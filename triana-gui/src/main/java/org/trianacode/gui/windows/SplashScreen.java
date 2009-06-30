@@ -68,7 +68,7 @@ import java.awt.event.ComponentEvent;
 import java.util.logging.Logger;
 
 /**
- * Start-up Splash screen class that also has buttons for the various peer options
+ * Start-up Splash screen
  *
  * @author Matthew Shields
  * @version $Revision: 4050 $

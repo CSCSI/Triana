@@ -58,7 +58,7 @@
  */
 package org.trianacode.gui;
 
-import org.trianacode.taskgraph.util.FileUtils;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -74,18 +74,17 @@ import java.awt.*;
  * running a 1024 x 768 computer. If the machine has a better resolution
  * than this then Triana will appear larger so that it occupies the same
  * proportion than it does on an SVGA screen.</p>
- *
+ * <p/>
  * <p>Triana uses this class extensively when creating its graphical user
  * interface.  </p>
- *
+ * <p/>
  * This class also provides some sueful routines which Triana uses. For example
  * there is a function here which displays Triana's title screen.
  *
- * @author      Ian Taylor
- * @created     16 Jan 1997
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
+ * @created 16 Jan 1997
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Display {
     /**
@@ -169,9 +168,10 @@ public class Display {
      * screen by checking the x and y coordinates of its desired
      * position and clipping them so that it
      * fits onto the particular screen.
+     *
      * @param fr the frame to be clipped into the screen size
-     * @param x the desired x coordinate
-     * @param y the desired y coordinate
+     * @param x  the desired x coordinate
+     * @param y  the desired y coordinate
      */
     public static Point clipFrameToScreen(Component fr, int x, int y) {
         int clipX, clipY;
@@ -205,6 +205,7 @@ public class Display {
      * this function to place their displaying windows on the screen.
      * Subclasses of ParameterPanel don't need to call this as it is
      * called automatically.
+     *
      * @param fr the frame to be clipped into the screen size
      */
     public static Point clipFrameToScreen(Window fr, Point p) {
@@ -226,14 +227,14 @@ public class Display {
      */
     public static void centralise(Window fr) {
         fr.setLocation((screenX / 2) - (fr.getSize().width / 2),
-                       (screenY / 2) - (fr.getSize().height / 2));
+                (screenY / 2) - (fr.getSize().height / 2));
     }
 
 
     /**
      * @return an anchor point for the specified object. If the object is a
-     * menu in a pop-up window then this is based on the invoker, if the object
-     * is not a component/invalid then comp is centralised.
+     *         menu in a pop-up window then this is based on the invoker, if the object
+     *         is not a component/invalid then comp is centralised.
      */
     public static Point getAnchorPoint(Object anchor, Component comp) {
         Component anchcomp = null;
@@ -282,8 +283,7 @@ public class Display {
     public static JPanel getTrianaLogo() {
         JPanel outer = new JPanel(new BorderLayout());
         JPanel content = new JPanel(new GridLayout(7, 2));
-        Image im = FileUtils.getSystemImage("frontimage2.jpg");
-        ImageIcon ic = new ImageIcon(im);
+        ImageIcon ic = GUIEnv.getTrianaImageIcon();
         JLabel label = new JLabel(ic);
         outer.add(label, BorderLayout.NORTH);
 

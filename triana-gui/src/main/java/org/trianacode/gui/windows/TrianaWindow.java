@@ -152,17 +152,6 @@ public abstract class TrianaWindow extends JFrame
         setSize(width, height);
     }
 
-
-    /**
-     * Returns the name of the icon to use when TrianaWindow is
-     * iconified.
-     *
-     * @return name of the icon.
-     */
-    public String getMyIconName() {
-        return "triana.gif";
-    }
-
     /**
      * Returns an image to use as the icon when TrianaWindow is
      * iconified.
