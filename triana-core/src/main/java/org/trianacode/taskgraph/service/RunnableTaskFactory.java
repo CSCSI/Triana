@@ -1,0 +1,185 @@
+/*
+ * The University of Wales, Cardiff Triana Project Software License (Based
+ * on the Apache Software License Version 1.1)
+ *
+ * Copyright (c) 2007 University of Wales, Cardiff. All rights reserved.
+ *
+ * Redistribution and use of the software in source and binary forms, with
+ * or without modification, are permitted provided that the following
+ * conditions are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * 3. The end-user documentation included with the redistribution, if any,
+ *    must include the following acknowledgment: "This product includes
+ *    software developed by the University of Wales, Cardiff for the Triana
+ *    Project (http://www.trianacode.org)." Alternately, this
+ *    acknowledgment may appear in the software itself, if and wherever
+ *    such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Triana" and "University of Wales, Cardiff" must not be
+ *    used to endorse or promote products derived from this software
+ *    without prior written permission. For written permission, please
+ *    contact triana@trianacode.org.
+ *
+ * 5. Products derived from this software may not be called "Triana," nor
+ *    may Triana appear in their name, without prior written permission of
+ *    the University of Wales, Cardiff.
+ *
+ * 6. This software may not be sold, used or incorporated into any product
+ *    for sale to third parties.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN
+ * NO EVENT SHALL UNIVERSITY OF WALES, CARDIFF OR ITS CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * ------------------------------------------------------------------------
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Triana Project. For more information on the
+ * Triana Project, please see. http://www.trianacode.org.
+ *
+ * This license is based on the BSD license as adopted by the Apache
+ * Foundation and is governed by the laws of England and Wales.
+ *
+ */
+package org.trianacode.taskgraph.service;
+
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
+import org.trianacode.taskgraph.tool.Tool;
+
+
+/**
+ * Implementation of the TaskgraphFactoryInterface, creates a RunnableTask and associated OldUnit
+ * and tool classes
+ *
+ *
+ */
+public class RunnableTaskFactory implements TaskFactory {
+
+    private String factoryname = DEFAULT_FACTORY_NAME;
+
+
+    /**
+     * Constructs a default runnable taskgraph factory
+     */
+    public RunnableTaskFactory() {
+    }
+
+    /**
+     * Constructs a runnable taskgraph factory that uses the specified name
+     */
+    public RunnableTaskFactory(String factoryname) {
+        this.factoryname = factoryname;
+    }
+
+
+    /**
+     * @return the name of the taskgraph factory
+     */
+    public String getFactoryName() {
+        return factoryname;
+    }
+
+    /**
+     * @return a description of the task factory
+     */
+    public String getFactoryDescription() {
+        return "Default Triana Tool (runnable)";
+    }
+
+
+    /**
+     * @return a RunnableTask
+     */
+    public Task createTask(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskException {
+        try {
+            if (tool instanceof TaskGraph) {
+                Task task = (Task) TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, parent, preserveinst);
+                task.setParent(parent);
+                task.init();
+
+                return task;
+            } else {
+                return (Task) initRunnableInstance(tool, parent, preserveinst);
+            }
+        }
+        catch (TaskGraphException except) {
+            throw(new TaskException(except.getMessage(), except));
+        }
+    }
+
+    protected RunnableInstance initRunnableInstance(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskGraphException {
+        RunnableTask task = new RunnableTask(tool, this, preserveinst);
+
+        task.setParent(parent);
+        task.initUnit(TaskGraphManager.getToolTable());
+        task.init();
+
+        return task;
+    }
+
+    /**
+     * @return a new RunnableNode connected to the specified RunnableTask
+     */
+    public Node createNode(Task task, boolean input) {
+        if (task instanceof RunnableInstance) {
+            RunnableNode rn = new RunnableNode((RunnableInstance) task, input);
+            System.out.println("RunnableTaskFactory.createNode created runnable node");
+            return rn;
+        }
+        else if (task instanceof TaskGraph) {
+            RunnableNode rn = new RunnableNode((TaskGraph) task, input);
+            System.out.println("RunnableTaskFactory.createNode created new RunnableNode");
+            return rn;
+        } else {
+            throw new RuntimeException("Inconsistent taskgraph; cannot attach a runnable node to a non-runnable task");
+        }
+    }
+
+    /**
+     * @return a new parameter node inputting/outputting the specified parameter and connected to
+     *         the specified task
+     */
+    public ParameterNode createParameterNode(String paramname, Task task, boolean input) {
+        if (task instanceof RunnableInstance)
+            return new RunnableParameterNode(paramname, (RunnableInstance) task, input);
+        else if (task instanceof TaskGraph)
+            return new RunnableParameterNode(paramname, (TaskGraph) task, input);
+        else
+            throw new RuntimeException("Inconsistent taskgraph; cannot attach a runnable node to a non-runnable task");
+    }
+
+
+    /**
+     * @return a new RunnableCable connecting the specified nodes
+     */
+    public Cable createCable(Node sendnode, Node recnode) throws CableException {
+        if ((recnode.getTopLevelNode() instanceof RunnableNode)
+                && (sendnode.getTopLevelNode() instanceof RunnableNode)) {
+            System.out.println("RunnableTaskFactory.createCable both are runnable nodes");
+            RunnableCable cable = new RunnableCable();
+            System.out.println("RunnableTaskFactory.createCable trying to craete runnable cable");
+            cable.connect(sendnode, recnode);
+            System.out.println("RunnableTaskFactory.createCable created runnable cable");
+
+            return cable;
+        }
+        throw (new IncompatibleProxyException("RunnableTaskhFactory Error: Cannot connect proxy types (" + sendnode.getTopLevelTask().getProxy().getType() + "->" + recnode.getTopLevelTask().getProxy().getType() + ")"));
+    }
+
+}

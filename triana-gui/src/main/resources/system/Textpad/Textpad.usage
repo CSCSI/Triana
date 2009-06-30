@@ -1,0 +1,32 @@
+
+      Welcome to Textpad!
+
+      Two special features of Textpad are:
+
+  ===========
+  1. Presets
+  ===========
+
+    To add a file to the presets, select File>Add to Presets.
+
+    To preset  the parent directory of the file, select
+    File>Add directory to Presets.
+
+    Open a preset by selecting it from the Presets menu.
+
+    If a directory is clicked, you will be asked whether to
+    save to or open from the directory.
+
+    To edit the presets, select Presets>Edit... After editing,
+    save the Presets file and select Preset>Update to load the
+    new presets.
+
+  ========================= 
+  2. Drag and drop support
+  =========================
+
+                Try it out!
+
+			Thank you for using textpad!
+				
+					- M.L.Noone

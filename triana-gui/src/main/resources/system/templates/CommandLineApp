@@ -1,0 +1,68 @@
+$PACKAGE
+import triana.service.CommandLineExec;
+import triana.io.XMLReader;
+import triana.taskgraph.ToolInterface;
+import triana.taskgraph.TaskGraphException;
+import triana.service.SchedulerException;
+import triana.proxies.ProxyFactory;
+import triana.taskgraph.TaskGraphManager;
+
+import java.io.StringReader;
+import java.io.IOException;
+
+public class $CLASSNAME {
+
+    public static void main(String[] args) {
+        try {
+            ProxyFactory.initProxyFactory();
+            TaskGraphManager.initTaskGraphManager();
+
+            XMLReader reader = new XMLReader(new StringReader(getTaskGraph()));
+            ToolInterface tool = reader.readComponent();
+
+            CommandLineExec exec = new CommandLineExec("$CLASSNAME", tool);
+
+            initMaps(exec);
+
+            String mess = exec.initParameters(args);
+
+            if (mess == null)
+                exec.run(new Object[0]);     
+            else {
+                System.out.println(mess);
+                System.exit(0);
+            }
+
+		while (!exec.isFinished())
+                try {
+                    Thread.sleep(1000);
+                } catch(InterruptedException except) {
+                }
+        } catch(TaskGraphException except) {
+            System.out.println("Application Aborted: Error reading taskgraph");
+            except.printStackTrace();
+        } catch(SchedulerException except) {
+            System.out.println("Application Aborted: Scheduler error");
+            except.printStackTrace();
+        } catch(IOException except) {
+            System.out.println("Application Aborted: IOException");
+            except.printStackTrace();
+        }
+
+        System.exit(0);
+    }
+
+    public static void initMaps(CommandLineExec exec) {
+$MAPS
+    }
+
+
+    public static String getTaskGraph() {
+        String str = "";
+
+$TASKGRAPH
+
+        return str;
+    }
+
+}

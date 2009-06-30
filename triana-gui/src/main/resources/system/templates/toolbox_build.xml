@@ -1,0 +1,25 @@
+<project name="$TOOLBOX_TAG" default="build" basedir=".">
+<target name="init">
+	<delete dir="classes" />
+	<mkdir dir="classes" />
+</target>
+
+<target name="build" depends="init">
+   <javac srcdir="./src" 
+           destdir="./classes"
+           failonerror="${javac.flag.failonerror}"
+           deprecation="${javac.flag.deprecation}"
+           optimize="${javac.flag.optimize}"
+           verbose="${javac.flag.verbose}"
+           debug="${javac.flag.debug}"
+           classpath="${triana.ext.classpath}">
+	</javac>
+</target>
+
+<target name="clean">
+	<delete dir="classes" />
+	<mkdir dir="classes" />
+</target>
+
+
+</project>

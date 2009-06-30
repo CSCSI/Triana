@@ -1,0 +1,103 @@
+#include "unit.h"
+
+/**
+ * Same as the standard argv but element 0 does NOT contain
+ * the program name.  Argv contains the rest of the command 
+ * line arguments and argc contains the number of com
+ */
+void process(int argc, char *argv[]) {
+   int i;
+   signal *s;
+   signal *s2;
+   char *input;
+   int value;
+   int offset;
+   value = 1.0;
+   offset = 0;
+
+   if (argc > 0) {
+      input =(char *)malloc(10*sizeof(char)); /* the 1st CmdLine parameter */
+       strcpy( input, argv[0] );
+       value = atof( input );
+       }
+
+   if (argc > 1) {
+       input =(char *)malloc(10*sizeof(char)); 
+       strcpy( input, argv[1] ); /* the 2nd CmdLine parameter */
+       offset = atoi( input );
+       }
+
+   printf("Cmdline = %1.4f and %i\n", value, offset);
+
+   s = getSignal();       
+
+   /* Just an example using the 2 command line parameters shown above */
+
+   for (i = 0; i<s->samples; ++i) 
+       s->data[i] = (s->data[i]* value) + offset;
+   }
+
+/**
+ * This is the test which appears in the help window for this rountine
+ * within Triana. i.e. use this to explain how users pass parameters
+ * to your function.
+ */
+char* getHelp() {
+    char* help;
+
+    help =(char *)malloc(250*sizeof(char));
+
+    strcpy(help, "Type in Your help here\n");
+    strcat(help, "This will appear in the Native's Window\n");
+    strcat(help, "Add more lines in this way\n\n");
+
+    return help;
+    }
+
+
+/**
+ * This is the test which appears in the help window for this rountine
+ * within Triana. i.e. use this to explain how users pass parameters
+ * to your function.
+ */
+char* getInterfaceInfo() {
+    char* str;
+
+    str =(char *)malloc(250*sizeof(char));
+INTERFACE
+
+    return str;
+    }
+
+/**
+ * Returns the type of data which can be input into the unit (see
+ * the Triana types allowed.
+ */
+char* inputType() {
+    return "INPUT_TYPES";
+    }
+
+/**
+ * Returns the type of data which can be output from the unit (see
+ * the Triana types allowed.
+ */
+char* outputType() {
+    return "OUTPUT_TYPES";
+    }
+
+/**
+ * Returns the mode of operation. If you return multi_on then
+ * the C program can access all of the input nodes.  If this
+ * is set to multi_off then the unit acts as a multiprocesser
+ * where each input and corresponding output node run the
+ * C program once.  This can be used for example to several 
+ * ffts by having several input nodes rather than having several
+ * seperate units.
+ */
+char* getMode() {
+    return "multi_on";
+    }
+
+
+
+

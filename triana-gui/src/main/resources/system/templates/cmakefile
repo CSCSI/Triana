@@ -1,0 +1,21 @@
+# setup compiler, platform and directories
+
+OS = PLATFORM
+EXTRA_LIBS = -lm           
+LibName = NAME_OF_LIB
+CCcommand = cc -G -fsimple=2
+LibraryPath = ../lib/$(OS)
+javainc = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(OS)
+
+.SUFFIXES : .o .c
+
+SRC = unit.c NAME_OF_UNIT.c 
+
+OBJ = $(SRC:.o=.c)
+
+default: $(OBJ)
+	$(CCcommand) -o $(LibraryPath)/lib$(LibName)ENDING $(javainc) $(OBJ) $(EXTRA_LIBS)
+
+
+
+

@@ -1,0 +1,65 @@
+import triana.gui.panels.ParameterPanel;
+
+import javax.swing.*;
+import java.awt.*;
+
+
+/**
+ * $POPUP_DESCRIPTION
+ *
+ * @author     $AUTHOR
+ * @created    $DATE
+ * @version    $Revision: 2915 $
+ * @date       $Date: 2006-07-25 15:39:49 +0100 (Tue, 25 Jul 2006) $ modified by $Author: spxmss $
+ * @todo
+ */
+public class $PANELNAME extends ParameterPanel {
+
+    // Define GUI components here, e.g.
+    //
+    // private JTextField namelabel = new JTextField(); 
+
+
+    /**
+     * This method is called before the panel is displayed. It should initialise
+     * the panel layout.
+     */
+    public void init() {
+        // Insert code to layout GUI here, e.g.
+        //
+        // add(namelabel);
+    }
+
+
+    /**
+     * This method is called when cancel is clicked on the parameter window. It
+     * should synchronize the GUI components with the task parameter values
+     */
+    public void reset() {
+        // Insert code to synchronise the GUI with the task parameters here, e.g.
+        //
+        // namelabel.setText(getParameter("name"));         
+    }
+
+
+    /**
+     * This method is called when a parameter in the task is updated. It should 
+     * update the GUI in response to the parameter update
+     */
+    public void parameterUpdate(String paramname, Object value) {
+        // Insert code to update GUI in response to parameter changes here, e.g.
+        // 
+        // if (paramname.equals("name"))
+        //     namelabel.setText(value);
+    }
+
+
+    /**
+     * This method is called when the panel is being disposed off. It should
+     * clean-up subwindows, open files etc.
+     */
+    public void dispose() {
+        // Insert code to clean-up panel here
+    }
+
+}

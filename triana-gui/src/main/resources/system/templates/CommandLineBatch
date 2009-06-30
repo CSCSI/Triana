@@ -1,0 +1,14 @@
+@echo off
+
+setlocal ENABLEDELAYEDEXPANSION
+
+set TRIANACP=
+set OPTION=-Dtriana.home=%TRIANA%\
+set GATADAPTORS=-Dgat.adaptor.path=%TRIANA%\lib\gat
+
+for %%i in (%TRIANA%\lib\*.jar) do set TRIANACP=!TRIANACP!;%%i
+for %%i in (%TRIANA%\lib\gap\*.jar) do set TRIANACP=!TRIANACP!;%%i
+for %%i in (%TRIANA%\lib\gat\*.jar) do set TRIANACP=!TRIANACP!;%%i
+for %%i in (%TRIANA%\lib\gms\*.jar) do set TRIANACP=!TRIANACP!;%%i
+
+java -Dwindir=%WINDIR% -classpath %TRIANA%\classes;%TRIANACP%;%TRIANA%\toolboxes\GEO\Input\classes;%TRIANA%\toolboxes\SignalProc\Algorithms\classes;. %OPTION% %GATADAPTORS% $APPCLASS %*

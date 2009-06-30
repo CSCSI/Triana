@@ -1,0 +1,143 @@
+package triana.tools;
+
+UWCC_HEADER
+
+import triana.ocl.*;
+import triana.types.*;
+import triana.gui.windows.*;
+import java.awt.*;
+import java.awt.event.*;
+import triana.util.*;
+import triana.gui.*;
+
+/**
+ * A NAME_OF_UNIT unit to ..
+ *
+ * @version VERSION DATE
+ * @author AUTHOR
+ */
+public class NAME_OF_UNIT extends Unit {
+
+    // some examples of parameters
+
+    public double volume;
+
+    /**
+     * The UnitPanel for NAME_OF_UNIT
+     */
+    WINDOW_NAME myPanel;
+
+     /**
+      **********************************************
+      *** USER CODE of NAME_OF_UNIT goes here    ***
+      **********************************************
+      */
+    public void process() {         
+        SampleSet wave = getInputNode(0);
+
+        // double the amplitude of the WaveForm
+
+        for (int i=0; i<wave.size(); ++i)
+            Wave.data[i] *= volume;
+
+        output(s);
+        }
+
+
+    /** 
+     * Initialses information specific to NAME_OF_UNIT. 
+     */
+    public void init() {
+        super.init();
+
+        setResizableInputs(INRESIZE);
+        setResizableOutputs(OUTRESIZE);
+
+        volume = 0.0;
+
+        // set these to true if your unit can process double-precision
+        // arrays
+        requireDoubleInputs(false);
+        canProcessDoubleArrays(false);
+
+        myPanel = new WINDOW_NAME(this);
+        myPanel.volume.setText(String.valueOf(volume));
+        }
+
+     /**
+      * Reset's NAME_OF_UNIT   
+      */
+     public void reset() {
+         super.reset();
+         }
+
+    /**
+     * Saves NAME_OF_UNIT's parameters.
+     */
+    public void saveParameters() {      
+        saveParameter("volume", volume);
+        }
+
+    /**
+     * Used to set each of NAME_OF_UNIT's parameters.
+     */
+    public void setParameter(String name, String value) {
+        volume = StrToInt(value);
+        }
+
+
+    /**
+     *
+     * @return a string containing the names of the types allowed 
+     * to be input to NAME_OF_UNIT, each separated by a white space.
+     */
+    public String inputTypes() {
+        return "INPUT_TYPES";
+        }
+
+    /**
+     * @return a string containing the names of the types output
+     * from NAME_OF_UNIT, each separated by a white space.
+     */
+    public String outputTypes() {
+        return "OUTPUT_TYPES";
+        }
+
+    /**
+     *
+     * @returns the location of the help file for this unit.  
+     */
+    public String helpFile() {
+        return "HELP_FILE";
+        }
+
+
+    /**
+     * @return NAME_OF_UNIT's parameter window sp that Grid 
+     * can move and display it.
+     */
+    public UnitPanel myParameterPanel() {
+        return myPanel;
+        }
+
+
+    /**
+     * Captures the events thrown out by WINDOW_NAME.
+     */   
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);   // we need this
+ 
+        if (e.getSource() instanceof TextField) {
+            String text = e.getActionCommand();
+            volume = Util.strToDouble(text);
+            }
+        }
+
+     }
+
+
+
+
+
+
+

@@ -1,0 +1,54 @@
+#!/bin/sh
+
+case "`uname`" in
+	CYGWIN*) _s=';'
+	;;
+	*) _s=':'
+esac
+
+prog=${JAVACMD:-java}
+
+option="-Dtriana.home=$TRIANA/"
+gatadaptors="-Dgat.adaptor.path=$TRIANA/lib/gat/"
+log4j="-Dlog4j.configuration.file=$TRIANA/system/log/trianaLogConfig.xml"
+
+for i in `find $TRIANA/lib -name '*.jar'`; do
+    if [ -z "$TRIANACP" ]; then
+	TRIANACP="$i"
+    else
+	TRIANACP="$TRIANACP$_s$i"
+    fi
+done
+
+for i in `find $TRIANA/lib/gap -name '*.jar'`; do
+    if [ -z "$TRIANACP" ]; then
+	TRIANACP="$i"
+    else
+	TRIANACP="$TRIANACP$_s$i"
+    fi
+done
+
+for i in `find $TRIANA/lib/gat -name '*.jar'`; do
+    if [ -z "$TRIANACP" ]; then
+	TRIANACP="$i"
+    else
+	TRIANACP="$TRIANACP$_s$i"
+    fi
+done
+
+for i in `find $TRIANA/lib/gms -name '*.jar'`; do
+    if [ -z "$TRIANACP" ]; then
+	TRIANACP="$i"
+    else
+	TRIANACP="$TRIANACP$_s$i"
+    fi
+done
+
+if [ -n "$TRIANACP" ]; then
+    export TRIANACP
+    classpath="$TRIANA/classes$_s$TRIANACP"
+else
+    classpath="$TRIANA/classes"
+fi
+
+$prog -Xms128M -Xmx256M -classpath $TRIANA/toolboxes/GEO/Input/classes$_s$TRIANA/toolboxes/SignalProc/Algorithms/classes$_s"$classpath"$_s. $option $gatadaptors $log4j $APPCLASS "$@"

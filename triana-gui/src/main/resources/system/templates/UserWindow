@@ -1,0 +1,53 @@
+package triana.tools;
+
+UWCC_HEADER
+
+import triana.gui.windows.*;
+import triana.gui.panels.*;
+import java.awt.*;
+import java.awt.event.*;
+import triana.ocl.*;
+import triana.util.*;
+import triana.types.*;
+import javax.swing.*;
+
+
+/**
+ * A WINDOW_NAME UnitPanel to ..
+ *
+ * @version VERSION DATE
+ * @author AUTHOR
+ *
+ * @see UnitPanel 
+ *
+ */
+public class WINDOW_NAME extends UnitPanel {
+
+    /**
+     * Creates a new WINDOW_NAME.
+     */
+    public WINDOW_NAME() {
+        super(); 
+        }
+
+    /**
+     * Sets the triana unit for NAME_OF_UNIT.
+     */
+    public void setObject(Unit unit) {
+        super.setObject(unit); 
+
+        layoutPanel();
+        }
+
+     /**
+      * Function to do the layout of the panel.
+      */
+    public void layoutPanel() {
+ 
+        }
+    }
+
+
+
+
+

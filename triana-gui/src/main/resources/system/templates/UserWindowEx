@@ -1,0 +1,58 @@
+package triana.tools;
+
+UWCC_HEADER
+
+import triana.gui.windows.*;
+import java.awt.*;
+import java.awt.event.*;
+import triana.ocl.*;
+import triana.types.*;
+
+/**
+ * A WINDOW_NAME UnitPanel to ..
+ *
+ * @version VERSION DATE
+ * @author AUTHOR
+ *
+ * @see UnitPanel 
+ *
+ */
+public class WINDOW_NAME extends UnitPanel {
+
+    /**
+     * A simple textfield to edit the volume of a Waveform
+     */
+   TextField volume;
+
+    /**
+     * Creates a new WINDOW_NAME for NAME_OF_UNIT.
+     */
+    public WINDOW_NAME(ActionListener unit) {
+        super(unit); 
+
+        volume = new TextField(50));
+
+        layoutWindow();
+        }
+
+     /**
+      * The layout of the Exec Window.
+      */
+    public void layoutWindow () {
+        setLayout(new GridLayout(1,2,5,5));
+
+        add(new Label( "Enter the new volume" , Label.CENTER));
+        add(volume);
+    
+        pack();
+        }
+
+    public String helpFile() {
+        return "HELP_FILE";
+        }
+    }
+
+
+
+
+
