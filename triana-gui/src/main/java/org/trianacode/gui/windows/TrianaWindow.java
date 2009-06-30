@@ -66,7 +66,6 @@ import org.trianacode.gui.help.search.FindWordDialog;
 import org.trianacode.gui.help.search.FindWordEvent;
 import org.trianacode.gui.help.search.FindWordListener;
 import org.trianacode.gui.help.search.HTMLSearchResults;
-import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -171,8 +170,7 @@ public abstract class TrianaWindow extends JFrame
      * @return image to use.
      */
     public Image getMyIcon() {
-        return FileUtils.getImage(Env.home() + File.separator + "system" +
-                File.separator + "icons" + File.separator + getMyIconName());
+        return GUIEnv.getTrianaIcon();
     }
 
 

@@ -96,11 +96,11 @@ public class SplashScreen {
         splashScreen.setUndecorated(true);
         JPanel jp = new JPanel();
         jp.setLayout(new BorderLayout());
-        final SplashPanel sp = new SplashPanel(GUIEnv.getIcon("frontsplash.jpg"));
+        final SplashPanel sp = new SplashPanel(GUIEnv.getIcon("frontsplash.png"));
         jp.add(sp, BorderLayout.CENTER);
         sp.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
-                ImageIcon icon = (ImageIcon) sp.getIcon();
+                ImageIcon icon = sp.getIcon();
                 Dimension size = sp.getSize();
                 icon.setImage(icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_DEFAULT));
             }
@@ -111,6 +111,7 @@ public class SplashScreen {
 
         JPanel progressPanel = new JPanel();
         progressPanel.setLayout(new BorderLayout());
+        progressPanel.setBackground(Color.WHITE);
         progressPanel.add(progressLabel, BorderLayout.NORTH);
         JPanel pbarPanel = new JPanel(new BorderLayout());
         pbarPanel.add(progressBar, BorderLayout.CENTER);

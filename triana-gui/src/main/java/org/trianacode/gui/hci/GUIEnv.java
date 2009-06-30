@@ -96,7 +96,7 @@ import java.util.logging.Logger;
 public class GUIEnv {
 
     static Logger logger = Logger.getLogger("org.trianacode.gui.hci.GUIEnv");
-    
+
     private static ApplicationFrame app = null;
 
     private static MouseListener mouseList;
@@ -163,7 +163,7 @@ public class GUIEnv {
 
     /**
      * @return the MainTriana panel which is representing the specified task
-     * graph, or null if the task isn't represented
+     *         graph, or null if the task isn't represented
      */
     public static TaskGraphPanel getTaskGraphPanelFor(TaskGraph group) {
         return app.getTaskGraphPanelFor(group);
@@ -307,7 +307,7 @@ public class GUIEnv {
 
             tools.refreshLocation(tool.getToolXMLFileName(), tool.getToolBox());
         } catch (IOException except) {
-            throw(new RuntimeException("Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));
+            throw (new RuntimeException("Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));
         }
     }
 
@@ -421,6 +421,7 @@ public class GUIEnv {
 
     /**
      * Sets the Color Table property so it can be saved
+     *
      * @param entry
      */
     public static void setColorTableEntry(ColorTableEntry entry) {
@@ -545,19 +546,25 @@ public class GUIEnv {
     /**
      * Returns the name of the icon to use when TrianaWindow is
      * iconified.
+     *
      * @return name of the icon.
      */
     private static String getTrianaIconName() {
-        return "triana.gif";
+        return "triana.png";
     }
 
     /**
      * Returns an image to use as the icon when TrianaWindow is
      * iconified.
+     *
      * @return image to use.
      */
     public static Image getTrianaIcon() {
         return FileUtils.getSystemImage(getTrianaIconName());
+    }
+
+    public static ImageIcon getTrianaImageIcon() {
+        return new ImageIcon(FileUtils.getSystemImage(getTrianaIconName()));
     }
 }
 

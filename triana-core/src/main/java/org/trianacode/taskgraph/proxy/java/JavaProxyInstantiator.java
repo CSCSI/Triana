@@ -86,10 +86,9 @@ public class JavaProxyInstantiator implements ProxyInstantiator {
     }
 
     public Proxy cloneProxy(Proxy proxy) throws ProxyInstantiationException {
-        if(proxy instanceof JavaProxy) {
-            JavaProxy jp = (JavaProxy)proxy;
+        if (proxy instanceof JavaProxy) {
+            JavaProxy jp = (JavaProxy) proxy;
             JavaProxy clone = new JavaProxy(jp.getUnitName(), jp.getUnitPackage());
-            clone.setUnit(jp.getUnit());
             return clone;
         }
         throw new ProxyInstantiationException("Could not clone proxy. Wrong type:" + proxy.getType());

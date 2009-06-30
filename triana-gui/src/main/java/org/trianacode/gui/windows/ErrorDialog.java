@@ -74,10 +74,10 @@ import java.io.StringWriter;
 /**
  * Just calls the JOptionPane with the appropriate values for an ErrorDialog
  *
- * @author      Ian Taylor
- * @created     16 Jan 1997
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
+ * @created 16 Jan 1997
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ErrorDialog implements Serializable {
 
@@ -126,7 +126,7 @@ public class ErrorDialog implements Serializable {
         textarea.setBackground(ok.getBackground());
         textarea.setBorder(new EmptyBorder(3, 3, 3, 3));
 
-        ImageIcon ima = GUIEnv.getIcon("triana.gif");
+        ImageIcon ima = GUIEnv.getTrianaImageIcon();
         JLabel icon = new JLabel(ima);
         icon.setBorder(new EmptyBorder(3, 3, 3, 3));
 
@@ -164,7 +164,7 @@ public class ErrorDialog implements Serializable {
         }
 
         show(text + Env.getString("FullTrace") +
-             "\n\r" + ss.toString());
+                "\n\r" + ss.toString());
         try {
             sr.close();
             ss.close();
