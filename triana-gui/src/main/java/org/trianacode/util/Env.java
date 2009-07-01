@@ -67,11 +67,12 @@ import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
-import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.ser.DocumentHandler;
+import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
+import org.trianacode.taskgraph.util.Home;
 import org.trianacode.taskgraph.util.Listing;
 import org.w3c.dom.Element;
 
@@ -192,8 +193,8 @@ public final class Env {
 
     /**
      * Color Table Definitions
-     *
-     this should replace the defunct cable colour stuff unless we are going to reinstate
+     * <p/>
+     * this should replace the defunct cable colour stuff unless we are going to reinstate
      */
     private static Vector colorTableEntries = new Vector();
     public static final String COLOR_TABLE_STR = "colorTable";
@@ -278,46 +279,7 @@ public final class Env {
      * Initializes the Triana home
      */
     static {
-        logger.info("calculating Triana home");
-        File appHome;
-        String triana = "Triana";
-        File file = new File(System.getProperty("user.home"));
-        if (!file.isDirectory()) {
-            logger.severe("User home not a valid directory: " + file);
-            appHome = new File(triana);
-        } else {
-            String os = os();
-            logger.fine("OS is " + os);
-            if (os.indexOf("osx") > -1) {
-                File libDir = new File(file, "Library/Application Support");
-                libDir.mkdirs();
-                appHome = new File(libDir, triana);
-            } else if (os.equals("windows")) {
-                String APPDATA = System.getenv("APPDATA");
-                File appData = null;
-                if (APPDATA != null) {
-                    appData = new File(APPDATA);
-                }
-                if (appData != null && appData.isDirectory()) {
-                    appHome = new File(appData, triana);
-                } else {
-                    logger.severe("Could not find %APPDATA%: " + APPDATA);
-                    appHome = new File(file, triana);
-                }
-            } else {
-                appHome = new File(file, "." + triana.toLowerCase());
-            }
-        }
-        if (!appHome.exists()) {
-            if (appHome.mkdir()) {
-            } else {
-                logger.severe("Could not create " + appHome);
-            }
-        }
-        home = appHome.getAbsolutePath();
-        if(!home.endsWith(File.separator)) {
-            home = home + File.separator;
-        }
+        home = Home.home();
     }
 
 
@@ -376,8 +338,7 @@ public final class Env {
 
         if (!configFile.exists()) {// First time run so need to set up paths
             restoreDefaultConfig();
-        }
-        else {// read from the file
+        } else {// read from the file
             GUIEnv.loadDefaultColours();
             try {
                 Env.readConfig(tools, configFile);
@@ -451,8 +412,7 @@ public final class Env {
         String oldVal;
         if (deb.equals("on")) {
             oldVal = (String) setUserProperty(DEBUG_STR, "true");
-        }
-        else {
+        } else {
             oldVal = (String) setUserProperty(DEBUG_STR, "false");
         }
         if ((oldVal == null) || (!oldVal.equals(deb))) {
@@ -522,8 +482,7 @@ public final class Env {
     public static Object getUserProperty(String propName) {
         if (options.containsKey(propName)) {
             return options.get(propName);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -536,8 +495,7 @@ public final class Env {
 
         if (toolbox != null) {
             return toolbox;
-        }
-        else {
+        } else {
             setLastWorkingToolbox(Env.home() + "toolboxes");
             return Env.home() + "toolboxes";
         }
@@ -573,11 +531,9 @@ public final class Env {
         Object value = getUserProperty(propName);
         if ((value == null) || (value instanceof Boolean)) {
             return (Boolean) value;
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return new Boolean((String) value);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -603,11 +559,9 @@ public final class Env {
 
         if (java == null) {
             return "";
-        }
-        else if (java.endsWith(File.separator + "jre")) {
+        } else if (java.endsWith(File.separator + "jre")) {
             return java.substring(0, java.lastIndexOf(File.separator + "jre"));
-        }
-        else {
+        } else {
             return java;
         }
     }
@@ -697,41 +651,14 @@ public final class Env {
      * <i>linux</i> is returned </li>
      */
     public final static String os() {
-        String os = System.getProperty("os.name");
-
-        if (os.startsWith("Windows")) {
-            return "windows";
-        }
-
-        if ((os.equals("SunOS")) || (os.equals("Solaris"))) {
-            return "solaris";
-        }
-
-        if (os.equals("Digital Unix")) {
-            return "dec";
-        }
-
-        if (os.equals("Linux")) {
-            return "linux";
-        }
-
-        if ((os.equals("Irix")) || (os.equals("IRIX"))) {
-            return "irix";
-        }
-
-        if (os.equals("Mac OS X")) {
-            return "osx";
-        }
-
-        return "Not Recognised";
+        return Home.os();
     }
 
     public int getEndian() {
         String os = os();
         if ((os.equals("windows")) || (os.equals("linux")) || (os.equals("dec"))) {
             endian = LITTLE;
-        }
-        else {
+        } else {
             endian = BIG;
         }
         return endian;
@@ -745,11 +672,9 @@ public final class Env {
         String os = os();
         if (os.equals("windows")) {
             return ".dll";
-        }
-        else if (os.equals("osx")) {
+        } else if (os.equals("osx")) {
             return ".jnilib";
-        }
-        else {
+        } else {
             return ".so";
         }
     }
@@ -761,8 +686,7 @@ public final class Env {
         String os = os();
         if (os.equals("windows")) {
             return "";
-        }
-        else {
+        } else {
             return "lib";
         }
     }
@@ -940,14 +864,7 @@ public final class Env {
      * @return the absolute path to the user resource directory.
      */
     public final static String getResourceDir() {
-        if (resourceDir.equals("")) {
-            resourceDir = home + File.separator + verName + "Resources";
-            File resDir = new File(resourceDir);
-            if (!resDir.exists()) {
-                resDir.mkdir();
-            }
-        }
-        return resourceDir;
+        return Home.getResourceDir();
     }
 
     /**
@@ -959,8 +876,7 @@ public final class Env {
 
         if (lastdir != null) {
             return lastdir;
-        }
-        else {
+        } else {
             return userHome();
         }
     }
@@ -989,8 +905,7 @@ public final class Env {
 
         if (position == null) {
             return new Point(0, 0);
-        }
-        else {
+        } else {
             return (Point) position;
         }
     }
@@ -1010,8 +925,7 @@ public final class Env {
 
         if (size == null) {
             return defaultsize;
-        }
-        else {
+        } else {
             return (Dimension) size;
         }
     }
@@ -1032,8 +946,7 @@ public final class Env {
 
         if (visible == null) {
             return false;
-        }
-        else {
+        } else {
             return new Boolean((String) visible).booleanValue();
         }
     }
@@ -1053,8 +966,7 @@ public final class Env {
 
         if (position == null) {
             return new Point(0, 0);
-        }
-        else {
+        } else {
             return (Point) position;
         }
     }
@@ -1074,8 +986,7 @@ public final class Env {
 
         if ((size == null) || (!(size instanceof Dimension))) {
             return defaultsize;
-        }
-        else {
+        } else {
             return (Dimension) size;
         }
     }
@@ -1095,8 +1006,7 @@ public final class Env {
 
         if ((zoom == null) || (!(zoom instanceof Double))) {
             return 1;
-        }
-        else {
+        } else {
             return ((Double) zoom).doubleValue();
         }
     }
@@ -1134,8 +1044,7 @@ public final class Env {
     public final static String getFileReader(String fileext) {
         if (filereaders.containsKey(fileext.toLowerCase())) {
             return (String) filereaders.get(fileext.toLowerCase());
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -1188,8 +1097,7 @@ public final class Env {
     public final static String getFileWriter(String fileext) {
         if (filewriters.containsKey(fileext.toLowerCase())) {
             return (String) filewriters.get(fileext.toLowerCase());
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -1280,8 +1188,7 @@ public final class Env {
             }
             restoredFromDisk = true;
             return true;
-        }
-        else {
+        } else {
             restoredFromDisk = true;
             return false;
         }
@@ -1323,8 +1230,7 @@ public final class Env {
                     }
                 }
             }
-        }
-        else {
+        } else {
             clearStateFiles();
         }
     }
@@ -1378,8 +1284,7 @@ public final class Env {
     public static boolean isPeerEnabled(String type) {
         if (peerconfig.containsKey(type)) {
             return new Boolean((String) peerconfig.get(type)).booleanValue();
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -1642,11 +1547,9 @@ public final class Env {
 
                 if (!new File(toolbox).exists()) {
                     logger.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
-                }
-                else if (elem.getAttribute(TOOLBOX_TYPE_STR) != null) {
+                } else if (elem.getAttribute(TOOLBOX_TYPE_STR) != null) {
                     tools.setToolBoxType(elem.getTextContent().trim(), elem.getAttribute(TOOLBOX_TYPE_STR));
-                }
-                else {
+                } else {
                     tools.addToolBox(elem.getTextContent().trim());
                 }
             }
@@ -1842,12 +1745,10 @@ public final class Env {
             if (item instanceof String) {// unparsed string
                 if ((((String) item).indexOf("http:") != -1) || (toAddTo.indexOf("ftp:") != -1)) {
                     toAddTo.addElement(new java.net.URL((String) item));
-                }
-                else {
+                } else {
                     toAddTo.addElement(item);
                 }
-            }
-            else {
+            } else {
                 toAddTo.addElement(item);// already parsed
             }
             return 1;
@@ -1868,8 +1769,7 @@ public final class Env {
     public static Vector<String> getAllTrianaTypes() {
         if (allTypes == null) {
             allTypes = new Vector<String>();
-        }
-        else {
+        } else {
             return new Vector<String>(allTypes);
         }
 
@@ -2006,7 +1906,7 @@ public final class Env {
                 is.close();
             }
             catch (IOException ee) {
-                logger.severe("Couldn't get Resources from " + file + ":"  + FileUtils.formatThrowable(ee));
+                logger.severe("Couldn't get Resources from " + file + ":" + FileUtils.formatThrowable(ee));
             }
         }
         return tips;
@@ -2081,8 +1981,7 @@ public final class Env {
     public final static void verifyPassword(String p) {
         if (!p.equals("objectcon")) {
             System.exit(0);
-        }
-        else {
+        } else {
             passwordOK = true;
         }
     }
@@ -2125,8 +2024,7 @@ public final class Env {
             recentFileItems = validatedItems;
 
             return (String[]) validatedItems.toArray(new String[validatedItems.size()]);
-        }
-        else {
+        } else {
             return new String[0];
         }
     }
