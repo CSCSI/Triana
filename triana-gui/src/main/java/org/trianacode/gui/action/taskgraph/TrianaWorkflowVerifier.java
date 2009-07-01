@@ -75,16 +75,14 @@ import javax.swing.*;
  * Checks a pre-run workflow to see whether it has any ProtoServices, and if
  * so prompts the user to distribute these services or cancel the run.
  *
- * @author      Ian Wang
- * @created     29th July 2004
-<<<<<<< TrianaWorkflowVerifier.java
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.2.2.1
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 29th July 2004
+ * <<<<<<< TrianaWorkflowVerifier.java
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * =======
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * >>>>>>> 1.2.2.1
  */
 
 public class TrianaWorkflowVerifier implements WorkflowVerifier {
@@ -93,7 +91,7 @@ public class TrianaWorkflowVerifier implements WorkflowVerifier {
      * @return the default actions handled by this verifier
      */
     public String[] getDefaultWorkflowActions() {
-        return new String[] {WorkflowActions.RUN_ACTION};
+        return new String[]{WorkflowActions.RUN_ACTION};
     }
 
     /**
@@ -118,9 +116,9 @@ public class TrianaWorkflowVerifier implements WorkflowVerifier {
             if (name.equals(""))
                 name = "Workflow";
 
-            String[] options = new String[] {"Reset and ReRun", "Cancel"};
+            String[] options = new String[]{"Reset and ReRun", "Cancel"};
 
-            int result = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(), name + " contains error state tasks!", Env.getString("Run") + " Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            int result = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(), name + " contains error state tasks!", Env.getString("Run") + " Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon(), options, options[0]);
 
             if (result == 0)
                 return RESET_AND_RUN;
@@ -131,7 +129,7 @@ public class TrianaWorkflowVerifier implements WorkflowVerifier {
             if (name.equals(""))
                 name = "Workflow";
 
-            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot run " + name + " as it contains suspended tasks! Please try again later.", Env.getString("Run") + " Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot run " + name + " as it contains suspended tasks! Please try again later.", Env.getString("Run") + " Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
             return CANCEL;
         } else
             return AUTHORIZE;

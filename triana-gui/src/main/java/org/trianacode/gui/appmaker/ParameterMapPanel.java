@@ -59,6 +59,7 @@
 
 package org.trianacode.gui.appmaker;
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.windows.WizardInterface;
 import org.trianacode.gui.windows.WizardPanel;
 import org.trianacode.taskgraph.Task;
@@ -81,12 +82,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- *
- *
- * @author      Ian Wang
- * @created     4th November 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 4th November 2003
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class ParameterMapPanel extends JPanel
@@ -266,7 +265,7 @@ public class ParameterMapPanel extends JPanel
     public int getNumberOfRequiredArguments() {
         try {
             return Integer.parseInt(argfield.getText());
-        } catch(NumberFormatException except) {
+        } catch (NumberFormatException except) {
             return 0;
         }
     }
@@ -281,7 +280,7 @@ public class ParameterMapPanel extends JPanel
         JComboBox paramcombo;
         JTextField mapfield;
 
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             mapfield = (JTextField) iter.next();
             paramcombo = (JComboBox) paramiter.next();
 
@@ -295,7 +294,7 @@ public class ParameterMapPanel extends JPanel
 
     /**
      * @return the parameters that are mapped to the specified map string
-     * (in the form groupname.taskname.paramname)
+     *         (in the form groupname.taskname.paramname)
      */
     public String[] getMappedParameters(String map) {
         Iterator mapiter = maplist.iterator();
@@ -304,7 +303,7 @@ public class ParameterMapPanel extends JPanel
         JTextField mapfield;
         JComboBox paramcombo;
 
-        while(mapiter.hasNext()) {
+        while (mapiter.hasNext()) {
             mapfield = (JTextField) mapiter.next();
             paramcombo = (JComboBox) paramiter.next();
 
@@ -317,7 +316,7 @@ public class ParameterMapPanel extends JPanel
 
     /**
      * @return the value mapped to the specified map/parameter combination,
-     * or null if no value is mapped
+     *         or null if no value is mapped
      */
     public String getMappedValue(String map, String parameter) {
         Iterator mapiter = maplist.iterator();
@@ -327,7 +326,7 @@ public class ParameterMapPanel extends JPanel
         JComboBox paramcombo;
         JTextField valfield;
 
-        while(mapiter.hasNext()) {
+        while (mapiter.hasNext()) {
             mapfield = (JTextField) mapiter.next();
             paramcombo = (JComboBox) paramiter.next();
             valfield = (JTextField) valiter.next();
@@ -353,7 +352,7 @@ public class ParameterMapPanel extends JPanel
         JTextField descfield;
         String desc = "";
 
-        while(mapiter.hasNext()) {
+        while (mapiter.hasNext()) {
             mapfield = (JTextField) mapiter.next();
             descfield = (JTextField) desciter.next();
 
@@ -382,9 +381,9 @@ public class ParameterMapPanel extends JPanel
                     XMLReader reader = new XMLReader(new FileReader(filename));
                     tool = reader.readComponent();
                 } catch (IOException except) {
-                    JOptionPane.showMessageDialog(null, "Error reading " + filename, "IO Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error reading " + filename, "IO Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
                 } catch (TaskGraphException except) {
-                    JOptionPane.showMessageDialog(null, "Invalid taskgraph file: " + filename, "Taskgraph Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Invalid taskgraph file: " + filename, "Taskgraph Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
                 }
 
                 if (tool != null) {
@@ -480,7 +479,7 @@ public class ParameterMapPanel extends JPanel
             empty = null;
             exist = false;
 
-            while(iter.hasNext() && (!exist)) {
+            while (iter.hasNext() && (!exist)) {
                 mapfield = (JTextField) iter.next();
                 exist = mapfield.getText().equals("#" + count);
 
@@ -547,7 +546,7 @@ public class ParameterMapPanel extends JPanel
         else if (maplist.contains(event.getSource())) {
             JTextField source = (JTextField) event.getSource();
 
-            while(source.getText().startsWith("-"))
+            while (source.getText().startsWith("-"))
                 source.setText(source.getText().substring(1));
         }
     }

@@ -95,7 +95,6 @@ import java.io.IOException;
  * @version $Revision: 4048 $
  * @created 21st June 2004
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class HistoryTrackingAction extends AbstractAction implements ActionDisplayOptions {
@@ -276,12 +275,14 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
          */
         private void saveHistory(Task task) {
             if (!(task instanceof ClipableTaskInterface)) {
-                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: Clipins not implemented for " + task.getToolName());
+                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: Clipins not implemented for " + task.getToolName(),
+                        "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
                 return;
             }
 
             if (!((ClipableTaskInterface) task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
-                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: No history information availible, try re-running with history tracking");
+                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: No history information availible, try re-running with history tracking",
+                        "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
                 return;
             }
 
@@ -310,7 +311,8 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
                 writer.writeComponent(history);
                 writer.close();
             } catch (IOException except) {
-                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: " + except.getMessage());
+                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: " + except.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE,
+                        GUIEnv.getTrianaImageIcon());
             }
         }
 

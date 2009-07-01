@@ -592,7 +592,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         try {
             Clipboard.putTools(getSelectedTools(true), true);
         } catch (TaskGraphException except) {
-            throw(new RuntimeException("Copy Error: " + except.getMessage()));
+            throw (new RuntimeException("Copy Error: " + except.getMessage()));
         }
     }
 
@@ -617,17 +617,17 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                     String toolname = ((Tool) nodes[0].getUserObject()).getToolName();
                     reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                             Env.getString("deleteTool") + " " + toolname + "?",
-                            Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION);
+                            Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
                 } else {
                     String pack = getPackage(nodes[0]);
                     reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                             Env.getString("deletePackage") + " " + pack + "?",
-                            Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION);
+                            Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
                 }
             } else {
                 reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                         Env.getString("deleteSelected") + "?",
-                        Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION);
+                        Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
             }
         }
 
@@ -659,7 +659,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                 " " +
                 tool.getToolName() +
                 "?", Env.getString("Rename"),
-                JOptionPane.QUESTION_MESSAGE, null, null, tool.getToolName());
+                JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, tool.getToolName());
 
         if ((name != null) && (!name.equals(tool.getToolName()))) {
             tool.setToolName(name);
@@ -672,7 +672,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      */
     private void handleRenamePackage(DefaultMutableTreeNode node) {
         JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot rename package",
-                Env.getString("Rename"), JOptionPane.OK_OPTION);
+                Env.getString("Rename"), JOptionPane.OK_OPTION, GUIEnv.getTrianaImageIcon());
     }
 
 

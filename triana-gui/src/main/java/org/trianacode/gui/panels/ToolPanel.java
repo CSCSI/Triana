@@ -75,11 +75,10 @@ import java.io.File;
  * A simple panel for specifying a tool name (optional), package and tool box.
  * This can be used in various tool creation/paste into type panels.
  *
- * @author      Ian Wang
- * @created     6th October 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 6th October 2004
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 
@@ -223,7 +222,7 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
                 if (packageName == null) {
                     packageName = "";
                     JOptionPane.showMessageDialog(this, "The selected unit package is not in your tool box path",
-                                                  "Warning", JOptionPane.WARNING_MESSAGE);
+                            "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaImageIcon());
                 }
 
                 packageName = packageName.replace(File.separatorChar, '.');
@@ -238,6 +237,7 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
     /**
      * Attempt to return the package name minus a unitPackage path, null if the unitPackage path
      * doesn't exist
+     *
      * @param fullPath the absolute path
      * @return The package name or null
      */

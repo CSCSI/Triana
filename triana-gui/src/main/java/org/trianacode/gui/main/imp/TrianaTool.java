@@ -59,6 +59,7 @@
 
 package org.trianacode.gui.main.imp;
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
 import org.trianacode.gui.main.NodeComponent;
@@ -75,17 +76,15 @@ import java.util.Hashtable;
  * The graphical representation of a tool.
  *
  * @author Ian Wang
-<<<<<<< TrianaTool.java
+ *         <<<<<<< TrianaTool.java
  * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.5.2.1
+ *          >>>>>>> 1.5.2.1
  * @created 7th August 2003
-<<<<<<< TrianaTool.java
+ * <<<<<<< TrianaTool.java
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
+ * =======
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.5.2.1
+ * >>>>>>> 1.5.2.1
  */
 
 public abstract class TrianaTool extends JPanel implements TrianaColorConstants {
@@ -228,7 +227,8 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
 
             repaint();
 
-            JOptionPane.showMessageDialog(this, errorstate, getToolName() + " " + Env.getString("Error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, errorstate, getToolName() + " " + Env.getString("Error"), JOptionPane.ERROR_MESSAGE,
+                    GUIEnv.getTrianaImageIcon());
         }
     }
 

@@ -148,7 +148,6 @@ public class FileUtils {
     }
 
 
-
     /**
      * Deletes the file at the given file location. If the file
      * is a directory then the directory must be empty for the
@@ -715,7 +714,7 @@ public class FileUtils {
                 audio = getAudioClip(new URL(audioFile));
             else {
                 URL url = FileUtils.class.getResource(audioFile);
-                if(url != null) {
+                if (url != null) {
                     audio = getAudioClip(url);
                 }
             }
@@ -803,9 +802,9 @@ public class FileUtils {
      */
     public static Image getSystemImage(String imageName) {
         imageName = imageName.replace(File.separatorChar, '/');
-        String dir = "system/icons/";
-        if(imageName.startsWith("/")) {
-            dir = "system/icons";
+        String dir = "system/icons/crystalicons/";
+        if (imageName.startsWith("/")) {
+            dir = "system/icons/crystalicons";
         }
         String imageURL = dir + imageName;
         logger.finest("loading icon: " + imageURL);
@@ -1155,7 +1154,6 @@ public class FileUtils {
 
         if (fileName.trim().equals(""))
             return fileName;
-
 
 
         if (newFile.indexOf("$USER_HOME") != -1)

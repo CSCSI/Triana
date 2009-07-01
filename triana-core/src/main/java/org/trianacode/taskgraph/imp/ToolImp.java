@@ -67,7 +67,6 @@ import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -85,9 +84,7 @@ public class ToolImp implements Tool {
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.imp.ToolImp");
 
 
-
-
-    private String version = "1.0";
+    private String version = "0.1";
 
     /**
      * ToolImp name
@@ -484,10 +481,11 @@ public class ToolImp implements Tool {
      * @return a brief description of what this tool does
      */
     public String getPopUpDescription() {
-        if (isParameterName(POP_UP_DESCRIPTION))
-            return (String) getParameter(POP_UP_DESCRIPTION);
-        else
-            return DEFAULT_POP_UP_DESCRIPTION;
+        if (!isParameterName(POP_UP_DESCRIPTION)) {
+            setParameter(POP_UP_DESCRIPTION, DEFAULT_POP_UP_DESCRIPTION);
+            setParameterType(POP_UP_DESCRIPTION, TRANSIENT);
+        }
+        return (String) getParameter(POP_UP_DESCRIPTION);
     }
 
     /**

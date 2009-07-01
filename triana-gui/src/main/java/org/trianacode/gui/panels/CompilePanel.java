@@ -75,10 +75,10 @@ import java.io.File;
 /**
  * A panel for compiling tools and generating XML
  *
- * @author      Ian Wang
- * @created     2nd October
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 2nd October
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CompilePanel extends ParameterPanel
         implements ActionListener, ItemListener, ToolTableListener, WindowListener, FocusListener {
@@ -693,7 +693,7 @@ public class CompilePanel extends ParameterPanel
                 toolfile.setText(toolFileStr);
             } else {
                 JOptionPane.showMessageDialog(this, "The selected unit package is not in your tool box path",
-                        "Warning", JOptionPane.WARNING_MESSAGE);
+                        "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaImageIcon());
                 unitpack.setText("");
                 toolpack.setText("");
             }

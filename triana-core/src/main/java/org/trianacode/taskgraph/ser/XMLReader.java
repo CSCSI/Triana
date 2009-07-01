@@ -167,6 +167,7 @@ public class XMLReader implements XMLConstants {
     private void initTool(ToolImp tool, Element parent) throws TaskGraphException {
         tool.setToolName(getToolName(parent));
         tool.setToolPackage(getToolPackage(parent));
+        tool.setVersion(getVersion(parent));
 
         try {
             tool.setDataInputNodeCount(getInportNum(parent));
@@ -442,6 +443,14 @@ public class XMLReader implements XMLConstants {
             return "";
     }
 
+    private String getVersion(Element component) {
+        Element current = handler.getChild(component, VERSION_TAG);
+        if (current != null) {
+            return current.getTextContent();
+        } else
+            return DEFAULT_VERSION;
+    }
+
     private void setProxy(Tool tool, Element component) throws TaskException {
         Element current = handler.getChild(component, PROXY_TAG);
 
@@ -595,7 +604,7 @@ public class XMLReader implements XMLConstants {
 
                     for (Iterator iter = list.iterator(); iter.hasNext();) {
                         paramelem = (Element) iter.next();
-                        
+
                         details.put(paramelem.getAttribute(PARAM_NAME_TAG), ObjectMarshaller.marshallElementToJava(paramelem));
                     }
 
@@ -634,7 +643,7 @@ public class XMLReader implements XMLConstants {
 
 
     private void parseJavaUnit(ToolImp tool, Element component) throws TaskException {
-        
+
         String unitname;
         String unitpack = "";
 

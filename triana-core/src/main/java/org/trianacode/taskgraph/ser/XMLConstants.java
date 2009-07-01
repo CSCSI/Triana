@@ -26,6 +26,8 @@ package org.trianacode.taskgraph.ser;
  */
 public interface XMLConstants {
 
+    static final String NS_TRIANA = "http://www.trianacode.org/tool";
+
 
     static final String TASKGRAPH_TAG = "taskgraph";
     static final String TASKGRAPH_LAYOUT_TAG = "taskgraphlayout";
@@ -70,7 +72,8 @@ public interface XMLConstants {
     static final String PARAM_NAME_TAG = "paramname";
     static final String GROUP_MAPING_TAG = "groupnodemapping";
     static final String EXTERNAL_NODE_TAG = "externalnode";
-
+    static final String VERSION_TAG = "version";
+    static final String DEFAULT_VERSION = "0.1-SNAPSHOT";
     // Deprecated XML tags
     static final String UNIT_NAME_TAG = "unitName";
     static final String UNIT_PACKAGE_TAG = "unitPackage";

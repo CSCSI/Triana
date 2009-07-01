@@ -59,6 +59,7 @@
 
 package org.trianacode.gui;
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
@@ -67,18 +68,19 @@ import javax.swing.*;
 /**
  * Utility class for holding GUI based dialogs methods.
  *
- * @author  Matthew Shields
- * @created Jul 24, 2003: 2:07:55 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @created Jul 24, 2003: 2:07:55 PM
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TrianaDialog {
 
     /**
      * Check to see if a file exists, it it does ask the user to confirm to overwrite.
+     *
      * @param name the name of the file we are checking
      * @return <strong>true</strong> if the file does not exist or if the user has clicked
-     * <strong>ok</strong>, <strong>false</strong> otherwise.
+     *         <strong>ok</strong>, <strong>false</strong> otherwise.
      */
     public static boolean isOKtoWriteIfExists(String name) {
         if (FileUtils.fileExists(name)) {
@@ -88,10 +90,9 @@ public class TrianaDialog {
             msg.append(", ");
             msg.append(Env.getString("existsOverwrite"));
             return (JOptionPane.showConfirmDialog(null, msg.toString(), Env.getString("confirmOverwrite"),
-                                                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon())
                     == JOptionPane.YES_OPTION);
-        }
-        else
+        } else
             return true;
     }
 

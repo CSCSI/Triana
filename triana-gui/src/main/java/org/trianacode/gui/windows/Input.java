@@ -59,6 +59,8 @@
 package org.trianacode.gui.windows;
 
 
+import org.trianacode.gui.hci.GUIEnv;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
@@ -66,15 +68,15 @@ import java.io.Serializable;
 /**
  * Just calls the JOptionPane with the appropriate values for the particular
  * input you want to get from the user. You use it like this :-
- *
- <pre>     double inp = Input.aNumber("Enter the value for beta");
- String s = Input.aString("Enter your name");   </pre>
+ * <p/>
+ * <pre>     double inp = Input.aNumber("Enter the value for beta");
+ * String s = Input.aString("Enter your name");   </pre>
  * etc....
  *
- * @author      Ian Taylor
- * @created     16 Jan 1997
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
+ * @created 16 Jan 1997
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Input implements Serializable {
 
@@ -132,7 +134,7 @@ public class Input implements Serializable {
      */
     public static String aString(Component parent, String text) {
         return (String) JOptionPane.showInputDialog(parent, text, "Triana Input Dialog",
-                                                    JOptionPane.QUESTION_MESSAGE, null, null, "");
+                JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, "");
     }
 
 

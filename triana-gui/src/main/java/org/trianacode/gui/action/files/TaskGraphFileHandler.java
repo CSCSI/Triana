@@ -191,7 +191,6 @@ public class TaskGraphFileHandler implements SelectionManager {
      * @param file         the file which the taskgraph is to be loaded from
      * @param updateRecent update the recently opened menu item
      * @param runnable     if false then the taskgraph is non-runnable, used for debugging or visualisation
-     *
      * @return a reference to the loaded taskgraph
      */
     private static TaskGraph openTaskGraph(File file, boolean updateRecent, boolean runnable) {
@@ -217,15 +216,13 @@ public class TaskGraphFileHandler implements SelectionManager {
                 TaskGraph initgraph = null;
                 if (runnable) {
                     GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
-                }
-                else {
+                } else {
                     GUIEnv.getApplicationFrame().addNoExecParentTaskGraphPanel((TaskGraph) tool);
                 }
                 return initgraph;
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
-                        "Error: " + file.getName() + " is not a valid taskgraph file");
+                        "Error: " + file.getName() + " is not a valid taskgraph file", "Open Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
             }
         }
         catch (TaskGraphException except) {
@@ -263,7 +260,6 @@ public class TaskGraphFileHandler implements SelectionManager {
     /**
      * Show the import file dialog and import the workflow/task graph using the selected
      * <code>FileImportExportDecorator.importWorkflow</code> method.
-     *
      */
     public static void importTaskgraph() {
         final TFileChooser fc = new TFileChooser(IMPORT_TASKGRAPH_DIR);
@@ -303,7 +299,6 @@ public class TaskGraphFileHandler implements SelectionManager {
     /**
      * Show the export file dialog and export the current selected task graph using the selected
      * <code>FileImportExportDecorator.exportWorkflow</code> method.
-     *
      */
     public static void exportTaskgraph() {
         final TFileChooser fc = new TFileChooser(EXPORT_TASKGRAPH_DIR);
@@ -351,7 +346,6 @@ public class TaskGraphFileHandler implements SelectionManager {
      * toolbox in Triana format.
      *
      * @param tooltable
-     *
      */
     public void importTools(final ToolTable tooltable) {
         final TFileChooser fc = new TFileChooser(IMPORT_TOOL_DIR);
@@ -416,7 +410,7 @@ public class TaskGraphFileHandler implements SelectionManager {
     }
 
     /**
-     rudimentary at the moment just pops up a dialog, no checking to see if this is an existing group that has
+     * rudimentary at the moment just pops up a dialog, no checking to see if this is an existing group that has
      * been modified
      */
     public static void saveTaskGraph(TaskGraph taskgraph, ToolTable tools, boolean saveas) {
@@ -438,12 +432,11 @@ public class TaskGraphFileHandler implements SelectionManager {
 
             int choice = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(),
                     "Save current group or root taskgraph?", title, JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), options, options[0]);
 
             if (choice == 1) {
                 group = parent;
-            }
-            else if (choice == 2) {
+            } else if (choice == 2) {
                 return;
             }
         }
@@ -462,8 +455,7 @@ public class TaskGraphFileHandler implements SelectionManager {
 
                 if ((filename != null) && (!filename.equals(""))) {
                     chooser.setSelectedFile(new File(filename));
-                }
-                else {
+                } else {
                     chooser.setSelectedFile(new File(
                             chooser.getCurrentDirectory().getPath() + File.separator + group.getToolName() + XMLWriter.XML_FILE_SUFFIX));
                 }
@@ -477,12 +469,10 @@ public class TaskGraphFileHandler implements SelectionManager {
                     if (TrianaDialog.isOKtoWriteIfExists(filename)) {
                         writeFile = true;
                         finished = true;
-                    }
-                    else {
+                    } else {
                         writeFile = false;
                     }
-                }
-                else {
+                } else {
                     finished = true;
                 }
             }

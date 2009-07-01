@@ -77,10 +77,10 @@ import java.awt.event.ActionEvent;
 /**
  * Action to handle workflow/taskgraph Exporting.
  *
- * @author  Matthew Shields
- * @created May 2, 2003: 3:49:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @created May 2, 2003: 3:49:12 PM
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class PrintAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -122,7 +122,7 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
                         if (taskgraphpanel != null)
                             comp = taskgraphpanel.getContainer();
                         else
-                            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
                     } else
                         comp = GUIEnv.getApplicationFrame();
 
@@ -141,7 +141,7 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
     private class PrintPanel extends ParameterPanel {
 
         JRadioButton taskgraphradio = new JRadioButton("Print Selected Taskgraph");
-        JRadioButton trianaradio  = new JRadioButton("Print Triana Window");
+        JRadioButton trianaradio = new JRadioButton("Print Triana Window");
 
         JCheckBox scalecheck = new JCheckBox("Scale to page size", true);
 

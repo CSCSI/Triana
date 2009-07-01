@@ -58,6 +58,7 @@
  */
 package org.trianacode.gui.appmaker;
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.WizardListener;
 import org.trianacode.gui.windows.WizardWindow;
@@ -75,10 +76,10 @@ import java.io.*;
  * A class for displaying the command line application wizard, and
  * generating a command line application class.
  *
- * @author      Ian Wang
- * @created     Today's date
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created Today's date
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CommandLineWizard implements WizardListener {
 
@@ -137,7 +138,8 @@ public class CommandLineWizard implements WizardListener {
 
             File saveFile = new File(filepanel.getJavaFileName());
             if (saveFile.exists()) {
-                int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION);
+                int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
 
                 if (reply == JOptionPane.NO_OPTION) {
                     return false;
@@ -161,7 +163,7 @@ public class CommandLineWizard implements WizardListener {
         template = template.replace(CLASSNAME, filepanel.getApplicationName());
 
         if (filepanel.getApplicationPackage().equals(""))
-           template = template.replace(PACKAGE, "");
+            template = template.replace(PACKAGE, "");
         else
             template = template.replace(PACKAGE, "package " + filepanel.getApplicationPackage() + ";\n");
 
@@ -180,7 +182,7 @@ public class CommandLineWizard implements WizardListener {
 
         line += "        exec.setNumberOfRequiredArguments(" + mappanel.getNumberOfRequiredArguments() + ");\n\n";
 
-        for(int mcount = 0; mcount < maps.length; mcount++) {
+        for (int mcount = 0; mcount < maps.length; mcount++) {
             params = mappanel.getMappedParameters(maps[mcount]);
             desc = mappanel.getDescription(maps[mcount]);
 
@@ -189,7 +191,7 @@ public class CommandLineWizard implements WizardListener {
                 line += ", \"" + desc + "\");\n";
             }
 
-            for(int pcount = 0; pcount < params.length; pcount++) {
+            for (int pcount = 0; pcount < params.length; pcount++) {
                 val = mappanel.getMappedValue(maps[mcount], params[pcount]);
 
                 line += "        exec.mapParameter(\"" + maps[mcount] + "\"";
@@ -205,7 +207,7 @@ public class CommandLineWizard implements WizardListener {
         // remove last newline
         line = line.substring(0, line.length() - 1);
 
-        template = template.replace( MAPS, line);
+        template = template.replace(MAPS, line);
         return template;
     }
 
@@ -269,7 +271,8 @@ public class CommandLineWizard implements WizardListener {
 
             File saveFile = new File(filepanel.getBatchFileName());
             if (saveFile.exists()) {
-                int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION);
+                int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
 
                 if (reply == JOptionPane.NO_OPTION) {
                     return false;
@@ -306,7 +309,8 @@ public class CommandLineWizard implements WizardListener {
 
             File saveFile = new File(filepanel.getShellScriptName());
             if (saveFile.exists()) {
-                int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION);
+                int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
 
                 if (reply == JOptionPane.NO_OPTION) {
                     return false;
@@ -371,11 +375,12 @@ public class CommandLineWizard implements WizardListener {
                 compiler.setCompilerClasspath(comppanel.getClasspath() + System.getProperty("path.separator") + filepanel.getOutputDirectory());
                 compiler.setCompilerArguments(comppanel.getArguments());
                 compiler.compile();
-            } catch(FileNotFoundException except) {
-                JOptionPane.showMessageDialog(comppanel, "Error: " + filepanel.getJavaFileName() + " not found!", "File Not Found Error", JOptionPane.ERROR_MESSAGE);
+            } catch (FileNotFoundException except) {
+                JOptionPane.showMessageDialog(comppanel, "Error: " + filepanel.getJavaFileName() + " not found!", "File Not Found Error", JOptionPane.ERROR_MESSAGE,
+                        GUIEnv.getTrianaImageIcon());
                 window.setVisible(true);
                 return;
-            } catch(CompilerException except) {
+            } catch (CompilerException except) {
                 window.setVisible(true);
                 return;
             }

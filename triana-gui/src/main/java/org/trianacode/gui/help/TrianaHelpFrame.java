@@ -76,11 +76,11 @@ import java.util.Vector;
 /**
  * The main window for the Triana Help application.  This class contains the
  * entire GUI functionality of TrianaHelp.
- * @see HtmlPane
  *
- * @author      Melanie Rhianna Lewis
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Melanie Rhianna Lewis
+ * @version $Revision: 4048 $
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @see HtmlPane
  */
 public class TrianaHelpFrame extends JFrameEx {
     // The pane which actually contains the HTML document
@@ -150,8 +150,7 @@ public class TrianaHelpFrame extends JFrameEx {
         // System.out.println("[Creating html pane]");
         if (file != null) {
             htmlPane = new HtmlPane(file);
-        }
-        else {
+        } else {
             htmlPane = new HtmlPane();
         }
         htmlPane.getEditorPane().addCaretListener(new SelectionListener());
@@ -179,7 +178,7 @@ public class TrianaHelpFrame extends JFrameEx {
 
         // Create the history dialog
         historyDialog = new HistoryDialog(this, "History", true,
-                                          htmlPane.getUrlHistory());
+                htmlPane.getUrlHistory());
 
         setSize(new Dimension(600, 400));
     }
@@ -204,14 +203,14 @@ public class TrianaHelpFrame extends JFrameEx {
 
         menuItem = new JMenuItem("File...");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-                                                       Event.CTRL_MASK));
+                Event.CTRL_MASK));
         menuItem.addActionListener(new FileOpenAction());
         subMenu.add(menuItem);
 
         menuItem = new JMenuItem("Location...");
         menuItem.addActionListener(new FileOpenURLAction());
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-                                                       Event.CTRL_MASK));
+                Event.CTRL_MASK));
         subMenu.add(menuItem);
 
         menu.add(subMenu);
@@ -219,7 +218,7 @@ public class TrianaHelpFrame extends JFrameEx {
 
         menuItem = new JMenuItem("Close");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
-                                                       Event.META_MASK));
+                Event.META_MASK));
         ;
         menuItem.addActionListener(new FileCloseAction());
         menu.add(menuItem);
@@ -234,7 +233,7 @@ public class TrianaHelpFrame extends JFrameEx {
         editCopy = new JMenuItem("Copy");
         editCopy.addActionListener(new EditCopyAction());
         editCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-                                                       Event.CTRL_MASK));
+                Event.CTRL_MASK));
         ;
         editCopy.setEnabled(false);
         menu.add(editCopy);
@@ -266,7 +265,7 @@ public class TrianaHelpFrame extends JFrameEx {
 
         menuItem = new JMenuItem("Index");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
-                                                       Event.CTRL_MASK));
+                Event.CTRL_MASK));
         ;
         menuItem.addActionListener(new GoIndexAction());
         menu.add(menuItem);
@@ -274,7 +273,7 @@ public class TrianaHelpFrame extends JFrameEx {
 
         menuItem = new JMenuItem("History...");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-                                                       Event.CTRL_MASK));
+                Event.CTRL_MASK));
         ;
         menuItem.addActionListener(new GoHistoryAction());
         menu.add(menuItem);
@@ -440,8 +439,8 @@ public class TrianaHelpFrame extends JFrameEx {
      */
     private class FileOpenURLAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            String string = JOptionPane.showInputDialog(TrianaHelpFrame.this,
-                                                        "Enter URL to open", "Open URL...", JOptionPane.QUESTION_MESSAGE);
+            String string = (String) JOptionPane.showInputDialog(TrianaHelpFrame.this,
+                    "Enter URL to open", "Open URL...", JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, null);
 
             if (string != null) {
                 string.trim();
@@ -528,6 +527,7 @@ public class TrianaHelpFrame extends JFrameEx {
     /**
      * A class which listens for a CaretEvent and if a selection has
      * been made it enables the copy menu item and button on the tool bar.
+     *
      * @see javax.swing.event.CaretEvent
      * @see javax.swing.event.CaretListener
      */
@@ -547,6 +547,7 @@ public class TrianaHelpFrame extends JFrameEx {
      * A class which listens for a UrlEvent from the UrlHistory object
      * owned by the HtmlPane.  A UrlEvent is a custom event sent by the
      * UrlHistory class when it is changed in some way.
+     *
      * @see UrlHistory
      * @see UrlEvent
      * @see UrlEventListener
@@ -573,6 +574,7 @@ public class TrianaHelpFrame extends JFrameEx {
     /**
      * A private class which responds to the close window widget being used by
      * generating a CloseFrameEvent.
+     *
      * @see CloseFrameEvent
      */
     private class WindowClosingAction extends WindowAdapter {
@@ -584,6 +586,7 @@ public class TrianaHelpFrame extends JFrameEx {
     /**
      * A private class which is an action which generates a CloseFrameEvent.
      * This is usually used as an ActionListener for a button or menu item.
+     *
      * @see CloseFrameEvent
      */
     private class FileCloseAction implements ActionListener {
@@ -596,8 +599,9 @@ public class TrianaHelpFrame extends JFrameEx {
 
     /**
      * Adds a CloseFrameListener to the Frame
-     * @see CloseFrameListener
+     *
      * @param listener The CloseFrameListener to add
+     * @see CloseFrameListener
      */
     public void addCloseFrameListener(CloseFrameListener listener) {
         closeFrameVector.addElement(listener);
@@ -606,9 +610,10 @@ public class TrianaHelpFrame extends JFrameEx {
     /**
      * Dispatches a CloseFrameEvent to the CloseFrameListeners registered with
      * the Frame.
+     *
+     * @param event The CloseFrameEvent to dispatch
      * @see CloseFrameListener
      * @see CloseFrameEvent
-     * @param event The CloseFrameEvent to dispatch
      */
     public void processCloseFrameEvent(CloseFrameEvent event) {
         CloseFrameListener listener;

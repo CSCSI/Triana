@@ -109,6 +109,7 @@ public class XMLWriter implements XMLConstants {
 
         addToolName(tool, elem);
         addPackage(tool, elem);
+        addVersion(tool, elem);
         addProxy(tool, elem);
         addRenderingHints(tool, elem);
         addExtensions(tool, elem);
@@ -168,7 +169,7 @@ public class XMLWriter implements XMLConstants {
                 Cable[] connections =
                         TaskGraphUtils.getInternalCables(tasks);
                 if (connections.length > 0) {
-                    Element connectionListElem =handler.element(CONNECTION_LIST_TAG);
+                    Element connectionListElem = handler.element(CONNECTION_LIST_TAG);
                     handler.add(connectionListElem, taskListElem);
                     for (int i = 0; i < connections.length; i++) {
                         handler.add(getConnection(connections[i], taskgraph), connectionListElem);
@@ -373,6 +374,16 @@ public class XMLWriter implements XMLConstants {
         else if (tool instanceof Task)
             handler.add(((Task) tool).getToolName(), current);
 
+        handler.add(current, parent);
+    }
+
+    private void addVersion(Tool tool, Element parent) {
+        Element current = handler.element(VERSION_TAG);
+
+        if (tool.getVersion() == null) {
+            tool.setVersion(DEFAULT_VERSION);
+        }
+        handler.add(tool.getVersion(), current);
         handler.add(current, parent);
     }
 

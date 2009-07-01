@@ -58,6 +58,8 @@
  */
 package org.trianacode.gui.help;
 
+import org.trianacode.gui.hci.GUIEnv;
+
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -69,8 +71,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class HtmlPane extends JScrollPane implements HyperlinkListener {
     private JEditorPane editorPane;
@@ -204,8 +206,8 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
         catch (MalformedURLException e) {
             getToolkit().beep();
             JOptionPane.showMessageDialog(editorPane, "The URL provided was not a valid",
-                                          "Invalid URL",
-                                          JOptionPane.ERROR_MESSAGE);
+                    "Invalid URL",
+                    JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
         }
     }
 
@@ -283,8 +285,7 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
 
                 Container parent = editorPane.getParent();
                 parent.repaint();
-            }
-            else {
+            } else {
                 Document doc = editorPane.getDocument();
                 try {
                     editorPane.setPage(url);
@@ -292,7 +293,7 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
                 catch (IOException ioe) {
                     getToolkit().beep();
                     JOptionPane.showMessageDialog(editorPane, url,
-                                                  "Document not found", JOptionPane.ERROR_MESSAGE);
+                            "Document not found", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
                     editorPane.setDocument(doc);
                 }
                 finally {

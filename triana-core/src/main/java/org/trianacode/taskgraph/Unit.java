@@ -25,8 +25,6 @@ import org.trianacode.taskgraph.util.FileUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.Collections;
 import java.util.logging.Logger;
 
 /**
@@ -41,7 +39,6 @@ import java.util.logging.Logger;
 public abstract class Unit {
 
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.Unit");
-
 
 
     /**
@@ -236,7 +233,7 @@ public abstract class Unit {
      * unit (e.g. close open files).
      */
     public void dispose() {
-        
+
     }
 
     public void parameterUpdate(String paramname, Object value) {
@@ -249,9 +246,9 @@ public abstract class Unit {
                 "new value:" + value + "\n" +
                 "existing type for param: " + getTask().getParameterType(paramname));
 
-        if(existing != null && existing.length == 2 && existing[0] != null && !existing[0].equals(value)) {
-            log.fine("setting new type for param " + paramname +  " : " + (String) existing[1]);
-            getTask().setParameterType(paramname, (String)existing[1]);
+        if (existing != null && existing.length == 2 && existing[0] != null && !existing[0].equals(value)) {
+            log.fine("setting new type for param " + paramname + " : " + (String) existing[1]);
+            getTask().setParameterType(paramname, (String) existing[1]);
         }
         parameterUpdate(paramname, value);
     }
@@ -311,7 +308,7 @@ public abstract class Unit {
      * @param type      see above
      */
     public void defineParameter(String paramname, Object initvalue, String type) {
-        
+
         Task task = getTask();
 
         if (!task.isParameterName(paramname)) {
@@ -325,10 +322,10 @@ public abstract class Unit {
 
     private String addDefinedParam(String name, Object value, String type) {
         String reset = type;
-        if(type.equals(INTERNAL)) {
+        if (type.equals(INTERNAL)) {
             reset = TRANSIENT;
         }
-        if(type.equals(USER_ACCESSIBLE)) {
+        if (type.equals(USER_ACCESSIBLE)) {
             reset = TRANSIENT_ACCESSIBLE;
         }
         definedParams.put(name, new Object[]{value, type});
@@ -605,6 +602,7 @@ public abstract class Unit {
      * Convienience method for setting the default pop-up description.
      */
     public void setPopUpDescription(String location) {
+        getTask().removeParameter(Task.POP_UP_DESCRIPTION);
         defineParameter(Task.POP_UP_DESCRIPTION, location, Tool.INTERNAL);
     }
 
@@ -745,6 +743,14 @@ public abstract class Unit {
         } else {
             getTask().setParameter(Tool.PARAM_PANEL_HIDE, value);
         }
+    }
+
+    public void setVersion(String version) {
+        getTask().setVersion(version);
+    }
+
+    public String getVersion() {
+        return getTask().getVersion();
     }
 
     public void log(String msg) {

@@ -69,10 +69,10 @@ import javax.swing.*;
 /**
  * A self contained class for listening a user request for the options panel and displaying it
  *
- * @author  Matthew Shields
- * @created Apr 29, 2003: 1:42:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @created Apr 29, 2003: 1:42:12 PM
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class OptionsHandler {
 
@@ -96,7 +96,7 @@ public class OptionsHandler {
             paramwin.setParameterPanel(panel);
 
             paramwin.setLocation((paramwin.getToolkit().getScreenSize().width / 2) - (paramwin.getSize().width / 2),
-                                 (paramwin.getToolkit().getScreenSize().height / 2) - (paramwin.getSize().height / 2));
+                    (paramwin.getToolkit().getScreenSize().height / 2) - (paramwin.getSize().height / 2));
 
 
             paramwin.setVisible(true);
@@ -105,8 +105,8 @@ public class OptionsHandler {
             if (paramwin.isAccepted()) {
                 if (!panel.validateChanges()) {
                     JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
-                                                  "The tool: " + panel.getInvalidToolName() + " does not exist",
-                                                  "Warning", JOptionPane.WARNING_MESSAGE);
+                            "The tool: " + panel.getInvalidToolName() + " does not exist",
+                            "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaImageIcon());
 
                     finished = false;
                 }

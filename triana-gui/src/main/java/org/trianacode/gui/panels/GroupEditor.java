@@ -58,6 +58,7 @@
  */
 package org.trianacode.gui.panels;
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.*;
@@ -180,7 +181,7 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
 
     private void initList(JList list, boolean input) {
         ((DefaultListModel) list.getModel()).clear();
-        Node nodes [];
+        Node nodes[];
 
         if (input) {
             nodes = getInputNodes();
@@ -203,7 +204,7 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
 
 
     private Node[] getInputNodes() {
-        Node nodes [] = getTask().getDataInputNodes();
+        Node nodes[] = getTask().getDataInputNodes();
 
         if (taskgraph.isControlTaskConnected()) {
             Task looptask = taskgraph.getControlTask();
@@ -218,7 +219,7 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
     }
 
     private Node[] getOutputNodes() {
-        Node nodes [] = getTask().getDataOutputNodes();
+        Node nodes[] = getTask().getDataOutputNodes();
 
         if (taskgraph.isControlTaskConnected()) {
             Task looptask = taskgraph.getControlTask();
@@ -305,7 +306,8 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
                 if (tool != null)
                     taskgraph.createControlTask(tool, false);
                 else
-                    JOptionPane.showMessageDialog(this, "Invalid Control Task: " + controlfield.getText(), "Group Editor Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid Control Task: " + controlfield.getText(), "Group Editor Error", JOptionPane.ERROR_MESSAGE,
+                            GUIEnv.getTrianaImageIcon());
             }
 
             controlfield.setText(taskgraph.getControlTask().getQualifiedToolName());

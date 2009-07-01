@@ -70,15 +70,6 @@ import java.util.Vector;
 
 /**
  * Graphical cable for connecting units on the GUI.
- *
- * @author Robert Davies
-<<<<<<< StableCable.java
- * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.3.2.1
  */
 public class StableCable implements MouseListener, MouseMotionListener, DrawCable {
 

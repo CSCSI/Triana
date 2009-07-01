@@ -58,6 +58,7 @@
  */
 package org.trianacode.gui.panels;
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
@@ -216,25 +217,24 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                     String current = selectedFiles[i].getPath();
 
                     if (toolBoxItems.contains(current)) { //already in list
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathexists"));
+                        JOptionPane.showMessageDialog(this, Env.getString("toolpathexists"), "Information", JOptionPane.INFORMATION_MESSAGE,
+                                GUIEnv.getTrianaImageIcon());
                         break;
-                    }
-                    else if (isSubPath(current)) { //contained as a subpath of item in list
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsub"));
+                    } else if (isSubPath(current)) { //contained as a subpath of item in list
+                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsub"), "Information", JOptionPane.INFORMATION_MESSAGE,
+                                GUIEnv.getTrianaImageIcon());
                         break;
-                    }
-                    else if (isSuperPath(current)) { //is super path of element
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsuper"));
+                    } else if (isSuperPath(current)) { //is super path of element
+                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsuper"), "Information", JOptionPane.INFORMATION_MESSAGE,
+                                GUIEnv.getTrianaImageIcon());
                         break;
-                    }
-                    else {
+                    } else {
                         tools.addToolBox(current);
                         toolBoxItems.add(current);
                     }
                 }
             }
-        }
-        else {
+        } else {
             Object selected = toolboxList.getSelectedValue();
             toolBoxItems.remove(selected);
             tools.removeToolBox((String) selected);
@@ -288,8 +288,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                 setBtn.enableInputMethods(enabled);
                 if (path.equals(pathField.getText()))
                     pathField.setText("");
-            }
-            else {
+            } else {
                 pathField.setText(path);
                 tools.setToolBoxType(path, type);
             }

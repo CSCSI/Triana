@@ -98,17 +98,15 @@ import java.util.Hashtable;
  * </p><p>
  *
  * @author Ian Taylor
-<<<<<<< MainTriana.java
+ *         <<<<<<< MainTriana.java
  * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.13.2.1
+ *          >>>>>>> 1.13.2.1
  * @created 24 Jan 1997
-<<<<<<< MainTriana.java
+ * <<<<<<< MainTriana.java
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
+ * =======
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.13.2.1
+ * >>>>>>> 1.13.2.1
  */
 public class MainTriana extends JPanel
         implements TaskGraphPanel, ShowToolPanel, SelectionBoxInterface,
@@ -670,7 +668,7 @@ public class MainTriana extends JPanel
             String name = (String) JOptionPane.showInputDialog(GUIEnv.getApplicationFrame(),
                     Env.getString("newNameFor") + " " + task.getToolName() + "?",
                     Env.getString("Rename"),
-                    JOptionPane.QUESTION_MESSAGE, null, null, task.getToolName());
+                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, task.getToolName());
             if ((name != null) && (!name.equals(task.getToolName()))) {
                 task.setToolName(name);
             }
