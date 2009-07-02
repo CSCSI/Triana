@@ -63,14 +63,12 @@ import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.proxy.Proxy;
 
-import java.net.URI;
-
 
 /**
- * @author      Matthew Shields
- * @created     Apr 25, 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
+ * @created Apr 25, 2002
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface Tool {
 
@@ -166,6 +164,13 @@ public interface Tool {
     public static final String UNKNOWN_DATA_TYPE = "Unknown Type";
     public static final String ANY_DATA_TYPE = "Any Type";
 
+    /**
+     * Tool types in terms of their definition files.
+     */
+    public static final String DEFINITION_TRIANA_XML = "definition.triana.xml";
+    public static final String DEFINITION_JAVA_CLASS = "definition.java.class";
+    public static final String DEFINITION_UNKNOWN = "definition.unknown";
+
     public String getVersion();
 
     /**
@@ -173,11 +178,11 @@ public interface Tool {
      */
     public String getToolName();
 
-
+    public String getDefinitionType();
 
     /**
      * @return a Java style package name for this tool in the form [package].[package].
-     * i.e. Common.Input
+     *         i.e. Common.Input
      */
     public String getToolPackage();
 
@@ -188,10 +193,10 @@ public interface Tool {
     public String getQualifiedToolName();
 
     /**
-     * @return the location directory that held the XML file this tool was generated
-     * from.
+     * @return the location directory that held the definition file this tool was generated
+     *         from. This could be XML or a Java .class file. Other things might be supported in the future.
      */
-    public String getToolXMLFileName();
+    public String getDefinitionPath();
 
     /**
      * @return the path to the toolbox that this tool has been loaded from.
@@ -255,25 +260,25 @@ public interface Tool {
 
     /**
      * @return an array of general input types for nodes not covered by
-     * getDataInputTypes(int node)
+     *         getDataInputTypes(int node)
      */
     public String[] getDataInputTypes();
 
     /**
      * @return the data types accepted on the specified node index (if null is
-     * returned then the general input types should be assumed)
+     *         returned then the general input types should be assumed)
      */
     public String[] getDataInputTypes(int node);
 
     /**
      * @return an array of general output types for nodes for nodes not covered
-     * by getDataOutputTypes(int node)
+     *         by getDataOutputTypes(int node)
      */
     public String[] getDataOutputTypes();
 
     /**
      * @return an data types output by the specified node index (if null is
-     * returned then the general output types should be assumed)
+     *         returned then the general output types should be assumed)
      */
     public String[] getDataOutputTypes(int node);
 
@@ -393,7 +398,7 @@ public interface Tool {
     /**
      * Used by ToolTable to set the location of the file this tool was loaded from
      */
-    public void setToolXMLFileName(String filepath);
+    public void setDefinitionPath(String filepath);
 
     /**
      * Used by ToolTable to set the location of the toolbox this tool was loaded from

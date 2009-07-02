@@ -71,15 +71,15 @@ import java.util.Hashtable;
 /**
  * A model for laying out and updating a tree of tools.
  *
- * @author      Ian Wang
- * @created     12th Feb 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 12th Feb 2003
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener {
 
     /**
-     *  The default tree root text
+     * The default tree root text
      */
     private static final String ROOT_NAME = "Triana Tools";
 
@@ -158,7 +158,7 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
 
     /**
      * @return the virtual package name for the specfied tool using the current
-     * tool filter, null if the tool is being ignored
+     *         tool filter, null if the tool is being ignored
      */
     public String[] getFilteredPackages(Tool tool) {
         if (filter == null)
@@ -250,8 +250,8 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
 
             // distinguish between different tools with the same name
             if ((compare == 0) && (newobj instanceof Tool) && (child.getUserObject() instanceof Tool)) {
-                String newloc = ((Tool) newobj).getToolXMLFileName();
-                String childloc = ((Tool) child.getUserObject()).getToolXMLFileName();
+                String newloc = ((Tool) newobj).getDefinitionPath();
+                String childloc = ((Tool) child.getUserObject()).getDefinitionPath();
                 compare = newloc.compareToIgnoreCase(childloc);
             }
 

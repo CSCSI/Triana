@@ -71,8 +71,11 @@ import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolFileHandler;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
@@ -85,6 +88,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -234,8 +241,8 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     /**
      * Delete the selected Tool.
      */
-    public void deleteTools() {
-        handleDelete(true);
+    public void deleteTools(boolean files) {
+        handleDelete(true, files);
     }
 
     /**
@@ -582,7 +589,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      */
     private void handleCut() {
         handleCopy();
-        handleDelete(false);
+        handleDelete(false, true);
     }
 
     /**
@@ -607,27 +614,27 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     /**
      * Deletes the xml files for the specified toolTables
      */
-    private void handleDelete(boolean prompt) {
+    private void handleDelete(boolean prompt, boolean files) {
         int reply = JOptionPane.OK_OPTION;
         DefaultMutableTreeNode[] nodes = getSelectedNodes();
-
+        String del = files ? Env.getString("Delete") : Env.getString("DeleteReferences");
         if (prompt) {
             if (nodes.length == 1) {
                 if (nodes[0].getUserObject() instanceof Tool) {
                     String toolname = ((Tool) nodes[0].getUserObject()).getToolName();
                     reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                             Env.getString("deleteTool") + " " + toolname + "?",
-                            Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
                 } else {
                     String pack = getPackage(nodes[0]);
                     reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                             Env.getString("deletePackage") + " " + pack + "?",
-                            Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
                 }
             } else {
                 reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                         Env.getString("deleteSelected") + "?",
-                        Env.getString("Delete"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
             }
         }
 
@@ -636,8 +643,10 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         System.arraycopy(seltools, 0, deltools, 0, seltools.length);
 
         if (reply == JOptionPane.OK_OPTION) {
-            for (int count = 0; count < deltools.length; count++)
-                toolTable.deleteTool(deltools[count]);
+            for (int count = 0; count < deltools.length; count++) {
+
+                toolTable.deleteTool(deltools[count], files);
+            }
         }
     }
 
@@ -655,6 +664,18 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      * Renames a tool
      */
     private void handleRenameTool(Tool tool) {
+        boolean copy = false;
+        if (!tool.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML)) {
+            int reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
+                    tool.getToolName() + " is not defined in XML. Do want to create a copy to rename?",
+                    Env.getString("Rename"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+            if (reply != JOptionPane.OK_OPTION) {
+                return;
+            } else {
+                copy = true;
+            }
+        }
+
         String name = (String) JOptionPane.showInputDialog(GUIEnv.getApplicationFrame(), Env.getString("newNameFor") +
                 " " +
                 tool.getToolName() +
@@ -662,10 +683,30 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                 JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, tool.getToolName());
 
         if ((name != null) && (!name.equals(tool.getToolName()))) {
-            tool.setToolName(name);
-            GUIEnv.saveTool(tool, toolTable);
+            try {
+                if (copy) {
+                    ToolImp newTool = new ToolImp(tool);
+                    File f = ToolFileHandler.getXMLDirecotry(tool);
+                    System.out.println("LeafListener.handleRenameTool xml dir:" + f.getAbsolutePath());
+                    f = new File(f, name + ".xml");
+                    newTool.setDefinitionPath(f.getAbsolutePath());
+                    newTool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
+                    tool = newTool;
+                }
+                tool.setToolName(name);
+                XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(tool.getDefinitionPath())));
+                writer.writeComponent(tool);
+                writer.close();
+                toolTable.refreshLocation(tool.getDefinitionPath(), tool.getToolBox());
+            } catch (IOException except) {
+                throw (new RuntimeException("Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));
+            } catch (TaskException e) {
+                e.printStackTrace();
+            }
+
         }
     }
+
 
     /**
      * Renames a package TODO fix this

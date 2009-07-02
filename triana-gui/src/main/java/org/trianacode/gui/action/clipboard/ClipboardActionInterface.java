@@ -64,11 +64,10 @@ import org.trianacode.taskgraph.TaskGraphException;
  * Interface to be implemented by all classes that need access to the Clipboard for Triana
  * Tools and Groups. Cuts, Copies and Pastes TrianaTools to and from the Clipboard.
  *
- *
- * @author  Matthew Shields
- * @created May 7, 2003: 12:40:05 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @created May 7, 2003: 12:40:05 PM
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface ClipboardActionInterface extends ClipboardPasteInterface {
 
@@ -86,7 +85,7 @@ public interface ClipboardActionInterface extends ClipboardPasteInterface {
     /**
      * Delete the selected Tools.
      */
-    public void deleteTools();
+    public void deleteTools(boolean files);
 
     /**
      * Rename the selected Tool or Group.

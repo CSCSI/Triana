@@ -65,10 +65,7 @@ import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.Help;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.service.TrianaClient;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
@@ -76,10 +73,6 @@ import javax.swing.*;
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.MouseListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -293,21 +286,6 @@ public class GUIEnv {
             ErrorDialog.show("Sorry, Error executing " + editor +
                     "\nPlease, go to the Options menu in the MainTrianaWindow\n" +
                     "and choose a valid editor for this file type.");
-        }
-    }
-
-    /**
-     * Save the XML for the specified tool
-     */
-    public static void saveTool(Tool tool, ToolTable tools) {
-        try {
-            XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(tool.getToolXMLFileName())));
-            writer.writeComponent(tool);
-            writer.close();
-
-            tools.refreshLocation(tool.getToolXMLFileName(), tool.getToolBox());
-        } catch (IOException except) {
-            throw (new RuntimeException("Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));
         }
     }
 
@@ -533,11 +511,7 @@ public class GUIEnv {
 
 
     public static ImageIcon getIcon(String file) {
-        ImageIcon sysIcon = FileUtils.getSystemImageIcon(iconTheme + File.separator + file);
-        if (sysIcon == null) {
-            logger.info("Icon " + file + " not found in " + iconTheme + " theme. Trying default.");
-            sysIcon = FileUtils.getSystemImageIcon(File.separator + file);
-        }
+        ImageIcon sysIcon = FileUtils.getSystemImageIcon(file);
         if (sysIcon == null)
             logger.severe("Icon " + file + " not found.");
         return sysIcon;

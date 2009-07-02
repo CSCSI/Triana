@@ -72,10 +72,10 @@ import java.awt.event.FocusListener;
 /**
  * A ToolBar for searching and filtering of units in the unit tree view
  *
- * @author      Matthew Shields
- * @created     Nov 15, 2002; 4:43:06 PM
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
+ * @created Nov 15, 2002; 4:43:06 PM
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class SearchToolBar extends JToolBar implements ActionListener, FocusListener {
 
@@ -84,12 +84,12 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
     /**
      * An array of the filters in the toolbar
      */
-    public static ToolFilter [] filters = {new AllPackagesFilter(),
-                                           new SubPackageFilter(),
-                                           new AllToolsFilter(),
-                                           new InputToolsFilter(),
-                                           new OutputToolsFilter(),
-                                           new DataTypeFilter()};
+    public static ToolFilter[] filters = {new AllPackagesFilter(),
+            new SubPackageFilter(),
+            new AllToolsFilter(),
+            new InputToolsFilter(),
+            new OutputToolsFilter(),
+            new DataTypeFilter()};
 
 
     /**
@@ -127,7 +127,7 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
     private void createWidgets() {
         JPanel searchpanel = new JPanel(new BorderLayout());
         searchField = new JComboBox(filters);
-        searchField.setPrototypeDisplayValue("01234567890123456789012345");
+        searchField.setPrototypeDisplayValue("01234567890123456");
         searchField.setEditable(true);
         searchField.setSelectedIndex(0);
         searchField.addActionListener(this);
@@ -135,6 +135,7 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
         searchField.setToolTipText("Enter search string");
         searchpanel.add(searchField, BorderLayout.SOUTH);
         add(searchpanel);
+        initFilter();
     }
 
 
@@ -158,7 +159,7 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
     private void initFilter() {
         Object item = searchField.getSelectedItem();
 
-        if (!item.equals(filtertxt)) {
+        if (!filtertxt.equals(item)) {
             filtertxt = item.toString();
 
             if (item instanceof ToolFilter)
@@ -187,5 +188,6 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
         if (event.getSource() == searchField)
             initFilter();
     }
+
 
 }

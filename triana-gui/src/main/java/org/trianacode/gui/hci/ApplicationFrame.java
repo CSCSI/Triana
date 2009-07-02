@@ -91,13 +91,13 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.interceptor.Interceptor;
-import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.constants.HiddenToolConstants;
 import org.trianacode.taskgraph.constants.MapConstants;
 import org.trianacode.taskgraph.constants.ScriptConstants;
 import org.trianacode.taskgraph.constants.TextToolConstants;
 import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.interceptor.Interceptor;
+import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.ser.Base64ObjectDeserializer;
 import org.trianacode.taskgraph.ser.ObjectDeserializationManager;
@@ -331,6 +331,7 @@ public class ApplicationFrame extends TrianaWindow
         ActionTable.putAction(ActionTable.PASTE_ACTION, new PasteAction(this));
         ActionTable.putAction(ActionTable.PASTE_INTO_ACTION, new PasteIntoAction(this, tools));
         ActionTable.putAction(ActionTable.DELETE_ACTION, new DeleteAction(this));
+        ActionTable.putAction(ActionTable.DELETE_REFERENCES_ACTION, new DeleteRefsAction(this));
         ActionTable.putAction(ActionTable.RENAME_ACTION, new RenameAction(this));
 
         ActionTable.putAction(ActionTable.PROERTIES_ACTION, new PropertiesAction(this));
@@ -391,7 +392,7 @@ public class ApplicationFrame extends TrianaWindow
         Map<Class, List<Object>> en = ExtensionFinder.services(ext);
         Set<Class> keys = en.keySet();
         for (Class key : keys) {
-            if(key.equals(Extension.class)) {
+            if (key.equals(Extension.class)) {
                 List<Object> exts = en.get(key);
                 for (Object o : exts) {
                     Extension e = (Extension) o;
@@ -411,7 +412,7 @@ public class ApplicationFrame extends TrianaWindow
     }
 
 
-    /**                                                                                     
+    /**
      * Initialises the panels in the main window
      */
     private void initLayout() {
@@ -644,7 +645,7 @@ public class ApplicationFrame extends TrianaWindow
      * @return the instance of taskgraph created using the current taskgraph factory
      */
     public TaskGraph addParentTaskGraphPanel(TaskGraph initgraph) {
-            String factoryType = TaskGraphManager.DEFAULT_FACTORY_TYPE;
+        String factoryType = TaskGraphManager.DEFAULT_FACTORY_TYPE;
         try {
             return addParentTaskGraphPanel(initgraph, factoryType);
         }

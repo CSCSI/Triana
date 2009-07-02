@@ -155,7 +155,6 @@ public class XMLReader implements XMLConstants {
             addConnections(taskgraph, tasklist);
             addExternalMap(taskgraph, tasklist);
             addControlTask(taskgraph, tasklist);
-
             return taskgraph;
         } else {
             ToolImp tool = new ToolImp();
@@ -168,7 +167,7 @@ public class XMLReader implements XMLConstants {
         tool.setToolName(getToolName(parent));
         tool.setToolPackage(getToolPackage(parent));
         tool.setVersion(getVersion(parent));
-
+        tool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
         try {
             tool.setDataInputNodeCount(getInportNum(parent));
             tool.setDataOutputNodeCount(getOutputNum(parent));

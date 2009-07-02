@@ -69,7 +69,6 @@ import java.util.ArrayList;
 
 /**
  * A task within a taskgraph.
- *
  */
 public class TaskImp extends ToolImp implements Task {
 
@@ -133,14 +132,14 @@ public class TaskImp extends ToolImp implements Task {
 
             this.setToolName(tool.getToolName());
             this.setToolPackage(tool.getToolPackage());
-
+            this.setDefinitionType(tool.getDefinitionType());
             if (tool.getProxy() != null)
 
                 this.setProxy(ProxyFactory.cloneProxy(tool.getProxy()));
 
             this.instanceid = InstanceIDManager.registerID(this, tool, preserveinst);
 
-            this.setToolXMLFileName(tool.getToolXMLFileName());
+            this.setDefinitionPath(tool.getDefinitionPath());
             this.setToolBox(tool.getToolBox());
             this.setPopUpDescription(tool.getPopUpDescription());
             this.setHelpFile(tool.getHelpFile());
@@ -878,7 +877,8 @@ public class TaskImp extends ToolImp implements Task {
             }
         });
     }
-/**
+
+    /**
      * Notifies all the task listeners that a node has been removed.
      */
     protected void notifyNodeRemoved(final Node node) {

@@ -56,108 +56,63 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
+package org.trianacode.gui.action.tools;
 
-package org.trianacode.gui.panels;
-
-import org.trianacode.gui.Display;
+import org.trianacode.gui.action.ActionDisplayOptions;
+import org.trianacode.gui.action.SelectionManager;
+import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 /**
- * Class Description Here...
+ * Action class to handle all "delete" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Jun 16, 2005: 4:36:13 PM
+ * @created May 2, 2003: 3:49:12 PM
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * Put your notes here...
  */
-public class ScrollingMessageFrame {
+public class DeleteRefsAction extends AbstractAction implements ActionDisplayOptions {
 
-    public static int SCREEN_WIDTH = 650;
-    public static int SCREEN_HEIGHT = 410;
-
-
-    private JFrame frame = new JFrame();
-    private JTextArea text;
+    private SelectionManager selectionHandler;
 
 
-    public ScrollingMessageFrame(String title) {
-        this(title, true);
-
-
+    public DeleteRefsAction(SelectionManager selhandler) {
+        this(selhandler, DISPLAY_BOTH);
     }
 
-    public ScrollingMessageFrame(String title, boolean show) {
-        frame.setTitle(title);
-        JPanel content = (JPanel) frame.getContentPane();
+    public DeleteRefsAction(SelectionManager selhandler, int displayOption, JMenu parentMenu) {
+        this(selhandler, displayOption);
+        char mnem = MenuMnemonics.getInstance().getNextMnemonic(parentMenu, Env.getString("DeleteReferences"));
+        putValue(MNEMONIC_KEY, new Integer(mnem));
+    }
 
-        frame.setSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
-
-        text = new JTextArea();
-        text.setEditable(false);
-        text.setLineWrap(true);
-
-        JScrollPane scroll = new JScrollPane(text);
-        scroll.setBorder(new LineBorder(Color.black, 1));
-
-        JPanel buttonpanel = new JPanel(new BorderLayout());
-        JButton ok = new JButton(Env.getString("OK"));
-        ok.setMnemonic(Env.getString("OK").charAt(0));
-        buttonpanel.add(ok, BorderLayout.EAST);
-        buttonpanel.setBorder(new EmptyBorder(3, 0, 0, 0));
-
-        ok.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                frame.setVisible(false);
-            }
-        });
-
-        frame.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
-                frame.setVisible(false);
-            }
-        });
-
-        content.add(buttonpanel, BorderLayout.SOUTH);
-        content.add(scroll, BorderLayout.CENTER);
-        content.setBorder(new EmptyBorder(3, 3, 3, 3));
-
-        Display.centralise(frame);
-        if (show) {
-            frame.setVisible(true);
+    public DeleteRefsAction(SelectionManager selhandler, int displayOption) {
+        super();
+        this.selectionHandler = selhandler;
+        putValue(SHORT_DESCRIPTION, Env.getString("DeleteReferences"));
+        putValue(ACTION_COMMAND_KEY, Env.getString("DeleteReferences"));
+        if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
+            putValue(SMALL_ICON, GUIEnv.getIcon("delete.png"));
         }
+        if ((displayOption == DISPLAY_NAME) || (displayOption == DISPLAY_BOTH)) {
+            putValue(NAME, Env.getString("DeleteReferences"));
+        }
+
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.VK_CONTROL));
     }
 
     /**
-     * Sets the size of the compiler screen size
+     * Invoked when an action occurs.
      */
-    public void setScreenSize(int width, int height) {
-        frame.setSize(new Dimension(width, height));
-        Display.centralise(frame);
-    }
-
-    public void setVisible(boolean state) {
-        if (!frame.isVisible() && state) {
-            frame.setVisible(state);
-        } else {
-            frame.setVisible(state);
+    public void actionPerformed(ActionEvent e) {
+        if (selectionHandler.getSelectionHandler() instanceof ClipboardActionInterface) {
+            ((ClipboardActionInterface) selectionHandler.getSelectionHandler()).deleteTools(false);
         }
     }
-
-    /**
-     * outputs a line to the compile screen
-     */
-    public void println(String line) {
-        text.append(line + "\n");
-    }
-
 }

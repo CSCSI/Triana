@@ -120,7 +120,6 @@ public final class CompileUtil {
      * a flag indicating whether the compiler screen is enabled
      */
     private boolean screenenabled = true;
-    private boolean appendOuput;
 
 
     /**
@@ -129,29 +128,24 @@ public final class CompileUtil {
     public CompileUtil() {
     }
 
-    public CompileUtil(String destDir, boolean compilewindow, boolean appendOuput) {
-        this.appendOuput = appendOuput;
-        this.destDir = destDir;
-
-        setCompilerScreenEnabled(compilewindow);
-        initCompileScreen();
-    }
 
     /**
      * Constructor
      *
      * @param javaFile      file to compile
-     * @param destDir       destination directory for compiled class file
      * @param compilewindow if true show the compile window with output
      */
-    public CompileUtil(String javaFile, String destDir, boolean compilewindow) {
+    public CompileUtil(String javaFile, boolean compilewindow) {
         setJavaFile(javaFile);
-        this.destDir = destDir;
-        appendOuput = false;
 
         setCompilerScreenEnabled(compilewindow);
-        initCompileScreen();
+        initCompileScreen(javaFile);
 
+    }
+
+    public CompileUtil(boolean compilewindow) {
+        setCompilerScreenEnabled(compilewindow);
+        initCompileScreen("");
     }
 
     public String getJavaFile() {
@@ -159,7 +153,12 @@ public final class CompileUtil {
     }
 
     public void setJavaFile(String javaFile) {
+
         this.javaFile = addJavaToFile(javaFile);
+        File f = new File(javaFile);
+        if (!f.exists() || f.length() == 0) {
+            javaFile = null;
+        }
     }
 
     public String getDestDir() {
@@ -181,13 +180,9 @@ public final class CompileUtil {
     /**
      * Initialise compile screen
      */
-    private void initCompileScreen() {
+    private void initCompileScreen(String file) {
         if (isCompilerScreenEnabled()) {
-
-            if (appendOuput)
-                compileScreen = new ScrollingMessageFrame("Triana Compiling: All Tools");
-            else
-                compileScreen = new ScrollingMessageFrame("Triana Compiling: " + new File(javaFile).getName());
+            compileScreen = new ScrollingMessageFrame("Triana Compiling..." + file);
         }
     }
 
@@ -297,6 +292,16 @@ public final class CompileUtil {
      * Executes the current compiler compilerCommand
      */
     public void compile() throws CompilerException, FileNotFoundException {
+        if (javaFile == null) {
+            throw new CompilerException("javaFile is not set! Nothing to compile!");
+        }
+        if (destDir == null) {
+            File java = new File(javaFile);
+            java = new File(java.getParentFile(), "classes");
+            java.mkdirs();
+            destDir = java.getAbsolutePath();
+
+        }
         Process process;
         BufferedReader errorreader;
         String str;
@@ -334,10 +339,10 @@ public final class CompileUtil {
 
         }
         printCompilerLine("Compiling: " + javaFile);
-        if (!appendOuput) {
-            printCompilerLine(compilerStrBuff.toString());
-            printCompilerLine(Env.getString("compilerWait"));
-        }
+
+        printCompilerLine(compilerStrBuff.toString());
+        printCompilerLine(Env.getString("compilerWait"));
+
         try {
             String[] cmdarray = (String[]) commmandStrVector.toArray(new String[commmandStrVector.size()]);
 
@@ -361,8 +366,7 @@ public final class CompileUtil {
             printCompilerLine(errLog);
             printCompilerLine(Env.getString("compilerSuccess"));
         } else {
-            if (!appendOuput)
-                printCompilerLine(errLog);
+            printCompilerLine(errLog);
             throw (new CompilerException(errLog));
         }
 

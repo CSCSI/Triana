@@ -65,10 +65,10 @@ import org.trianacode.taskgraph.tool.Tool;
  * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes
  * Input.SignalProc
  *
- * @author      Ian Wang
- * @created     12th Feb 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 12th Feb 2002
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class AllPackagesFilter implements ToolFilter {
 
@@ -76,7 +76,7 @@ public class AllPackagesFilter implements ToolFilter {
      * @return the name of this filter
      */
     public String getName() {
-        return "All Packages (default)";
+        return "Easy";
     }
 
     /**
@@ -96,10 +96,19 @@ public class AllPackagesFilter implements ToolFilter {
 
     /**
      * @return the filtered packages for the tool, empty array if the tool is
-     * ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     *         ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
      */
     public String[] getFilteredPackage(Tool tool) {
-        return new String[]{tool.getToolPackage()};
+        String pkg = tool.getToolPackage();
+        if (pkg.startsWith("org.")) {
+            pkg = pkg.substring(4);
+        }
+        if (pkg.startsWith("trianacode.")) {
+            pkg = pkg.substring(11);
+        }
+
+
+        return new String[]{pkg};
     }
 
     /**

@@ -653,7 +653,7 @@ public class MainTriana extends JPanel
     /**
      * Delete the selected Tool.
      */
-    public void deleteTools() {
+    public void deleteTools(boolean files) {
         deleteSelected();
     }
 

@@ -71,8 +71,8 @@ import java.awt.event.ActionListener;
  * The Triana toolbar, placed at the top of the Main application window.
  * This is implemented as a tear-off window.
  *
- * @version $Revision: 4048 $
  * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TrianaToolBar extends AbstractToolBar implements Actions {
@@ -88,14 +88,14 @@ public class TrianaToolBar extends AbstractToolBar implements Actions {
     JButton save;
     JButton saveas;
     JButton newfile;
-    JButton find;
-    JButton help;
+    //JButton find;
+    //JButton help;
     JButton print;
     JButton selectall;
     JButton options;
 
     /**
-     *  Description of the Field
+     * Description of the Field
      */
 
     public TrianaToolBar(String title, ApplicationFrame app) {
@@ -117,9 +117,9 @@ public class TrianaToolBar extends AbstractToolBar implements Actions {
         save = createButton(ActionTable.getAction(SAVE_ACTION));
         saveas = createButton(ActionTable.getAction(SAVE_AS_ACTION));
         print = createButton(ActionTable.getAction(PRINT_ACTION));
-        help = createButton(ActionTable.getAction(HELP_ACTION));
+        /*help = createButton(ActionTable.getAction(HELP_ACTION));
 
-        find = createButton(ActionTable.getAction(FIND_ACTION));
+        find = createButton(ActionTable.getAction(FIND_ACTION));*/
 
 
         selectall = createButton(ActionTable.getAction(SELECT_ALL_ACTION));
@@ -140,10 +140,10 @@ public class TrianaToolBar extends AbstractToolBar implements Actions {
         add(selectall);
         add(delete);
         add(new ToolBarSeparator());
-        add(find);
+        //add(find);
         add(print);
         add(options);
-        add(help);
+        //add(help);
 
         MenuUtils.formatToolBar(this, MenuUtils.ICON_ONLY);
 

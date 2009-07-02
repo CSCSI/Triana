@@ -72,10 +72,10 @@ import java.awt.event.KeyEvent;
 /**
  * Action class to handle all "delete" actions.
  *
- * @author  Matthew Shields
- * @created May 2, 2003: 3:49:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @created May 2, 2003: 3:49:12 PM
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class DeleteAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -112,7 +112,7 @@ public class DeleteAction extends AbstractAction implements ActionDisplayOptions
      */
     public void actionPerformed(ActionEvent e) {
         if (selectionHandler.getSelectionHandler() instanceof ClipboardActionInterface) {
-            ((ClipboardActionInterface) selectionHandler.getSelectionHandler()).deleteTools();
+            ((ClipboardActionInterface) selectionHandler.getSelectionHandler()).deleteTools(true);
         }
     }
 }

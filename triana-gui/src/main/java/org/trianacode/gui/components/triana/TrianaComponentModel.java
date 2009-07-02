@@ -87,8 +87,6 @@ import javax.swing.*;
 
 /**
  * The default ToolComponentModel for a task
- 
-
  */
 
 public class TrianaComponentModel implements
@@ -219,6 +217,7 @@ public class TrianaComponentModel implements
         JMenuItem copy = new JMenuItem(ActionTable.getAction(Actions.COPY_ACTION));
         JMenuItem pasteInto = new JMenuItem(ActionTable.getAction(Actions.PASTE_INTO_ACTION));
         JMenuItem delete = new JMenuItem(ActionTable.getAction(Actions.DELETE_ACTION));
+
         JMenuItem rename = new JMenuItem(ActionTable.getAction(Actions.RENAME_ACTION));
 
         groupWorkspacePopup = new JPopupMenu("Group Menu");
@@ -245,6 +244,8 @@ public class TrianaComponentModel implements
         JMenuItem cut = new JMenuItem(ActionTable.getAction(Actions.CUT_ACTION));
         JMenuItem copy = new JMenuItem(ActionTable.getAction(Actions.COPY_ACTION));
         JMenuItem delete = new JMenuItem(ActionTable.getAction(Actions.DELETE_ACTION));
+        JMenuItem deleteRefs = new JMenuItem(ActionTable.getAction(Actions.DELETE_REFERENCES_ACTION));
+
         JMenuItem pasteInto = new JMenuItem(ActionTable.getAction(Actions.PASTE_INTO_ACTION));
         JMenuItem rename = new JMenuItem(ActionTable.getAction(Actions.RENAME_ACTION));
         //JMenuItem editdesc = new JMenuItem(ActionTable.getAction(Actions.EDIT_DESC_ACTION));
@@ -260,6 +261,7 @@ public class TrianaComponentModel implements
         toolTreePopup.add(copy);
         toolTreePopup.add(pasteInto);
         toolTreePopup.add(delete);
+        toolTreePopup.add(deleteRefs);
         toolTreePopup.add(rename);
         toolTreePopup.addSeparator();
         //toolTreePopup.add(editdesc);
@@ -282,6 +284,8 @@ public class TrianaComponentModel implements
         JMenuItem cut = new JMenuItem(ActionTable.getAction(Actions.CUT_ACTION));
         JMenuItem copy = new JMenuItem(ActionTable.getAction(Actions.COPY_ACTION));
         JMenuItem delete = new JMenuItem(ActionTable.getAction(Actions.DELETE_ACTION));
+        JMenuItem deleteRefs = new JMenuItem(ActionTable.getAction(Actions.DELETE_REFERENCES_ACTION));
+
         JMenuItem pasteInto = new JMenuItem(ActionTable.getAction(Actions.PASTE_INTO_ACTION));
         JMenuItem rename = new JMenuItem(ActionTable.getAction(Actions.RENAME_ACTION));
         //JMenuItem editdesc = new JMenuItem(ActionTable.getAction(Actions.EDIT_DESC_ACTION));
@@ -297,6 +301,7 @@ public class TrianaComponentModel implements
         groupTreePopup.add(copy);
         groupTreePopup.add(pasteInto);
         groupTreePopup.add(delete);
+        groupTreePopup.add(deleteRefs);
         groupTreePopup.add(rename);
         groupTreePopup.addSeparator();
         //groupTreePopup.add(editdesc);

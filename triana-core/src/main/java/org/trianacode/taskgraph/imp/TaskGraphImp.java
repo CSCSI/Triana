@@ -119,6 +119,7 @@ public class TaskGraphImp extends TaskImp
      */
     public TaskGraphImp(Tool tool, TaskFactory factory, boolean preserveinst) throws TaskException {
         super(tool, factory, preserveinst);
+        setDefinitionType(Tool.DEFINITION_TRIANA_XML);
         addTaskListener(this);
     }
 
@@ -823,13 +824,13 @@ public class TaskGraphImp extends TaskImp
      * Disconnects the specified cable from its nodes.
      */
     public void disconnect(Cable cable) throws CableException {
-            if (cable != null && cable.isConnected()) {
-                if (!(containsNode(cable.getSendingNode()) && containsNode(cable.getReceivingNode())))
-                    throw(new CableException("Cannot disconnect a cable not contained in the taskgraph"));
+        if (cable != null && cable.isConnected()) {
+            if (!(containsNode(cable.getSendingNode()) && containsNode(cable.getReceivingNode())))
+                throw (new CableException("Cannot disconnect a cable not contained in the taskgraph"));
 
-                notifyCableDisconnected(cable, false, false);
-                cable.disconnect();
-            }
+            notifyCableDisconnected(cable, false, false);
+            cable.disconnect();
+        }
     }
 
 

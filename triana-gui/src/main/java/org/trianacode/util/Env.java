@@ -114,7 +114,7 @@ public final class Env {
     private static boolean passwordOK = false;
     private static boolean runOut = false;
     private static final String version = "3.2.2";
-    private static final String verName = "TrianaV4";
+    private static final String verName = "TrianaV3";
     public static String CONFIG_VERSION = "1.6.4";
 
     private static Vector classpaths;
@@ -137,6 +137,7 @@ public final class Env {
     public static String COMPILER_STR = "compiler";
     public static String CLASSPATH_STR = "classpath";
     public static String OPTIONS_STR = "options";
+    public static String EXCLUDED_TOOLS = "excluded_tools";
     public static String OPTION_STR = "option";
     public static String CODE_EDITOR_STR = "code_editor";
     public static String HELP_EDITOR_STR = "help_editor";
@@ -206,6 +207,7 @@ public final class Env {
      */
     private static Hashtable filereaders = new Hashtable();
     private static Hashtable filewriters = new Hashtable();
+    private static Set<String> excludedTools = new HashSet<String>();
 
     private static WriteConfigThread writeConfigThread = null;
     private static WriteStateThread writeStateThread = null;
@@ -244,7 +246,6 @@ public final class Env {
      */
     private static final String CONFIG_FILE = "triana.config";
     private static final String CONFIG_FILE_BAK = "triana_bak.config";
-    private static final String PEER_CONFIG_FILE = "peer.config";
     private static File configFile;
     private static File configBakFile;
     private static final String LOCK_PREFIX = "config";
@@ -257,7 +258,7 @@ public final class Env {
     };
 
     private static final long TIMEOUT = 20000;
-    private static String resourceDir = "";
+    private static String resourceDir = null;
     private static String tempDir = "";
     private static String logDir = "";
     private static String remoteToolDir = "";
@@ -297,6 +298,18 @@ public final class Env {
      */
     public static void removeUserPropertyListener(UserPropertyListener listener) {
         listeners.remove(listener);
+    }
+
+    public static void removeExcludedTool(String definitionPath) {
+        excludedTools.remove(definitionPath);
+    }
+
+    public static void addExcludedTool(String definitionPath) {
+        excludedTools.add(definitionPath);
+    }
+
+    public static boolean isExcludedTool(String definitionPath) {
+        return excludedTools.contains(definitionPath);
     }
 
     /**
@@ -743,7 +756,7 @@ public final class Env {
      * Returns the TRIANA environment variable.
      */
     public final static String home() {
-        return home;
+        return Home.home();
     }
 
     /**
@@ -1407,7 +1420,13 @@ public final class Env {
                 handler.add(ObjectMarshaller.marshallJavaToElement(val, options.get(key)), optionElem);
                 handler.add(optionElem, optionsElem);
             }
-
+            Element excludes = handler.element(EXCLUDED_TOOLS);
+            handler.add(excludes, root);
+            for (String excludedTool : excludedTools) {
+                Element excl = handler.element(NAME_STR);
+                handler.add(excludedTool, excl);
+                handler.add(excl, excludes);
+            }
             //color table entries
             if (!colorTableEntries.isEmpty()) {
                 Element colorTableElem = handler.element(COLOR_TABLE_STR);
@@ -1510,6 +1529,7 @@ public final class Env {
         }
     }
 
+
     private static void recursivelySaveChildTaskGraphElems(OpenTaskGraph childTG, Element parent, DocumentHandler handler) {
         Element childElem = handler.element(CHILD_STR);
         handler.add(childElem, parent);
@@ -1583,6 +1603,14 @@ public final class Env {
 
                 Object value = ObjectMarshaller.marshallElementToJava(optionElem);
                 setUserProperty(nameStr, value);
+            }
+
+            elementList = handler.getChildren(handler.getChild(root, EXCLUDED_TOOLS), NAME_STR);
+            iter = elementList.iterator();
+            while (iter.hasNext()) {
+                Element name = (Element) iter.next();
+                String txt = name.getTextContent().trim();
+                excludedTools.add(txt);
             }
 
             // color table elements
@@ -2055,17 +2083,6 @@ public final class Env {
      */
     public static ColorTableEntry[] getColorTableEntries() {
         return (ColorTableEntry[]) colorTableEntries.toArray(new ColorTableEntry[colorTableEntries.size()]);
-    }
-
-    /**
-     * @return the class destination path for toolbox classes
-     */
-    public static String getToolClassesDestinationDir() {
-        String pathname = home() + File.separatorChar + "toolclasses";
-        if (!(new File(pathname).exists())) {
-            (new File(pathname)).mkdir();
-        }
-        return pathname;
     }
 
     /**

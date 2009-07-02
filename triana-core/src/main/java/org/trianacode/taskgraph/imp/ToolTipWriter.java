@@ -155,13 +155,14 @@ public class ToolTipWriter {
                 tip.append(proxy.getUnitPackage());
                 tip.append("<br>Unit Name : ");
                 tip.append(proxy.getUnitName());
-            } else*/ if (tool.getProxy() != null) {
+            } else*/
+            if (tool.getProxy() != null) {
                 tip.append("<br>Proxy : ");
                 tip.append(tool.getProxy().toString());
             }
 
-            tip.append("<br>XML File : ");
-            tip.append(tool.getToolXMLFileName());
+            tip.append("<br>Definition File : ");
+            tip.append(tool.getDefinitionPath());
 
         }
         tip.append("</html>");

@@ -62,11 +62,10 @@ package org.trianacode.gui.action;
 /**
  * An interface defining all the action keys for the action table
  *
- * @author      Ian Wang
- * @created     22nd June 2004
- * @version     $Revision: 4051 $
- * @date        $Date: 2007-10-31 17:51:40 +0000 (Wed, 31 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4051 $
+ * @created 22nd June 2004
+ * @date $Date: 2007-10-31 17:51:40 +0000 (Wed, 31 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public interface Actions {
@@ -89,6 +88,7 @@ public interface Actions {
     public static final String PASTE_ACTION = "paste";
     public static final String PASTE_INTO_ACTION = "pasteInto";
     public static final String DELETE_ACTION = "delete";
+    public static final String DELETE_REFERENCES_ACTION = "deleteReferences";
     public static final String RENAME_ACTION = "rename";
 
     public static final String PROERTIES_ACTION = "properties";

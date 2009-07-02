@@ -35,6 +35,9 @@ public class ToolClassLoader extends URLClassLoader {
 
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.imp.tool.creators.ToolClassLoader");
 
+    private static ToolClassLoader loader = new ToolClassLoader();
+
+
     public ToolClassLoader(ClassLoader classLoader) {
         this(classLoader, new String[0]);
     }
@@ -52,6 +55,31 @@ public class ToolClassLoader extends URLClassLoader {
         this(ClassLoader.getSystemClassLoader());
     }
 
+    public void addToolBox(String toolbox) {
+        File box = new File(toolbox);
+        if (!box.exists() || box.length() == 0 || !box.isDirectory()) {
+            return;
+        }
+
+        File[] files = box.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
+            if (file.isDirectory()) {
+                if (file.getName().equals("classes")) {
+                    addPath(file.getAbsolutePath());
+                } else {
+                    addToolBox(file.getAbsolutePath());
+                }
+            } else {
+                if (file.getName().endsWith(".jar")) {
+                    addPath(file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
 
     public void addPath(String path) {
         log.fine("adding path:" + path);
@@ -64,11 +92,42 @@ public class ToolClassLoader extends URLClassLoader {
                     s += "/";
                 }
                 URL u = new URL(s);
-                addURL(u);
+                URL[] all = getURLs();
+                boolean add = true;
+                for (URL url : all) {
+                    if (url.equals(u)) {
+                        add = false;
+                        break;
+                    }
+                }
+                if (add) {
+                    addURL(u);
+                }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
         }
     }
+
+
+    public String getClassPath() {
+        StringBuilder classPath = new StringBuilder();
+        URL[] paths = getURLs();
+        for (int i = 0; i < paths.length; i++) {
+            URL path = paths[i];
+            String s = path.getFile();
+            File f = new File(s);
+            classPath.append(f.getAbsolutePath());
+            if (i < paths.length - 1) {
+                classPath.append(System.getProperty("path.separator"));
+            }
+        }
+        return classPath.toString();
+    }
+
+    public static ToolClassLoader getLoader() {
+        return loader;
+    }
+
 
 }

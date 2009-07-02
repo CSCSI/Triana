@@ -97,7 +97,6 @@ public class CompilePanel extends ParameterPanel
     private static String LAST_CLASSPATH = null;
 
     private static boolean LAST_COMPILE = true;
-    private static boolean LAST_GENERATE = true;
     private static boolean LAST_COMPILE_GUI = true;
 
 
@@ -122,7 +121,6 @@ public class CompilePanel extends ParameterPanel
 
     private JButton compilerbrowse = new JButton(GUIEnv.getIcon("dots.png"));
 
-    private JCheckBox generate = new JCheckBox(Env.getString("generateXML"));
     private JTextField toolname = new JTextField(LAST_TOOLNAME, 15);
     private JTextField toolpack = new JTextField(LAST_TOOLPACK, 15);
     private JTextField toolfile = new JTextField(LAST_TOOLFILE, 20);
@@ -325,11 +323,7 @@ public class CompilePanel extends ParameterPanel
         genpanel.add(packpanel);
         genpanel.add(filecont);
 
-        generate.addItemListener(this);
-        generate.setSelected(LAST_GENERATE);
-
         JPanel gencont = new JPanel(new BorderLayout());
-        gencont.add(generate, BorderLayout.NORTH);
         gencont.add(labelpanel, BorderLayout.WEST);
         gencont.add(genpanel, BorderLayout.CENTER);
 
@@ -359,12 +353,6 @@ public class CompilePanel extends ParameterPanel
         return compile.isSelected();
     }
 
-    /**
-     * @return true if generate tool XML is selected
-     */
-    public boolean isGenerateXML() {
-        return generate.isSelected();
-    }
 
     /**
      * @return true if compile GUI is selected
@@ -397,13 +385,6 @@ public class CompilePanel extends ParameterPanel
         if (!(new File(pathname).exists()))
             (new File(pathname)).mkdir();
         return pathname;
-    }
-
-    /**
-     * @return the class destination path
-     */
-    public String getDestinationDir() {
-        return Env.getToolClassesDestinationDir();
     }
 
     /**
@@ -580,7 +561,6 @@ public class CompilePanel extends ParameterPanel
         LAST_ARG = arg.getText();
 
         LAST_COMPILE = compile.isSelected();
-        LAST_GENERATE = generate.isSelected();
         LAST_COMPILE_GUI = compileGUI.isSelected();
 
         super.okClicked();
@@ -593,15 +573,6 @@ public class CompilePanel extends ParameterPanel
             classpath.setEnabled(compile.isSelected());
             arg.setEnabled(compile.isSelected());
         }
-
-        if (event.getSource() == generate) {
-            toolname.setEnabled(generate.isSelected());
-            toolpack.setEnabled(generate.isSelected());
-            toolfile.setEnabled(generate.isSelected());
-        }
-
-        compileGUI.setEnabled(generate.isSelected() && compile.isSelected());
-        compileGUI.setSelected(generate.isSelected() && compile.isSelected());
 
         if (event.getSource() == toolBoxChooser) {
             Env.setLastWorkingToolbox((String) toolBoxChooser.getSelectedItem());

@@ -86,6 +86,8 @@ public class ToolImp implements Tool {
 
     private String version = "0.1";
 
+    private String definitionType = Tool.DEFINITION_UNKNOWN;
+
     /**
      * ToolImp name
      */
@@ -179,7 +181,7 @@ public class ToolImp implements Tool {
     /**
      * The location of the file used to generate this tool
      */
-    private String xmlFilepath = "";
+    private String filepath = "";
 
     /**
      * The location of the toolbox this tool was loaded from
@@ -203,7 +205,7 @@ public class ToolImp implements Tool {
             setToolPackage(tool.getToolPackage());
             setProxy(ProxyFactory.cloneProxy(tool.getProxy()));
 
-            setToolXMLFileName(tool.getToolXMLFileName());
+            setDefinitionPath(tool.getDefinitionPath());
             setToolBox(tool.getToolBox());
             setPopUpDescription(tool.getPopUpDescription());
             setHelpFile(tool.getHelpFile());
@@ -277,6 +279,15 @@ public class ToolImp implements Tool {
      */
     public String getToolName() {
         return toolname;
+    }
+
+    public String getDefinitionType() {
+        return definitionType;
+    }
+
+
+    public void setDefinitionType(String type) {
+        this.definitionType = type;
     }
 
     /**
@@ -816,15 +827,15 @@ public class ToolImp implements Tool {
      * @return the location directory that held the file this tool was generated
      *         from.
      */
-    public String getToolXMLFileName() {
-        return xmlFilepath;
+    public String getDefinitionPath() {
+        return filepath;
     }
 
     /**
      * Used by ToolTable to set the location of the file this tool was loaded from
      */
-    public void setToolXMLFileName(String filepath) {
-        xmlFilepath = filepath;
+    public void setDefinitionPath(String filepath) {
+        this.filepath = filepath;
     }
 
 

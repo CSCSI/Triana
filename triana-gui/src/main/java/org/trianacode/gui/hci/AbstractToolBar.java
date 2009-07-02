@@ -59,24 +59,21 @@
 
 package org.trianacode.gui.hci;
 
-import org.trianacode.util.Env;
-
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * An abstract toolbar class that provides functionality for all Triana toolbars
  *
- * @author      Ian Wang
- * @created     29th March 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 29th March 2003
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class AbstractToolBar extends JToolBar {
 
-    public static final int BUTTON_INSET = 1;
+    public static final int BUTTON_INSET = 2;
 
     public static final int SEPARATOR_WIDTH = 10;
     public static final int SEPARATOR_HEIGHT = 20;
@@ -100,12 +97,7 @@ public class AbstractToolBar extends JToolBar {
     }
 
     private JButton decorateButton(JButton button) {
-        if (Env.os().equals("osx")) {
-            button.setMargin(new Insets(2, 2, 2, 2));
-        }
-        else {
-            button.setMargin(new Insets(BUTTON_INSET, BUTTON_INSET, BUTTON_INSET, BUTTON_INSET));
-        }
+        button.setMargin(new Insets(BUTTON_INSET, BUTTON_INSET, BUTTON_INSET, BUTTON_INSET));
         return button;
     }
 

@@ -186,7 +186,7 @@ public abstract class AbstractToolTable implements ToolTable {
      *
      * @param tool tool to be deleted
      */
-    public abstract void deleteTool(Tool tool);
+    public abstract void deleteTool(Tool tool, boolean files);
 
     /**
      * Generate a new file location to store a pasted tool

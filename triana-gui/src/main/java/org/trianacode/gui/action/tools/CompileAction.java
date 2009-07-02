@@ -112,26 +112,25 @@ public class CompileAction extends AbstractAction implements ActionDisplayOption
                 thread.setPriority(Thread.MIN_PRIORITY);
                 thread.start();
             }
-        }
-        else {
-        final Tool[] selectedTools = selhandler.getSelectedTools();
+        } else {
+            final Tool[] selectedTools = selhandler.getSelectedTools();
 
-        final CompileHandler compiler = new CompileHandler(tools, true, true);
-        Thread thread = new Thread() {
-            public void run() {
-                for (int i = 0; i < selectedTools.length; i++) {
-                    Tool selectedTool = selectedTools[i];
-                    if ((selectedTool != null) && (!(selectedTool instanceof TaskGraph)))
-                        compiler.compileTargetTool(selectedTool);
+            final CompileHandler compiler = new CompileHandler(true);
+            Thread thread = new Thread() {
+                public void run() {
+                    for (int i = 0; i < selectedTools.length; i++) {
+                        Tool selectedTool = selectedTools[i];
+                        if ((selectedTool != null) && (!(selectedTool instanceof TaskGraph)))
+                            compiler.compileTargetTool(selectedTool);
 
+                    }
                 }
-            }
 
 
-        };
-        thread.setName("Build Tools Thread");
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
+            };
+            thread.setName("Build Tools Thread");
+            thread.setPriority(Thread.MIN_PRIORITY);
+            thread.start();
         }
     }
 }

@@ -137,7 +137,7 @@ public class ErrorDialog implements Serializable {
 
         showit.pack();
         Display.centralise(showit);
-        showit.show();
+        showit.setVisible(true);
         showit.toFront();
     }
 

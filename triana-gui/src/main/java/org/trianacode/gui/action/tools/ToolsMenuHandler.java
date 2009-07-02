@@ -61,10 +61,12 @@ package org.trianacode.gui.action.tools;
 import org.trianacode.gui.appmaker.CommandLineWizard;
 import org.trianacode.gui.hci.CompileHandler;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -93,7 +95,7 @@ public class ToolsMenuHandler implements ActionListener {
         if (label.equals(Env.getString("newUnit")))
             newTool();
         else if (label.equals(Env.getString("compileGenerate")))
-            generateToolXML();
+            compile();
         else if (label.equals(Env.getString("compileAll")))
             rebuildAllTools();
         else if (label.equals(Env.getString("editToolBoxPaths")))
@@ -103,7 +105,7 @@ public class ToolsMenuHandler implements ActionListener {
     }
 
     private void rebuildAllTools() {
-        final CompileHandler compiler = new CompileHandler(tools, true, true);
+        final CompileHandler compiler = new CompileHandler(true);
         Thread thread = new Thread() {
             public void run() {
                 String[] toolNames = tools.getToolNames();
@@ -126,8 +128,26 @@ public class ToolsMenuHandler implements ActionListener {
     /**
      * Generate the XML for a tool and add it to the toolbox
      */
-    public void generateToolXML() {
-        new CompileHandler(tools);
+    public void compile() {
+        final Tool[] ts = GUIEnv.getApplicationFrame().getSelectedTools();
+        if (ts == null || ts.length == 0) {
+            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Please Select a Tool from the workspace", "Select", JOptionPane.INFORMATION_MESSAGE,
+                    GUIEnv.getTrianaImageIcon());
+        } else {
+            final CompileHandler compiler = new CompileHandler(true);
+            Thread thread = new Thread() {
+                public void run() {
+                    for (int i = 0; i < ts.length; i++) {
+                        Tool selectedTool = ts[i];
+                        if ((selectedTool != null) && (!(selectedTool instanceof TaskGraph)))
+                            compiler.compileTargetTool(selectedTool);
+                    }
+                }
+            };
+            thread.setName("Build Tools Thread");
+            thread.setPriority(Thread.MIN_PRIORITY);
+            thread.start();
+        }
     }
 
     public void editToolBoxPaths() {

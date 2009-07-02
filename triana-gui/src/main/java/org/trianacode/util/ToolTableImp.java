@@ -104,17 +104,23 @@ public class ToolTableImp extends AbstractToolTable {
      *
      * @param tool tool to be deleted
      */
-    public void deleteTool(Tool tool) {
-        String xmlFile = tool.getToolXMLFileName();
+    public void deleteTool(Tool tool, boolean files) {
 
-        if ((xmlFile != null) && (!xmlFile.equals(""))) {
-            File file = new File(xmlFile);
+        String path = tool.getDefinitionPath();
 
-            if (file.exists()) {
-                file.delete();
+        if ((path != null) && (!path.equals(""))) {
+
+            File file = new File(path);
+            if (files) {
+                if (file.exists()) {
+                    file.delete();
+                }
+                purgeTool(path);
+            } else {
+                Env.addExcludedTool(path);
+                purgeTool(path);
             }
 
-            purgeTool(xmlFile);
         }
     }
 
@@ -179,11 +185,14 @@ public class ToolTableImp extends AbstractToolTable {
      */
     protected void addTool(File toolFile, String toolbox) {
         if ((!toolFile.exists()) || toolFile.isDirectory()) {
+            Env.removeExcludedTool(toolFile.getAbsolutePath());
             return;
         }
 
         String xmlFilePath = toolFile.getAbsolutePath();
-
+        if (Env.isExcludedTool(xmlFilePath)) {
+            return;
+        }
         // don't load if an up-to-date tool already exists
         if (locationTable.containsKey(toolFile.getAbsolutePath())) {
             ToolInfo tool = locationTable.get(xmlFilePath);
@@ -207,7 +216,7 @@ public class ToolTableImp extends AbstractToolTable {
                     tool.setToolPackage(getToolPackageName(xmlFilePath, tool.getToolName()));
                 }
 
-                tool.setToolXMLFileName(xmlFilePath);
+                tool.setDefinitionPath(xmlFilePath);
                 tool.setToolBox(toolbox);
 
                 ToolInfo toolinfo = new ToolInfo(tool, xmlFilePath);
@@ -281,12 +290,13 @@ public class ToolTableImp extends AbstractToolTable {
             try {
                 List<Tool> tools = reader.createTools(baseToolboxPath);
                 for (Tool tool : tools) {
-                    System.out.println("ToolTableImp.addTools tool name:" + tool.getQualifiedToolName());
-                    System.out.println("ToolTableImp.addTools tool file:" + tool.getToolXMLFileName());
-                    ToolInfo toolinfo = new ToolInfo(tool, tool.getToolXMLFileName());
-                    locationTable.put(tool.getToolXMLFileName(), toolinfo);
-                    toolTable.put(toolinfo.getQualifiedName(), toolinfo);
-                    notifyToolAdded(tool);
+                    String def = tool.getDefinitionPath();
+                    if (!Env.isExcludedTool(def)) {
+                        ToolInfo toolinfo = new ToolInfo(tool, tool.getDefinitionPath());
+                        locationTable.put(tool.getDefinitionPath(), toolinfo);
+                        toolTable.put(toolinfo.getQualifiedName(), toolinfo);
+                        notifyToolAdded(tool);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

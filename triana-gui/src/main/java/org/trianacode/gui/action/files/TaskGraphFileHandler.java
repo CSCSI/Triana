@@ -212,7 +212,7 @@ public class TaskGraphFileHandler implements SelectionManager {
 
             if (tool instanceof TaskGraph) {
                 progressBar = new TrianaProgressBar("loading: " + file.getName(), false);
-                tool.setToolXMLFileName(file.getPath());
+                tool.setDefinitionPath(file.getPath());
                 TaskGraph initgraph = null;
                 if (runnable) {
                     GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
@@ -440,9 +440,9 @@ public class TaskGraphFileHandler implements SelectionManager {
                 return;
             }
         }
+        String filename = group.getDefinitionPath();
 
-        String filename = group.getToolXMLFileName();
-        boolean showdialog = saveas || (filename == null) || (filename.equals(""));
+        boolean showdialog = saveas || (filename == null) || (filename.equals("") || !group.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML));
         boolean writeFile = true;
 
         if (showdialog) {
@@ -483,7 +483,7 @@ public class TaskGraphFileHandler implements SelectionManager {
             if (showdialog) {
                 String taskName = FileUtils.getFileNameNoSuffix(filename);
                 group.setToolName(taskName);
-                ((Tool) taskgraph).setToolXMLFileName(filename);
+                ((Tool) taskgraph).setDefinitionPath(filename);
             }
 
             backGroundSaveTaskGraph(taskgraph, filename, tools, true);

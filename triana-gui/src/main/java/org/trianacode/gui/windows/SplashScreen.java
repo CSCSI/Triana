@@ -62,6 +62,7 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -78,8 +79,8 @@ import java.util.logging.Logger;
 public class SplashScreen {
 
     protected static JFrame splashScreen = new JFrame();
-    protected static JProgressBar progressBar = new JProgressBar();
-    protected static JLabel progressLabel = new JLabel();
+    //protected static JProgressBar progressBar = new JProgressBar();
+    protected static JLabel progressLabel = new JLabel("Initialising : ");
     static Logger logger = Logger.getLogger("org.trianacode.gui.windows.SplashScreen");
 
     /**
@@ -105,17 +106,18 @@ public class SplashScreen {
                 icon.setImage(icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_DEFAULT));
             }
         });
-        progressBar.setMinimum(0);
-        progressBar.setMaximum(tasks - 1);
-        progressBar.setValue(0);
+        //progressBar.setMinimum(0);
+        //progressBar.setMaximum(tasks - 1);
+        //progressBar.setValue(0);
 
         JPanel progressPanel = new JPanel();
         progressPanel.setLayout(new BorderLayout());
         progressPanel.setBackground(Color.WHITE);
-        progressPanel.add(progressLabel, BorderLayout.NORTH);
-        JPanel pbarPanel = new JPanel(new BorderLayout());
-        pbarPanel.add(progressBar, BorderLayout.CENTER);
-        progressPanel.add(pbarPanel, BorderLayout.SOUTH);
+        progressPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
+        progressPanel.add(progressLabel, BorderLayout.SOUTH);
+        //JPanel pbarPanel = new JPanel(new BorderLayout());
+        //pbarPanel.add(progressBar, BorderLayout.CENTER);
+        //progressPanel.add(pbarPanel, BorderLayout.SOUTH);
 
         jp.add(progressPanel, BorderLayout.SOUTH);
         splashScreen.setContentPane(jp);
@@ -133,8 +135,8 @@ public class SplashScreen {
      */
     public void setSplashProgress(String s) {
         logger.finest("Enter");
-        progressLabel.setText(s);
-        progressBar.setValue(progressBar.getValue() + 1);
+        progressLabel.setText("Initialising : " + s);
+        //progressBar.setValue(progressBar.getValue() + 1);
 
     }
 
@@ -151,23 +153,6 @@ public class SplashScreen {
 
         private ImageIcon icon;
 
-        public SplashPanel(ImageIcon icon, JComponent config) {
-            this.icon = icon;
-
-            setLayout(null);
-            add(config);
-
-            Dimension size = config.getPreferredSize();
-            config.setLocation((int) (icon.getIconWidth() - (size.width * 1.2)),
-                    (int) (icon.getIconHeight() - (size.height * 1.2) - 30));
-            config.setSize(size);
-        }
-
-
-        /**
-         * Creates a new <code>JPanel</code> with a double buffer
-         * and a flow layout.
-         */
         public SplashPanel(ImageIcon icon) {
             this.icon = icon;
         }

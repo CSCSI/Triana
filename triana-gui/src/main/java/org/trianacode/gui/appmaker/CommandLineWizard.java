@@ -370,7 +370,9 @@ public class CommandLineWizard implements WizardListener {
 
         if (comppanel.isCompile()) {
             try {
-                CompileUtil compiler = new CompileUtil(filepanel.getJavaFileName(), filepanel.getOutputDirectory(), true);
+                CompileUtil compiler = new CompileUtil(true);
+                compiler.setJavaFile(filepanel.getJavaFileName());
+                compiler.setDestDir(filepanel.getOutputDirectory());
                 compiler.setCompilerLocation(comppanel.getJavaCompiler());
                 compiler.setCompilerClasspath(comppanel.getClasspath() + System.getProperty("path.separator") + filepanel.getOutputDirectory());
                 compiler.setCompilerArguments(comppanel.getArguments());

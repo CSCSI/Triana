@@ -16,14 +16,14 @@
 
 package org.trianacode.taskgraph.imp.tool.creators;
 
-import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.imp.tool.creators.type.TypeFinder;
+import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.imp.tool.creators.type.TypeFinder;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,16 +44,15 @@ public class JavaReader {
 
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.imp.tool.creators.JavaReader");
 
-    private static ToolClassLoader loader = new ToolClassLoader();
 
     static {
-        ClassLoaders.addClassLoader(loader);
+        ClassLoaders.addClassLoader(ToolClassLoader.getLoader());
     }
 
     public List<Tool> createTools(String path) throws IOException {
 
         List<Tool> tools = new ArrayList<Tool>();
-        loader.addPath(path);
+        ToolClassLoader.getLoader().addToolBox(path);
         File f = new File(path);
         if (f.exists()) {
             TypeFinder finder = new TypeFinder(Unit.class.getName(), f);
@@ -71,9 +70,10 @@ public class JavaReader {
     public Tool read(String className, String toolbox, String classFile) {
         try {
             ToolImp tool = new ToolImp();
+            tool.setDefinitionType(Tool.DEFINITION_JAVA_CLASS);
             tool.setToolName(getClassName(className));
             tool.setToolPackage(getPackageName(className));
-            tool.setToolXMLFileName(classFile);
+            tool.setDefinitionPath(classFile);
             tool.setToolBox(toolbox);
             tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
             return tool;

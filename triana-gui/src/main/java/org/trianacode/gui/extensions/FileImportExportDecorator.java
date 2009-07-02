@@ -60,6 +60,7 @@ package org.trianacode.gui.extensions;
 
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
@@ -73,7 +74,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Decorator design pattern implementation that adds import and export specific plugin
@@ -115,9 +115,15 @@ public class FileImportExportDecorator implements ActionListener {
      * @see GraphicsEnvironment#isHeadless
      */
     public int showImportDialog(Component parent) {
+        System.out.println("FileImportExportDecorator.showImportDialog");
         init();
         java.util.List<Object> importers = ExtensionFinder.services(TaskGraphImporterInterface.class);
         Object[] plugins = importers.toArray(new Object[importers.size()]);
+        if (plugins.length == 0) {
+            JOptionPane.showMessageDialog(parent, "No Taskgraph Importers currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
+                    GUIEnv.getTrianaImageIcon());
+            return TFileChooser.CANCEL_OPTION;
+        }
         addFilters(plugins);
         approveBtn.setText(Env.getString("ImportBtn"));
         appendExtChk.setEnabled(false);
@@ -147,6 +153,11 @@ public class FileImportExportDecorator implements ActionListener {
         init();
         java.util.List<Object> importers = ExtensionFinder.services(ToolImporterInterface.class);
         Object[] plugins = importers.toArray(new Object[importers.size()]);
+        if (plugins.length == 0) {
+            JOptionPane.showMessageDialog(parent, "No Tool Importers currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
+                    GUIEnv.getTrianaImageIcon());
+            return TFileChooser.CANCEL_OPTION;
+        }
         addFilters(plugins);
         approveBtn.setText(Env.getString("ImportBtn"));
         appendExtChk.setEnabled(false);
@@ -176,6 +187,11 @@ public class FileImportExportDecorator implements ActionListener {
         init();
         java.util.List<Object> importers = ExtensionFinder.services(TaskGraphExporterInterface.class);
         Object[] plugins = importers.toArray(new Object[importers.size()]);
+        if (plugins.length == 0) {
+            JOptionPane.showMessageDialog(parent, "No Taskgraph Exporters currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
+                    GUIEnv.getTrianaImageIcon());
+            return TFileChooser.CANCEL_OPTION;
+        }
         addFilters(plugins);
         approveBtn.setText(Env.getString("ExportBtn"));
         appendExtChk.setEnabled(true);
@@ -223,8 +239,8 @@ public class FileImportExportDecorator implements ActionListener {
      * user.
      *
      * @return the imported taskgraph
-     *                             thrown if the taskgraph or workflow format is invalid
-     *                             or unparsable, non matching brackets for example.
+     *         thrown if the taskgraph or workflow format is invalid
+     *         or unparsable, non matching brackets for example.
      * @throws java.io.IOException thrown if there is a file IO problem.
      */
     public TaskGraph importWorkflow() throws TaskGraphException, IOException {
@@ -246,7 +262,7 @@ public class FileImportExportDecorator implements ActionListener {
             throw (new RuntimeException("Attempting to export workflow before Export Dialog shown"));
 
         // Bug fix for not picking up file name text.
-       ((TaskGraphExporterInterface) getSelectedFilter()).exportWorkflow(taskgraph,
+        ((TaskGraphExporterInterface) getSelectedFilter()).exportWorkflow(taskgraph,
                 fc.getSelectedFile(), appendExtChk.isSelected());
     }
 
@@ -255,9 +271,10 @@ public class FileImportExportDecorator implements ActionListener {
      * @return the current default package for imported tools.
      */
     public String getDefaultToolPackage() {
-        if (!(getSelectedFilter() instanceof ToolImporterInterface))
+        AbstractFormatFilter sel = getSelectedFilter();
+        if (!(sel instanceof ToolImporterInterface)) {
             throw (new RuntimeException("Attempting to import tools before Import Dialog shown"));
-
+        }
         return ((ToolImporterInterface) getSelectedFilter()).getDefaultToolPackage();
     }
 
@@ -268,8 +285,8 @@ public class FileImportExportDecorator implements ActionListener {
      * @param pack the suggested package for imported tools
      * @param pack
      * @return the imported tool
-     *                             thrown if the tool format is invalid or unparsable, non
-     *                             matching brackets for example.
+     *         thrown if the tool format is invalid or unparsable, non
+     *         matching brackets for example.
      * @throws java.io.IOException thrown if there is a file IO problem.
      */
     public Tool[] importTools(String pack) throws TaskGraphException, IOException {
@@ -283,6 +300,7 @@ public class FileImportExportDecorator implements ActionListener {
      * Set the options based on choosen filter. Options button enabled,
      * <code>FileFilter</code> filters.
      */
+
     private void setOptionsForSelectedFilter() {
         AbstractFormatFilter selectedFilter = getSelectedFilter();
         if (selectedFilter == null) {
@@ -291,13 +309,15 @@ public class FileImportExportDecorator implements ActionListener {
                 selectedFilter = (AbstractFormatFilter) filterList.getItemAt(0);
             }
         }
-        optionsBtn.setEnabled(selectedFilter.hasOptions());
-        fc.resetChoosableFileFilters();
-        FileFilter[] choosableFileFilters = selectedFilter.getChoosableFileFilters();
-        for (int i = 0; i < choosableFileFilters.length; i++) {
-            fc.addChoosableFileFilter(choosableFileFilters[i]);
+        if (selectedFilter != null) {
+            optionsBtn.setEnabled(selectedFilter.hasOptions());
+            fc.resetChoosableFileFilters();
+            FileFilter[] choosableFileFilters = selectedFilter.getChoosableFileFilters();
+            for (int i = 0; i < choosableFileFilters.length; i++) {
+                fc.addChoosableFileFilter(choosableFileFilters[i]);
+            }
+            fc.setFileFilter(selectedFilter.getDefaultFileFilter());
         }
-        fc.setFileFilter(selectedFilter.getDefaultFileFilter());
     }
 
     /**

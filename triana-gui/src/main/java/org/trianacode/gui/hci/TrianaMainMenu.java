@@ -88,7 +88,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
      * Menus
      */
     private JMenu fileMenu;
-    private JMenu helpMenu;
+    //private JMenu helpMenu;
     private JMenu toolsMenu;
     private JMenu editMenu;
     private JMenu optionsMenu;
@@ -126,7 +126,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
     private void createMenus(ToolTable tools) {
         JMenuItem item;
 
-        helpMenu = MenuMnemonics.getInstance().createMenu(Env.getString("Help"));
+        //helpMenu = MenuMnemonics.getInstance().createMenu(Env.getString("Help"));
         fileMenu = MenuMnemonics.getInstance().createMenu(Env.getString("File"));
 
         fileMenu.add(new JMenuItem(ActionTable.getAction(NEW_ACTION)));
@@ -150,7 +150,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         MenuMnemonics.getInstance().createMenuItem(Env.getString("Quit"), fileMenu, applicationFrame);
         MenuUtils.assignMnemonics(fileMenu);
 
-        MenuMnemonics.getInstance().createMenuItem(Env.getString("Index"), helpMenu, applicationFrame);
+        /*MenuMnemonics.getInstance().createMenuItem(Env.getString("Index"), helpMenu, applicationFrame);
         helpMenu.addSeparator();
         MenuMnemonics.getInstance().createMenuItem(Env.getString("GettingStarted"), helpMenu, applicationFrame);
         help = new JMenuItem(ActionTable.getAction(HELP_ACTION));
@@ -165,7 +165,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         MenuMnemonics.getInstance().createMenuItem(Env.getString("FindTool"), helpMenu, applicationFrame);
         helpMenu.addSeparator();
         MenuMnemonics.getInstance().createMenuItem(Env.getString("System"), helpMenu, applicationFrame);
-        MenuMnemonics.getInstance().createMenuItem(Env.getString("About"), helpMenu, applicationFrame);
+        MenuMnemonics.getInstance().createMenuItem(Env.getString("About"), helpMenu, applicationFrame);*/
 
         editMenu = MenuMnemonics.getInstance().createMenu(Env.getString("Edit"));
         editMenu.add(new JMenuItem(ActionTable.getAction(CUT_ACTION)));
@@ -255,7 +255,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
      * Called after creation to make sure that the ehlp menu is addedc at the end of the menu bar.
      */
     public void addHelp() {
-        this.add(helpMenu);
+        //this.add(helpMenu);
     }
 
 

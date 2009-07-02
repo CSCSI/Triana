@@ -146,7 +146,7 @@ public interface ToolTable {
     /**
      * Deletes the specified tool.
      */
-    public void deleteTool(Tool tool);
+    public void deleteTool(Tool tool, boolean files);
 
 
     /**
@@ -155,7 +155,7 @@ public interface ToolTable {
      * file location, tool server network address), and is ignored if not understood.
      *
      * @param location the location of the file
-     * @param toolbox the toolbox the location is in (specify null if unknown)
+     * @param toolbox  the toolbox the location is in (specify null if unknown)
      */
     public void refreshLocation(String location, String toolbox);
 
@@ -193,8 +193,8 @@ public interface ToolTable {
      * Generate a new file location to store a pasted tool
      *
      * @param toolname tool to be created
-     * @param pack tool package name
-     * @param toolbox toolbox to create the tool in
+     * @param pack     tool package name
+     * @param toolbox  toolbox to create the tool in
      * @return a unused file to store the xml for the specified tool in
      */
     public String getPasteFileLocation(String toolname, String pack, String toolbox);

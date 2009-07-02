@@ -64,18 +64,18 @@ import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.ParameterWindowListener;
 import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.imp.tool.creators.ToolClassLoader;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.CompileUtil;
 import org.trianacode.util.CompilerException;
 import org.trianacode.util.Env;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
 
 /**
  * The class responsible for co-ordinating the compiling of tools and the
@@ -93,17 +93,13 @@ public class CompileHandler implements ParameterWindowListener {
      */
     private CompilePanel panel;
 
-    /**
-     * the currently loaded tools
-     */
-    private ToolTable tools;
 
     /**
      * Compile options
      */
     private boolean compileSource = true;
-    private String destinationDir;
     private String sourceFilePath;
+    private String destFilePath;
     private String sourceDir;
     private String toolFile;
     private String toolName;
@@ -113,7 +109,6 @@ public class CompileHandler implements ParameterWindowListener {
     private boolean compileGUI = true;
 
     private boolean automatedCompile = false;
-    private boolean generateXML = true;
 
     private String unitName;
     private CompileUtil compiler;
@@ -125,34 +120,21 @@ public class CompileHandler implements ParameterWindowListener {
      * Construct a compile handler that will be used to automatically compile tools. Set the tool and then call compile,
      * errors will be reported but ignored, messages will be appended to a dialog.
      *
-     * @param tools            the system ToolTable
      * @param automatedCompile if <b>true</b> reports will be append to a dialog and compilation won't be interupted
      */
-    public CompileHandler(ToolTable tools, boolean automatedCompile) {
-        this(tools, automatedCompile, true);
-    }
-
-    public CompileHandler(ToolTable tools, boolean automatedCompile, boolean generateXML) {
-        this.tools = tools;
+    public CompileHandler(boolean automatedCompile) {
         this.automatedCompile = automatedCompile;
-        this.generateXML = generateXML;
 
-        if (automatedCompile)
+        if (automatedCompile) {
             init();
-    }
-
-    /**
-     * Construct a compiler handler for compiling a yet to be specified tool
-     */
-    public CompileHandler(ToolTable tools) {
-        this(null, tools);
+        }
     }
 
     /**
      * Construct a compiler handler for compiling a specified tool
      */
     public CompileHandler(Tool tool, ToolTable tools) {
-        this(tools, false, true);
+        this(false);
 
         if (panel == null) {
             panel = new CompilePanel(tools);
@@ -165,13 +147,12 @@ public class CompileHandler implements ParameterWindowListener {
     }
 
     private void init() {
-        destinationDir = Env.getToolClassesDestinationDir();
-        compiler = new CompileUtil(destinationDir, true, true);
+        compiler = new CompileUtil(true);
         compiler.setCompilerLocation(Env.getCompilerCommand());
-        compiler.setCompilerClasspath(Env.getClasspath() + System.getProperty("path.separator") + destinationDir);
+        compiler.setCompilerClasspath(Env.getClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
         compiler.setCompilerArguments(Env.getJavacArgs());
 
-        errorFrame = new ScrollingMessageFrame("Automated Compile - Error Messages");
+        errorFrame = new ScrollingMessageFrame("Automated Compile - Error Messages", false);
 
     }
 
@@ -195,9 +176,12 @@ public class CompileHandler implements ParameterWindowListener {
                 unitPackage = proxy.getUnitPackage().replace('.', File.separatorChar);
                 toolBox = tool.getToolBox();
                 toolPackage = tool.getToolPackage();
-                toolFile = tool.getToolXMLFileName();
-                sourceDir = toolBox + File.separatorChar + unitPackage + File.separatorChar + "src";
-                sourceFilePath = sourceDir + File.separatorChar + unitName + ".java";
+                toolFile = tool.getDefinitionPath();
+                sourceDir = computeSrcFileLocation(toolBox, unitPackage);
+                if (sourceDir != null) {
+                    sourceFilePath = sourceDir + File.separatorChar + unitName + ".java";
+                }
+                destFilePath = computeDestFileLocation(toolBox);
 
                 if (panel != null) {
                     panel.setUnitName(unitName);
@@ -212,6 +196,80 @@ public class CompileHandler implements ParameterWindowListener {
                     compile();
             }
         }
+    }
+
+    private String computeDestFileLocation(String toolbox) {
+        File f = new File(toolbox);
+        if (!checkDir(f)) {
+            return null;
+        }
+        File cls = new File(f, "classes");
+        if (!checkDir(cls)) {
+            cls = findDir(f, "classes");
+        }
+        if (cls == null) {
+            cls = new File(f, "classes");
+            cls.mkdirs();
+        }
+        return cls.getAbsolutePath();
+    }
+
+    private String computeSrcFileLocation(String toolBox, String packageString) {
+        File f = new File(toolBox);
+        if (!checkDir(f)) {
+            return null;
+        }
+        File src = new File(toolBox, "src");
+        if (!checkDir(src)) {
+            src = findDir(f, "src");
+        }
+        File srcDir = src;
+
+        File main = new File(src, "main");
+        if (checkDir(main)) {
+            File java = new File(main, "java");
+            if (checkDir(java)) {
+                // looks like maven
+                srcDir = java;
+            }
+        }
+        return srcDir.getAbsolutePath() + File.separator + packageString;
+    }
+
+    private File findDir(File parent, String name) {
+        File[] files = parent.listFiles(new FilenameFilter() {
+
+            public boolean accept(File file, String s) {
+                if (!file.isDirectory() || s.startsWith(".") || s.startsWith("CVS")) {
+                    return false;
+                }
+                return true;
+            }
+        });
+        if (files == null) {
+            return null;
+        }
+        for (File file : files) {
+            if (file.getName().equals(name)) {
+                return file;
+            }
+        }
+        for (File file : files) {
+
+            File f = findDir(file, name);
+            if (f != null) {
+                return f;
+            }
+
+        }
+        return null;
+    }
+
+    private boolean checkDir(File f) {
+        if (!f.exists() || f.length() == 0 || !f.isDirectory()) {
+            return false;
+        }
+        return true;
     }
 
 
@@ -241,7 +299,6 @@ public class CompileHandler implements ParameterWindowListener {
                 }
             }
             compileSource = panel.isCompileSource();
-            destinationDir = panel.getDestinationDir();
             sourceFilePath = panel.getSourceFilePath();
             sourceDir = panel.getSourceDir();
             toolFile = panel.getToolFile();
@@ -250,7 +307,6 @@ public class CompileHandler implements ParameterWindowListener {
             toolBox = panel.getToolBox();
             unitPackage = panel.getUnitPackage();
             compileGUI = panel.isCompileGUI();
-            generateXML = panel.isGenerateXML();
             unitName = panel.getUnitName();
 
             compile();
@@ -261,110 +317,50 @@ public class CompileHandler implements ParameterWindowListener {
     public void compile() {
         try {
             if (compileSource) {
-                if (!(new File(destinationDir).exists()))
-                    new File(destinationDir).mkdirs();
-
                 if (!automatedCompile) {
-                    compiler = new CompileUtil(sourceFilePath, destinationDir, true);
+                    compiler = new CompileUtil(sourceFilePath, true);
                     compiler.setCompilerLocation(panel.getCompilerCommand());
-                    compiler.setCompilerClasspath(panel.getCompilerClasspath() + System.getProperty("path.separator") + destinationDir);
+                    compiler.setCompilerClasspath(panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
                     compiler.setCompilerArguments(panel.getCompilerArguments());
                 } else
                     compiler.setJavaFile(sourceFilePath);
-
+                compiler.setDestDir(destFilePath);
                 compiler.setSourcepath(sourceDir);
                 compiler.compile();
             }
 
-            if (generateXML) {
-                Tool prototype = null;
+            if (compileGUI) {
 
-                if (new File(toolFile).exists()) {
-                    try {
-                        XMLReader reader = new XMLReader(new FileReader(toolFile));
-                        prototype = reader.readComponent();
-                    } catch (IOException except) {
-                    }
-                }
-
-                if (prototype == null)
-                    prototype = new ToolImp();
-
-                prototype.setToolName(toolName);
-                prototype.setToolPackage(toolPackage);
-                prototype.setToolBox(toolBox);
-                prototype.setProxy(new JavaProxy(parseSrcForQualifiedUnit(), unitPackage));
-
-                Tool tool = generateToolXML(prototype, toolFile, tools);
-                compileGUI(tool);
+                //compileGUI(tool);
             }
-//        } catch (NullPointerException except) {
-//            if (automatedCompile)
-//                errorFrame.println("NPE, cannot instantiate: " + unitPackage.replace(File.separatorChar, '.') + "." + unitName);
-//            else {
-//                new ErrorDialog("NPE, cannot instantiate: " + unitPackage.replace(File.separatorChar, '.') + "." + unitName);
-//                showParameterWindow();
-//            }
+
         } catch (IOException except) {
-            if (automatedCompile)
+            if (automatedCompile) {
+                errorFrame.setVisible(true);
                 errorFrame.println(except.getMessage());
-            else {
+            } else {
+                except.printStackTrace();
                 new ErrorDialog(Env.getString("compileError"), except.getMessage());
                 showParameterWindow();
             }
-        } catch (TaskGraphException except) {
+        } /*catch (TaskGraphException except) {
             if (automatedCompile)
                 errorFrame.println(except.getMessage());
             else {
                 new ErrorDialog(Env.getString("taskGraphError"), except.getMessage());
                 showParameterWindow();
             }
-        } catch (CompilerException except) {
-            if (automatedCompile)
+        } */ catch (CompilerException except) {
+            if (automatedCompile) {
+                errorFrame.setVisible(true);
+
                 errorFrame.println(except.getMessage());
-            else
+            } else
                 showParameterWindow();
         }
 
     }
 
-
-    private String parseSrcForQualifiedUnit() throws IOException {
-        String qualUnitName = "";
-        String sourceFile = sourceFilePath;
-
-        BufferedReader reader = FileUtils.createReader(sourceFile);
-        StreamTokenizer token = new StreamTokenizer(reader);
-        token.eolIsSignificant(false);
-        token.slashSlashComments(true);
-        token.slashStarComments(true);
-        token.lowerCaseMode(false);
-        token.wordChars((int) '_', (int) '_');
-
-        boolean found = false;
-        int currTok;
-        try {
-            while ((!found) && ((currTok = token.nextToken()) != StreamTokenizer.TT_EOF)) {
-                if ((currTok == StreamTokenizer.TT_WORD) && (token.sval.equals("package"))) {
-                    token.nextToken();
-                    qualUnitName = token.sval;
-                    found = true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            FileUtils.closeReader(reader);
-        }
-
-        if (!found)
-            qualUnitName = unitPackage;
-
-        if (qualUnitName.equals(""))
-            return unitName;
-        else
-            return qualUnitName + '.' + unitName;
-    }
 
     public void compileGUI(Tool tool) throws FileNotFoundException, CompilerException {
         if (compileGUI && tool.isParameterName(Tool.PARAM_PANEL_CLASS)) {
@@ -376,6 +372,7 @@ public class CompileHandler implements ParameterWindowListener {
             if (!(new File(sourcepath).exists())) {
                 String errorMsg = Env.getString("compileError3") + ", " + sourcepath + " does not exist";
                 if (automatedCompile) {
+                    errorFrame.setVisible(true);
                     errorFrame.println(errorMsg);
                 } else {
                     new ErrorDialog(Env.getString("compileError"), errorMsg);
@@ -387,31 +384,17 @@ public class CompileHandler implements ParameterWindowListener {
             if (automatedCompile) {
                 compiler.setJavaFile(sourcepath);
             } else {
-                compiler = new CompileUtil(sourcepath, destinationDir, true);
+                compiler = new CompileUtil(sourcepath, true);
                 compiler.setCompilerLocation(panel.getCompilerCommand());
-                compiler.setCompilerClasspath(panel.getCompilerClasspath() + System.getProperty("path.separator") + destinationDir);
+                //TODO
+                compiler.setCompilerClasspath(panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
                 compiler.setCompilerArguments(panel.getCompilerArguments());
             }
+            compiler.setDestDir(destFilePath);
             compiler.setSourcepath(sourceDir);
             compiler.compile();
         }
     }
 
-    /**
-     * Generate an XML file for the specified tool.
-     *
-     * @see Tool getPrototypeTool(String unitname, String unitpack, String toolname, String toolpack)
-     */
-    public Tool generateToolXML(Tool prototype, String xmlfile, ToolTable tools) throws TaskException {
-        prototype.setToolXMLFileName(xmlfile);
-
-        TaskGraph taskgraph = TaskGraphManager.createTaskGraph(TaskGraphManager.TOOL_DEF_FACTORY_TYPE);
-
-        Task task = taskgraph.createTask(prototype, false);
-
-        tools.refreshLocation(xmlfile, prototype.getToolBox());
-
-        return task;
-    }
 
 }
