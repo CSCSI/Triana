@@ -34,7 +34,7 @@ import java.io.FilenameFilter;
 
 public class ToolFileHandler {
 
-    public static File getXMLDirecotry(Tool tool) {
+    public static File getXMLDirectory(Tool tool) {
         return getDir(tool, tool.getToolBox(), "xml");
     }
 
@@ -51,10 +51,15 @@ public class ToolFileHandler {
     }
 
     public static File getRoot(Tool tool, String toolbox) {
+        File f = null;
         if (toolbox == null) {
-            return null;
+            File def = new File(tool.getDefinitionPath());
+            if (def == null) {
+                return null;
+            }
+            f = getRootFromDefinition(def);
         }
-        File f = new File(toolbox);
+        f = new File(toolbox);
         if (!f.exists() || f.length() == 0) {
             return null;
         }
@@ -78,6 +83,20 @@ public class ToolFileHandler {
             parent = parent.getParentFile();
         }
         return false;
+    }
+
+    private static File getRootFromDefinition(File def) {
+        File parent = def.getParentFile();
+        while (parent != null) {
+            if (parent.getAbsolutePath().equals("classes")) {
+                return parent.getParentFile();
+            }
+            if (parent.getAbsolutePath().equals("lib")) {
+                return parent.getParentFile();
+            }
+            parent = parent.getParentFile();
+        }
+        return null;
     }
 
     private static File getDir(Tool tool, String toolbox, String name) {

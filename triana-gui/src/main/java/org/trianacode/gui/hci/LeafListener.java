@@ -686,7 +686,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
             try {
                 if (copy) {
                     ToolImp newTool = new ToolImp(tool);
-                    File f = ToolFileHandler.getXMLDirecotry(tool);
+                    File f = ToolFileHandler.getXMLDirectory(tool);
                     System.out.println("LeafListener.handleRenameTool xml dir:" + f.getAbsolutePath());
                     f = new File(f, name + ".xml");
                     newTool.setDefinitionPath(f.getAbsolutePath());

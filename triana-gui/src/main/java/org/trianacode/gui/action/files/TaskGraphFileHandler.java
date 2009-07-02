@@ -449,7 +449,7 @@ public class TaskGraphFileHandler implements SelectionManager {
             boolean finished = false;
             writeFile = false;
             do {
-                TFileChooser chooser = new TFileChooser(Env.TASKGRAPH_DIRECTORY);
+                TFileChooser chooser = new TFileChooser(Env.getDirectory(Env.TASKGRAPH_DIRECTORY));
                 chooser.setDialogTitle("Save As...");
                 chooser.setFileFilter(new XMLFileFilter());
 
@@ -483,12 +483,14 @@ public class TaskGraphFileHandler implements SelectionManager {
             if (showdialog) {
                 String taskName = FileUtils.getFileNameNoSuffix(filename);
                 group.setToolName(taskName);
-                ((Tool) taskgraph).setDefinitionPath(filename);
+                group.setToolPackage("ummm.dunno");
+                taskgraph.setDefinitionPath(filename);
             }
 
             backGroundSaveTaskGraph(taskgraph, filename, tools, true);
         }
     }
+
 
     private static void backGroundSaveTaskGraph(final Tool task, final String file, final ToolTable tools, final boolean updateRecent) {
         Thread thread = new Thread() {

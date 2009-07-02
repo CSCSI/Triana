@@ -137,29 +137,34 @@ public class ToolTableUtils {
      *         xml file version)
      */
     public static boolean isBroken(Tool tool) {
-        String name = tool.getQualifiedToolName();
-        try {
-            if (!(tool instanceof TaskGraph)) {
-                if (tool.isParameterName(Tool.PARAM_PANEL_CLASS) && tool.getParameter(
-                        Tool.PARAM_PANEL_CLASS).equals("Invalid") && (!tool.isParameterName(
-                        Tool.GUI_BUILDER)) && (!tool.isParameterName(Tool.OLD_GUI_BUILDER))) {
-                    return true;
-                } else if (tool.getProxy() instanceof JavaProxy) {
-                    name = ((JavaProxy) tool.getProxy()).getFullUnitName();
-                    ClassLoaders.forName(name);
 
-                    if (tool.isParameterName(Tool.PARAM_PANEL_CLASS) && (!tool.getParameter(
-                            Tool.PARAM_PANEL_CLASS).equals("Invalid"))) {
+        if (!(tool instanceof TaskGraph)) {
+            if (tool.isParameterName(Tool.PARAM_PANEL_CLASS) && tool.getParameter(
+                    Tool.PARAM_PANEL_CLASS).equals("Invalid") && (!tool.isParameterName(
+                    Tool.GUI_BUILDER)) && (!tool.isParameterName(Tool.OLD_GUI_BUILDER))) {
+                return true;
+            } else if (tool.getProxy() instanceof JavaProxy) {
+                String name = ((JavaProxy) tool.getProxy()).getFullUnitName();
+                try {
+                    ClassLoaders.forName(name);
+                } catch (ClassNotFoundException e) {
+                    log.warning("Broken tool: " + name);
+                    return true;
+                }
+
+                if (tool.isParameterName(Tool.PARAM_PANEL_CLASS) && (!tool.getParameter(
+                        Tool.PARAM_PANEL_CLASS).equals("Invalid"))) {
+                    try {
                         ClassLoaders.forName((String) tool.getParameter(Tool.PARAM_PANEL_CLASS));
+                    } catch (ClassNotFoundException e) {
+                        log.warning("Broken tool: " + name);
+                        return true;
                     }
                 }
             }
+        }
 
-            return false;
-        }
-        catch (ClassNotFoundException e) {
-            log.warning("Broken tool: " + name);
-            return true;
-        }
+        return false;
+
     }
 }

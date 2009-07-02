@@ -78,7 +78,6 @@ import java.util.Map;
  * @version $Revision: 4048 $
  * @created 6th May 2003
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class BrokenToolMonitor extends Thread implements ToolTableListener {
@@ -112,6 +111,7 @@ public class BrokenToolMonitor extends Thread implements ToolTableListener {
 
     /**
      * @return true if the tool is broken
+     *         TODO - the icon is not updated if the tool ceases to be broken!!
      */
     public static boolean isBroken(Tool tool) {
         if (!brokentable.containsKey(tool))
@@ -191,7 +191,7 @@ public class BrokenToolMonitor extends Thread implements ToolTableListener {
 
             try {
                 Thread.sleep(1000 * 60);
-            } catch(InterruptedException except) {
+            } catch (InterruptedException except) {
             }
         }
     }

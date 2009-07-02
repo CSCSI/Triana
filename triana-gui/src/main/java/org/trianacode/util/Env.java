@@ -898,6 +898,10 @@ public final class Env {
         if (lastdir != null) {
             return lastdir;
         } else {
+            File f = new File(dirtype);
+            if (f.exists() && f.length() > 0) {
+                return dirtype;
+            }
             return userHome();
         }
     }

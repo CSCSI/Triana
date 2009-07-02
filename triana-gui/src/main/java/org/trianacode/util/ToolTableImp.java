@@ -277,15 +277,6 @@ public class ToolTableImp extends AbstractToolTable {
 
         for (int count = 0; count < toolboxArray.length; count++) {
             String baseToolboxPath = toolboxArray[count];
-
-            // recursively find all files in toolboxes with .xml suffix
-
-            File[] xmlfiles = FileUtils.listEndsWith(baseToolboxPath, XMLReader.XML_FILE_SUFFIX, excludedDirectories);
-
-            for (int i = 0; i < xmlfiles.length; i++) {
-                addTool(xmlfiles[i], baseToolboxPath);
-
-            }
             JavaReader reader = new JavaReader();
             try {
                 List<Tool> tools = reader.createTools(baseToolboxPath);
@@ -301,6 +292,15 @@ public class ToolTableImp extends AbstractToolTable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            // recursively find all files in toolboxes with .xml suffix
+
+            File[] xmlfiles = FileUtils.listEndsWith(baseToolboxPath, XMLReader.XML_FILE_SUFFIX, excludedDirectories);
+
+            for (int i = 0; i < xmlfiles.length; i++) {
+                addTool(xmlfiles[i], baseToolboxPath);
+
+            }
+
         }
 
     }
