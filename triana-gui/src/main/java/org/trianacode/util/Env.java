@@ -114,7 +114,7 @@ public final class Env {
     private static boolean passwordOK = false;
     private static boolean runOut = false;
     private static final String version = "3.2.2";
-    private static final String verName = "TrianaV3";
+    private static final String verName = "TrianaV4";
     public static String CONFIG_VERSION = "1.6.4";
 
     private static Vector classpaths;
@@ -863,9 +863,17 @@ public final class Env {
     /**
      * @return the absolute path to the user resource directory.
      */
-    public final static String getResourceDir() {
-        return Home.getResourceDir();
+    public final static synchronized String getResourceDir() {
+        if (resourceDir == null) {
+            resourceDir = home() + File.separator + verName + "Resources";
+            File resDir = new File(resourceDir);
+            if (!resDir.exists()) {
+                resDir.mkdir();
+            }
+        }
+        return resourceDir;
     }
+
 
     /**
      * @return the last directory used to access the specified directory type (@see

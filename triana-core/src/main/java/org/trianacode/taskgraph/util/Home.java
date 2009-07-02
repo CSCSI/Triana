@@ -33,8 +33,7 @@ public class Home {
     static Logger logger = Logger.getLogger("org.trianacode.taskgraph.util.Home");
     private static String home = null;
     private static String os = null;
-    private static String resourcesDir = null;
-    private static String version = "40";
+
 
     public static synchronized String home() {
         if (home != null) {
@@ -81,20 +80,6 @@ public class Home {
         return home;
     }
 
-
-    /**
-     * @return the absolute path to the user resource directory.
-     */
-    public final static synchronized String getResourceDir() {
-        if (resourcesDir == null) {
-            resourcesDir = home() + File.separator + "Triana" + version + "Resources";
-            File resDir = new File(resourcesDir);
-            if (!resDir.exists()) {
-                resDir.mkdir();
-            }
-        }
-        return resourcesDir;
-    }
 
     public static synchronized String os() {
         if (os != null) {
