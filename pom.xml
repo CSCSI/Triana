@@ -39,8 +39,10 @@
     <modules>
         <module>triana-core</module>
         <module>triana-gui</module>
-        <module>triana-types</module>
+        <!--<module>triana-types</module>-->
         <module>triana-interceptors</module>
+		<module>triana-tool</module>
+		<module>triana-app</module>
     </modules>
 
 </project>
