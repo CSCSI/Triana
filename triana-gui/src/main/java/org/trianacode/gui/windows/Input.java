@@ -134,7 +134,7 @@ public class Input implements Serializable {
      */
     public static String aString(Component parent, String text) {
         return (String) JOptionPane.showInputDialog(parent, text, "Triana Input Dialog",
-                JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, "");
+                JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), null, "");
     }
 
 

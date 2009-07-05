@@ -15,7 +15,7 @@
  */
 
 
-package org.trianacode.taskgraph.imp.tool.creators.type;
+package org.trianacode.taskgraph.tool.creators.type;
 
 import java.util.ArrayList;
 

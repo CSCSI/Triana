@@ -207,7 +207,7 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
             getToolkit().beep();
             JOptionPane.showMessageDialog(editorPane, "The URL provided was not a valid",
                     "Invalid URL",
-                    JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
         }
     }
 
@@ -293,7 +293,7 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
                 catch (IOException ioe) {
                     getToolkit().beep();
                     JOptionPane.showMessageDialog(editorPane, url,
-                            "Document not found", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            "Document not found", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                     editorPane.setDocument(doc);
                 }
                 finally {

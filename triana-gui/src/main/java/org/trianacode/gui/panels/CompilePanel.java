@@ -664,7 +664,7 @@ public class CompilePanel extends ParameterPanel
                 toolfile.setText(toolFileStr);
             } else {
                 JOptionPane.showMessageDialog(this, "The selected unit package is not in your tool box path",
-                        "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaIcon());
                 unitpack.setText("");
                 toolpack.setText("");
             }

@@ -106,7 +106,7 @@ public class OptionsHandler {
                 if (!panel.validateChanges()) {
                     JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
                             "The tool: " + panel.getInvalidToolName() + " does not exist",
-                            "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaIcon());
 
                     finished = false;
                 }

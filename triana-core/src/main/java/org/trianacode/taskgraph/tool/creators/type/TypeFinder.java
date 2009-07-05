@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.trianacode.taskgraph.imp.tool.creators.type;
+package org.trianacode.taskgraph.tool.creators.type;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +34,7 @@ public class TypeFinder {
     private String type;
     private File file;
     private ClassParser parser = new ClassParser();
+    private Set<String> deadEnds = new HashSet<String>();
 
     public TypeFinder(String type, File file) {
         this.type = convert(type);
@@ -41,20 +42,23 @@ public class TypeFinder {
     }
 
     public List<String[]> find() throws IOException {
+        long now = System.currentTimeMillis();
         Set<String[]> ret = new HashSet<String[]>();
         Map<String, ClassHierarchy> hiers = parser.readFile(file);
-        
+
         for (String hier : hiers.keySet()) {
             if (isType(hiers, hier)) {
                 ret.add(new String[]{hier, hiers.get(hier).getFile()});
             }
         }
+        long end = System.currentTimeMillis();
+        System.out.println("TypeFinder.find time:" + (end - now));
         return new ArrayList<String[]>(ret);
     }
 
     private boolean isType(Map<String, ClassHierarchy> hiers, String hier) {
         ClassHierarchy ch = hiers.get(hier);
-        if(ch == null) {
+        if (ch == null || deadEnds.contains(hier)) {
             return false;
         }
         String[] intfs = ch.getInterfaces();
@@ -65,16 +69,24 @@ public class TypeFinder {
         }
         for (String intf : intfs) {
             boolean is = isType(hiers, intf);
-            if(is) {
+            if (is) {
                 return true;
+            } else {
+                System.out.println("TypeFinder.isType adding deadend:" + intf);
+                deadEnds.add(intf);
             }
         }
-        
+
         String superClass = ch.getSuperClass();
         if (superClass.equals(type)) {
             return true;
         } else {
-            return isType(hiers, superClass);
+            boolean b = isType(hiers, superClass);
+            if (!b) {
+                System.out.println("TypeFinder.isType adding deadend:" + hier);
+                deadEnds.add(hier);
+            }
+            return b;
         }
     }
 
@@ -91,7 +103,7 @@ public class TypeFinder {
 
     public static void main(String[] args) {
         try {
-            List<String[]> matches = new TypeFinder("org.trianacode.taskgraph.tool.Tool", new File("/Users/scmabh/work/maven/triana/triana2/triana-core/target/classes")).find();
+            List<String[]> matches = new TypeFinder("org.trianacode.taskgraph.tool.Tool", new File("/Users/scmabh/work/maven/triana4/triana-core/target/classes")).find();
             for (String[] match : matches) {
                 System.out.println("TypeFinder.main matched:" + match[0] + ":" + match[1]);
             }

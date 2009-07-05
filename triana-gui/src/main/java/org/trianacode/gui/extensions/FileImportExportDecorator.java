@@ -121,7 +121,7 @@ public class FileImportExportDecorator implements ActionListener {
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
             JOptionPane.showMessageDialog(parent, "No Taskgraph Importers currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
-                    GUIEnv.getTrianaImageIcon());
+                    GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
         }
         addFilters(plugins);
@@ -155,7 +155,7 @@ public class FileImportExportDecorator implements ActionListener {
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
             JOptionPane.showMessageDialog(parent, "No Tool Importers currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
-                    GUIEnv.getTrianaImageIcon());
+                    GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
         }
         addFilters(plugins);
@@ -189,7 +189,7 @@ public class FileImportExportDecorator implements ActionListener {
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
             JOptionPane.showMessageDialog(parent, "No Taskgraph Exporters currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
-                    GUIEnv.getTrianaImageIcon());
+                    GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
         }
         addFilters(plugins);

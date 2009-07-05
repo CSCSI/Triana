@@ -108,7 +108,7 @@ public abstract class TrianaWindow extends JFrame
     public TrianaWindow() {
         super();
 
-        setIconImage(GUIEnv.getTrianaIcon());
+        setIconImage(GUIEnv.getTrianaImage());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
@@ -159,7 +159,7 @@ public abstract class TrianaWindow extends JFrame
      * @return image to use.
      */
     public Image getMyIcon() {
-        return GUIEnv.getTrianaIcon();
+        return GUIEnv.getTrianaImage();
     }
 
 

@@ -58,13 +58,13 @@
  */
 package org.trianacode.gui.appmaker;
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ClassPathPanel;
 import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.ParameterWindowListener;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -80,10 +80,10 @@ import java.io.File;
  * The panel for specifying the taskgraph that is executed from the
  * command line.
  *
- * @author      Ian Wang
- * @created     2nd November 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 2nd November 2003
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class CompilationPanel extends JPanel
@@ -94,8 +94,8 @@ public class CompilationPanel extends JPanel
     private JTextField javacfield = new JTextField(25);
     private JTextField classpathfield = new JTextField(25);
     private JTextField argfield = new JTextField(25);
-    private JButton javacbrowse = new JButton(FileUtils.getSystemImageIcon("dots.png"));
-    private JButton classpathbrowse = new JButton(FileUtils.getSystemImageIcon("dots.png"));
+    private JButton javacbrowse = new JButton(GUIEnv.getIcon("dots.png"));
+    private JButton classpathbrowse = new JButton(GUIEnv.getIcon("dots.png"));
 
     private ParameterWindow classpathwin;
 

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.trianacode.taskgraph.imp.tool.creators;
+package org.trianacode.taskgraph.tool;
 
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.ToolImp;
-import org.trianacode.taskgraph.imp.tool.creators.type.TypeFinder;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.tool.ClassLoaders;
-import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.creators.type.TypeFinder;
 import org.trianacode.taskgraph.util.FileUtils;
 
 import java.io.File;
@@ -42,7 +40,7 @@ import java.util.logging.Logger;
 
 public class JavaReader {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.imp.tool.creators.JavaReader");
+    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.JavaReader");
 
 
     static {

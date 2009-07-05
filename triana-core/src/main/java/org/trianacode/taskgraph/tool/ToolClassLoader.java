@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.trianacode.taskgraph.imp.tool.creators;
+package org.trianacode.taskgraph.tool;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 
 public class ToolClassLoader extends URLClassLoader {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.imp.tool.creators.ToolClassLoader");
+    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolClassLoader");
 
     private static ToolClassLoader loader = new ToolClassLoader();
 

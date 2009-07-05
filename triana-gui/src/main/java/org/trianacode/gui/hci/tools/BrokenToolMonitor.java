@@ -190,7 +190,7 @@ public class BrokenToolMonitor extends Thread implements ToolTableListener {
                 tree.repaint();
 
             try {
-                Thread.sleep(1000 * 60);
+                Thread.sleep(1000 * 5);
             } catch (InterruptedException except) {
             }
         }

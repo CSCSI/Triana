@@ -139,7 +139,7 @@ public class CommandLineWizard implements WizardListener {
             File saveFile = new File(filepanel.getJavaFileName());
             if (saveFile.exists()) {
                 int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
 
                 if (reply == JOptionPane.NO_OPTION) {
                     return false;
@@ -272,7 +272,7 @@ public class CommandLineWizard implements WizardListener {
             File saveFile = new File(filepanel.getBatchFileName());
             if (saveFile.exists()) {
                 int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
 
                 if (reply == JOptionPane.NO_OPTION) {
                     return false;
@@ -310,7 +310,7 @@ public class CommandLineWizard implements WizardListener {
             File saveFile = new File(filepanel.getShellScriptName());
             if (saveFile.exists()) {
                 int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
 
                 if (reply == JOptionPane.NO_OPTION) {
                     return false;
@@ -379,7 +379,7 @@ public class CommandLineWizard implements WizardListener {
                 compiler.compile();
             } catch (FileNotFoundException except) {
                 JOptionPane.showMessageDialog(comppanel, "Error: " + filepanel.getJavaFileName() + " not found!", "File Not Found Error", JOptionPane.ERROR_MESSAGE,
-                        GUIEnv.getTrianaImageIcon());
+                        GUIEnv.getTrianaIcon());
                 window.setVisible(true);
                 return;
             } catch (CompilerException except) {

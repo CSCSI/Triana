@@ -16,9 +16,11 @@
 
 package org.trianacode.util;
 
-import org.trianacode.taskgraph.imp.tool.creators.JavaReader;
+import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
+import org.trianacode.taskgraph.tool.JarHelper;
+import org.trianacode.taskgraph.tool.JavaReader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.util.FileUtils;
 
@@ -118,7 +120,7 @@ public class ToolTableImp extends AbstractToolTable {
                 purgeTool(path);
             } else {
                 Env.addExcludedTool(path);
-                purgeTool(path);
+                purgeToolRef(path);
             }
 
         }
@@ -190,9 +192,7 @@ public class ToolTableImp extends AbstractToolTable {
         }
 
         String xmlFilePath = toolFile.getAbsolutePath();
-        if (Env.isExcludedTool(xmlFilePath)) {
-            return;
-        }
+
         // don't load if an up-to-date tool already exists
         if (locationTable.containsKey(toolFile.getAbsolutePath())) {
             ToolInfo tool = locationTable.get(xmlFilePath);
@@ -206,29 +206,49 @@ public class ToolTableImp extends AbstractToolTable {
                 notifyToolRemoved(tool.getTool());
             }
         }
-
-        try {
-            XMLReader reader = new XMLReader(new BufferedReader(new FileReader(toolFile)));
-            Tool tool = reader.readComponent();
-
-            if (tool != null) {
-                if (tool.getToolPackage().equals("")) {
-                    tool.setToolPackage(getToolPackageName(xmlFilePath, tool.getToolName()));
+        if (toolFile.getName().endsWith(".jar")) {
+            try {
+                JarHelper helper = new JarHelper(toolFile);
+                List<String> potentials = helper.listEntries();
+                for (String potential : potentials) {
+                    if (potential.endsWith(".xml")) {
+                        InputStream in = helper.getStream(potential);
+                        readXMLStream(in, xmlFilePath, toolbox);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
 
-                tool.setDefinitionPath(xmlFilePath);
-                tool.setToolBox(toolbox);
-
-                ToolInfo toolinfo = new ToolInfo(tool, xmlFilePath);
-                locationTable.put(toolinfo.getXMLFileName(), toolinfo);
-                toolTable.put(toolinfo.getQualifiedName(), toolinfo);
-
-                notifyToolAdded(tool);
+            }
+        } else {
+            try {
+                readXMLStream(new FileInputStream(toolFile), xmlFilePath, toolbox);
+            }
+            catch (Exception e) {
+                System.out.println(e.getMessage() + " in xmlFile: " + xmlFilePath);
+                e.printStackTrace(System.out);
             }
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage() + " in xmlFile: " + xmlFilePath);
-            e.printStackTrace(System.out);
+    }
+
+    private void readXMLStream(InputStream in, String filePath, String toolbox) throws TaskGraphException, IOException {
+        XMLReader reader = new XMLReader(new BufferedReader(new InputStreamReader(in)));
+        Tool tool = reader.readComponent();
+
+        if (tool != null) {
+            if (tool.getToolPackage().equals("")) {
+                tool.setToolPackage(getToolPackageName(filePath, tool.getToolName()));
+            }
+            tool.setDefinitionPath(filePath);
+            tool.setToolBox(toolbox);
+            if (Env.isExcludedTool(filePath)) {
+                logger.fine("Not adding " + filePath + " because it has been excluded");
+            } else {
+                ToolInfo toolinfo = new ToolInfo(tool, filePath);
+                locationTable.put(toolinfo.getXMLFileName(), toolinfo);
+                toolTable.put(toolinfo.getQualifiedName(), toolinfo);
+                notifyToolAdded(tool);
+            }
         }
     }
 
@@ -272,6 +292,18 @@ public class ToolTableImp extends AbstractToolTable {
 
     }
 
+    protected void purgeToolRef(String location) {
+        if (locationTable.containsKey(location)) {
+            ToolInfo tool = locationTable.get(location);
+            //if (!toolboxes.contains(tool.getTool().getToolBox())) {
+            locationTable.remove(location);
+            toolTable.remove(tool.getQualifiedName());
+            notifyToolRemoved(tool.getTool());
+            //}
+        }
+
+    }
+
     protected void addTools() {
         String[] toolboxArray = toolboxes.toArray(new String[toolboxes.size()]);
 
@@ -292,17 +324,15 @@ public class ToolTableImp extends AbstractToolTable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // recursively find all files in toolboxes with .xml suffix
+            // recursively find all files in toolboxes with .xml suffix or a .jar
 
-            File[] xmlfiles = FileUtils.listEndsWith(baseToolboxPath, XMLReader.XML_FILE_SUFFIX, excludedDirectories);
+            File[] files = FileUtils.listEndsWith(baseToolboxPath, new String[]{XMLReader.XML_FILE_SUFFIX, ".jar"}, excludedDirectories);
 
-            for (int i = 0; i < xmlfiles.length; i++) {
-                addTool(xmlfiles[i], baseToolboxPath);
-
+            for (int i = 0; i < files.length; i++) {
+                addTool(files[i], baseToolboxPath);
             }
 
         }
-
     }
 
 

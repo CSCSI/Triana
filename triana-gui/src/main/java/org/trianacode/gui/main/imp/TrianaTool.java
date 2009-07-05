@@ -228,7 +228,7 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
             repaint();
 
             JOptionPane.showMessageDialog(this, errorstate, getToolName() + " " + Env.getString("Error"), JOptionPane.ERROR_MESSAGE,
-                    GUIEnv.getTrianaImageIcon());
+                    GUIEnv.getTrianaIcon());
         }
     }
 

@@ -307,7 +307,7 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
                     taskgraph.createControlTask(tool, false);
                 else
                     JOptionPane.showMessageDialog(this, "Invalid Control Task: " + controlfield.getText(), "Group Editor Error", JOptionPane.ERROR_MESSAGE,
-                            GUIEnv.getTrianaImageIcon());
+                            GUIEnv.getTrianaIcon());
             }
 
             controlfield.setText(taskgraph.getControlTask().getQualifiedToolName());

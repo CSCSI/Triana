@@ -276,13 +276,13 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
         private void saveHistory(Task task) {
             if (!(task instanceof ClipableTaskInterface)) {
                 JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: Clipins not implemented for " + task.getToolName(),
-                        "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                 return;
             }
 
             if (!((ClipableTaskInterface) task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
                 JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: No history information availible, try re-running with history tracking",
-                        "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                 return;
             }
 
@@ -312,7 +312,7 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
                 writer.close();
             } catch (IOException except) {
                 JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: " + except.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE,
-                        GUIEnv.getTrianaImageIcon());
+                        GUIEnv.getTrianaIcon());
             }
         }
 

@@ -511,10 +511,15 @@ public class GUIEnv {
 
 
     public static ImageIcon getIcon(String file) {
-        ImageIcon sysIcon = FileUtils.getSystemImageIcon(file);
+        ImageIcon sysIcon = FileUtils.getSystemImageIcon(iconTheme + "/" + file);
         if (sysIcon == null)
             logger.severe("Icon " + file + " not found.");
         return sysIcon;
+    }
+
+    public static Image getImage(String file) {
+        return FileUtils.getSystemImage(file);
+
     }
 
     /**
@@ -533,12 +538,12 @@ public class GUIEnv {
      *
      * @return image to use.
      */
-    public static Image getTrianaIcon() {
-        return FileUtils.getSystemImage(getTrianaIconName());
+    public static Image getTrianaImage() {
+        return getImage(iconTheme + "/" + getTrianaIconName());
     }
 
-    public static ImageIcon getTrianaImageIcon() {
-        return new ImageIcon(FileUtils.getSystemImage(getTrianaIconName()));
+    public static ImageIcon getTrianaIcon() {
+        return getIcon(getTrianaIconName());
     }
 }
 

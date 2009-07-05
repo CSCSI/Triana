@@ -381,9 +381,9 @@ public class ParameterMapPanel extends JPanel
                     XMLReader reader = new XMLReader(new FileReader(filename));
                     tool = reader.readComponent();
                 } catch (IOException except) {
-                    JOptionPane.showMessageDialog(null, "Error reading " + filename, "IO Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    JOptionPane.showMessageDialog(null, "Error reading " + filename, "IO Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                 } catch (TaskGraphException except) {
-                    JOptionPane.showMessageDialog(null, "Invalid taskgraph file: " + filename, "Taskgraph Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    JOptionPane.showMessageDialog(null, "Invalid taskgraph file: " + filename, "Taskgraph Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                 }
 
                 if (tool != null) {

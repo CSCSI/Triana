@@ -305,11 +305,15 @@ public final class Env {
     }
 
     public static void addExcludedTool(String definitionPath) {
+        logger.fine("adding excluded tool:" + definitionPath);
         excludedTools.add(definitionPath);
     }
 
     public static boolean isExcludedTool(String definitionPath) {
-        return excludedTools.contains(definitionPath);
+
+        boolean b = excludedTools.contains(definitionPath);
+        logger.fine("tool is excluded:" + definitionPath + "? " + b);
+        return b;
     }
 
     /**
@@ -1568,10 +1572,19 @@ public final class Env {
                         "Current config version is " + CONFIG_VERSION + " Attempting to load your config version " + versionStr);
             }
 
-            List elementList = handler.getChildren(handler.getChild(root, TOOLBOXES_STR));
+            List elementList = handler.getChildren(handler.getChild(root, EXCLUDED_TOOLS), NAME_STR);
             Iterator iter = elementList.iterator();
+            while (iter.hasNext()) {
+                Element name = (Element) iter.next();
+                String txt = name.getTextContent().trim();
+                addExcludedTool(txt);
+            }
+
+            elementList = handler.getChildren(handler.getChild(root, TOOLBOXES_STR));
+            iter = elementList.iterator();
             Element elem;
             String toolbox;
+
 
             while (iter.hasNext()) {
                 elem = ((Element) iter.next());
@@ -1609,13 +1622,6 @@ public final class Env {
                 setUserProperty(nameStr, value);
             }
 
-            elementList = handler.getChildren(handler.getChild(root, EXCLUDED_TOOLS), NAME_STR);
-            iter = elementList.iterator();
-            while (iter.hasNext()) {
-                Element name = (Element) iter.next();
-                String txt = name.getTextContent().trim();
-                excludedTools.add(txt);
-            }
 
             // color table elements
             Element colorTableElem = handler.getChild(root, COLOR_TABLE_STR);
@@ -1899,12 +1905,10 @@ public final class Env {
             String settings = path + "settings";
             logger.fine("resource path = " + path);
             InputStream localeSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream(settings);
-            Vector<String> locale;
-            locale = FileUtils.readAndSplitFile(new BufferedReader(new InputStreamReader(localeSettings)));
+            Vector<String> locale = FileUtils.readAndSplitFile(new BufferedReader(new InputStreamReader(localeSettings)));
             logger.info("Language = " + locale.get(0));
             logger.info("Country = " + locale.get(1));
-            Locale currentLocale;
-            currentLocale = new Locale(locale.get(0), locale.get(1));
+
             String file = path + "triana_" + locale.get(0) + "_" + locale.get(1) + ".properties";
 
             logger.info("Internationalization Bundle File = " + file);

@@ -90,7 +90,7 @@ public class TrianaDialog {
             msg.append(", ");
             msg.append(Env.getString("existsOverwrite"));
             return (JOptionPane.showConfirmDialog(null, msg.toString(), Env.getString("confirmOverwrite"),
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon())
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon())
                     == JOptionPane.YES_OPTION);
         } else
             return true;

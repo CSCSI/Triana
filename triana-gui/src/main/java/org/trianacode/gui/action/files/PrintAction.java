@@ -122,7 +122,7 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
                         if (taskgraphpanel != null)
                             comp = taskgraphpanel.getContainer();
                         else
-                            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                     } else
                         comp = GUIEnv.getApplicationFrame();
 

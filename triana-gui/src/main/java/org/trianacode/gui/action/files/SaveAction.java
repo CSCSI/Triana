@@ -98,7 +98,8 @@ public class SaveAction extends AbstractAction implements ActionDisplayOptions {
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selectionHandler.getSelectedTaskgraph() != null)
+        if (selectionHandler.getSelectedTaskgraph() != null) {
             TaskGraphFileHandler.saveTaskGraph(selectionHandler.getSelectedTaskgraph(), tools, false);
+        }
     }
 }

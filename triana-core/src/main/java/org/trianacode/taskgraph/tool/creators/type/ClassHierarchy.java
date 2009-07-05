@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.trianacode.taskgraph.imp.tool.creators.type;
+package org.trianacode.taskgraph.tool.creators.type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class ClassHierarchy {
     }
 
     public void addInterface(String inf) {
-        if(!interfaces.contains(inf)) {
+        if (!interfaces.contains(inf)) {
             interfaces.add(inf);
         }
     }
@@ -68,6 +68,7 @@ public class ClassHierarchy {
     public void setFile(String file) {
         this.file = file;
     }
+
 
     public String toString() {
         return "Name:" + name + " Superclass:" + superClass + " Interfaces:" + interfaces;

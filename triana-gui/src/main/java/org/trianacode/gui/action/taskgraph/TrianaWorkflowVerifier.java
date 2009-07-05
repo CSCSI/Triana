@@ -118,7 +118,7 @@ public class TrianaWorkflowVerifier implements WorkflowVerifier {
 
             String[] options = new String[]{"Reset and ReRun", "Cancel"};
 
-            int result = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(), name + " contains error state tasks!", Env.getString("Run") + " Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon(), options, options[0]);
+            int result = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(), name + " contains error state tasks!", Env.getString("Run") + " Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon(), options, options[0]);
 
             if (result == 0)
                 return RESET_AND_RUN;
@@ -129,7 +129,7 @@ public class TrianaWorkflowVerifier implements WorkflowVerifier {
             if (name.equals(""))
                 name = "Workflow";
 
-            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot run " + name + " as it contains suspended tasks! Please try again later.", Env.getString("Run") + " Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot run " + name + " as it contains suspended tasks! Please try again later.", Env.getString("Run") + " Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return CANCEL;
         } else
             return AUTHORIZE;

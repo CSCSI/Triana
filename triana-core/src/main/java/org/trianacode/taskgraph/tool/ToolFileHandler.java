@@ -35,54 +35,34 @@ import java.io.FilenameFilter;
 public class ToolFileHandler {
 
     public static File getXMLDirectory(Tool tool) {
-        return getDir(tool, tool.getToolBox(), "xml");
+        return getDir(tool, "xml");
     }
 
     public static File getSourceDirectory(Tool tool) {
-        return getDir(tool, tool.getToolBox(), "src");
+        return getDir(tool, "src");
     }
 
     public static File getClassesDirectory(Tool tool) {
-        return getDir(tool, tool.getToolBox(), "classes");
+        return getDir(tool, "classes");
     }
 
     public static File getLibDirectory(Tool tool) {
-        return getDir(tool, tool.getToolBox(), "lib");
+        return getDir(tool, "lib");
     }
 
-    public static File getRoot(Tool tool, String toolbox) {
-        File f = null;
-        if (toolbox == null) {
-            File def = new File(tool.getDefinitionPath());
-            if (def == null) {
-                return null;
-            }
-            f = getRootFromDefinition(def);
-        }
-        f = new File(toolbox);
-        if (!f.exists() || f.length() == 0) {
-            return null;
-        }
-
+    public static File getRoot(Tool tool) {
         File def = new File(tool.getDefinitionPath());
-        if (!def.exists() || def.length() == 0) {
+        if (def == null) {
             return null;
         }
-        if (!isContained(def, f)) {
+        File root = getRootFromDefinition(def);
+        if (root == null) {
             return null;
         }
-        return f;
-    }
-
-    private static boolean isContained(File tool, File toolbox) {
-        File parent = tool.getParentFile();
-        while (parent != null) {
-            if (parent.getAbsolutePath().equals(toolbox.getAbsolutePath())) {
-                return true;
-            }
-            parent = parent.getParentFile();
+        if (!root.exists() || root.length() == 0) {
+            return null;
         }
-        return false;
+        return root;
     }
 
     private static File getRootFromDefinition(File def) {
@@ -94,14 +74,17 @@ public class ToolFileHandler {
             if (parent.getAbsolutePath().equals("lib")) {
                 return parent.getParentFile();
             }
+            if (parent.getAbsolutePath().equals("xml")) {
+                return parent.getParentFile();
+            }
             parent = parent.getParentFile();
         }
         return null;
     }
 
-    private static File getDir(Tool tool, String toolbox, String name) {
+    private static File getDir(Tool tool, String name) {
 
-        File root = getRoot(tool, toolbox);
+        File root = getRoot(tool);
         if (root == null) {
             return null;
         }

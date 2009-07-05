@@ -218,7 +218,7 @@ public abstract class AbstractToolTable implements ToolTable {
      * @param tool the Tool removed from the ToolTable
      */
     protected void notifyToolRemoved(Tool tool) {
-        ToolTableListener[] lists = (ToolTableListener[]) listeners.toArray(new ToolTableListener[listeners.size()]);
+        ToolTableListener[] lists = listeners.toArray(new ToolTableListener[listeners.size()]);
 
         for (int count = 0; count < lists.length; count++) {
             lists[count].toolRemoved(tool);

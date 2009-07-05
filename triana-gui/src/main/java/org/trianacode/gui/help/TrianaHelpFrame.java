@@ -440,7 +440,7 @@ public class TrianaHelpFrame extends JFrameEx {
     private class FileOpenURLAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String string = (String) JOptionPane.showInputDialog(TrianaHelpFrame.this,
-                    "Enter URL to open", "Open URL...", JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, null);
+                    "Enter URL to open", "Open URL...", JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), null, null);
 
             if (string != null) {
                 string.trim();

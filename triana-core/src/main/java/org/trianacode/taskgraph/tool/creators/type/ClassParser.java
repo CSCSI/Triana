@@ -15,7 +15,7 @@
  */
 
 
-package org.trianacode.taskgraph.imp.tool.creators.type;
+package org.trianacode.taskgraph.tool.creators.type;
 
 import java.io.*;
 import java.util.Enumeration;
@@ -41,8 +41,6 @@ public class ClassParser {
 
     private static Object DUMMY = new Object();
 
-    private String inputClass = null;
-
 
     public Map<String, ClassHierarchy> readFile(String fileName) throws IOException {
         File file = new File(fileName);
@@ -51,7 +49,6 @@ public class ClassParser {
     }
 
     public Map<String, ClassHierarchy> readFile(File file) throws IOException {
-        inputClass = parseClassFile(file.getAbsolutePath());
         if (!file.exists()) {
             throw new FileNotFoundException("Input file does not exist");
         }
@@ -65,7 +62,7 @@ public class ClassParser {
 
     }
 
-    private Map<String, ClassHierarchy> analyseClassFile(File file) throws IOException {
+    public Map<String, ClassHierarchy> analyseClassFile(File file) throws IOException {
         Map<String, ClassHierarchy> map = new HashMap<String, ClassHierarchy>();
         if (file.isDirectory()) {
             String[] files = file.list();
@@ -77,14 +74,14 @@ public class ClassParser {
             }
         } else {
             ClassHierarchy ch = extractClasses(file);
-            if(ch != null) {
+            if (ch != null) {
                 map.put(ch.getName(), ch);
             }
         }
         return map;
     }
 
-    private Map<String, ClassHierarchy> analyseClassFiles(File f, ZipFile zipFile) throws IOException {
+    public Map<String, ClassHierarchy> analyseClassFiles(File f, ZipFile zipFile) throws IOException {
         Map<String, ClassHierarchy> strings = new HashMap<String, ClassHierarchy>();
 
         Enumeration entries = zipFile.entries();
@@ -93,7 +90,8 @@ public class ClassParser {
             if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
                 InputStream stream = zipFile.getInputStream(entry);
                 ClassHierarchy ch = getClasses(stream, f);
-                if(ch != null) {
+                if (ch != null) {
+                    ch.setFile("jar:file:" + f.getAbsolutePath() + "!/" + entry.getName());
                     strings.put(ch.getName(), ch);
                 }
             }
@@ -101,7 +99,7 @@ public class ClassParser {
         return strings;
     }
 
-    private ClassHierarchy extractClasses(File file) throws IOException {
+    public ClassHierarchy extractClasses(File file) throws IOException {
         InputStream stream = null;
         try {
             stream = new FileInputStream(file);
@@ -116,7 +114,7 @@ public class ClassParser {
         }
     }
 
-    private ClassHierarchy getClasses(InputStream stream, File file) throws IOException {
+    public ClassHierarchy getClasses(InputStream stream, File file) throws IOException {
         DataInputStream dataStream = new DataInputStream(stream);
         return getPoolClasses(dataStream, file);
     }
@@ -201,18 +199,18 @@ public class ClassParser {
         stream.readUnsignedShort();
         int me = stream.readUnsignedShort();
         Integer index = classRefs.get(me);
-        if(index == null) {
+        if (index == null) {
             return null;
         }
 
         UTF8Constant utf = names.get(index);
-        if(utf == null) {
+        if (utf == null) {
             return null;
         }
 
         String[] currStrings = utf.getClasses();
 
-        if(currStrings == null || currStrings.length != 1) {
+        if (currStrings == null || currStrings.length != 1) {
             return null;
         }
         ClassHierarchy hier = new ClassHierarchy(createClassName(currStrings[0]));
@@ -231,7 +229,7 @@ public class ClassParser {
             hier.setSuperClass(createClassName(currStrings[0]));
         }
         int numInterfaces = stream.readUnsignedShort();
-        for(int k = 0; k < numInterfaces; k++) {
+        for (int k = 0; k < numInterfaces; k++) {
             int intf = stream.readUnsignedShort();
             index = classRefs.get(intf);
             if (index == null) {
@@ -257,8 +255,6 @@ public class ClassParser {
     }
 
 
-
-
     private String parseClassFile(String classFile) {
         int start = 0;
         int end = classFile.length();
@@ -269,10 +265,6 @@ public class ClassParser {
             end = classFile.indexOf(".");
         }
         return classFile.substring(start, end);
-    }
-
-    public String getInputClass() {
-        return inputClass;
     }
 
     public static void main(String[] args) {

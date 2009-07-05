@@ -166,7 +166,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
             JTextField pathField = new JTextField(toolBox);
             nameLinePanel.add(pathField, BorderLayout.CENTER);
 
-            JButton setDefaultBtn = new JButton(Env.getString("Set"));
+            JButton setDefaultBtn = new JButton("Set Type");
             setDefaultBtn.setEnabled(false);
             DefaultToolActionListener defaultToolActionListener = new DefaultToolActionListener(type, pathField, tools, setDefaultBtn);
             setDefaultBtn.addActionListener(defaultToolActionListener);
@@ -218,15 +218,15 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
 
                     if (toolBoxItems.contains(current)) { //already in list
                         JOptionPane.showMessageDialog(this, Env.getString("toolpathexists"), "Information", JOptionPane.INFORMATION_MESSAGE,
-                                GUIEnv.getTrianaImageIcon());
+                                GUIEnv.getTrianaIcon());
                         break;
                     } else if (isSubPath(current)) { //contained as a subpath of item in list
                         JOptionPane.showMessageDialog(this, Env.getString("toolpathsub"), "Information", JOptionPane.INFORMATION_MESSAGE,
-                                GUIEnv.getTrianaImageIcon());
+                                GUIEnv.getTrianaIcon());
                         break;
                     } else if (isSuperPath(current)) { //is super path of element
                         JOptionPane.showMessageDialog(this, Env.getString("toolpathsuper"), "Information", JOptionPane.INFORMATION_MESSAGE,
-                                GUIEnv.getTrianaImageIcon());
+                                GUIEnv.getTrianaIcon());
                         break;
                     } else {
                         tools.addToolBox(current);

@@ -668,7 +668,7 @@ public class MainTriana extends JPanel
             String name = (String) JOptionPane.showInputDialog(GUIEnv.getApplicationFrame(),
                     Env.getString("newNameFor") + " " + task.getToolName() + "?",
                     Env.getString("Rename"),
-                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, task.getToolName());
+                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), null, task.getToolName());
             if ((name != null) && (!name.equals(task.getToolName()))) {
                 task.setToolName(name);
             }

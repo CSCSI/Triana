@@ -222,7 +222,7 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
                 if (packageName == null) {
                     packageName = "";
                     JOptionPane.showMessageDialog(this, "The selected unit package is not in your tool box path",
-                            "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            "Warning", JOptionPane.WARNING_MESSAGE, GUIEnv.getTrianaIcon());
                 }
 
                 packageName = packageName.replace(File.separatorChar, '.');

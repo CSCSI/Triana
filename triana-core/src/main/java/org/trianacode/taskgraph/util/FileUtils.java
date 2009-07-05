@@ -802,9 +802,9 @@ public class FileUtils {
      */
     public static Image getSystemImage(String imageName) {
         imageName = imageName.replace(File.separatorChar, '/');
-        String dir = "system/icons/crystalicons/";
+        String dir = "system/icons/";
         if (imageName.startsWith("/")) {
-            dir = "system/icons/crystalicons";
+            dir = "system/icons";
         }
         String imageURL = dir + imageName;
         logger.finest("loading icon: " + imageURL);
@@ -1459,6 +1459,13 @@ public class FileUtils {
         return (File[]) list.toArray(new File[list.size()]);
     }
 
+    public static File[] listEndsWith(String baseDir, String[] endsWith, String[] excludedir) {
+        ArrayList list = new ArrayList();
+        list(baseDir, excludedir, endsWith, list);
+
+        return (File[]) list.toArray(new File[list.size()]);
+    }
+
     private static void list(String baseDir, String[] excludedir, String endsWith, ArrayList list) {
         File base = new File(baseDir);
         ExcludeFilter exfilter = new ExcludeFilter(excludedir);
@@ -1468,6 +1475,18 @@ public class FileUtils {
 
             if (baseList != null)
                 list(baseList, exfilter, new EndsWithFilter(endsWith), list);
+        }
+    }
+
+    private static void list(String baseDir, String[] excludedir, String[] endsWith, ArrayList list) {
+        File base = new File(baseDir);
+        ExcludeFilter exfilter = new ExcludeFilter(excludedir);
+
+        if (base.exists()) {
+            File[] baseList = base.listFiles(exfilter);
+
+            if (baseList != null)
+                list(baseList, exfilter, new EndsWithFilters(endsWith), list);
         }
     }
 
@@ -1527,6 +1546,27 @@ public class FileUtils {
          */
         public boolean matches(File file) {
             return file.getAbsolutePath().endsWith(endsWith);
+        }
+
+    }
+
+    private static class EndsWithFilters implements Filter {
+
+        private String[] endsWith;
+
+
+        public EndsWithFilters(String[] endsWith) {
+            this.endsWith = endsWith;
+        }
+
+        /**
+         * @return true if the specified file matches the filter
+         */
+        public boolean matches(File file) {
+            for (String s : endsWith) {
+                return file.getAbsolutePath().endsWith(s);
+            }
+            return false;
         }
 
     }

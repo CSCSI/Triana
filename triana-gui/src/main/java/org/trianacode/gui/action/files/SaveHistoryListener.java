@@ -126,13 +126,13 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
     private void saveHistory(Task task) {
         if (!(task instanceof ClipableTaskInterface)) {
             JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: Clipins not implemented for " + task.getToolName(),
-                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return;
         }
 
         if (!((ClipableTaskInterface) task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
             JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: No History Information Availible",
-                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return;
         }
 
@@ -162,7 +162,7 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
             writer.close();
         } catch (IOException except) {
             JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: " + except.getMessage(),
-                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
         }
     }
 
@@ -175,7 +175,7 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
 
         if (!(task instanceof RunnableTask)) {
             JOptionPane.showMessageDialog(frame, "Save History Error: " + task.getToolName() + " not a runnable instance (contact Triana developers)",
-                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return;
         }
 

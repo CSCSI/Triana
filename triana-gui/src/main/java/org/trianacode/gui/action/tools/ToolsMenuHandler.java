@@ -132,7 +132,7 @@ public class ToolsMenuHandler implements ActionListener {
         final Tool[] ts = GUIEnv.getApplicationFrame().getSelectedTools();
         if (ts == null || ts.length == 0) {
             JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Please Select a Tool from the workspace", "Select", JOptionPane.INFORMATION_MESSAGE,
-                    GUIEnv.getTrianaImageIcon());
+                    GUIEnv.getTrianaIcon());
         } else {
             final CompileHandler compiler = new CompileHandler(true);
             Thread thread = new Thread() {

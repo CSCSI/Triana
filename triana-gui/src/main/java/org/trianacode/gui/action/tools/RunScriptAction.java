@@ -281,7 +281,7 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
                     GUIEnv.getApplicationFrame().addChildTaskGraphPanel((TaskGraph) newtask, GUIEnv.getTrianaClientFor(newtask));
                 else if (open)
                     JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot display script output as it is not a TaskGraph", Env.getString("runScript") + ": " + scriptname, JOptionPane.ERROR_MESSAGE,
-                            GUIEnv.getTrianaImageIcon());
+                            GUIEnv.getTrianaIcon());
 
                 checkProtoService(newtask, scriptname);
                 handleresult++;

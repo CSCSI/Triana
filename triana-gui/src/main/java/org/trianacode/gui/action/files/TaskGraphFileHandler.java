@@ -70,6 +70,7 @@ import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.gui.panels.ToolPanel;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
+import org.trianacode.gui.windows.SaveToolDialog;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
@@ -77,7 +78,6 @@ import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -222,7 +222,7 @@ public class TaskGraphFileHandler implements SelectionManager {
                 return initgraph;
             } else {
                 JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
-                        "Error: " + file.getName() + " is not a valid taskgraph file", "Open Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        "Error: " + file.getName() + " is not a valid taskgraph file", "Open Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             }
         }
         catch (TaskGraphException except) {
@@ -432,7 +432,7 @@ public class TaskGraphFileHandler implements SelectionManager {
 
             int choice = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(),
                     "Save current group or root taskgraph?", title, JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), options, options[0]);
+                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), options, options[0]);
 
             if (choice == 1) {
                 group = parent;
@@ -440,54 +440,30 @@ public class TaskGraphFileHandler implements SelectionManager {
                 return;
             }
         }
-        String filename = group.getDefinitionPath();
+        String definitionPath = group.getDefinitionPath();
 
-        boolean showdialog = saveas || (filename == null) || (filename.equals("") || !group.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML));
+        boolean showdialog = saveas || (definitionPath == null) || (definitionPath.equals("") || !group.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML));
         boolean writeFile = true;
 
         if (showdialog) {
-            boolean finished = false;
             writeFile = false;
-            do {
-                TFileChooser chooser = new TFileChooser(Env.getDirectory(Env.TASKGRAPH_DIRECTORY));
-                chooser.setDialogTitle("Save As...");
-                chooser.setFileFilter(new XMLFileFilter());
-
-                if ((filename != null) && (!filename.equals(""))) {
-                    chooser.setSelectedFile(new File(filename));
+            SaveToolDialog dialog = new SaveToolDialog(group, tools);
+            if (dialog.isGo()) {
+                String toolbox = group.getToolBox();
+                File dir = new File(toolbox, group.getToolPackage().replace(".", File.separator));
+                dir.mkdirs();
+                definitionPath = dir.getAbsolutePath() + File.separator + group.getToolName() + ".xml";
+                group.setDefinitionPath(definitionPath);
+                if (TrianaDialog.isOKtoWriteIfExists(definitionPath)) {
+                    writeFile = true;
                 } else {
-                    chooser.setSelectedFile(new File(
-                            chooser.getCurrentDirectory().getPath() + File.separator + group.getToolName() + XMLWriter.XML_FILE_SUFFIX));
-                }
-
-                int result = chooser.showSaveDialog(GUIEnv.getApplicationFrame());
-                if (result == TFileChooser.APPROVE_OPTION) {
-                    filename = chooser.getSelectedFile().getAbsolutePath();
-                    if (filename.indexOf('.') == -1) {
-                        filename = filename + XMLWriter.XML_FILE_SUFFIX;
-                    }
-                    if (TrianaDialog.isOKtoWriteIfExists(filename)) {
-                        writeFile = true;
-                        finished = true;
-                    } else {
-                        writeFile = false;
-                    }
-                } else {
-                    finished = true;
+                    writeFile = false;
                 }
             }
-            while (!finished);
         }
 
         if (writeFile) {
-            if (showdialog) {
-                String taskName = FileUtils.getFileNameNoSuffix(filename);
-                group.setToolName(taskName);
-                group.setToolPackage("ummm.dunno");
-                taskgraph.setDefinitionPath(filename);
-            }
-
-            backGroundSaveTaskGraph(taskgraph, filename, tools, true);
+            backGroundSaveTaskGraph(taskgraph, definitionPath, tools, true);
         }
     }
 

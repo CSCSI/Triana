@@ -126,7 +126,7 @@ public class ErrorDialog implements Serializable {
         textarea.setBackground(ok.getBackground());
         textarea.setBorder(new EmptyBorder(3, 3, 3, 3));
 
-        ImageIcon ima = GUIEnv.getTrianaImageIcon();
+        ImageIcon ima = GUIEnv.getTrianaIcon();
         JLabel icon = new JLabel(ima);
         icon.setBorder(new EmptyBorder(3, 3, 3, 3));
 

@@ -267,6 +267,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         packageMenu.add(new JMenuItem(ActionTable.getAction(COPY_ACTION)));
         packageMenu.add(new JMenuItem(ActionTable.getAction(PASTE_ACTION)));
         packageMenu.add(new JMenuItem(ActionTable.getAction(DELETE_ACTION)));
+        packageMenu.add(new JMenuItem(ActionTable.getAction(DELETE_REFERENCES_ACTION)));
         packageMenu.add(new JMenuItem(ActionTable.getAction(RENAME_ACTION)));
         packageMenu.add(new JMenuItem(ActionTable.getAction(COMPILE_ACTION)));
     }
@@ -275,6 +276,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         multipleMenu.add(new JMenuItem(ActionTable.getAction(CUT_ACTION)));
         multipleMenu.add(new JMenuItem(ActionTable.getAction(COPY_ACTION)));
         multipleMenu.add(new JMenuItem(ActionTable.getAction(DELETE_ACTION)));
+        multipleMenu.add(new JMenuItem(ActionTable.getAction(DELETE_REFERENCES_ACTION)));
         multipleMenu.add(new JMenuItem(ActionTable.getAction(COMPILE_ACTION)));
     }
 
@@ -618,23 +620,26 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         int reply = JOptionPane.OK_OPTION;
         DefaultMutableTreeNode[] nodes = getSelectedNodes();
         String del = files ? Env.getString("Delete") : Env.getString("DeleteReferences");
+        String q1 = files ? Env.getString("deleteTool") : Env.getString("removeTool");
+        String q2 = files ? Env.getString("deletePackage") : Env.getString("removePackage");
+        String q3 = files ? Env.getString("deleteSelected") : Env.getString("removeSelected");
         if (prompt) {
             if (nodes.length == 1) {
                 if (nodes[0].getUserObject() instanceof Tool) {
                     String toolname = ((Tool) nodes[0].getUserObject()).getToolName();
                     reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
-                            Env.getString("deleteTool") + " " + toolname + "?",
-                            del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            q1 + " " + toolname + "?",
+                            del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
                 } else {
                     String pack = getPackage(nodes[0]);
                     reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
-                            Env.getString("deletePackage") + " " + pack + "?",
-                            del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                            q2 + " " + pack + "?",
+                            del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
                 }
             } else {
                 reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
-                        Env.getString("deleteSelected") + "?",
-                        del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                        q3 + "?",
+                        del, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
             }
         }
 
@@ -668,7 +673,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         if (!tool.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML)) {
             int reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                     tool.getToolName() + " is not defined in XML. Do want to create a copy to rename?",
-                    Env.getString("Rename"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon());
+                    Env.getString("Rename"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
             if (reply != JOptionPane.OK_OPTION) {
                 return;
             } else {
@@ -680,7 +685,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                 " " +
                 tool.getToolName() +
                 "?", Env.getString("Rename"),
-                JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaImageIcon(), null, tool.getToolName());
+                JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), null, tool.getToolName());
 
         if ((name != null) && (!name.equals(tool.getToolName()))) {
             try {
@@ -713,7 +718,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      */
     private void handleRenamePackage(DefaultMutableTreeNode node) {
         JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot rename package",
-                Env.getString("Rename"), JOptionPane.OK_OPTION, GUIEnv.getTrianaImageIcon());
+                Env.getString("Rename"), JOptionPane.OK_OPTION, GUIEnv.getTrianaIcon());
     }
 
 

@@ -283,7 +283,7 @@ public class Display {
     public static JPanel getTrianaLogo() {
         JPanel outer = new JPanel(new BorderLayout());
         JPanel content = new JPanel(new GridLayout(7, 2));
-        ImageIcon ic = GUIEnv.getTrianaImageIcon();
+        ImageIcon ic = GUIEnv.getTrianaIcon();
         JLabel label = new JLabel(ic);
         outer.add(label, BorderLayout.NORTH);
 
