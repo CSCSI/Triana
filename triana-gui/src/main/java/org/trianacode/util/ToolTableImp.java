@@ -16,18 +16,15 @@
 
 package org.trianacode.util;
 
-import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.tool.JarHelper;
-import org.trianacode.taskgraph.tool.JavaReader;
-import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.util.FileUtils;
 
-import java.io.*;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -44,11 +41,8 @@ public class ToolTableImp extends AbstractToolTable {
 
 
     private ReloadToolsThread reload;
-    public static String[] excludedDirectories = {"classes", "help", "src", "lib", "CVS", ".svn"};
-    /**
-     * A hashtable of tools, indexed by their xml file location
-     */
-    protected Map<String, ToolInfo> locationTable = new ConcurrentHashMap<String, ToolInfo>(100);
+
+    public static String[] excludedDirectories = {"CVS", ".svn", ".cvsignore"};
 
     public void init() {
         logger.fine("initialising local tool table");
@@ -59,10 +53,26 @@ public class ToolTableImp extends AbstractToolTable {
 
     /**
      * Add a tool box path to the current tool boxes
+     * This also gets the tool class loader to find paths within
+     * the tool box to add to its classpath
+     * And gets the types map to parse all the class files and jar files
+     * and categorize them according to their classes,superclass and interfaces.
      */
-    public void addToolBox(String path) {
-        logger.fine("adding toolbox path:" + path);
-        super.addToolBox(path);
+    public void addToolBox(Toolbox... box) {
+        super.addToolBox(box);
+        for (Toolbox toolbox : box) {
+            if (!toolbox.isVirtual()) {
+                ToolClassLoader.getLoader().addToolBox(toolbox.getPath());
+                File f = new File(toolbox.getPath());
+                if (f.exists() && f.length() > 0) {
+                    try {
+                        TypesMap.load(f);
+                    } catch (IOException e) {
+                        logger.warning("Error loading types map: " + FileUtils.formatThrowable(e));
+                    }
+                }
+            }
+        }
         if (reload != null) {
             reload.reloadTools();
         }
@@ -107,7 +117,6 @@ public class ToolTableImp extends AbstractToolTable {
      * @param tool tool to be deleted
      */
     public void deleteTool(Tool tool, boolean files) {
-
         String path = tool.getDefinitionPath();
 
         if ((path != null) && (!path.equals(""))) {
@@ -117,10 +126,10 @@ public class ToolTableImp extends AbstractToolTable {
                 if (file.exists()) {
                     file.delete();
                 }
-                purgeTool(path);
+                purgeTool(tool);
             } else {
                 Env.addExcludedTool(path);
-                purgeToolRef(path);
+                purgeToolRef(tool);
             }
 
         }
@@ -185,71 +194,25 @@ public class ToolTableImp extends AbstractToolTable {
      * @param toolFile the tool file
      * @param toolbox  toolbox to which the tool is to be added
      */
-    protected void addTool(File toolFile, String toolbox) {
+    protected Tool addTool(File toolFile, String toolbox) {
         if ((!toolFile.exists()) || toolFile.isDirectory()) {
             Env.removeExcludedTool(toolFile.getAbsolutePath());
-            return;
+            return null;
         }
-
-        String xmlFilePath = toolFile.getAbsolutePath();
-
-        // don't load if an up-to-date tool already exists
-        if (locationTable.containsKey(toolFile.getAbsolutePath())) {
-            ToolInfo tool = locationTable.get(xmlFilePath);
-
-            if (tool.getLastModified() == toolFile.lastModified()) {
-                return;
-            } else {
-                locationTable.remove(tool.getXMLFileName());
-                toolTable.remove(tool.getQualifiedName());
-
-                notifyToolRemoved(tool.getTool());
-            }
+        ToolFormatHandler.ToolStatus stats = null;
+        try {
+            stats = toolHandler.add(toolFile, toolbox);
+        } catch (ToolException e) {
+            notifyToolRemoved(stats.getTool());
         }
-        if (toolFile.getName().endsWith(".jar")) {
-            try {
-                JarHelper helper = new JarHelper(toolFile);
-                List<String> potentials = helper.listEntries();
-                for (String potential : potentials) {
-                    if (potential.endsWith(".xml")) {
-                        InputStream in = helper.getStream(potential);
-                        readXMLStream(in, xmlFilePath, toolbox);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-
-            }
-        } else {
-            try {
-                readXMLStream(new FileInputStream(toolFile), xmlFilePath, toolbox);
-            }
-            catch (Exception e) {
-                System.out.println(e.getMessage() + " in xmlFile: " + xmlFilePath);
-                e.printStackTrace(System.out);
-            }
+        if (stats.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_MODIFIED) {
+            return null;
+        } else if (stats.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_ADDED) {
+            notifyToolRemoved(stats.getTool());
+        } else if (stats.getStatus() == ToolFormatHandler.ToolStatus.Status.OK) {
+            notifyToolAdded(stats.getTool());
         }
-    }
-
-    private void readXMLStream(InputStream in, String filePath, String toolbox) throws TaskGraphException, IOException {
-        XMLReader reader = new XMLReader(new BufferedReader(new InputStreamReader(in)));
-        Tool tool = reader.readComponent();
-
-        if (tool != null) {
-            if (tool.getToolPackage().equals("")) {
-                tool.setToolPackage(getToolPackageName(filePath, tool.getToolName()));
-            }
-            tool.setDefinitionPath(filePath);
-            tool.setToolBox(toolbox);
-            if (Env.isExcludedTool(filePath)) {
-                logger.fine("Not adding " + filePath + " because it has been excluded");
-            } else {
-                ToolInfo toolinfo = new ToolInfo(tool, filePath);
-                locationTable.put(toolinfo.getXMLFileName(), toolinfo);
-                toolTable.put(toolinfo.getQualifiedName(), toolinfo);
-                notifyToolAdded(tool);
-            }
-        }
+        return stats.getTool();
     }
 
     protected String getToolPackageName(String xmlFilePath, String toolName) {
@@ -271,8 +234,10 @@ public class ToolTableImp extends AbstractToolTable {
         }
 
         if (toolbox != null) {
-            addTool(new File(location), toolbox);
-            purgeTool(location);
+            Tool tool = addTool(new File(location), toolbox);
+            if (tool != null) {
+                purgeTool(tool);
+            }
         }
     }
 
@@ -280,53 +245,24 @@ public class ToolTableImp extends AbstractToolTable {
      * Removes the tool at the specified location from the tool/location tables if it has been
      * deleted
      */
-    protected void purgeTool(String location) {
-        if (locationTable.containsKey(location)) {
-            ToolInfo tool = locationTable.get(location);
-            if ((!new File(location).exists()) || !toolboxes.contains(tool.getTool().getToolBox())) {
-                locationTable.remove(location);
-                toolTable.remove(tool.getQualifiedName());
-                notifyToolRemoved(tool.getTool());
-            }
-        }
-
+    protected void purgeTool(Tool tool) {
+        toolHandler.delete(tool);
+        notifyToolRemoved(tool);
     }
 
-    protected void purgeToolRef(String location) {
-        if (locationTable.containsKey(location)) {
-            ToolInfo tool = locationTable.get(location);
-            //if (!toolboxes.contains(tool.getTool().getToolBox())) {
-            locationTable.remove(location);
-            toolTable.remove(tool.getQualifiedName());
-            notifyToolRemoved(tool.getTool());
-            //}
-        }
-
+    protected void purgeToolRef(Tool tool) {
+        toolHandler.delete(tool);
+        notifyToolRemoved(tool);
     }
 
     protected void addTools() {
-        String[] toolboxArray = toolboxes.toArray(new String[toolboxes.size()]);
+        String[] toolboxArray = toolboxes.keySet().toArray(new String[toolboxes.size()]);
 
         for (int count = 0; count < toolboxArray.length; count++) {
             String baseToolboxPath = toolboxArray[count];
-            JavaReader reader = new JavaReader();
-            try {
-                List<Tool> tools = reader.createTools(baseToolboxPath);
-                for (Tool tool : tools) {
-                    String def = tool.getDefinitionPath();
-                    if (!Env.isExcludedTool(def)) {
-                        ToolInfo toolinfo = new ToolInfo(tool, tool.getDefinitionPath());
-                        locationTable.put(tool.getDefinitionPath(), toolinfo);
-                        toolTable.put(toolinfo.getQualifiedName(), toolinfo);
-                        notifyToolAdded(tool);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // recursively find all files in toolboxes with .xml suffix or a .jar
 
-            File[] files = FileUtils.listEndsWith(baseToolboxPath, new String[]{XMLReader.XML_FILE_SUFFIX, ".jar"}, excludedDirectories);
+            // recursively find all files in toolboxes with .xml, .class or .jar suffix
+            File[] files = FileUtils.listEndsWith(baseToolboxPath, new String[]{XMLReader.XML_FILE_SUFFIX, ".jar", ".class"}, excludedDirectories);
 
             for (int i = 0; i < files.length; i++) {
                 addTool(files[i], baseToolboxPath);
@@ -390,16 +326,10 @@ public class ToolTableImp extends AbstractToolTable {
          * Removes deleted tools from the tools/location tables
          */
         private void purgeTools() {
-            String toolnames[] = getToolNames();
-            String toolboxloc;
-
-            for (int count = 0; count < toolnames.length; count++) {
-                toolboxloc = getToolBoxLocation(toolnames[count]);
-
-                if (toolboxloc != null) {
-                    purgeTool(toolboxloc);
-                    sleep();
-                }
+            Tool[] tools = getTools();
+            for (int count = 0; count < tools.length; count++) {
+                purgeTool(tools[count]);
+                sleep();
             }
         }
 

@@ -63,10 +63,10 @@ package org.trianacode.taskgraph.tool;
  * An interface implemented by classes that wish to be notified when tools
  * are added or removed.
  *
- * @author      Ian Wang
- * @created     11th Feb 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 11th Feb 2003
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface ToolTableListener {
 
@@ -83,11 +83,11 @@ public interface ToolTableListener {
     /**
      * Called when a Tool Box is added
      */
-    public void toolBoxAdded(String toolbox);
+    public void toolBoxAdded(Toolbox toolbox);
 
     /**
      * Called when a Tool Box is Removed
      */
-    public void toolBoxRemoved(String toolbox);
+    public void toolBoxRemoved(Toolbox toolbox);
 
 }

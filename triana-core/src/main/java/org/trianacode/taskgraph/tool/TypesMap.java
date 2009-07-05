@@ -46,17 +46,16 @@ public class TypesMap {
     }
 
     /**
-     * get a class hierarchy based on the a File (could be class file or jar),
-     * the full path to the class under scrutiny (will be the full path to the file in the case
+     * get a class hierarchy based on
+     * the full path to the class under scrutiny (will be the full path to a file in the case
      * of of a non-zipped file, or a jar: URL pointing to an entry if jarred), and the
      * type to match against, e.g. a getClass().getName() type string.
      *
-     * @param file
      * @param path
      * @param type
      * @return
      */
-    public static ClassHierarchy isType(File file, String path, String type) {
+    public static ClassHierarchy isType(String path, String type) {
         Map<String, ClassHierarchy> mapped = allByType.get(type);
         if (mapped != null && mapped.get(path) != null) {
             return mapped.get(path);
@@ -65,7 +64,7 @@ public class TypesMap {
             if (isType(allByName, hier, type)) {
                 ClassHierarchy ch = allByName.get(hier);
                 addToTypes(type, ch);
-                if (ch.getFile().equals(file.getAbsolutePath()) && ch.getFile().equals(path)) {
+                if (ch.getFile().equals(path)) {
                     return ch;
                 }
             }

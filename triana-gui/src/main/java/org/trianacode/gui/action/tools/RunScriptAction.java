@@ -77,6 +77,7 @@ import org.trianacode.taskgraph.service.TrianaRun;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableListener;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -507,13 +508,13 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
         /**
          * Called when a Tool Box is added
          */
-        public void toolBoxAdded(String toolbox) {
+        public void toolBoxAdded(Toolbox toolbox) {
         }
 
         /**
          * Called when a Tool Box is Removed
          */
-        public void toolBoxRemoved(String toolbox) {
+        public void toolBoxRemoved(Toolbox toolbox) {
         }
 
 

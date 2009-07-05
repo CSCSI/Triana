@@ -16,15 +16,10 @@
 
 package org.trianacode.util;
 
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableListener;
+import org.trianacode.taskgraph.tool.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -39,35 +34,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractToolTable implements ToolTable {
 
 
-    private static ArrayList<String> standardToolBoxes = new ArrayList<String>(5);
-
-    /**
-     * Set up the directories that are to be excluded when searching for tool files
-     */
     static {
-        standardToolBoxes.add(DEFAULT_TOOLBOX);
-        standardToolBoxes.add(DATA_TOOLBOX);
-        standardToolBoxes.add(USER_TOOLBOX);
-        standardToolBoxes.add(REMOTE_TOOLBOX);
-        standardToolBoxes.add(NO_TYPE_SET);
+        ClassLoaders.addClassLoader(ToolClassLoader.getLoader());
     }
 
     /**
-     * An array list of all the current toolbox paths
+     * A hashtable of tool boxes keyed by their path
      */
-    protected Vector<String> toolboxes = new Vector<String>();
-    /**
-     * A hashtable of tool boxes keyed by their type
-     */
-    protected Map<String, String> types = new ConcurrentHashMap<String, String>();
-    /**
-     * A hashtable of tools, indexed by their qualified tool name (package_name.toolname)
-     */
-    protected Map<String, ToolInfo> toolTable = new ConcurrentHashMap<String, ToolInfo>(100);
+    protected Map<String, Toolbox> toolboxes = new ConcurrentHashMap<String, Toolbox>();
+
     /**
      * An array list of tool listeners
      */
     protected Vector<ToolTableListener> listeners = new Vector<ToolTableListener>();
+
+    protected ToolFormatHandler toolHandler = new FileToolFormatHandler();
+
 
     /**
      * Utility method to load all the tools found in the named tool box, ignoring the default toolboxes. It empties all
@@ -75,16 +57,15 @@ public abstract class AbstractToolTable implements ToolTable {
      *
      * @param toolbox the tool box to load from.
      */
-    public void blockingLoadToolsFromToolBox(String toolbox) {
+    public void blockingLoadToolsFromToolBox(Toolbox toolbox) {
         blockingLoadToolsFromToolBox(toolbox, true);
     }
 
-    protected void blockingLoadToolsFromToolBox(String toolbox, boolean clearTables) {
+    protected void blockingLoadToolsFromToolBox(Toolbox toolbox, boolean clearTables) {
         if (clearTables) {
-            toolboxes.clear();
-            toolTable.clear();
+            toolHandler.clear();
         }
-        toolboxes.add(toolbox);
+        toolboxes.put(toolbox.getPath(), toolbox);
         addTools();
     }
 
@@ -94,9 +75,13 @@ public abstract class AbstractToolTable implements ToolTable {
      * over time.
      */
     public void blockingLoadTools() {
-        for (String toolbox : toolboxes) {
+        for (Toolbox toolbox : toolboxes.values()) {
             blockingLoadToolsFromToolBox(toolbox, false);
         }
+    }
+
+    public ToolFormatHandler getToolFormatHandler() {
+        return toolHandler;
     }
 
     /**
@@ -123,11 +108,11 @@ public abstract class AbstractToolTable implements ToolTable {
      * @return the file name or null if not found
      */
     public String getToolBoxLocation(String toolname) {
-        if (toolTable.containsKey(toolname)) {
-            return (toolTable.get(toolname)).getXMLFileName();
-        } else {
-            return null;
+        Tool tool = toolHandler.getTool(toolname);
+        if (tool != null) {
+            return tool.getDefinitionPath();
         }
+        return null;
     }
 
     /**
@@ -137,22 +122,25 @@ public abstract class AbstractToolTable implements ToolTable {
      * @return The Tool or null if not found
      */
     public Tool getTool(String toolName) {
-        if (toolTable.containsKey(toolName)) {
-            return (toolTable.get(toolName)).getTool();
-        } else {
-            return null;
-        }
+        return toolHandler.getTool(toolName);
     }
 
     /**
      * @return an array of the tools with the specified name
      */
     public Tool[] getTools(String toolName) {
-        if (toolTable.containsKey(toolName)) {
-            return new Tool[]{(toolTable.get(toolName)).getTool()};
-        } else {
-            return new Tool[0];
+        Tool tool = toolHandler.getTool(toolName);
+        if (tool != null) {
+            return new Tool[]{tool};
         }
+        return new Tool[0];
+    }
+
+    /**
+     * @return an array of the tools with the specified name
+     */
+    public Tool[] getTools() {
+        return toolHandler.getTools();
     }
 
 
@@ -160,14 +148,14 @@ public abstract class AbstractToolTable implements ToolTable {
      * @return true if a tool with the given name exists
      */
     public boolean isTool(String toolName) {
-        return toolTable.containsKey(toolName);
+        return toolHandler.getTool(toolName) != null;
     }
 
     /**
      * returns an array of strings of qualified tool names.
      */
     public String[] getToolNames() {
-        return (String[]) toolTable.keySet().toArray(new String[toolTable.size()]);
+        return toolHandler.getToolNames();
     }
 
 
@@ -205,7 +193,7 @@ public abstract class AbstractToolTable implements ToolTable {
      * @param tool the tool added to the ToolTable
      */
     protected void notifyToolAdded(Tool tool) {
-        ToolTableListener[] lists = (ToolTableListener[]) listeners.toArray(new ToolTableListener[listeners.size()]);
+        ToolTableListener[] lists = listeners.toArray(new ToolTableListener[listeners.size()]);
 
         for (int count = 0; count < lists.length; count++) {
             lists[count].toolAdded(tool);
@@ -230,8 +218,8 @@ public abstract class AbstractToolTable implements ToolTable {
      *
      * @param toolbox the toolbox added to the ToolTable
      */
-    protected void notifyToolboxAdded(String toolbox) {
-        ToolTableListener[] lists = (ToolTableListener[]) listeners.toArray(new ToolTableListener[listeners.size()]);
+    protected void notifyToolboxAdded(Toolbox toolbox) {
+        ToolTableListener[] lists = listeners.toArray(new ToolTableListener[listeners.size()]);
 
         for (int count = 0; count < lists.length; count++) {
             lists[count].toolBoxAdded(toolbox);
@@ -243,8 +231,8 @@ public abstract class AbstractToolTable implements ToolTable {
      *
      * @param toolbox the toolbox removed from the ToolTable
      */
-    protected void notifyToolboxRemoved(String toolbox) {
-        ToolTableListener[] lists = (ToolTableListener[]) listeners.toArray(new ToolTableListener[listeners.size()]);
+    protected void notifyToolboxRemoved(Toolbox toolbox) {
+        ToolTableListener[] lists = listeners.toArray(new ToolTableListener[listeners.size()]);
 
         for (int count = 0; count < lists.length; count++) {
             lists[count].toolBoxRemoved(toolbox);
@@ -254,48 +242,34 @@ public abstract class AbstractToolTable implements ToolTable {
     /**
      * @return a list of the current tool box paths
      */
-    public String[] getToolBoxes() {
-        return (String[]) toolboxes.toArray(new String[toolboxes.size()]);
+    public Toolbox[] getToolBoxes() {
+        return toolboxes.values().toArray(new Toolbox[toolboxes.size()]);
     }
 
     /**
      * @return the tool box path of the specified type (null if no tool box specified for that
      *         type)
      */
-    public String getToolBox(String type) {
-        if (types.containsKey(type)) {
-            return types.get(type);
-        } else {
-            return null;
+    public Toolbox getToolBox(String type) {
+        for (String s : toolboxes.keySet()) {
+            Toolbox box = toolboxes.get(s);
+            if (box.getType().equals(type)) {
+                return box;
+            }
         }
+        return null;
     }
 
     /**
-     * @return the type for the specified tool box path ({@link #NO_TYPE_SET NO_TYPE_SET} if no type
+     * @return the type for the specified tool box path if no type
      *         specified for the tool box path)
      */
     public String getToolBoxType(String toolbox) {
-        for (String type : types.keySet()) {
-            if (types.containsKey(type) && (types.get(type).equals(toolbox))) {
-                return type;
-            }
+        Toolbox tb = toolboxes.get(toolbox);
+        if (tb != null) {
+            return tb.getType();
         }
-        return NO_TYPE_SET;
-    }
-
-    /**
-     * Associates a toolbox type with a toolbox. Only one toolbox can be associated with a type but
-     * many types van be associated witha single toolbox.
-     * <p/>
-     * If the tool box to be set is not in the list of current tool boxes then it is added first.
-     *
-     * @param toolbox the tool box we want associated with a type
-     * @param type    the type we want to associate with the toolbox
-     * @return the previous toolbox of the specified type or null if it did not have one.
-     */
-    public String setToolBoxType(String toolbox, String type) {
-        addToolBox(toolbox);
-        return types.put(type, toolbox);
+        return "";
     }
 
     /**
@@ -304,17 +278,23 @@ public abstract class AbstractToolTable implements ToolTable {
      * @return an array of the current tool box type values
      */
     public String[] getToolBoxTypes() {
-        Set<String> typeKeys = types.keySet();
-        return (String[]) typeKeys.toArray(new String[types.keySet().size()]);
+        List<String> types = new ArrayList<String>();
+        for (String s : toolboxes.keySet()) {
+            Toolbox tb = toolboxes.get(s);
+            types.add(tb.getType());
+        }
+        return types.toArray(new String[toolboxes.size()]);
     }
 
     /**
      * Add a tool box path to the current tool boxes
      */
-    public void addToolBox(String path) {
-        if (!toolboxes.contains(path)) {
-            toolboxes.add(path);
-            notifyToolboxAdded(path);
+    public void addToolBox(Toolbox... boxes) {
+        for (Toolbox box : boxes) {
+            if (toolboxes.get(box.getPath()) == null) {
+                toolboxes.put(box.getPath(), box);
+                notifyToolboxAdded(box);
+            }
         }
     }
 
@@ -325,16 +305,12 @@ public abstract class AbstractToolTable implements ToolTable {
      * @param path the path of the tool box to remove
      */
     public void removeToolBox(String path) {
-        if (toolboxes.contains(path)) {
-            String toolBoxType = getToolBoxType(path);
-            if (standardToolBoxes.contains(toolBoxType)) {
-                types.put(toolBoxType, "");
-            } else {
-                types.remove(toolBoxType);
-            }
+        Toolbox box = toolboxes.get(path);
+        if (box != null && !box.getType().equals(DEFAULT_TOOLBOX)) {
             toolboxes.remove(path);
-            notifyToolboxRemoved(path);
+            notifyToolboxRemoved(box);
         }
+
     }
 
 
@@ -356,16 +332,18 @@ public abstract class AbstractToolTable implements ToolTable {
      */
     public String findToolBox(String location) {
         String locpath = new File(location).getAbsolutePath();
-        String[] toolboxes = getToolBoxes();
-        String toolbox = null;
-
-        for (int count = 0; (count < toolboxes.length) && (toolbox == null); count++) {
-            if (locpath.startsWith(new File(toolboxes[count]).getAbsolutePath())) {
-                toolbox = toolboxes[count];
+        Iterator<String> it = toolboxes.keySet().iterator();
+        while (it.hasNext()) {
+            String path = it.next();
+            Toolbox tb = toolboxes.get(path);
+            if (!tb.isVirtual()) {
+                if (locpath.startsWith(new File(path).getAbsolutePath())) {
+                    return path;
+                }
             }
         }
+        return null;
 
-        return toolbox;
     }
 
 
@@ -375,15 +353,22 @@ public abstract class AbstractToolTable implements ToolTable {
      * @param toolFile the tool file
      * @param toolbox  toolbox to which the tool is to be added
      */
-    protected abstract void addTool(File toolFile, String toolbox);
+    protected abstract Tool addTool(File toolFile, String toolbox) throws ToolException;
 
     /**
-     * Removes the tool at the specified location from the tool/location tables if it has been
-     * deleted
+     * Removes the tool
      *
-     * @param location the location of the Tool.
+     * @param tool the Tool.
      */
-    protected abstract void purgeTool(String location);
+    protected abstract void purgeTool(Tool tool);
+
+
+    /**
+     * Removes references to the tool
+     *
+     * @param tool the Tool.
+     */
+    protected abstract void purgeToolRef(Tool tool);
 
     /**
      * Add tools to the tool table using the addTool method for all tools in all tool boxes.

@@ -62,6 +62,7 @@ import org.trianacode.gui.hci.ToolFilter;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableListener;
+import org.trianacode.taskgraph.tool.Toolbox;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -338,12 +339,12 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
     /**
      * Called when a Tool Box is added
      */
-    public void toolBoxAdded(String toolbox) {
+    public void toolBoxAdded(Toolbox toolbox) {
     }
 
     /**
      * Called when a Tool Box is Removed
      */
-    public void toolBoxRemoved(String toolbox) {
+    public void toolBoxRemoved(Toolbox toolbox) {
     }
 }

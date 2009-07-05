@@ -71,10 +71,6 @@ public interface ToolTable {
 
     // The standard tool box types
     public static final String DEFAULT_TOOLBOX = "Default";
-    public static final String USER_TOOLBOX = "User";
-    public static final String DATA_TOOLBOX = "Data";
-    public static final String REMOTE_TOOLBOX = "Remote";
-    public static final String NO_TYPE_SET = "No Type";
 
     /**
      * Called to initialise the tool table
@@ -85,13 +81,13 @@ public interface ToolTable {
     /**
      * @return a list of the current tool box paths
      */
-    public String[] getToolBoxes();
+    public Toolbox[] getToolBoxes();
 
     /**
      * @return the tool box path of the specified type (null if no tool box specified for that
      *         type)
      */
-    public String getToolBox(String type);
+    public Toolbox getToolBox(String type);
 
     /**
      * @return the type for the specified tool box path (null if no type specified for the tool box
@@ -103,7 +99,8 @@ public interface ToolTable {
     /**
      * Add a tool box path to the current tool boxes
      */
-    public void addToolBox(String path);
+    public void addToolBox(Toolbox... path);
+
 
     /**
      * Remove a tool box path from the current tool boxes
@@ -121,6 +118,13 @@ public interface ToolTable {
      * @return an array of the tools with the specified name
      */
     public Tool[] getTools(String toolName);
+
+    /**
+     * get all tools
+     *
+     * @return
+     */
+    public Tool[] getTools();
 
     /**
      * @return true if a tool with the given name exists
@@ -170,17 +174,6 @@ public interface ToolTable {
      */
     public void removeToolTableListener(ToolTableListener listener);
 
-    /**
-     * Associates a toolbox type with a toolbox. Only one toolbox can be associated with a type but
-     * many types van be associated witha single toolbox.
-     * <p/>
-     * If the tool box to be set is not in the list of current tool boxes then it is added first.
-     *
-     * @param toolbox the tool box we want associated with a type
-     * @param type    the type we want to associate with the toolbox
-     * @return the previous toolbox of the specified type or null if it did not have one.
-     */
-    public String setToolBoxType(String toolbox, String type);
 
     /**
      * Returns the list of current toolbox types
@@ -205,7 +198,7 @@ public interface ToolTable {
      *
      * @param toolbox the tool box to load from.
      */
-    void blockingLoadToolsFromToolBox(String toolbox);
+    void blockingLoadToolsFromToolBox(Toolbox toolbox);
 
     /**
      * Utility method to load all the tools in the known tool boxes, blocking until finished. This method avoids using
@@ -213,4 +206,6 @@ public interface ToolTable {
      * over time.
      */
     void blockingLoadTools();
+
+    public ToolFormatHandler getToolFormatHandler();
 }

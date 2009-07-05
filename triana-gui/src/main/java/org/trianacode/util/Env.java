@@ -71,6 +71,7 @@ import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Home;
 import org.trianacode.taskgraph.util.Listing;
@@ -126,6 +127,7 @@ public final class Env {
     public static String TOOLBOXES_STR = "toolboxes";
     public static String TOOLBOX_STR = "toolbox";
     public static String TOOLBOX_TYPE_STR = "type";
+    public static final String TOOLBOX_VIRTUAL = "virtual";
     public static String COLORS_STR = "colors";
     public static String COLOR_STR = "color";
     public static String TYPE_STR = "type";
@@ -371,7 +373,6 @@ public final class Env {
                 }
             }
         }
-        setToolBoxDefaults(tools);
         if (write) {
             writeConfigThread = new WriteConfigThread(tools);
             writeConfig();
@@ -379,35 +380,6 @@ public final class Env {
         }
     }
 
-    /**
-     * Sets up the type value pairs for the toolboxes if they are not already defined.
-     *
-     * @param tools the <code>ToolTable</code> that the toolboxes will be added to.
-     */
-    private static void setToolBoxDefaults(ToolTable tools) {
-        if (tools.getToolBox(ToolTable.DEFAULT_TOOLBOX) == null) {
-            String defaultToolbox1 = Env.home() + "toolboxes";
-            String defaultToolbox2 = new File(Env.home()).getParent() + separator() + "toolboxes";
-
-            if ((new File(defaultToolbox1)).exists()) {
-                tools.setToolBoxType(defaultToolbox1, ToolTable.DEFAULT_TOOLBOX);
-            }
-
-            if ((new File(defaultToolbox2)).exists()) {
-                tools.setToolBoxType(defaultToolbox2, ToolTable.DEFAULT_TOOLBOX);
-            }
-        }
-        if (tools.getToolBox(ToolTable.USER_TOOLBOX) == null) {
-            tools.setToolBoxType(Env.getUserToolDir(), ToolTable.USER_TOOLBOX);
-        }
-        if (tools.getToolBox(ToolTable.DATA_TOOLBOX) == null) {
-            tools.setToolBoxType(Env.getDataToolDir(), ToolTable.DATA_TOOLBOX);
-        }
-        if (tools.getToolBox(ToolTable.REMOTE_TOOLBOX) == null) {
-            tools.setToolBoxType(Env.getRemoteToolDir(), ToolTable.REMOTE_TOOLBOX);
-        }
-
-    }
 
     /**
      * Restore the default user settings
@@ -1384,13 +1356,13 @@ public final class Env {
             Element toolboxesElem = handler.element(TOOLBOXES_STR);
             handler.add(toolboxesElem, root);
 
-            String[] toolboxes = tools.getToolBoxes();
+            Toolbox[] toolboxes = tools.getToolBoxes();
             for (int count = 0; count < toolboxes.length; count++) {
                 Element toolbox = handler.element(TOOLBOX_STR);
-                handler.add(toolboxes[count], toolbox);
+                handler.add(toolboxes[count].getPath(), toolbox);
 
-                toolbox.setAttribute(TOOLBOX_TYPE_STR, tools.getToolBoxType(toolboxes[count]));
-
+                toolbox.setAttribute(TOOLBOX_TYPE_STR, toolboxes[count].getType());
+                toolbox.setAttribute(TOOLBOX_VIRTUAL, toolboxes[count].isVirtual() + "");
                 handler.add(toolbox, toolboxesElem);
             }
 
@@ -1585,19 +1557,33 @@ public final class Env {
             Element elem;
             String toolbox;
 
-
+            List<Toolbox> boxes = new ArrayList<Toolbox>();
+            boolean hasDefault = false;
             while (iter.hasNext()) {
                 elem = ((Element) iter.next());
                 toolbox = elem.getTextContent().trim();
-
-                if (!new File(toolbox).exists()) {
+                String type = elem.getAttribute(TOOLBOX_TYPE_STR);
+                String virtual = elem.getAttribute(TOOLBOX_VIRTUAL);
+                boolean v = virtual != null && virtual.equals("true");
+                if (!v && !new File(toolbox).exists()) {
                     logger.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
-                } else if (elem.getAttribute(TOOLBOX_TYPE_STR) != null) {
-                    tools.setToolBoxType(elem.getTextContent().trim(), elem.getAttribute(TOOLBOX_TYPE_STR));
                 } else {
-                    tools.addToolBox(elem.getTextContent().trim());
+                    if (type != null && type.length() > 0) {
+                        if (type.equals(ToolTable.DEFAULT_TOOLBOX)) {
+                            hasDefault = true;
+                        }
+                        boxes.add(new Toolbox(toolbox, type, v));
+                    } else {
+                        boxes.add(new Toolbox(toolbox, v));
+                    }
                 }
             }
+            if (!hasDefault) {
+                Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.DEFAULT_TOOLBOX), ToolTable.DEFAULT_TOOLBOX);
+                boxes.add(def);
+            }
+            // add them in one hit
+            tools.addToolBox(boxes.toArray(new Toolbox[boxes.size()]));
 
             elementList = handler.getChildren(handler.getChild(root, COLORS_STR));
             iter = elementList.iterator();

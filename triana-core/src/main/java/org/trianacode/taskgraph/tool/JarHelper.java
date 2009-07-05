@@ -52,9 +52,13 @@ public class JarHelper {
     private File file;
     private JarFile jarFile;
 
-    public JarHelper(File file) throws IOException {
+    public JarHelper(File file) throws ToolException {
         this.file = file;
-        this.jarFile = new JarFile(file);
+        try {
+            this.jarFile = new JarFile(file);
+        } catch (IOException e) {
+            throw new ToolException(e.getMessage());
+        }
     }
 
     public List<String> listEntries(String parentEntry) {

@@ -60,6 +60,7 @@ package org.trianacode.gui.panels;
 
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
@@ -71,7 +72,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -138,9 +138,14 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
         add(panel, BorderLayout.EAST);
 
         String prototype = "01234567890123456789012345";
-        String[] toolBoxes = tools.getToolBoxes();
-        toolBoxItems = new Vector(Arrays.asList(toolBoxes));
-        String[] namedTypes = tools.getToolBoxTypes();
+        Toolbox[] toolBoxes = tools.getToolBoxes();
+        toolBoxItems = new Vector();
+        String[] namedTypes = new String[toolBoxes.length];
+        int x = 0;
+        for (Toolbox toolBox : toolBoxes) {
+            toolBoxItems.add(toolBox.getPath());
+            namedTypes[x++] = toolBox.getType();
+        }
 
         for (int count = 0; count < toolBoxItems.size(); count++)
             if (((String) toolBoxItems.elementAt(count)).length() > prototype.length())
@@ -162,8 +167,8 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
             String type = namedTypes[i];
             JPanel nameLinePanel = new JPanel(new BorderLayout());
             labels.add(new JLabel(type + " "));
-            String toolBox = tools.getToolBox(type);
-            JTextField pathField = new JTextField(toolBox);
+            Toolbox toolBox = tools.getToolBox(type);
+            JTextField pathField = new JTextField(toolBox.getPath());
             nameLinePanel.add(pathField, BorderLayout.CENTER);
 
             JButton setDefaultBtn = new JButton("Set Type");
@@ -229,7 +234,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                                 GUIEnv.getTrianaIcon());
                         break;
                     } else {
-                        tools.addToolBox(current);
+                        tools.addToolBox(new Toolbox(current));
                         toolBoxItems.add(current);
                     }
                 }
@@ -290,7 +295,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                     pathField.setText("");
             } else {
                 pathField.setText(path);
-                tools.setToolBoxType(path, type);
+                //todo - anyway this panel sucks
             }
         }
 

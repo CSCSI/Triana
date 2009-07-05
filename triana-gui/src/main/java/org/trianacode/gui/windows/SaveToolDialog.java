@@ -20,6 +20,7 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -79,9 +80,9 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         DefaultComboBoxModel model = (DefaultComboBoxModel) combo.getModel();
         combo.setEditable(false);
         combo.setPrototypeDisplayValue("01234567890123456789");
-        String[] toolboxes = tools.getToolBoxes();
+        Toolbox[] toolboxes = tools.getToolBoxes();
         for (int count = 0; count < toolboxes.length; count++)
-            model.addElement(toolboxes[count]);
+            model.addElement(toolboxes[count].getPath());
 
         JPanel listpanel = new JPanel(new BorderLayout(3, 0));
         listpanel.add(new JLabel("Choose a toolbox:"), BorderLayout.WEST);

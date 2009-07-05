@@ -16,6 +16,8 @@
 
 package org.trianacode.taskgraph.tool;
 
+import java.io.File;
+
 /**
  * Class Description Here...
  *
@@ -28,6 +30,47 @@ package org.trianacode.taskgraph.tool;
 public class Toolbox {
 
     private String path;
+    private String type;
     private boolean isVirtual;
 
+    public Toolbox(String path, String type, boolean virtual) {
+        this.path = path;
+        this.type = type;
+        isVirtual = virtual;
+    }
+
+    public Toolbox(String path, String type) {
+        this(path, type, false);
+    }
+
+    public Toolbox(String path) {
+        this(path, "No Type", false);
+    }
+
+    public Toolbox(String path, boolean virtual) {
+        this(path, "No Type", virtual);
+    }
+
+    public Toolbox(File file, String type) {
+        file.mkdirs();
+        this.path = file.getAbsolutePath();
+        this.type = type;
+        isVirtual = false;
+    }
+
+    public Toolbox(File file) {
+        this(file, "No Type");
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
 }

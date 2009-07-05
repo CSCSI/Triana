@@ -22,6 +22,7 @@ import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -48,7 +49,7 @@ public class ToolTableUtils {
      */
     public static String qualifyPath(String qualifiedName, ToolTable tools) {
         String fullPath = qualifiedName;
-        String[] toolboxes = tools.getToolBoxes();
+        Toolbox[] toolboxes = tools.getToolBoxes();
         for (int i = 0; i < toolboxes.length; i++) {
             String toolboxpath = toolboxes[i] + Env.separator();
             qualifiedName = fullPath.replace(toolboxpath, "");

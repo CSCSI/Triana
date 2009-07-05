@@ -64,6 +64,7 @@ import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableListener;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -610,15 +611,15 @@ public class CompilePanel extends ParameterPanel
     /**
      * Called when a Tool Box is added
      */
-    public void toolBoxAdded(String toolbox) {
-        toolBoxChooser.addItem(toolbox);
+    public void toolBoxAdded(Toolbox toolbox) {
+        toolBoxChooser.addItem(toolbox.getPath());
     }
 
     /**
      * Called when a Tool Box is Removed
      */
-    public void toolBoxRemoved(String toolbox) {
-        toolBoxChooser.removeItem(toolbox);
+    public void toolBoxRemoved(Toolbox toolbox) {
+        toolBoxChooser.removeItem(toolbox.getPath());
     }
 
     /**

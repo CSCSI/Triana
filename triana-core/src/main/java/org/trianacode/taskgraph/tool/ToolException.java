@@ -14,31 +14,25 @@
  * limitations under the License.
  */
 
-package org.trianacode.gui.panels;
+package org.trianacode.taskgraph.tool;
 
-import org.trianacode.gui.hci.GUIEnv;
-
-import javax.swing.*;
-import java.awt.*;
+import java.io.IOException;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 4, 2009: 12:39:31 PM
+ * @created Jul 5, 2009: 6:12:30 PM
  * @date $Date:$ modified by $Author:$
  */
 
-public class OptionPane {
+public class ToolException extends IOException {
 
-
-    public static void showInformation(String msg, String title, Component parent) {
-        JOptionPane.showMessageDialog(parent, msg, title, JOptionPane.INFORMATION_MESSAGE, GUIEnv.getTrianaIcon());
+    public ToolException() {
     }
 
-    public static void showError(String msg, String title, Component parent) {
-        JOptionPane.showMessageDialog(parent, msg, title, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
+    public ToolException(String s) {
+        super(s);
     }
-
 }

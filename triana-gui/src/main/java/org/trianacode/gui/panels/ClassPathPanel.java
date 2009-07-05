@@ -60,6 +60,7 @@
 package org.trianacode.gui.panels;
 
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
@@ -225,14 +226,16 @@ public class ClassPathPanel extends ParameterPanel implements ActionListener, Pr
 
     private void handleAddAllToolBoxes() {
         ArrayList allDirs = new ArrayList();
-        String[] toolBoxes = tools.getToolBoxes();
+        Toolbox[] toolBoxes = tools.getToolBoxes();
         PathListModel pathListModel = ((PathListModel) classpathList.getModel());
 
         for (int i = 0; i < toolBoxes.length; i++) {
-            File[] classDirs = FileUtils.listEndsWith(toolBoxes[i], "classes");
+            if (!toolBoxes[i].isVirtual()) {
+                File[] classDirs = FileUtils.listEndsWith(toolBoxes[i].getPath(), "classes");
 
-            for (int count = 0; count < classDirs.length; count++)
-                allDirs.add(classDirs[count].getAbsolutePath());
+                for (int count = 0; count < classDirs.length; count++)
+                    allDirs.add(classDirs[count].getAbsolutePath());
+            }
         }
 
         if (addAllToolboxChk.isSelected())

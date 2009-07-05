@@ -16,8 +16,8 @@
 
 package org.trianacode.taskgraph.tool;
 
+import java.io.File;
 import java.net.URL;
-import java.util.List;
 
 /**
  * Class Description Here...
@@ -33,8 +33,24 @@ public interface ToolFormatHandler {
     public static final String SRC_PATH = "src";
     public static final String CLASSES_PATH = "classes";
 
+    public Tool getTool(String fullname);
 
-    public List<Tool> getTools();
+    public ToolStatus add(Tool tool) throws ToolException;
+
+    public ToolStatus add(File f, String toolbox) throws ToolException;
+
+    public void delete(Tool tool);
+
+    public void remove(Tool tool);
+
+    public void clear();
+
+    public String[] getToolNames();
+
+    public Tool[] getTools();
+
+    public File toFile(URL url);
+
 
     /**
      * gets the root directory of the tool.
@@ -70,5 +86,37 @@ public interface ToolFormatHandler {
     public boolean writeTool(Tool tool, URL location);
 
     public boolean isModifiable(Tool tool);
+
+    public boolean isModified(Tool tool);
+
+    public static class ToolStatus {
+
+        public static enum Status {
+            OK,
+            REMOVED,
+            NOT_ADDED,
+            NOT_MODIFIED,
+            NULL_DEFINITION_PATH,
+            NULL_TOOL,
+            UNKNOWN_FORMAT
+
+        }
+
+        private Tool tool;
+        private Status status;
+
+        public ToolStatus(Tool tool, Status status) {
+            this.tool = tool;
+            this.status = status;
+        }
+
+        public Tool getTool() {
+            return tool;
+        }
+
+        public Status getStatus() {
+            return status;
+        }
+    }
 
 }

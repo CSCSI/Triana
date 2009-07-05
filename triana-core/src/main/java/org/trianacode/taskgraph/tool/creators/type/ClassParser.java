@@ -91,7 +91,8 @@ public class ClassParser {
                 InputStream stream = zipFile.getInputStream(entry);
                 ClassHierarchy ch = getClasses(stream, f);
                 if (ch != null) {
-                    ch.setFile("jar:file:" + f.getAbsolutePath() + "!/" + entry.getName());
+                    String jarpath = f.toURI().toURL().toString();
+                    ch.setFile("jar:" + jarpath + "!/" + entry.getName());
                     strings.put(ch.getName(), ch);
                 }
             }

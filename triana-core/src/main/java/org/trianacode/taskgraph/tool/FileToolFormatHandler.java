@@ -17,17 +17,23 @@
 package org.trianacode.taskgraph.tool;
 
 import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
+import org.trianacode.taskgraph.util.FileUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 
 /**
  * Tool format handler. This handles the following cases:
@@ -65,94 +71,198 @@ import java.util.jar.JarFile;
 
 public class FileToolFormatHandler implements ToolFormatHandler {
 
+    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.FileToolFormatHandler");
+
     private Map<String, ToolUrl> tools = new HashMap<String, ToolUrl>();
-    private File file;
-    private boolean isJar = false;
-    private boolean isJava = false;
-    private boolean isXml = false;
-    private boolean exists = true;
 
 
-    public FileToolFormatHandler(Tool tool) throws TaskException {
+    public ToolStatus add(Tool tool) throws ToolException {
 
         String def = tool.getDefinitionPath();
         if (def == null) {
-            exists = false;
+            return new ToolStatus(tool, ToolStatus.Status.NULL_DEFINITION_PATH);
         } else {
-            file = new File(def);
+            File file = new File(def);
             if (!file.exists() || file.length() == 0) {
-                throw new TaskException("no file found for tool " + tool.getToolName());
+                throw new ToolException("no file found for tool " + tool.getToolName());
             }
-            isJar = false;
+            // does not add tools if they are files and the file has not been modified.
+            if (!isModified(tool)) {
+                return new ToolStatus(tool, ToolStatus.Status.NOT_ADDED);
+            }
+            boolean isJar = false;
             if (file.getName().endsWith(".jar")) {
                 try {
                     JarFile jf = new JarFile(file);
                 } catch (IOException e) {
-                    throw new TaskException("The file has an extension of '.jar' but the content does not comply with the zip specification.");
+                    throw new ToolException("The file has an extension of '.jar' but the content does not comply with the zip specification.");
                 }
                 isJar = true;
             }
             if (isJar) {
-                URL[] arr = initJar(tool);
+                URL[] arr = initJar(tool, file);
                 if (arr == null) {
-                    throw new TaskException("unknown jar format " + tool.getToolName());
+                    throw new ToolException("unknown jar format " + tool.getToolName());
                 }
                 tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
             } else {
-                URL[] arr = initFile(tool);
+                URL[] arr = initFile(tool, file);
                 if (arr == null) {
-                    throw new TaskException("unknown directory structure " + tool.getToolName());
+                    throw new ToolException("unknown directory structure " + tool.getToolName());
                 }
                 tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
             }
         }
-
+        return new ToolStatus(tool, ToolStatus.Status.OK);
     }
 
-    public FileToolFormatHandler(File file, String toolbox) throws Exception {
-        if (file.getName().endsWith(".xml")) {
-            isXml = true;
-            Tool tool = readXMLStream(new FileInputStream(file), file.getAbsolutePath(), toolbox);
-            if (tool != null) {
-                initTool(tool);
-            }
-        } else if (file.getName().endsWith(".jar")) {
-            isJar = true;
-            JarHelper helper = new JarHelper(file);
-            List<String> potentials = helper.listEntries();
-            for (String potential : potentials) {
-                if (potential.endsWith(".xml")) {
-                    InputStream in = helper.getStream(potential);
-                    Tool tool = readXMLStream(in, file.getAbsolutePath(), toolbox);
-                    if (tool != null) {
-                        initTool(tool);
+    public ToolStatus add(File file, String toolbox) throws ToolException {
+        try {
+            if (file.getName().endsWith(".xml")) {
+                Tool tool = readXMLStream(new FileInputStream(file), file.getAbsolutePath(), toolbox);
+                if (tool != null) {
+                    return initTool(tool, file);
+                }
+            } else if (file.getName().endsWith(".jar")) {
+                JarHelper helper = new JarHelper(file);
+                List<String> potentials = helper.listEntries();
+                for (String potential : potentials) {
+                    if (potential.endsWith(".xml")) {
+                        InputStream in = helper.getStream(potential);
+                        Tool tool = readXMLStream(in, file.getAbsolutePath(), toolbox);
+                        if (tool != null) {
+                            return initJarredTool(tool, file);
+                        }
+                    } else if (potential.endsWith(".class")) {
+
+                        URL url = createJarURL(file, potential);
+                        if (url != null) {
+                            ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
+                            if (ch != null) {
+                                Tool tool = read(ch.getName(), toolbox, ch.getFile());
+                                if (tool != null) {
+                                    return initJarredTool(tool, file);
+                                }
+                            } else {
+                                return null;
+                            }
+                        }
+
                     }
-                } else if (potential.endsWith(".class")) {
-                    // todo - need to load in all the class files in this jar.
-                    // This will give us all the Unit descendents in this jar.
-                    // then need resolve this class file against these potential
-                    // superclasses.
-                    // If this fails, need to resolve againts loaded classes.
-                    // humph. This is tricky because... what happens with dependencies that are referenced
-                    // i.e. via Ivy ot whatever... not in this jar - could be anywhere...
+                }
+            } else if (file.getName().endsWith(".class")) {
+                ClassHierarchy ch = TypesMap.isType(file.getAbsolutePath(), Unit.class.getName());
+                if (ch != null) {
+                    Tool tool = read(ch.getName(), toolbox, ch.getFile());
+                    if (tool != null) {
+                        return initTool(tool, file);
+                    }
+                } else {
+                    return null;
                 }
             }
+        } catch (IOException e) {
+            throw new ToolException(e.getMessage());
+        }
+        return new ToolStatus(null, ToolStatus.Status.NULL_TOOL);
+    }
+
+    public void delete(Tool tool) {
+        String id = createId(tool);
+        ToolUrl tu = tools.get(id);
+        if (tu != null) {
+            if (tu.isJar()) {
+                // we do not delete jars. There could be other tools in it.
+                remove(tool);
+            }
+            File f = toFile(tu.getDef());
+            log.fine("got file from URL:" + f.getAbsolutePath());
+            if (f.exists()) {
+                f.delete();
+                tools.remove(id);
+            }
+        }
+    }
+
+    public void remove(Tool tool) {
+        String id = createId(tool);
+        ToolUrl tu = tools.get(id);
+        if (tu != null) {
+            tools.remove(id);
+        }
+    }
+
+    public void clear() {
+        tools.clear();
+    }
+
+    public String[] getToolNames() {
+        String[] t = new String[tools.size()];
+        int count = 0;
+        for (String tool : tools.keySet()) {
+            t[count++] = tool;
+        }
+        return t;
+    }
+
+
+    public Tool read(String className, String toolbox, String classFile) {
+        try {
+            ToolImp tool = new ToolImp();
+            tool.setDefinitionType(Tool.DEFINITION_JAVA_CLASS);
+            tool.setToolName(getClassName(className));
+            tool.setToolPackage(getPackageName(className));
+            tool.setDefinitionPath(classFile);
+            tool.setToolBox(toolbox);
+            tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
+            return tool;
+        } catch (TaskException e) {
+            log.warning("Error creating tool:" + FileUtils.formatThrowable(e));
+            return null;
         }
     }
 
 
-    private void initTool(Tool tool) {
-        URL[] arr = initFile(tool);
+    private ToolStatus initTool(Tool tool, File file) {
+        URL[] arr = initFile(tool, file);
         if (arr == null) {
             //what todo?
+            return new ToolStatus(tool, ToolStatus.Status.UNKNOWN_FORMAT);
         } else {
-            tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
+            tool.setDefinitionPath(file.getAbsolutePath());
+            if (isModified(tool)) {
+                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
+                return new ToolStatus(tool, ToolStatus.Status.OK);
+            } else {
+                return new ToolStatus(tool, ToolStatus.Status.NOT_MODIFIED);
+            }
         }
     }
 
-    private Tool readXMLStream(InputStream in, String filePath, String toolbox) throws TaskGraphException, IOException {
+    private ToolStatus initJarredTool(Tool tool, File file) {
+        URL[] arr = initJar(tool, file);
+        if (arr == null) {
+            //what todo?
+            return new ToolStatus(tool, ToolStatus.Status.UNKNOWN_FORMAT);
+        } else {
+            tool.setDefinitionPath(file.getAbsolutePath());
+            if (isModified(tool)) {
+                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
+                return new ToolStatus(tool, ToolStatus.Status.OK);
+            } else {
+                return new ToolStatus(tool, ToolStatus.Status.NOT_MODIFIED);
+            }
+        }
+    }
+
+    private Tool readXMLStream(InputStream in, String filePath, String toolbox) throws ToolException {
         XMLReader reader = new XMLReader(new BufferedReader(new InputStreamReader(in)));
-        Tool tool = reader.readComponent();
+        Tool tool = null;
+        try {
+            tool = reader.readComponent();
+        } catch (Exception e) {
+            throw new ToolException("Error reading tool :" + FileUtils.formatThrowable(e));
+        }
         if (tool != null) {
             if (tool.getToolPackage().equals("")) {
                 //TODO  or not todo
@@ -165,7 +275,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         return null;
     }
 
-    private URL[] initJar(Tool tool) {
+    private URL[] initJar(Tool tool, File file) {
         String name = tool.getToolName();
         if (name == null) {
             return null;
@@ -194,7 +304,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             }
         }
         if (def != null) {
-            isXml = true;
+            //isXml = true;
         } else {
             def = jf.getEntry(pkg + name + ".class");
             if (def != null) {
@@ -211,7 +321,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 }
             }
             if (def != null) {
-                isJava = true;
+                //isJava = true;
             }
         }
         if (def == null) {
@@ -226,7 +336,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 defRootURL = createJarURL(file, defRoot);
             }
             URL defURL = createJarURL(file, def);
-
+            tool.setDefinitionPath(file.getAbsolutePath());
             return new URL[]{rootURL, defRootURL, defURL};
         } catch (MalformedURLException e) {
             return null;
@@ -249,13 +359,12 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         return null;
     }
 
-    private URL[] initFile(Tool tool) {
+    private URL[] initFile(Tool tool, File file) {
 
-        File[] files = getRootFromDefinition(tool);
+        File[] files = getRootFromDefinition(tool, file);
         if (files == null || files[0] == null || files[1] == null) {
             return null;
         }
-
         try {
             URL rootURL = files[0].toURI().toURL();
             URL defRootURL = files[1].toURI().toURL();
@@ -268,7 +377,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
 
-    private File[] getRootFromDefinition(Tool tool) {
+    private File[] getRootFromDefinition(Tool tool, File file) {
         String name = tool.getToolName();
         if (name == null) {
             return null;
@@ -281,7 +390,6 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         File root = null;
         File defRoot = null;
         if (file.getName().endsWith(".xml")) {
-            isXml = true;
             root = matches(names, file);
             if (root != null) {
                 defRoot = root;
@@ -293,7 +401,6 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 }
             }
         } else if (file.getName().endsWith(".class")) {
-            isJava = true;
             root = matches(names, file);
             if (root != null) {
                 defRoot = root;
@@ -345,10 +452,19 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         return p;
     }
 
-    public List<Tool> getTools() {
-        List<Tool> t = new ArrayList<Tool>();
+    public Tool getTool(String fullname) {
+        ToolUrl tool = tools.get(fullname);
+        if (tool != null) {
+            return tool.getTool();
+        }
+        return null;
+    }
+
+    public Tool[] getTools() {
+        Tool[] t = new Tool[tools.size()];
+        int count = 0;
         for (String tool : tools.keySet()) {
-            t.add(tools.get(tool).getTool());
+            t[count++] = (tools.get(tool).getTool());
         }
         return t;
     }
@@ -386,11 +502,71 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
     public boolean isModifiable(Tool tool) {
-        return !isJar && !isJava;
+        ToolUrl tu = tools.get(createId(tool));
+        if (tu != null) {
+            return !tu.isJar() && !tu.isJava();
+        }
+        return false;
+    }
+
+    public boolean isModified(Tool tool) {
+        ToolUrl tu = tools.get(createId(tool));
+        if (tu != null) {
+            File f = new File(tool.getDefinitionPath());
+            if (f.exists() && f.length() > 0) {
+                File exist = null;
+                if (tu.isJar()) {
+                    exist = toFile(tu.getRoot());
+                } else {
+                    exist = toFile(tu.getDef());
+                }
+                if (exist != null) {
+                    return exist.lastModified() < f.lastModified();
+                }
+            }
+        }
+        return true;
+    }
+
+    public File toFile(URL url) {
+        if (url == null) {
+            return null;
+        }
+        try {
+            File f = new File(url.toURI());
+            if (f.exists() && f.length() > 0) {
+                return f;
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String createId(Tool tool) {
-        return tool.getToolBox() + ":" + tool.getToolPackage() + ":" + tool.getToolName();
+        return tool.getQualifiedToolName();
+    }
+
+    private String getPackageName(String fullname) {
+        if (fullname.endsWith(".class")) {
+            fullname = fullname.substring(0, fullname.length() - 6);
+        }
+        int index = fullname.indexOf(".");
+        if (index > 0) {
+            return fullname.substring(0, fullname.lastIndexOf("."));
+        }
+        return "unknown";
+    }
+
+    private String getClassName(String fullname) {
+        if (fullname.endsWith(".class")) {
+            fullname = fullname.substring(0, fullname.length() - 6);
+        }
+        int index = fullname.indexOf(".");
+        if (index > 0) {
+            return fullname.substring(fullname.lastIndexOf(".") + 1, fullname.length());
+        }
+        return fullname;
     }
 
     private class ToolUrl {
@@ -404,6 +580,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             this.root = root;
             this.defRoot = defRoot;
             this.def = def;
+
         }
 
         public Tool getTool() {
@@ -420,6 +597,18 @@ public class FileToolFormatHandler implements ToolFormatHandler {
 
         public URL getDef() {
             return def;
+        }
+
+        public boolean isJava() {
+            return getDef().toString().endsWith(".java");
+        }
+
+        public boolean isXml() {
+            return getDef().toString().endsWith(".xml");
+        }
+
+        public boolean isJar() {
+            return getDef().toString().startsWith("jar:");
         }
     }
 

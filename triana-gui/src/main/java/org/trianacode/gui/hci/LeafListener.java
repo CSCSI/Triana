@@ -67,6 +67,7 @@ import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
 import org.trianacode.gui.action.clipboard.ClipboardPasteInterface;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
@@ -75,7 +76,6 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolFileHandler;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
@@ -92,6 +92,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -691,12 +692,18 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
             try {
                 if (copy) {
                     ToolImp newTool = new ToolImp(tool);
-                    File f = ToolFileHandler.getXMLDirectory(tool);
-                    System.out.println("LeafListener.handleRenameTool xml dir:" + f.getAbsolutePath());
-                    f = new File(f, name + ".xml");
-                    newTool.setDefinitionPath(f.getAbsolutePath());
-                    newTool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
-                    tool = newTool;
+                    URL url = toolTable.getToolFormatHandler().getDefinitionRoot(tool);
+                    File f = toolTable.getToolFormatHandler().toFile(url);
+                    if (f == null) {
+                        OptionPane.showError("Could not get root file for tool definition", "Error", GUIEnv.getApplicationFrame());
+                        return;
+                    } else {
+                        System.out.println("LeafListener.handleRenameTool xml dir:" + f.getAbsolutePath());
+                        f = new File(f, name + ".xml");
+                        newTool.setDefinitionPath(f.getAbsolutePath());
+                        newTool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
+                        tool = newTool;
+                    }
                 }
                 tool.setToolName(name);
                 XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(tool.getDefinitionPath())));
