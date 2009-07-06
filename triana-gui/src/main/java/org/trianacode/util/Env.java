@@ -262,10 +262,6 @@ public final class Env {
     private static final long TIMEOUT = 20000;
     private static String resourceDir = null;
     private static String tempDir = "";
-    private static String logDir = "";
-    private static String remoteToolDir = "";
-    private static String dataToolDir = "";
-    private static String userToolDir = "";
 
 
     /**
@@ -780,31 +776,10 @@ public final class Env {
     }
 
     /**
-     * @return the absolute path to the user's log directory
-     */
-    public static final String getLogDir() {
-        if (logDir.equals("")) {
-            logDir = getResourceDir() + separator() + "temp";
-            File dir = new File(logDir);
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-        }
-        return logDir;
-    }
-
-    /**
      * @return the absolute path to the user resource directory.
      */
     public final static synchronized String getResourceDir() {
-        if (resourceDir == null) {
-            resourceDir = home() + File.separator + verName + "Resources";
-            File resDir = new File(resourceDir);
-            if (!resDir.exists()) {
-                resDir.mkdir();
-            }
-        }
-        return resourceDir;
+        return home();
     }
 
 

@@ -41,7 +41,7 @@ public class Home {
         }
         logger.info("calculating Triana home");
         File appHome;
-        String triana = "Triana";
+        String triana = "Triana4";
         File file = new File(System.getProperty("user.home"));
         if (!file.isDirectory()) {
             logger.severe("User home not a valid directory: " + file);
