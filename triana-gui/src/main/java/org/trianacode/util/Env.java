@@ -115,7 +115,7 @@ public final class Env {
     private static boolean passwordOK = false;
     private static boolean runOut = false;
     private static final String version = "3.2.2";
-    private static final String verName = "TrianaV3";
+    private static final String verName = "TrianaV4";
     public static String CONFIG_VERSION = "1.6.4";
 
     private static Vector classpaths;
@@ -342,21 +342,11 @@ public final class Env {
     public static void initConfig(ToolTable tools, boolean write) {
         logger.info("Configuring environment");
 
-        File layoutFile = new File(Env.getToolBoxLayoutFile());
-        if (!layoutFile.exists()) {
-            try {
-                layoutFile.createNewFile();
-            }
-            catch (IOException e) {
-                logger.severe("Error creating user tool box file : " + FileUtils.formatThrowable(e));
-            }
-        }
-
         configFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE);
         configBakFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE_BAK);
 
         if (!configFile.exists()) {// First time run so need to set up paths
-            restoreDefaultConfig();
+            restoreDefaultConfig(tools);
         } else {// read from the file
             GUIEnv.loadDefaultColours();
             try {
@@ -369,7 +359,7 @@ public final class Env {
                 }
                 catch (Exception e1) {
                     logger.warning("Corrupt backup file, restoring defaults");
-                    restoreDefaultConfig();
+                    restoreDefaultConfig(tools);
                 }
             }
         }
@@ -384,12 +374,14 @@ public final class Env {
     /**
      * Restore the default user settings
      */
-    private static void restoreDefaultConfig() {
+    private static void restoreDefaultConfig(ToolTable table) {
         GUIEnv.loadDefaultColours();
         String defaultEditor = Env.getString("defaultEditor");
         setUserProperty(CODE_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));
+        Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.DEFAULT_TOOLBOX), ToolTable.DEFAULT_TOOLBOX);
+        table.addToolBox(def);
     }
 
 
@@ -766,60 +758,12 @@ public final class Env {
     }
 
     /**
-     * Returns the absolute path to the toolbox layout file.
-     */
-    public static final String getToolBoxLayoutFile() {
-        return getResourceDir() + separator() + "toolbox.layout";
-    }
-
-    /**
-     * @return the absolute path to the user's tool directory.
-     */
-    private static final String getUserToolDir() {
-        if (userToolDir.equals("")) {
-            userToolDir = getResourceDir() + separator() + "GroupTools";
-            File dir = new File(userToolDir);
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-        }
-        return userToolDir;
-    }
-
-    /**
      * @return The user name from the JDK "user.name"
      */
     public static String getUserName() {
         return System.getProperty("user.name");
     }
 
-    /**
-     * @return the absolute path to the user's data directory.
-     */
-    private static final String getDataToolDir() {
-        if (dataToolDir.equals("")) {
-            dataToolDir = getResourceDir() + separator() + "Data";
-            File dir = new File(dataToolDir);
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-        }
-        return dataToolDir;
-    }
-
-    /**
-     * @return the absolute path to the user's remote service directory.
-     */
-    private static final String getRemoteToolDir() {
-        if (remoteToolDir.equals("")) {
-            remoteToolDir = getResourceDir() + separator() + "Remote";
-            File dir = new File(remoteToolDir);
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-        }
-        return remoteToolDir;
-    }
 
     /**
      * @return the absolute path to the user's temp directory
