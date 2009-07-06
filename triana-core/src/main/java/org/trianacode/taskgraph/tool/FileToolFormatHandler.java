@@ -128,7 +128,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 JarHelper helper = new JarHelper(file);
                 List<String> potentials = helper.listEntries();
                 for (String potential : potentials) {
-                    System.out.println("FileToolFormatHandler.add potential:" + potential);
+                    log.fine("FileToolFormatHandler.add potential:" + potential);
                     if (potential.endsWith(".xml")) {
                         InputStream in = helper.getStream(potential);
                         Tool tool = readXMLStream(in, file.getAbsolutePath(), toolbox);

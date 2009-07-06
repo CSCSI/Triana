@@ -100,7 +100,7 @@ public class ToolTableImp extends AbstractToolTable {
      * @param toolbox the toolbox the tool is pasted into (ignore if irrelevant)
      */
     public void insertTool(Tool tool, String pack, String toolbox) {
-        System.out.println("ToolTableImp.insertTool full name:" + tool.getQualifiedToolName());
+        log.fine("ToolTableImp.insertTool full name:" + tool.getQualifiedToolName());
         if (toolHandler.getTool(tool.getQualifiedToolName()) != null) {
             log.fine("Not pasting. Tool already exists with name " + tool.getQualifiedToolName());
             return;
@@ -224,7 +224,7 @@ public class ToolTableImp extends AbstractToolTable {
         List<Tool> ret = new ArrayList<Tool>();
         if (stats != null) {
             for (ToolFormatHandler.ToolStatus stat : stats) {
-                System.out.println("ToolTableImp.addTool stats:" + stat.getStatus());
+                log.fine("ToolTableImp.addTool stats:" + stat.getStatus());
                 if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_MODIFIED) {
                     continue;
                 } else if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_ADDED) {
