@@ -368,6 +368,8 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     /**
      * If the user object at the tree node is a Tool this returns the package for that tool. If it
      * is a package node then the node hierarchy is used to suggest a package.
+     * TODO - this bases the suggested package on the visible nodes in the tree, which may be mangled
+     * due to the filter being imposed on the tree
      */
     private String getPackage(DefaultMutableTreeNode node) {
         if (node.getUserObject() instanceof Tool)

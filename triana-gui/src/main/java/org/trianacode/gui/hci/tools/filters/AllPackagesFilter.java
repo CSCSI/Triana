@@ -61,9 +61,6 @@ package org.trianacode.gui.hci.tools.filters;
 import org.trianacode.gui.hci.ToolFilter;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes
  * Input.SignalProc
@@ -80,7 +77,7 @@ public class AllPackagesFilter implements ToolFilter {
      * @return the name of this filter
      */
     public String getName() {
-        return "Simple";
+        return "Packages";
     }
 
     /**
@@ -104,7 +101,7 @@ public class AllPackagesFilter implements ToolFilter {
      */
     public String[] getFilteredPackage(Tool tool) {
         String pkg = tool.getToolPackage();
-        String[] names = pkg.split("\\.");
+        /*String[] names = pkg.split("\\.");
         List<String> good = new ArrayList<String>();
         for (String name : names) {
             if (name.length() > 0) {
@@ -121,7 +118,7 @@ public class AllPackagesFilter implements ToolFilter {
                 pkg += ".";
             }
 
-        }
+        }*/
 
         return new String[]{pkg};
     }
