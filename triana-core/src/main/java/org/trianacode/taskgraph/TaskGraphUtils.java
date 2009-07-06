@@ -98,7 +98,7 @@ public class TaskGraphUtils {
     public static Tool cloneTool(Tool tool) throws TaskException {
         if (tool instanceof TaskGraph) {
             try {
-                return (Tool) cloneTaskGraph((TaskGraph) tool, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE, false, false, true);
+                return cloneTaskGraph((TaskGraph) tool, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE, false, false, true);
             } catch (TaskGraphException except) {
                 throw (new TaskException(except));
             }
@@ -311,7 +311,7 @@ public class TaskGraphUtils {
             }
 
             TaskGraph group = taskgraph;
-            Node nodes [] = group.getDataInputNodes();
+            Node nodes[] = group.getDataInputNodes();
             Node node;
             Node clonenode;
 
@@ -362,9 +362,9 @@ public class TaskGraphUtils {
 
             return clone;
         } catch (ClassCastException except) {
-            throw(new TaskGraphException("cloningError" + ": " + "NodeError", except));
+            throw (new TaskGraphException("cloningError" + ": " + "NodeError", except));
         } catch (TaskGraphException except) {
-            throw(new TaskGraphException("cloningError" + ": " + except.getMessage(), except));
+            throw (new TaskGraphException("cloningError" + ": " + except.getMessage(), except));
         }
     }
 
@@ -794,7 +794,7 @@ public class TaskGraphUtils {
 
     /**
      * @return the remaining workflow that follows the specified task, optionally including
-     * the original task at index 0.
+     *         the original task at index 0.
      */
     public static Task[] getRemainingWorkflow(Task task, boolean include) {
         ArrayList tasks = new ArrayList();
@@ -813,7 +813,7 @@ public class TaskGraphUtils {
         for (int count = 0; count < conntasks.length; count++)
             tasks.add(conntasks[count]);
 
-        while(ptr < tasks.size()) {
+        while (ptr < tasks.size()) {
             temptask = (Task) tasks.get(ptr++);
 
             conntasks = getConnectedTasks(temptask);

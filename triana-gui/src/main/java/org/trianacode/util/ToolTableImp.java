@@ -97,6 +97,8 @@ public class ToolTableImp extends AbstractToolTable {
      */
     public void insertTool(Tool tool, String pack, String toolbox) {
         String location = getPasteFileLocation(tool.getToolName(), pack, toolbox);
+        tool.setDefinitionPath(location);
+        tool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
 
         try {
             XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(location)));
@@ -197,6 +199,10 @@ public class ToolTableImp extends AbstractToolTable {
         if ((!toolFile.exists()) || toolFile.isDirectory()) {
             log.fine("dumping file..." + toolFile);
             Env.removeExcludedTool(toolFile.getAbsolutePath());
+            Tool[] referenced = toolHandler.getTools(toolFile.getAbsolutePath());
+            for (Tool tool : referenced) {
+                toolHandler.remove(tool);
+            }
             return null;
         }
         List<ToolFormatHandler.ToolStatus> stats = null;
@@ -209,7 +215,7 @@ public class ToolTableImp extends AbstractToolTable {
         List<Tool> ret = new ArrayList<Tool>();
         if (stats != null) {
             for (ToolFormatHandler.ToolStatus stat : stats) {
-                System.out.println("ToolTableImp.addTool stats:" + stat.getStatus());
+                log.fine("ToolTableImp.addTool stats:" + stat.getStatus());
                 if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_MODIFIED) {
                     continue;
                 } else if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_ADDED) {
@@ -244,12 +250,11 @@ public class ToolTableImp extends AbstractToolTable {
 
         if (toolbox != null) {
             List<Tool> tool = addTools(new File(location), toolbox);
-            for (Tool tool1 : tool) {
+            /*for (Tool tool1 : tool) {
                 if (tool1 != null) {
                     purgeTool(tool1);
                 }
-            }
-
+            }*/
         }
     }
 

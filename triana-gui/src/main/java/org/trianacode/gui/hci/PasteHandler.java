@@ -151,7 +151,7 @@ public class PasteHandler {
                 if (pack != null) {
                     for (int count = 0; count < tools.length; count++) {
                         if (TrianaDialog.isOKtoWriteIfExists(tooltable.getPasteFileLocation(tools[count].getToolName(), pack, toolbox))) {
-                            ((Tool) tools[count]).setToolPackage(pack);
+                            tools[count].setToolPackage(pack);
                             tooltable.insertTool(tools[count], pack, toolbox);
                         }
                     }

@@ -112,7 +112,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
     public List<ToolStatus> add(File file, String toolbox) throws ToolException {
-        System.out.println("FileToolFormatHandler.add file:" + file.getAbsolutePath());
+        log.fine("FileToolFormatHandler.add file:" + file.getAbsolutePath());
         List<ToolStatus> ret = new ArrayList<ToolStatus>();
         try {
             if (file.getName().endsWith(".xml")) {
@@ -190,6 +190,10 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         if (tu != null) {
             tools.remove(id);
         }
+    }
+
+    public void removeDefinitionPath(String path) {
+        shared.remove(path);
     }
 
     public void clear() {

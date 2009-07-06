@@ -92,8 +92,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 
 
 /**
@@ -591,6 +590,34 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      * Cuts the selected tool/package of toolTables from the tree
      */
     private void handleCut() {
+        Tool[] seltools = getSelectedTools();
+        Set<String> nonXML = new HashSet<String>();
+
+        for (Tool seltool : seltools) {
+            if (!seltool.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML)) {
+                nonXML.add(seltool.getToolName());
+            }
+        }
+        if (nonXML.size() > 0) {
+            int lines = 1;
+            StringBuilder sb = new StringBuilder("Tools to be converted to XML:\n");
+            for (String s : nonXML) {
+                sb.append(s).append("\n");
+                lines++;
+                if (lines > 14) {
+                    sb.append("...\n");
+                    break;
+                }
+            }
+            boolean ok = OptionPane.showOkCancel(sb.toString(), "Tool Conversion", workspaceContainer);
+            if (!ok) {
+                return;
+            }
+        }
+        Boolean others = checkAffectedTools(seltools);
+        if (others != null && others == false) {
+            return;
+        }
         handleCopy();
         handleDelete(false, true);
     }
@@ -615,10 +642,75 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     }
 
     /**
+     * shows the user other affected tools when deleting.
+     * A null returned value means there were no other affected tools.
+     * true means the user was ok with losing the other tools.
+     * false means they were not.
+     *
+     * @param selectedTools
+     * @return
+     */
+    private Boolean checkAffectedTools(Tool[] selectedTools) {
+        Map<String, Set<String>> allAffected = new HashMap<String, Set<String>>();
+        for (Tool seltool : selectedTools) {
+            String def = seltool.getDefinitionPath();
+            Tool[] affected = toolTable.getTools(def);
+            if (affected.length > 0) {
+                Set<String> others = allAffected.get(def);
+                if (others == null) {
+                    others = new HashSet<String>();
+                }
+                for (Tool tool : affected) {
+                    others.add(tool.getToolName());
+                }
+                allAffected.put(def, others);
+            }
+        }
+        if (allAffected.size() > 0) {
+            StringBuilder sb = new StringBuilder("\nDeleting: ");
+            int lines = 0;
+            for (String s : allAffected.keySet()) {
+                if (lines > 14) {
+                    sb.append("...\n");
+                    break;
+                }
+                sb.append(s).append(":\n").append("The following tools will be deleted:\n");
+                lines += 2;
+                Set<String> aff = allAffected.get(s);
+                for (String s1 : aff) {
+                    if (lines > 14) {
+                        break;
+                    }
+                    sb.append(s1).append("\n");
+                    lines++;
+                }
+            }
+            int reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
+                    sb.toString() + "\nDo you wish to continue?",
+                    "Delete Files", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
+            if (reply == JOptionPane.OK_OPTION) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Deletes the xml files for the specified toolTables
      */
     private void handleDelete(boolean prompt, boolean files) {
         int reply = JOptionPane.OK_OPTION;
+        Tool[] seltools = getSelectedTools();
+        if (files) {
+            Boolean b = checkAffectedTools(seltools);
+            if (b) {
+                return;
+            } else if (!b) {
+                prompt = false;
+            }
+        }
         DefaultMutableTreeNode[] nodes = getSelectedNodes();
         String del = files ? Env.getString("Delete") : Env.getString("DeleteReferences");
         String q1 = files ? Env.getString("deleteTool") : Env.getString("removeTool");
@@ -644,7 +736,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
             }
         }
 
-        Tool[] seltools = getSelectedTools();
+
         Tool[] deltools = new Tool[seltools.length];
         System.arraycopy(seltools, 0, deltools, 0, seltools.length);
 
@@ -671,7 +763,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      */
     private void handleRenameTool(Tool tool) {
         boolean copy = false;
-        if (!tool.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML)) {
+        if (!tool.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML) || !toolTable.isModifiable(tool)) {
             int reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                     tool.getToolName() + " is not defined in XML. Do want to create a copy to rename?",
                     Env.getString("Rename"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
@@ -691,19 +783,11 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         if ((name != null) && (!name.equals(tool.getToolName()))) {
             try {
                 if (copy) {
-                    ToolImp newTool = new ToolImp(tool);
-                    URL url = toolTable.getToolFormatHandler().getDefinitionRoot(tool);
-                    File f = toolTable.getToolFormatHandler().toFile(url);
-                    if (f == null) {
-                        OptionPane.showError("Could not get root file for tool definition", "Error", GUIEnv.getApplicationFrame());
+                    Tool other = copyTool(tool, name);
+                    if (other == null) {
                         return;
-                    } else {
-                        System.out.println("LeafListener.handleRenameTool xml dir:" + f.getAbsolutePath());
-                        f = new File(f, name + ".xml");
-                        newTool.setDefinitionPath(f.getAbsolutePath());
-                        newTool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
-                        tool = newTool;
                     }
+                    tool = other;
                 }
                 tool.setToolName(name);
                 XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(tool.getDefinitionPath())));
@@ -717,6 +801,22 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
             }
 
         }
+    }
+
+    private Tool copyTool(Tool tool, String newName) throws TaskException {
+        ToolImp newTool = new ToolImp(tool);
+        String path = tool.getDefinitionPath();
+        File f = new File(path);
+        if (!f.exists() || f.length() == 0) {
+            OptionPane.showError("Could not get root file for tool definition", "Error", GUIEnv.getApplicationFrame());
+            return null;
+        } else {
+            f = new File(f.getParentFile(), newName + ".xml");
+            newTool.setToolName(newName);
+            newTool.setDefinitionPath(f.getAbsolutePath());
+            newTool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
+        }
+        return newTool;
     }
 
 

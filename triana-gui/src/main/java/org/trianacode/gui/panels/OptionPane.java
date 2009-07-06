@@ -41,4 +41,12 @@ public class OptionPane {
         JOptionPane.showMessageDialog(parent, msg, title, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
     }
 
+    public static boolean showOkCancel(String msg, String title, Component parent) {
+        int reply = JOptionPane.showConfirmDialog(parent, msg, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
+        if (reply == JOptionPane.OK_OPTION) {
+            return true;
+        }
+        return false;
+    }
+
 }

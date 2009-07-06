@@ -87,23 +87,25 @@ public class Clipboard {
     /**
      * Stores tasks that are being cut or copied in the clipboard.
      *
-     * @param tools the tools being stored in the clipboard
+     * @param tools      the tools being stored in the clipboard
      * @param repackaged a flag indicating whether the tools have already been
-     * repackaged to reflect the correct paste subpackage.
+     *                   repackaged to reflect the correct paste subpackage.
      */
     public static void putTools(Tool[] tools, boolean repackaged) throws TaskGraphException {
         clipboard = new Tool[tools.length];
         repack = repackaged;
 
-        for (int count = 0; count < tools.length; count++)
+        for (int count = 0; count < tools.length; count++) {
             clipboard[count] = TaskGraphUtils.cloneTool(tools[count]);
+
+        }
     }
 
     /**
      * Retrieves copies of the tasks stored in the clipboard
      *
      * @param repackaged a flag indiacting whether the returned tools should
-     * be repackaged to reflact the correct paste subpackage
+     *                   be repackaged to reflact the correct paste subpackage
      */
     public static Tool[] getTools(boolean repackaged) {
         try {
@@ -117,7 +119,7 @@ public class Clipboard {
             }
 
             return temp;
-        } catch(TaskGraphException except) {
+        } catch (TaskGraphException except) {
             return new Tool[0];
         }
     }

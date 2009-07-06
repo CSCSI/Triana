@@ -97,6 +97,16 @@ public interface ToolTable {
      */
     public String getToolBoxType(String toolbox);
 
+    /**
+     * get the list of tools that share the same definition path.
+     * This could be the case if a tool is in a jar file for example, which contains
+     * other tools.
+     *
+     * @param definitionPath
+     * @return
+     */
+    public Tool[] getTools(String definitionPath);
+
 
     /**
      * Add a tool box path to the current tool boxes
@@ -116,10 +126,6 @@ public interface ToolTable {
      */
     public Tool getTool(String toolName);
 
-    /**
-     * @return an array of the tools with the specified name
-     */
-    public Tool[] getTools(String toolName);
 
     /**
      * get all tools
@@ -153,6 +159,14 @@ public interface ToolTable {
      * Deletes the specified tool.
      */
     public void deleteTool(Tool tool, boolean files);
+
+    /**
+     * return true if this tool can be modified. A remote tool, or a jarred tool may not be.
+     *
+     * @param tool
+     * @return
+     */
+    public boolean isModifiable(Tool tool);
 
 
     /**
@@ -209,5 +223,4 @@ public interface ToolTable {
      */
     void blockingLoadTools();
 
-    public ToolFormatHandler getToolFormatHandler();
 }

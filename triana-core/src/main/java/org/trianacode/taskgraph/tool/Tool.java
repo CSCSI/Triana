@@ -405,6 +405,13 @@ public interface Tool {
      */
     public void setToolBox(String toolboxpath);
 
+    /**
+     * used when creating clones that are not based on the same definition file type
+     *
+     * @param type
+     */
+    public void setDefinitionType(String type);
+
 
     /**
      * Sets the proxy for this tool

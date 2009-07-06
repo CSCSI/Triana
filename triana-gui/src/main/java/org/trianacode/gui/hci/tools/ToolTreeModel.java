@@ -123,15 +123,11 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
 
         nodes.put("", getRoot());
 
-        String[] names = tooltable.getToolNames();
-        Tool[] tools;
+        Tool[] tools = tooltable.getTools();
 
-        for (int namecount = 0; namecount < names.length; namecount++) {
-            tools = tooltable.getTools(names[namecount]);
+        for (int toolcount = 0; toolcount < tools.length; toolcount++)
+            insertTool(tools[toolcount]);
 
-            for (int toolcount = 0; toolcount < tools.length; toolcount++)
-                insertTool(tools[toolcount]);
-        }
     }
 
 

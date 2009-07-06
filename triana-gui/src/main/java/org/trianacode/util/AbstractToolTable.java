@@ -80,10 +80,6 @@ public abstract class AbstractToolTable implements ToolTable {
         }
     }
 
-    public ToolFormatHandler getToolFormatHandler() {
-        return toolHandler;
-    }
-
     /**
      * Add a listener to be notified when new tools are discovered
      */
@@ -126,14 +122,11 @@ public abstract class AbstractToolTable implements ToolTable {
     }
 
     /**
-     * @return an array of the tools with the specified name
+     * @return an array of the tools that share the same file
      */
-    public Tool[] getTools(String toolName) {
-        Tool tool = toolHandler.getTool(toolName);
-        if (tool != null) {
-            return new Tool[]{tool};
-        }
-        return new Tool[0];
+    public Tool[] getTools(String definitionPath) {
+        return toolHandler.getTools(definitionPath);
+
     }
 
     /**
@@ -175,6 +168,10 @@ public abstract class AbstractToolTable implements ToolTable {
      * @param tool tool to be deleted
      */
     public abstract void deleteTool(Tool tool, boolean files);
+
+    public boolean isModifiable(Tool tool) {
+        return toolHandler.isModifiable(tool);
+    }
 
     /**
      * Generate a new file location to store a pasted tool

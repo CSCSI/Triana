@@ -108,15 +108,13 @@ public class ToolsMenuHandler implements ActionListener {
         final CompileHandler compiler = new CompileHandler(true);
         Thread thread = new Thread() {
             public void run() {
-                String[] toolNames = tools.getToolNames();
-                for (int i = 0; i < toolNames.length; i++) {
-                    String toolName = toolNames[i];
-                    Tool[] toolsByName = tools.getTools(toolName);
-                    for (int j = 0; j < toolsByName.length; j++) {
-                        Tool tool = toolsByName[j];
-                        compiler.compileTargetTool(tool);
-                    }
+
+                Tool[] toolsByName = tools.getTools();
+                for (int j = 0; j < toolsByName.length; j++) {
+                    Tool tool = toolsByName[j];
+                    compiler.compileTargetTool(tool);
                 }
+
             }
         };
         thread.setName("Toolbox Rebuild Thread");

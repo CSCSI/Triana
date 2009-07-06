@@ -201,6 +201,7 @@ public class ToolImp implements Tool {
      */
     public ToolImp(Tool tool) throws TaskException {
         try {
+            setDefinitionType(tool.getDefinitionType());
             setToolName(tool.getToolName());
             setToolPackage(tool.getToolPackage());
             setProxy(ProxyFactory.cloneProxy(tool.getProxy()));

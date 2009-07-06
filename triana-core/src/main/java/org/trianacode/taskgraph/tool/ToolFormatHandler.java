@@ -44,6 +44,8 @@ public interface ToolFormatHandler {
 
     public void remove(Tool tool);
 
+    public void removeDefinitionPath(String path);
+
     public void clear();
 
     public String[] getToolNames();

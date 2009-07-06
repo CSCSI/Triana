@@ -131,8 +131,10 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         cancel.addActionListener(this);
 
         getContentPane().add(buttonpanel, BorderLayout.SOUTH);
-        setLocationRelativeTo(GUIEnv.getApplicationFrame());
+
+
         pack();
+        setLocationRelativeTo(GUIEnv.getApplicationFrame());
         setVisible(true);
     }
 
