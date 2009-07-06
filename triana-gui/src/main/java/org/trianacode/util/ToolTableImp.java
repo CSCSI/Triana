@@ -61,8 +61,9 @@ public class ToolTableImp extends AbstractToolTable {
         super.addToolBox(box);
         for (Toolbox toolbox : box) {
             if (!toolbox.isVirtual()) {
-                ToolClassLoader.getLoader().addToolBox(toolbox.getPath());
                 File f = new File(toolbox.getPath());
+                f.mkdirs();
+                ToolClassLoader.getLoader().addToolBox(toolbox.getPath());
                 if (f.exists() && f.length() > 0) {
                     try {
                         TypesMap.load(f);
