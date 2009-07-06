@@ -246,6 +246,10 @@ public abstract class AbstractToolTable implements ToolTable {
         return toolboxes.values().toArray(new Toolbox[toolboxes.size()]);
     }
 
+    public String[] getToolBoxPaths() {
+        return toolboxes.keySet().toArray(new String[toolboxes.size()]);
+    }
+
     /**
      * @return the tool box path of the specified type (null if no tool box specified for that
      *         type)
@@ -353,7 +357,7 @@ public abstract class AbstractToolTable implements ToolTable {
      * @param toolFile the tool file
      * @param toolbox  toolbox to which the tool is to be added
      */
-    protected abstract Tool addTool(File toolFile, String toolbox) throws ToolException;
+    protected abstract List<Tool> addTools(File toolFile, String toolbox) throws ToolException;
 
     /**
      * Removes the tool

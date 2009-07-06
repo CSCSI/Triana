@@ -1563,8 +1563,13 @@ public class FileUtils {
          * @return true if the specified file matches the filter
          */
         public boolean matches(File file) {
+            if (file.isDirectory()) {
+                return true;
+            }
             for (String s : endsWith) {
-                return file.getAbsolutePath().endsWith(s);
+                if (file.getAbsolutePath().endsWith(s)) {
+                    return true;
+                }
             }
             return false;
         }

@@ -65,11 +65,13 @@ public class ClassParser {
     public Map<String, ClassHierarchy> analyseClassFile(File file) throws IOException {
         Map<String, ClassHierarchy> map = new HashMap<String, ClassHierarchy>();
         if (file.isDirectory()) {
-            String[] files = file.list();
+            File[] files = file.listFiles();
             for (int i = 0; i < files.length; i++) {
-                File child = new File(file, files[i]);
-                if (child.isDirectory() || files[i].endsWith(".class")) {
-                    map.putAll(analyseClassFile(child));
+
+                if (files[i].isDirectory() || files[i].getName().endsWith(".class")) {
+                    map.putAll(analyseClassFile(files[i]));
+                } else if (files[i].getName().endsWith(".jar")) {
+                    map.putAll(analyseClassFiles(files[i], new ZipFile(files[i])));
                 }
             }
         } else {
@@ -92,6 +94,7 @@ public class ClassParser {
                 ClassHierarchy ch = getClasses(stream, f);
                 if (ch != null) {
                     String jarpath = f.toURI().toURL().toString();
+                    System.out.println("ClassParser.analyseClassFiles created jar url:" + jarpath);
                     ch.setFile("jar:" + jarpath + "!/" + entry.getName());
                     strings.put(ch.getName(), ch);
                 }

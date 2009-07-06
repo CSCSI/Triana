@@ -26,6 +26,7 @@ import org.trianacode.taskgraph.util.FileUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -116,55 +117,59 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         return new ToolStatus(tool, ToolStatus.Status.OK);
     }
 
-    public ToolStatus add(File file, String toolbox) throws ToolException {
+    public List<ToolStatus> add(File file, String toolbox) throws ToolException {
+        System.out.println("FileToolFormatHandler.add file:" + file.getAbsolutePath());
+        List<ToolStatus> ret = new ArrayList<ToolStatus>();
         try {
             if (file.getName().endsWith(".xml")) {
+                log.fine("file is XML:" + file.getAbsolutePath());
                 Tool tool = readXMLStream(new FileInputStream(file), file.getAbsolutePath(), toolbox);
                 if (tool != null) {
-                    return initTool(tool, file);
+                    ret.add(initTool(tool, file));
                 }
             } else if (file.getName().endsWith(".jar")) {
+                log.fine("file is JAR:" + file.getAbsolutePath());
                 JarHelper helper = new JarHelper(file);
                 List<String> potentials = helper.listEntries();
                 for (String potential : potentials) {
+                    System.out.println("FileToolFormatHandler.add potential:" + potential);
                     if (potential.endsWith(".xml")) {
                         InputStream in = helper.getStream(potential);
                         Tool tool = readXMLStream(in, file.getAbsolutePath(), toolbox);
                         if (tool != null) {
-                            return initJarredTool(tool, file);
+                            ret.add(initJarredTool(tool, file));
                         }
                     } else if (potential.endsWith(".class")) {
 
                         URL url = createJarURL(file, potential);
+                        System.out.println("FileToolFormatHandler.add jar url:" + url.toString());
                         if (url != null) {
                             ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
                             if (ch != null) {
                                 Tool tool = read(ch.getName(), toolbox, ch.getFile());
                                 if (tool != null) {
-                                    return initJarredTool(tool, file);
+                                    ret.add(initJarredTool(tool, file));
                                 }
-                            } else {
-                                return null;
                             }
                         }
 
                     }
                 }
             } else if (file.getName().endsWith(".class")) {
+                log.fine("file is Java:" + file.getAbsolutePath());
                 ClassHierarchy ch = TypesMap.isType(file.getAbsolutePath(), Unit.class.getName());
+                System.out.println("FileToolFormatHandler.add class hierarchy:" + ch);
                 if (ch != null) {
                     Tool tool = read(ch.getName(), toolbox, ch.getFile());
                     if (tool != null) {
-                        return initTool(tool, file);
+                        ret.add(initTool(tool, file));
                     }
-                } else {
-                    return null;
                 }
             }
         } catch (IOException e) {
             throw new ToolException(e.getMessage());
         }
-        return new ToolStatus(null, ToolStatus.Status.NULL_TOOL);
+        return ret;
     }
 
     public void delete(Tool tool) {
@@ -176,8 +181,9 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 remove(tool);
             }
             File f = toFile(tu.getDef());
-            log.fine("got file from URL:" + f.getAbsolutePath());
-            if (f.exists()) {
+
+            if (f != null && f.exists()) {
+                log.fine("got file from URL:" + f.getAbsolutePath());
                 f.delete();
                 tools.remove(id);
             }
@@ -197,12 +203,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
     public String[] getToolNames() {
-        String[] t = new String[tools.size()];
-        int count = 0;
-        for (String tool : tools.keySet()) {
-            t[count++] = tool;
-        }
-        return t;
+        return tools.keySet().toArray(new String[tools.size()]);
     }
 
 
@@ -533,7 +534,9 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             return null;
         }
         try {
-            File f = new File(url.toURI());
+            URI uri = url.toURI();
+            System.out.println("FileToolFormatHandler.toFile URI:" + uri);
+            File f = new File(uri);
             if (f.exists() && f.length() > 0) {
                 return f;
             }

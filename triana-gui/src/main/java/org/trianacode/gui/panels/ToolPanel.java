@@ -161,7 +161,7 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
         formpanel.add(new JLabel(Env.getString("package")));
         formpanel.add(packpanel2);
 
-        toolbox = new JComboBox(tools.getToolBoxes());
+        toolbox = new JComboBox(tools.getToolBoxPaths());
         toolbox.addItemListener(this);
         String lastToolBox = (String) Env.getUserProperty(LAST_TOOLBOX);
 

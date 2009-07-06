@@ -21,10 +21,9 @@ import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.util.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -37,15 +36,15 @@ import java.util.logging.Logger;
  */
 
 public class ToolTableImp extends AbstractToolTable {
-    static Logger logger = Logger.getLogger("org.trianacode.util.ToolTableImp");
+    static Logger log = Logger.getLogger("org.trianacode.util.ToolTableImp");
 
 
     private ReloadToolsThread reload;
 
-    public static String[] excludedDirectories = {"CVS", ".svn", ".cvsignore"};
+    public static String[] excludedDirectories = {"CVS", ".", "src"};
 
     public void init() {
-        logger.fine("initialising local tool table");
+        log.fine("initialising local tool table");
         reload = new ReloadToolsThread();
         reload.start();
     }
@@ -68,7 +67,7 @@ public class ToolTableImp extends AbstractToolTable {
                     try {
                         TypesMap.load(f);
                     } catch (IOException e) {
-                        logger.warning("Error loading types map: " + FileUtils.formatThrowable(e));
+                        log.warning("Error loading types map: " + FileUtils.formatThrowable(e));
                     }
                 }
             }
@@ -194,25 +193,35 @@ public class ToolTableImp extends AbstractToolTable {
      * @param toolFile the tool file
      * @param toolbox  toolbox to which the tool is to be added
      */
-    protected Tool addTool(File toolFile, String toolbox) {
+    protected List<Tool> addTools(File toolFile, String toolbox) {
         if ((!toolFile.exists()) || toolFile.isDirectory()) {
+            log.fine("dumping file..." + toolFile);
             Env.removeExcludedTool(toolFile.getAbsolutePath());
             return null;
         }
-        ToolFormatHandler.ToolStatus stats = null;
+        List<ToolFormatHandler.ToolStatus> stats = null;
         try {
             stats = toolHandler.add(toolFile, toolbox);
         } catch (ToolException e) {
-            notifyToolRemoved(stats.getTool());
+            //notifyToolRemoved(stats.getTool());
+
         }
-        if (stats.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_MODIFIED) {
-            return null;
-        } else if (stats.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_ADDED) {
-            notifyToolRemoved(stats.getTool());
-        } else if (stats.getStatus() == ToolFormatHandler.ToolStatus.Status.OK) {
-            notifyToolAdded(stats.getTool());
+        List<Tool> ret = new ArrayList<Tool>();
+        if (stats != null) {
+            for (ToolFormatHandler.ToolStatus stat : stats) {
+                System.out.println("ToolTableImp.addTool stats:" + stat.getStatus());
+                if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_MODIFIED) {
+                    continue;
+                } else if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_ADDED) {
+                    notifyToolRemoved(stat.getTool());
+                } else if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.OK) {
+                    notifyToolAdded(stat.getTool());
+                }
+                ret.add(stat.getTool());
+            }
+
         }
-        return stats.getTool();
+        return ret;
     }
 
     protected String getToolPackageName(String xmlFilePath, String toolName) {
@@ -234,10 +243,13 @@ public class ToolTableImp extends AbstractToolTable {
         }
 
         if (toolbox != null) {
-            Tool tool = addTool(new File(location), toolbox);
-            if (tool != null) {
-                purgeTool(tool);
+            List<Tool> tool = addTools(new File(location), toolbox);
+            for (Tool tool1 : tool) {
+                if (tool1 != null) {
+                    purgeTool(tool1);
+                }
             }
+
         }
     }
 
@@ -260,15 +272,43 @@ public class ToolTableImp extends AbstractToolTable {
 
         for (int count = 0; count < toolboxArray.length; count++) {
             String baseToolboxPath = toolboxArray[count];
-
-            // recursively find all files in toolboxes with .xml, .class or .jar suffix
-            File[] files = FileUtils.listEndsWith(baseToolboxPath, new String[]{XMLReader.XML_FILE_SUFFIX, ".jar", ".class"}, excludedDirectories);
-
-            for (int i = 0; i < files.length; i++) {
-                addTool(files[i], baseToolboxPath);
+            List<File> files = find(new File(baseToolboxPath), new String[]{".xml", ".jar", ".class"}, excludedDirectories);
+            for (int i = 0; i < files.size(); i++) {
+                addTools(files.get(i), baseToolboxPath);
             }
-
         }
+    }
+
+    private List<File> find(File f, final String[] exts, final String[] extDirs) {
+        ArrayList<File> files = new ArrayList<File>();
+
+        if (f.isDirectory()) {
+            File[] fs = f.listFiles(new FilenameFilter() {
+                public boolean accept(File file, String s) {
+                    if (file.isDirectory()) {
+                        for (String extDir : extDirs) {
+                            if (file.getName().startsWith(extDir)) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    } else {
+                        for (String ext : exts) {
+                            if (file.getName().endsWith(ext)) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            });
+            for (File file : fs) {
+                files.addAll(find(file, exts, extDirs));
+            }
+        } else {
+            files.add(f);
+        }
+        return files;
     }
 
 

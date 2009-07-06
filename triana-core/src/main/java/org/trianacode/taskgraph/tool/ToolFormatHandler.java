@@ -18,6 +18,7 @@ package org.trianacode.taskgraph.tool;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Class Description Here...
@@ -37,7 +38,7 @@ public interface ToolFormatHandler {
 
     public ToolStatus add(Tool tool) throws ToolException;
 
-    public ToolStatus add(File f, String toolbox) throws ToolException;
+    public List<ToolStatus> add(File f, String toolbox) throws ToolException;
 
     public void delete(Tool tool);
 

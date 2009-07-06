@@ -83,6 +83,8 @@ public interface ToolTable {
      */
     public Toolbox[] getToolBoxes();
 
+    public String[] getToolBoxPaths();
+
     /**
      * @return the tool box path of the specified type (null if no tool box specified for that
      *         type)
