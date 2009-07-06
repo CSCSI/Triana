@@ -50,6 +50,8 @@ public interface ToolFormatHandler {
 
     public Tool[] getTools();
 
+    public Tool[] getTools(String path);
+
     public File toFile(URL url);
 
 
@@ -89,6 +91,8 @@ public interface ToolFormatHandler {
     public boolean isModifiable(Tool tool);
 
     public boolean isModified(Tool tool);
+
+    public boolean isMovable(Tool tool);
 
     public static class ToolStatus {
 

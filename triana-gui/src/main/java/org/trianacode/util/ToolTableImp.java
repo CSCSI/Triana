@@ -263,7 +263,7 @@ public class ToolTableImp extends AbstractToolTable {
     }
 
     protected void purgeToolRef(Tool tool) {
-        toolHandler.delete(tool);
+        toolHandler.remove(tool);
         notifyToolRemoved(tool);
     }
 

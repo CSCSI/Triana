@@ -29,10 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
@@ -59,10 +56,6 @@ import java.util.logging.Logger;
  * <p/>
  * A Java tool, even if the source is available in the tool, is also not modifiable.
  * <p/>
- * The file constructor is not complete at the moment in that is DOES NOT create Java tools.
- * This is because of dependency issues that are not resolved yet.
- * <p/>
- * Therefore, Java tools are loaded from elsewhere (currently JavaReader in ToolTableImp), and then passed to this in the Tool constructor.
  *
  * @author Andrew Harrison
  * @version $Revision:$
@@ -75,7 +68,8 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.FileToolFormatHandler");
 
     private Map<String, ToolUrl> tools = new HashMap<String, ToolUrl>();
-
+    // lists of tools that share the same file (i.e. a jar)
+    private Map<String, Set<String>> shared = new HashMap<String, Set<String>>();
 
     public ToolStatus add(Tool tool) throws ToolException {
 
@@ -89,7 +83,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             }
             // does not add tools if they are files and the file has not been modified.
             if (!isModified(tool)) {
-                return new ToolStatus(tool, ToolStatus.Status.NOT_ADDED);
+                return new ToolStatus(tool, ToolStatus.Status.NOT_MODIFIED);
             }
             boolean isJar = false;
             if (file.getName().endsWith(".jar")) {
@@ -142,7 +136,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                     } else if (potential.endsWith(".class")) {
 
                         URL url = createJarURL(file, potential);
-                        System.out.println("FileToolFormatHandler.add jar url:" + url.toString());
+                        log.fine("FileToolFormatHandler.add jar url:" + url.toString());
                         if (url != null) {
                             ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
                             if (ch != null) {
@@ -158,7 +152,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             } else if (file.getName().endsWith(".class")) {
                 log.fine("file is Java:" + file.getAbsolutePath());
                 ClassHierarchy ch = TypesMap.isType(file.getAbsolutePath(), Unit.class.getName());
-                System.out.println("FileToolFormatHandler.add class hierarchy:" + ch);
+                log.fine("FileToolFormatHandler.add class hierarchy:" + ch);
                 if (ch != null) {
                     Tool tool = read(ch.getName(), toolbox, ch.getFile());
                     if (tool != null) {
@@ -179,13 +173,13 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             if (tu.isJar()) {
                 // we do not delete jars. There could be other tools in it.
                 remove(tool);
-            }
-            File f = toFile(tu.getDef());
-
-            if (f != null && f.exists()) {
-                log.fine("got file from URL:" + f.getAbsolutePath());
-                f.delete();
-                tools.remove(id);
+            } else {
+                File f = new File(tu.getTool().getDefinitionPath());
+                if (f != null && f.exists()) {
+                    log.fine("got file from URL:" + f.getAbsolutePath());
+                    f.delete();
+                    tools.remove(id);
+                }
             }
         }
     }
@@ -248,6 +242,12 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         } else {
             tool.setDefinitionPath(file.getAbsolutePath());
             if (isModified(tool)) {
+                Set<String> others = shared.get(tool.getDefinitionPath());
+                if (others == null) {
+                    others = new HashSet<String>();
+                }
+                others.add(createId(tool));
+                shared.put(tool.getDefinitionPath(), others);
                 tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
                 return new ToolStatus(tool, ToolStatus.Status.OK);
             } else {
@@ -470,6 +470,21 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         return t;
     }
 
+    public Tool[] getTools(String path) {
+        Set<String> names = shared.get(path);
+        if (names == null) {
+            return new Tool[0];
+        }
+        List<Tool> ret = new ArrayList<Tool>();
+        for (String name : names) {
+            ToolUrl tu = tools.get(name);
+            if (tu != null && tu.getTool() != null) {
+                ret.add(tu.getTool());
+            }
+        }
+        return ret.toArray(new Tool[ret.size()]);
+    }
+
     public URL getRoot(Tool tool) {
         ToolUrl tu = tools.get(createId(tool));
         if (tu != null) {
@@ -527,6 +542,14 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             }
         }
         return true;
+    }
+
+    public boolean isMovable(Tool tool) {
+        ToolUrl tu = tools.get(createId(tool));
+        if (tu != null) {
+            return tu.isJar() || tu.isXml();
+        }
+        return false;
     }
 
     public File toFile(URL url) {
@@ -603,7 +626,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         }
 
         public boolean isJava() {
-            return getDef().toString().endsWith(".java");
+            return getDef().toString().endsWith(".class");
         }
 
         public boolean isXml() {
