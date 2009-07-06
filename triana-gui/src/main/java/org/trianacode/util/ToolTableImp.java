@@ -96,6 +96,11 @@ public class ToolTableImp extends AbstractToolTable {
      * @param toolbox the toolbox the tool is pasted into (ignore if irrelevant)
      */
     public void insertTool(Tool tool, String pack, String toolbox) {
+        System.out.println("ToolTableImp.insertTool full name:" + tool.getQualifiedToolName());
+        if (toolHandler.getTool(tool.getQualifiedToolName()) != null) {
+            log.fine("Not pasting. Tool already exists with name " + tool.getQualifiedToolName());
+            return;
+        }
         String location = getPasteFileLocation(tool.getToolName(), pack, toolbox);
         tool.setDefinitionPath(location);
         tool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);

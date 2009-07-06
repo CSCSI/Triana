@@ -150,9 +150,12 @@ public class PasteHandler {
 
                 if (pack != null) {
                     for (int count = 0; count < tools.length; count++) {
-                        if (TrianaDialog.isOKtoWriteIfExists(tooltable.getPasteFileLocation(tools[count].getToolName(), pack, toolbox))) {
-                            tools[count].setToolPackage(pack);
-                            tooltable.insertTool(tools[count], pack, toolbox);
+                        String loc = tooltable.getPasteFileLocation(tools[count].getToolName(), pack, toolbox);
+                        if (!loc.equals(tools[count].getDefinitionPath())) {
+                            if (TrianaDialog.isOKtoWriteIfExists(loc)) {
+                                tools[count].setToolPackage(pack);
+                                tooltable.insertTool(tools[count], pack, toolbox);
+                            }
                         }
                     }
                 }

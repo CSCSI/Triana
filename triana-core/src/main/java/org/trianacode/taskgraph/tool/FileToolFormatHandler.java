@@ -118,7 +118,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             if (file.getName().endsWith(".xml")) {
                 log.fine("file is XML:" + file.getAbsolutePath());
                 Tool tool = readXMLStream(new FileInputStream(file), file.getAbsolutePath(), toolbox);
-                if (tool != null) {
+                if (tool != null && tools.get(createId(tool)) == null) {
                     ret.add(initTool(tool, file));
                 }
             } else if (file.getName().endsWith(".jar")) {
@@ -130,7 +130,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                     if (potential.endsWith(".xml")) {
                         InputStream in = helper.getStream(potential);
                         Tool tool = readXMLStream(in, file.getAbsolutePath(), toolbox);
-                        if (tool != null) {
+                        if (tool != null && tools.get(createId(tool)) == null) {
                             ret.add(initJarredTool(tool, file));
                         }
                     } else if (potential.endsWith(".class")) {
@@ -141,7 +141,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                             ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
                             if (ch != null) {
                                 Tool tool = read(ch.getName(), toolbox, ch.getFile());
-                                if (tool != null) {
+                                if (tool != null && tools.get(createId(tool)) == null) {
                                     ret.add(initJarredTool(tool, file));
                                 }
                             }
