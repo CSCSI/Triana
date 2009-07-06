@@ -117,7 +117,7 @@ public interface ToolTable {
     /**
      * Remove a tool box path from the current tool boxes
      */
-    public void removeToolBox(String path);
+    public boolean removeToolBox(String path);
 
 
     /**

@@ -81,11 +81,14 @@ public class ToolTableImp extends AbstractToolTable {
     /**
      * Remove a tool box path from the current tool boxes
      */
-    public void removeToolBox(String path) {
-        super.removeToolBox(path);
-        if (reload != null) {
-            reload.reloadTools();
+    public boolean removeToolBox(String path) {
+        if (super.removeToolBox(path)) {
+            if (reload != null) {
+                reload.reloadTools();
+            }
+            return true;
         }
+        return false;
     }
 
     /**
@@ -221,7 +224,7 @@ public class ToolTableImp extends AbstractToolTable {
         List<Tool> ret = new ArrayList<Tool>();
         if (stats != null) {
             for (ToolFormatHandler.ToolStatus stat : stats) {
-                log.fine("ToolTableImp.addTool stats:" + stat.getStatus());
+                System.out.println("ToolTableImp.addTool stats:" + stat.getStatus());
                 if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_MODIFIED) {
                     continue;
                 } else if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_ADDED) {
@@ -349,9 +352,7 @@ public class ToolTableImp extends AbstractToolTable {
 
         public void run() {
             while (true) {
-                purgeTools();
                 loadTools();
-
                 try {
                     Thread.sleep(1000 * 60);
                 }
@@ -372,30 +373,6 @@ public class ToolTableImp extends AbstractToolTable {
             }
         }
 
-
-        /**
-         * Removes deleted tools from the tools/location tables
-         */
-        private void purgeTools() {
-            Tool[] tools = getTools();
-            for (int count = 0; count < tools.length; count++) {
-                purgeTool(tools[count]);
-                sleep();
-            }
-        }
-
-        private void sleep() {
-            if (minpriority && (++sleepcount >= 20)) {
-                try {
-                    sleepcount = 0;
-                    Thread.sleep(100);
-                }
-                catch (InterruptedException except) {
-                }
-            } else {
-                Thread.yield();
-            }
-        }
 
     }
 }

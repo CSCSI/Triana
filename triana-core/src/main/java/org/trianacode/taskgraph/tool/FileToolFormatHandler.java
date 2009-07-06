@@ -99,13 +99,15 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 if (arr == null) {
                     throw new ToolException("unknown jar format " + tool.getToolName());
                 }
-                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
+                File f = new File(tool.getDefinitionPath());
+                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2], f.lastModified()));
             } else {
                 URL[] arr = initFile(tool, file);
                 if (arr == null) {
                     throw new ToolException("unknown directory structure " + tool.getToolName());
                 }
-                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
+                File f = new File(tool.getDefinitionPath());
+                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2], f.lastModified()));
             }
         }
         return new ToolStatus(tool, ToolStatus.Status.OK);
@@ -185,6 +187,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
     public void remove(Tool tool) {
+        new Exception().printStackTrace();
         String id = createId(tool);
         ToolUrl tu = tools.get(id);
         if (tu != null) {
@@ -230,7 +233,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         } else {
             tool.setDefinitionPath(file.getAbsolutePath());
             if (isModified(tool)) {
-                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
+                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2], file.lastModified()));
                 return new ToolStatus(tool, ToolStatus.Status.OK);
             } else {
                 return new ToolStatus(tool, ToolStatus.Status.NOT_MODIFIED);
@@ -252,7 +255,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 }
                 others.add(createId(tool));
                 shared.put(tool.getDefinitionPath(), others);
-                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2]));
+                tools.put(createId(tool), new ToolUrl(tool, arr[0], arr[1], arr[2], file.lastModified()));
                 return new ToolStatus(tool, ToolStatus.Status.OK);
             } else {
                 return new ToolStatus(tool, ToolStatus.Status.NOT_MODIFIED);
@@ -534,15 +537,15 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         if (tu != null) {
             File f = new File(tool.getDefinitionPath());
             if (f.exists() && f.length() > 0) {
-                File exist = null;
-                if (tu.isJar()) {
-                    exist = toFile(tu.getRoot());
-                } else {
-                    exist = toFile(tu.getDef());
+                Tool exist = tu.getTool();
+                if (exist == null) {
+                    return true;
                 }
-                if (exist != null) {
-                    return exist.lastModified() < f.lastModified();
+                String path = exist.getDefinitionPath();
+                if (path == null || !path.equals(tool.getDefinitionPath())) {
+                    return true;
                 }
+                return tu.getLastModified() != f.lastModified();
             }
         }
         return true;
@@ -562,7 +565,6 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         }
         try {
             URI uri = url.toURI();
-            System.out.println("FileToolFormatHandler.toFile URI:" + uri);
             File f = new File(uri);
             if (f.exists() && f.length() > 0) {
                 return f;
@@ -604,12 +606,14 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         private URL root;
         private URL defRoot;
         private URL def;
+        private long lastModified = -1;
 
-        private ToolUrl(Tool tool, URL root, URL defRoot, URL def) {
+        private ToolUrl(Tool tool, URL root, URL defRoot, URL def, long lastModified) {
             this.tool = tool;
             this.root = root;
             this.defRoot = defRoot;
             this.def = def;
+            this.lastModified = lastModified;
 
         }
 
@@ -627,6 +631,14 @@ public class FileToolFormatHandler implements ToolFormatHandler {
 
         public URL getDef() {
             return def;
+        }
+
+        public long getLastModified() {
+            return lastModified;
+        }
+
+        public void setLastModified(long lastModified) {
+            this.lastModified = lastModified;
         }
 
         public boolean isJava() {

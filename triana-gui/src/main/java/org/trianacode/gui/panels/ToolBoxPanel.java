@@ -66,8 +66,6 @@ import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -125,7 +123,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
         setLayout(new BorderLayout());
 
         JPanel buttonpanel = new JPanel(new GridLayout(2, 1));
-        buttonpanel.setBorder(new EmptyBorder(0, 3, 0, 0));
+        buttonpanel.setBorder(new EmptyBorder(3, 3, 3, 3));
         addBtn = new JButton("Add");
         addBtn.addActionListener(this);
         buttonpanel.add(addBtn);
@@ -158,32 +156,6 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
 
         JScrollPane scroll = new JScrollPane(toolboxList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scroll, BorderLayout.CENTER);
-
-        JPanel namedPanel = new JPanel(new BorderLayout());
-        JPanel labels = new JPanel(new GridLayout(namedTypes.length, 1));
-        JPanel paths = new JPanel(new GridLayout(namedTypes.length, 1));
-
-        for (int i = 0; i < namedTypes.length; i++) {
-            String type = namedTypes[i];
-            JPanel nameLinePanel = new JPanel(new BorderLayout());
-            labels.add(new JLabel(type + " "));
-            Toolbox toolBox = tools.getToolBox(type);
-            JTextField pathField = new JTextField(toolBox.getPath());
-            nameLinePanel.add(pathField, BorderLayout.CENTER);
-
-            JButton setDefaultBtn = new JButton("Set Type");
-            setDefaultBtn.setEnabled(false);
-            DefaultToolActionListener defaultToolActionListener = new DefaultToolActionListener(type, pathField, tools, setDefaultBtn);
-            setDefaultBtn.addActionListener(defaultToolActionListener);
-            remBtn.addActionListener(defaultToolActionListener);
-            toolboxList.addListSelectionListener(defaultToolActionListener);
-            nameLinePanel.add(setDefaultBtn, BorderLayout.EAST);
-            paths.add(nameLinePanel);
-        }
-
-        namedPanel.add(labels, BorderLayout.WEST);
-        namedPanel.add(paths, BorderLayout.CENTER);
-        add(namedPanel, BorderLayout.SOUTH);
 
     }
 
@@ -239,10 +211,19 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                     }
                 }
             }
+
         } else {
-            Object selected = toolboxList.getSelectedValue();
-            toolBoxItems.remove(selected);
-            tools.removeToolBox((String) selected);
+            String selected = (String) toolboxList.getSelectedValue();
+
+            if (!tools.removeToolBox(selected)) {
+                if (tools.getToolBoxType(selected).equals(ToolTable.DEFAULT_TOOLBOX)) {
+                    OptionPane.showInformation("Cannot remove toolbox", "Default Toolbox", this);
+                } else {
+                    OptionPane.showError("Cannot remove toolbox", "Error", this);
+                }
+            } else {
+                toolBoxItems.remove(selected);
+            }
 
         }
         toolboxList.setListData(toolBoxItems);
@@ -273,36 +254,5 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
         return false;
     }
 
-    private class DefaultToolActionListener implements ActionListener, ListSelectionListener {
-        private String type;
-        private JTextField pathField;
-        private ToolTable tools;
-        private JButton setBtn;
-
-        public DefaultToolActionListener(String type, JTextField pathField, ToolTable tools, JButton setBtn) {
-            this.type = type;
-            this.pathField = pathField;
-            this.tools = tools;
-            this.setBtn = setBtn;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            String path = (String) toolboxList.getSelectedValue();
-            if (e.getSource() == remBtn) {
-                boolean enabled = (toolboxList.getSelectedValue() != null);
-                setBtn.enableInputMethods(enabled);
-                if (path.equals(pathField.getText()))
-                    pathField.setText("");
-            } else {
-                pathField.setText(path);
-                //todo - anyway this panel sucks
-            }
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            boolean enabled = (toolboxList.getSelectedValue() != null);
-            setBtn.setEnabled(enabled);
-        }
-    }
 
 }

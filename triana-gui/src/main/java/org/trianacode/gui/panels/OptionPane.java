@@ -49,4 +49,16 @@ public class OptionPane {
         return false;
     }
 
+    public static void showInformation(String msg, String title) {
+        showInformation(msg, title, GUIEnv.getApplicationFrame());
+    }
+
+    public static void showError(String msg, String title) {
+        showError(msg, title, GUIEnv.getApplicationFrame());
+    }
+
+    public static boolean showOkCancel(String msg, String title) {
+        return showOkCancel(msg, title, GUIEnv.getApplicationFrame());
+    }
+
 }
