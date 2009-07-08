@@ -80,6 +80,8 @@ import org.w3c.dom.Element;
 import java.applet.Applet;
 import java.awt.*;
 import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Logger;
@@ -341,6 +343,16 @@ public final class Env {
         configFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE);
         configBakFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE_BAK);
 
+        try {
+            String me = getToolboxPath();
+            System.out.println("Env.initConfig MY PATH:" + me);
+            logger.fine("my path:" + me);
+            Toolbox box = new Toolbox(me, ToolTable.DEFAULT_TOOLBOX);
+            tools.addToolBox(box);
+        } catch (IOException e) {
+            logger.warning("Could not find jar that I'm in!");
+        }
+        tools.addToolBox();
         if (!configFile.exists()) {// First time run so need to set up paths
             restoreDefaultConfig(tools);
         } else {// read from the file
@@ -366,6 +378,62 @@ public final class Env {
         }
     }
 
+    public static String getPath(String cls) throws IOException {
+        return getPath(cls, Env.class.getClassLoader());
+    }
+
+    public static String getToolboxPath() throws IOException {
+        return getPath("org.trianacode.toolbox.FindMe", Env.class.getClassLoader());
+    }
+
+    public static String getPath() throws IOException {
+        return getPath("org.trianacode.util.Env", Env.class.getClassLoader());
+
+    }
+
+    public static String getPath(String cls, ClassLoader loader) throws IOException {
+        URL u;
+
+        String clsRes = cls.replace('.', '/') + ".class";
+        u = loader.getResource(clsRes);
+
+        if (u == null) {
+            throw new IOException("no resource found with name " + cls);
+        }
+        String url = u.toString();
+        System.out.println("Env.getPath MY RESOURCE:" + url);
+        String delim = "jar!/";
+        int jarIdx = url.indexOf(delim);
+        if (jarIdx != -1) {
+
+            String jar = url.substring(0, jarIdx + 3);
+            if (jar.startsWith("jar:file:")) {
+                jar = jar.substring(9, jar.length());
+            }
+            try {
+                jar = URLDecoder.decode(jar, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String os = System.getProperty("os.name").toLowerCase(Locale.US);
+            if (os.indexOf("windows") > -1) {
+                jar = jar.substring(1, jar.length());
+            }
+            return jar;
+        } else {
+
+            int ind = url.indexOf(clsRes);
+            if (ind > -1) {
+                return url.substring(0, ind);
+            }
+            return null;
+
+
+            // not in jar. need to find root directory we are in.
+        }
+
+    }
+
 
     /**
      * Restore the default user settings
@@ -376,8 +444,8 @@ public final class Env {
         setUserProperty(CODE_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));
-        Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.DEFAULT_TOOLBOX), ToolTable.DEFAULT_TOOLBOX);
-        table.addToolBox(def);
+        //Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.DEFAULT_TOOLBOX), ToolTable.DEFAULT_TOOLBOX);
+        //table.addToolBox(def);
     }
 
 
@@ -1497,10 +1565,10 @@ public final class Env {
                     }
                 }
             }
-            if (!hasDefault) {
+            /*if (!hasDefault) {
                 Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.DEFAULT_TOOLBOX), ToolTable.DEFAULT_TOOLBOX);
                 boxes.add(def);
-            }
+            }*/
             // add them in one hit
             tools.addToolBox(boxes.toArray(new Toolbox[boxes.size()]));
 

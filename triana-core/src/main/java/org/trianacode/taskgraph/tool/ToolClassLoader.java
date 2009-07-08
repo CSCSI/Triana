@@ -57,25 +57,31 @@ public class ToolClassLoader extends URLClassLoader {
 
     public void addToolBox(String toolbox) {
         File box = new File(toolbox);
-        if (!box.exists() || box.length() == 0 || !box.isDirectory()) {
+        if (!box.exists() || box.length() == 0) {
             return;
         }
+        if (box.isDirectory()) {
 
-        File[] files = box.listFiles();
-        if (files == null) {
-            return;
-        }
-        for (File file : files) {
-            if (file.isDirectory()) {
-                if (file.getName().equals("classes")) {
-                    addPath(file.getAbsolutePath());
+            File[] files = box.listFiles();
+            if (files == null) {
+                return;
+            }
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    if (file.getName().equals("classes")) {
+                        addPath(file.getAbsolutePath());
+                    } else {
+                        addToolBox(file.getAbsolutePath());
+                    }
                 } else {
-                    addToolBox(file.getAbsolutePath());
+                    if (file.getName().endsWith(".jar")) {
+                        addPath(file.getAbsolutePath());
+                    }
                 }
-            } else {
-                if (file.getName().endsWith(".jar")) {
-                    addPath(file.getAbsolutePath());
-                }
+            }
+        } else {
+            if (box.getName().endsWith(".jar")) {
+                addPath(box.getAbsolutePath());
             }
         }
     }

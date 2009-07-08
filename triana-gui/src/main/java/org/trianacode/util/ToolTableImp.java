@@ -282,13 +282,13 @@ public class ToolTableImp extends AbstractToolTable {
     }
 
     protected void addTools() {
-        String[] toolboxArray = toolboxes.keySet().toArray(new String[toolboxes.size()]);
-
-        for (int count = 0; count < toolboxArray.length; count++) {
-            String baseToolboxPath = toolboxArray[count];
-            List<File> files = find(new File(baseToolboxPath), new String[]{".xml", ".jar", ".class"}, excludedDirectories);
-            for (int i = 0; i < files.size(); i++) {
-                addTools(files.get(i), baseToolboxPath);
+        for (String s : toolboxes.keySet()) {
+            Toolbox tb = toolboxes.get(s);
+            if (!tb.isVirtual()) {
+                List<File> files = find(new File(s), new String[]{".xml", ".jar", ".class"}, excludedDirectories);
+                for (int i = 0; i < files.size(); i++) {
+                    addTools(files.get(i), s);
+                }
             }
         }
     }

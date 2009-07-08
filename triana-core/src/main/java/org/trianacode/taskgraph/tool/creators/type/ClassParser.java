@@ -94,7 +94,6 @@ public class ClassParser {
                 ClassHierarchy ch = getClasses(stream, f);
                 if (ch != null) {
                     String jarpath = f.toURI().toURL().toString();
-                    System.out.println("ClassParser.analyseClassFiles created jar url:" + jarpath);
                     ch.setFile("jar:" + jarpath + "!/" + entry.getName());
                     strings.put(ch.getName(), ch);
                 }
@@ -200,7 +199,8 @@ public class ClassParser {
                 constants[i++] = c;
             }
         }
-        stream.readUnsignedShort();
+        int access = stream.readUnsignedShort(); //acces flags
+
         int me = stream.readUnsignedShort();
         Integer index = classRefs.get(me);
         if (index == null) {
@@ -218,6 +218,7 @@ public class ClassParser {
             return null;
         }
         ClassHierarchy hier = new ClassHierarchy(createClassName(currStrings[0]));
+        hier.setAccess(access);
         hier.setFile(f.getAbsolutePath());
         int parent = stream.readUnsignedShort();
         index = classRefs.get(parent);

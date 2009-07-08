@@ -101,6 +101,10 @@ public class TypesMap {
         if (ch == null || deadEnds.contains(hier)) {
             return false;
         }
+        if (!ch.isPublic() || !ch.isConcrete()) {
+
+            return false;
+        }
         String[] intfs = ch.getInterfaces();
         for (String intf : intfs) {
             if (intf.equals(type)) {
@@ -112,7 +116,6 @@ public class TypesMap {
             if (is) {
                 return true;
             } else {
-                System.out.println("TypeFinder.isType adding deadend:" + intf);
                 deadEnds.add(intf);
             }
         }
@@ -123,7 +126,6 @@ public class TypesMap {
         } else {
             boolean b = isType(hiers, superClass, type);
             if (!b) {
-                System.out.println("TypeFinder.isType adding deadend:" + hier);
                 deadEnds.add(hier);
             }
             return b;

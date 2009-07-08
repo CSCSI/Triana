@@ -34,6 +34,8 @@ public class ClassHierarchy {
     private String superClass;
     private List<String> interfaces = new ArrayList<String>();
     private String file;
+    private int access = -1;
+
 
     public ClassHierarchy(String name) {
         this.name = name;
@@ -69,6 +71,21 @@ public class ClassHierarchy {
         this.file = file;
     }
 
+    public int getAccess() {
+        return access;
+    }
+
+    public void setAccess(int access) {
+        this.access = access;
+    }
+
+    public boolean isPublic() {
+        return access % 2 == 1;
+    }
+
+    public boolean isConcrete() {
+        return access < 50;
+    }
 
     public String toString() {
         return "Name:" + name + " Superclass:" + superClass + " Interfaces:" + interfaces;
