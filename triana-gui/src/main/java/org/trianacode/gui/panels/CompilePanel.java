@@ -186,7 +186,7 @@ public class CompilePanel extends ParameterPanel
         packcont.add(packpanel, BorderLayout.WEST);
 
         JPanel toolboxpanel = new JPanel(new BorderLayout());
-        toolBoxChooser = new JComboBox(tools.getToolBoxes());
+        toolBoxChooser = new JComboBox(tools.getToolBoxPaths());
         toolBoxChooser.setSelectedItem(Env.getLastWorkingToolbox());
         toolBoxChooser.addItemListener(this);
 

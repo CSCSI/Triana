@@ -707,10 +707,12 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         Tool[] seltools = getSelectedTools();
         if (files) {
             Boolean b = checkAffectedTools(seltools);
-            if (b) {
-                return;
-            } else if (!b) {
-                prompt = false;
+            if (b != null) {
+                if (b) {
+                    return;
+                } else if (!b) {
+                    prompt = false;
+                }
             }
         }
         DefaultMutableTreeNode[] nodes = getSelectedNodes();

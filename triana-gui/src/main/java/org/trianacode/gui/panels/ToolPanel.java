@@ -167,8 +167,8 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
 
         if (lastToolBox != null)
             toolbox.setSelectedItem(lastToolBox);
-        else if (tools.getToolBox(ToolTable.DEFAULT_TOOLBOX) != null)
-            toolbox.setSelectedItem(tools.getToolBox(ToolTable.DEFAULT_TOOLBOX));
+        else if (tools.getToolBox(ToolTable.USER_TOOLBOX) != null)
+            toolbox.setSelectedItem(tools.getToolBox(ToolTable.USER_TOOLBOX));
 
         formpanel.add(new JLabel(Env.getString("toolbox")));
         formpanel.add(toolbox);

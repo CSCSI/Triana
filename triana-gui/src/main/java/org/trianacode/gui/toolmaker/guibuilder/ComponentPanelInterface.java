@@ -56,51 +56,38 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.gui.hci;
-
-import org.trianacode.taskgraph.tool.Tool;
-
+package org.trianacode.gui.toolmaker.guibuilder;
 
 /**
- * An interface implemented by classes that map between tools and tool tree
- * locations
+ * A interface that must be implemented by component panels in the gui builder.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2003
+ * @created Today's date
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
-public interface ToolFilter {
-
-    public static final String DEFAULT_ROOT = "Tools";
+public interface ComponentPanelInterface {
 
     /**
-     * @return the name of this filter
+     * @return the gui builder string for the defined component
      */
-    public String getName();
+    public String getGUIBuilderStr(String param);
 
     /**
-     * @return the root for the tool tree
+     * Sets the defined component given the specified gui builder string
      */
-    public String getRoot();
+    public void setGUIBuilderStr(String line);
 
     /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     *         ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * Resets the defined component to default values
      */
-    public String[] getFilteredPackage(Tool tool);
+    public void reset(String paramname);
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * notifies the panel of the default parameter value
      */
-    public void init();
+    public void notifyDefaultValue(String value);
 
-    /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
-     */
-    public void dispose();
 
 }

@@ -216,8 +216,8 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
             String selected = (String) toolboxList.getSelectedValue();
 
             if (!tools.removeToolBox(selected)) {
-                if (tools.getToolBoxType(selected).equals(ToolTable.DEFAULT_TOOLBOX)) {
-                    OptionPane.showInformation("Cannot remove toolbox", "Default Toolbox", this);
+                if (tools.getToolBoxType(selected).equals(Toolbox.INTERNAL)) {
+                    OptionPane.showInformation("Cannot remove toolbox", "Internal Toolbox", this);
                 } else {
                     OptionPane.showError("Cannot remove toolbox", "Error", this);
                 }

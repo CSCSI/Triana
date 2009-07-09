@@ -347,12 +347,11 @@ public final class Env {
             String me = getToolboxPath();
             System.out.println("Env.initConfig MY PATH:" + me);
             logger.fine("my path:" + me);
-            Toolbox box = new Toolbox(me, ToolTable.DEFAULT_TOOLBOX);
+            Toolbox box = new Toolbox(me, Toolbox.INTERNAL);
             tools.addToolBox(box);
         } catch (IOException e) {
             logger.warning("Could not find jar that I'm in!");
         }
-        tools.addToolBox();
         if (!configFile.exists()) {// First time run so need to set up paths
             restoreDefaultConfig(tools);
         } else {// read from the file
@@ -444,8 +443,8 @@ public final class Env {
         setUserProperty(CODE_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));
-        //Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.DEFAULT_TOOLBOX), ToolTable.DEFAULT_TOOLBOX);
-        //table.addToolBox(def);
+        Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.USER_TOOLBOX), ToolTable.USER_TOOLBOX);
+        table.addToolBox(def);
     }
 
 
@@ -1556,7 +1555,7 @@ public final class Env {
                     logger.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
                 } else {
                     if (type != null && type.length() > 0) {
-                        if (type.equals(ToolTable.DEFAULT_TOOLBOX)) {
+                        if (type.equals(ToolTable.USER_TOOLBOX)) {
                             hasDefault = true;
                         }
                         boxes.add(new Toolbox(toolbox, type, v));
@@ -1566,7 +1565,7 @@ public final class Env {
                 }
             }
             /*if (!hasDefault) {
-                Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.DEFAULT_TOOLBOX), ToolTable.DEFAULT_TOOLBOX);
+                Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.USER_TOOLBOX), ToolTable.USER_TOOLBOX);
                 boxes.add(def);
             }*/
             // add them in one hit

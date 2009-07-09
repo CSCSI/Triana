@@ -56,51 +56,44 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.gui.hci;
-
-import org.trianacode.taskgraph.tool.Tool;
-
+package org.trianacode.gui.toolmaker;
 
 /**
- * An interface implemented by classes that map between tools and tool tree
- * locations
+ * An interface implemented by parameter defining panels
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2003
+ * @created Today's date
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
-public interface ToolFilter {
-
-    public static final String DEFAULT_ROOT = "Tools";
+public interface ParamsPanelInterface {
 
     /**
-     * @return the name of this filter
+     * Parameter update policies
      */
-    public String getName();
-
-    /**
-     * @return the root for the tool tree
-     */
-    public String getRoot();
-
-    /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     *         ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
-     */
-    public String[] getFilteredPackage(Tool tool);
+    public static final int UPDATE_AT_START_OF_PROCESS = 0;
+    public static final int UPDATE_IMMEDIATELY = 1;
+    public static final int DO_NOT_UPDATE = 2;
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * @return an array of the parameter
      */
-    public void init();
+    public String[] getParameterNames();
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * @return the parameter type for a parameter
      */
-    public void dispose();
+    public String getParameterType(String paramname);
+
+    /**
+     * @return the default value for a parameter
+     */
+    public String getDefaultValue(String paramname);
+
+    /**
+     * Sets the default value for a parameter
+     */
+    public void setDefaultValue(String paramname, String value);
 
 }

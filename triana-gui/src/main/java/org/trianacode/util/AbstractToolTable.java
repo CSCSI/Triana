@@ -307,7 +307,7 @@ public abstract class AbstractToolTable implements ToolTable {
      */
     public boolean removeToolBox(String path) {
         Toolbox box = toolboxes.get(path);
-        if (box != null && !box.getType().equals(DEFAULT_TOOLBOX)) {
+        if (box != null && !box.getType().equals(USER_TOOLBOX)) {
             toolboxes.remove(path);
             notifyToolboxRemoved(box);
             return true;

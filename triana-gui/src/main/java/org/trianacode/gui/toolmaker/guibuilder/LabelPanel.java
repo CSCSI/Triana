@@ -56,51 +56,95 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.gui.hci;
+package org.trianacode.gui.toolmaker.guibuilder;
 
-import org.trianacode.taskgraph.tool.Tool;
 
+import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 /**
- * An interface implemented by classes that map between tools and tool tree
- * locations
+ * The panel for defining a gui builder text field component
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2003
+ * @created 2002
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
-public interface ToolFilter {
-
-    public static final String DEFAULT_ROOT = "Tools";
+public class LabelPanel extends JPanel implements ComponentPanelInterface {
 
     /**
-     * @return the name of this filter
+     * input fields
      */
-    public String getName();
+    private JTextField title = new JTextField(15);
 
     /**
-     * @return the root for the tool tree
+     * the default value
      */
-    public String getRoot();
+    private String defval = "";
+
+
+    public LabelPanel() {
+        initLayout();
+    }
 
     /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     *         ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * intialise the layout
      */
-    public String[] getFilteredPackage(Tool tool);
+    private void initLayout() {
+        setLayout(new BorderLayout());
+
+        JPanel labelpanel = new JPanel(new GridLayout(1, 1));
+        labelpanel.add(new JLabel(Env.getString("title")));
+        labelpanel.setBorder(new EmptyBorder(0, 0, 0, 3));
+
+        JPanel titlepanel = new JPanel(new BorderLayout());
+        titlepanel.add(title, BorderLayout.WEST);
+
+        JPanel fieldpanel = new JPanel(new GridLayout(1, 1));
+        fieldpanel.add(titlepanel);
+
+        JPanel contain = new JPanel(new BorderLayout());
+        contain.add(fieldpanel, BorderLayout.CENTER);
+        contain.add(labelpanel, BorderLayout.WEST);
+
+        add(contain, BorderLayout.NORTH);
+    }
+
+    /**
+     * @return the gui builder string for the defined component
+     */
+    public String getGUIBuilderStr(String param) {
+        return title.getText() + " $title " + param + " Label " + defval;
+    }
+
+    /**
+     * Sets the defined component given the specified gui builder string
+     */
+    public void setGUIBuilderStr(String line) {
+        String[] strs = BuilderPanel.splitString(line);
+
+        title.setText(strs[0]);
+    }
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * Resets the defined component to default values
      */
-    public void init();
+    public void reset(String param) {
+        title.setText(param);
+    }
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * notifies the panel of the default parameter value
      */
-    public void dispose();
+    public void notifyDefaultValue(String value) {
+        if (value == null)
+            defval = "";
+        else
+            defval = value;
+    }
 
 }

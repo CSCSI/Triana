@@ -56,51 +56,49 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.gui.hci;
+package org.trianacode.gui.toolmaker.guibuilder;
 
-import org.trianacode.taskgraph.tool.Tool;
-
+import javax.swing.*;
 
 /**
- * An interface implemented by classes that map between tools and tool tree
- * locations
+ * The panel for defining a gui builder text field component
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2003
+ * @created 2002
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
-public interface ToolFilter {
+public class HiddenPanel extends JPanel implements ComponentPanelInterface {
 
-    public static final String DEFAULT_ROOT = "Tools";
 
-    /**
-     * @return the name of this filter
-     */
-    public String getName();
-
-    /**
-     * @return the root for the tool tree
-     */
-    public String getRoot();
-
-    /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     *         ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
-     */
-    public String[] getFilteredPackage(Tool tool);
+    public HiddenPanel() {
+    }
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * @return the gui builder string for the defined component
      */
-    public void init();
+    public String getGUIBuilderStr(String param) {
+        return "";
+    }
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * Sets the defined component given the specified gui builder string
      */
-    public void dispose();
+    public void setGUIBuilderStr(String line) {
+    }
+
+
+    /**
+     * Resets the defined component to default values
+     */
+    public void reset(String param) {
+    }
+
+    /**
+     * notifies the panel of the default parameter value
+     */
+    public void notifyDefaultValue(String value) {
+    }
 
 }
