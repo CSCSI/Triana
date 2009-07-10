@@ -78,17 +78,15 @@ import java.awt.*;
  * are handled in ToolHandler
  *
  * @author Ian Taylor
-<<<<<<< TrianaTask.java
+ *         <<<<<<< TrianaTask.java
  * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.9.2.1
+ *          >>>>>>> 1.9.2.1
  * @created 1 Dec 1999
-<<<<<<< TrianaTask.java
+ * <<<<<<< TrianaTask.java
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
+ * =======
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.9.2.1
+ * >>>>>>> 1.9.2.1
  */
 
 public class TrianaTask extends TrianaTool implements TaskListener, TaskComponent {
@@ -116,8 +114,19 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
      */
     public TrianaTask(Task task) {
         super(task);
+        Component main = null;
+        String s = task.getToolName();
+        if (task.getSubTitle() != null) {
+            String value = task.getSubTitle();
+            if (value != null && value.length() > 0) {
+                main = new MultiTextSubComponent(s, value, this);
+            }
+        }
+        if (main == null) {
+            main = new TextSubComponent(s, this);
 
-        setMainComponent(new TextSubComponent(task.getToolName(), this));
+        }
+        setMainComponent(main);
         initNodes();
         task.addTaskListener(this);
     }
@@ -326,6 +335,18 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
                 getParent().repaint();
             }
         }
+        if ((evt.getTask() == getTaskInterface()) && (evt.getUpdatedProperty() == TaskPropertyEvent.TASK_SUBNAME_UPDATE)) {
+            Component comp = getMainComponent();
+
+            if (comp instanceof MultiTextSubComponent)
+                ((MultiTextSubComponent) comp).updateSubText((String) evt.getNewValue());
+
+            if (getParent() != null) {
+                invalidate();
+                getParent().validate();
+                getParent().repaint();
+            }
+        }
     }
 
     /**
@@ -360,8 +381,7 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
                     requestCount = 0;
                 else
                     requestCount++;
-            }
-            else if (paramname.equals(Task.EXECUTION_COUNT)) {
+            } else if (paramname.equals(Task.EXECUTION_COUNT)) {
                 if (Integer.parseInt((String) evt.getNewValue()) == 0)
                     executeCount = 0;
                 else
@@ -370,21 +390,18 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
 
             setProcessingLED(requestCount > executeCount);
             repaint();
-        }
-        else if (paramname.equals(Task.ERROR_MESSAGE)) {
+        } else if (paramname.equals(Task.ERROR_MESSAGE)) {
             if ((evt.getNewValue() == null) || (evt.getNewValue().equals("")))
                 clearError();
             else
                 setError((String) evt.getNewValue());
-        }
-        else if (paramname.equals(Task.GUI_X) || paramname.equals(Task.GUI_Y)) {
+        } else if (paramname.equals(Task.GUI_X) || paramname.equals(Task.GUI_Y)) {
             if (getParent() != null) {
                 invalidate();
                 getParent().validate();
                 getParent().repaint();
             }
-        }
-        else if (paramname.equals(Task.PARAM_PANEL_SHOW))
+        } else if (paramname.equals(Task.PARAM_PANEL_SHOW))
             ParameterPanelManager.showParameterWindowFor(getTaskInterface(), this);
         else if (paramname.equals(Task.PARAM_PANEL_HIDE))
             ParameterPanelManager.hideParameterWindowFor(getTaskInterface());

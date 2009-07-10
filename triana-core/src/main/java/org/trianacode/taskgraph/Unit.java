@@ -745,6 +745,10 @@ public abstract class Unit {
         }
     }
 
+    public TaskGraphContext getTaskGraphContext() {
+        return getTask().getContext();
+    }
+
     public void setVersion(String version) {
         getTask().setVersion(version);
     }

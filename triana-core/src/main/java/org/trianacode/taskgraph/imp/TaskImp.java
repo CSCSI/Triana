@@ -125,6 +125,8 @@ public class TaskImp extends ToolImp implements Task {
      */
     private boolean runcontin = false;
 
+    private String subtext = "";
+
 
     public TaskImp(Tool tool, TaskFactory factory, boolean preserveinst) throws TaskException {
         try {
@@ -967,6 +969,25 @@ public class TaskImp extends ToolImp implements Task {
         outnodes.clear();
         inparams.clear();
         outparams.clear();
+    }
+
+    public TaskGraphContext getContext() {
+        if (getParent() != null) {
+            return getParent().getContext();
+        }
+        return null;
+    }
+
+    public void setSubTitle(String subtext) {
+        String old = this.subtext;
+        this.subtext = subtext;
+        if (!this.subtext.equals(old)) {
+            notifyPropertyUpdate(TaskPropertyEvent.TASK_SUBNAME_UPDATE, old, this.subtext);
+        }
+    }
+
+    public String getSubTitle() {
+        return subtext;
     }
 
 }

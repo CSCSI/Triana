@@ -105,6 +105,8 @@ public class TaskGraphImp extends TaskImp
      */
     private boolean initgroupnodes = false;
 
+    private TaskGraphContext context = new TaskGraphContext();
+
 
     /**
      * Create a taskgraph that uses the default task factory.
@@ -831,6 +833,10 @@ public class TaskGraphImp extends TaskImp
             notifyCableDisconnected(cable, false, false);
             cable.disconnect();
         }
+    }
+
+    public TaskGraphContext getContext() {
+        return context;
     }
 
 

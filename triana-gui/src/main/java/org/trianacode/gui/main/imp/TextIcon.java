@@ -71,17 +71,14 @@ import java.awt.*;
  * with the component)
  *
  * @author Ian Wang
-<<<<<<< TextIcon.java
+ *         <<<<<<< TextIcon.java
  * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.3.4.1
- * @created
-<<<<<<< TextIcon.java
+ *          >>>>>>> 1.3.4.1
+ * @created <<<<<<< TextIcon.java
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
+ * =======
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.3.4.1
+ * >>>>>>> 1.3.4.1
  */
 
 public class TextIcon extends AbstractButton {

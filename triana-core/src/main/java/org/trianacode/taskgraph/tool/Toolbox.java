@@ -33,6 +33,8 @@ public class Toolbox {
     private String type;
     private boolean isVirtual;
 
+    public static final String INTERNAL = "internal";
+
     public Toolbox(String path, String type, boolean virtual) {
         this.path = path;
         this.type = type;

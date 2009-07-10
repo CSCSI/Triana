@@ -70,7 +70,6 @@ import java.awt.*;
  * @version $Revision: 4048 $
  * @created
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public interface TrianaLayoutConstants {
@@ -101,6 +100,7 @@ public interface TrianaLayoutConstants {
      */
     public static Font DEFAULT_FONT = new Font("Sans-Serif", Font.PLAIN, (int) (TRIANA_UNIT * 0.3));
 
+    public static Font SMALL_FONT = new Font("Sans-Serif", Font.PLAIN, (int) (TRIANA_UNIT * 0.2));
 
     /**
      * a node's default connected color

@@ -64,10 +64,10 @@ import org.trianacode.taskgraph.tool.Tool;
 /**
  * An interface to TaskGraphs
  *
- * @author      Ian Wang
- * @created     29th April
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 29th April
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface TaskGraph extends Task {
 
@@ -110,7 +110,7 @@ public interface TaskGraph extends Task {
 
     /**
      * @return the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED
-     * or CONTROL_TASK_UNSTABLE)
+     *         or CONTROL_TASK_UNSTABLE)
      */
     public int getControlTaskState();
 
@@ -155,7 +155,7 @@ public interface TaskGraph extends Task {
 
     /**
      * @return an array of all the tasks contained with this taskgraph,
-     * optionally including the control task
+     *         optionally including the control task
      */
     public Task[] getTasks(boolean includecontrol);
 
@@ -180,7 +180,7 @@ public interface TaskGraph extends Task {
      */
     public boolean containsTask(String identifier);
 
-   /**
+    /**
      * @return true if the taskgraph contains the specified task instance
      */
     public boolean containsTaskInstance(String instanceid);
@@ -218,6 +218,7 @@ public interface TaskGraph extends Task {
      * Disconnects the specified cable from its nodes.
      */
     public void disconnect(Cable cable) throws CableException;
+
 
     /**
      * ================from TaskGraph==================

@@ -177,6 +177,7 @@ public class RunnableTask extends AbstractRunnableTask
             }
         }
 
+
     }
 
     /**
@@ -185,7 +186,7 @@ public class RunnableTask extends AbstractRunnableTask
     public void initUnit(ToolTable tools) throws TaskException {
         if (unit != null) {
             unit.setRunnableInterface(this);
-            this.unit.init();
+            unit.init();
             init = true;
 
             String[] paramnames = getParameterNames();

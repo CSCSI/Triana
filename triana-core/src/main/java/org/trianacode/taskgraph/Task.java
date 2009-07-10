@@ -64,10 +64,10 @@ import org.trianacode.taskgraph.tool.Tool;
 /**
  * The interface to tasks within a taskgraph
  *
- * @author      Ian Wang
- * @created     14th November
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
+ * @created 14th November
+ * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface Task extends Tool {
 
@@ -303,7 +303,7 @@ public interface Task extends Tool {
 
     /**
      * @return the error message associated with the current error (null if
-     * the task is not in an error state)
+     *         the task is not in an error state)
      */
     public String getErrorMessage();
 
@@ -367,5 +367,11 @@ public interface Task extends Tool {
      * Cleans up any operations associated with this task
      */
     public void dispose();
+
+    public TaskGraphContext getContext();
+
+    public void setSubTitle(String subtext);
+
+    public String getSubTitle();
 
 }

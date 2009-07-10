@@ -70,7 +70,7 @@ package org.trianacode.taskgraph.tool;
 public interface ToolTable {
 
     // The standard tool box types
-    public static final String DEFAULT_TOOLBOX = "Default";
+    public static final String USER_TOOLBOX = "user";
 
     /**
      * Called to initialise the tool table

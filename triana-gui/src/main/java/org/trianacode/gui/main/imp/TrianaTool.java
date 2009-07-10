@@ -102,6 +102,9 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
     public static int THIN_STRIPE_OFFSET = 10;
     public static int STRIPE_ANGLE_OFFSET = -30;
 
+    public static final String SUB_NAME = "trianatool-sub-name";
+    public static final String SUB_NAME_VALUE = "trianatool-sub-name-value";
+
 
     /**
      * A reference to the task this tool is representing

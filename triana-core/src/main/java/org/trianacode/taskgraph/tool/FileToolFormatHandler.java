@@ -216,6 +216,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             tool.setToolPackage(getPackageName(className));
             tool.setDefinitionPath(classFile);
             tool.setToolBox(toolbox);
+
             tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
             return tool;
         } catch (TaskException e) {
