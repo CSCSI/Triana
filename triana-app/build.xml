@@ -9,7 +9,7 @@
     <property name="core-classes" value="../triana-core/target/classes"/>
     <property name="gui-classes" value="../triana-gui/target/classes"/>
     <property name="types-classes" value="../triana-types/target/classes"/>
-    <property name="toolbox-classes" value="../triana-toolbox/target/classes"/>
+    <!--<property name="toolbox-classes" value="../triana-toolbox/target/classes"/>-->
 
 
     <target name="triana-app" depends="clean">
@@ -24,9 +24,11 @@
         <copy todir="target/classes" overwrite="yes">
             <fileset dir="${types-classes}" includes="**/**"/>
         </copy>
+        <!--
         <copy todir="target/classes" overwrite="yes">
-            <fileset dir="${toolbox-classes}" includes="**/**"/>
-        </copy>
+                    <fileset dir="${toolbox-classes}" includes="**/**"/>
+                </copy>-->
+        
         <jar jarfile="target/triana-app-${version}.jar" basedir="target/classes"/>
         <copy todir="target" overwrite="yes">
             <fileset dir="bin" includes="**/*.sh,**/*.bat,**/*.properties"/>
