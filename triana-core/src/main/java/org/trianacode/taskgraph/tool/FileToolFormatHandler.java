@@ -16,6 +16,25 @@
 
 package org.trianacode.taskgraph.tool;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.jar.JarFile;
+import java.util.logging.Logger;
+
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.ToolImp;
@@ -24,43 +43,26 @@ import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
-import java.util.jar.JarFile;
-import java.util.logging.Logger;
-
 /**
  * Tool format handler. This handles the following cases:
  * <p/>
- * For xml tools:
- * 1. package/package/Tool.xml
- * 2. package/package/xml/Tool.xml
+ * For xml tools: 1. package/package/Tool.xml 2. package/package/xml/Tool.xml
  * <p/>
- * For java tools:
- * 1. package/package/classes/package/package/Tool.class
- * 2. package/package/target/classes/package/package/Tool.class
+ * For java tools: 1. package/package/classes/package/package/Tool.class 2. package/package/target/classes/package/package/Tool.class
  * <p/>
  * If the tool is in a jar file, it handles the above paths inside the jar file.
  * <p/>
- * This also handles jars that are excutable, i.e. a bog standard jar inwhich
- * the classes are top level entries:
+ * This also handles jars that are excutable, i.e. a bog standard jar inwhich the classes are top level entries:
  * <p/>
  * package/package/Tool.class
  * <p/>
- * A tool that is jarred up is considered not modifiable because it is considered
- * a distribution.
+ * A tool that is jarred up is considered not modifiable because it is considered a distribution.
  * <p/>
  * A Java tool, even if the source is available in the tool, is also not modifiable.
  * <p/>
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 3, 2009: 4:14:26 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class FileToolFormatHandler implements ToolFormatHandler {
@@ -90,7 +92,8 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 try {
                     JarFile jf = new JarFile(file);
                 } catch (IOException e) {
-                    throw new ToolException("The file has an extension of '.jar' but the content does not comply with the zip specification.");
+                    throw new ToolException(
+                            "The file has an extension of '.jar' but the content does not comply with the zip specification.");
                 }
                 isJar = true;
             }
@@ -427,7 +430,9 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                     classed.addAll(names);
                     root = matches(names, file);
                     if (root != null) {
-                        defRoot = new File(root, pkg.replace(".", File.separator) + File.separator + "target" + File.separator + "classes");
+                        defRoot = new File(root,
+                                pkg.replace(".", File.separator) + File.separator + "target" + File.separator
+                                        + "classes");
                     }
                 }
             }
@@ -462,12 +467,14 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
     public Tool getTool(String fullname) {
+
         ToolUrl tool = tools.get(fullname);
         if (tool != null) {
             return tool.getTool();
         }
         return null;
     }
+
 
     public Tool[] getTools() {
         Tool[] t = new Tool[tools.size()];

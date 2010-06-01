@@ -60,25 +60,23 @@
 package org.trianacode.gui.hci.tools;
 
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JTree;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.ToolTableUtils;
 
-import javax.swing.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * A background thread that constantly checks whether any tools have been broken/
- * unbroken, repainting the tool tree when a change occurs.
+ * A background thread that constantly checks whether any tools have been broken/ unbroken, repainting the tool tree
+ * when a change occurs.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th May 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class BrokenToolMonitor extends Thread implements ToolTableListener {
@@ -111,19 +109,19 @@ public class BrokenToolMonitor extends Thread implements ToolTableListener {
 
 
     /**
-     * @return true if the tool is broken
-     *         TODO - the icon is not updated if the tool ceases to be broken!!
+     * @return true if the tool is broken TODO - the icon is not updated if the tool ceases to be broken!!
      */
     public static boolean isBroken(Tool tool) {
-        if (!brokentable.containsKey(tool))
+        if (!brokentable.containsKey(tool)) {
             checkTool(tool);
+        }
 
         return (brokentable.get(tool)).booleanValue();
     }
 
     /**
-     * Checks whether the specified tool is broken, returns true if the state
-     * of the tool in the broken tools table has changed
+     * Checks whether the specified tool is broken, returns true if the state of the tool in the broken tools table has
+     * changed
      */
     private static boolean checkTool(Tool tool) {
         boolean broken = ToolTableUtils.isBroken(tool);
@@ -177,19 +175,17 @@ public class BrokenToolMonitor extends Thread implements ToolTableListener {
     public void run() {
         Tool tool;
         String[] toolnames = new String[0];
-        int count = 0;
 
         while (!stopped) {
-            while (count >= toolnames.length) {
-                toolnames = tooltable.getToolNames();
-                count = 0;
+            int count = 0;
+            toolnames = tooltable.getToolNames();
+            if (toolnames.length > 0) {
+                tool = tooltable.getTool(toolnames[count++]);
+
+                if ((tool != null) && checkTool(tool) && (tree != null)) {
+                    tree.repaint();
+                }
             }
-
-            tool = tooltable.getTool(toolnames[count++]);
-
-            if ((tool != null) && checkTool(tool) && (tree != null))
-                tree.repaint();
-
             try {
                 Thread.sleep(1000 * 5);
             } catch (InterruptedException except) {

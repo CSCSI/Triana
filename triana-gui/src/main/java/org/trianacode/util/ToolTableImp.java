@@ -16,23 +16,30 @@
 
 package org.trianacode.util;
 
-import org.trianacode.taskgraph.ser.XMLReader;
-import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.tool.*;
-import org.trianacode.taskgraph.util.FileUtils;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.ser.XMLWriter;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolClassLoader;
+import org.trianacode.taskgraph.tool.ToolException;
+import org.trianacode.taskgraph.tool.ToolFormatHandler;
+import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.taskgraph.tool.TypesMap;
+import org.trianacode.taskgraph.util.FileUtils;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 5:13:34 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ToolTableImp extends AbstractToolTable {
@@ -51,11 +58,9 @@ public class ToolTableImp extends AbstractToolTable {
 
 
     /**
-     * Add a tool box path to the current tool boxes
-     * This also gets the tool class loader to find paths within
-     * the tool box to add to its classpath
-     * And gets the types map to parse all the class files and jar files
-     * and categorize them according to their classes,superclass and interfaces.
+     * Add a tool box path to the current tool boxes This also gets the tool class loader to find paths within the tool
+     * box to add to its classpath And gets the types map to parse all the class files and jar files and categorize them
+     * according to their classes,superclass and interfaces.
      */
     public void addToolBox(Toolbox... box) {
         super.addToolBox(box);
@@ -92,8 +97,8 @@ public class ToolTableImp extends AbstractToolTable {
     }
 
     /**
-     * Inserts a copy of the tool into the specified package. Combined with delete
-     * tool this can be used to cut/copy tools.
+     * Inserts a copy of the tool into the specified package. Combined with delete tool this can be used to cut/copy
+     * tools.
      *
      * @param tool    the tool being pasted
      * @param pack    the package of the pasted tool
@@ -245,9 +250,9 @@ public class ToolTableImp extends AbstractToolTable {
     }
 
     /**
-     * Notifies the tool table to update the tool loaded from the specified location, such as when a
-     * tool is created. The location should be in a form understanded by the tool table (e.g. XML
-     * file location, tool server network address), and is ignored if not understood.
+     * Notifies the tool table to update the tool loaded from the specified location, such as when a tool is created.
+     * The location should be in a form understanded by the tool table (e.g. XML file location, tool server network
+     * address), and is ignored if not understood.
      *
      * @param location the location of the file
      * @param toolbox  the toolbox the location is in (specify null if unknown)
@@ -268,8 +273,7 @@ public class ToolTableImp extends AbstractToolTable {
     }
 
     /**
-     * Removes the tool at the specified location from the tool/location tables if it has been
-     * deleted
+     * Removes the tool at the specified location from the tool/location tables if it has been deleted
      */
     protected void purgeTool(Tool tool) {
         toolHandler.delete(tool);
@@ -352,6 +356,7 @@ public class ToolTableImp extends AbstractToolTable {
 
         public void run() {
             while (true) {
+                System.out.println("ToolTableImp$ReloadToolsThread.run");
                 loadTools();
                 try {
                     Thread.sleep(1000 * 60);

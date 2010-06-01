@@ -27,8 +27,6 @@ import java.util.logging.Logger;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 24, 2009: 4:30:22 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ToolClassLoader extends URLClassLoader {
@@ -61,7 +59,7 @@ public class ToolClassLoader extends URLClassLoader {
             return;
         }
         if (box.isDirectory()) {
-
+            addPath(box.getAbsolutePath());
             File[] files = box.listFiles();
             if (files == null) {
                 return;
@@ -84,6 +82,7 @@ public class ToolClassLoader extends URLClassLoader {
                 addPath(box.getAbsolutePath());
             }
         }
+        System.out.println("ToolClassLoader.addToolBox CLASSPATH:" + getClassPath());
     }
 
 

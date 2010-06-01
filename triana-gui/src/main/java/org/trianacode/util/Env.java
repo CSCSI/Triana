@@ -59,6 +59,39 @@
 package org.trianacode.util;
 
 
+import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.logging.Logger;
+
+import org.w3c.dom.Element;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
@@ -75,32 +108,18 @@ import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Home;
 import org.trianacode.taskgraph.util.Listing;
-import org.w3c.dom.Element;
-
-import java.applet.Applet;
-import java.awt.*;
-import java.io.*;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.*;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
- * Env allows a way of accessing various environment and system variables within Triana. Some
- * methods convert from the Java system properties to suitable labels which are of more use within
- * Triana. To get the particular variable you want just call any of these functions from within any
- * unit e.g. :-</p>
+ * Env allows a way of accessing various environment and system variables within Triana. Some methods convert from the
+ * Java system properties to suitable labels which are of more use within Triana. To get the particular variable you
+ * want just call any of these functions from within any unit e.g. :-</p> <p/> <center> Env.trianahome() </center> <p>
+ * returns triana's home directory.</p><p>
  * <p/>
- * <center> Env.trianahome() </center> <p> returns triana's home directory.</p><p>
- * <p/>
- * The toString() method is also useful for identifying all the system properties at run-time to
- * make sure your system is set up correctly. This message is printed out Triana or Triana is used.
+ * The toString() method is also useful for identifying all the system properties at run-time to make sure your system
+ * is set up correctly. This message is printed out Triana or Triana is used.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 9 Oct 1997
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public final class Env {
 
@@ -223,8 +242,7 @@ public final class Env {
 
     /**
      * The resource bundle to store the messages to display within triana. These are taken from the
-     * system/locale/triana_.._...properties file depending on which locale you are
-     * running in
+     * system/locale/triana_.._...properties file depending on which locale you are running in
      */
     static ResourceBundle messages = null;
 
@@ -334,8 +352,7 @@ public final class Env {
      * Initialise the user config
      *
      * @param tools the tool table
-     * @param write a flag indicating whether changes to the config are written back to the config
-     *              file
+     * @param write a flag indicating whether changes to the config are written back to the config file
      */
     public static void initConfig(ToolTable tools, boolean write) {
         logger.info("Configuring environment");
@@ -443,14 +460,14 @@ public final class Env {
         setUserProperty(CODE_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));
-        Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.USER_TOOLBOX), ToolTable.USER_TOOLBOX);
+        Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.USER_TOOLBOX),
+                ToolTable.USER_TOOLBOX);
         table.addToolBox(def);
     }
 
 
     /**
-     * Turns the debug information printed out to the MSDOS window on or off. This works in Applets
-     * or Applications
+     * Turns the debug information printed out to the MSDOS window on or off. This works in Applets or Applications
      */
     public static void setDebug(String deb) {
         String oldVal;
@@ -504,9 +521,9 @@ public final class Env {
     }
 
     /**
-     * Adds a name, value pair to the user configuration properties. The propValue object has to
-     * correctly override the equals() method otherwise the property file will be written every time
-     * this method is called, even if the new value is supposed to be the same as the old value.
+     * Adds a name, value pair to the user configuration properties. The propValue object has to correctly override the
+     * equals() method otherwise the property file will be written every time this method is called, even if the new
+     * value is supposed to be the same as the old value.
      *
      * @return the old value or null if there was none.
      */
@@ -568,8 +585,7 @@ public final class Env {
     }
 
     /**
-     * Method to sort out the difference between storing our boolean value as a string or a
-     * boolean.
+     * Method to sort out the difference between storing our boolean value as a string or a boolean.
      */
     private static Boolean getBoolean(String propName) {
         Object value = getUserProperty(propName);
@@ -583,8 +599,8 @@ public final class Env {
     }
 
     /**
-     * Wraper for {@link #getUserProperty} if the property does not exist then it is set to the
-     * defaultValue and that is returned.
+     * Wraper for {@link #getUserProperty} if the property does not exist then it is set to the defaultValue and that is
+     * returned.
      */
     public static boolean getBooleanUserProperty(String propName, boolean defaultValue) {
         Boolean prop = getBoolean(propName);
@@ -687,12 +703,11 @@ public final class Env {
     }
 
     /**
-     * Returns the machines operating system. This returns a single word which identifies the
-     * particular operating system. The identifier is returned in lower case so it can be used to
-     * identify directories of where various things are stored for different platforms e.g. </p><p>
-     * <ol> <li> Windows 95/NT - <i>windows</i> is returned <li> Solaris - <i>solaris</i> is
-     * returned <li> IRIX - <i>irix</i> is returned <li> DEC - <i>dec</i> is returned <li> LINUX  -
-     * <i>linux</i> is returned </li>
+     * Returns the machines operating system. This returns a single word which identifies the particular operating
+     * system. The identifier is returned in lower case so it can be used to identify directories of where various
+     * things are stored for different platforms e.g. </p><p> <ol> <li> Windows 95/NT - <i>windows</i> is returned <li>
+     * Solaris - <i>solaris</i> is returned <li> IRIX - <i>irix</i> is returned <li> DEC - <i>dec</i> is returned <li>
+     * LINUX  - <i>linux</i> is returned </li>
      */
     public final static String os() {
         return Home.os();
@@ -709,8 +724,7 @@ public final class Env {
     }
 
     /**
-     * The ending for the native libraries i.e. .so on unix and .dll on window 95/NT, .jnilib for
-     * Mac OS X
+     * The ending for the native libraries i.e. .so on unix and .dll on window 95/NT, .jnilib for Mac OS X
      */
     public final static String getSharedLibSuffix() {
         String os = os();
@@ -743,8 +757,8 @@ public final class Env {
     }
 
     /**
-     * Returns the location of the plugin directory used to store project specific plugins to be
-     * loaded at run time, for example filters and import/export tools.
+     * Returns the location of the plugin directory used to store project specific plugins to be loaded at run time, for
+     * example filters and import/export tools.
      *
      * @return the plugin directory location
      */
@@ -753,10 +767,9 @@ public final class Env {
     }
 
     /**
-     * Returns the machine architecture. This returns a single word which identifies the particular
-     * platform e.g. </p><p> <ol> <li> Windows 95/NT - <i>Windows</i> is returned <li> Solaris -
-     * <i>Solaris</i> is returned <li> IRIX - <i>Irix</i> is returned <li> DEC - <i>Dec</i> is
-     * returned <li> LINUX  - <i>Linux</i> is returned </li>
+     * Returns the machine architecture. This returns a single word which identifies the particular platform e.g.
+     * </p><p> <ol> <li> Windows 95/NT - <i>Windows</i> is returned <li> Solaris - <i>Solaris</i> is returned <li> IRIX
+     * - <i>Irix</i> is returned <li> DEC - <i>Dec</i> is returned <li> LINUX  - <i>Linux</i> is returned </li>
      */
     public final static String arch() {
         return System.getProperty("os.arch");
@@ -851,8 +864,7 @@ public final class Env {
 
 
     /**
-     * @return the last directory used to access the specified directory type (@see
-     *         triana.util.TFileChooser)
+     * @return the last directory used to access the specified directory type (@see triana.util.TFileChooser)
      */
     public final static String getDirectory(String dirtype) {
         String lastdir = (String) getUserProperty(DIRECTORY_STR + ":" + dirtype);
@@ -869,8 +881,7 @@ public final class Env {
     }
 
     /**
-     * Sets the last directory used to access the specified directory type (@see
-     * triana.util.TFileChooser)
+     * Sets the last directory used to access the specified directory type (@see triana.util.TFileChooser)
      */
     public final static void setDirectory(String dirtype, String dir) {
         setUserProperty(DIRECTORY_STR + ":" + dirtype, dir);
@@ -1244,10 +1255,10 @@ public final class Env {
     }
 
     /**
-     * Save any open MainTriana window taskgraphs for reopening next time Triana is run. Only save a
-     * window if it is a top level taskgraph, i.e. don't save the taskgraphs for any windows that
-     * are displaying a sub group. If a group window is open then set the property that so that it
-     * will be reopened at start up once it's parent taskgraph is loaded.
+     * Save any open MainTriana window taskgraphs for reopening next time Triana is run. Only save a window if it is a
+     * top level taskgraph, i.e. don't save the taskgraphs for any windows that are displaying a sub group. If a group
+     * window is open then set the property that so that it will be reopened at start up once it's parent taskgraph is
+     * loaded.
      *
      * @param cont the MainTriana we are testing to save
      * @return The name of the tempory file to save to or null if nothing has been saved.
@@ -1277,9 +1288,8 @@ public final class Env {
     }
 
     /**
-     * Write a marker file to indicate we are writing to the config file, this is a blocking call
-     * that is only called from with the write config file thread. Calling from anywhere else may
-     * have a detrimental effect on performance.
+     * Write a marker file to indicate we are writing to the config file, this is a blocking call that is only called
+     * from with the write config file thread. Calling from anywhere else may have a detrimental effect on performance.
      *
      * @return the name of the temporary marker file.
      */
@@ -1487,7 +1497,8 @@ public final class Env {
 
         }
         catch (IOException e) {
-            logger.severe("Error writing to user config file: " + configFile.getAbsolutePath() + ":" + FileUtils.formatThrowable(e));
+            logger.severe("Error writing to user config file: " + configFile.getAbsolutePath() + ":" + FileUtils
+                    .formatThrowable(e));
         }
         finally {
             FileUtils.closeWriter(bw);
@@ -1496,7 +1507,8 @@ public final class Env {
     }
 
 
-    private static void recursivelySaveChildTaskGraphElems(OpenTaskGraph childTG, Element parent, DocumentHandler handler) {
+    private static void recursivelySaveChildTaskGraphElems(OpenTaskGraph childTG, Element parent,
+                                                           DocumentHandler handler) {
         Element childElem = handler.element(CHILD_STR);
         handler.add(childElem, parent);
         Element nameElem = handler.element(NAME_STR);
@@ -1527,7 +1539,8 @@ public final class Env {
             String versionStr = root.getAttribute(CONFIG_VERSION_STR);
             if (!versionStr.equals(CONFIG_VERSION)) {
                 logger.warning(
-                        "Current config version is " + CONFIG_VERSION + " Attempting to load your config version " + versionStr);
+                        "Current config version is " + CONFIG_VERSION + " Attempting to load your config version "
+                                + versionStr);
             }
 
             List elementList = handler.getChildren(handler.getChild(root, EXCLUDED_TOOLS), NAME_STR);
@@ -1673,7 +1686,8 @@ public final class Env {
         }
     }
 
-    private static void recursivelyLoadChildTaskGraphElements(OpenTaskGraph parent, Element childElem, DocumentHandler handler) {
+    private static void recursivelyLoadChildTaskGraphElements(OpenTaskGraph parent, Element childElem,
+                                                              DocumentHandler handler) {
         Element nameElem = handler.getChild(childElem, NAME_STR);
         OpenTaskGraph info = new OpenTaskGraph();
         info.setName(nameElem.getAttribute(VALUE_STR));
@@ -1753,10 +1767,9 @@ public final class Env {
     }
 
     /**
-     * Adds the specific object to the given vector.  The vectors can be Classpaths, toolboxes or
-     * help files.  If the argument is a String then we check to see if its a network or a local
-     * file. It is stored as a URL if its networks or a String if its local. The CLASSPATH is
-     * already split up into the various objects
+     * Adds the specific object to the given vector.  The vectors can be Classpaths, toolboxes or help files.  If the
+     * argument is a String then we check to see if its a network or a local file. It is stored as a URL if its networks
+     * or a String if its local. The CLASSPATH is already split up into the various objects
      */
     private final static int addToVar(Vector toAddTo, Object item) {
         try {
@@ -1781,8 +1794,7 @@ public final class Env {
     /**
      * Gets all the types compiled in the $TRIANA/classes/triana/types
      *
-     * @return a StringVector containing a Vector of every TrianaType (i.e. each type stored as a
-     *         String).
+     * @return a StringVector containing a Vector of every TrianaType (i.e. each type stored as a String).
      */
     public static Vector<String> getAllTrianaTypes() {
         if (allTypes == null) {
@@ -1795,7 +1807,7 @@ public final class Env {
 
 
         String typePath;
-        typePath = Env.home() + "classes" + sep + "triana" + sep + "types" + sep;
+        typePath = Env.home() + sep + "classes" + sep + "triana" + sep + "types" + sep;
         Listing listing = FileUtils.listAllFiles(typePath, "*.class", false);
         String[] l = new String[0];
 
@@ -1829,7 +1841,8 @@ public final class Env {
     }
 
     private static String typesFile() {
-        return Env.home() + "resources" + File.separator + "system" + File.separator + "types" + File.separator + "TrianaTypes";
+        return Env.home() + "resources" + File.separator + "system" + File.separator + "types" + File.separator
+                + "TrianaTypes";
     }
 
     /**
@@ -1849,8 +1862,7 @@ public final class Env {
     }
 
     /**
-     * Loads in a template found in $TRIANA/system/templates/ i.e. BasicWindow, UserWindow,
-     * WindowUnit etc.
+     * Loads in a template found in $TRIANA/system/templates/ i.e. BasicWindow, UserWindow, WindowUnit etc.
      *
      * @return a string containing the contents of the template file
      */
@@ -1866,9 +1878,8 @@ public final class Env {
     }
 
     /**
-     * Gets the ResourceBundle, which store the internationalized messages to display within triana.
-     * These are taken from the system/internationalization/triana_.._...properties file depending
-     * on which locale you are running in.
+     * Gets the ResourceBundle, which store the internationalized messages to display within triana. These are taken
+     * from the system/internationalization/triana_.._...properties file depending on which locale you are running in.
      */
     public static ResourceBundle getResourceBundle() throws IOException {
         if (messages == null) {
@@ -1877,7 +1888,8 @@ public final class Env {
             String settings = path + "settings";
             logger.fine("resource path = " + path);
             InputStream localeSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream(settings);
-            Vector<String> locale = FileUtils.readAndSplitFile(new BufferedReader(new InputStreamReader(localeSettings)));
+            Vector<String> locale = FileUtils
+                    .readAndSplitFile(new BufferedReader(new InputStreamReader(localeSettings)));
             logger.info("Language = " + locale.get(0));
             logger.info("Country = " + locale.get(1));
 
@@ -1904,9 +1916,8 @@ public final class Env {
     }
 
     /**
-     * Gets the ResourceBundle, which store the internationalized messages to display within triana.
-     * These are taken from the system/internationalization/triana_.._...properties file depending
-     * on which locale you are running in.
+     * Gets the ResourceBundle, which store the internationalized messages to display within triana. These are taken
+     * from the system/internationalization/triana_.._...properties file depending on which locale you are running in.
      */
     public static ResourceBundle getTips() {
         String sep = separator();
@@ -1936,9 +1947,8 @@ public final class Env {
     }
 
     /**
-     * Gets the string fromm the resource bundle which store the messages to display within triana.
-     * These are taken from the system/locale/triana_.._...properties file depending on which locale
-     * you are running in
+     * Gets the string fromm the resource bundle which store the messages to display within triana. These are taken from
+     * the system/locale/triana_.._...properties file depending on which locale you are running in
      */
     public static String getString(String word) {
         if (messages == null) {
