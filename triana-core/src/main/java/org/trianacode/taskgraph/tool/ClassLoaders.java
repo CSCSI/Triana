@@ -98,7 +98,6 @@ public class ClassLoaders {
 
 
     public static Class forName(String className) throws ClassNotFoundException {
-        System.out.println("ClassLoaders.forName " + className);
         className = getTextClassName(className);
         boolean isArray = false;
         int dims = 0;

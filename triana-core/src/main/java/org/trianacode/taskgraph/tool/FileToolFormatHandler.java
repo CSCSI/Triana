@@ -48,7 +48,9 @@ import org.trianacode.taskgraph.util.FileUtils;
  * <p/>
  * For xml tools: 1. package/package/Tool.xml 2. package/package/xml/Tool.xml
  * <p/>
- * For java tools: 1. package/package/classes/package/package/Tool.class 2. package/package/target/classes/package/package/Tool.class
+ * For java tools: 1. package/package/classes/package/package/Tool.class
+ * <p/>
+ * 2. package/package/target/classes/package/package/Tool.class
  * <p/>
  * If the tool is in a jar file, it handles the above paths inside the jar file.
  * <p/>

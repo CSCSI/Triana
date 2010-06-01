@@ -356,7 +356,6 @@ public class ToolTableImp extends AbstractToolTable {
 
         public void run() {
             while (true) {
-                System.out.println("ToolTableImp$ReloadToolsThread.run");
                 loadTools();
                 try {
                     Thread.sleep(1000 * 60);
