@@ -24,13 +24,10 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 /**
- * Somewhere to put all those class loaders. This takes a brute force approach
- * to finding a class by name.
+ * Somewhere to put all those class loaders. This takes a brute force approach to finding a class by name.
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 8:49:54 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ClassLoaders {
@@ -41,7 +38,8 @@ public class ClassLoaders {
     /**
      * hash table of class loaders
      */
-    private static java.util.Hashtable<String, ClassLoader> mappedLoaders = new java.util.Hashtable<String, ClassLoader>();
+    private static java.util.Hashtable<String, ClassLoader> mappedLoaders
+            = new java.util.Hashtable<String, ClassLoader>();
     private static Vector<ClassLoader> loaders = new Vector<ClassLoader>();
 
 
@@ -71,19 +69,21 @@ public class ClassLoaders {
      * @param className the name of a class
      */
     public static void setClassLoader(String className, ClassLoader loader) {
-        if (className != null && loader != null)
+        if (className != null && loader != null) {
             mappedLoaders.put(className, loader);
+        }
     }
 
     /**
-     * Obtain the ClassLoader (if any) associated with the given
-     * className.
+     * Obtain the ClassLoader (if any) associated with the given className.
      *
      * @param className the name of a class
      * @return class loader
      */
     public static ClassLoader getClassLoader(String className) {
-        if (className == null) return null;
+        if (className == null) {
+            return null;
+        }
         return mappedLoaders.get(className);
     }
 
@@ -98,6 +98,7 @@ public class ClassLoaders {
 
 
     public static Class forName(String className) throws ClassNotFoundException {
+        System.out.println("ClassLoaders.forName " + className);
         className = getTextClassName(className);
         boolean isArray = false;
         int dims = 0;
@@ -108,25 +109,25 @@ public class ClassLoaders {
 
         }
         Class cls;
-        if (className.equals("boolean"))
+        if (className.equals("boolean")) {
             cls = Boolean.TYPE;
-        else if (className.equals("char"))
+        } else if (className.equals("char")) {
             cls = Character.TYPE;
-        else if (className.equals("byte"))
+        } else if (className.equals("byte")) {
             cls = Byte.TYPE;
-        else if (className.equals("short"))
+        } else if (className.equals("short")) {
             cls = Short.TYPE;
-        else if (className.equals("int"))
+        } else if (className.equals("int")) {
             cls = Integer.TYPE;
-        else if (className.equals("long"))
+        } else if (className.equals("long")) {
             cls = Long.TYPE;
-        else if (className.equals("float"))
+        } else if (className.equals("float")) {
             cls = Float.TYPE;
-        else if (className.equals("double"))
+        } else if (className.equals("double")) {
             cls = Double.TYPE;
-        else if (className.equals("void"))
+        } else if (className.equals("void")) {
             cls = void.class;
-        else {
+        } else {
             cls = loadClass(className);
         }
         if (isArray) {
@@ -137,8 +138,9 @@ public class ClassLoaders {
     }
 
     public static String getTextClassName(String text) {
-        if (text == null || !(isJVMName(text)))
+        if (text == null || !(isJVMName(text))) {
             return text;
+        }
         String className = "";
         int index = 0;
         while (index < text.length() && text.charAt(index) == '[') {
@@ -146,23 +148,23 @@ public class ClassLoaders {
             className += "[]";
         }
         if (index < text.length()) {
-            if (text.charAt(index) == 'B')
+            if (text.charAt(index) == 'B') {
                 className = "byte" + className;
-            else if (text.charAt(index) == 'C')
+            } else if (text.charAt(index) == 'C') {
                 className = "char" + className;
-            else if (text.charAt(index) == 'D')
+            } else if (text.charAt(index) == 'D') {
                 className = "double" + className;
-            else if (text.charAt(index) == 'F')
+            } else if (text.charAt(index) == 'F') {
                 className = "float" + className;
-            else if (text.charAt(index) == 'I')
+            } else if (text.charAt(index) == 'I') {
                 className = "int" + className;
-            else if (text.charAt(index) == 'J')
+            } else if (text.charAt(index) == 'J') {
                 className = "long" + className;
-            else if (text.charAt(index) == 'S')
+            } else if (text.charAt(index) == 'S') {
                 className = "short" + className;
-            else if (text.charAt(index) == 'Z')
+            } else if (text.charAt(index) == 'Z') {
                 className = "boolean" + className;
-            else {
+            } else {
                 className = text.substring(index + 1, text.indexOf(";")) + className;
             }
         }
@@ -182,7 +184,7 @@ public class ClassLoaders {
                             // Check if the class is a registered class then
                             // use the classloader for that class.
                             ClassLoader classLoader = getClassLoader(className);
-                            if(classLoader == null) {
+                            if (classLoader == null) {
                                 throw new ClassNotFoundException();
                             }
                             return Class.forName(className, true, classLoader);
@@ -243,11 +245,11 @@ public class ClassLoaders {
                         // Check if the class is a registered class then
                         // use the classloader for that class.
                         ClassLoader classLoader = getClassLoader(className);
-                        if(classLoader != null) {
-                        URL url = classLoader.getResource(className);
-                        if (url != null) {
-                            return url;
-                        }
+                        if (classLoader != null) {
+                            URL url = classLoader.getResource(className);
+                            if (url != null) {
+                                return url;
+                            }
                         }
                         //check the list of loaders
                         for (int i = 0; i < loaders.size(); i++) {
@@ -290,7 +292,7 @@ public class ClassLoaders {
 
     private static boolean isJVMName(String text) {
         return text.startsWith("[") ||
-                text.startsWith("L") ||
+                (text.startsWith("L") && text.indexOf(";") > -1) ||
                 text.equals("B") ||
                 text.equals("C") ||
                 text.equals("D") ||
