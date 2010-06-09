@@ -34,6 +34,7 @@ public class ToolClassLoader extends URLClassLoader {
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolClassLoader");
 
     private static ToolClassLoader loader = new ToolClassLoader();
+    private static String[] ignores = {".svn", "CVS"};
 
 
     public ToolClassLoader(ClassLoader classLoader) {
@@ -55,7 +56,7 @@ public class ToolClassLoader extends URLClassLoader {
 
     public void addToolBox(String toolbox) {
         File box = new File(toolbox);
-        if (!box.exists() || box.length() == 0) {
+        if (!box.exists() || box.length() == 0 || box.getName().startsWith(".")) {
             return;
         }
         if (box.isDirectory()) {
@@ -65,14 +66,18 @@ public class ToolClassLoader extends URLClassLoader {
                 return;
             }
             for (File file : files) {
+                String name = file.getName();
+                if (name.startsWith(".")) {
+                    continue;
+                }
                 if (file.isDirectory()) {
-                    if (file.getName().equals("classes")) {
+                    if (name.equals("classes")) {
                         addPath(file.getAbsolutePath());
                     } else {
                         addToolBox(file.getAbsolutePath());
                     }
                 } else {
-                    if (file.getName().endsWith(".jar")) {
+                    if (name.endsWith(".jar")) {
                         addPath(file.getAbsolutePath());
                     }
                 }
