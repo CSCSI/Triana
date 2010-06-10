@@ -59,6 +59,19 @@
 
 package org.trianacode.gui.panels;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Point;
+import java.awt.Window;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.builder.GUICreaterPanel;
 import org.trianacode.gui.hci.GUIEnv;
@@ -66,32 +79,28 @@ import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.event.ControlTaskStateEvent;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskGraphCableEvent;
+import org.trianacode.taskgraph.event.TaskGraphListener;
+import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Vector;
-
 /**
- * The parameter panel manager keeps a hashtable of parameter panels for each task. It monitors all
- * open taskgraphs, and if a task is created with its paramPanelInstantiate parameter set to true,
- * the parameter panel for that task is immediately instantiated. If a parameter panel is not
- * immediately instantiated then it is instantiated when it is first accessed.
+ * The parameter panel manager keeps a hashtable of parameter panels for each task. It monitors all open taskgraphs, and
+ * if a task is created with its paramPanelInstantiate parameter set to true, the parameter panel for that task is
+ * immediately instantiated. If a parameter panel is not immediately instantiated then it is instantiated when it is
+ * first accessed.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class ParameterPanelManager implements TaskGraphListener, TaskListener {
@@ -137,24 +146,26 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
             ParameterPanel paramPanel = (ParameterPanel) paneltable.get(task);
 
             if (isAlreadyInWindow(paramPanel)) {
-                paramPanel = new MessagePanel("Properties for " + task.getToolName() + " already visible in existing window");
+                paramPanel = new MessagePanel(
+                        "Properties for " + task.getToolName() + " already visible in existing window");
                 paramPanel.setTask(task);
                 paramPanel.init();
             }
 
             return paramPanel;
-        }
-        else if (task instanceof TaskGraph)
+        } else if (task instanceof TaskGraph) {
             return initGroupPanel((TaskGraph) task);
-        else
+        } else {
             return null;
+        }
     }
 
     private static boolean isAlreadyInWindow(ParameterPanel paramPanel) {
         Container cont = paramPanel.getParent();
 
-        while ((cont != null) && (!(cont instanceof Window)))
+        while ((cont != null) && (!(cont instanceof Window))) {
             cont = cont.getParent();
+        }
 
         return (cont instanceof Window);
     }
@@ -175,19 +186,21 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
     public static boolean isInstantiatePanel(Task task) {
         return (task.isParameterName(Tool.PARAM_PANEL_CLASS) &&
                 ((!task.isParameterName(Tool.PARAM_PANEL_INSTANTIATE) ||
-                (task.getParameter(Tool.PARAM_PANEL_INSTANTIATE).equals(Tool.ON_TASK_INSTANTIATION)))));
+                        (task.getParameter(Tool.PARAM_PANEL_INSTANTIATE).equals(Tool.ON_TASK_INSTANTIATION)))));
     }
 
 
     private void handleTaskCreated(Task task) {
-        if (isInstantiatePanel(task))
+        if (isInstantiatePanel(task)) {
             instantiatePanel(task);
+        }
 
         if (task instanceof TaskGraph) {
             Task[] tasks = ((TaskGraph) task).getTasks(true);
 
-            for (int count = 0; count < tasks.length; count++)
+            for (int count = 0; count < tasks.length; count++) {
                 handleTaskCreated(tasks[count]);
+            }
         }
     }
 
@@ -195,17 +208,32 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         if (!paneltable.containsKey(task)) {
             ParameterPanel paramPanel = null;
 
-            if (task.isParameterName(Tool.GUI_BUILDER))
+            if (task.isParameterName(Tool.GUI_BUILDER)) {
                 paramPanel = initGUIBuilderV2Panel((String) task.getParameter(Tool.GUI_BUILDER), task);
-            else if (task.isParameterName(Tool.PARAM_PANEL_CLASS))
+            } else if (task.isParameterName(Tool.PARAM_PANEL_CLASS)) {
                 paramPanel = initParameterPanel(task);
-            else if (task.isParameterName(Tool.OLD_GUI_BUILDER))
-                throw (new RuntimeException("Deprecated GUI Builder information in " + task.getToolName() + ": Tool XML must be be regenrated"));
+            } else if (task.isParameterName(Tool.OLD_GUI_BUILDER)) {
+                throw (new RuntimeException("Deprecated GUI Builder information in " + task.getToolName()
+                        + ": Tool XML must be be regenrated"));
+            }
 
             if (paramPanel != null) {
                 paneltable.put(task, paramPanel);
                 task.addTaskListener(disposemanager);
             }
+        }
+    }
+
+    public static void registerPanel(JPanel panel, Task task) {
+        if (!paneltable.containsKey(task)) {
+            ParameterPanel paramPanel = null;
+            if (panel instanceof ParameterPanel) {
+                paramPanel = (ParameterPanel) panel;
+            } else {
+                paramPanel = new PanelHolder(panel);
+            }
+            paneltable.put(task, paramPanel);
+            task.addTaskListener(disposemanager);
         }
     }
 
@@ -220,11 +248,13 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         for (int count = 0; count < tasks.length; count++) {
             paramPanel = getParameterPanel(tasks[count]);
 
-            if (paramPanel != null)
+            if (paramPanel != null) {
                 panels.add(paramPanel);
+            }
         }
 
-        ParameterPanel groupPanel = new GroupParameterPanel((ParameterPanel[]) panels.toArray(new ParameterPanel[panels.size()]));
+        ParameterPanel groupPanel = new GroupParameterPanel(
+                (ParameterPanel[]) panels.toArray(new ParameterPanel[panels.size()]));
         groupPanel.setTask(taskgraph);
         groupPanel.init();
 
@@ -246,8 +276,7 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
             String rowValue = (String) task.getParameter(panel.getRow(i).getParameterName());
             if (rowValue != null) {
                 panel.getRow(i).setValue(rowValue);
-            }
-            else {
+            } else {
                 String msg = "Error generating panel for: " + task.getToolName() + "\n"
                         + "Unit: " + task.getProxy().toString() + "\n"
                         + "Unit does not have a corresponding parameter for the GUI element: "
@@ -266,18 +295,20 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         ParameterPanel paramPanel = null;
         try {
             TrianaClient client = GUIEnv.getTrianaClientFor(task);
+            //if (client != null) {
 
-            if (client != null) {
-                paramPanel = createPanel(task);
-                paramPanel.setTask(task);
-                paramPanel.init();
-            }
+            paramPanel = createPanel(task);
+            paramPanel.setTask(task);
+            paramPanel.init();
+            //}
         }
         catch (ClassNotFoundException except) {
-            new ErrorDialog(Env.getString("panelNotFoundError"), Env.getString("panelNotFoundError") + ": " + task.getParameter(Tool.PARAM_PANEL_CLASS));
+            new ErrorDialog(Env.getString("panelNotFoundError"),
+                    Env.getString("panelNotFoundError") + ": " + task.getParameter(Tool.PARAM_PANEL_CLASS));
         }
         catch (Exception except) {
-            new ErrorDialog(Env.getString("panelInstantiationError"), Env.getString("panelInstantiationError") + ": " + task.getParameter(Tool.PARAM_PANEL_CLASS));
+            new ErrorDialog(Env.getString("panelInstantiationError"),
+                    Env.getString("panelInstantiationError") + ": " + task.getParameter(Tool.PARAM_PANEL_CLASS));
             except.printStackTrace();
         }
         return paramPanel;
@@ -285,12 +316,13 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
 
 
     /**
-     * Attempt to find and load the ParameterPanel specified by this classname
-     * and task.
+     * Attempt to find and load the ParameterPanel specified by this classname and task.
      */
     public static ParameterPanel createPanel(Task task) throws Exception {
-        if (!task.isParameterName(Tool.PARAM_PANEL_CLASS))
-            throw (new Exception("Error Instantiating Parameter Panel For " + task.getToolName() + " : Parameter panel class not specified"));
+        if (!task.isParameterName(Tool.PARAM_PANEL_CLASS)) {
+            throw (new Exception("Error Instantiating Parameter Panel For " + task.getToolName()
+                    + " : Parameter panel class not specified"));
+        }
 
         String classname = (String) task.getParameter(Tool.PARAM_PANEL_CLASS);
         Class paramClass;
@@ -308,8 +340,8 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
             e.printStackTrace();
             throw (new Exception(Env.getString("panelInstantiationError") + ": " + classname));
         }
-        if(panel instanceof ParameterPanel) {
-            return (ParameterPanel)panel;
+        if (panel instanceof ParameterPanel) {
+            return (ParameterPanel) panel;
         }
         return new PanelHolder(panel);
     }
@@ -319,20 +351,22 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
      * Called when a new task is created in a taskgraph.
      */
     public void taskCreated(TaskGraphTaskEvent event) {
-        if (event.getTask() instanceof TaskGraph)
+        if (event.getTask() instanceof TaskGraph) {
             monitorTaskGraph((TaskGraph) event.getTask());
-        else
+        } else {
             handleTaskCreated(event.getTask());
+        }
     }
 
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method is called when tasks
-     * are removed from a taskgraph due to being grouped (they are place in the groups taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are place in the groups taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
-        if (event.getTask() instanceof TaskGraph)
+        if (event.getTask() instanceof TaskGraph) {
             unmonitorTaskGraph((TaskGraph) event.getTask());
+        }
     }
 
     /**
@@ -390,8 +424,7 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
     }
 
     /**
-     * Called when the core properties of a task change i.e. its name, whether it is running
-     * continuously etc.
+     * Called when the core properties of a task change i.e. its name, whether it is running continuously etc.
      */
     public void taskPropertyUpdate(TaskPropertyEvent event) {
     }
@@ -400,23 +433,24 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         if (windowtable.containsKey(task)) {
             ParameterWindow window = (ParameterWindow) windowtable.get(task);
 
-            if (window.isVisible())
+            if (window.isVisible()) {
                 window.requestFocus();
-            else
+            } else {
                 window.setVisible(true);
+            }
 
             return window;
-        }
-        else {
+        } else {
             ParameterPanel panel = getParameterPanel(task);
 
             if (panel != null) {
                 ParameterWindow paramWindow;
 
-                if (panel.isAlwaysOnTopPreferred())
+                if (panel.isAlwaysOnTopPreferred()) {
                     paramWindow = new ParameterWindow(GUIEnv.getApplicationFrame(), panel.getPreferredButtons(), false);
-                else
+                } else {
                     paramWindow = new ParameterWindow(panel.getPreferredButtons());
+                }
 
                 windowtable.put(task, paramWindow);
                 tasktable.put(paramWindow, task);
@@ -434,7 +468,7 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
 
                 return paramWindow;
             }
-            
+
         }
 
         return null;
@@ -470,8 +504,9 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         public void windowClosed(WindowEvent event) {
             Task task = (Task) tasktable.remove(event.getWindow());
 
-            if (task != null)
+            if (task != null) {
                 windowtable.remove(task);
+            }
         }
 
 

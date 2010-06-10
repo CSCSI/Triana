@@ -25,14 +25,13 @@ import java.util.List;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 3, 2009: 10:19:19 AM
- * @date $Date:$ modified by $Author:$
  */
 public interface ToolFormatHandler {
 
     public static final String XML_PATH = "xml";
     public static final String SRC_PATH = "src";
     public static final String CLASSES_PATH = "classes";
+    public static final String LIB_PATH = "lib";
 
     public Tool getTool(String fullname);
 
@@ -58,9 +57,7 @@ public interface ToolFormatHandler {
 
 
     /**
-     * gets the root directory of the tool.
-     * A root can potentially contain multiple tools. i.e.,
-     * a root may be shared.
+     * gets the root directory of the tool. A root can potentially contain multiple tools. i.e., a root may be shared.
      *
      * @return
      */
@@ -74,9 +71,8 @@ public interface ToolFormatHandler {
     public URL getDefinitionRoot(Tool tool);
 
     /**
-     * get the definition URL which can be read from.
-     * This could be different from the Tool's getDefinitionPath, for example
-     * if it's in a jar file.
+     * get the definition URL which can be read from. This could be different from the Tool's getDefinitionPath, for
+     * example if it's in a jar file.
      *
      * @return
      */

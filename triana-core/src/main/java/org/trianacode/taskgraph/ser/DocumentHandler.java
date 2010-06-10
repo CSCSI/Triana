@@ -16,52 +16,58 @@
 
 package org.trianacode.taskgraph.ser;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 30, 2009: 10:49:36 AM
- * @date $Date:$ modified by $Author:$
  */
 
 public class DocumentHandler {
 
     private Document doc;
 
-    public DocumentHandler() {
+    public DocumentHandler() throws IOException {
         this.doc = newDocument();
-        if(doc == null) {
-            throw new RuntimeException("could not create a new document!");
+        if (doc == null) {
+            throw new IOException("could not create a new document!");
         }
     }
 
-    public DocumentHandler(InputStream in) {
+    public DocumentHandler(InputStream in) throws IOException {
         this.doc = newDocument(in);
         if (doc == null) {
-            throw new RuntimeException("could not create a new document!");
+            throw new IOException("could not create a new document!");
         }
     }
 
-    public DocumentHandler(Reader in) {
+    public DocumentHandler(Reader in) throws IOException {
         this.doc = newDocument(in);
         if (doc == null) {
-            throw new RuntimeException("could not create a new document!");
+            throw new IOException("could not create a new document!");
         }
     }
 
@@ -80,7 +86,7 @@ public class DocumentHandler {
     public boolean hasChildren(Element parent) {
         NodeList ch = parent.getChildNodes();
         if (ch != null) {
-            if(ch.getLength() > 0) {
+            if (ch.getLength() > 0) {
                 return true;
             }
         }
@@ -88,23 +94,22 @@ public class DocumentHandler {
     }
 
     public Element add(Object o, Element parent) {
-        if(o instanceof Element) {
-            parent.appendChild((Element)o);
+        if (o instanceof Element) {
+            parent.appendChild((Element) o);
         } else if (o instanceof String) {
-            parent.setTextContent((String)o);
+            parent.setTextContent((String) o);
         }
         return parent;
     }
 
     public Element setRoot(Element o) {
-            doc.appendChild(o);
+        doc.appendChild(o);
         return o;
     }
 
     public Document document() {
         return doc;
     }
-
 
 
     public void addAttribute(Element e, String key, String value) {
@@ -121,13 +126,13 @@ public class DocumentHandler {
 
     public Element getChild(Element parent, String tag) {
         NodeList ch = parent.getChildNodes();
-        if(ch != null) {
+        if (ch != null) {
             int len = ch.getLength();
-            for(int i = 0; i < len; i++) {
+            for (int i = 0; i < len; i++) {
                 Node n = ch.item(i);
-                if(n instanceof  Element) {
+                if (n instanceof Element) {
                     Element e = (Element) n;
-                    if(e.getLocalName().equals(tag)) {
+                    if (e.getLocalName().equals(tag)) {
                         return e;
                     }
                 }
@@ -172,7 +177,6 @@ public class DocumentHandler {
     }
 
 
-
     private static Document newDocument() {
         Document doc = null;
         try {
@@ -206,10 +210,11 @@ public class DocumentHandler {
             dbf.setNamespaceAware(true);
             DocumentBuilder db = dbf.newDocumentBuilder();
             doc = db.parse(new InputSource(in));
+            return doc;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return doc;
+        return null;
     }
 
 
@@ -267,5 +272,5 @@ public class DocumentHandler {
         return sr;
     }
 
-    
+
 }

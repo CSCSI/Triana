@@ -59,6 +59,13 @@
 package org.trianacode.gui.toolmaker;
 
 
+import java.awt.Frame;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import org.trianacode.gui.windows.WizardListener;
 import org.trianacode.gui.windows.WizardWindow;
 import org.trianacode.taskgraph.TaskException;
@@ -69,23 +76,13 @@ import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 
 /**
- * <p> A class for creating the template for an Triana tool
- * This class is a stand alone application which can be run
- * independantly of the Triana GUI, but can also be used
- * from within the GUI. </p>
+ * <p> A class for creating the template for an Triana tool This class is a stand alone application which can be run
+ * independantly of the Triana GUI, but can also be used from within the GUI. </p>
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created Today's date
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class UnitWizard implements WizardListener {
 
@@ -228,17 +225,19 @@ public class UnitWizard implements WizardListener {
             return;
         }
 
-        if (guipanel.isGenerateCustomPanel())
+        if (guipanel.isGenerateCustomPanel()) {
             if (!generateCustomPanel()) {
                 window.setVisible(true);
                 return;
             }
+        }
 
-        if (finalpanel.isPlaceholderChecked())
+        if (finalpanel.isPlaceholderChecked()) {
             if (!generatePlaceHolder()) {
                 window.setVisible(true);
                 return;
             }
+        }
         window.dispose();
     }
 
@@ -274,7 +273,9 @@ public class UnitWizard implements WizardListener {
         template = changeToolTags(template);
         template = changeHTMLTags(template);
         if (FileUtils.fileExists(htmlFile)) {
-            int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + htmlFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION);
+            int reply = JOptionPane
+                    .showConfirmDialog(null, "Really Overwrite " + htmlFile + " ?", "File Exists Warning",
+                            JOptionPane.YES_NO_OPTION);
             if (reply == JOptionPane.NO_OPTION) {
                 return false;
             }
@@ -296,7 +297,9 @@ public class UnitWizard implements WizardListener {
 
         String saveFile = getToolSourcePath();
         if (FileUtils.fileExists(saveFile)) {
-            int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION);
+            int reply = JOptionPane
+                    .showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning",
+                            JOptionPane.YES_NO_OPTION);
             if (reply == JOptionPane.NO_OPTION) {
                 return false;
             }
@@ -314,48 +317,54 @@ public class UnitWizard implements WizardListener {
      */
     private String changeToolTags(String template) {
         String packageName = toolpanel.getSourcePackage();
-        if (!packageName.equals(""))
+        if (!packageName.equals("")) {
             template = "package " + packageName + ";\n\n" + template;
+        }
         template = template.replace(TOOLNAME, toolpanel.getSourceClass());
         template = template.replace(POPUP, toolpanel.getPopUpDescription());
         template = template.replace(DATE, toolpanel.getDate());
         template = template.replace(AUTHOR, toolpanel.getAuthor());
         template = template.replace(HELPFILE, toolpanel.getHelpFile());
 
-        if (toolpanel.isIncludeCopyright())
+        if (toolpanel.isIncludeCopyright()) {
             template = template.replace(COPYRIGHT, Env.getCopyright());
-        else
+        } else {
             template = template.replace(COPYRIGHT, "");
+        }
 
         template = template.replace(DEFAULT_INPUT_NODES, String.valueOf(toolpanel.getDefaultInputNodes()));
         template = template.replace(MIN_INPUT_NODES, String.valueOf(toolpanel.getMinimumInputNodes()));
 
-        if (toolpanel.getMaximumInputNodes() == Integer.MAX_VALUE)
+        if (toolpanel.getMaximumInputNodes() == Integer.MAX_VALUE) {
             template = template.replace(MAX_INPUT_NODE, "Integer.MAX_VALUE");
-        else
+        } else {
             template = template.replace(MAX_INPUT_NODE, String.valueOf(toolpanel.getMaximumInputNodes()));
+        }
 
         template = template.replace(DEFAULT_OUTPUT_NODES, String.valueOf(toolpanel.getDefaultOutputNodes()));
         template = template.replace(MIN_OUTPUT_NODES, String.valueOf(toolpanel.getMinimumOutputNodes()));
 
-        if (toolpanel.getMaximumOutputNodes() == Integer.MAX_VALUE)
+        if (toolpanel.getMaximumOutputNodes() == Integer.MAX_VALUE) {
             template = template.replace(MAX_OUTPUT_NODE, "Integer.MAX_VALUE");
-        else
+        } else {
             template = template.replace(MAX_OUTPUT_NODE, String.valueOf(toolpanel.getMaximumOutputNodes()));
+        }
 
-        if (paramspanel.getUpdatePolicy() == ParamsPanelInterface.UPDATE_AT_START_OF_PROCESS)
+        if (paramspanel.getUpdatePolicy() == ParamsPanelInterface.UPDATE_AT_START_OF_PROCESS) {
             template = template.replace(PARAM_UPDATE_POLICY, "PROCESS_UPDATE");
-        else if (paramspanel.getUpdatePolicy() == ParamsPanelInterface.UPDATE_IMMEDIATELY)
+        } else if (paramspanel.getUpdatePolicy() == ParamsPanelInterface.UPDATE_IMMEDIATELY) {
             template = template.replace(PARAM_UPDATE_POLICY, "IMMEDIATE_UPDATE");
-        else
+        } else {
             template = template.replace(PARAM_UPDATE_POLICY, "NO_UPDATE");
+        }
 
-        if (typespanel.getOutputPolicy() == TypesPanel.COPY_OUTPUT)
+        if (typespanel.getOutputPolicy() == TypesPanel.COPY_OUTPUT) {
             template = template.replace(OUTPUT_POLICY, "COPY_OUTPUT");
-        else if (typespanel.getOutputPolicy() == TypesPanel.CLONE_MULTIPLE_OUTPUT)
+        } else if (typespanel.getOutputPolicy() == TypesPanel.CLONE_MULTIPLE_OUTPUT) {
             template = template.replace(OUTPUT_POLICY, "CLONE_MULTIPLE_OUTPUT");
-        else
+        } else {
             template = template.replace(OUTPUT_POLICY, "CLONE_ALL_OUTPUT");
+        }
 
         template = template.replace(NODE_INPUT_TYPES, getNodeInputTypesString());
         template = template.replace(INPUT_TYPES, getInputTypesString());
@@ -392,16 +401,18 @@ public class UnitWizard implements WizardListener {
         for (int i = 0; i < strArr.length; ++i) {
             incode += http1 + strArr[i] + ".html" +
                     http2 + strArr[i] + http3;
-            if (i < strArr.length - 1)
+            if (i < strArr.length - 1) {
                 incode += ", ";
+            }
         }
 
         strArr = typespanel.getOutputTypes();
         for (int i = 0; i < strArr.length; ++i) {
             outcode += http1 + strArr[i] + ".html" +
                     http2 + strArr[i] + http3;
-            if (i < strArr.length - 1)
+            if (i < strArr.length - 1) {
                 outcode += ", ";
+            }
         }
 
         template = template.replace(INPUT_TYPES_HTML, incode);
@@ -416,25 +427,27 @@ public class UnitWizard implements WizardListener {
     private String getNodeInputTypesString() {
         String[][] intypes = typespanel.getNodeInputTypes();
 
-        if (intypes.length == 0)
+        if (intypes.length == 0) {
             return "[0][0]";
-        else {
+        } else {
             String instr = "[][] {\n";
 
             for (int ncount = 0; ncount < intypes.length; ncount++) {
                 instr += "            {";
 
                 for (int tcount = 0; tcount < intypes[ncount].length; tcount++) {
-                    if (tcount > 0)
+                    if (tcount > 0) {
                         instr += ", ";
+                    }
 
                     instr += "\"" + intypes[ncount][tcount] + "\"";
                 }
 
-                if (ncount < intypes.length - 1)
+                if (ncount < intypes.length - 1) {
                     instr += "},\n";
-                else
+                } else {
                     instr += "}\n";
+                }
             }
 
             instr += "            }";
@@ -451,8 +464,9 @@ public class UnitWizard implements WizardListener {
         String[] intypes = typespanel.getInputTypes();
 
         for (int count = 0; count < intypes.length; count++) {
-            if (count > 0)
+            if (count > 0) {
                 instr = instr + ", ";
+            }
 
             instr = instr + "\"" + intypes[count] + "\"";
         }
@@ -467,25 +481,27 @@ public class UnitWizard implements WizardListener {
     private String getNodeOutputTypesString() {
         String[][] outtypes = typespanel.getNodeOutputTypes();
 
-        if (outtypes.length == 0)
+        if (outtypes.length == 0) {
             return "[0][0]";
-        else {
+        } else {
             String outstr = "[][] {\n";
 
             for (int ncount = 0; ncount < outtypes.length; ncount++) {
                 outstr += "            {";
 
                 for (int tcount = 0; tcount < outtypes[ncount].length; tcount++) {
-                    if (tcount > 0)
+                    if (tcount > 0) {
                         outstr += ", ";
+                    }
 
                     outstr += "\"" + outtypes[ncount][tcount] + "\"";
                 }
 
-                if (ncount < outtypes.length - 1)
+                if (ncount < outtypes.length - 1) {
                     outstr += "},\n";
-                else
+                } else {
                     outstr += "}\n";
+                }
             }
 
             outstr += "            }";
@@ -502,8 +518,9 @@ public class UnitWizard implements WizardListener {
         String[] outtypes = typespanel.getOutputTypes();
 
         for (int count = 0; count < outtypes.length; count++) {
-            if (count > 0)
+            if (count > 0) {
                 outstr = outstr + ", ";
+            }
 
             outstr = outstr + "\"" + outtypes[count] + "\"";
         }
@@ -517,8 +534,9 @@ public class UnitWizard implements WizardListener {
     private String getDefineParamsString() {
         String[] paramnames = paramspanel.getParameterNames();
 
-        if (paramnames.length == 0)
+        if (paramnames.length == 0) {
             return "";
+        }
 
         String str = "// parameter data type definitions";
 
@@ -537,28 +555,31 @@ public class UnitWizard implements WizardListener {
     private String getInitParamsString() {
         String[] paramnames = paramspanel.getParameterNames();
 
-        if (paramnames.length == 0)
+        if (paramnames.length == 0) {
             return "";
+        }
 
         String str = "\n\n        // Define initial value and type of parameters";
         for (int count = 0; count < paramnames.length; count++) {
             str += "\n        defineParameter(\"" + paramnames[count] + "\", ";
 
-            if (paramspanel.getDefaultValue(paramnames[count]) != null)
+            if (paramspanel.getDefaultValue(paramnames[count]) != null) {
                 str += "\"" + paramspanel.getDefaultValue(paramnames[count]) + "\", ";
-            else if (paramspanel.getDataType(paramnames[count]).equals("String"))
+            } else if (paramspanel.getDataType(paramnames[count]).equals("String")) {
                 str += "\"\", ";
-            else if (paramspanel.getDataType(paramnames[count]).equals("boolean"))
+            } else if (paramspanel.getDataType(paramnames[count]).equals("boolean")) {
                 str += "\"false\", ";
-            else
+            } else {
                 str += "\"0\", ";
+            }
 
-            if (paramspanel.getParameterType(paramnames[count]).equals(INTERNAL))
+            if (paramspanel.getParameterType(paramnames[count]).equals(INTERNAL)) {
                 str += "INTERNAL";
-            else if (paramspanel.getParameterType(paramnames[count]).equals(TRANSIENT))
+            } else if (paramspanel.getParameterType(paramnames[count]).equals(TRANSIENT)) {
                 str += "TRANSIENT";
-            else
+            } else {
                 str += "USER_ACCESSIBLE";
+            }
 
             str += ");";
         }
@@ -573,13 +594,16 @@ public class UnitWizard implements WizardListener {
     private String getResetParamsString() {
         String[] paramnames = paramspanel.getParameterNames();
 
-        if (paramnames.length == 0)
+        if (paramnames.length == 0) {
             return "";
+        }
 
         String str = "\n        // Set unit variables to the values specified by the parameters";
 
-        for (int count = 0; count < paramnames.length; count++)
-            str += "\n        " + getParamUpdateString(paramnames[count], "getParameter(\"" + paramnames[count] + "\")");
+        for (int count = 0; count < paramnames.length; count++) {
+            str += "\n        " + getParamUpdateString(paramnames[count],
+                    "getParameter(\"" + paramnames[count] + "\")");
+        }
 
         return str;
     }
@@ -594,8 +618,9 @@ public class UnitWizard implements WizardListener {
         for (int count = 0; count < paramnames.length; count++) {
             str += "\n        ";
 
-            if (count != 0)
+            if (count != 0) {
                 str += "\n        ";
+            }
 
             str += "if (paramname.equals(\"" + paramnames[count] + "\"))";
             str += "\n            " + getParamUpdateString(paramnames[count], "value");
@@ -610,8 +635,10 @@ public class UnitWizard implements WizardListener {
     private String getProcessCodeString() {
         String str = "";
 
-        if ((typespanel.getInputTypes().length > 0) && (toolpanel.getDefaultInputNodes() > 0))
-            str += typespanel.getInputTypes()[0] + " input = (" + typespanel.getInputTypes()[0] + ") getInputAtNode(0);\n\n        ";
+        if ((typespanel.getInputTypes().length > 0) && (toolpanel.getDefaultInputNodes() > 0)) {
+            str += typespanel.getInputTypes()[0] + " input = (" + typespanel.getInputTypes()[0]
+                    + ") getInputAtNode(0);\n\n        ";
+        }
 
         return str;
     }
@@ -624,22 +651,23 @@ public class UnitWizard implements WizardListener {
         String datatype = paramspanel.getDataType(paramname);
         String str = "";
 
-        if (datatype.equals("String"))
+        if (datatype.equals("String")) {
             str += paramname + " = (String) " + updatestr + ";";
-        else if (datatype.equals("boolean"))
+        } else if (datatype.equals("boolean")) {
             str += paramname + " = new Boolean((String) " + updatestr + ").booleanValue();";
-        else if (datatype.equals("byte"))
+        } else if (datatype.equals("byte")) {
             str += paramname + " = new Byte((String) " + updatestr + ").byteValue();";
-        else if (datatype.equals("double"))
+        } else if (datatype.equals("double")) {
             str += paramname + " = new Double((String) " + updatestr + ").doubleValue();";
-        else if (datatype.equals("int"))
+        } else if (datatype.equals("int")) {
             str += paramname + " = new Integer((String) " + updatestr + ").intValue();";
-        else if (datatype.equals("float"))
+        } else if (datatype.equals("float")) {
             str += paramname + " = new Float((String) " + updatestr + ").floatValue();";
-        else if (datatype.equals("long"))
+        } else if (datatype.equals("long")) {
             str += paramname + " = new Long((String) " + updatestr + ").longValue();";
-        else if (datatype.equals("short"))
+        } else if (datatype.equals("short")) {
             str += paramname + " = new Short((String) " + updatestr + ").shortValue();";
+        }
 
         return str;
     }
@@ -654,8 +682,9 @@ public class UnitWizard implements WizardListener {
             String str = "\n\n        // Initialise GUI builder interface";
             str += "\n        String guilines = \"\";";
 
-            for (int count = 0; count < lines.length; count++)
+            for (int count = 0; count < lines.length; count++) {
                 str += "\n        guilines += \"" + lines[count] + "\\n\";";
+            }
 
             str += "\n        setGUIBuilderV2Info(guilines);";
 
@@ -665,8 +694,9 @@ public class UnitWizard implements WizardListener {
             str += "\n        setParameterPanelClass(\"" + guipanel.getQualifiedCustomPanelName() + "\");";
 
             return str;
-        } else
+        } else {
             return "";
+        }
     }
 
     /**
@@ -679,7 +709,9 @@ public class UnitWizard implements WizardListener {
 
         String saveFile = getCustomPanelSourcePath();
         if (FileUtils.fileExists(saveFile)) {
-            int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION);
+            int reply = JOptionPane
+                    .showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning",
+                            JOptionPane.YES_NO_OPTION);
             if (reply == JOptionPane.NO_OPTION) {
                 return false;
             }
@@ -699,17 +731,19 @@ public class UnitWizard implements WizardListener {
             ToolImp placeholder = new ToolImp();
             String placename = finalpanel.getPlaceHolderToolName();
             int index = placename.lastIndexOf('.');
-            if (index == -1)
+            if (index == -1) {
                 placeholder.setToolName(placename);
-            else {
+            } else {
                 placeholder.setToolName(placename.substring(index + 1));
                 placeholder.setToolPackage(placename.substring(0, index));
             }
 
-            if (!toolpanel.getSourcePackage().equals(""))
-                placeholder.setProxy(new JavaProxy(toolpanel.getSourcePackage() + '.' + toolpanel.getSourceClass(), toolpanel.getUnitPackage()));
-            else
+            if (!toolpanel.getSourcePackage().equals("")) {
+                placeholder.setProxy(new JavaProxy(toolpanel.getSourcePackage() + '.' + toolpanel.getSourceClass(),
+                        toolpanel.getUnitPackage()));
+            } else {
                 placeholder.setProxy(new JavaProxy(toolpanel.getSourceClass(), toolpanel.getUnitPackage()));
+            }
 
             placeholder.setPopUpDescription(toolpanel.getPopUpDescription());
             placeholder.setHelpFile(getToolHelpFilePath());
@@ -717,14 +751,16 @@ public class UnitWizard implements WizardListener {
 
             String saveFile = finalpanel.getPlaceHolderFile();
             if (FileUtils.fileExists(saveFile)) {
-                int reply = JOptionPane.showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning", JOptionPane.YES_NO_OPTION);
+                int reply = JOptionPane
+                        .showConfirmDialog(null, "Really Overwrite " + saveFile + " ?", "File Exists Warning",
+                                JOptionPane.YES_NO_OPTION);
                 if (reply == JOptionPane.NO_OPTION) {
                     return false;
                 }
             }
-
-            XMLWriter writer = new XMLWriter(FileUtils.createWriter(saveFile));
             try {
+                XMLWriter writer = new XMLWriter(FileUtils.createWriter(saveFile));
+
                 writer.writeComponent(placeholder);
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.

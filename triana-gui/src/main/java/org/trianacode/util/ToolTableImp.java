@@ -48,7 +48,7 @@ public class ToolTableImp extends AbstractToolTable {
 
     private ReloadToolsThread reload;
 
-    public static String[] excludedDirectories = {"CVS", ".", "src"};
+    public static String[] excludedDirectories = {"CVS", ".", "src", "lib"};
 
     public void init() {
         log.fine("initialising local tool table");

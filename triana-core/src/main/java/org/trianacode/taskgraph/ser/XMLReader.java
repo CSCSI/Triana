@@ -16,7 +16,26 @@
 
 package org.trianacode.taskgraph.ser;
 
-import org.trianacode.taskgraph.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.InstanceIDManager;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
 import org.trianacode.taskgraph.imp.SerializedObject;
 import org.trianacode.taskgraph.imp.ToolImp;
@@ -25,23 +44,12 @@ import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 4:18:27 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class XMLReader implements XMLConstants {
@@ -50,39 +58,34 @@ public class XMLReader implements XMLConstants {
 
     /**
      * Instance of a SAXBuilder from JDOM
-     *
-     * @link http://www.jdom.org
      */
     private Reader in = null;
 
     private DocumentHandler handler;
 
     /**
-     * a flag indicating whether the serialized task instance is preserved in
-     * the deserialized tasks
+     * a flag indicating whether the serialized task instance is preserved in the deserialized tasks
      */
     private boolean preserveinst = false;
 
 
-    public XMLReader(Reader reader) {
+    public XMLReader(Reader reader) throws IOException {
         this.in = reader;
         this.handler = new DocumentHandler(reader);
     }
 
 
     /**
-     * @return true if the serialized task instance is preserved in the
-     *         deserialized task. If true then the instance id and transient variables
-     *         are deserialized, if false they are discarded.
+     * @return true if the serialized task instance is preserved in the deserialized task. If true then the instance id
+     *         and transient variables are deserialized, if false they are discarded.
      */
     public boolean isPreserveInstance() {
         return preserveinst;
     }
 
     /**
-     * Sets whether serialized task instance is preserved in the deserialized
-     * task. If true then the instance id and transient variables are
-     * deserialized, if false they are discarded.
+     * Sets whether serialized task instance is preserved in the deserialized task. If true then the instance id and
+     * transient variables are deserialized, if false they are discarded.
      */
     public void setPreserveInstance(boolean state) {
         preserveinst = state;
@@ -91,8 +94,8 @@ public class XMLReader implements XMLConstants {
     /**
      * Read method.
      *
-     * @return a TrianaIOComponent containing the abstract representation of
-     *         either a ToolImp, TaskGraphImp or TaskGraphLayout.
+     * @return a TrianaIOComponent containing the abstract representation of either a ToolImp, TaskGraphImp or
+     *         TaskGraphLayout.
      */
     public Tool readComponent() throws TaskGraphException, IOException {
 
@@ -101,9 +104,8 @@ public class XMLReader implements XMLConstants {
 
 
     /**
-     * Close the stream.  Once a stream has been closed, further read(),
-     * ready(), mark(), or reset() invocations will throw an IOException.
-     * Closing a previously-closed stream, however, has no effect.
+     * Close the stream.  Once a stream has been closed, further read(), ready(), mark(), or reset() invocations will
+     * throw an IOException. Closing a previously-closed stream, however, has no effect.
      *
      * @throws IOException If an I/O error occurs
      */
@@ -121,12 +123,14 @@ public class XMLReader implements XMLConstants {
         if (isTool(root)) {
             Tool tool = getTool(root);
 
-            if ((preserveinst) && (!root.getLocalName().equals(TOOL_TAG)))
+            if ((preserveinst) && (!root.getLocalName().equals(TOOL_TAG))) {
                 return TaskGraphManager.createTask(tool, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE, preserveinst);
-            else
+            } else {
                 return tool;
-        } else
+            }
+        } else {
             return null;
+        }
     }
 
     private boolean isTool(Element elem) {
@@ -148,8 +152,9 @@ public class XMLReader implements XMLConstants {
             for (Iterator iter = taskElems.iterator(); iter.hasNext();) {
                 Element taskelem = (Element) iter.next();
 
-                if (isTool(taskelem))
+                if (isTool(taskelem)) {
                     taskgraph.createTask(getTool(taskelem), preserveinst);
+                }
             }
 
             addConnections(taskgraph, tasklist);
@@ -173,9 +178,9 @@ public class XMLReader implements XMLConstants {
             tool.setDataOutputNodeCount(getOutputNum(parent));
 
             // Convert old style tools (where everything was a unit) to proxy format
-            if (isPreProxyTool(parent))
+            if (isPreProxyTool(parent)) {
                 parseToolClasses(tool, parent);
-            else {
+            } else {
                 setProxy(tool, parent);
                 setRenderingHints(tool, parent);
             }
@@ -189,16 +194,18 @@ public class XMLReader implements XMLConstants {
             Element current = handler.getChild(parent, INPUT_TAG);
             if (current != null) {
                 Element[] nodes = getIONodes(current);
-                for (int count = 0; count < nodes.length; count++)
+                for (int count = 0; count < nodes.length; count++) {
                     tool.setDataInputTypes(count, getIODataTypes(nodes[count]));
+                }
 
                 tool.setDataInputTypes(getIODataTypes(current));
             }
             current = handler.getChild(parent, OUTPUT_TAG);
             if (current != null) {
                 Element[] nodes = getIONodes(current);
-                for (int count = 0; count < nodes.length; count++)
+                for (int count = 0; count < nodes.length; count++) {
                     tool.setDataOutputTypes(count, getIODataTypes(nodes[count]));
+                }
 
                 tool.setDataOutputTypes(getIODataTypes(current));
             }
@@ -206,8 +213,9 @@ public class XMLReader implements XMLConstants {
             addParameters(parent, tool);
             addExtensions(parent, tool);
 
-            if (preserveinst)
+            if (preserveinst) {
                 initInstanceID(tool, parent);
+            }
         } catch (TaskGraphException except) {
             throw (new TaskGraphException("Error Reading " + tool.getQualifiedToolName() + ": " + except.getMessage()));
         }
@@ -217,8 +225,9 @@ public class XMLReader implements XMLConstants {
     private void initInstanceID(Tool tool, Element parent) {
         Element current = handler.getChild(parent, INSTANCE_ID_TAG);
 
-        if (current != null)
+        if (current != null) {
             InstanceIDManager.registerID(tool, current.getTextContent().trim());
+        }
     }
 
 
@@ -349,26 +358,33 @@ public class XMLReader implements XMLConstants {
                     }*/
                     ObjectDeserializer deserializer = ObjectDeserializationManager.getObjectDeserializer(serializer);
                     if (serializer != null) {
-                        if (deserializer == null)
-                            log.warning("Invalid Object Deserializer in " + tool.getQualifiedToolName() + ": " + serializer);
-                        else
+                        if (deserializer == null) {
+                            log.warning("Invalid Object Deserializer in " + tool.getQualifiedToolName() + ": "
+                                    + serializer);
+                        } else {
                             paramvalue = new SerializedObject((String) paramvalue, deserializer);
+                        }
                     }
                 }
 
                 if (preserveinst || (paramtype == null) || (!paramtype.startsWith(Tool.TRANSIENT))) {
                     name = childelem.getAttribute(NAME_TAG);
 
-                    if (name.indexOf('.') >= 0)
-                        System.err.println("WARNING: " + tool.getQualifiedToolName() + " contains an invalid parameter name (" + name + ")");
+                    if (name.indexOf('.') >= 0) {
+                        System.err.println(
+                                "WARNING: " + tool.getQualifiedToolName() + " contains an invalid parameter name ("
+                                        + name + ")");
+                    }
 
-                    if (paramtype != null)
+                    if (paramtype != null) {
                         tool.setParameterType(name, paramtype);
+                    }
 
-                    if (paramvalue != null)
+                    if (paramvalue != null) {
                         tool.setParameter(name, paramvalue);
-                    else
+                    } else {
                         tool.setParameter(name, childelem.getAttribute(VALUE_TAG));
+                    }
                 }
             }
         }
@@ -401,8 +417,8 @@ public class XMLReader implements XMLConstants {
 
 
     /**
-     * Sets the pop-up description for the tool. NOTE that the description tag
-     * is no longer used, pop-up description is now stored as a parameter.
+     * Sets the pop-up description for the tool. NOTE that the description tag is no longer used, pop-up description is
+     * now stored as a parameter.
      */
     private void setDescription(Tool tool, Element component) {
         Element current = handler.getChild(component, DESC_TAG);
@@ -412,24 +428,27 @@ public class XMLReader implements XMLConstants {
     }
 
     /**
-     * For a TaskGraphImp or ToolImp XML Element return the text for the Name element,
-     * for a Task return the tool name attribute.
+     * For a TaskGraphImp or ToolImp XML Element return the text for the Name element, for a Task return the tool name
+     * attribute.
      */
     private String getToolName(Element component) {
         // provides backwards compatibility with old task names
         Element current = handler.getChild(component, TASK_NAME_TAG);
-        if (current != null)
+        if (current != null) {
             return current.getTextContent();
+        }
 
         current = handler.getChild(component, TOOL_NAME_TAG);
 
-        if (current != null)
+        if (current != null) {
             return current.getTextContent();
+        }
 
         current = handler.getChild(component, NAME_TAG);
 
-        if (current != null)
+        if (current != null) {
             return current.getTextContent();
+        }
 
         return "Unknown";
     }
@@ -438,16 +457,18 @@ public class XMLReader implements XMLConstants {
         Element current = handler.getChild(component, PACKAGE_TAG);
         if (current != null) {
             return current.getTextContent();
-        } else
+        } else {
             return "";
+        }
     }
 
     private String getVersion(Element component) {
         Element current = handler.getChild(component, VERSION_TAG);
         if (current != null) {
             return current.getTextContent();
-        } else
+        } else {
             return DEFAULT_VERSION;
+        }
     }
 
     private void setProxy(Tool tool, Element component) throws TaskException {
@@ -482,14 +503,16 @@ public class XMLReader implements XMLConstants {
 
             for (Iterator hintit = hintlist.iterator(); hintit.hasNext();) {
                 hintelem = (Element) hintit.next();
-                hint = new RenderingHintImp(hintelem.getAttribute(HINT_TAG), Boolean.valueOf(hintelem.getAttribute(PROXY_DEPENDENT_TAG)).booleanValue());
+                hint = new RenderingHintImp(hintelem.getAttribute(HINT_TAG),
+                        Boolean.valueOf(hintelem.getAttribute(PROXY_DEPENDENT_TAG)).booleanValue());
 
                 List paramlist = handler.getChildren(hintelem, PARAM_TAG);
                 Element elem;
 
                 for (Iterator paramit = paramlist.iterator(); paramit.hasNext();) {
                     elem = (Element) paramit.next();
-                    hint.setRenderingDetail(elem.getAttribute(PARAM_NAME_TAG), ObjectMarshaller.marshallElementToJava(elem));
+                    hint.setRenderingDetail(elem.getAttribute(PARAM_NAME_TAG),
+                            ObjectMarshaller.marshallElementToJava(elem));
                 }
 
                 tool.addRenderingHint(hint);
@@ -534,15 +557,17 @@ public class XMLReader implements XMLConstants {
 
                 trig = elem.getAttribute(TRIGGER_TAG);
 
-                if (trig != null)
+                if (trig != null) {
                     trigger[index] = Boolean.valueOf(trig).booleanValue();
-                else
+                } else {
                     trigger[index] = names[index].equals(ParameterNode.TRIGGER_PARAM);
+                }
             }
 
             tool.setParameterInputs(names, trigger);
-        } else
+        } else {
             tool.setParameterInputs(new String[0], new boolean[0]);
+        }
     }
 
     private void setOutParams(Tool tool, Element component) throws NodeException {
@@ -561,14 +586,14 @@ public class XMLReader implements XMLConstants {
             }
 
             tool.setParameterOutputs(names);
-        } else
+        } else {
             tool.setParameterOutputs(new String[0]);
+        }
     }
 
 
     /**
-     * @return true if old style XML where everthing is a Java unit rather than
-     *         a generic unit.
+     * @return true if old style XML where everthing is a Java unit rather than a generic unit.
      */
     private boolean isPreProxyTool(Element parent) throws TaskException {
         boolean oldstyle = handler.getChild(parent, UNIT_NAME_TAG) != null;
@@ -578,8 +603,9 @@ public class XMLReader implements XMLConstants {
         boolean newstyle = handler.getChild(parent, PROXY_TAG) != null;
         newstyle = newstyle || (handler.getChild(parent, RENDERING_HINTS_TAG) != null);
 
-        if (oldstyle && newstyle)
+        if (oldstyle && newstyle) {
             throw (new TaskException("XML contains both old and new style proxy definitions"));
+        }
 
         return oldstyle;
     }
@@ -604,16 +630,21 @@ public class XMLReader implements XMLConstants {
                     for (Iterator iter = list.iterator(); iter.hasNext();) {
                         paramelem = (Element) iter.next();
 
-                        details.put(paramelem.getAttribute(PARAM_NAME_TAG), ObjectMarshaller.marshallElementToJava(paramelem));
+                        details.put(paramelem.getAttribute(PARAM_NAME_TAG),
+                                ObjectMarshaller.marshallElementToJava(paramelem));
                     }
 
                     Object root = ObjectMarshaller.marshallElementToJava(elem);
-                    if (root != null)
+                    if (root != null) {
                         details.put(Proxy.DEFAULT_INSTANCE_DETAIL, root);
+                    }
 
                     if (ProxyFactory.isProxyType(classname)) {
-                        if (tool.getProxy() != null)
-                            System.err.println("Multiple proxy tool classes found (" + classname + ", " + tool.getProxy().getType() + ")");
+                        if (tool.getProxy() != null) {
+                            System.err.println(
+                                    "Multiple proxy tool classes found (" + classname + ", " + tool.getProxy().getType()
+                                            + ")");
+                        }
 
                         try {
                             tool.setProxy(ProxyFactory.createProxy(classname, details));
@@ -636,8 +667,9 @@ public class XMLReader implements XMLConstants {
             }
         }
 
-        if (tool.getProxy() == null)
+        if (tool.getProxy() == null) {
             parseJavaUnit(tool, parent);
+        }
     }
 
 
@@ -647,14 +679,16 @@ public class XMLReader implements XMLConstants {
         String unitpack = "";
 
         Element elem = handler.getChild(component, UNIT_NAME_TAG);
-        if (elem != null)
+        if (elem != null) {
             unitname = elem.getTextContent();
-        else
+        } else {
             return;
+        }
 
         elem = handler.getChild(component, UNIT_PACKAGE_TAG);
-        if (elem != null)
+        if (elem != null) {
             unitpack = elem.getTextContent();
+        }
 
         tool.setProxy(new JavaProxy(unitname, unitpack));
     }

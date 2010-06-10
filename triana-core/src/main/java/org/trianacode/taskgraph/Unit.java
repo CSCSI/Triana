@@ -16,6 +16,10 @@
 
 package org.trianacode.taskgraph;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.trianacode.taskgraph.clipin.ClipInStore;
 import org.trianacode.taskgraph.service.ControlInterface;
 import org.trianacode.taskgraph.service.RunnableInterface;
@@ -23,17 +27,11 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 24, 2009: 5:14:55 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public abstract class Unit {
@@ -173,9 +171,8 @@ public abstract class Unit {
     }
 
     /**
-     * This method should return an array of the data types accepted by specific nodes, with the
-     * node index providing the index for the array. For nodes not covered by the array, the types
-     * specified by getInputTypes() are assumed.
+     * This method should return an array of the data types accepted by specific nodes, with the node index providing
+     * the index for the array. For nodes not covered by the array, the types specified by getInputTypes() are assumed.
      *
      * @return an array of the input types for this unit
      */
@@ -184,9 +181,8 @@ public abstract class Unit {
     }
 
     /**
-     * This method should return an array of the data types accepted by nodes not specified in
-     * getNodeInputTypes (e.g. triana.types.VectorType). If no package is specified then
-     * triana.types is assumed.
+     * This method should return an array of the data types accepted by nodes not specified in getNodeInputTypes (e.g.
+     * triana.types.VectorType). If no package is specified then triana.types is assumed.
      *
      * @return an array of the input types for this unit
      */
@@ -194,9 +190,8 @@ public abstract class Unit {
 
 
     /**
-     * This method should return an array of the data types output by specific nodes, with the node
-     * index providing the index for the array. For nodes not covered by the array, the types
-     * specified by getOutputTypes() are assumed.
+     * This method should return an array of the data types output by specific nodes, with the node index providing the
+     * index for the array. For nodes not covered by the array, the types specified by getOutputTypes() are assumed.
      *
      * @return an array of the input types for this unit
      */
@@ -205,9 +200,8 @@ public abstract class Unit {
     }
 
     /**
-     * This method should return an array of the data types output by nodes not specified in
-     * getNodeOutputTypes() (e.g. triana.types.VectorType). If no package is specified then
-     * triana.types is assumed.
+     * This method should return an array of the data types output by nodes not specified in getNodeOutputTypes() (e.g.
+     * triana.types.VectorType). If no package is specified then triana.types is assumed.
      *
      * @return an array of the output types for this unit
      */
@@ -215,22 +209,21 @@ public abstract class Unit {
 
 
     /**
-     * This function is called when the unit is first created. It should be over-ridden to
-     * initialise the tool properties (e.g. default number of nodes) and tool parameters.
+     * This function is called when the unit is first created. It should be over-ridden to initialise the tool
+     * properties (e.g. default number of nodes) and tool parameters.
      */
     public void init() {
     }
 
     /**
-     * This function is called when the reset is pressed on the gui. It restore the unit to its
-     * pre-start state.
+     * This function is called when the reset is pressed on the gui. It restore the unit to its pre-start state.
      */
     public void reset() {
     }
 
     /**
-     * This function is called when the unit is deleted. It should be over-ridden to clean up the
-     * unit (e.g. close open files).
+     * This function is called when the unit is deleted. It should be over-ridden to clean up the unit (e.g. close open
+     * files).
      */
     public void dispose() {
 
@@ -255,14 +248,14 @@ public abstract class Unit {
 
 
     /**
-     * The main unit algorithm. This method should be implemented with the appropriate algorihtm for
-     * the unit (if no algorithm is implemented deadlock occurs).
+     * The main unit algorithm. This method should be implemented with the appropriate algorihtm for the unit (if no
+     * algorithm is implemented deadlock occurs).
      */
     public abstract void process() throws Exception;
 
     /**
-     * This is called when the network is forcably stopped by the user. This should be over-ridden
-     * with the desired tasks.
+     * This is called when the network is forcably stopped by the user. This should be over-ridden with the desired
+     * tasks.
      */
     public void stopping() {
     }
@@ -292,16 +285,14 @@ public abstract class Unit {
 
 
     /**
-     * Defines the initial value and type of a parameter. If the parameter is already defined, such
-     * as when the unit is recreated from a serialized version, then nothing happens. This method
-     * should generally only be used in the init method. Note that a parameterUpdate call is not
-     * generated.
+     * Defines the initial value and type of a parameter. If the parameter is already defined, such as when the unit is
+     * recreated from a serialized version, then nothing happens. This method should generally only be used in the init
+     * method. Note that a parameterUpdate call is not generated.
      * <p/>
      * The type of the parameter can either be:
      * <p/>
-     * USER_ACCESSIBLE - The user is allowed to dynamically update the value INTERNAL - The
-     * parameter is hidden from the user TRANSIENT - The parameter is hidden from the user and does
-     * not get saved when the taskgraph is serialized
+     * USER_ACCESSIBLE - The user is allowed to dynamically update the value INTERNAL - The parameter is hidden from the
+     * user TRANSIENT - The parameter is hidden from the user and does not get saved when the taskgraph is serialized
      *
      * @param paramname the name of the parameter
      * @param initvalue the value of the parameter (null if not defined)
@@ -377,9 +368,8 @@ public abstract class Unit {
     }
 
     /**
-     * Returns the data at input node <i>nodeNumber</i>. If data is not ready, NOT_READY triana type
-     * is returned. If there is no cable connected to the input node the NOT_CONNECTED triana type
-     * is returned.
+     * Returns the data at input node <i>nodeNumber</i>. If data is not ready, NOT_READY triana type is returned. If
+     * there is no cable connected to the input node the NOT_CONNECTED triana type is returned.
      *
      * @param nodeNumber the particular node you want to get the data from.
      */
@@ -388,9 +378,8 @@ public abstract class Unit {
     }
 
     /**
-     * Outputs the data across all nodes. This passses the given data set to the first output node
-     * and then makes copies for any other output nodes. This method blocks until the data is
-     * successfully sent.
+     * Outputs the data across all nodes. This passses the given data set to the first output node and then makes copies
+     * for any other output nodes. This method blocks until the data is successfully sent.
      *
      * @param data the data to be sent
      */
@@ -399,9 +388,9 @@ public abstract class Unit {
     }
 
     /**
-     * Outputs the data to the given node <i>outputNode</i>.. This method is used to set the data at
-     * each particular output node if this is necessary, otherwise use output to copy the data
-     * across all nodes. This method blocks until the data is successfully sent.
+     * Outputs the data to the given node <i>outputNode</i>.. This method is used to set the data at each particular
+     * output node if this is necessary, otherwise use output to copy the data across all nodes. This method blocks
+     * until the data is successfully sent.
      *
      * @param outputNode the output node you wish to set
      * @param data       the data to be sent
@@ -411,9 +400,9 @@ public abstract class Unit {
     }
 
     /**
-     * Outputs the data to the given node <i>outputNode</i>. If specified this method blocks until
-     * the data is successfully sent (usual behaviour), otherwise, if non-blocking, isOutputSent()
-     * can be used to poll whether the data has been successfully sent.
+     * Outputs the data to the given node <i>outputNode</i>. If specified this method blocks until the data is
+     * successfully sent (usual behaviour), otherwise, if non-blocking, isOutputSent() can be used to poll whether the
+     * data has been successfully sent.
      *
      * @param outputNode the output node you wish to set
      * @param data       the data to be sent
@@ -433,9 +422,8 @@ public abstract class Unit {
 
 
     /**
-     * @return the clip-in with the specified name that came attached to the the specified data item
-     *         (null if not present). Only clip-ins for data that has been input in the current
-     *         process can be retrieved.
+     * @return the clip-in with the specified name that came attached to the the specified data item (null if not
+     *         present). Only clip-ins for data that has been input in the current process can be retrieved.
      */
     public Object getClipIn(Object data, String name) {
         return getRunnableInterface().getClipIn(data, name);
@@ -503,8 +491,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method for setting the maximum number of input nodes for this unit. This method
-     * should only be called from within the init() method.
+     * Convienience method for setting the maximum number of input nodes for this unit. This method should only be
+     * called from within the init() method.
      */
     public void setMaximumInputNodes(int inodes) {
         defineParameter(Tool.MAX_INPUT_NODES, String.valueOf(inodes), Tool.INTERNAL);
@@ -519,8 +507,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method for setting the minimum number of input nodes for this unit. This method
-     * should only be called from within the init() method.
+     * Convienience method for setting the minimum number of input nodes for this unit. This method should only be
+     * called from within the init() method.
      */
     public void setMinimumInputNodes(int inodes) {
         defineParameter(Tool.MIN_INPUT_NODES, String.valueOf(inodes), Tool.INTERNAL);
@@ -535,8 +523,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method for setting the default number of input nodes for this unit. This method
-     * should only be called from within the init() method.
+     * Convienience method for setting the default number of input nodes for this unit. This method should only be
+     * called from within the init() method.
      */
     public void setDefaultInputNodes(int inodes) {
         defineParameter(Tool.DEFAULT_INPUT_NODES, String.valueOf(inodes), Tool.INTERNAL);
@@ -551,8 +539,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method for setting the maximum number of output nodes for this unit. This method
-     * should only be called from within the init() method.
+     * Convienience method for setting the maximum number of output nodes for this unit. This method should only be
+     * called from within the init() method.
      */
     public void setMaximumOutputNodes(int onodes) {
         defineParameter(Tool.MAX_OUTPUT_NODES, String.valueOf(onodes), Tool.INTERNAL);
@@ -567,8 +555,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method for setting the minimum number of output nodes for this unit. This method
-     * should only be called from within the init() method.
+     * Convienience method for setting the minimum number of output nodes for this unit. This method should only be
+     * called from within the init() method.
      */
     public void setMinimumOutputNodes(int onodes) {
         defineParameter(Tool.MIN_OUTPUT_NODES, String.valueOf(onodes), Tool.INTERNAL);
@@ -583,8 +571,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method for setting the default number of output nodes for this unit. This method
-     * should only be called from within the init() method.
+     * Convienience method for setting the default number of output nodes for this unit. This method should only be
+     * called from within the init() method.
      */
     public void setDefaultOutputNodes(int onodes) {
         defineParameter(Tool.DEFAULT_OUTPUT_NODES, String.valueOf(onodes), Tool.INTERNAL);
@@ -615,9 +603,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method for setting the default help file location. If only a filename is
-     * specified then the toolbox location + /help is assumed. All tools should have help files,
-     * which should be written in HTML.
+     * Convienience method for setting the default help file location. If only a filename is specified then the toolbox
+     * location + /help is assumed. All tools should have help files, which should be written in HTML.
      */
     public void setHelpFileLocation(String location) {
         defineParameter(Task.HELP_FILE_PARAM, location, Tool.INTERNAL);
@@ -632,8 +619,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method that sets the parameter update policy for this unit. This method should
-     * only be called from within the init() method.
+     * Convienience method that sets the parameter update policy for this unit. This method should only be called from
+     * within the init() method.
      */
     public void setParameterUpdatePolicy(String policy) {
         defineParameter(Tool.PARAM_UPDATE_POLICY, policy, Tool.INTERNAL);
@@ -648,8 +635,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method that sets the output policy for this unit. This method should only be
-     * called from within the init() method.
+     * Convienience method that sets the output policy for this unit. This method should only be called from within the
+     * init() method.
      */
     public void setOutputPolicy(String policy) {
         defineParameter(Tool.OUTPUT_POLICY, policy, Tool.INTERNAL);
@@ -657,8 +644,8 @@ public abstract class Unit {
 
 
     /**
-     * Convienience method that sets the information used to create a GUI with GUI Builder V2. This
-     * method should only be called from within the init() method.
+     * Convienience method that sets the information used to create a GUI with GUI Builder V2. This method should only
+     * be called from within the init() method.
      */
     public void setGUIBuilderV2Info(String info) {
         getTask().removeParameter(Tool.OLD_GUI_BUILDER);
@@ -675,8 +662,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method that sets the custom parameter panel used. This method should only be
-     * called from within the init() method.
+     * Convienience method that sets the custom parameter panel used. This method should only be called from within the
+     * init() method.
      */
     public void setParameterPanelClass(String classname) {
         defineParameter(Tool.PARAM_PANEL_CLASS, classname, Tool.INTERNAL);
@@ -692,9 +679,8 @@ public abstract class Unit {
     }
 
     /**
-     * Convienience method that sets the when the parameter panel is instantiated, either
-     * ON_USER_ACCESS or ON_TASK_INSTANTIATION. This method should only be called from within the
-     * init() method.
+     * Convienience method that sets the when the parameter panel is instantiated, either ON_USER_ACCESS or
+     * ON_TASK_INSTANTIATION. This method should only be called from within the init() method.
      */
     public void setParameterPanelInstantiate(String policy) {
         defineParameter(Tool.PARAM_PANEL_INSTANTIATE, policy, Tool.INTERNAL);
@@ -709,16 +695,14 @@ public abstract class Unit {
 
 
     /**
-     * Sets the default node requirements for this unit (ESSENTIAL, ESSENTIAL_IF_CONNECTED or
-     * OPTIONAL)
+     * Sets the default node requirements for this unit (ESSENTIAL, ESSENTIAL_IF_CONNECTED or OPTIONAL)
      */
     public void setDefaultNodeRequirement(String requirement) {
         getTask().setDefaultNodeRequirement(requirement);
     }
 
     /**
-     * @return the default node requirements for this unit (ESSENTIAL, ESSENTIAL_IF_CONNECTED or
-     *         OPTIONAL)
+     * @return the default node requirements for this unit (ESSENTIAL, ESSENTIAL_IF_CONNECTED or OPTIONAL)
      */
     public String getDefaultNodeRequirement() {
         return getTask().getDefaultNodeRequirement();

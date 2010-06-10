@@ -16,23 +16,28 @@
 
 package org.trianacode.taskgraph.ser;
 
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.proxy.Proxy;
-import org.trianacode.taskgraph.tool.Tool;
-import org.w3c.dom.Element;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.w3c.dom.Element;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.proxy.Proxy;
+import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 4:15:53 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class XMLWriter implements XMLConstants {
@@ -46,7 +51,7 @@ public class XMLWriter implements XMLConstants {
      */
     private boolean preserveinst = false;
 
-    public XMLWriter(Writer writer) {
+    public XMLWriter(Writer writer) throws IOException {
         this.writer = writer;
         handler = new DocumentHandler();
     }
@@ -66,18 +71,16 @@ public class XMLWriter implements XMLConstants {
 
 
     /**
-     * @return true if the task instance is preserved in the serialized task.
-     *         If true then the instance id and transient variables are serialized, if
-     *         false they are discarded.
+     * @return true if the task instance is preserved in the serialized task. If true then the instance id and transient
+     *         variables are serialized, if false they are discarded.
      */
     public boolean isPreserveInstance() {
         return preserveinst;
     }
 
     /**
-     * Sets whether the task instance is preserved in the serialized task.
-     * If true then the instance id and transient variables are serialized, if
-     * false they are discarded.
+     * Sets whether the task instance is preserved in the serialized task. If true then the instance id and transient
+     * variables are serialized, if false they are discarded.
      */
     public void setPreserveInstance(boolean state) {
         this.preserveinst = state;
@@ -97,15 +100,17 @@ public class XMLWriter implements XMLConstants {
     private Element getComponent(Tool tool, boolean insidetaskgraph, boolean preserveinst) throws TaskGraphException {
         Element elem;
 
-        if ((tool instanceof TaskGraph) && (preserveinst || insidetaskgraph))
+        if ((tool instanceof TaskGraph) && (preserveinst || insidetaskgraph)) {
             elem = handler.element(TASKGRAPH_TAG);
-        else if ((tool instanceof Task) && (preserveinst || insidetaskgraph))
+        } else if ((tool instanceof Task) && (preserveinst || insidetaskgraph)) {
             elem = handler.element(TASK_TAG);
-        else
+        } else {
             elem = handler.element(TOOL_TAG);
+        }
 
-        if ((tool instanceof Task) && preserveinst)
+        if ((tool instanceof Task) && preserveinst) {
             addInstanceID((Task) tool, elem);
+        }
 
         addToolName(tool, elem);
         addPackage(tool, elem);
@@ -144,7 +149,8 @@ public class XMLWriter implements XMLConstants {
      */
     private void addSubTasks(Tool tool, Element parent, boolean preserveinst) throws TaskGraphException {
         if (tool instanceof TaskGraph) {
-            TaskGraph taskgraph = TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE);
+            TaskGraph taskgraph = TaskGraphUtils
+                    .cloneTaskGraph((TaskGraph) tool, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE);
             TaskGraphUtils.disconnectControlTask(taskgraph);
 
             Task[] tasks = taskgraph.getTasks(false);
@@ -286,8 +292,9 @@ public class XMLWriter implements XMLConstants {
             handler.add(current, output);
         }
 
-        if (handler.hasChildren(output))
+        if (handler.hasChildren(output)) {
             handler.add(output, parent);
+        }
     }
 
     private void addInputTypes(Tool tool, Element parent) {
@@ -322,8 +329,9 @@ public class XMLWriter implements XMLConstants {
             handler.add(current, input);
         }
 
-        if (handler.hasChildren(input))
+        if (handler.hasChildren(input)) {
             handler.add(input, parent);
+        }
     }
 
     private void addOutportNum(Tool tool, Element parent) {
@@ -369,10 +377,11 @@ public class XMLWriter implements XMLConstants {
     private void addToolName(Tool tool, Element parent) {
         Element current = handler.element(TOOL_NAME_TAG);
 
-        if (tool.getToolName() != null)
+        if (tool.getToolName() != null) {
             handler.add(tool.getToolName(), current);
-        else if (tool instanceof Task)
+        } else if (tool instanceof Task) {
             handler.add(((Task) tool).getToolName(), current);
+        }
 
         handler.add(current, parent);
     }
@@ -433,7 +442,8 @@ public class XMLWriter implements XMLConstants {
                     paramelem.setAttribute(PARAM_NAME_TAG, paramnames[params]);
                     Element val = handler.element(VALUE_TAG);
 
-                    handler.add(ObjectMarshaller.marshallJavaToElement(val, hints[count].getRenderingDetail(paramnames[params])), paramelem);
+                    handler.add(ObjectMarshaller.marshallJavaToElement(val,
+                            hints[count].getRenderingDetail(paramnames[params])), paramelem);
                     handler.add(paramelem, current);
                 }
 

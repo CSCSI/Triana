@@ -270,7 +270,13 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
     private Tool readXMLStream(InputStream in, String filePath, String toolbox) throws ToolException {
-        XMLReader reader = new XMLReader(new BufferedReader(new InputStreamReader(in)));
+        XMLReader reader = null;
+        try {
+            reader = new XMLReader(new BufferedReader(new InputStreamReader(in)));
+        } catch (IOException e) {
+            log.fine("error reading xml file " + e.getMessage());
+            return null;
+        }
         Tool tool = null;
         try {
             tool = reader.readComponent();

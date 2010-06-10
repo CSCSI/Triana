@@ -16,6 +16,12 @@
 
 package org.trianacode.gui.panels;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Window;
+
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.event.ParameterUpdateEvent;
@@ -23,24 +29,22 @@ import org.trianacode.taskgraph.event.TaskDisposedEvent;
 import org.trianacode.taskgraph.event.TaskNodeEvent;
 import org.trianacode.taskgraph.event.TaskPropertyEvent;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 8:40:24 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class PanelHolder extends ParameterPanel {
 
+    private JPanel panel;
+
 
     public PanelHolder(JPanel panel) {
+        this.panel = panel;
         setLayout(new BorderLayout());
-        add(BorderLayout.CENTER,  panel);
+        add(BorderLayout.CENTER, panel);
     }
 
     /**
@@ -61,10 +65,14 @@ public class PanelHolder extends ParameterPanel {
         super();
     }
 
+    public JPanel getPanel() {
+        return panel;
+    }
 
     public void setTask(Task task) {
-        if (this.task != null)
+        if (this.task != null) {
             throw (new RuntimeException("Error: Task for " + getClass().getName() + " already set"));
+        }
 
         this.task = task;
         task.addTaskListener(this);
@@ -82,8 +90,8 @@ public class PanelHolder extends ParameterPanel {
      * Sets a paremeter in the associated task to the specified value.
      * <p/>
      * If the panel is attached to a group then parameter names of the form taskname.paramname or
-     * groupname.taskname.paramname will set the parameter within the specified sub task. If the
-     * panel isn't attached to a group then the groupname.taskname section is ignored.
+     * groupname.taskname.paramname will set the parameter within the specified sub task. If the panel isn't attached to
+     * a group then the groupname.taskname section is ignored.
      *
      * @param name  the name of the parameter to be set
      * @param value the value the parameter is set to
@@ -109,7 +117,7 @@ public class PanelHolder extends ParameterPanel {
      */
     public Object getParameter(String name) {
 
-            return null;
+        return null;
     }
 
     /**
@@ -120,13 +128,13 @@ public class PanelHolder extends ParameterPanel {
      */
     public boolean isParameterName(String name) {
 
-            return false;
+        return false;
     }
 
 
     /**
-     * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by default. It should be
-     * overridden if the panel has different preferred set of buttons.
+     * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by default. It should be overridden if the
+     * panel has different preferred set of buttons.
      *
      * @return the panels preferred button combination (as defined in Windows Constants).
      */
@@ -135,8 +143,8 @@ public class PanelHolder extends ParameterPanel {
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel prefers to be
-     * allowed to be hidden behind the main triana window.
+     * This method returns true by default. It should be overridden if the panel prefers to be allowed to be hidden
+     * behind the main triana window.
      *
      * @return true by default
      */
@@ -145,16 +153,16 @@ public class PanelHolder extends ParameterPanel {
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel does not want the
-     * user to be able to change the auto commit state
+     * This method returns true by default. It should be overridden if the panel does not want the user to be able to
+     * change the auto commit state
      */
     public boolean isAutoCommitVisible() {
         return false;
     }
 
     /**
-     * This method returns false by default. It should be overridden if the panel wants parameter
-     * changes to be commited automatically
+     * This method returns false by default. It should be overridden if the panel wants parameter changes to be commited
+     * automatically
      */
     public boolean isAutoCommitByDefault() {
         return true;
@@ -184,64 +192,64 @@ public class PanelHolder extends ParameterPanel {
 
 
     /**
-     * This method is called when the task is set for this panel. It is overridden to create the
-     * panel layout.
+     * This method is called when the task is set for this panel. It is overridden to create the panel layout.
      */
-    public void init() {}
+    public void init() {
+    }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset all the panels
-     * components to the values specified by the associated task, e.g. a component representing a
-     * parameter called "noise" should be set to the value returned by a
-     * getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
-    public void reset() {}
+    public void reset() {
+    }
 
     /**
-     * This method is called when the panel is finished with. It should dispose of any components
-     * (e.g. windows) used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
-    public void dispose() {}
+    public void dispose() {
+    }
 
 
     /**
      * Disposes of the parameter panel, calls dispose on the subclassing panel
      */
     public void disposePanel() {
-        if (task != null)
+        if (task != null) {
             task.removeTaskListener(this);
+        }
 
         dispose();
     }
 
 
     /**
-     * This method is called when a parameter in the associated task is updated. It should be
-     * overridden to update the GUI in response to the parameter update
+     * This method is called when a parameter in the associated task is updated. It should be overridden to update the
+     * GUI in response to the parameter update
      */
     public void parameterUpdate(String paramname, Object value) {
     }
 
 
     /**
-     * Called when the ok button is clicked on the parameter window. Calls applyClicked by default
-     * to commit any parameter changes.
+     * Called when the ok button is clicked on the parameter window. Calls applyClicked by default to commit any
+     * parameter changes.
      */
     public void okClicked() {
 
     }
 
     /**
-     * Called when the cancel button is clicked on the parameter window. Parameter changes are not
-     * commited.
+     * Called when the cancel button is clicked on the parameter window. Parameter changes are not commited.
      */
     public void cancelClicked() {
 
     }
 
     /**
-     * Called when the apply button is clicked on the parameter window. Commits any parameter
-     * changes.
+     * Called when the apply button is clicked on the parameter window. Commits any parameter changes.
      */
     public void applyClicked() {
 
@@ -270,13 +278,15 @@ public class PanelHolder extends ParameterPanel {
     protected Window getWindow() {
         Container parent = getParent();
 
-        while ((parent != null) && (!(parent instanceof Window)))
+        while ((parent != null) && (!(parent instanceof Window))) {
             parent = parent.getParent();
+        }
 
-        if (parent != null)
+        if (parent != null) {
             return (Window) parent;
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -295,8 +305,7 @@ public class PanelHolder extends ParameterPanel {
 
 
     /**
-     * Called when the core properties of a task change i.e. its name, whether it is running
-     * continuously etc.
+     * Called when the core properties of a task change i.e. its name, whether it is running continuously etc.
      */
     public void taskPropertyUpdate(TaskPropertyEvent event) {
     }

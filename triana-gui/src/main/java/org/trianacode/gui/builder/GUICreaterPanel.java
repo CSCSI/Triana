@@ -58,6 +58,23 @@
  */
 package org.trianacode.gui.builder;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.event.ParameterUpdateEvent;
@@ -65,23 +82,12 @@ import org.trianacode.taskgraph.event.TaskNodeEvent;
 import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import org.trianacode.taskgraph.util.FileUtils;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Enumeration;
-import java.util.Vector;
-
 
 /**
- * This is the screen in which users sets the GUI parameters to
- * build their user-defined interface for their unit.
+ * This is the screen in which users sets the GUI parameters to build their user-defined interface for their unit.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 1 Decmeber 1999
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class GUICreaterPanel extends ParameterPanel
         implements ActionListener, ChangeListener, ItemListener, FocusListener {
@@ -97,10 +103,8 @@ public class GUICreaterPanel extends ParameterPanel
 
 
     /**
-     * a boolean used to determine whether the setParameter function
-     * should work or not. When events are sent from here to the unit
-     * this is set to false because the widgets which sent the events
-     * dont need to be update
+     * a boolean used to determine whether the setParameter function should work or not. When events are sent from here
+     * to the unit this is set to false because the widgets which sent the events dont need to be update
      */
     boolean update = true;
 
@@ -127,19 +131,18 @@ public class GUICreaterPanel extends ParameterPanel
 
 
     /**
-     * sets the parameters to the new StringVector which contains a vector
-     * of Strings representing each line of the interface.  This also
-     * does a display since once new parameters have been set then
-     * it makes sense to show them!
+     * sets the parameters to the new StringVector which contains a vector of Strings representing each line of the
+     * interface.  This also does a display since once new parameters have been set then it makes sense to show them!
      */
     public void setParameters(Vector<String> sv) {
         allParams = sv;
         Vector<String> sv2;
 
-        if (allRows != null)
+        if (allRows != null) {
             allRows.removeAllElements();
-        else
+        } else {
             allRows = new Vector();
+        }
 
         Row temprow;
 
@@ -170,8 +173,9 @@ public class GUICreaterPanel extends ParameterPanel
             paramname = (String) enumeration.nextElement();
             row = getRowForParameter(paramname);
 
-            if ((row != null) && (getTask().getParameter(paramname) != null))
+            if ((row != null) && (getTask().getParameter(paramname) != null)) {
                 row.setValue((String) getTask().getParameter(paramname));
+            }
         }
     }
 
@@ -191,8 +195,9 @@ public class GUICreaterPanel extends ParameterPanel
         for (int i = 0; i < allRows.size(); ++i) {
             r = (Row) allRows.elementAt(i);
 
-            if (r.getParameterName().equals(name))
+            if (r.getParameterName().equals(name)) {
                 return r;
+            }
         }
 
         return null;
@@ -200,9 +205,8 @@ public class GUICreaterPanel extends ParameterPanel
 
 
     /**
-     * @return a StringVector containing all of the parameters of
-     *         each row in a text format.  Each String in the StringVector
-     *         represents a row of the GUI interface
+     * @return a StringVector containing all of the parameters of each row in a text format.  Each String in the
+     *         StringVector represents a row of the GUI interface
      */
     public Vector<String> toStringVector() {
         return allParams;
@@ -218,8 +222,9 @@ public class GUICreaterPanel extends ParameterPanel
         for (int i = 0; i < allRows.size(); ++i) {
             r = (Row) allRows.elementAt(i);
 
-            if (r.containsComponent(wid))
+            if (r.containsComponent(wid)) {
                 return r;
+            }
         }
 
         return null;
@@ -235,20 +240,18 @@ public class GUICreaterPanel extends ParameterPanel
 
 
     /**
-     * Sets the parameter with the given name to the given value.
-     * This is worked out for the particular widget which the name
-     * represents. This is needed by OCL when users may want to
-     * set the parameters individually and therefore the OCL
-     * OldUnit class must update the user interface also. This
-     * function is therefore called everytime the user calls
+     * Sets the parameter with the given name to the given value. This is worked out for the particular widget which the
+     * name represents. This is needed by OCL when users may want to set the parameters individually and therefore the
+     * OCL OldUnit class must update the user interface also. This function is therefore called everytime the user calls
      * the setParameter function within their unit.
      */
     public void setParameter(String name, String value) {
         if (update) {
             Row r = getRowForParameter(name);
 
-            if ((r != null) && (value != null))
+            if ((r != null) && (value != null)) {
                 r.setValue(value);
+            }
         }
 
         update = true; // always reset for next call
@@ -259,8 +262,9 @@ public class GUICreaterPanel extends ParameterPanel
      * For the textfield :-
      */
     public void actionPerformed(ActionEvent e) {
-        if (getTask() == null)
+        if (getTask() == null) {
             return;
+        }
 
         if (e.getSource() instanceof JComboBox) {
             JComboBox c = (JComboBox) e.getSource();
@@ -282,16 +286,18 @@ public class GUICreaterPanel extends ParameterPanel
      * For the Scrolbars :-
      */
     public void stateChanged(ChangeEvent e) {
-        if (getTask() == null)
+        if (getTask() == null) {
             return;
+        }
 
         Row r = getRowForWidget((Component) e.getSource());
         update = false;
 
-        if (r.getType() == Row.INTSCROLLER)
+        if (r.getType() == Row.INTSCROLLER) {
             super.setParameter(r.getParameterName(), r.getValue());
-        else
+        } else {
             super.setParameter(r.getParameterName(), r.getValue());
+        }
     }
 
 
@@ -299,8 +305,9 @@ public class GUICreaterPanel extends ParameterPanel
      * For the JCheckBoxes :-
      */
     public void itemStateChanged(ItemEvent e) {
-        if (getTask() == null)
+        if (getTask() == null) {
             return;
+        }
 
         if (e.getItemSelectable() instanceof JCheckBox) {
             JCheckBox c = (JCheckBox) e.getItemSelectable();
@@ -347,8 +354,9 @@ public class GUICreaterPanel extends ParameterPanel
 
             panel.add(r, BorderLayout.NORTH);
 
-            if (tmppanel != null)
+            if (tmppanel != null) {
                 panel.add(tmppanel, BorderLayout.CENTER);
+            }
 
             tmppanel = panel;
             panel = new JPanel(new BorderLayout());
@@ -364,8 +372,9 @@ public class GUICreaterPanel extends ParameterPanel
     public void parameterUpdated(ParameterUpdateEvent event) {
         Row row = getRowForParameter(event.getParameterName());
 
-        if (row != null)
+        if (row != null) {
             row.setValue((String) event.getTask().getParameter(event.getParameterName()));
+        }
     }
 
     public void nodeAdded(TaskNodeEvent event) {
@@ -382,15 +391,16 @@ public class GUICreaterPanel extends ParameterPanel
             int startidx = fullline.indexOf('[');
 
             while (startidx > -1) {
-                guilines.addElement(fullline.substring(startidx + 1, fullline.indexOf(']', startidx)));
+                String line = fullline.substring(startidx + 1, fullline.indexOf(']', startidx));
+                guilines.addElement(line);
                 startidx = fullline.indexOf('[', startidx + 1);
             }
-        }
-        else {
+        } else {
             String[] split = fullline.split("\n");
 
-            for (int count = 0; count < split.length; count++)
+            for (int count = 0; count < split.length; count++) {
                 guilines.addElement(split[count]);
+            }
         }
 
         return guilines;

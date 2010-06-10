@@ -58,6 +58,18 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.BorderLayout;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.TrianaDialog;
 import org.trianacode.gui.action.SelectionManager;
@@ -80,19 +92,11 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.basic.BasicFileChooserUI;
-import java.awt.*;
-import java.io.*;
-
 /**
  * A class to handle the loading and saving of TaskGraph files.
  *
  * @author Matthew Shields
  * @version $Revision: 4051 $
- * @created May 8, 2003: 3:15:15 PM
- * @date $Date: 2007-10-31 17:51:40 +0000 (Wed, 31 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TaskGraphFileHandler implements SelectionManager {
 
@@ -118,7 +122,8 @@ public class TaskGraphFileHandler implements SelectionManager {
      * @param tools        The tooltable (can be null)
      * @param updateRecent if true then the file is added to the recent items list
      */
-    public static void saveTaskGraphAs(final Tool task, final String file, final ToolTable tools, final boolean updateRecent) {
+    public static void saveTaskGraphAs(final Tool task, final String file, final ToolTable tools,
+                                       final boolean updateRecent) {
         XMLWriter writer = null;
         try {
             BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file));
@@ -203,7 +208,7 @@ public class TaskGraphFileHandler implements SelectionManager {
                 GUIEnv.getApplicationFrame().getTrianaMenuBar().updateRecentMenu(file.getAbsolutePath());
             }
         }
-        catch (FileNotFoundException e) {
+        catch (IOException e) {
             System.out.println(file + " : not found");
         }
 
@@ -222,7 +227,8 @@ public class TaskGraphFileHandler implements SelectionManager {
                 return initgraph;
             } else {
                 JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
-                        "Error: " + file.getName() + " is not a valid taskgraph file", "Open Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
+                        "Error: " + file.getName() + " is not a valid taskgraph file", "Open Error",
+                        JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             }
         }
         catch (TaskGraphException except) {
@@ -410,8 +416,8 @@ public class TaskGraphFileHandler implements SelectionManager {
     }
 
     /**
-     * rudimentary at the moment just pops up a dialog, no checking to see if this is an existing group that has
-     * been modified
+     * rudimentary at the moment just pops up a dialog, no checking to see if this is an existing group that has been
+     * modified
      */
     public static void saveTaskGraph(TaskGraph taskgraph, ToolTable tools, boolean saveas) {
         TaskGraph group = taskgraph;
@@ -442,7 +448,8 @@ public class TaskGraphFileHandler implements SelectionManager {
         }
         String definitionPath = group.getDefinitionPath();
 
-        boolean showdialog = saveas || (definitionPath == null) || (definitionPath.equals("") || !group.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML));
+        boolean showdialog = saveas || (definitionPath == null) || (definitionPath.equals("") || !group
+                .getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML));
         boolean writeFile = true;
 
         if (showdialog) {
@@ -468,7 +475,8 @@ public class TaskGraphFileHandler implements SelectionManager {
     }
 
 
-    private static void backGroundSaveTaskGraph(final Tool task, final String file, final ToolTable tools, final boolean updateRecent) {
+    private static void backGroundSaveTaskGraph(final Tool task, final String file, final ToolTable tools,
+                                                final boolean updateRecent) {
         Thread thread = new Thread() {
             public void run() {
                 saveTaskGraphAs(task, file, tools, updateRecent);
