@@ -58,17 +58,32 @@
  */
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.clipin.ClipInBucket;
-import org.trianacode.taskgraph.clipin.ClipInStore;
-import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.clipin.ClipInBucket;
+import org.trianacode.taskgraph.clipin.ClipInStore;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
+import org.trianacode.taskgraph.ser.TrianaObjectInputStream;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolTable;
 
 /**
  * An extension to Task that allows the underlying OldUnit to be instantiated and run.
@@ -108,15 +123,15 @@ public class RunnableTask extends AbstractRunnableTask
     public int packetsLeft;
 
     /**
-     * An array of the essential nodes that have called but not activated the unit due to waiting
-     * for data from other essential nodes. When the unit is finally activated (data received from
-     * all essential nodes), this array is cleared.
+     * An array of the essential nodes that have called but not activated the unit due to waiting for data from other
+     * essential nodes. When the unit is finally activated (data received from all essential nodes), this array is
+     * cleared.
      */
     private ArrayList wakeups = new ArrayList();
 
     /**
-     * A hashtable of parameter updates that have not been passed to the unit; this is used when
-     * parmeter updates are only commited to the unit at the start of its proceess method.
+     * A hashtable of parameter updates that have not been passed to the unit; this is used when parmeter updates are
+     * only commited to the unit at the start of its proceess method.
      */
     private Hashtable paramupdates = new Hashtable();
 
@@ -126,8 +141,7 @@ public class RunnableTask extends AbstractRunnableTask
     private ClipInBucket clipins = new ClipInBucket(this);
 
     /**
-     * A hashtable containing the clip-ins for each data item input during the current process
-     * cycle.
+     * A hashtable containing the clip-ins for each data item input during the current process cycle.
      */
     private Hashtable clipinbuffer = new Hashtable();
 
@@ -190,9 +204,11 @@ public class RunnableTask extends AbstractRunnableTask
             init = true;
 
             String[] paramnames = getParameterNames();
-            for (int count = 0; count < paramnames.length; count++)
-                if (!getParameterType(paramnames[count]).equals(Tool.LATE_INITIALIZE))
+            for (int count = 0; count < paramnames.length; count++) {
+                if (!getParameterType(paramnames[count]).equals(Tool.LATE_INITIALIZE)) {
                     unit.parameterUpdated(paramnames[count], getParameter(paramnames[count]));
+                }
+            }
 
             executionReset();
         }
@@ -207,8 +223,7 @@ public class RunnableTask extends AbstractRunnableTask
     }
 
     /**
-     * @return the control interface to the scheduler (returns null if the task is not a control
-     *         task)
+     * @return the control interface to the scheduler (returns null if the task is not a control task)
      */
     public ControlInterface getControlInterface() {
         return this;
@@ -224,23 +239,23 @@ public class RunnableTask extends AbstractRunnableTask
 
 
     /**
-     * @return the clip-in attached to this task with the specified name (null if not present). The
-     *         flag indicates whether the clip
+     * @return the clip-in attached to this task with the specified name (null if not present). The flag indicates
+     *         whether the clip
      */
     public Object getClipIn(String name) {
         return clipins.getClipIn(name);
     }
 
     /**
-     * @return the clip-in with the specified name that came attached to the the specified data item
-     *         (null if not present). Only clip-ins for data that has been input in the current
-     *         process can be retrieved.
+     * @return the clip-in with the specified name that came attached to the the specified data item (null if not
+     *         present). Only clip-ins for data that has been input in the current process can be retrieved.
      */
     public Object getClipIn(Object data, String name) {
-        if (clipinbuffer.containsKey(data))
+        if (clipinbuffer.containsKey(data)) {
             return ((ClipInBucket) clipinbuffer.get(data)).getClipIn(name);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -290,9 +305,8 @@ public class RunnableTask extends AbstractRunnableTask
 
 
     /**
-     * Tells the Unit that an output node has finished sending the data. Here, we simply decrement
-     * the <b>packetsLeft </b> variabe which is set to be equal to the number of non-blocking nodes
-     * wich are sending the data.
+     * Tells the Unit that an output node has finished sending the data. Here, we simply decrement the <b>packetsLeft
+     * </b> variabe which is set to be equal to the number of non-blocking nodes wich are sending the data.
      */
     public final void finished() {
         --packetsLeft;
@@ -307,26 +321,30 @@ public class RunnableTask extends AbstractRunnableTask
         Node[] nodes = getRequiredNodes();
 
         // Check if wake-ups have been received from all essential nodes.
-        for (int count = 0; (count < nodes.length) && (wakeup); count++)
-            if (!wakeups.contains(nodes[count]))
+        for (int count = 0; (count < nodes.length) && (wakeup); count++) {
+            if (!wakeups.contains(nodes[count])) {
                 wakeup = false;
+            }
+        }
 
-        if (wakeup)
+        if (wakeup) {
             startThread();
+        }
     }
 
     /**
-     * Tells the Task to wake up if data has been received on all of its essential nodes. The
-     * parameter indicates the node that received data to cause this wake-up.
+     * Tells the Task to wake up if data has been received on all of its essential nodes. The parameter indicates the
+     * node that received data to cause this wake-up.
      */
     public final synchronized void wakeUp(Node node) {
         if (isRequired(node)) {
             wakeups.add(node);
             wakeUp();
-        } else if (node.isParameterNode())
+        } else if (node.isParameterNode()) {
             receiveParameterValue(node);
-        else
+        } else {
             wakeUp();
+        }
     }
 
     /**
@@ -344,9 +362,11 @@ public class RunnableTask extends AbstractRunnableTask
         Node[] nodes = getInputNodes();
         ArrayList required = new ArrayList();
 
-        for (int count = 0; count < nodes.length; count++)
-            if (isRequired(nodes[count]))
+        for (int count = 0; count < nodes.length; count++) {
+            if (isRequired(nodes[count])) {
                 required.add(nodes[count]);
+            }
+        }
 
         return (Node[]) required.toArray(new Node[required.size()]);
     }
@@ -360,13 +380,15 @@ public class RunnableTask extends AbstractRunnableTask
             Object parameter = getInput((RunnableParameterNode) node);
             String paramname = ((RunnableParameterNode) node).getParameterName();
 
-            if (paramname.equals(ParameterNode.TRIGGER_PARAM))
+            if (paramname.equals(ParameterNode.TRIGGER_PARAM)) {
                 return;
+            }
 
-            if (parameter instanceof Number)
+            if (parameter instanceof Number) {
                 setParameter(paramname, parameter.toString());
-            else
+            } else {
                 setParameter(paramname, parameter);
+            }
         }
     }
 
@@ -392,8 +414,9 @@ public class RunnableTask extends AbstractRunnableTask
                     }
 
                     handled = true;
-                } else
+                } else {
                     Thread.yield();
+                }
             }
         }
         while (!handled);
@@ -404,8 +427,9 @@ public class RunnableTask extends AbstractRunnableTask
      * @return true if there is data waiting on the specified node
      */
     public boolean isInput(int nodeNumber) {
-        if (nodeNumber >= getDataInputNodeCount())
+        if (nodeNumber >= getDataInputNodeCount()) {
             throw new OutOfRangeException("Node " + nodeNumber + " is out of range on Unit " + getToolName());
+        }
 
         Node node = getDataInputNode(nodeNumber);
         if ((node != null) && (node.isConnected())) {
@@ -417,28 +441,27 @@ public class RunnableTask extends AbstractRunnableTask
     }
 
     /**
-     * Returns the data at input node <i>nodeNumber</i>. If data is not ready, NOT_READY triana type
-     * is returned. If there is no cable connected to the input node the NOT_CONNECTED triana type
-     * is returned.
+     * Returns the data at input node <i>nodeNumber</i>. If data is not ready, NOT_READY triana type is returned. If
+     * there is no cable connected to the input node the NOT_CONNECTED triana type is returned.
      *
      * @param nodeNumber the node you want to get the data from.
      */
     public Object getInput(int nodeNumber)
             throws OutOfRangeException, EmptyingException, NotCompatibleException {
 
-        if (nodeNumber >= getDataInputNodeCount())
+        if (nodeNumber >= getDataInputNodeCount()) {
             throw new OutOfRangeException("Node " + nodeNumber + " is out of range on Unit " + getToolName());
+        }
 
         RunnableNode node = (RunnableNode) getDataInputNode(nodeNumber);
         Object data = getInput(node);
 
         String[] types = getDataInputTypes(nodeNumber);
 
-        if (types == null)
+        if (types == null) {
             types = getDataInputTypes();
-        for (String type : types) {
-            System.out.println("RunnableTask.getInput type for node " + nodeNumber + " : " + type);
         }
+
         Class[] typecls = TypeChecking.classForTrianaType(types);
 
         if (!TypeChecking.isCompatible(data, typecls)) {
@@ -451,12 +474,14 @@ public class RunnableTask extends AbstractRunnableTask
             }*/
 
             if (!TypeChecking.isCompatible(data, typecls)) {
-                String errormsg = "Data type received at node " + node.getNodeIndex() + " on unit " + this.getToolName() + " is incompatible with unit specification.\n";
+                String errormsg = "Data type received at node " + node.getNodeIndex() + " on unit " + this.getToolName()
+                        + " is incompatible with unit specification.\n";
                 errormsg += "Received input types : " + data.getClass().getName() + "\n";
                 errormsg += "Allowed input types :";
 
-                for (int count = 0; count < types.length; count++)
+                for (int count = 0; count < types.length; count++) {
                     errormsg += " " + types[count];
+                }
 
                 throw new NotCompatibleException(errormsg);
             }
@@ -471,23 +496,23 @@ public class RunnableTask extends AbstractRunnableTask
             if ((data instanceof GraphType) && (((ProcessDoublesInterface) unit).getRequireDoubleInputs()))
                 ((GraphType) data).convertDependentDataArraysToDoubles();
         }*/
-        System.out.println("RunnableTask.getInput returning data:" + data);
         return data;
     }
 
     /**
-     * Returns the data at the specified input node. If data is not ready, NOT_READY triana type is
-     * returned. If there is no cable connected to the input node the NOT_CONNECTED triana type is
-     * returned.
+     * Returns the data at the specified input node. If data is not ready, NOT_READY triana type is returned. If there
+     * is no cable connected to the input node the NOT_CONNECTED triana type is returned.
      */
     protected Object getInput(RunnableNodeInterface node) {
         InputCable cable = (InputCable) node.getCable();
 
-        if (!node.isConnected())
+        if (!node.isConnected()) {
             return ConnectionStatus.NOT_CONNECTED;
+        }
 
-        if (node.isOptional() && (!cable.isDataReady()))
+        if (node.isOptional() && (!cable.isDataReady())) {
             return ConnectionStatus.NOT_READY;
+        }
 
         Object mess = cable.recv();
         Object data;
@@ -502,16 +527,17 @@ public class RunnableTask extends AbstractRunnableTask
                 clipins.insert(messclips, node);
                 clipinbuffer.put(messclips, clipins);
             }
-        } else
+        } else {
             data = mess;
+        }
 
         return data;
     }
 
 
     /**
-     * b Outputs the data from the unit. This passses the given data set to the first output node
-     * and then makes copies for any other output nodes.
+     * b Outputs the data from the unit. This passses the given data set to the first output node and then makes copies
+     * for any other output nodes.
      *
      * @param data the data to be sent
      */
@@ -522,31 +548,35 @@ public class RunnableTask extends AbstractRunnableTask
 
             packetsLeft = 0; // number of packets to output
 
-            for (int i = 0; i < this.getDataOutputNodeCount(); ++i)
-                if (this.getDataOutputNode(i).isConnected())
+            for (int i = 0; i < this.getDataOutputNodeCount(); ++i) {
+                if (this.getDataOutputNode(i).isConnected()) {
                     ++packetsLeft;
+                }
+            }
 
-            boolean clonemultiple = (!isParameterName(OUTPUT_POLICY)) || (getParameter(OUTPUT_POLICY).equals(CLONE_MULTIPLE_OUTPUT));
-            boolean cloneall = (isParameterName(OUTPUT_POLICY)) && (getParameter(OUTPUT_POLICY).equals(CLONE_ALL_OUTPUT));
+            boolean clonemultiple = (!isParameterName(OUTPUT_POLICY)) || (getParameter(OUTPUT_POLICY).equals(
+                    CLONE_MULTIPLE_OUTPUT));
+            boolean cloneall = (isParameterName(OUTPUT_POLICY)) && (getParameter(OUTPUT_POLICY).equals(
+                    CLONE_ALL_OUTPUT));
 
             for (int i = 0; i < this.getDataOutputNodeCount(); ++i) {
                 node = (RunnableNode) this.getDataOutputNode(i);
-
-
                 if (node.isConnected()) {
                     // check output policy
                     if (clonemultiple) {
                         if (i != this.getDataOutputNodeCount() - 1) {
                             toOutput = copyData(data);
-                        } else
+                        } else {
                             toOutput = data;
-                    } else if (cloneall)
+                        }
+                    } else if (cloneall) {
                         toOutput = copyData(data);
-                    else
+                    } else {
                         toOutput = data;
+                    }
                     // TODO
                     //output(node, toOutput, !Env.isNonBlockingOutputNodes());
-                    output(node, toOutput, false);
+                    output(node, toOutput, true);
                 }
 
                 // Wait for non-blocking outputs to return
@@ -574,12 +604,12 @@ public class RunnableTask extends AbstractRunnableTask
     }
 
     /**
-     * Makes a copy of the specified data. If the data is of TrianaType the copyMe method is used,
-     * otherwise the data is serialized then deserialized.
+     * Makes a copy of the specified data. If the data is of TrianaType the copyMe method is used, otherwise the data is
+     * serialized then deserialized.
      * <p/>
-     * Note: this relies on all data types being serialisable Note2: this method uses
-     * ByteArrayInputStream and OutputStream which are not optimised, they are synchronized (not
-     * needed here) and the buffer size and growth factor could be tweeked
+     * Note: this relies on all data types being serialisable Note2: this method uses ByteArrayInputStream and
+     * OutputStream which are not optimised, they are synchronized (not needed here) and the buffer size and growth
+     * factor could be tweeked
      */
     private Object copyData(Object data) throws IOException, ClassNotFoundException {
         /*
@@ -589,24 +619,32 @@ public class RunnableTask extends AbstractRunnableTask
         else {*/
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream objout = new ObjectOutputStream(bos);
-
         objout.writeObject(data);
         objout.flush();
         objout.close();
+        bos.close();
 
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        ObjectInputStream objin = new ObjectInputStream(bis);
+        ObjectInputStream objin = new TrianaObjectInputStream(bis);
+        Object ret = null;
+        try {
+            ret = objin.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
-        return objin.readObject();
+        objin.close();
+        return ret;
         //}
     }
 
     /**
-     * Outputs the data to the given node <i>outputNode</i>. If specified this method blocks until
-     * the data is successfully sent, otherwise, if non-blocking, isOutputSent() can be used to poll
-     * whether the data has been successfully sent. This method is used to set the data at each
-     * particular output node if this is necessary, otherwise use output(Object data) to copy the
-     * data across all nodes.
+     * Outputs the data to the given node <i>outputNode</i>. If specified this method blocks until the data is
+     * successfully sent, otherwise, if non-blocking, isOutputSent() can be used to poll whether the data has been
+     * successfully sent. This method is used to set the data at each particular output node if this is necessary,
+     * otherwise use output(Object data) to copy the data across all nodes.
      *
      * @param outputNode the output node you wish to set
      * @param data       the data to be sent
@@ -623,18 +661,20 @@ public class RunnableTask extends AbstractRunnableTask
         if (!node.isParameterNode()) {
             waitPause();
 
-            if (!getExecutionState().equals(ExecutionState.RUNNING))
+            if (!getExecutionState().equals(ExecutionState.RUNNING)) {
                 throw (new EmptyingException("Output Error: " + getToolName() + " is not running"));
+            }
         }
 
         if (node.isConnected()) {
             ClipInBucket extract = clipins.extract(node);
             DataMessage mess = new DataMessage(data, extract);
 
-            if (blocking)
+            if (blocking) {
                 ((OutputCable) node.getCable()).send(mess);
-            else
+            } else {
                 ((OutputCable) node.getCable()).sendNonBlocking(mess);
+            }
         }
     }
 
@@ -643,22 +683,24 @@ public class RunnableTask extends AbstractRunnableTask
      * @return true if the data sent with the non-blocking send call has reached its destination
      */
     public boolean isOutputSent(int outputNode) {
-        if (outputNode >= getDataOutputNodeCount())
+        if (outputNode >= getDataOutputNodeCount()) {
             return false;
+        }
 
         RunnableNode gn = (RunnableNode) getDataOutputNode(outputNode);
         OutputCable cable = (OutputCable) gn.getCable();
 
-        if (cable == null)
+        if (cable == null) {
             return false;
-        else
+        } else {
             return cable.isDataSent();
+        }
     }
 
 
     /**
-     * This over-rides the RunnableUnit's run method so that we can display the data flow indicators
-     * on the icons when we are processing data.
+     * This over-rides the RunnableUnit's run method so that we can display the data flow indicators on the icons when
+     * we are processing data.
      */
     public void run() {
         thread = Thread.currentThread();
@@ -729,8 +771,9 @@ public class RunnableTask extends AbstractRunnableTask
                             }
 
                             handled = true;
-                        } else
+                        } else {
                             Thread.yield();
+                        }
                     }
                 }
                 while (!handled);
@@ -742,8 +785,8 @@ public class RunnableTask extends AbstractRunnableTask
     /**
      * Runs the specified task.
      * <p/>
-     * If execution is paused then this method waits until execution is resumed, or throws a
-     * SchedulerException if execution is reset.
+     * If execution is paused then this method waits until execution is resumed, or throws a SchedulerException if
+     * execution is reset.
      */
     public void runTask(Task task) throws SchedulerException {
         waitPause();
@@ -753,8 +796,8 @@ public class RunnableTask extends AbstractRunnableTask
     /**
      * Runs all the tasks within the group that this task belongs to.
      * <p/>
-     * If execution is paused then this method waits until execution is resumed, or throws a
-     * SchedulerException if execution is reset.
+     * If execution is paused then this method waits until execution is resumed, or throws a SchedulerException if
+     * execution is reset.
      */
     public void runGroup() throws SchedulerException {
         if (getParent() != null) {
@@ -762,14 +805,14 @@ public class RunnableTask extends AbstractRunnableTask
 
             Task[] tasks = getParent().getTasks(false);
 
-            for (int count = 0; count < tasks.length; count++)
+            for (int count = 0; count < tasks.length; count++) {
                 TaskGraphManager.getTrianaServer(getParent()).runTask(tasks[count]);
+            }
         }
     }
 
     /**
-     * Tries running the process() method. If it succeeds then this function returns true, otherwise
-     * it returns false
+     * Tries running the process() method. If it succeeds then this function returns true, otherwise it returns false
      */
     public void process() {
         try {
@@ -783,10 +826,12 @@ public class RunnableTask extends AbstractRunnableTask
                 except.printStackTrace();
             }
 
-            if (!getExecutionState().equals(ExecutionState.ERROR))
+            if (!getExecutionState().equals(ExecutionState.ERROR)) {
                 System.out.println("FINISHED RUNNING " + getQualifiedTaskName());
-            else
-                System.err.println("ERROR RUNNING " + getQualifiedTaskName() + " (" + getParameter(ERROR_MESSAGE) + ")");
+            } else {
+                System.err
+                        .println("ERROR RUNNING " + getQualifiedTaskName() + " (" + getParameter(ERROR_MESSAGE) + ")");
+            }
         }
         catch (OutOfRangeException ore) {
             System.err.println("Out Of Range : " + getQualifiedTaskName());
@@ -819,9 +864,11 @@ public class RunnableTask extends AbstractRunnableTask
 
     private void receiveTriggerParameters() {
         ParameterNode[] params = getParameterInputNodes();
-        for (int count = 0; count < params.length; count++)
-            if (params[count].isTriggerNode())
+        for (int count = 0; count < params.length; count++) {
+            if (params[count].isTriggerNode()) {
                 receiveParameterValue(params[count]);
+            }
+        }
     }
 
     /**
@@ -857,10 +904,11 @@ public class RunnableTask extends AbstractRunnableTask
                 while (enumeration.hasMoreElements()) {
                     paramname = (String) enumeration.nextElement();
 
-                    if (paramupdates.get(paramname).equals(NULL_STR))
+                    if (paramupdates.get(paramname).equals(NULL_STR)) {
                         unit.parameterUpdated(paramname, null);
-                    else
+                    } else {
                         unit.parameterUpdated(paramname, paramupdates.get(paramname));
+                    }
                 }
 
                 paramupdates.clear();
@@ -873,13 +921,16 @@ public class RunnableTask extends AbstractRunnableTask
 
     protected void notifyParameterSet(String name, String type, Object oldval, Object newval) {
         if ((unit != null) && (init)) {
-            if ((threadstate != IN_PROCESS) || ((isParameterName(PARAM_UPDATE_POLICY)) && (getParameter(PARAM_UPDATE_POLICY).equals(IMMEDIATE_UPDATE))))
+            if ((threadstate != IN_PROCESS) || ((isParameterName(PARAM_UPDATE_POLICY)) && (getParameter(
+                    PARAM_UPDATE_POLICY).equals(IMMEDIATE_UPDATE)))) {
                 unit.parameterUpdated(name, getParameter(name));
-            else if ((!isParameterName(PARAM_UPDATE_POLICY)) || (getParameter(PARAM_UPDATE_POLICY).equals(PROCESS_UPDATE))) {
-                if (getParameter(name) != null)
+            } else if ((!isParameterName(PARAM_UPDATE_POLICY)) || (getParameter(PARAM_UPDATE_POLICY).equals(
+                    PROCESS_UPDATE))) {
+                if (getParameter(name) != null) {
                     paramupdates.put(name, getParameter(name));
-                else
+                } else {
                     paramupdates.put(name, NULL_STR);
+                }
             }
         }
 

@@ -295,6 +295,7 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         ParameterPanel paramPanel = null;
         try {
             TrianaClient client = GUIEnv.getTrianaClientFor(task);
+            //TODO - removed necessity for TrianaClient. Not sure why this would be needed
             //if (client != null) {
 
             paramPanel = createPanel(task);
