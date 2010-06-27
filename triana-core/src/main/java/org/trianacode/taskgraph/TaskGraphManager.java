@@ -59,6 +59,13 @@
 
 package org.trianacode.taskgraph;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
+
 import org.trianacode.taskgraph.event.TaskGraphCreatedEvent;
 import org.trianacode.taskgraph.event.TaskGraphManagerListener;
 import org.trianacode.taskgraph.imp.TaskGraphImp;
@@ -67,19 +74,12 @@ import org.trianacode.taskgraph.service.TrianaServer;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 
-import java.util.*;
-import java.util.logging.Logger;
-
 
 /**
- * A abstract TaskGraphFactory implementation for creating taskgraphs that contain
- * a mixture of proxies
+ * A abstract TaskGraphFactory implementation for creating taskgraphs that contain a mixture of proxies
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 5th May 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public class TaskGraphManager {
@@ -132,12 +132,12 @@ public class TaskGraphManager {
 
 
     /**
-     * Initializes the tool table. This method must be called only once, when
-     * the application is first initialized.
+     * Initializes the tool table. This method must be called only once, when the application is first initialized.
      */
     public static void initToolTable(ToolTable tools) {
-        if (tooltable != null)
+        if (tooltable != null) {
             throw (new RuntimeException("Error: Tool Table already initialized!"));
+        }
 
         tooltable = tools;
     }
@@ -154,8 +154,9 @@ public class TaskGraphManager {
      * Adds a TaskgraphManagerListener
      */
     public void addTaskgraphManagerListener(TaskGraphManagerListener listener) {
-        if (!listeners.contains(listener))
+        if (!listeners.contains(listener)) {
             listeners.add(listener);
+        }
     }
 
     /**
@@ -184,10 +185,11 @@ public class TaskGraphManager {
      * @return the taskgraph factory for the specified type
      */
     public static TaskGraphFactory getTaskGraphFactory(String type) {
-        if (factorytable.containsKey(type))
+        if (factorytable.containsKey(type)) {
             return (TaskGraphFactory) factorytable.get(type);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -204,13 +206,15 @@ public class TaskGraphManager {
     public static TrianaServer getTrianaServer(TaskGraph taskgraph) {
         Task parent = (Task) taskgraph;
 
-        while ((parent != null) && (!servertable.containsKey(parent)))
+        while ((parent != null) && (!servertable.containsKey(parent))) {
             parent = parent.getParent();
+        }
 
-        if (servertable.containsKey(parent))
+        if (servertable.containsKey(parent)) {
             return (TrianaServer) servertable.get(parent);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -229,25 +233,26 @@ public class TaskGraphManager {
     }
 
     /**
-     * @return the factory type for the specfied tool. If not type is initialized
-     *         then the type for its parent (or parent's parent etc.) is returned.
-     *         (null if not type initialized)
+     * @return the factory type for the specfied tool. If not type is initialized then the type for its parent (or
+     *         parent's parent etc.) is returned. (null if not type initialized)
      */
     public static String getTaskGraphFactoryType(Tool tool) {
-        if (typetable.containsKey(tool))
+        if (typetable.containsKey(tool)) {
             return (String) typetable.get(tool);
-        else if (tool instanceof Task) {
+        } else if (tool instanceof Task) {
             Task parent = (Task) tool;
 
             while ((parent != null) && (!typetable.containsKey(parent))) {
-                if (parent.getParent() != null)
+                if (parent.getParent() != null) {
                     parent = parent.getParent();
-                else
+                } else {
                     parent = null;
+                }
             }
 
-            if ((parent != null) && (typetable.containsKey(parent)))
+            if ((parent != null) && (typetable.containsKey(parent))) {
                 return (String) typetable.get(parent);
+            }
         }
 
         return null;
@@ -259,29 +264,32 @@ public class TaskGraphManager {
     public static TaskGraphFactory getTaskGraphFactory(Tool tool) {
         String type = getTaskGraphFactoryType(tool);
 
-        if (type == null)
-            throw (new RuntimeException("TaskGraphFactory type not registered for " + tool.getToolName() + " (or its parents)"));
+        if (type == null) {
+            throw (new RuntimeException(
+                    "TaskGraphFactory type not registered for " + tool.getToolName() + " (or its parents)"));
+        }
 
         return (TaskGraphFactory) factorytable.get(type);
     }
 
 
     /**
-     * @return a new root task/taskgraph instantiated with the specified factory
-     *         type
+     * @return a new root task/taskgraph instantiated with the specified factory type
      */
     public static Task createTask(Tool tool, String factorytype, boolean preserveinst) throws TaskException {
         try {
-            if (!isTaskGraphFactory(factorytype))
+            if (!isTaskGraphFactory(factorytype)) {
                 throw (new RuntimeException("TaskGraphFactory not registered for " + factorytype + " type"));
+            }
 
             Task task;
 
             if (tool instanceof TaskGraph) {
-                if (preserveinst)
-                    task = (Task) TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, factorytype);
-                else
-                    task = (Task) TaskGraphUtils.copyTaskGraph((TaskGraph) tool, factorytype);
+                if (preserveinst) {
+                    task = TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, factorytype);
+                } else {
+                    task = TaskGraphUtils.copyTaskGraph((TaskGraph) tool, factorytype);
+                }
             } else {
                 task = getTaskGraphFactory(factorytype).createTask(tool, null, preserveinst);
             }
@@ -309,9 +317,11 @@ public class TaskGraphManager {
     /**
      * Creates a root taskgraph based on the specified taskgraph
      */
-    public static TaskGraph createTaskGraph(TaskGraph taskgraph, String factorytype, boolean preserveinst) throws TaskException {
-        if (!isTaskGraphFactory(factorytype))
+    public static TaskGraph createTaskGraph(TaskGraph taskgraph, String factorytype, boolean preserveinst)
+            throws TaskException {
+        if (!isTaskGraphFactory(factorytype)) {
             throw (new RuntimeException("TaskGraphFactory not registered for " + factorytype + " type"));
+        }
 
         TaskGraph inittaskgraph = getTaskGraphFactory(factorytype).createTaskGraph(taskgraph, preserveinst);
         registerFactoryType(inittaskgraph, factorytype);
@@ -324,11 +334,12 @@ public class TaskGraphManager {
     private static void notifyTaskGraphCreated(TaskGraph taskgraph, String factorytype) {
         TaskGraphCreatedEvent event = new TaskGraphCreatedEvent(taskgraph, factorytype);
 
-        synchronized(listeners) {
+        synchronized (listeners) {
             Iterator it = listeners.iterator();
 
-            while(it.hasNext())
+            while (it.hasNext()) {
                 ((TaskGraphManagerListener) it.next()).taskgraphCreated(event);
+            }
         }
     }
 

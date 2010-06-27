@@ -58,6 +58,10 @@
  */
 package org.trianacode.taskgraph;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
+
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskGraphImp;
 import org.trianacode.taskgraph.imp.TaskImp;
@@ -66,18 +70,12 @@ import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Vector;
-
 
 /**
  * Utility functions useful in handling task graphs
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 02-May-02
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TaskGraphUtils {
 
@@ -85,10 +83,11 @@ public class TaskGraphUtils {
      * @return true if the specified task is a control task
      */
     public static boolean isControlTask(Task task) {
-        if (task.getParent() == null)
+        if (task.getParent() == null) {
             return false;
-        else
+        } else {
             return (task.getParent().getControlTask() == task);
+        }
     }
 
 
@@ -102,36 +101,36 @@ public class TaskGraphUtils {
             } catch (TaskGraphException except) {
                 throw (new TaskException(except));
             }
-        } else
+        } else {
             return toolClone(tool);
+        }
     }
 
     /**
-     * Creates a non-runnable clone of the specfied task, optionally preserving
-     * the instance id.
+     * Creates a non-runnable clone of the specfied task, optionally preserving the instance id.
      */
     public static Task cloneTask(Task task, boolean preserveinst) throws TaskException {
         if (task instanceof TaskGraph) {
             try {
-                return (Task) cloneTaskGraph((TaskGraph) task, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE, preserveinst, false, true);
+                return (Task) cloneTaskGraph((TaskGraph) task, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE, preserveinst,
+                        false, true);
             } catch (TaskGraphException except) {
                 throw (new TaskException(except));
             }
-        } else
+        } else {
             return taskClone(task, preserveinst);
+        }
     }
 
     /**
-     * Creates a clone of the tool. If the tool is a taskgraph then a dummy
-     * single tool is returned
+     * Creates a clone of the tool. If the tool is a taskgraph then a dummy single tool is returned
      */
     public static Tool dummyCloneTool(Tool tool) throws TaskException {
         return toolClone(tool);
     }
 
     /**
-     * Creates a clone of the task. If the task is a taskgraph then a dummy
-     * single task is returned
+     * Creates a clone of the task. If the task is a taskgraph then a dummy single task is returned
      */
     public static Task dummyCloneTask(Task task, boolean preserveinst) throws TaskException {
         return taskClone(task, preserveinst);
@@ -139,8 +138,7 @@ public class TaskGraphUtils {
 
 
     /**
-     * Creates a place holder tool, which is a copy of only the nodes and tool
-     * classes of the specified tool.
+     * Creates a place holder tool, which is a copy of only the nodes and tool classes of the specified tool.
      */
     public static Tool createPlaceHolderTool(Tool tool) throws TaskException {
         try {
@@ -151,12 +149,14 @@ public class TaskGraphUtils {
             placeholder.setProxy(ProxyFactory.cloneProxy(tool.getProxy()));
 
             RenderingHint[] hints = tool.getRenderingHints();
-            for (int count = 0; count < hints.length; count++)
+            for (int count = 0; count < hints.length; count++) {
                 placeholder.addRenderingHint(hints[count]);
+            }
 
             String[] names = tool.getExtensionNames();
-            for (int count = 0; count < names.length; count++)
+            for (int count = 0; count < names.length; count++) {
                 placeholder.addExtension(names[count], tool.getExtension(names[count]));
+            }
 
             int paramin = tool.getParameterInputNodeCount();
             String[] paramnames = new String[paramin];
@@ -172,15 +172,17 @@ public class TaskGraphUtils {
             int paramout = tool.getParameterOutputNodeCount();
             paramnames = new String[paramout];
 
-            for (int count = 0; count < paramout; count++)
+            for (int count = 0; count < paramout; count++) {
                 paramnames[count] = tool.getParameterOutputName(count);
+            }
 
             placeholder.setParameterOutputs(paramnames);
 
-            if (tool instanceof TaskGraph)
+            if (tool instanceof TaskGraph) {
                 return new TaskGraphImp(placeholder, new TaskFactoryImp(), false);
-            else
+            } else {
                 return placeholder;
+            }
         } catch (NodeException except) {
             throw (new TaskException(except));
         } catch (ProxyInstantiationException except) {
@@ -190,22 +192,25 @@ public class TaskGraphUtils {
 
 
     /**
-     * Creates a clone of the specified taskgraph within the parent, optionally
-     * preserving the instance ids of the cloned task.
+     * Creates a clone of the specified taskgraph within the parent, optionally preserving the instance ids of the
+     * cloned task.
      */
-    public static TaskGraph cloneTaskGraph(TaskGraph taskgraph, TaskGraph parent, boolean preserveinst) throws TaskGraphException {
+    public static TaskGraph cloneTaskGraph(TaskGraph taskgraph, TaskGraph parent, boolean preserveinst)
+            throws TaskGraphException {
         TaskGraph clone;
         String factorytype;
 
-        if (parent != null)
+        if (parent != null) {
             factorytype = TaskGraphManager.getTaskGraphFactoryType(parent);
-        else
+        } else {
             throw (new TaskException("Parent taskgraphs must be created using TaskGraphManager"));
+        }
 
-        if (preserveinst)
+        if (preserveinst) {
             clone = TaskGraphUtils.cloneTaskGraph(taskgraph, factorytype);
-        else
+        } else {
             clone = TaskGraphUtils.copyTaskGraph(taskgraph, factorytype);
+        }
 
         ((Task) clone).setParent(parent);
         ((Task) clone).init();
@@ -215,29 +220,25 @@ public class TaskGraphUtils {
 
 
     /**
-     * Creates a full clone of the taskgraph, preserving the instances of the
-     * clone and all the tasks within the clone. Note that setParent() and init()
-     * are not called on the clone.
+     * Creates a full clone of the taskgraph, preserving the instances of the clone and all the tasks within the clone.
+     * Note that setParent() and init() are not called on the clone.
      */
     public static TaskGraph cloneTaskGraph(TaskGraph taskgraph, String factorytype) throws TaskGraphException {
         return cloneTaskGraph(taskgraph, factorytype, true, true, true);
     }
 
     /**
-     * Creates a semi-clone of the taskgraph, preserving the instances of the
-     * tasks within the the clone, but not the clone itself (i.e. the clone
-     * is a new taskgraph instance with the same contents). Note that the
-     * control task is not cloned. Also note that setParent() and init()
-     * are not called on the clone.
+     * Creates a semi-clone of the taskgraph, preserving the instances of the tasks within the the clone, but not the
+     * clone itself (i.e. the clone is a new taskgraph instance with the same contents). Note that the control task is
+     * not cloned. Also note that setParent() and init() are not called on the clone.
      */
     public static TaskGraph semiCloneTaskGraph(TaskGraph taskgraph, String factorytype) throws TaskGraphException {
         return cloneTaskGraph(taskgraph, factorytype, false, true, false);
     }
 
     /**
-     * Creates a copy of the taskgraph, not preserving the instance id of
-     * the clone or the tasks within the clone. Note that setParent() and init()
-     * are not called on the clone.
+     * Creates a copy of the taskgraph, not preserving the instance id of the clone or the tasks within the clone. Note
+     * that setParent() and init() are not called on the clone.
      */
     public static TaskGraph copyTaskGraph(TaskGraph taskgraph, String factorytype) throws TaskGraphException {
         return cloneTaskGraph(taskgraph, factorytype, false, false, true);
@@ -260,10 +261,9 @@ public class TaskGraphUtils {
 
 
     /**
-     * Creates a clone copy of the specified taskgraph that is created using the
-     * specified taskgraph factory, optionally preserving the instance id
-     * of the original taskgraph in the clone. Note that the control task for
-     * the clone is attached using the default connection policy.
+     * Creates a clone copy of the specified taskgraph that is created using the specified taskgraph factory, optionally
+     * preserving the instance id of the original taskgraph in the clone. Note that the control task for the clone is
+     * attached using the default connection policy.
      *
      * @param taskgraph    the taskgraph being clones
      * @param factorytype  the taskgraph factory type used to create the clone
@@ -271,17 +271,19 @@ public class TaskGraphUtils {
      * @param prestasks    a flag indicating whether the instance of tasks within the taskgraph are preserved
      * @param clonecontrol a flag indicating whether the control task is cloned
      */
-    private static TaskGraph cloneTaskGraph(TaskGraph taskgraph, String factorytype, boolean presclone, boolean prestasks, boolean clonecontrol) throws TaskGraphException {
+    private static TaskGraph cloneTaskGraph(TaskGraph taskgraph, String factorytype, boolean presclone,
+                                            boolean prestasks, boolean clonecontrol) throws TaskGraphException {
         try {
             TaskGraph clone = TaskGraphManager.createTaskGraph(taskgraph, factorytype, presclone);
-            System.out.println("TaskGraphUtils.cloneTaskGraph craeted taskgraph");
-            if (taskgraph.getToolName() != null)
+            if (taskgraph.getToolName() != null) {
                 clone.setToolName(taskgraph.getToolName());
+            }
 
             Task[] tasks = taskgraph.getTasks(false);
 
-            for (int count = 0; count < tasks.length; count++)
+            for (int count = 0; count < tasks.length; count++) {
                 clone.createTask(tasks[count], prestasks);
+            }
 
             Cable[] cables = TaskGraphUtils.getInternalCables(tasks);
             Task task;
@@ -292,17 +294,19 @@ public class TaskGraphUtils {
                 for (int count = 0; count < cables.length; count++) {
                     task = clone.getTask(taskgraph.getTask(cables[count].getSendingNode()).getToolName());
 
-                    if (cables[count].getSendingNode().isParameterNode())
+                    if (cables[count].getSendingNode().isParameterNode()) {
                         sendnode = task.getParameterOutputNode(cables[count].getSendingNode().getNodeIndex());
-                    else
+                    } else {
                         sendnode = task.getDataOutputNode(cables[count].getSendingNode().getNodeIndex());
+                    }
 
                     task = clone.getTask(taskgraph.getTask(cables[count].getReceivingNode()).getToolName());
 
-                    if (cables[count].getReceivingNode().isParameterNode())
+                    if (cables[count].getReceivingNode().isParameterNode()) {
                         recnode = task.getParameterInputNode(cables[count].getReceivingNode().getNodeIndex());
-                    else
+                    } else {
                         recnode = task.getDataInputNode(cables[count].getReceivingNode().getNodeIndex());
+                    }
 
                     clone.connect(sendnode, recnode);
                 }
@@ -317,15 +321,19 @@ public class TaskGraphUtils {
 
             try {
                 for (int count = 0; count < nodes.length; count++) {
-                    if (taskgraph.isControlTaskConnected())
+                    if (taskgraph.isControlTaskConnected()) {
                         node = TaskGraphUtils.getControlNode(nodes[count]).getCable().getReceivingNode();
-                    else
+                    } else {
                         node = nodes[count].getParentNode();
+                    }
 
-                    if (node.isParameterNode())
-                        clonenode = (Node) clone.getTask(taskgraph.getTask(node).getToolName()).getParameterInputNode(node.getNodeIndex());
-                    else
-                        clonenode = (Node) clone.getTask(taskgraph.getTask(node).getToolName()).getDataInputNode(node.getNodeIndex());
+                    if (node.isParameterNode()) {
+                        clonenode = clone.getTask(taskgraph.getTask(node).getToolName())
+                                .getParameterInputNode(node.getNodeIndex());
+                    } else {
+                        clonenode = clone.getTask(taskgraph.getTask(node).getToolName())
+                                .getDataInputNode(node.getNodeIndex());
+                    }
 
                     clone.setGroupNodeParent(clone.getDataInputNode(count), clonenode);
                 }
@@ -337,15 +345,19 @@ public class TaskGraphUtils {
 
             try {
                 for (int count = 0; count < nodes.length; count++) {
-                    if (taskgraph.isControlTaskConnected())
+                    if (taskgraph.isControlTaskConnected()) {
                         node = TaskGraphUtils.getControlNode(nodes[count]).getCable().getSendingNode();
-                    else
+                    } else {
                         node = nodes[count].getParentNode();
+                    }
 
-                    if (node.isParameterNode())
-                        clonenode = (Node) clone.getTask(taskgraph.getTask(node).getToolName()).getParameterOutputNode(node.getNodeIndex());
-                    else
-                        clonenode = (Node) clone.getTask(taskgraph.getTask(node).getToolName()).getDataOutputNode(node.getNodeIndex());
+                    if (node.isParameterNode()) {
+                        clonenode = clone.getTask(taskgraph.getTask(node).getToolName())
+                                .getParameterOutputNode(node.getNodeIndex());
+                    } else {
+                        clonenode = clone.getTask(taskgraph.getTask(node).getToolName())
+                                .getDataOutputNode(node.getNodeIndex());
+                    }
 
                     clone.setGroupNodeParent(clone.getDataOutputNode(count), clonenode);
                 }
@@ -356,27 +368,30 @@ public class TaskGraphUtils {
             if (taskgraph.isControlTask() && clonecontrol) {
                 clone.createControlTask(taskgraph.getControlTask(), prestasks);
 
-                if (taskgraph.isControlTaskConnected())
+                if (taskgraph.isControlTaskConnected()) {
                     connectControlTask(clone);
+                }
             }
 
             return clone;
         } catch (ClassCastException except) {
+            except.printStackTrace();
             throw (new TaskGraphException("cloningError" + ": " + "NodeError", except));
         } catch (TaskGraphException except) {
+            except.printStackTrace();
             throw (new TaskGraphException("cloningError" + ": " + except.getMessage(), except));
         }
     }
 
 
     /**
-     * Create new tasks in the specified taskgraph taskgraph, optionally
-     * preserving the original instance ids in the new tasks. Any connections
-     * between the specified tools are also created.
+     * Create new tasks in the specified taskgraph taskgraph, optionally preserving the original instance ids in the new
+     * tasks. Any connections between the specified tools are also created.
      *
      * @return the interfaces to the new tasks
      */
-    public static Task[] createTasks(Tool[] tools, TaskGraph taskgraph, boolean preserveinst) throws TaskException, CableException {
+    public static Task[] createTasks(Tool[] tools, TaskGraph taskgraph, boolean preserveinst)
+            throws TaskException, CableException {
         Task[] taskarray = new Task[tools.length];
         Hashtable idmap = new Hashtable();
 
@@ -386,9 +401,11 @@ public class TaskGraphUtils {
         }
 
         ArrayList tasklist = new ArrayList();
-        for (int count = 0; count < tools.length; count++)
-            if (tools[count] instanceof Task)
+        for (int count = 0; count < tools.length; count++) {
+            if (tools[count] instanceof Task) {
                 tasklist.add(tools[count]);
+            }
+        }
 
         Task[] tasks = (Task[]) tasklist.toArray(new Task[tasklist.size()]);
 
@@ -402,15 +419,17 @@ public class TaskGraphUtils {
             sendtask = (Task) idmap.get(cables[count].getSendingTask());
             rectask = (Task) idmap.get(cables[count].getReceivingTask());
 
-            if (cables[count].getSendingNode().isDataNode())
+            if (cables[count].getSendingNode().isDataNode()) {
                 sendnode = sendtask.getDataOutputNode(cables[count].getSendingNode().getNodeIndex());
-            else
+            } else {
                 sendnode = sendtask.getParameterOutputNode(cables[count].getSendingNode().getNodeIndex());
+            }
 
-            if (cables[count].getReceivingNode().isDataNode())
+            if (cables[count].getReceivingNode().isDataNode()) {
                 recnode = rectask.getDataInputNode(cables[count].getReceivingNode().getNodeIndex());
-            else
+            } else {
                 recnode = rectask.getParameterInputNode(cables[count].getReceivingNode().getNodeIndex());
+            }
 
             taskgraph.connect(sendnode, recnode);
         }
@@ -429,17 +448,19 @@ public class TaskGraphUtils {
     /**
      * Replaces a current task with a new tool.
      * <p/>
-     * Note that newtool is a task with no parent it is automatically disposed
-     * after the replacement task has been created.
+     * Note that newtool is a task with no parent it is automatically disposed after the replacement task has been
+     * created.
      *
      * @param curtask      the task being replaced
      * @param newtool      the tool used to replace the existing task
      * @param rename       true if the new task should take the same name as the existing task
      * @param preserveinst true if the new task should preseve the instance id of newtool
      */
-    public static Task replaceTask(Task curtask, Tool newtool, boolean rename, boolean preserveinst) throws TaskGraphException {
-        if (curtask.getParent() == null)
+    public static Task replaceTask(Task curtask, Tool newtool, boolean rename, boolean preserveinst)
+            throws TaskGraphException {
+        if (curtask.getParent() == null) {
             throw (new RuntimeException("Error replacing task: Task being replaced does not have a parent taskgraph"));
+        }
 
         TaskGraph parent = curtask.getParent();
         boolean reconnectcontrol = false;
@@ -462,10 +483,11 @@ public class TaskGraphUtils {
                     ((Node) sendnodes[count]).setChildNode(null);
                 }
 
-                if (sendnodes[count].isConnected())
+                if (sendnodes[count].isConnected()) {
                     sendnodes[count] = sendnodes[count].getCable().getSendingNode();
-                else
+                } else {
                     sendnodes[count] = null;
+                }
             }
 
             Node[] recnodes = curtask.getOutputNodes();
@@ -477,84 +499,105 @@ public class TaskGraphUtils {
                     ((Node) recnodes[count]).setChildNode(null);
                 }
 
-                if (recnodes[count].isConnected())
+                if (recnodes[count].isConnected()) {
                     recnodes[count] = recnodes[count].getCable().getReceivingNode();
-                else
+                } else {
                     recnodes[count] = null;
+                }
             }
 
             Task newtask = parent.createTask(newtool, preserveinst);
 
             if (!(newtask instanceof TaskGraph)) {
-                while (newtask.getDataInputNodeCount() < curtask.getDataInputNodeCount())
+                while (newtask.getDataInputNodeCount() < curtask.getDataInputNodeCount()) {
                     newtask.addDataInputNode();
+                }
 
-                while (newtask.getDataInputNodeCount() > curtask.getDataInputNodeCount())
+                while (newtask.getDataInputNodeCount() > curtask.getDataInputNodeCount()) {
                     newtask.removeDataInputNode(newtask.getDataInputNode(newtask.getDataInputNodeCount() - 1));
+                }
 
-                while (newtask.getDataOutputNodeCount() < curtask.getDataOutputNodeCount())
+                while (newtask.getDataOutputNodeCount() < curtask.getDataOutputNodeCount()) {
                     newtask.addDataOutputNode();
+                }
 
-                while (newtask.getDataOutputNodeCount() > curtask.getDataOutputNodeCount())
+                while (newtask.getDataOutputNodeCount() > curtask.getDataOutputNodeCount()) {
                     newtask.removeDataOutputNode(newtask.getDataOutputNode(newtask.getDataOutputNodeCount() - 1));
+                }
 
-                while (newtask.getParameterInputNodeCount() > 0)
+                while (newtask.getParameterInputNodeCount() > 0) {
                     newtask.removeParameterInputNode(newtask.getParameterInputNode(0));
+                }
 
-                for (int count = 0; count < curtask.getParameterInputNodeCount(); count++)
+                for (int count = 0; count < curtask.getParameterInputNodeCount(); count++) {
                     newtask.addParameterInputNode(curtask.getParameterInputName(count));
+                }
 
-                while (newtask.getParameterOutputNodeCount() > 0)
+                while (newtask.getParameterOutputNodeCount() > 0) {
                     newtask.removeParameterOutputNode(newtask.getParameterOutputNode(0));
+                }
 
-                for (int count = 0; count < curtask.getParameterOutputNodeCount(); count++)
+                for (int count = 0; count < curtask.getParameterOutputNodeCount(); count++) {
                     newtask.addParameterOutputNode(curtask.getParameterOutputName(count));
+                }
             }
 
             Node[] innodes = newtask.getInputNodes();
 
-            for (int count = 0; (count < childinnodes.length); count++)
+            for (int count = 0; (count < childinnodes.length); count++) {
                 if (childinnodes[count] != null) {
                     if (count < innodes.length) {
                         childinnodes[count].setParentNode((Node) innodes[count]);
                         ((Node) innodes[count]).setChildNode(childinnodes[count]);
-                    } else
+                    } else {
                         childinnodes[count].setParentNode(null);
+                    }
                 }
+            }
 
             Node[] outnodes = newtask.getOutputNodes();
 
-            for (int count = 0; (count < childoutnodes.length); count++)
+            for (int count = 0; (count < childoutnodes.length); count++) {
                 if (childoutnodes[count] != null) {
                     if (count < outnodes.length) {
                         childoutnodes[count].setParentNode((Node) outnodes[count]);
                         ((Node) outnodes[count]).setChildNode(childoutnodes[count]);
-                    } else
+                    } else {
                         childoutnodes[count].setParentNode(null);
+                    }
                 }
+            }
 
-            for (int count = 0; (count < innodes.length) && (count < sendnodes.length); count++)
-                if (sendnodes[count] != null)
+            for (int count = 0; (count < innodes.length) && (count < sendnodes.length); count++) {
+                if (sendnodes[count] != null) {
                     parent.connect(sendnodes[count], innodes[count].getBottomLevelNode());
+                }
+            }
 
-            for (int count = 0; (count < outnodes.length) && (count < recnodes.length); count++)
-                if (recnodes[count] != null)
+            for (int count = 0; (count < outnodes.length) && (count < recnodes.length); count++) {
+                if (recnodes[count] != null) {
                     parent.connect(outnodes[count].getBottomLevelNode(), recnodes[count]);
+                }
+            }
 
-            if (reconnectcontrol)
+            if (reconnectcontrol) {
                 TaskGraphUtils.connectControlTask(parent);
+            }
 
             parent.removeTask(curtask);
 
-            if (rename)
+            if (rename) {
                 newtask.setToolName(taskname);
+            }
 
-            if ((newtool != curtask) && (newtool instanceof Task) && (((Task) newtool).getParent() == null))
+            if ((newtool != curtask) && (newtool instanceof Task) && (((Task) newtool).getParent() == null)) {
                 TaskGraphUtils.disposeTool(newtool);
+            }
 
             return newtask;
-        } else
+        } else {
             throw (new RuntimeException("Cannot recreate top-level parent taskgraph"));
+        }
     }
 
     /**
@@ -564,10 +607,11 @@ public class TaskGraphUtils {
         if (tool instanceof Task) {
             Task disposetask = (Task) tool;
 
-            if (disposetask.getParent() != null)
+            if (disposetask.getParent() != null) {
                 disposetask.getParent().removeTask(disposetask);
-            else
+            } else {
                 disposetask.dispose();
+            }
         }
     }
 
@@ -580,34 +624,41 @@ public class TaskGraphUtils {
 
         nodes = task.getDataInputNodes();
 
-        for (int count = 0; count < nodes.length; count++)
-            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable())))
+        for (int count = 0; count < nodes.length; count++) {
+            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable()))) {
                 list.add(nodes[count].getCable());
+            }
+        }
 
         nodes = task.getDataOutputNodes();
 
-        for (int count = 0; count < nodes.length; count++)
-            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable())))
+        for (int count = 0; count < nodes.length; count++) {
+            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable()))) {
                 list.add(nodes[count].getCable());
+            }
+        }
 
         nodes = task.getParameterInputNodes();
 
-        for (int count = 0; count < nodes.length; count++)
-            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable())))
+        for (int count = 0; count < nodes.length; count++) {
+            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable()))) {
                 list.add(nodes[count].getCable());
+            }
+        }
 
         nodes = task.getParameterOutputNodes();
 
-        for (int count = 0; count < nodes.length; count++)
-            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable())))
+        for (int count = 0; count < nodes.length; count++) {
+            if ((nodes[count].isConnected()) && (!list.contains(nodes[count].getCable()))) {
                 list.add(nodes[count].getCable());
+            }
+        }
 
         return getCableArray(list.toArray());
     }
 
     /**
-     * @return an array of the cables connected to the specified tasks (internal
-     *         and external)
+     * @return an array of the cables connected to the specified tasks (internal and external)
      */
     public static Cable[] getConnectedCables(Task[] tasklist) {
         ArrayList list = new ArrayList(100);
@@ -616,9 +667,11 @@ public class TaskGraphUtils {
         for (int count1 = 0; count1 < tasklist.length; count1++) {
             cables = getConnectedCables(tasklist[count1]);
 
-            for (int count2 = 0; count2 < cables.length; count2++)
-                if (!list.contains(cables[count2]))
+            for (int count2 = 0; count2 < cables.length; count2++) {
+                if (!list.contains(cables[count2])) {
                     list.add(cables[count2]);
+                }
+            }
         }
 
         return getCableArray(list.toArray());
@@ -631,8 +684,9 @@ public class TaskGraphUtils {
         Cable[] cables = getConnectedCables(task);
         boolean flag = false;
 
-        for (int count = 0; (count < cables.length) && (!flag); count++)
+        for (int count = 0; (count < cables.length) && (!flag); count++) {
             flag = (cables[count] == cable);
+        }
 
         return true;
     }
@@ -644,16 +698,17 @@ public class TaskGraphUtils {
         Cable[] cables = getConnectedCables(tasklist);
         boolean flag = false;
 
-        for (int count = 0; (count < cables.length) && (!flag); count++)
+        for (int count = 0; (count < cables.length) && (!flag); count++) {
             flag = (cables[count] == cable);
+        }
 
         return true;
     }
 
 
     /**
-     * @return the set of cables that are internal to a given set of tasks, i.e.
-     *         only cables that connect two tasks in the input set.
+     * @return the set of cables that are internal to a given set of tasks, i.e. only cables that connect two tasks in
+     *         the input set.
      */
     public static Cable[] getInternalCables(Task[] tasklist) {
         ArrayList list = new ArrayList(10);
@@ -662,34 +717,37 @@ public class TaskGraphUtils {
         for (int count1 = 0; count1 < tasklist.length; count1++) {
             cables = getConnectedCables(tasklist[count1]);
 
-            for (int count2 = 0; count2 < cables.length; count2++)
-                for (int count3 = 0; count3 < tasklist.length; count3++)
+            for (int count2 = 0; count2 < cables.length; count2++) {
+                for (int count3 = 0; count3 < tasklist.length; count3++) {
                     if ((cables[count2].connects(tasklist[count3])) &&
                             (tasklist[count3] != tasklist[count1]) &&
-                            (!list.contains(cables[count2])))
+                            (!list.contains(cables[count2]))) {
                         list.add(cables[count2]);
+                    }
+                }
+            }
         }
 
         return getCableArray(list.toArray());
     }
 
     /**
-     * Checks to see if a given cable is internal to a set of tasks, i.e. it
-     * connects two of the given tasks.
+     * Checks to see if a given cable is internal to a set of tasks, i.e. it connects two of the given tasks.
      */
     public static boolean isInternalCable(Cable cable, Task[] tasklist) {
         Cable[] cables = getInternalCables(tasklist);
         boolean flag = false;
 
-        for (int count = 0; (count < cables.length) && (!flag); count++)
+        for (int count = 0; (count < cables.length) && (!flag); count++) {
             flag = (cables[count] == cable);
+        }
 
         return true;
     }
 
     /**
-     * @return the set of cables that are external to a given set of tasks, i.e.
-     *         only cables that connect a task in the input set with one outside.
+     * @return the set of cables that are external to a given set of tasks, i.e. only cables that connect a task in the
+     *         input set with one outside.
      */
     public static Cable[] getExternalCables(Task[] tasklist) {
         ArrayList list = new ArrayList(10);
@@ -702,12 +760,15 @@ public class TaskGraphUtils {
             for (int count2 = 0; count2 < cables.length; count2++) {
                 flag = true;
 
-                for (int count3 = 0; count3 < tasklist.length; count3++)
-                    if (cables[count2].connects(tasklist[count3]) && (tasklist[count3] != tasklist[count1]))
+                for (int count3 = 0; count3 < tasklist.length; count3++) {
+                    if (cables[count2].connects(tasklist[count3]) && (tasklist[count3] != tasklist[count1])) {
                         flag = false;
+                    }
+                }
 
-                if ((flag) && (!list.contains(cables[count2])))
+                if ((flag) && (!list.contains(cables[count2]))) {
                     list.add(cables[count2]);
+                }
             }
         }
 
@@ -715,15 +776,16 @@ public class TaskGraphUtils {
     }
 
     /**
-     * Checks to see if a given cable is external to a set of tasks, i.e. it
-     * connects a task in the input set with one outside.
+     * Checks to see if a given cable is external to a set of tasks, i.e. it connects a task in the input set with one
+     * outside.
      */
     public static boolean isExternalCable(Cable cable, Task[] tasklist) {
         Cable[] cables = getExternalCables(tasklist);
         boolean flag = false;
 
-        for (int count = 0; (count < cables.length) && (!flag); count++)
+        for (int count = 0; (count < cables.length) && (!flag); count++) {
             flag = (cables[count] == cable);
+        }
 
         return true;
     }
@@ -732,8 +794,9 @@ public class TaskGraphUtils {
     private static Cable[] getCableArray(Object[] master) {
         Cable[] copy = new Cable[master.length];
 
-        for (int count = 0; count < master.length; count++)
+        for (int count = 0; count < master.length; count++) {
             copy[count] = (Cable) master[count];
+        }
 
         return copy;
     }
@@ -747,8 +810,9 @@ public class TaskGraphUtils {
         ArrayList tasks = new ArrayList();
 
         for (int count = 0; count < nodes.length; count++) {
-            if (nodes[count].getCable() != null)
+            if (nodes[count].getCable() != null) {
                 tasks.add(nodes[count].getCable().getSendingTask());
+            }
         }
 
         return (Task[]) tasks.toArray(new Task[tasks.size()]);
@@ -762,8 +826,9 @@ public class TaskGraphUtils {
         ArrayList tasks = new ArrayList();
 
         for (int count = 0; count < nodes.length; count++) {
-            if (nodes[count].getCable() != null)
+            if (nodes[count].getCable() != null) {
                 tasks.add(nodes[count].getCable().getReceivingTask());
+            }
         }
 
         return (Task[]) tasks.toArray(new Task[tasks.size()]);
@@ -777,24 +842,26 @@ public class TaskGraphUtils {
         ArrayList tasks = new ArrayList();
 
         for (int count = 0; count < nodes.length; count++) {
-            if (nodes[count].getCable() != null)
+            if (nodes[count].getCable() != null) {
                 tasks.add(nodes[count].getCable().getSendingTask());
+            }
         }
 
 
         nodes = task.getOutputNodes();
 
         for (int count = 0; count < nodes.length; count++) {
-            if (nodes[count].getCable() != null)
+            if (nodes[count].getCable() != null) {
                 tasks.add(nodes[count].getCable().getReceivingTask());
+            }
         }
 
         return (Task[]) tasks.toArray(new Task[tasks.size()]);
     }
 
     /**
-     * @return the remaining workflow that follows the specified task, optionally including
-     *         the original task at index 0.
+     * @return the remaining workflow that follows the specified task, optionally including the original task at index
+     *         0.
      */
     public static Task[] getRemainingWorkflow(Task task, boolean include) {
         ArrayList tasks = new ArrayList();
@@ -810,17 +877,20 @@ public class TaskGraphUtils {
 
         conntasks = getOutputTasks(task);
 
-        for (int count = 0; count < conntasks.length; count++)
+        for (int count = 0; count < conntasks.length; count++) {
             tasks.add(conntasks[count]);
+        }
 
         while (ptr < tasks.size()) {
             temptask = (Task) tasks.get(ptr++);
 
             conntasks = getConnectedTasks(temptask);
 
-            for (int count = 0; count < conntasks.length; count++)
-                if (!tasks.contains(conntasks[count]))
+            for (int count = 0; count < conntasks.length; count++) {
+                if (!tasks.contains(conntasks[count])) {
                     tasks.add(conntasks[count]);
+                }
+            }
         }
 
         return (Task[]) tasks.toArray(new Task[tasks.size()]);
@@ -831,18 +901,21 @@ public class TaskGraphUtils {
      * Sets up the connections for the loop task. Input/output from the group now goes via the loop task.
      */
     public static void connectControlTask(TaskGraph taskgraph) throws TaskGraphException {
-        if (taskgraph.getControlTask() == null)
+        if (taskgraph.getControlTask() == null) {
             return;
+        }
 
         taskgraph.setControlTaskState(TaskGraph.CONTROL_TASK_UNSTABLE);
 
         Task contask = taskgraph.getControlTask();
 
-        while (contask.getDataInputNodeCount() > 0)
+        while (contask.getDataInputNodeCount() > 0) {
             contask.removeDataInputNode(contask.getDataInputNode(0));
+        }
 
-        while (contask.getDataOutputNodeCount() > 0)
+        while (contask.getDataOutputNodeCount() > 0) {
             contask.removeDataOutputNode(contask.getDataOutputNode(0));
+        }
 
         TaskGraph grouptask = taskgraph;
         Node loopnode;
@@ -869,11 +942,13 @@ public class TaskGraphUtils {
             grouptask.setGroupNodeParent(groupnode, loopnode);
         }
 
-        for (int nodecount = 0; nodecount < innodes.length; nodecount++)
+        for (int nodecount = 0; nodecount < innodes.length; nodecount++) {
             taskgraph.connect(contask.addDataOutputNode(), inconnodes[nodecount]);
+        }
 
-        for (int nodecount = 0; nodecount < outnodes.length; nodecount++)
+        for (int nodecount = 0; nodecount < outnodes.length; nodecount++) {
             taskgraph.connect(outconnodes[nodecount], contask.addDataInputNode());
+        }
 
         taskgraph.setControlTaskState(TaskGraph.CONTROL_TASK_CONNECTED);
     }
@@ -882,8 +957,9 @@ public class TaskGraphUtils {
      * Removes the connections for the loop task.
      */
     public static void disconnectControlTask(TaskGraph taskgraph) throws TaskGraphException {
-        if (!taskgraph.isControlTaskConnected())
+        if (!taskgraph.isControlTaskConnected()) {
             return;
+        }
 
         taskgraph.setControlTaskState(TaskGraph.CONTROL_TASK_UNSTABLE);
 
@@ -930,11 +1006,13 @@ public class TaskGraphUtils {
             ((Node) contask.getDataOutputNode(count)).setChildNode(null);
         }
 
-        while (contask.getDataInputNodeCount() > 0)
+        while (contask.getDataInputNodeCount() > 0) {
             contask.removeDataInputNode(contask.getDataInputNode(0));
+        }
 
-        while (contask.getDataOutputNodeCount() > 0)
+        while (contask.getDataOutputNodeCount() > 0) {
             contask.removeDataOutputNode(contask.getDataOutputNode(0));
+        }
 
         taskgraph.setControlTaskState(TaskGraph.CONTROL_TASK_DISCONNECTED);
     }
@@ -946,15 +1024,17 @@ public class TaskGraphUtils {
     private static Node getControlNode(Node groupnode) {
         Task controltask = groupnode.getTopLevelTask();
 
-        if (groupnode.isInputNode())
-            return controltask.getDataOutputNode(groupnode.getNodeIndex() + groupnode.getTask().getDataOutputNodeCount());
-        else
+        if (groupnode.isInputNode()) {
+            return controltask
+                    .getDataOutputNode(groupnode.getNodeIndex() + groupnode.getTask().getDataOutputNodeCount());
+        } else {
             return controltask.getDataInputNode(groupnode.getNodeIndex() + groupnode.getTask().getDataInputNodeCount());
+        }
     }
 
     /**
-     * @return the ultimate source node that sends data to/receives data from
-     *         the given node (ignoring control tasks). Null if not connected.
+     * @return the ultimate source node that sends data to/receives data from the given node (ignoring control tasks).
+     *         Null if not connected.
      */
     public static Node getSourceNode(Node node) {
         Task task;
@@ -964,22 +1044,26 @@ public class TaskGraphUtils {
             node = node.getBottomLevelNode();
 
             if (node.isConnected()) {
-                if (node.isInputNode())
+                if (node.isInputNode()) {
                     node = node.getCable().getSendingNode();
-                else
+                } else {
                     node = node.getCable().getReceivingNode();
+                }
 
                 task = node.getTask();
 
                 if ((task.getParent() != null) && (task.getParent().getControlTask() == task)) {
-                    if (node.isInputNode())
+                    if (node.isInputNode()) {
                         node = task.getDataOutputNode(node.getNodeIndex() - task.getParent().getDataInputNodeCount());
-                    else
+                    } else {
                         node = task.getDataInputNode(node.getNodeIndex() - task.getParent().getDataOutputNodeCount());
-                } else
+                    }
+                } else {
                     bottom = true;
-            } else
+                }
+            } else {
                 return null;
+            }
         }
 
         return NodeUtils.getTopLevelNode(node);
@@ -987,26 +1071,25 @@ public class TaskGraphUtils {
 
 
     /**
-     * @return a count of all the tasks within a taskgraph and its sub taskgraphs
-     *         (optionally including control tasks)
+     * @return a count of all the tasks within a taskgraph and its sub taskgraphs (optionally including control tasks)
      */
     public static int getAllTasksCount(TaskGraph taskGraph, boolean includecontrol) {
         Task[] tasks = taskGraph.getTasks(includecontrol);
         int taskcount = 0;
 
         for (int count = 0; count < tasks.length; count++) {
-            if (tasks[count] instanceof TaskGraph)
+            if (tasks[count] instanceof TaskGraph) {
                 taskcount += getAllTasksCount((TaskGraph) tasks[count], includecontrol) + 1;
-            else
+            } else {
                 taskcount++;
+            }
         }
 
         return taskcount;
     }
 
     /**
-     * @return an array of all tasks within a taskgraph and its sub taskgraphs,
-     *         optionally including control tasks
+     * @return an array of all tasks within a taskgraph and its sub taskgraphs, optionally including control tasks
      */
     public static Task[] getAllTasksRecursive(TaskGraph taskGraph, boolean includecontrol) {
         Vector copy = new Vector();
@@ -1022,11 +1105,13 @@ public class TaskGraphUtils {
     public static void getAllTasksRecursive(TaskGraph taskGraph, Vector copy, boolean includecontrol) {
         Task[] tasks = taskGraph.getTasks(includecontrol);
 
-        for (int i = 0; i < tasks.length; i++)
-            if (tasks[i] instanceof TaskGraph)
+        for (int i = 0; i < tasks.length; i++) {
+            if (tasks[i] instanceof TaskGraph) {
                 getAllTasksRecursive((TaskGraph) tasks[i], copy, includecontrol);
-            else
+            } else {
                 copy.add(tasks[i]);
+            }
+        }
     }
 
 
@@ -1039,9 +1124,11 @@ public class TaskGraphUtils {
         int count = 0;
 
         while (types != null) {
-            for (int tcount = 0; tcount < types.length; tcount++)
-                if (!typelist.contains(types[tcount]))
+            for (int tcount = 0; tcount < types.length; tcount++) {
+                if (!typelist.contains(types[tcount])) {
                     typelist.add(types[tcount]);
+                }
+            }
 
             types = tool.getDataInputTypes(++count);
         }
@@ -1058,9 +1145,11 @@ public class TaskGraphUtils {
         int count = 0;
 
         while (types != null) {
-            for (int tcount = 0; tcount < types.length; tcount++)
-                if (!typelist.contains(types[tcount]))
+            for (int tcount = 0; tcount < types.length; tcount++) {
+                if (!typelist.contains(types[tcount])) {
                     typelist.add(types[tcount]);
+                }
+            }
 
             types = tool.getDataOutputTypes(++count);
         }

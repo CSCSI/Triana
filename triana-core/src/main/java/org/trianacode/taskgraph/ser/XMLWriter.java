@@ -241,12 +241,16 @@ public class XMLWriter implements XMLConstants {
 
     private void addParams(Tool tool, Element parent, boolean preserveinst) {
         String[] paramNames = tool.getParameterNames();
+        System.out.println("XMLWriter.addParams preserve Inst is " + preserveinst);
         if (paramNames.length > 0) {
             Element param = handler.element(PARAM_LIST_TAG);
             handler.add(param, parent);
 
             for (int i = 0; i < paramNames.length; i++) {
+                System.out.println("XMLWriter.addParams is transient " + tool.getParameterType(paramNames[i])
+                        .startsWith(Tool.TRANSIENT));
                 if (preserveinst || (!tool.getParameterType(paramNames[i]).startsWith(Tool.TRANSIENT))) {
+                    System.out.println("XMLWriter.addParams WRITING ATTRIBUTE " + paramNames[i]);
                     Element current = handler.element(PARAM_TAG);
                     current.setAttribute(NAME_TAG, paramNames[i]);
 

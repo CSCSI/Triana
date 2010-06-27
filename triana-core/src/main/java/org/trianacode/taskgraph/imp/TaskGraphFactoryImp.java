@@ -59,22 +59,30 @@
 
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.IncompatibleTypeException;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphFactory;
+import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.tool.Tool;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
 
 /**
  * An implementation of MultiTaskGraphFactory
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 14th December 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 
@@ -102,8 +110,9 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
      * Registers a taskgraph factory for the specified proxy type.
      */
     public void registerTaskGraphFactory(String proxytype, TaskFactory factory) {
-        if (!factorytable.containsKey(proxytype))
+        if (!factorytable.containsKey(proxytype)) {
             factorytable.put(proxytype, new ArrayList());
+        }
 
         ArrayList list = (ArrayList) factorytable.get(proxytype);
         list.add(factory);
@@ -117,34 +126,33 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
             ArrayList list = (ArrayList) factorytable.get(proxytype);
             list.remove(factory);
 
-            if (list.isEmpty())
+            if (list.isEmpty()) {
                 factorytable.remove(proxytype);
+            }
         }
     }
 
     /**
-     * @return an array of the proxy types that have taskgraph factorys
-     *         registered
+     * @return an array of the proxy types that have taskgraph factorys registered
      */
     public String[] getRegisteredProxyTypes() {
         return (String[]) factorytable.keySet().toArray(new String[factorytable.keySet().size()]);
     }
 
     /**
-     * @return the registered taskgraph factory for the specified proxy
-     *         (null if none registered)
+     * @return the registered taskgraph factory for the specified proxy (null if none registered)
      */
     public TaskFactory[] getRegisteredTaskGraphFactories(String proxytype) {
         if (factorytable.containsKey(proxytype)) {
             ArrayList list = (ArrayList) factorytable.get(proxytype);
             return (TaskFactory[]) list.toArray(new TaskFactory[list.size()]);
-        } else
+        } else {
             return new TaskFactory[0];
+        }
     }
 
     /**
-     * @return true if there is a registered taskgraph factory for the specified
-     *         tool class
+     * @return true if there is a registered taskgraph factory for the specified tool class
      */
     public boolean isRegisteredTaskGraphFactory(String proxytype) {
         return (factorytable.containsKey(proxytype));
@@ -162,27 +170,34 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
             factories = getRegisteredTaskGraphFactories(proxy.getType());
 
             // Use only factory/factory specified in rendering hint
-            if ((factories.length == 1) && (!tool.isRenderingHint(TASKGRAPH_FACTORY_RENDENRING_HINT)))
+            if ((factories.length == 1) && (!tool.isRenderingHint(TASKGRAPH_FACTORY_RENDENRING_HINT))) {
                 factory = factories[0];
-            else if (tool.isRenderingHint(TASKGRAPH_FACTORY_RENDENRING_HINT)) {
+            } else if (tool.isRenderingHint(TASKGRAPH_FACTORY_RENDENRING_HINT)) {
                 RenderingHint hint = tool.getRenderingHint(TASKGRAPH_FACTORY_RENDENRING_HINT);
                 String factoryname = (String) hint.getRenderingDetail(FACTORY_NAME);
 
-                for (int count = 0; (count < factories.length) && (factory == null); count++)
-                    if (factories[count].getFactoryName().equals(factoryname))
+                for (int count = 0; (count < factories.length) && (factory == null); count++) {
+                    if (factories[count].getFactoryName().equals(factoryname)) {
                         factory = factories[count];
+                    }
+                }
 
-                if (factory == null)
+                if (factory == null) {
                     throw (new TaskException("Unknown TaskGraphFactory: " + factoryname));
-            } else
-                throw (new TaskException("Multiple TaskGraphFactory instances defined for Proxy type " + proxy.getType() + ": TaskGraphFactory Rendering Hint requried"));
+                }
+            } else {
+                throw (new TaskException("Multiple TaskGraphFactory instances defined for Proxy type " + proxy.getType()
+                        + ": TaskGraphFactory Rendering Hint requried"));
+            }
         }
 
         if (factory == null) {
-            if (tool.getProxy() == null)
+            if (tool.getProxy() == null) {
                 throw (new TaskException("No proxy set in " + tool.getToolName()));
-            else
-                throw (new TaskException("No TaskgraphFactory instance specified for Proxy type " + tool.getProxy().getType()));
+            } else {
+                throw (new TaskException(
+                        "No TaskgraphFactory instance specified for Proxy type " + tool.getProxy().getType()));
+            }
         }
 
         return factory;
@@ -211,13 +226,12 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
     }
 
     /**
-     * @return a new task of type tool, optionally preserving the original
-     *         instance id in the new task.
+     * @return a new task of type tool, optionally preserving the original instance id in the new task.
      */
     public Task createTask(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskException {
         try {
             if ((tool.getProxy() == null) && (tool instanceof TaskGraph)) {
-                return (Task) TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, parent, preserveinst);
+                return TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, parent, preserveinst);
             } else {
                 TaskFactory factory = getRegisteredTaskGraphFactory(tool);
                 return factory.createTask(tool, parent, preserveinst);
@@ -237,9 +251,9 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
             TaskFactory sendfactory = getRegisteredTaskGraphFactory(sendnode.getTopLevelTask());
             TaskFactory recfactory = getRegisteredTaskGraphFactory(recnode.getTopLevelTask());
 
-            if (sendfactory == recfactory)
+            if (sendfactory == recfactory) {
                 return recfactory.createCable(sendnode, recnode);
-            else {
+            } else {
                 IncompatibleTypeException incompatexcept = null;
 
                 try {
@@ -259,10 +273,13 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
                 Tool sendtool = sendnode.getTopLevelTask();
                 Tool rectool = recnode.getTopLevelTask();
 
-                if (incompatexcept != null)
+                if (incompatexcept != null) {
                     throw (incompatexcept);
-                else
-                    throw (new IncompatibleProxyException("Cannot connect " + sendtool.getToolName() + " to " + rectool.getToolName() + ": Incompatible proxy types"));
+                } else {
+                    throw (new IncompatibleProxyException(
+                            "Cannot connect " + sendtool.getToolName() + " to " + rectool.getToolName()
+                                    + ": Incompatible proxy types"));
+                }
             }
         } catch (TaskException except) {
             throw (new CableException(except.getMessage()));

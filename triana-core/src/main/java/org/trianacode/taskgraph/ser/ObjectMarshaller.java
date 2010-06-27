@@ -17,23 +17,21 @@
 package org.trianacode.taskgraph.ser;
 
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.trianacode.taskgraph.util.FileUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.logging.Logger;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.trianacode.taskgraph.util.FileUtils;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 7, 2009: 4:09:05 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ObjectMarshaller implements XMLConstants {
@@ -47,9 +45,9 @@ public class ObjectMarshaller implements XMLConstants {
     public static Element marshallJavaToElement(Element result, Object javaObject) {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         String res = serSimple(javaObject);
-        if (res != null)
+        if (res != null) {
             result.setTextContent(res);
-        else {
+        } else {
             result.setAttribute(BASE64_ENCODED, "true");
             try {
                 ObjectOutputStream marshall = new ObjectOutputStream(bout);
@@ -89,8 +87,9 @@ public class ObjectMarshaller implements XMLConstants {
 
 
     public static String marshallJavaToString(Object javaObject) throws IOException {
-        if ((javaObject instanceof String))
+        if ((javaObject instanceof String)) {
             return (String) javaObject;
+        }
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         ObjectOutputStream marshall = new ObjectOutputStream(bout);
@@ -100,16 +99,18 @@ public class ObjectMarshaller implements XMLConstants {
 
     public static Object marshallStringToJava(String str) {
         try {
-            return deser.deserializeObject(str);
+            Object ret = deser.deserializeObject(str);
+            return ret;
         } catch (IOException e) {
             return str;
         }
     }
 
     private static String serSimple(Object o) {
-        if(o instanceof String) {
-            return (String)o;
-        } else if (o instanceof Boolean ||
+        if (o instanceof String) {
+            return (String) o;
+        } else if (o instanceof CharSequence ||
+                o instanceof Boolean ||
                 o instanceof Short ||
                 o instanceof Long ||
                 o instanceof Double ||

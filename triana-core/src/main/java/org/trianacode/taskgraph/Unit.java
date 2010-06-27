@@ -316,9 +316,9 @@ public abstract class Unit {
         if (type.equals(INTERNAL)) {
             reset = TRANSIENT;
         }
-        if (type.equals(USER_ACCESSIBLE)) {
+        /*if (type.equals(USER_ACCESSIBLE)) {
             reset = TRANSIENT_ACCESSIBLE;
-        }
+        }*/
         definedParams.put(name, new Object[]{value, type});
         return reset;
     }

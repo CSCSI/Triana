@@ -37,7 +37,6 @@ import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
-import org.trianacode.taskgraph.imp.SerializedObject;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
@@ -356,7 +355,7 @@ public class XMLReader implements XMLConstants {
                         else
                             paramvalue = new SerializedObject((String) paramvalue, deserializer);
                     }*/
-                    ObjectDeserializer deserializer = ObjectDeserializationManager.getObjectDeserializer(serializer);
+                    /*ObjectDeserializer deserializer = ObjectDeserializationManager.getObjectDeserializer(serializer);
                     if (serializer != null) {
                         if (deserializer == null) {
                             log.warning("Invalid Object Deserializer in " + tool.getQualifiedToolName() + ": "
@@ -364,7 +363,8 @@ public class XMLReader implements XMLConstants {
                         } else {
                             paramvalue = new SerializedObject((String) paramvalue, deserializer);
                         }
-                    }
+                    }*/
+                    paramvalue = ObjectMarshaller.marshallElementToJava(childelem);
                 }
 
                 if (preserveinst || (paramtype == null) || (!paramtype.startsWith(Tool.TRANSIENT))) {

@@ -26,8 +26,6 @@ import java.io.ObjectInputStream;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 5:44:28 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class Base64ObjectDeserializer implements ObjectDeserializer {
@@ -38,7 +36,7 @@ public class Base64ObjectDeserializer implements ObjectDeserializer {
     public Object deserializeObject(String serialized) throws IOException {
         try {
             byte[] bytes = Base64.decode(serialized);
-            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes));
+            ObjectInputStream in = new TrianaObjectInputStream(new ByteArrayInputStream(bytes));
             return in.readObject();
         }
         catch (Exception e) {
