@@ -59,6 +59,17 @@
 
 package org.trianacode.gui.hci.tools;
 
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import org.trianacode.gui.components.triana.OpenGroupComponentModel;
 import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.gui.main.TaskComponent;
@@ -69,30 +80,9 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-
 /**
- * A ToolComponentModel maintains a list to ToolComponentModels, each of which
- * controls how a particular tool appears in the tool tree/workspace.
- *
- * @author Ian Wang
-<<<<<<< TaskGraphView.java
- * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.5.2.1
- * @created 6th May 2003
-<<<<<<< TaskGraphView.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.5.2.1
-
+ * A ToolComponentModel maintains a list to ToolComponentModels, each of which controls how a particular tool appears in
+ * the tool tree/workspace.
  */
 
 public class TaskGraphView {
@@ -213,9 +203,8 @@ public class TaskGraphView {
 
 
     /**
-     * Registers a ToolComponentModel for a particular tool class. Note that
-     * if a tool has two component models then the later registered takes
-     * precedence.
+     * Registers a ToolComponentModel for a particular tool class. Note that if a tool has two component models then the
+     * later registered takes precedence.
      */
     public void registerToolModel(String toolclass, ToolComponentModel model) {
         toolmodels.put(toolclass, model);
@@ -255,25 +244,27 @@ public class TaskGraphView {
 
 
     /**
-     * @return the tree icon for the specified tool (if null is returned then the
-     *         default leaf icon is used)
+     * @return the tree icon for the specified tool (if null is returned then the default leaf icon is used)
      */
     public Icon getTreeIcon(Tool tool) {
         ToolComponentModel model = getToolComponentModel(tool);
         Icon icon = null;
 
-        if (model != null)
+        if (model != null) {
             icon = model.getTreeIcon(tool);
+        }
 
-        if ((icon == null) && (getDefaultToolModel() != null))
+        if ((icon == null) && (getDefaultToolModel() != null)) {
             icon = getDefaultToolModel().getTreeIcon(tool);
+        }
 
-        if (icon != null)
+        if (icon != null) {
             return icon;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getTreeIcon(tool);
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -284,18 +275,22 @@ public class TaskGraphView {
         ToolComponentModel model = getToolComponentModel(tool);
         String tip = null;
 
-        if (model != null)
+        if (model != null) {
             tip = model.getTreeToolTip(tool, extended);
+        }
 
-        if ((tip == null) && (getDefaultToolModel() != null))
+        if ((tip == null) && (getDefaultToolModel() != null)) {
             tip = getDefaultToolModel().getTreeToolTip(tool, extended);
+        }
 
-        if (tip != null)
+        if (tip != null) {
             return tip;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getTreeToolTip(tool, extended);
-        else
-            throw (new RuntimeException("Tool Component Model not set for " + tool.getToolName() + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Tool Component Model not set for " + tool.getToolName() + " in " + getViewName()));
+        }
     }
 
     /**
@@ -305,19 +300,23 @@ public class TaskGraphView {
         ToolComponentModel model = getToolComponentModel(tool);
         JPopupMenu menu = null;
 
-        if (model != null)
+        if (model != null) {
             menu = model.getTreePopup(tool);
+        }
 
-        if ((menu == null) && (getDefaultToolModel() != null))
+        if ((menu == null) && (getDefaultToolModel() != null)) {
             menu = getDefaultToolModel().getTreePopup(tool);
+        }
 
         if (menu != null) {
             addTreeExtensions(menu, tool);
             return menu;
-        } else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getTreePopup(tool);
-        else
-            throw (new RuntimeException("Tool Component Model not set for " + tool.getToolName() + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Tool Component Model not set for " + tool.getToolName() + " in " + getViewName()));
+        }
     }
 
     /**
@@ -329,8 +328,9 @@ public class TaskGraphView {
         if (actions.length > 0) {
             final JMenu extmenu = new JMenu("Extensions");
 
-            for (int count = 0; count < actions.length; count++)
+            for (int count = 0; count < actions.length; count++) {
                 extmenu.add(actions[count]);
+            }
 
             menu.addSeparator();
             menu.add(extmenu);
@@ -345,18 +345,22 @@ public class TaskGraphView {
         ToolComponentModel model = getToolComponentModel(task);
         String tip = null;
 
-        if (model != null)
+        if (model != null) {
             tip = model.getWorkspaceToolTip(task, extended);
+        }
 
-        if ((tip == null) && (getDefaultToolModel() != null))
+        if ((tip == null) && (getDefaultToolModel() != null)) {
             tip = getDefaultToolModel().getWorkspaceToolTip(task, extended);
+        }
 
-        if (tip != null)
+        if (tip != null) {
             return tip;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getWorkspaceToolTip(task, extended);
-        else
-            throw (new RuntimeException("Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        }
     }
 
     /**
@@ -366,19 +370,23 @@ public class TaskGraphView {
         ToolComponentModel model = getToolComponentModel(task);
         JPopupMenu menu = null;
 
-        if (model != null)
+        if (model != null) {
             menu = model.getWorkspacePopup(task);
+        }
 
-        if ((menu == null) && (getDefaultToolModel() != null))
+        if ((menu == null) && (getDefaultToolModel() != null)) {
             menu = getDefaultToolModel().getWorkspacePopup(task);
+        }
 
         if (menu != null) {
             addWorkspaceExtensions(menu, task);
             return menu;
-        } else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getWorkspacePopup(task);
-        else
-            throw (new RuntimeException("Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        }
     }
 
     /**
@@ -390,8 +398,9 @@ public class TaskGraphView {
         if (actions.length > 0) {
             JMenu extmenu = new JMenu("Extensions");
 
-            for (int count = 0; count < actions.length; count++)
+            for (int count = 0; count < actions.length; count++) {
                 extmenu.add(actions[count]);
+            }
 
             menu.addSeparator();
             menu.add(extmenu);
@@ -404,25 +413,28 @@ public class TaskGraphView {
 
 
     /**
-     * @return the right-click popup menu for an open group (right-click on
-     *         workspace background)
+     * @return the right-click popup menu for an open group (right-click on workspace background)
      */
     public JPopupMenu getOpenGroupPopup(TaskGraph taskgraph) {
         OpenGroupComponentModel model = getOpenGroupComponentModel(taskgraph);
         JPopupMenu menu = null;
 
-        if (model != null)
+        if (model != null) {
             menu = model.getOpenGroupPopup(taskgraph);
+        }
 
-        if ((menu == null) && (getDefaultOpenGroupModel() != null))
+        if ((menu == null) && (getDefaultOpenGroupModel() != null)) {
             menu = getDefaultOpenGroupModel().getOpenGroupPopup(taskgraph);
+        }
 
-        if (menu != null)
+        if (menu != null) {
             return menu;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getOpenGroupPopup(taskgraph);
-        else
-            throw (new RuntimeException("Open Group Component Model not set for " + taskgraph + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Open Group Component Model not set for " + taskgraph + " in " + getViewName()));
+        }
     }
 
     /**
@@ -432,41 +444,48 @@ public class TaskGraphView {
         OpenGroupComponentModel model = getOpenGroupComponentModel(taskgraph);
         JPopupMenu menu = null;
 
-        if (model != null)
+        if (model != null) {
             menu = model.getMultipleSelectedPopup(tasks);
+        }
 
-        if ((menu == null) && (getDefaultOpenGroupModel() != null))
+        if ((menu == null) && (getDefaultOpenGroupModel() != null)) {
             menu = getDefaultOpenGroupModel().getMultipleSelectedPopup(tasks);
+        }
 
-        if (menu != null)
+        if (menu != null) {
             return menu;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getMultipleSelectionPopup(taskgraph, tasks);
-        else
-            throw (new RuntimeException("Open Group Component Model not set for " + taskgraph + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Open Group Component Model not set for " + taskgraph + " in " + getViewName()));
+        }
     }
 
 
     /**
-     * @return the action that is invoked when the task is activated (e.g.
-     *         double-clicked).
+     * @return the action that is invoked when the task is activated (e.g. double-clicked).
      */
     public Action getTaskAction(Task task) {
         ToolComponentModel model = getToolComponentModel(task);
         Action action = null;
 
-        if (model != null)
+        if (model != null) {
             action = model.getTaskAction(task);
+        }
 
-        if ((action == null) && (getDefaultToolModel() != null))
+        if ((action == null) && (getDefaultToolModel() != null)) {
             action = getDefaultToolModel().getTaskAction(task);
+        }
 
-        if (action != null)
+        if (action != null) {
             return action;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getTaskAction(task);
-        else
-            throw (new RuntimeException("Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        }
     }
 
     /**
@@ -476,65 +495,73 @@ public class TaskGraphView {
         ToolComponentModel model = getToolComponentModel(task);
         TaskComponent comp = null;
 
-        if (model != null)
+        if (model != null) {
             comp = model.getTaskComponent(task);
+        }
 
-        if ((comp == null) && (getDefaultToolModel() != null))
+        if ((comp == null) && (getDefaultToolModel() != null)) {
             comp = getDefaultToolModel().getTaskComponent(task);
+        }
 
-        if (comp != null)
+        if (comp != null) {
             return comp;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getTaskComponent(task);
-        else
-            throw (new RuntimeException("Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Tool Component Model not set for " + task.getToolName() + " in " + getViewName()));
+        }
     }
 
 
     /**
-     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined
-     *               in UpdateActionConstants)
+     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined in UpdateActionConstants)
      * @return true if the update action icon should be shown for the specified action
      */
     public boolean isUpdateIcon(Task task, String action) {
         ToolComponentModel model = getToolComponentModel(task);
         int isicon = ToolComponentModel.UNKNOWN_ACTION;
 
-        if (model != null)
+        if (model != null) {
             isicon = model.isUpdateIcon(task, action);
+        }
 
-        if ((isicon == ToolComponentModel.UNKNOWN_ACTION) && (getDefaultToolModel() != null))
+        if ((isicon == ToolComponentModel.UNKNOWN_ACTION) && (getDefaultToolModel() != null)) {
             isicon = getDefaultToolModel().isUpdateIcon(task, action);
+        }
 
-        if (isicon == ToolComponentModel.DISPLAY_ICON)
+        if (isicon == ToolComponentModel.DISPLAY_ICON) {
             return true;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().isUpdateIcon(task, action);
-        else
+        } else {
             return false;
+        }
     }
 
     /**
-     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined
-     *               in UpdateActionConstants)
+     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined in UpdateActionConstants)
      * @return the action associated with the specified update action.
      */
     public Action getUpdateAction(Task task, String action) {
         ToolComponentModel model = getToolComponentModel(task);
         Action act = null;
 
-        if (model != null)
+        if (model != null) {
             act = model.getUpdateAction(task, action);
+        }
 
-        if ((act == null) && (getDefaultToolModel() != null))
+        if ((act == null) && (getDefaultToolModel() != null)) {
             act = getDefaultToolModel().getUpdateAction(task, action);
+        }
 
-        if (act != null)
+        if (act != null) {
             return act;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getUpdateAction(task, action);
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -545,18 +572,22 @@ public class TaskGraphView {
         OpenGroupComponentModel model = getOpenGroupComponentModel(taskgraph);
         TaskGraphPanel comp = null;
 
-        if (model != null)
+        if (model != null) {
             comp = model.getOpenGroupComponent(taskgraph, client);
+        }
 
-        if ((comp == null) && (getDefaultOpenGroupModel() != null))
+        if ((comp == null) && (getDefaultOpenGroupModel() != null)) {
             comp = getDefaultOpenGroupModel().getOpenGroupComponent(taskgraph, client);
+        }
 
-        if (comp != null)
+        if (comp != null) {
             return comp;
-        else if (getParentToolMode() != null)
+        } else if (getParentToolMode() != null) {
             return getParentToolMode().getTaskGraphPanel(taskgraph, client);
-        else
-            throw (new RuntimeException("Open Group Component Model not set for " + taskgraph + " in " + getViewName()));
+        } else {
+            throw (new RuntimeException(
+                    "Open Group Component Model not set for " + taskgraph + " in " + getViewName()));
+        }
     }
 
 
@@ -566,13 +597,14 @@ public class TaskGraphView {
     private ToolComponentModel getToolComponentModel(Tool tool) {
         ToolComponentModel model;
 
-        if (toolcache.containsKey(tool))
+        if (toolcache.containsKey(tool)) {
             model = (ToolComponentModel) toolcache.get(tool);
-        else {
+        } else {
             model = locateToolComponentModel(tool);
 
-            if (model != null)
+            if (model != null) {
                 toolcache.put(tool, model);
+            }
         }
 
         return model;
@@ -584,13 +616,14 @@ public class TaskGraphView {
     private OpenGroupComponentModel getOpenGroupComponentModel(TaskGraph taskgraph) {
         OpenGroupComponentModel model;
 
-        if (groupcache.containsKey(taskgraph))
+        if (groupcache.containsKey(taskgraph)) {
             model = (OpenGroupComponentModel) groupcache.get(taskgraph);
-        else {
+        } else {
             model = locateOpenGroupComponentModel(taskgraph);
 
-            if (model != null)
+            if (model != null) {
                 groupcache.put(taskgraph, model);
+            }
         }
         return model;
     }
@@ -617,8 +650,9 @@ public class TaskGraphView {
             }
         }
 
-        if ((model == null) && (getDefaultToolModel() != null))
+        if ((model == null) && (getDefaultToolModel() != null)) {
             model = getDefaultToolModel();
+        }
 
         return model;
     }
@@ -643,8 +677,9 @@ public class TaskGraphView {
             }
         }
 
-        if ((model == null) && (getDefaultOpenGroupModel() != null))
+        if ((model == null) && (getDefaultOpenGroupModel() != null)) {
             model = getDefaultOpenGroupModel();
+        }
 
         return model;
     }
