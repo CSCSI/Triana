@@ -48,7 +48,7 @@ public class ToolTableImp extends AbstractToolTable {
 
     private ReloadToolsThread reload;
 
-    public static String[] excludedDirectories = {"CVS", ".", "src", "lib"};
+    public static String[] excludedDirectories = {"CVS", "src", "lib"};
 
     public void init() {
         log.fine("initialising local tool table");
@@ -299,13 +299,15 @@ public class ToolTableImp extends AbstractToolTable {
 
     private List<File> find(File f, final String[] exts, final String[] extDirs) {
         ArrayList<File> files = new ArrayList<File>();
-
+        if (f.getName().startsWith(".")) {
+            return files;
+        }
         if (f.isDirectory()) {
             File[] fs = f.listFiles(new FilenameFilter() {
                 public boolean accept(File file, String s) {
                     if (file.isDirectory()) {
                         for (String extDir : extDirs) {
-                            if (file.getName().startsWith(extDir)) {
+                            if (file.getName().equals(extDir)) {
                                 return false;
                             }
                         }
