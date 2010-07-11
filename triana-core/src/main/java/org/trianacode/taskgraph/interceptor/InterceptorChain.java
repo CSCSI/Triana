@@ -16,18 +16,16 @@
 
 package org.trianacode.taskgraph.interceptor;
 
-import org.trianacode.taskgraph.Node;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.trianacode.taskgraph.Node;
 
 /**
  * An interceptor intercepts data while it's on the cable.
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 29, 2009: 10:40:46 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class InterceptorChain {
@@ -47,15 +45,14 @@ public class InterceptorChain {
     }
 
     public static boolean canConnect(Node sendNode, Node receiveNode) {
-        boolean possible = false;
         for (String s : interceptors.keySet()) {
             Interceptor interceptor = interceptors.get(s);
             boolean b = interceptor.canMediate(sendNode, receiveNode);
-            if(b) {
-                possible = b;
+            if (b) {
+                return true;
             }
         }
-        return possible;
+        return false;
     }
 
     public static Object interceptSend(Node sendNode, Node receiveNode, Object data) {

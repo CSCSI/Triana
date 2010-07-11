@@ -59,28 +59,27 @@
 
 package org.trianacode.gui.main.imp;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
 
+import javax.swing.SwingUtilities;
+import org.trianacode.taskgraph.Cable;
+
 /**
  * A bendy cable for linking components.
- *
- * @author Ian Wang
-<<<<<<< BendyCable.java
- * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.1.2.1
- * @created 15th November 2005
-<<<<<<< BendyCable.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.1.2.1
  */
 
 public class BendyCable implements DrawCable {
@@ -105,7 +104,7 @@ public class BendyCable implements DrawCable {
     private static int MINIMUM_DIST_FACTOR = 5;
     private static int U_BEND_DIST_FACTOR = 20;
 
-    private String type;
+    private Cable cable;
     private Component startcomp;
     private Component endcomp;
     private Point startpt;
@@ -124,12 +123,8 @@ public class BendyCable implements DrawCable {
     private int udist = (int) width * U_BEND_DIST_FACTOR;
 
 
-    public BendyCable(Component startcomp, Component endcomp, Container surface) {
-        this(DEFAULT_TYPE, startcomp, endcomp, surface);
-    }
-
-    public BendyCable(String type, Component startcomp, Component endcomp, Container surface) {
-        this.type = type;
+    public BendyCable(Cable cable, Component startcomp, Component endcomp, Container surface) {
+        this.cable = cable;
         this.startcomp = startcomp;
         this.endcomp = endcomp;
         this.surface = surface;
@@ -137,12 +132,9 @@ public class BendyCable implements DrawCable {
         calaculateEndpoints();
     }
 
-    public BendyCable(Component startcomp, Container surface) {
-        this(DEFAULT_TYPE, startcomp, surface);
-    }
 
-    public BendyCable(String type, Component startcomp, Container surface) {
-        this.type = type;
+    public BendyCable(Cable cable, Component startcomp, Container surface) {
+        this.cable = cable;
         this.startcomp = startcomp;
         this.surface = surface;
 
@@ -150,18 +142,16 @@ public class BendyCable implements DrawCable {
     }
 
 
+    @Override
+    public Cable getCable() {
+        return cable;
+    }
+
     /**
      * @return the type of the cable
      */
     public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the type of the cable
-     */
-    public void setType(String type) {
-        this.type = type;
+        return cable.getType();
     }
 
 
@@ -169,14 +159,15 @@ public class BendyCable implements DrawCable {
         Dimension size = comp.getSize();
         Point pos;
 
-        if (dir == TOP)
+        if (dir == TOP) {
             pos = new Point(size.width / 2, 0);
-        else if (dir == RIGHT)
+        } else if (dir == RIGHT) {
             pos = new Point(size.width, (size.height / 2));
-        else if (dir == BOTTOM)
+        } else if (dir == BOTTOM) {
             pos = new Point((size.width / 2), size.height);
-        else
+        } else {
             pos = new Point(0, (size.height / 2));
+        }
 
         return SwingUtilities.convertPoint(comp, pos.x, pos.y, surface);
     }
@@ -218,8 +209,7 @@ public class BendyCable implements DrawCable {
     }
 
     /**
-     * Set the point of the last node (i.e. the end of the cable) relative to
-     * the start point
+     * Set the point of the last node (i.e. the end of the cable) relative to the start point
      */
     public void setRelativeEndPoint(Point p) {
         Point startpoint = getStartPoint();
@@ -278,8 +268,9 @@ public class BendyCable implements DrawCable {
     private void calaculateEndpoints() {
         this.startpt = getDirPoint(startcomp, surface, startdir);
 
-        if (endcomp != null)
+        if (endcomp != null) {
             this.endpt = getDirPoint(endcomp, surface, enddir);
+        }
     }
 
 
@@ -298,8 +289,8 @@ public class BendyCable implements DrawCable {
 
             drawBend(startpt, offendpt, graphs);
 
-            int[] xpt = new int[] {endpt.x, (int) (endpt.x - (2 * width)), (int) (endpt.x - (2 * width))};
-            int[] ypt = new int[] {endpt.y, (int) (endpt.y - (1.5 * width)), (int) (endpt.y + (1.5 * width))};
+            int[] xpt = new int[]{endpt.x, (int) (endpt.x - (2 * width)), (int) (endpt.x - (2 * width))};
+            int[] ypt = new int[]{endpt.y, (int) (endpt.y - (1.5 * width)), (int) (endpt.y + (1.5 * width))};
             graphs.fillPolygon(xpt, ypt, 3);
 
             graphs.setColor(defaultcol);
@@ -311,16 +302,17 @@ public class BendyCable implements DrawCable {
         Shape shape;
         int bend = getBendType(startpt, endpt);
 
-        if (bend == BEND)
+        if (bend == BEND) {
             shape = getBend(startpt, endpt, startdir);
-        else if (bend == S_BEND)
+        } else if (bend == S_BEND) {
             shape = getSBend(startpt, endpt, startdir);
-        else if (bend == U_BEND)
+        } else if (bend == U_BEND) {
             shape = getUBend(startpt, endpt, startdir, udist);
-        else if (bend == U_BEND_PLUS_BEND)
+        } else if (bend == U_BEND_PLUS_BEND) {
             shape = getUBendPlusBend(startpt, endpt);
-        else
+        } else {
             shape = getUBendPlusUBend(startpt, endpt);
+        }
 
         graphs.draw(shape);
     }
@@ -332,27 +324,30 @@ public class BendyCable implements DrawCable {
         boolean infront;
         int bends;
 
-        if (startdir == TOP)
+        if (startdir == TOP) {
             infront = (startpos.getY() - mindist) > endpos.getY();
-        else if (startdir == RIGHT)
+        } else if (startdir == RIGHT) {
             infront = (startpos.getX() + mindist) < endpos.getX();
-        else if (startdir == BOTTOM)
+        } else if (startdir == BOTTOM) {
             infront = (startpos.getY() + mindist) < endpos.getY();
-        else
+        } else {
             infront = (startpos.getX() - mindist) > endpos.getX();
+        }
 
         if (startdir == enddir) {
             bends = U_BEND;
         } else if ((startdir % 2) != (enddir % 2)) {
-            if (infront)
+            if (infront) {
                 bends = BEND;
-            else
+            } else {
                 bends = U_BEND_PLUS_BEND;
+            }
         } else {
-            if (infront)
+            if (infront) {
                 bends = S_BEND;
-            else
+            } else {
                 bends = U_BEND_PLUS_U_BEND;
+            }
         }
 
         return bends;
@@ -362,20 +357,26 @@ public class BendyCable implements DrawCable {
      * @return an array of shapes making the cable
      */
     private Shape getBend(Point startpos, Point endpos, int dir) {
-        if (dir % 2 == 0)
-            return new QuadCurve2D.Double(startpos.getX(), startpos.getY(), startpos.getX(), endpos.getY(), endpos.getX(), endpos.getY());
-        else
-            return new QuadCurve2D.Double(startpos.getX(), startpos.getY(), endpos.getX(), startpos.getY(), endpos.getX(), endpos.getY());
+        if (dir % 2 == 0) {
+            return new QuadCurve2D.Double(startpos.getX(), startpos.getY(), startpos.getX(), endpos.getY(),
+                    endpos.getX(), endpos.getY());
+        } else {
+            return new QuadCurve2D.Double(startpos.getX(), startpos.getY(), endpos.getX(), startpos.getY(),
+                    endpos.getX(), endpos.getY());
+        }
     }
 
     /**
      * @return an array of shapes making the cable
      */
     private Shape getSBend(Point startpos, Point endpos, int dir) {
-        if (dir % 2 == 0)
-            return new CubicCurve2D.Double(startpos.getX(), startpos.getY(), startpos.getX(), endpos.getY(), endpos.getX(), startpos.getY(), endpos.getX(), endpos.getY());
-        else
-            return new CubicCurve2D.Double(startpos.getX(), startpos.getY(), endpos.getX(), startpos.getY(), startpos.getX(), endpos.getY(), endpos.getX(), endpos.getY());
+        if (dir % 2 == 0) {
+            return new CubicCurve2D.Double(startpos.getX(), startpos.getY(), startpos.getX(), endpos.getY(),
+                    endpos.getX(), startpos.getY(), endpos.getX(), endpos.getY());
+        } else {
+            return new CubicCurve2D.Double(startpos.getX(), startpos.getY(), endpos.getX(), startpos.getY(),
+                    startpos.getX(), endpos.getY(), endpos.getX(), endpos.getY());
+        }
     }
 
     /**
@@ -384,23 +385,30 @@ public class BendyCable implements DrawCable {
     private Shape getUBend(Point startpos, Point endpos, int dir, int ubenddist) {
         Point2D ctrlpt;
 
-        if (dir == TOP)
-            ctrlpt = new Point.Double((startpos.getX() + endpos.getX()) / 2, Math.min(startpos.getX(), endpos.getX()) - ubenddist);
-        else if (dir == RIGHT)
-            ctrlpt = new Point.Double(Math.max(startpos.getX(), endpos.getX()) + ubenddist, (startpos.getY() + endpos.getY()) / 2);
-        else if (dir == BOTTOM)
-            ctrlpt = new Point.Double((startpos.getX() + endpos.getX()) / 2, Math.max(startpos.getX(), endpos.getX()) + ubenddist);
-        else
-            ctrlpt = new Point.Double(Math.min(startpos.getX(), endpos.getX()) - ubenddist, (startpos.getY() + endpos.getY()) / 2);
+        if (dir == TOP) {
+            ctrlpt = new Point.Double((startpos.getX() + endpos.getX()) / 2,
+                    Math.min(startpos.getX(), endpos.getX()) - ubenddist);
+        } else if (dir == RIGHT) {
+            ctrlpt = new Point.Double(Math.max(startpos.getX(), endpos.getX()) + ubenddist,
+                    (startpos.getY() + endpos.getY()) / 2);
+        } else if (dir == BOTTOM) {
+            ctrlpt = new Point.Double((startpos.getX() + endpos.getX()) / 2,
+                    Math.max(startpos.getX(), endpos.getX()) + ubenddist);
+        } else {
+            ctrlpt = new Point.Double(Math.min(startpos.getX(), endpos.getX()) - ubenddist,
+                    (startpos.getY() + endpos.getY()) / 2);
+        }
 
-        return new QuadCurve2D.Double(startpos.getX(), startpos.getY(), ctrlpt.getX(), ctrlpt.getY(), endpos.getX(), endpos.getY());
+        return new QuadCurve2D.Double(startpos.getX(), startpos.getY(), ctrlpt.getX(), ctrlpt.getY(), endpos.getX(),
+                endpos.getY());
     }
 
     /**
      * @return an array of shapes making the cable
      */
     private Shape getUBendPlusBend(Point startpos, Point endpos) {
-        Point midpt = new Point((int) ((startpos.getX() + endpos.getX()) / 2), (int) ((startpos.getY() + endpos.getY()) / 2));
+        Point midpt = new Point((int) ((startpos.getX() + endpos.getX()) / 2),
+                (int) ((startpos.getY() + endpos.getY()) / 2));
 
         Shape ubend = getUBend(startpos, midpt, startdir, udist);
         Shape bend = getBend(midpt, endpos, (startdir + 2) % 4);
@@ -415,7 +423,8 @@ public class BendyCable implements DrawCable {
      * @return an array of shapes making the cable
      */
     private Shape getUBendPlusUBend(Point startpos, Point endpos) {
-        Point midpt = new Point((int) ((startpos.getX() + endpos.getX()) / 2), (int) ((startpos.getY() + endpos.getY()) / 2));
+        Point midpt = new Point((int) ((startpos.getX() + endpos.getX()) / 2),
+                (int) ((startpos.getY() + endpos.getY()) / 2));
         int ubenddist = getUBendDistance(startpos, endpos);
 
         Shape ubend = getUBend(startpos, midpt, startdir, ubenddist);
@@ -429,44 +438,6 @@ public class BendyCable implements DrawCable {
 
     private int getUBendDistance(Point startpos, Point endpos) {
         return (int) Math.max(Math.min(startpos.getX() - endpos.getX() + mindist, udist), 0);
-    }
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("BendyCable");
-        Container cont = frame.getContentPane();
-        cont.add(new TestPanel());
-
-
-        frame.setSize(600, 600);
-        frame.setVisible(true);
-    }
-
-    private static class TestPanel extends JPanel {
-
-        BendyCable cable;
-
-        public TestPanel() {
-            setLayout(null);
-
-            JButton but1 = new JButton();
-            but1.setPreferredSize(new Dimension(50, 50));
-            but1.setLocation(100, 100);
-
-            JButton but2 = new JButton();
-            but2.setPreferredSize(new Dimension(50, 50));
-            but2.setLocation(200, 200);
-
-            add(but1);
-            add(but2);
-
-            cable = new BendyCable(but1, but2, this);
-        }
-
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            cable.drawCable(g);
-        }
-
     }
 
 }

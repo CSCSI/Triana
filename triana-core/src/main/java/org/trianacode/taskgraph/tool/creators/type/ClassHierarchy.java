@@ -24,8 +24,6 @@ import java.util.List;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 26, 2009: 2:03:55 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ClassHierarchy {
@@ -35,6 +33,7 @@ public class ClassHierarchy {
     private List<String> interfaces = new ArrayList<String>();
     private String file;
     private int access = -1;
+    private boolean annotated = false;
 
 
     public ClassHierarchy(String name) {
@@ -85,6 +84,14 @@ public class ClassHierarchy {
 
     public boolean isConcrete() {
         return access < 50;
+    }
+
+    public boolean isAnnotated() {
+        return annotated;
+    }
+
+    public void setAnnotated(boolean annotated) {
+        this.annotated = annotated;
     }
 
     public String toString() {

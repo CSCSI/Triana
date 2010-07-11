@@ -141,11 +141,13 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                             ret.add(initJarredTool(tool, file));
                         }
                     } else if (potential.endsWith(".class")) {
-
                         URL url = createJarURL(file, potential);
                         log.fine("FileToolFormatHandler.add jar url:" + url.toString());
                         if (url != null) {
                             ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
+                            if (ch == null) {
+                                ch = TypesMap.getAnnotated(file.getAbsolutePath());
+                            }
                             if (ch != null) {
                                 Tool tool = read(ch.getName(), toolbox, ch.getFile());
                                 if (tool != null && tools.get(createId(tool)) == null) {
@@ -160,6 +162,11 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 log.fine("file is Java:" + file.getAbsolutePath());
                 ClassHierarchy ch = TypesMap.isType(file.getAbsolutePath(), Unit.class.getName());
                 log.fine("FileToolFormatHandler.add class hierarchy:" + ch);
+                if (ch == null) {
+                    ch = TypesMap.getAnnotated(file.getAbsolutePath());
+                }
+                log.fine("FileToolFormatHandler.add class hierarchy after trying annotations:" + ch);
+
                 if (ch != null) {
                     Tool tool = read(ch.getName(), toolbox, ch.getFile());
                     if (tool != null) {
@@ -192,7 +199,6 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     }
 
     public void remove(Tool tool) {
-        new Exception().printStackTrace();
         String id = createId(tool);
         ToolUrl tu = tools.get(id);
         if (tu != null) {

@@ -59,41 +59,32 @@
 
 package org.trianacode.gui.main.imp;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Point;
+
+import org.trianacode.taskgraph.Cable;
 
 /**
-<<<<<<< DrawCable.java
- * Common interface implemented by all cable classes
+ * <<<<<<< DrawCable.java Common interface implemented by all cable classes
  *
  * @author Ian Wang
- * @version $Revision: 4048 $
- * @created 28th March 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * Common interface implemented by all cable classes
- *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 28th March 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.1.2.1
  */
 
 public interface DrawCable {
 
     public static final String DEFAULT_TYPE = "default";
 
+    public Cable getCable();
 
     /**
      * @return the type of the cable
      */
     public String getType();
-
-    /**
-     * Sets the type of the cable
-     */
-    public void setType(String type);
-
 
     /**
      * @return the default width of the cable in pixels
@@ -138,8 +129,7 @@ public interface DrawCable {
     public void setEndPoint(Point p);
 
     /**
-     * Set the point of the last node (i.e. the end of the cable) relative to
-     * the start point
+     * Set the point of the last node (i.e. the end of the cable) relative to the start point
      */
     public void setRelativeEndPoint(Point p);
 

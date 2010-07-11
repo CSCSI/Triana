@@ -58,15 +58,21 @@
  */
 package org.trianacode.gui.main.imp;
 
-import org.trianacode.gui.main.NodeComponent;
-import org.trianacode.taskgraph.Node;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Vector;
+
+import javax.swing.SwingUtilities;
+import org.trianacode.gui.main.NodeComponent;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.Node;
 
 /**
  * Graphical cable for connecting units on the GUI.
@@ -103,9 +109,9 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     public static double INDEXED_OFFSET_FACTOR = 2.2;
 
     /**
-     * The type of the cable
+     * The cable
      */
-    private String type;
+    private Cable cable;
 
     /*
     * The JPanel to draw the cables on
@@ -113,8 +119,7 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     protected Component surface;
 
     /**
-     * the start and end node components for the cable (end is null if end point
-     * is used)
+     * the start and end node components for the cable (end is null if end point is used)
      */
     private Component startcomp;
     private Component endcomp;
@@ -164,12 +169,8 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     Point p1 = new Point(0, 0);
 
 
-    public StableCable(Component panel, Component start) {
-        this(DEFAULT_TYPE, panel, start);
-    }
-
-    public StableCable(String type, Component panel, Component start) {
-        this.type = type;
+    public StableCable(Cable cable, Component panel, Component start) {
+        this.cable = cable;
         this.points = new Vector();
         this.surface = panel;
         this.startcomp = start;
@@ -180,12 +181,9 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
         calculateEndpoints();
     }
 
-    public StableCable(Component panel, Component start, Component end) {
-        this(DEFAULT_TYPE, panel, start, end);
-    }
 
-    public StableCable(String type, Component panel, Component start, Component end) {
-        this.type = type;
+    public StableCable(Cable cable, Component panel, Component start, Component end) {
+        this.cable = cable;
         this.points = new Vector();
         this.surface = panel;
         this.startcomp = start;
@@ -198,20 +196,17 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     }
 
 
+    @Override
+    public Cable getCable() {
+        return cable;
+    }
+
     /**
      * @return the type of the cable
      */
     public String getType() {
-        return type;
+        return cable.getType();
     }
-
-    /**
-     * Sets the type of the cable
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
 
     /**
      * @return the default width of the cable in pixels
@@ -276,10 +271,11 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
      * @return the start point of this stable cable
      */
     public Point getStartPoint() {
-        if (!points.isEmpty())
+        if (!points.isEmpty()) {
             return (Point) points.elementAt(0);
-        else
+        } else {
             return new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        }
     }
 
     /**
@@ -288,10 +284,11 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     protected void setStartPoint(Point p) {
         rescaleFromStart(p);
 
-        if (!points.isEmpty())
+        if (!points.isEmpty()) {
             points.set(0, p);
-        else
+        } else {
             points.add(p);
+        }
 
         recalculateMidPoints();
     }
@@ -301,10 +298,11 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
      * @return the end point of this stable cable
      */
     public Point getEndPoint() {
-        if (points.size() > 1)
+        if (points.size() > 1) {
             return (Point) points.elementAt(points.size() - 1);
-        else
+        } else {
             return new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        }
     }
 
     /**
@@ -313,27 +311,28 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     public void setEndPoint(Point p) {
         rescaleFromEnd(p);
 
-        if (points.size() > 1)
+        if (points.size() > 1) {
             points.set(points.size() - 1, p);
-        else
+        } else {
             points.add(p);
+        }
 
         recalculateMidPoints();
     }
 
     /**
-     * Set the point of the last node (i.e. the end of the cable) relative to
-     * the start point
+     * Set the point of the last node (i.e. the end of the cable) relative to the start point
      */
     public void setRelativeEndPoint(Point p) {
         Point startpoint = getStartPoint();
         Dimension size = startcomp.getSize();
         Point endpoint = new Point(startpoint.x + p.x - size.width, startpoint.y + p.y - (size.height / 2));
 
-        if (points.size() > 1)
+        if (points.size() > 1) {
             points.set(points.size() - 1, endpoint);
-        else
+        } else {
             points.add(endpoint);
+        }
 
         recalculateMidPoints();
     }
@@ -355,8 +354,7 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
 
 
     /**
-     * Calculates the start and endpoints based on the current location of the
-     * start and end components
+     * Calculates the start and endpoints based on the current location of the start and end components
      */
     private void calculateEndpoints() {
         Dimension size = startcomp.getSize();
@@ -369,8 +367,9 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     }
 
     private void recalculateMidPoints() {
-        if (valid)
+        if (valid) {
             calculateInitialPoints();
+        }
     }
 
     private void calculateInitialPoints() {
@@ -399,9 +398,9 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
                     x2 = getIndexedDistance(x2);
                 }
 
-                if (x1 + getDistance() <= x2 - getDistance())
+                if (x1 + getDistance() <= x2 - getDistance()) {
                     drawTwoPoint(p1, p2);
-                else {
+                } else {
                     points.insertElementAt(new Point(x1 + getDistance(), y1), 1);
                     points.insertElementAt(new Point(x1 + getDistance(), hw), 2);
                     points.insertElementAt(new Point(x2 - getDistance(), hw), 3);
@@ -457,10 +456,11 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
         int x2 = (int) p2.getX();
         int hw = x1 + ((x2 - x1) / 2);
 
-        if (p1.getY() > p2.getY())
+        if (p1.getY() > p2.getY()) {
             hw = getIndexedDistance(hw);
-        else
+        } else {
             hw = getReverseIndexedDistance(hw);
+        }
 
         points.insertElementAt(new Point(hw, (int) p1.getY()), 1);
         points.insertElementAt(new Point(hw, (int) p2.getY()), 2);
@@ -497,7 +497,8 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
             }
         }
 
-        return Math.max(dist - (getIndexOffset() * maxindex / 2) + (getIndexOffset() * (maxindex - index)), getIndexOffset());
+        return Math.max(dist - (getIndexOffset() * maxindex / 2) + (getIndexOffset() * (maxindex - index)),
+                getIndexOffset());
     }
 
     /**
@@ -540,7 +541,7 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     private void drawCables(Graphics g) {
         int size = points.size();
 
-        for (int x = 0; x < 2; x++)
+        for (int x = 0; x < 2; x++) {
             for (int i = 0; i < size - 1; i++) {
                 Point a = (Point) points.elementAt(i);
                 Point b = (Point) points.elementAt(i + 1);
@@ -558,6 +559,7 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
                     ThickLine.drawLine(x1, y1, x2, y2, 1, g);
                 }
             }
+        }
     }
 
     private void drawNodes(Graphics g) {
@@ -575,6 +577,7 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     /*
  	 * Calculates if a point lies on a cable, within PIXELS pixels
  	 */
+
     private boolean isPointOnLine(Point p) {
 
         double x1, x2, y1, y2;
@@ -681,6 +684,7 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
     /*
 	 * Returns a point that is closest to point p
 	 */
+
     private int getPointIndex(Point p) {
         int x1 = (int) p.getX();
         int y1 = (int) p.getY();
@@ -725,8 +729,9 @@ public class StableCable implements MouseListener, MouseMotionListener, DrawCabl
         if (isNode(p)) {
             dragindex = getPointIndex(p);
             down = true;
-        } else
+        } else {
             dragindex = -1;
+        }
     }
 
     public void mouseReleased(MouseEvent ev) {

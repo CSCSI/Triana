@@ -59,26 +59,26 @@
 
 package org.trianacode.gui.components.triana;
 
+import java.awt.Color;
+
+import org.trianacode.gui.hci.color.CableColorModel;
 import org.trianacode.gui.hci.color.ColorTable;
 import org.trianacode.gui.hci.color.NodeColorModel;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
+import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.ParameterNode;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.awt.*;
-
 /**
  * The color model for standard Triana componenets
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th May 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
-public class TrianaColorModel implements NodeColorModel, TrianaColorConstants {
+public class TrianaColorModel implements NodeColorModel, CableColorModel, TrianaColorConstants {
 
     private static final Color DEFAULT_COLOR = new Color(190, 190, 255);
     private static final Color GROUP_COLOR = new Color(220, 220, 90);
@@ -97,6 +97,8 @@ public class TrianaColorModel implements NodeColorModel, TrianaColorConstants {
         ColorTable.instance().initDefaultColor(this, PROGRESS_COLOR, Color.blue);
         ColorTable.instance().initDefaultColor(this, SHOW_TOOL_CONNECTED_COLOR, FORSHOW_CONNECTED_COLOR);
         ColorTable.instance().initDefaultColor(this, SHOW_TOOL_UNCONNECTED_COLOR, FORSHOW_UNCONNECTED_COLOR);
+        ColorTable.instance().initDefaultColor(this, CABLE_COLOR, Color.black);
+        ColorTable.instance().initDefaultColor(this, CONTROL_CABLE_COLOR, Color.red);
     }
 
     /**
@@ -107,14 +109,13 @@ public class TrianaColorModel implements NodeColorModel, TrianaColorConstants {
     }
 
     /**
-     * @return the color names that this model uses. These are linked to actual colors by querying
-     *         the color table.
+     * @return the color names that this model uses. These are linked to actual colors by querying the color table.
      */
     public String[] getColorNames() {
         return new String[]{TOOL_COLOR, GROUP_TOOL_COLOR, ERROR_TOOL_COLOR, NAME_COLOR,
-                            UNCONNECTED_NODE_COLOR, TRIGGER_NODE_COLOR, ERROR_NODE_COLOR,
-                            PROGRESS_COLOR, SHOW_TOOL_CONNECTED_COLOR,
-                            SHOW_TOOL_UNCONNECTED_COLOR};
+                UNCONNECTED_NODE_COLOR, TRIGGER_NODE_COLOR, ERROR_NODE_COLOR,
+                PROGRESS_COLOR, SHOW_TOOL_CONNECTED_COLOR,
+                SHOW_TOOL_UNCONNECTED_COLOR, CABLE_COLOR};
     }
 
     /**
@@ -122,45 +123,47 @@ public class TrianaColorModel implements NodeColorModel, TrianaColorConstants {
      */
     public String[] getElementNames() {
         return new String[]{TOOL_ELEMENT, STRIPE_ELEMENT, NAME_ELEMENT, PROGRESS_ELEMENT,
-                            SHOW_TOOL_CONNECTED_ELEMENT, SHOW_TOOL_UNCONNECTED_ELEMENT};
+                SHOW_TOOL_CONNECTED_ELEMENT, SHOW_TOOL_UNCONNECTED_ELEMENT};
     }
 
 
     /**
-     * @return the color for the specified graphical element when representing the specified tool.
-     *         If the element is unrecognized this method will return a default color.
+     * @return the color for the specified graphical element when representing the specified tool. If the element is
+     *         unrecognized this method will return a default color.
      */
     public Color getColor(String element, Tool tool) {
         if (element.equals(TOOL_ELEMENT)) {
-            if (tool instanceof TaskGraph)
+            if (tool instanceof TaskGraph) {
                 return ColorTable.instance().getColor(this, GROUP_TOOL_COLOR);
-            else if (tool.isParameterName(Task.ERROR_MESSAGE))
+            } else if (tool.isParameterName(Task.ERROR_MESSAGE)) {
                 return ColorTable.instance().getColor(this, ERROR_TOOL_COLOR);
-            else
+            } else {
                 return ColorTable.instance().getColor(this, TOOL_COLOR);
-        }
-        else
+            }
+        } else {
             return getColor(element);
+        }
     }
 
     /**
      * @return the color for the specified graphical element not linked to a specific tool
      */
     public Color getColor(String element) {
-        if (element.equals(TOOL_ELEMENT))
+        if (element.equals(TOOL_ELEMENT)) {
             return ColorTable.instance().getColor(this, TOOL_COLOR);
-        else if (element.equals(STRIPE_ELEMENT))
+        } else if (element.equals(STRIPE_ELEMENT)) {
             return ColorTable.instance().getColor(this, TOOL_COLOR);
-        else if (element.equals(NAME_ELEMENT))
+        } else if (element.equals(NAME_ELEMENT)) {
             return ColorTable.instance().getColor(this, NAME_COLOR);
-        else if (element.equals(PROGRESS_ELEMENT))
+        } else if (element.equals(PROGRESS_ELEMENT)) {
             return ColorTable.instance().getColor(this, PROGRESS_COLOR);
-        else if (element.equals(SHOW_TOOL_CONNECTED_ELEMENT))
+        } else if (element.equals(SHOW_TOOL_CONNECTED_ELEMENT)) {
             return ColorTable.instance().getColor(this, SHOW_TOOL_CONNECTED_COLOR);
-        else if (element.equals(SHOW_TOOL_UNCONNECTED_ELEMENT))
+        } else if (element.equals(SHOW_TOOL_UNCONNECTED_ELEMENT)) {
             return ColorTable.instance().getColor(this, SHOW_TOOL_UNCONNECTED_COLOR);
-        else
+        } else {
             return Color.black;
+        }
     }
 
     /**
@@ -168,13 +171,22 @@ public class TrianaColorModel implements NodeColorModel, TrianaColorConstants {
      */
     public Color getColor(Node node) {
         if (node instanceof ParameterNode) {
-            if (((ParameterNode) node).isTriggerNode())
+            if (((ParameterNode) node).isTriggerNode()) {
                 return ColorTable.instance().getColor(this, TRIGGER_NODE_COLOR);
-            else if (((ParameterNode) node).isErrorNode())
+            } else if (((ParameterNode) node).isErrorNode()) {
                 return ColorTable.instance().getColor(this, ERROR_NODE_COLOR);
+            }
         }
 
         return ColorTable.instance().getColor(this, UNCONNECTED_NODE_COLOR);
     }
 
+    @Override
+    public Color getColor(Cable cable) {
+        String type = cable.getType();
+        if (type.equals(Cable.CONTROL_CABLE_TYPE)) {
+            return ColorTable.instance().getColor(this, CONTROL_CABLE_COLOR);
+        }
+        return ColorTable.instance().getColor(this, CABLE_COLOR);
+    }
 }

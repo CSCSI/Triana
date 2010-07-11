@@ -16,40 +16,50 @@
 
 package org.trianacode.taskgraph.tool;
 
-import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
-import org.trianacode.taskgraph.tool.creators.type.ClassParser;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
+import org.trianacode.taskgraph.tool.creators.type.ClassParser;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 5, 2009: 12:20:12 AM
- * @date $Date:$ modified by $Author:$
  */
 
 public class TypesMap {
 
     private static Map<String, ClassHierarchy> allByName = new ConcurrentHashMap<String, ClassHierarchy>();
-    private static Map<String, Map<String, ClassHierarchy>> allByType = new ConcurrentHashMap<String, Map<String, ClassHierarchy>>();
+    private static Map<String, Map<String, ClassHierarchy>> allByType
+            = new ConcurrentHashMap<String, Map<String, ClassHierarchy>>();
+    private static Map<String, ClassHierarchy> annotated = new ConcurrentHashMap<String, ClassHierarchy>();
     private static ClassParser parser = new ClassParser();
     private static Set<String> deadEnds = new HashSet<String>();
 
     public static void load(File file) throws IOException {
         Map<String, ClassHierarchy> hiers = parser.readFile(file);
         allByName.putAll(hiers);
+        for (String s : hiers.keySet()) {
+            ClassHierarchy ch = hiers.get(s);
+            if (ch.isAnnotated()) {
+                annotated.put(ch.getFile(), ch);
+            }
+        }
     }
 
     /**
-     * get a class hierarchy based on
-     * the full path to the class under scrutiny (will be the full path to a file in the case
-     * of of a non-zipped file, or a jar: URL pointing to an entry if jarred), and the
-     * type to match against, e.g. a getClass().getName() type string.
+     * get a class hierarchy based on the full path to the class under scrutiny (will be the full path to a file in the
+     * case of of a non-zipped file, or a jar: URL pointing to an entry if jarred), and the type to match against, e.g.
+     * a getClass().getName() type string.
      *
      * @param path
      * @param type
@@ -92,9 +102,14 @@ public class TypesMap {
             }
         }
         long end = System.currentTimeMillis();
-        System.out.println("TypeFinder.find time:" + (end - now));
+        System.out.println("TypeMap.find time:" + (end - now));
         return new ArrayList<ClassHierarchy>(ret);
     }
+
+    public static ClassHierarchy getAnnotated(String path) throws IOException {
+        return annotated.get(path);
+    }
+
 
     private static boolean isType(Map<String, ClassHierarchy> hiers, String hier, String type) {
         ClassHierarchy ch = hiers.get(hier);

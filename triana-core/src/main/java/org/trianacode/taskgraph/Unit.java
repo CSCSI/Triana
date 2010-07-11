@@ -100,16 +100,30 @@ public abstract class Unit {
 
     private String toolPackage = "unknown";
 
+    private String displayName = "unknown";
+
+    private String displayPackage = "unknown";
+
+
     private Map<String, Object[]> definedParams = new HashMap<String, Object[]>();
 
 
     public Unit() {
         setToolName(getClass().getSimpleName());
         setToolPackage(getPackageName(getClass().getName()));
+        setDisplayName(getToolName());
+        setDisplayPackage(getToolPackage());
+    }
+
+    public Unit(String name, String pkge) {
+        setToolName(getClass().getSimpleName());
+        setToolPackage(getPackageName(getClass().getName()));
+        setDisplayName(name);
+        setDisplayPackage(pkge);
     }
 
 
-    private String getPackageName(String fullname) {
+    protected String getPackageName(String fullname) {
         if (fullname.endsWith(".class")) {
             fullname = fullname.substring(0, fullname.length() - 6);
         }
@@ -168,6 +182,22 @@ public abstract class Unit {
 
     public void setToolName(String toolName) {
         this.toolName = toolName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayPackage() {
+        return displayPackage;
+    }
+
+    public void setDisplayPackage(String displayPackage) {
+        this.displayPackage = displayPackage.replace("/", ".");
     }
 
     /**

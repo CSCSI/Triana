@@ -60,22 +60,20 @@
 package org.trianacode.taskgraph.proxy.java;
 
 
-import org.trianacode.taskgraph.Unit;
-import org.trianacode.taskgraph.tool.ClassLoaders;
-import org.trianacode.taskgraph.proxy.Proxy;
-import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.annotation.AnnotationProcessor;
+import org.trianacode.taskgraph.proxy.Proxy;
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
+import org.trianacode.taskgraph.tool.ClassLoaders;
 
 /**
  * The proxy for java units
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 25th November 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * @todo
  */
 
 
@@ -97,11 +95,13 @@ public class JavaProxy implements Proxy {
     }
 
     public JavaProxy(Map instdetails) throws ProxyInstantiationException {
-        if (!instdetails.containsKey(JavaConstants.UNIT_NAME))
+        if (!instdetails.containsKey(JavaConstants.UNIT_NAME)) {
             throw (new ProxyInstantiationException("Invalid Java Unit Instance Details: Missing unit name"));
+        }
 
-        if (!instdetails.containsKey(JavaConstants.UNIT_PACKAGE))
+        if (!instdetails.containsKey(JavaConstants.UNIT_PACKAGE)) {
             throw (new ProxyInstantiationException("Invalid Java Unit Instance Details: Missing unit package"));
+        }
 
         this.unitname = (String) instdetails.get(JavaConstants.UNIT_NAME);
         this.unitpackage = (String) instdetails.get(JavaConstants.UNIT_PACKAGE);
@@ -118,7 +118,12 @@ public class JavaProxy implements Proxy {
     private void createUnit() {
         try {
             Class cls = ClassLoaders.forName(getFullUnitName());
-            unit = (Unit)cls.newInstance();
+            Object o = cls.newInstance();
+            if (Unit.class.isAssignableFrom(cls)) {
+                unit = (Unit) o;
+            } else {
+                unit = AnnotationProcessor.createUnit(o);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,14 +145,14 @@ public class JavaProxy implements Proxy {
     }
 
     public String getFullUnitName() {
-        if(unitpackage != null && unitpackage.length() > 0) {
+        if (unitpackage != null && unitpackage.length() > 0) {
             return unitpackage + "." + unitname;
         }
         return unitname;
     }
 
     public Unit getUnit() {
-        if(unit == null) {
+        if (unit == null) {
             createUnit();
         }
         return unit;
@@ -173,8 +178,9 @@ public class JavaProxy implements Proxy {
     public String toString() {
         String str = unitname;
 
-        if (!unitpackage.equals(""))
+        if (!unitpackage.equals("")) {
             str += " (" + unitpackage + ")";
+        }
 
         return str;
     }

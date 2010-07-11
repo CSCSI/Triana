@@ -17,7 +17,12 @@
 
 package org.trianacode.taskgraph.tool.creators.type;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -206,14 +211,11 @@ public class ClassParser {
         if (index == null) {
             return null;
         }
-
         UTF8Constant utf = names.get(index);
         if (utf == null) {
             return null;
         }
-
         String[] currStrings = utf.getClasses();
-
         if (currStrings == null || currStrings.length != 1) {
             return null;
         }
@@ -251,8 +253,77 @@ public class ClassParser {
             hier.addInterface(createClassName(currStrings[0]));
 
         }
+        drainFields(stream);
+        drainMethods(stream);
+        int clsAttr = stream.readUnsignedShort();
+        for (int k = 0; k < clsAttr; k++) {
+            int ref = stream.readUnsignedShort();
+            UTF8Constant constant = names.get(ref);
+            String[] classes = constant.getClasses();
+            if (classes[0].equals("RuntimeVisibleAnnotations")) {
+                stream.readInt();
+                int annoslength = stream.readUnsignedShort();
+                for (int an = 0; an < annoslength; an++) {
+                    int annoName = stream.readUnsignedShort();
+                    UTF8Constant anno = names.get(annoName);
+                    if (anno.getClasses()[0].equals("org/trianacode/taskgraph/annotation/Tool")) {
+                        hier.setAnnotated(true);
+                    }
+                    drainAnnotation(stream);
+                }
+            } else {
+                int attrLength = stream.readInt();
+                for (int z = 0; z < attrLength; z++) {
+                    stream.readByte();
+                }
+            }
+        }
 
         return hier;
+    }
+
+    private void drainFields(DataInputStream stream) throws IOException {
+        int numFields = stream.readUnsignedShort();
+        for (int j = 0; j < numFields; j++) {
+            stream.readUnsignedShort();
+            stream.readUnsignedShort();
+            stream.readUnsignedShort();
+            int fieldAttrs = stream.readUnsignedShort();
+            for (int k = 0; k < fieldAttrs; k++) {
+                stream.readUnsignedShort();
+                int attrLength = stream.readInt();
+                for (int z = 0; z < attrLength; z++) {
+                    stream.readByte();
+                }
+            }
+        }
+    }
+
+    private void drainMethods(DataInputStream stream) throws IOException {
+        int numMethods = stream.readUnsignedShort();
+        for (int x = 0; x < numMethods; x++) {
+            stream.readUnsignedShort();
+            stream.readUnsignedShort();
+            stream.readUnsignedShort();
+            int methodsAttr = stream.readUnsignedShort();
+            for (int k = 0; k < methodsAttr; k++) {
+                stream.readUnsignedShort();
+                int attrLength = stream.readInt();
+                for (int z = 0; z < attrLength; z++) {
+                    stream.readByte();
+                }
+            }
+        }
+    }
+
+    // start at index 2 - after checking type
+    private void drainAnnotation(DataInputStream stream) throws IOException {
+        int elements = stream.readUnsignedShort();
+        for (int i = 0; i < elements; i++) {
+            stream.readUnsignedShort(); // index into pool
+            stream.readByte();
+            stream.readUnsignedShort();
+        }
     }
 
     private String createClassName(String slashed) {
@@ -274,7 +345,8 @@ public class ClassParser {
 
     public static void main(String[] args) {
         try {
-            Map<String, ClassHierarchy> hiers = new ClassParser().readFile("/Users/scmabh/work/maven/triana/triana2/triana-core/target/classes/org/trianacode/taskgraph/imp/NodeImp.class");
+            Map<String, ClassHierarchy> hiers = new ClassParser().readFile(
+                    "/Users/scmabh/work/maven/triana4/triana-core/target/classes/org/trianacode/taskgraph/annotation/Test.class");
             for (String hier : hiers.keySet()) {
                 System.out.println(hiers.get(hier));
             }

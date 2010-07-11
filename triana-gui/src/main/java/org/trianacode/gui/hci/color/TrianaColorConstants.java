@@ -59,17 +59,13 @@
 
 package org.trianacode.gui.hci.color;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
- * Constants for color names and graphical elements used by standard Triana
- * components
+ * Constants for color names and graphical elements used by standard Triana components
  *
- * @author      Ian Wang
- * @created     6th May 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface TrianaColorConstants {
@@ -99,5 +95,7 @@ public interface TrianaColorConstants {
     public static final String PROGRESS_COLOR = "Progress Indicator";
     public static final String SHOW_TOOL_CONNECTED_COLOR = "Show Tool (Connected)";
     public static final String SHOW_TOOL_UNCONNECTED_COLOR = "Show Tool (Unconnected)";
+    public static final String CABLE_COLOR = "Cable Color";
+    public static final String CONTROL_CABLE_COLOR = "Control Cable Color";
 
 }

@@ -60,35 +60,24 @@
 package org.trianacode.gui.hci.color;
 
 
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.tool.Tool;
-
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.tool.Tool;
+
 /**
- * The ColorManager maintains a register of ColorModels for different tool
- * class types, and a default ColorModel which handles tool class types and
- * color elements not handled by a specific ColorModel. Components can query the
- * ColorManager to discover the color value for particular graphical elements
- * based on class of the tool they are visualizing.
+ * The ColorManager maintains a register of ColorModels for different tool class types, and a default ColorModel which
+ * handles tool class types and color elements not handled by a specific ColorModel. Components can query the
+ * ColorManager to discover the color value for particular graphical elements based on class of the tool they are
+ * visualizing.
  *
- * @author Ian Wang
-<<<<<<< ColorManager.java
- * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.6.2.1
- * @created 6th May 2004
-<<<<<<< ColorManager.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.6.2.1
- make a Singleton
+ * @author Ian Wang <<<<<<< ColorManager.java
+ * @version $Revision: 4048 $ >>>>>>> 1.6.2.1
  */
 
 public class ColorManager {
@@ -99,9 +88,8 @@ public class ColorManager {
     private static Hashtable modeltable = new Hashtable();
 
     /**
-     * A hashtable to the color model for each tool/element, keyed by the
-     * tool/element. This table is dynamically populated as colors are requested
-     * for tools.
+     * A hashtable to the color model for each tool/element, keyed by the tool/element. This table is dynamically
+     * populated as colors are requested for tools.
      */
     private static Hashtable modelcache = new Hashtable();
 
@@ -117,16 +105,14 @@ public class ColorManager {
 
 
     /**
-     * @return the default color model used when no color model is registered for
-     *         a tool class.
+     * @return the default color model used when no color model is registered for a tool class.
      */
     public static ColorModel getDefaultColorModel() {
         return defaultmodel;
     }
 
     /**
-     * Sets the default color model used when no color model is registered for
-     * a tool class.
+     * Sets the default color model used when no color model is registered for a tool class.
      */
     public static void setDefaultColorModel(ColorModel model) {
         defaultmodel = model;
@@ -135,9 +121,8 @@ public class ColorManager {
 
 
     /**
-     * Registers a color model to handle the color values for a particular
-     * tool class. Note that if two models are registered for a tool then
-     * the later registered takes precedence.
+     * Registers a color model to handle the color values for a particular tool class. Note that if two models are
+     * registered for a tool then the later registered takes precedence.
      */
     public static void registerColorModel(String toolclass, ColorModel model) {
         modeltable.put(toolclass, model);
@@ -163,14 +148,15 @@ public class ColorManager {
     }
 
     /**
-     * @return the color model regiseted for the specified tool class (or null
-     *         if no model is registered, i.e. the default color model is used)
+     * @return the color model regiseted for the specified tool class (or null if no model is registered, i.e. the
+     *         default color model is used)
      */
     public static ColorModel getRegisteredColorModel(String toolclass) {
-        if (modeltable.containsKey(toolclass))
+        if (modeltable.containsKey(toolclass)) {
             return (ColorModel) modeltable.get(toolclass);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -182,8 +168,7 @@ public class ColorManager {
 
 
     /**
-     * @return an array fo the registered color models (including the default
-     *         color model)
+     * @return an array fo the registered color models (including the default color model)
      */
     public static ColorModel[] getRegisteredColorModels() {
         String[] classes = getRegisteredToolClasses();
@@ -191,26 +176,27 @@ public class ColorManager {
 
         models.add(getDefaultColorModel());
 
-        for (int count = 0; count < classes.length; count++)
-            if (!models.contains(getRegisteredColorModel(classes[count])))
+        for (int count = 0; count < classes.length; count++) {
+            if (!models.contains(getRegisteredColorModel(classes[count]))) {
                 models.add(getRegisteredColorModel(classes[count]));
+            }
+        }
 
         return (ColorModel[]) models.toArray(new ColorModel[models.size()]);
     }
 
 
     /**
-     * @return the color for the particular graphical element of the specified
-     *         tool. Note that if two models are registered for a tool then
-     *         the later registered takes precedence.
+     * @return the color for the particular graphical element of the specified tool. Note that if two models are
+     *         registered for a tool then the later registered takes precedence.
      */
     public static Color getColor(String element, Tool tool) {
         ColorModel model;
         ElementKey key = new ElementKey(tool, element);
 
-        if (modelcache.containsKey(key))
+        if (modelcache.containsKey(key)) {
             model = (ColorModel) modelcache.get(key);
-        else {
+        } else {
             model = getToolColorModel(tool, element);
             modelcache.put(key, model);
         }
@@ -219,16 +205,15 @@ public class ColorManager {
     }
 
     /**
-     * @return the color for the particular graphical element not associated
-     *         withd a specific tool
+     * @return the color for the particular graphical element not associated withd a specific tool
      */
     public static Color getColor(String element) {
         ColorModel model;
         ElementKey key = new ElementKey(element);
 
-        if (modelcache.containsKey(key))
+        if (modelcache.containsKey(key)) {
             model = (ColorModel) modelcache.get(key);
-        else {
+        } else {
             model = getElementColorModel(element);
             modelcache.put(key, model);
         }
@@ -240,17 +225,36 @@ public class ColorManager {
      * @return the color for the particular node
      */
     public static Color getColor(Node node) {
-        if (node.getTask() == null)
+        if (node.getTask() == null) {
             return Color.black;
+        }
 
         ColorModel model = getNodeColorModel(node);
 
-        if (model instanceof NodeColorModel)
+        if (model instanceof NodeColorModel) {
             return ((NodeColorModel) model).getColor(node);
-        else if (getDefaultColorModel() instanceof NodeColorModel)
+        } else if (getDefaultColorModel() instanceof NodeColorModel) {
             return ((NodeColorModel) getDefaultColorModel()).getColor(node);
-        else
+        } else {
             return Color.black;
+        }
+    }
+
+
+    /**
+     * @return the color for the particular cable
+     */
+    public static Color getColor(Cable cable) {
+
+        ColorModel model = getCableColorModel(cable);
+
+        if (model instanceof CableColorModel) {
+            return ((CableColorModel) model).getColor(cable);
+        } else if (getDefaultColorModel() instanceof CableColorModel) {
+            return ((CableColorModel) getDefaultColorModel()).getColor(cable);
+        } else {
+            return Color.black;
+        }
     }
 
 
@@ -279,15 +283,17 @@ public class ColorManager {
             }
         }
 
-        if (model == null)
+        if (model == null) {
             model = getElementColorModel(element);
+        }
 
         return model;
     }
 
     private static ColorModel getElementColorModel(String element) {
-        if (isColorModelForElement(getDefaultColorModel(), element))
+        if (isColorModelForElement(getDefaultColorModel(), element)) {
             return getDefaultColorModel();
+        }
 
         Enumeration enumeration = modeltable.elements();
         ColorModel model = null;
@@ -296,12 +302,14 @@ public class ColorManager {
         while (enumeration.hasMoreElements() && (model == null)) {
             tempmodel = (ColorModel) enumeration.nextElement();
 
-            if (isColorModelForElement(tempmodel, element))
+            if (isColorModelForElement(tempmodel, element)) {
                 model = tempmodel;
+            }
         }
 
-        if (model == null)
+        if (model == null) {
             model = getDefaultColorModel();
+        }
 
         return model;
     }
@@ -309,9 +317,11 @@ public class ColorManager {
     private static boolean isColorModelForElement(ColorModel model, String element) {
         String[] elems = model.getElementNames();
 
-        for (int ecount = 0; ecount < elems.length; ecount++)
-            if (elems[ecount].equals(element))
+        for (int ecount = 0; ecount < elems.length; ecount++) {
+            if (elems[ecount].equals(element)) {
                 return true;
+            }
+        }
 
         return false;
     }
@@ -344,6 +354,37 @@ public class ColorManager {
         return model;
     }
 
+    /**
+     * @return the color model used for the specified tool
+     */
+    private static ColorModel getCableColorModel(Cable cable) {
+        ColorModel model = getDefaultColorModel();
+        if (cable.getSendingNode() == null) {
+            return model;
+        }
+        RenderingHint[] hints = cable.getSendingNode().getTask().getRenderingHints();
+        String hint;
+        ColorModel tempmodel = null;
+        int priority = -1;
+
+        for (int count = 0; count < hints.length; count++) {
+            hint = hints[count].getRenderingHint();
+
+            if (modeltable.containsKey(hint)) {
+                tempmodel = (ColorModel) modeltable.get(hint);
+
+                if (tempmodel instanceof NodeColorModel) {
+                    if ((model == null) || (classorder.indexOf(hint) > priority)) {
+                        model = tempmodel;
+                        priority = classorder.indexOf(hint);
+                    }
+                }
+            }
+        }
+
+        return model;
+    }
+
 
     private static class ElementKey {
 
@@ -361,13 +402,21 @@ public class ColorManager {
 
 
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ElementKey)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof ElementKey)) {
+                return false;
+            }
 
             final ElementKey elementKey = (ElementKey) o;
 
-            if (element != null ? !element.equals(elementKey.element) : elementKey.element != null) return false;
-            if (tool != null ? !tool.equals(elementKey.tool) : elementKey.tool != null) return false;
+            if (element != null ? !element.equals(elementKey.element) : elementKey.element != null) {
+                return false;
+            }
+            if (tool != null ? !tool.equals(elementKey.tool) : elementKey.tool != null) {
+                return false;
+            }
 
             return true;
         }
@@ -406,17 +455,15 @@ public class ColorManager {
 
 
         /**
-         * @return the color for the specified graphical element when representing
-         *         the specified tool. If the element is unrecognized this method will return
-         *         a default color.
+         * @return the color for the specified graphical element when representing the specified tool. If the element is
+         *         unrecognized this method will return a default color.
          */
         public Color getColor(String element, Tool tool) {
             return Color.black;
         }
 
         /**
-         * @return the color for the specified graphical element not linked to a
-         *         specific tool
+         * @return the color for the specified graphical element not linked to a specific tool
          */
         public Color getColor(String element) {
             return Color.black;

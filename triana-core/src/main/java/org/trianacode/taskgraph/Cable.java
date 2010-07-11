@@ -61,12 +61,11 @@ package org.trianacode.taskgraph;
 import org.trianacode.taskgraph.event.CableListener;
 
 /**
- * @author      Ian
- * @created     26-Apr-02
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian
+ * @version $Revision: 4048 $
  */
 public interface Cable {
+    String CONTROL_CABLE_TYPE = "control";
 
     /**
      * Adds a cable listener to this cable.
@@ -134,8 +133,7 @@ public interface Cable {
     public void reconnect(Node recnode) throws CableException;
 
     /**
-     * Disconnect this cable from its nodes. Note that a disconnected cable
-     * cannot be reconnected.
+     * Disconnect this cable from its nodes. Note that a disconnected cable cannot be reconnected.
      */
     public void disconnect() throws CableException;
 

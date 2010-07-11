@@ -59,25 +59,18 @@
 
 package org.trianacode.gui.main.imp;
 
-import org.trianacode.gui.hci.GUIEnv;
+import java.awt.Component;
+import java.awt.Container;
 
-import java.awt.*;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.imp.CableImp;
 
 /**
  * Factory class for creating DrawCables
  *
- * @author Ian Wang
-<<<<<<< CableFactory.java
- * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.1.2.1
- * @created 15th November 2005
-<<<<<<< CableFactory.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.1.2.1
+ * @author Ian Wang <<<<<<< CableFactory.java
+ * @version $Revision: 4048 $ >>>>>>> 1.1.2.1
  */
 
 public class CableFactory {
@@ -85,41 +78,48 @@ public class CableFactory {
     /**
      * @return a new draw cable instance
      */
-    public static DrawCable createDrawCable(String type, Component startcomp, Component endcomp, Container surface) {
-        if (GUIEnv.isSmoothCables())
-            return new BendyCable(type, startcomp, endcomp, surface);
-        else
-            return new StableCable(type, surface, startcomp, endcomp);
+    public static DrawCable createDrawCable(Cable cable, Component startcomp, Component endcomp, Container surface) {
+        if (GUIEnv.isSmoothCables()) {
+            return new BendyCable(cable, startcomp, endcomp, surface);
+        } else {
+            return new StableCable(cable, surface, startcomp, endcomp);
+        }
     }
 
     /**
      * @return a new draw cable instance
      */
     public static DrawCable createDrawCable(Component startcomp, Component endcomp, Container surface) {
-        if (GUIEnv.isSmoothCables())
-            return new BendyCable(startcomp, endcomp, surface);
-        else
-            return new StableCable(surface, startcomp, endcomp);
+        Cable cable = new CableImp();
+
+        if (GUIEnv.isSmoothCables()) {
+            return new BendyCable(cable, startcomp, endcomp, surface);
+        } else {
+            return new StableCable(cable, surface, startcomp, endcomp);
+        }
     }
 
     /**
      * @return a new draw cable instance
      */
-    public static DrawCable createDrawCable(String type, Component startcomp, Container surface) {
-        if (GUIEnv.isSmoothCables())
-            return new BendyCable(type, startcomp, surface);
-        else
-            return new StableCable(type, surface, startcomp);
+    public static DrawCable createDrawCable(Cable cable, Component startcomp, Container surface) {
+        if (GUIEnv.isSmoothCables()) {
+            return new BendyCable(cable, startcomp, surface);
+        } else {
+            return new StableCable(cable, surface, startcomp);
+        }
     }
 
     /**
      * @return a new draw cable instance
      */
     public static DrawCable createDrawCable(Component startcomp, Container surface) {
-        if (GUIEnv.isSmoothCables())
-            return new BendyCable(startcomp, surface);
-        else
-            return new StableCable(surface, startcomp);
+        Cable cable = new CableImp();
+        if (GUIEnv.isSmoothCables()) {
+            return new BendyCable(cable, startcomp, surface);
+        } else {
+            return new StableCable(cable, surface, startcomp);
+        }
     }
 
 }

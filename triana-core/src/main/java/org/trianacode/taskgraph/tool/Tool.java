@@ -67,8 +67,6 @@ import org.trianacode.taskgraph.proxy.Proxy;
 /**
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Apr 25, 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface Tool {
 
@@ -178,11 +176,14 @@ public interface Tool {
      */
     public String getToolName();
 
+    public String getDisplayName();
+
+    public String getDisplayPackage();
+
     public String getDefinitionType();
 
     /**
-     * @return a Java style package name for this tool in the form [package].[package].
-     *         i.e. Common.Input
+     * @return a Java style package name for this tool in the form [package].[package]. i.e. Common.Input
      */
     public String getToolPackage();
 
@@ -193,8 +194,8 @@ public interface Tool {
     public String getQualifiedToolName();
 
     /**
-     * @return the location directory that held the definition file this tool was generated
-     *         from. This could be XML or a Java .class file. Other things might be supported in the future.
+     * @return the location directory that held the definition file this tool was generated from. This could be XML or a
+     *         Java .class file. Other things might be supported in the future.
      */
     public String getDefinitionPath();
 
@@ -259,26 +260,24 @@ public interface Tool {
 
 
     /**
-     * @return an array of general input types for nodes not covered by
-     *         getDataInputTypes(int node)
+     * @return an array of general input types for nodes not covered by getDataInputTypes(int node)
      */
     public String[] getDataInputTypes();
 
     /**
-     * @return the data types accepted on the specified node index (if null is
-     *         returned then the general input types should be assumed)
+     * @return the data types accepted on the specified node index (if null is returned then the general input types
+     *         should be assumed)
      */
     public String[] getDataInputTypes(int node);
 
     /**
-     * @return an array of general output types for nodes for nodes not covered
-     *         by getDataOutputTypes(int node)
+     * @return an array of general output types for nodes for nodes not covered by getDataOutputTypes(int node)
      */
     public String[] getDataOutputTypes();
 
     /**
-     * @return an data types output by the specified node index (if null is
-     *         returned then the general output types should be assumed)
+     * @return an data types output by the specified node index (if null is returned then the general output types
+     *         should be assumed)
      */
     public String[] getDataOutputTypes(int node);
 
@@ -473,8 +472,7 @@ public interface Tool {
 
 
     /**
-     * Used to set the names/number of input parameter nodes, and whether they
-     * are trigger nodes.
+     * Used to set the names/number of input parameter nodes, and whether they are trigger nodes.
      */
     public void setParameterInputs(String[] names, boolean[] trigger) throws NodeException;
 

@@ -59,6 +59,24 @@
 package org.trianacode.gui.main.imp;
 
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.MainTrianaKeyMapFactory;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -67,53 +85,54 @@ import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
 import org.trianacode.gui.action.clipboard.ClipboardPasteInterface;
 import org.trianacode.gui.hci.Clipboard;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.hci.tools.UpdateActionConstants;
-import org.trianacode.gui.main.*;
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.event.*;
+import org.trianacode.gui.main.ForShowComponent;
+import org.trianacode.gui.main.IndicationCableInterface;
+import org.trianacode.gui.main.NodeComponent;
+import org.trianacode.gui.main.SelectionBoxInterface;
+import org.trianacode.gui.main.ShowToolPanel;
+import org.trianacode.gui.main.TaskComponent;
+import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.main.TrianaLayoutConstants;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.TaskLayoutDetails;
+import org.trianacode.taskgraph.event.ControlTaskStateEvent;
+import org.trianacode.taskgraph.event.NodeEvent;
+import org.trianacode.taskgraph.event.NodeListener;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskGraphCableEvent;
+import org.trianacode.taskgraph.event.TaskGraphListener;
+import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
 /**
- * A MainTriana is an area which contains Triana algorithms.  Here units are
- * placed at certain positions and connected together in a left-to-right
- * ordering.  If the data which a sending unit is compatable to the data
- * the receiving unit can receive then a connection takes place which
- * is indicated by a line being drawn between the output node on the
- * sending unit and the input node on the receiving unit.</p>
- * <p/>
- * A MainTriana is only concerned with the GUI side of connecting units together.
- * I have tried to separate the GUI from the actual triana engine as much as
- * possible in this release so that we create things like a scripting
- * language etc. at a later stage.
- * </p><p>
+ * A MainTriana is an area which contains Triana algorithms.  Here units are placed at certain positions and connected
+ * together in a left-to-right ordering.  If the data which a sending unit is compatable to the data the receiving unit
+ * can receive then a connection takes place which is indicated by a line being drawn between the output node on the
+ * sending unit and the input node on the receiving unit.</p> <p/> A MainTriana is only concerned with the GUI side of
+ * connecting units together. I have tried to separate the GUI from the actual triana engine as much as possible in this
+ * release so that we create things like a scripting language etc. at a later stage. </p><p>
  *
- * @author Ian Taylor
- *         <<<<<<< MainTriana.java
- * @version $Revision: 4048 $
- *          >>>>>>> 1.13.2.1
- * @created 24 Jan 1997
- * <<<<<<< MainTriana.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * =======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * >>>>>>> 1.13.2.1
+ * @author Ian Taylor <<<<<<< MainTriana.java
+ * @version $Revision: 4048 $ >>>>>>> 1.13.2.1
  */
 public class MainTriana extends JPanel
         implements TaskGraphPanel, ShowToolPanel, SelectionBoxInterface,
         IndicationCableInterface, TaskGraphListener, TaskListener, NodeListener,
         ClipboardActionInterface, ClipboardPasteInterface, ToolSelectionHandler {
-
-    private static final String CONTROL_CABLE_TYPE = "control";
 
 
     /**
@@ -182,7 +201,8 @@ public class MainTriana extends JPanel
     public MainTriana(TaskGraph taskgraph, TrianaClient client) {
         super();
 
-        layout = new MainTrianaLayout(TrianaLayoutConstants.DEFAULT_NODE_SIZE.width, TrianaLayoutConstants.DEFAULT_TOOL_SIZE.width / 2);
+        layout = new MainTrianaLayout(TrianaLayoutConstants.DEFAULT_NODE_SIZE.width,
+                TrianaLayoutConstants.DEFAULT_TOOL_SIZE.width / 2);
         setLayout(layout);
 
         addActionMaps();
@@ -210,8 +230,8 @@ public class MainTriana extends JPanel
     }
 
     /**
-     * Called by application frame immediately after the Main Triana has been added to a frame, used to initialise
-     * the gui and populate the main triana.
+     * Called by application frame immediately after the Main Triana has been added to a frame, used to initialise the
+     * gui and populate the main triana.
      */
     public void init() {
         populateMainTriana();
@@ -228,8 +248,9 @@ public class MainTriana extends JPanel
     private void populateMainTriana() {
         Task[] tasks = taskgraph.getTasks(false);
 
-        for (int count = 0; count < tasks.length; count++)
+        for (int count = 0; count < tasks.length; count++) {
             initializeTaskComponent(tasks[count]);
+        }
 
         Cable[] cables = TaskGraphUtils.getInternalCables(tasks);
         TaskComponent sendtask;
@@ -244,7 +265,8 @@ public class MainTriana extends JPanel
             sendnode = sendtask.getNodeComponent(cables[count].getSendingNode());
             recnode = rectask.getNodeComponent(cables[count].getReceivingNode());
 
-            drawingCables.put(cables[count], CableFactory.createDrawCable(getCableType(cables[count]), sendnode.getComponent(), recnode.getComponent(), this));
+            drawingCables.put(cables[count],
+                    CableFactory.createDrawCable(cables[count], sendnode.getComponent(), recnode.getComponent(), this));
         }
     }
 
@@ -256,16 +278,18 @@ public class MainTriana extends JPanel
         for (int count = 0; count < nodes.length; count++) {
             nodeAdded(new TaskNodeEvent(TaskNodeEvent.NODE_ADDED, taskgraph, nodes[count], count, count));
 
-            if (nodes[count].isConnected())
+            if (nodes[count].isConnected()) {
                 nodeConnected(new NodeEvent(nodes[count]));
+            }
         }
 
         nodes = taskgraph.getDataOutputNodes();
         for (int count = 0; count < nodes.length; count++) {
             nodeAdded(new TaskNodeEvent(TaskNodeEvent.NODE_ADDED, taskgraph, nodes[count], count, count));
 
-            if (nodes[count].isConnected())
+            if (nodes[count].isConnected()) {
                 nodeConnected(new NodeEvent(nodes[count]));
+            }
         }
     }
 
@@ -318,10 +342,11 @@ public class MainTriana extends JPanel
     public void addShowTool(ForShowComponent showtool, DrawCable cable) {
         showcables.put(showtool, cable);
 
-        if (showtool.getGroupNode().isInputNode())
+        if (showtool.getGroupNode().isInputNode()) {
             add(showtool.getComponent(), MainTrianaLayout.LEFT_FORSHOW);
-        else
+        } else {
             add(showtool.getComponent(), MainTrianaLayout.RIGHT_FORSHOW);
+        }
     }
 
     /**
@@ -382,20 +407,11 @@ public class MainTriana extends JPanel
         Node receivenode = cable.getReceivingNode();
         String type = DrawCable.DEFAULT_TYPE;
 
-        if (receivenode.isParameterNode() && receivenode.isEssential())
-            type = CONTROL_CABLE_TYPE;
+        if (receivenode.isParameterNode() && receivenode.isEssential()) {
+            type = Cable.CONTROL_CABLE_TYPE;
+        }
 
         return type;
-    }
-
-    /**
-     * @return the color for the specified cable type
-     */
-    private Color getCableColor(String type) {
-        if (type.equals(CONTROL_CABLE_TYPE))
-            return Color.RED;
-        else
-            return Color.BLACK;
     }
 
 
@@ -403,8 +419,10 @@ public class MainTriana extends JPanel
      * Sets the start component and endpoint of the indication cable
      */
     public void drawIndicationCableInterface(Component start, Point end) {
-        if ((indiccable == null) || (indiccable.getStartComponent() != start))
+        if ((indiccable == null) || (indiccable.getStartComponent() != start)) {
             indiccable = CableFactory.createDrawCable(start, this);
+        }
+        indiccable.setColor(Color.darkGray);
 
         indiccable.setRelativeEndPoint(end);
         drawIndicationCableInterface = true;
@@ -424,8 +442,7 @@ public class MainTriana extends JPanel
 
 
     /**
-     * @return the node the indic cable is currently over (null if no indic cable
-     *         or not over a node component).
+     * @return the node the indic cable is currently over (null if no indic cable or not over a node component).
      */
     public NodeComponent getIndicationNode() {
         if ((drawIndicationCableInterface) && (indiccable != null)) {
@@ -436,12 +453,13 @@ public class MainTriana extends JPanel
             do {
                 comp = subcomp;
 
-                if (comp == null)
+                if (comp == null) {
                     return null;
-                else if (comp instanceof NodeComponent)
+                } else if (comp instanceof NodeComponent) {
                     return (NodeComponent) comp;
-                else if (!(comp instanceof Container))
+                } else if (!(comp instanceof Container)) {
                     return null;
+                }
 
                 subcomp = comp.getComponentAt(SwingUtilities.convertPoint(this, endpoint, comp));
             } while (comp != subcomp);
@@ -471,8 +489,9 @@ public class MainTriana extends JPanel
     private void paintSelected(Graphics graphs) {
         TaskComponent[] comps = getSelectedComponents();
 
-        for (int count = 0; count < comps.length; count++)
+        for (int count = 0; count < comps.length; count++) {
             comps[count].getComponent().repaint();
+        }
     }
 
     /**
@@ -488,7 +507,7 @@ public class MainTriana extends JPanel
             cable = ((DrawCable) enumeration.nextElement());
 
             cable.setWidth(Math.max((int) (layout.getZoom() * cable.getDefaultWidth()), 1));
-            cable.setColor(getCableColor(cable.getType()));
+            cable.setColor(getCableColor(cable.getCable()));
             cable.drawCable(graphs);
         }
     }
@@ -502,7 +521,8 @@ public class MainTriana extends JPanel
             while (enumeration.hasMoreElements()) {
                 key = enumeration.nextElement();
                 cable = (DrawCable) drawingCables.get(key);
-                drawingCables.put(key, CableFactory.createDrawCable(cable.getType(), cable.getStartComponent(), cable.getEndComponent(), cable.getSurface()));
+                drawingCables.put(key, CableFactory.createDrawCable(cable.getCable(), cable.getStartComponent(),
+                        cable.getEndComponent(), cable.getSurface()));
             }
 
             smooth = GUIEnv.isSmoothCables();
@@ -518,7 +538,8 @@ public class MainTriana extends JPanel
             DrawCable[] cables = (DrawCable[]) showcables.values().toArray(new DrawCable[showcables.values().size()]);
 
             for (int count = 0; count < cables.length; count++) {
-                cables[count].setWidth(Math.max((int) (layout.getZoom() * cables[count].getDefaultWidth() * (2.0 / 3.0)), 1));
+                cables[count].setWidth(
+                        Math.max((int) (layout.getZoom() * cables[count].getDefaultWidth() * (2.0 / 3.0)), 1));
                 cables[count].drawCable(graphs);
             }
         }
@@ -577,9 +598,11 @@ public class MainTriana extends JPanel
         TaskComponent[] comps = getTaskComponents();
         ArrayList selected = new ArrayList();
 
-        for (int count = 0; count < comps.length; count++)
-            if (comps[count].isSelected())
+        for (int count = 0; count < comps.length; count++) {
+            if (comps[count].isSelected()) {
                 selected.add(comps[count]);
+            }
+        }
 
         return (TaskComponent[]) selected.toArray(new TaskComponent[selected.size()]);
     }
@@ -592,15 +615,15 @@ public class MainTriana extends JPanel
         TaskComponent[] tools = getSelectedComponents();
         Task[] tasks = new Task[tools.length];
 
-        for (int count = 0; count < tasks.length; count++)
+        for (int count = 0; count < tasks.length; count++) {
             tasks[count] = tools[count].getTaskInterface();
+        }
 
         Clipboard.putTools(tasks, false);
     }
 
     /**
-     * Puts the currently selected tasks in the clipboard and removes them
-     * from the taskgraph
+     * Puts the currently selected tasks in the clipboard and removes them from the taskgraph
      */
     public void cutSelected() throws TaskGraphException {
         copySelected();
@@ -616,8 +639,9 @@ public class MainTriana extends JPanel
 
         TaskComponent[] tools = getSelectedComponents();
 
-        for (int count = 0; count < tools.length; count++)
+        for (int count = 0; count < tools.length; count++) {
             tools[count].setSelected(false);
+        }
 
         TaskGraphUtils.createTasks(Clipboard.getTools(false), taskgraph, false);
 
@@ -630,8 +654,9 @@ public class MainTriana extends JPanel
     public void deleteSelected() {
         TaskComponent[] tools = getSelectedComponents();
 
-        for (int count = 0; count < tools.length; count++)
+        for (int count = 0; count < tools.length; count++) {
             taskgraph.removeTask(tools[count].getTaskInterface());
+        }
     }
 
 
@@ -643,8 +668,7 @@ public class MainTriana extends JPanel
     }
 
     /**
-     * Copy selected Tools to the Clipboard and delete them from the Container they are
-     * located in.
+     * Copy selected Tools to the Clipboard and delete them from the Container they are located in.
      */
     public void cutToClipboard() throws TaskGraphException {
         cutSelected();
@@ -696,10 +720,11 @@ public class MainTriana extends JPanel
     public Tool getSelectedTool() {
         TaskComponent[] taskcomps = getSelectedComponents();
 
-        if (taskcomps.length > 0)
+        if (taskcomps.length > 0) {
             return taskcomps[0].getTaskInterface();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -709,8 +734,9 @@ public class MainTriana extends JPanel
         TaskComponent[] taskcomps = getSelectedComponents();
         Task[] tasks = new Task[taskcomps.length];
 
-        for (int count = 0; count < tasks.length; count++)
+        for (int count = 0; count < tasks.length; count++) {
             tasks[count] = taskcomps[count].getTaskInterface();
+        }
 
         return tasks;
     }
@@ -753,11 +779,11 @@ public class MainTriana extends JPanel
 
 
     /**
-     * @return the cable colour associated with the specified cable, or null if
-     *         unknown
+     * @return the cable colour associated with the specified cable, or null if unknown
      */
     public Color getCableColor(Cable cable) {
-        if ((cable != null) && (cable.isConnected())) {
+        return ColorManager.getColor(cable);
+        /*if ((cable != null) && (cable.isConnected())) {
             Node source = TaskGraphUtils.getSourceNode(cable.getReceivingNode());
 
             if (source == null)
@@ -769,7 +795,7 @@ public class MainTriana extends JPanel
                 return GUIEnv.getCableColour(source.getTask().getDataOutputTypes()[0]);
         }
 
-        return null;
+        return null;*/
     }
 
 
@@ -791,15 +817,18 @@ public class MainTriana extends JPanel
                     validate();
                     repaint();
 
-                    Action action = TaskGraphViewManager.getUpdateAction(task, UpdateActionConstants.TASK_CREATED_ACTION);
+                    Action action = TaskGraphViewManager
+                            .getUpdateAction(task, UpdateActionConstants.TASK_CREATED_ACTION);
 
                     if (action != null) {
                         TaskComponent[] comps = getTaskComponents();
 
-                        for (int count = 0; count < comps.length; count++)
+                        for (int count = 0; count < comps.length; count++) {
                             comps[count].setSelected(comps[count] == comp);
+                        }
 
-                        ActionEvent actevt = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, (String) action.getValue(Action.ACTION_COMMAND_KEY));
+                        ActionEvent actevt = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                                (String) action.getValue(Action.ACTION_COMMAND_KEY));
                         action.actionPerformed(actevt);
                     }
                 }
@@ -808,9 +837,8 @@ public class MainTriana extends JPanel
     }
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method is
-     * called when tasks are removed from a taskgraph due to being grouped (they
-     * are place in the group's taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are place in the group's taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
         final TaskGraphTaskEvent evt = event;
@@ -858,7 +886,9 @@ public class MainTriana extends JPanel
                         NodeComponent sendnode = sendtask.getNodeComponent(cable.getSendingNode());
                         NodeComponent recnode = rectask.getNodeComponent(cable.getReceivingNode());
 
-                        drawingCables.put(cable, CableFactory.createDrawCable(type, sendnode.getComponent(), recnode.getComponent(), panel));
+                        drawingCables.put(cable,
+                                CableFactory.createDrawCable(cable, sendnode.getComponent(), recnode.getComponent(),
+                                        panel));
                         repaint();
                     }
                 }
@@ -880,8 +910,9 @@ public class MainTriana extends JPanel
      * Called when a connection is reconnected to a different task.
      */
     public void cableReconnected(TaskGraphCableEvent event) {
-        if (drawingCables.containsKey(event.getCable()))
+        if (drawingCables.containsKey(event.getCable())) {
             drawingCables.remove(event.getCable());
+        }
 
         cableConnected(event);
     }
@@ -905,8 +936,9 @@ public class MainTriana extends JPanel
     public void parameterUpdated(ParameterUpdateEvent event) {
         String paramname = event.getParameterName();
 
-        if (paramname.startsWith(Task.OUTPUT_TYPE))
+        if (paramname.startsWith(Task.OUTPUT_TYPE)) {
             repaint();
+        }
     }
 
 
@@ -914,8 +946,9 @@ public class MainTriana extends JPanel
      * Called when a data input node is added.
      */
     public void nodeAdded(TaskNodeEvent event) {
-        if (event.getTask() == taskgraph)
+        if (event.getTask() == taskgraph) {
             showmonitors.put(event.getNode(), new ForShowMonitor(event.getNode(), this));
+        }
     }
 
     /**
@@ -923,8 +956,9 @@ public class MainTriana extends JPanel
      */
     public void nodeRemoved(TaskNodeEvent event) {
         if (event.getTask() == taskgraph) {
-            if (showmonitors.containsKey(event.getNode()))
+            if (showmonitors.containsKey(event.getNode())) {
                 ((ForShowMonitor) showmonitors.get(event.getNode())).dispose();
+            }
 
             showmonitors.remove(event.getNode());
         }
@@ -954,8 +988,9 @@ public class MainTriana extends JPanel
         if (event.getNode().getTask() == taskgraph) {
             Cable cable = event.getNode().getCable();
 
-            if ((cable != null) && (cable.getSendingTask() != taskgraph))
+            if ((cable != null) && (cable.getSendingTask() != taskgraph)) {
                 cable.getSendingTask().removeTaskListener(this);
+            }
 
             repaint();
         }
@@ -982,8 +1017,9 @@ public class MainTriana extends JPanel
 
     public void dispose() {
         Enumeration enumeration = showmonitors.elements();
-        while (enumeration.hasMoreElements())
+        while (enumeration.hasMoreElements()) {
             ((ForShowMonitor) enumeration.nextElement()).dispose();
+        }
 
         showmonitors.clear();
         showcables.clear();

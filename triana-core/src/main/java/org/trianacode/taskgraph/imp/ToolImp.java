@@ -58,6 +58,15 @@
  */
 package org.trianacode.taskgraph.imp;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Vector;
+import java.util.logging.Logger;
+
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.TaskException;
@@ -66,18 +75,12 @@ import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Logger;
-
 
 /**
  * A generic definition of a tool in a xmlFilepath which is extended to make a task.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 23rd April
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolImp implements Tool {
 
@@ -92,6 +95,10 @@ public class ToolImp implements Tool {
      * ToolImp name
      */
     private String toolname = "";
+
+    private String displayName = "";
+
+    private String displayPackage = "";
 
     /**
      * Number of input nodes
@@ -165,16 +172,14 @@ public class ToolImp implements Tool {
     private String packageName = "";
 
     /**
-     * The name of the unit that contains the executable code for this tool, if
-     * it is the empty string it is assumed to be the tool name for backward
-     * compatibilty.
+     * The name of the unit that contains the executable code for this tool, if it is the empty string it is assumed to
+     * be the tool name for backward compatibilty.
      */
     private String unitName = "";
 
     /**
-     * This is the name for the package that contains the executable for this
-     * tool. if it is the empty string it is assumed to be the tool package for
-     * backward compatibilty.
+     * This is the name for the package that contains the executable for this tool. if it is the empty string it is
+     * assumed to be the tool package for backward compatibilty.
      */
     private String unitPackage = "";
 
@@ -204,6 +209,8 @@ public class ToolImp implements Tool {
             setDefinitionType(tool.getDefinitionType());
             setToolName(tool.getToolName());
             setToolPackage(tool.getToolPackage());
+            setDisplayName(tool.getDisplayName());
+            setDisplayPackage(tool.getDisplayPackage());
             setProxy(ProxyFactory.cloneProxy(tool.getProxy()));
 
             setDefinitionPath(tool.getDefinitionPath());
@@ -229,12 +236,14 @@ public class ToolImp implements Tool {
             setDataOutputTypes(tool.getDataOutputTypes());
 
             RenderingHint[] hints = tool.getRenderingHints();
-            for (count = 0; count < hints.length; count++)
+            for (count = 0; count < hints.length; count++) {
                 addRenderingHint(hints[count]);
+            }
 
             String[] names = tool.getExtensionNames();
-            for (count = 0; count < names.length; count++)
+            for (count = 0; count < names.length; count++) {
                 addExtension(names[count], tool.getExtension(names[count]));
+            }
 
             int paramin = tool.getParameterInputNodeCount();
             String[] paramnames = new String[paramin];
@@ -250,18 +259,21 @@ public class ToolImp implements Tool {
             int paramout = tool.getParameterOutputNodeCount();
             paramnames = new String[paramout];
 
-            for (count = 0; count < paramout; count++)
+            for (count = 0; count < paramout; count++) {
                 paramnames[count] = tool.getParameterOutputName(count);
+            }
 
             setParameterOutputs(paramnames);
 
             String[] params = tool.getParameterNames();
             for (count = 0; count < params.length; count++) {
-                if (tool.getParameter(params[count]) != null)
+                if (tool.getParameter(params[count]) != null) {
                     setParameter(params[count], tool.getParameter(params[count]));
+                }
 
-                if (tool.getParameterType(params[count]) != null)
+                if (tool.getParameterType(params[count]) != null) {
                     setParameterType(params[count], tool.getParameterType(params[count]));
+                }
             }
         } catch (NodeException except) {
             throw (new TaskException(except));
@@ -282,6 +294,24 @@ public class ToolImp implements Tool {
         return toolname;
     }
 
+    @Override
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
+    public String getDisplayPackage() {
+        return displayPackage;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setDisplayPackage(String displayPackage) {
+        this.displayPackage = displayPackage;
+    }
+
     public String getDefinitionType() {
         return definitionType;
     }
@@ -299,8 +329,7 @@ public class ToolImp implements Tool {
     }
 
     /**
-     * @return a Java style package name for this tool in the form [package].[package].
-     *         i.e. Common.Input
+     * @return a Java style package name for this tool in the form [package].[package]. i.e. Common.Input
      */
     public String getToolPackage() {
         return packageName;
@@ -340,15 +369,17 @@ public class ToolImp implements Tool {
      * Adds a proxy this tool
      */
     public void setProxy(Proxy proxy) throws TaskException {
-        if (proxy == null)
+        if (proxy == null) {
             removeProxy();
-        else if (!proxy.equals(this.proxy)) {
+        } else if (!proxy.equals(this.proxy)) {
             this.proxy = proxy;
 
             RenderingHint[] hints = getRenderingHints();
-            for (int count = 0; count < hints.length; count++)
-                if (hints[count].isProxyDependent())
+            for (int count = 0; count < hints.length; count++) {
+                if (hints[count].isProxyDependent()) {
                     removeRenderingHint(hints[count].getRenderingHint());
+                }
+            }
         }
     }
 
@@ -360,9 +391,11 @@ public class ToolImp implements Tool {
             proxy = null;
 
             RenderingHint[] hints = getRenderingHints();
-            for (int count = 0; count < hints.length; count++)
-                if (hints[count].isProxyDependent())
+            for (int count = 0; count < hints.length; count++) {
+                if (hints[count].isProxyDependent()) {
                     removeRenderingHint(hints[count].getRenderingHint());
+                }
+            }
         }
     }
 
@@ -392,10 +425,11 @@ public class ToolImp implements Tool {
      * @return the rendering hints for the specified hint
      */
     public RenderingHint getRenderingHint(String hint) {
-        if (hinttable.containsKey(hint))
+        if (hinttable.containsKey(hint)) {
             return (RenderingHint) hinttable.get(hint);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -433,30 +467,34 @@ public class ToolImp implements Tool {
 
 
     /**
-     * @return the type of the specified parameter, the default being Tool.UNKNOWN.
-     *         Returns null if the parameter does not exist.
+     * @return the type of the specified parameter, the default being Tool.UNKNOWN. Returns null if the parameter does
+     *         not exist.
      */
     public String getParameterType(String name) {
         Object result = paramtypes.get(name);
-        if (result != null)
+        if (result != null) {
             return (String) result;
-        else if (isParameterName(name))
+        } else if (isParameterName(name)) {
             return Tool.UNKNOWN_TYPE;
-        else
+        } else {
             return null;
+        }
     }
 
     /**
      * Used to set the parameters.
      */
     public void setParameter(String name, Object value) {
-        if (name.indexOf('.') >= 0)
-            System.err.println("WARNING: " + getQualifiedToolName() + " contains an invalid parameter name (" + name + ")");
+        if (name.indexOf('.') >= 0) {
+            System.err.println(
+                    "WARNING: " + getQualifiedToolName() + " contains an invalid parameter name (" + name + ")");
+        }
 
-        if (value == null)
+        if (value == null) {
             parameters.remove(name);
-        else
+        } else {
             parameters.put(name, value);
+        }
     }
 
     /**
@@ -504,10 +542,11 @@ public class ToolImp implements Tool {
      * Used to set the pop up description.
      */
     public void setPopUpDescription(String desc) {
-        if (desc != null)
+        if (desc != null) {
             setParameter(POP_UP_DESCRIPTION, desc);
-        else
+        } else {
             removeParameter(POP_UP_DESCRIPTION);
+        }
     }
 
 
@@ -522,27 +561,28 @@ public class ToolImp implements Tool {
      * Used to set the help file.
      */
     public void setHelpFile(String help) {
-        if (help != null)
+        if (help != null) {
             setParameter(HELP_FILE_PARAM, help);
-        else
+        } else {
             removeParameter(HELP_FILE_PARAM);
+        }
     }
 
 
     /**
-     * @return the data types accepted on the specified node index. If null is
-     *         returned then the types returned by getDataInputTypes() should be assumed)
+     * @return the data types accepted on the specified node index. If null is returned then the types returned by
+     *         getDataInputTypes() should be assumed)
      */
     public String[] getDataInputTypes(int node) {
-        if (node < nodeInputTypes.size())
+        if (node < nodeInputTypes.size()) {
             return (String[]) nodeInputTypes.get(node);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * @return an array of input types for node indexes not covered by
-     *         getDataInputTypes(int node)
+     * @return an array of input types for node indexes not covered by getDataInputTypes(int node)
      */
     public String[] getDataInputTypes() {
         return (String[]) inputTypes.toArray(new String[inputTypes.size()]);
@@ -552,11 +592,12 @@ public class ToolImp implements Tool {
      * Used by ToolFactory to set the input types for each node
      */
     public void setDataInputTypes(int node, String[] types) {
-        if (types == null)
+        if (types == null) {
             nodeInputTypes.setSize(node);
-        else {
-            while (nodeInputTypes.size() <= node)
+        } else {
+            while (nodeInputTypes.size() <= node) {
                 nodeInputTypes.add(new String[0]);
+            }
 
             nodeInputTypes.set(node, types);
         }
@@ -571,19 +612,19 @@ public class ToolImp implements Tool {
 
 
     /**
-     * @return an data types output by the specified node index. If null is
-     *         returned then the types returned by getDataInputTypes() should be assumed)
+     * @return an data types output by the specified node index. If null is returned then the types returned by
+     *         getDataInputTypes() should be assumed)
      */
     public String[] getDataOutputTypes(int node) {
-        if (node < nodeOutputTypes.size())
+        if (node < nodeOutputTypes.size()) {
             return (String[]) nodeOutputTypes.get(node);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * @return an array of output types for node indexes not covered by
-     *         getDataOutputTypes(int node)
+     * @return an array of output types for node indexes not covered by getDataOutputTypes(int node)
      */
     public String[] getDataOutputTypes() {
         return (String[]) outputTypes.toArray(new String[outputTypes.size()]);
@@ -594,11 +635,12 @@ public class ToolImp implements Tool {
      * Used by ToolFactory to set the output types for each node
      */
     public void setDataOutputTypes(int node, String[] types) {
-        if (types == null)
+        if (types == null) {
             nodeOutputTypes.setSize(node);
-        else {
-            while (nodeOutputTypes.size() <= node)
+        } else {
+            while (nodeOutputTypes.size() <= node) {
                 nodeOutputTypes.add(new String[0]);
+            }
 
             nodeOutputTypes.set(node, types);
         }
@@ -670,8 +712,9 @@ public class ToolImp implements Tool {
     public void setParameterInputs(String[] names, boolean[] trigger) throws NodeException {
         inparamnames.clear();
 
-        for (int count = 0; count < names.length; count++)
+        for (int count = 0; count < names.length; count++) {
             inparamnames.add(new InputNode(names[count], trigger[count]));
+        }
     }
 
 
@@ -695,8 +738,9 @@ public class ToolImp implements Tool {
     public void setParameterOutputs(String[] names) throws NodeException {
         outparamnames.clear();
 
-        for (int count = 0; count < names.length; count++)
+        for (int count = 0; count < names.length; count++) {
             outparamnames.add(names[count]);
+        }
     }
 
 
@@ -825,8 +869,7 @@ public class ToolImp implements Tool {
 
 
     /**
-     * @return the location directory that held the file this tool was generated
-     *         from.
+     * @return the location directory that held the file this tool was generated from.
      */
     public String getDefinitionPath() {
         return filepath;
@@ -844,10 +887,11 @@ public class ToolImp implements Tool {
      * @return the full-qualified (Java style) name of the tool, i.e. toolpackage.toolname
      */
     public String getQualifiedToolName() {
-        if ((getToolPackage() != null) && (!getToolPackage().equals("")))
+        if ((getToolPackage() != null) && (!getToolPackage().equals(""))) {
             return getToolPackage() + '.' + getToolName();
-        else
+        } else {
             return getToolName();
+        }
     }
 
 
@@ -867,10 +911,11 @@ public class ToolImp implements Tool {
 
 
     public String toString() {
-        if (toolname != null)
+        if (toolname != null) {
             return toolname;
-        else
+        } else {
             return "[" + super.toString() + "]";
+        }
     }
 
 
