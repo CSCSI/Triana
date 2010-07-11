@@ -3,7 +3,7 @@
 -->
 
 
-<project name="attic-all" default="triana-app" basedir=".">
+<project name="triana-all" default="triana-app" basedir=".">
 
     <property name="version" value="0.1"/>
     <property name="core-classes" value="../triana-core/target/classes"/>
@@ -27,8 +27,9 @@
         <!--
         <copy todir="target/classes" overwrite="yes">
                     <fileset dir="${toolbox-classes}" includes="**/**"/>
-                </copy>-->
-        
+        </copy>
+        -->
+
         <jar jarfile="target/triana-app-${version}.jar" basedir="target/classes"/>
         <copy todir="target" overwrite="yes">
             <fileset dir="bin" includes="**/*.sh,**/*.bat,**/*.properties"/>
