@@ -29,6 +29,11 @@ import java.io.File;
 
 public class Toolbox {
 
+    public static enum Type {
+        FILE,
+        HTTP
+    }
+
     private String path;
     private String type;
     private boolean isVirtual;
