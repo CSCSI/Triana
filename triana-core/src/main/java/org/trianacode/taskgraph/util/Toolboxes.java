@@ -47,21 +47,26 @@ public class Toolboxes {
             handler.add(toolbox, root);
         }
         handler.output(bw, true);
+        bw.flush();
+        FileUtils.closeWriter(bw);
+
     }
 
     public static void loadToolboxes(ToolTable table) {
+        System.out.println("Toolboxes.loadToolboxes============================================");
         File file = new File(Home.home() + File.separator + "toolboxes.xml");
         if (!file.exists() || file.length() == 0) {
             File defToolbox = new File(Home.home() + File.separator + "toolbox");
             defToolbox.mkdirs();
             table.addToolBox(new Toolbox(defToolbox.getAbsolutePath(), Toolbox.INTERNAL, "user"));
             try {
+                System.out.println("Toolboxes.loadToolboxes ABOUT TO SAVE ON A LOAD");
                 saveToolboxes(table);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return;
         }
+        file = new File(Home.home() + File.separator + "toolboxes.xml");
         List<Toolbox> tbs = new ArrayList<Toolbox>();
         BufferedReader br = null;
         try {
@@ -74,7 +79,7 @@ public class Toolboxes {
                 throw (new Exception("Corrupt config file: " + file.getAbsolutePath()));
             }
 
-            List elementList = handler.getChildren(handler.getChild(root, "toolbox"));
+            List elementList = handler.getChildren(root);
             Iterator iter = elementList.iterator();
             Element elem;
             String toolbox;
@@ -89,13 +94,17 @@ public class Toolboxes {
                     name = "noname";
                 }
                 boolean v = virtual != null && virtual.equals("true");
-                if (!v && !new File(toolbox).exists()) {
-                    log.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
-                } else {
-                    if (type != null && type.length() > 0) {
-                        tbs.add(new Toolbox(toolbox, type, v));
+                if (!v) {
+                    if (!new File(toolbox).exists()) {
+                        log.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
                     } else {
-                        tbs.add(new Toolbox(toolbox, name, v));
+                        if (type != null && type.length() > 0) {
+                            System.out.println("Toolboxes.loadToolboxes ============================= ADDED");
+                            tbs.add(new Toolbox(toolbox, type, v));
+                        } else {
+                            System.out.println("Toolboxes.loadToolboxes ============================= ADDED");
+                            tbs.add(new Toolbox(toolbox, name, v));
+                        }
                     }
                 }
             }

@@ -58,27 +58,34 @@
  */
 package org.trianacode.gui.panels;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
+import org.trianacode.taskgraph.util.Toolboxes;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.Vector;
 
 /**
  * Panel for displaying, adding and removing toolbox paths
  *
  * @author Matthew Shields
  * @version $Revsion:$
- * @created Apr 7, 2003: 1:53:37 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolBoxPanel extends ParameterPanel implements ActionListener {
 
@@ -90,8 +97,8 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
 
 
     /**
-     * This method returns true by default. It should be overridden if the panel does not want the
-     * user to be able to change the auto commit state
+     * This method returns true by default. It should be overridden if the panel does not want the user to be able to
+     * change the auto commit state
      */
     public boolean isAutoCommitVisible() {
         return false;
@@ -99,8 +106,8 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
 
 
     /**
-     * Called when the ok button is clicked on the parameter window. Calls applyClicked by default
-     * to commit any parameter changes.
+     * Called when the ok button is clicked on the parameter window. Calls applyClicked by default to commit any
+     * parameter changes.
      */
     public void okClicked() {
         super.okClicked();
@@ -116,8 +123,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
     }
 
     /**
-     * This method is called when the task is set for this panel. It is overridden to create the
-     * panel layout.
+     * This method is called when the task is set for this panel. It is overridden to create the panel layout.
      */
     public void init() {
         setLayout(new BorderLayout());
@@ -145,32 +151,34 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
             namedTypes[x++] = toolBox.getType();
         }
 
-        for (int count = 0; count < toolBoxItems.size(); count++)
-            if (((String) toolBoxItems.elementAt(count)).length() > prototype.length())
+        for (int count = 0; count < toolBoxItems.size(); count++) {
+            if (((String) toolBoxItems.elementAt(count)).length() > prototype.length()) {
                 prototype = ((String) toolBoxItems.elementAt(count));
+            }
+        }
 
         toolboxList = new JList(toolBoxItems);
         toolboxList.setVisibleRowCount(6);
         toolboxList.setPrototypeCellValue(prototype);
         toolboxList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JScrollPane scroll = new JScrollPane(toolboxList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scroll = new JScrollPane(toolboxList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scroll, BorderLayout.CENTER);
 
     }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset all the panels
-     * components to the values specified by the associated task, e.g. a component representing a
-     * parameter called "noise" should be set to the value returned by a
-     * getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public void reset() {
     }
 
     /**
-     * This method is called when the panel is finished with. It should dispose of any components
-     * (e.g. windows) used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public void dispose() {
     }
@@ -194,19 +202,27 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                     String current = selectedFiles[i].getPath();
 
                     if (toolBoxItems.contains(current)) { //already in list
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathexists"), "Information", JOptionPane.INFORMATION_MESSAGE,
+                        JOptionPane.showMessageDialog(this, Env.getString("toolpathexists"), "Information",
+                                JOptionPane.INFORMATION_MESSAGE,
                                 GUIEnv.getTrianaIcon());
                         break;
                     } else if (isSubPath(current)) { //contained as a subpath of item in list
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsub"), "Information", JOptionPane.INFORMATION_MESSAGE,
+                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsub"), "Information",
+                                JOptionPane.INFORMATION_MESSAGE,
                                 GUIEnv.getTrianaIcon());
                         break;
                     } else if (isSuperPath(current)) { //is super path of element
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsuper"), "Information", JOptionPane.INFORMATION_MESSAGE,
+                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsuper"), "Information",
+                                JOptionPane.INFORMATION_MESSAGE,
                                 GUIEnv.getTrianaIcon());
                         break;
                     } else {
                         tools.addToolBox(new Toolbox(current));
+                        try {
+                            Toolboxes.saveToolboxes(tools);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
                         toolBoxItems.add(current);
                     }
                 }
@@ -232,8 +248,9 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
     private boolean isSubPath(String child) {
         for (int i = 0; i < toolBoxItems.size(); i++) {
             String s = (String) toolBoxItems.elementAt(i);
-            if (FileUtils.isParent(s, child))
+            if (FileUtils.isParent(s, child)) {
                 return true;
+            }
         }
         return false;
     }

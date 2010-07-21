@@ -104,7 +104,6 @@ import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Home;
 import org.trianacode.taskgraph.util.Listing;
@@ -457,14 +456,12 @@ public final class Env {
      * Restore the default user settings
      */
     private static void restoreDefaultConfig(ToolTable table) {
+        Toolboxes.loadToolboxes(table);
         GUIEnv.loadDefaultColours();
         String defaultEditor = Env.getString("defaultEditor");
         setUserProperty(CODE_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));
-        Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.USER_TOOLBOX),
-                ToolTable.USER_TOOLBOX);
-        table.addToolBox(def);
     }
 
 
@@ -1343,7 +1340,7 @@ public final class Env {
 
         PrintWriter bw = null;
         try {
-            Toolboxes.saveToolboxes(tools);
+
             bw = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
             DocumentHandler handler = new DocumentHandler();
 

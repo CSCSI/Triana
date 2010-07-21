@@ -29,6 +29,7 @@ public class TaskTarget implements Target {
 
     public TaskTarget(Task task) {
         this.task = task;
+
     }
 
     @Override
@@ -44,14 +45,10 @@ public class TaskTarget implements Target {
 
     @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
+        requestContext.setResponseEntity(new ToolRenderer(task, "templates/tool.vm").render());
     }
 
-    /**
-     * receiving
-     *
-     * @param requestContext
-     * @throws RequestProcessException
-     */
+
     @Override
     public void onPut(RequestContext requestContext) throws RequestProcessException {
 
@@ -68,10 +65,10 @@ public class TaskTarget implements Target {
     @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
         TaskGraphContext context = task.getContext();
-        String executionId = (String) context.getProperty(ExecutionBus.SEND_ID);
+        String executionId = (String) context.getProperty(ExecutionBus.RECEIVE_ID);
         if (executionId == null) {
             executionId = UUID.randomUUID().toString();
-            context.setProperty(ExecutionBus.SEND_ID, executionId);
+            context.setProperty(ExecutionBus.RECEIVE_ID, executionId);
         }
         queue = new ExecutionQueue(executionId);
         ExecutionBus.addQueue(queue);
@@ -79,7 +76,7 @@ public class TaskTarget implements Target {
             TrianaExec exec = new TrianaExec(task);
             exec.run(new Object[0]);
             currentTask = getDisplayTask();
-            ToolParameterRenderer renderer = new ToolParameterRenderer(currentTask, "templates/tool.vm");
+            ToolParameterRenderer renderer = new ToolParameterRenderer(currentTask, "templates/tool-params.vm");
             requestContext.setResponseEntity(renderer.render());
             requestContext.setSendBody(true);
         } catch (TaskGraphException e) {

@@ -7,7 +7,7 @@ import org.thinginitself.streamable.Streamable;
  * @version 1.0.0 Jul 21, 2010
  */
 
-public class TaskComplete implements Renderer {
+public class TaskCompleteRenderer implements Renderer {
 
     @Override
     public Streamable render() {
