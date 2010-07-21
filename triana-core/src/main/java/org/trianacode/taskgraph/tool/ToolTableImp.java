@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.trianacode.util;
+package org.trianacode.taskgraph.tool;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,12 +27,6 @@ import java.util.logging.Logger;
 
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolClassLoader;
-import org.trianacode.taskgraph.tool.ToolException;
-import org.trianacode.taskgraph.tool.ToolFormatHandler;
-import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.taskgraph.tool.TypesMap;
 import org.trianacode.taskgraph.util.FileUtils;
 
 /**
@@ -43,7 +37,7 @@ import org.trianacode.taskgraph.util.FileUtils;
  */
 
 public class ToolTableImp extends AbstractToolTable {
-    static Logger log = Logger.getLogger("org.trianacode.util.ToolTableImp");
+    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolTableImp");
 
 
     private ReloadToolsThread reload;
@@ -143,7 +137,7 @@ public class ToolTableImp extends AbstractToolTable {
                 }
                 purgeTool(tool);
             } else {
-                Env.addExcludedTool(path);
+                //Env.addExcludedTool(path);
                 purgeToolRef(tool);
             }
 
@@ -212,7 +206,7 @@ public class ToolTableImp extends AbstractToolTable {
     protected List<Tool> addTools(File toolFile, String toolbox) {
         if ((!toolFile.exists()) || toolFile.isDirectory()) {
             log.fine("dumping file..." + toolFile);
-            Env.removeExcludedTool(toolFile.getAbsolutePath());
+            //Env.removeExcludedTool(toolFile.getAbsolutePath());
             Tool[] referenced = toolHandler.getTools(toolFile.getAbsolutePath());
             for (Tool tool : referenced) {
                 toolHandler.remove(tool);
@@ -245,7 +239,7 @@ public class ToolTableImp extends AbstractToolTable {
     }
 
     protected String getToolPackageName(String xmlFilePath, String toolName) {
-        String fullPath = xmlFilePath.replace(Env.separator() + toolName + XMLReader.XML_FILE_SUFFIX, "");
+        String fullPath = xmlFilePath.replace(File.separator + toolName + XMLReader.XML_FILE_SUFFIX, "");
         return ToolTableUtils.qualifyPath(fullPath, this);
     }
 

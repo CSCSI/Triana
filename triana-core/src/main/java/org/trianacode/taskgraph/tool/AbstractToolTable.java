@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.trianacode.util;
-
-import org.trianacode.taskgraph.tool.*;
+package org.trianacode.taskgraph.tool;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,8 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 5:15:07 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public abstract class AbstractToolTable implements ToolTable {
@@ -71,8 +71,8 @@ public abstract class AbstractToolTable implements ToolTable {
 
     /**
      * Utility method to load all the tools in the known tool boxes, blocking until finished. This method avoids using
-     * any the threaded reload tools methods so should not be used to load tools from toolboxes that may change
-     * over time.
+     * any the threaded reload tools methods so should not be used to load tools from toolboxes that may change over
+     * time.
      */
     public void blockingLoadTools() {
         for (Toolbox toolbox : toolboxes.values()) {
@@ -153,8 +153,8 @@ public abstract class AbstractToolTable implements ToolTable {
 
 
     /**
-     * Inserts a copy of the tool into the specified package. Combined with delete
-     * tool this can be used to cut/copy tools.
+     * Inserts a copy of the tool into the specified package. Combined with delete tool this can be used to cut/copy
+     * tools.
      *
      * @param tool    the tool being pasted
      * @param pack    the package of the pasted tool
@@ -248,8 +248,7 @@ public abstract class AbstractToolTable implements ToolTable {
     }
 
     /**
-     * @return the tool box path of the specified type (null if no tool box specified for that
-     *         type)
+     * @return the tool box path of the specified type (null if no tool box specified for that type)
      */
     public Toolbox getToolBox(String type) {
         for (String s : toolboxes.keySet()) {
@@ -262,8 +261,7 @@ public abstract class AbstractToolTable implements ToolTable {
     }
 
     /**
-     * @return the type for the specified tool box path if no type
-     *         specified for the tool box path)
+     * @return the type for the specified tool box path if no type specified for the tool box path)
      */
     public String getToolBoxType(String toolbox) {
         Toolbox tb = toolboxes.get(toolbox);
@@ -300,8 +298,7 @@ public abstract class AbstractToolTable implements ToolTable {
     }
 
     /**
-     * Removes a tool box from the current tool boxes and from the tool box types if it has a type
-     * set.
+     * Removes a tool box from the current tool boxes and from the tool box types if it has a type set.
      *
      * @param path the path of the tool box to remove
      */
@@ -318,9 +315,9 @@ public abstract class AbstractToolTable implements ToolTable {
 
 
     /**
-     * Notifies the tool table to update the tool loaded from the specified location, such as when a
-     * tool is created. The location should be in a form understanded by the tool table (e.g. XML
-     * file location, tool server network address), and is ignored if not understood.
+     * Notifies the tool table to update the tool loaded from the specified location, such as when a tool is created.
+     * The location should be in a form understanded by the tool table (e.g. XML file location, tool server network
+     * address), and is ignored if not understood.
      *
      * @param location the location of the file
      * @param toolbox  the toolbox the location is in (specify null if unknown)

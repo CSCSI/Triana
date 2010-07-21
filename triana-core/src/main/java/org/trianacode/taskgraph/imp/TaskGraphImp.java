@@ -58,15 +58,38 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.event.*;
-import org.trianacode.taskgraph.tool.Tool;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.NodeUtils;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.TPoint;
+import org.trianacode.taskgraph.TRectangle;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.TaskLayoutUtils;
+import org.trianacode.taskgraph.event.ControlTaskStateEvent;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskGraphCableEvent;
+import org.trianacode.taskgraph.event.TaskGraphListener;
+import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.tool.Tool;
 
 
 /**
@@ -74,8 +97,6 @@ import java.util.Iterator;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 24rd April
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TaskGraphImp extends TaskImp
         implements TaskGraph, TaskListener, Serializable, Cloneable {
@@ -105,8 +126,6 @@ public class TaskGraphImp extends TaskImp
      */
     private boolean initgroupnodes = false;
 
-    private TaskGraphContext context = new TaskGraphContext();
-
 
     /**
      * Create a taskgraph that uses the default task factory.
@@ -116,8 +135,8 @@ public class TaskGraphImp extends TaskImp
     }
 
     /**
-     * Create a taskgraph that takes its details from a specified tool and uses
-     * a specific factory. Should only be used by TaskGraphUtils and internally!
+     * Create a taskgraph that takes its details from a specified tool and uses a specific factory. Should only be used
+     * by TaskGraphUtils and internally!
      */
     public TaskGraphImp(Tool tool, TaskFactory factory, boolean preserveinst) throws TaskException {
         super(tool, factory, preserveinst);
@@ -126,9 +145,8 @@ public class TaskGraphImp extends TaskImp
     }
 
     /**
-     * Create a taskgraph containig the specified tasks, and using the specified
-     * taskgraph factory. A default mapping between the groups nodes and the tasks
-     * nodes is made.
+     * Create a taskgraph containig the specified tasks, and using the specified taskgraph factory. A default mapping
+     * between the groups nodes and the tasks nodes is made.
      */
     public TaskGraphImp(Task[] tasks, TaskFactory factory, boolean preserveinst) throws TaskException {
         this(new ToolImp(), factory, preserveinst);
@@ -155,19 +173,22 @@ public class TaskGraphImp extends TaskImp
                 Cable[] cables = TaskGraphUtils.getExternalCables(getTasks(false));
                 ArrayList nodes = new ArrayList();
 
-                for (int count = 0; count < cables.length; count++)
-                    if (containsTask(cables[count].getSendingTask()))
+                for (int count = 0; count < cables.length; count++) {
+                    if (containsTask(cables[count].getSendingTask())) {
                         addNodeToList(cables[count].getSendingNode(), nodes);
-                    else
+                    } else {
                         addNodeToList(cables[count].getReceivingNode(), nodes);
+                    }
+                }
 
                 for (Iterator iter = nodes.iterator(); iter.hasNext();) {
                     Node node = (Node) iter.next();
 
-                    if (node.isInputNode())
+                    if (node.isInputNode()) {
                         addDataInputNode(node);
-                    else
+                    } else {
                         addDataOutputNode(node);
+                    }
                 }
             }
         } catch (NodeException except) {
@@ -191,14 +212,16 @@ public class TaskGraphImp extends TaskImp
             if (newpoint[1] < curpoint[1]) {
                 nodelist.add(count, newnode);
                 insert = true;
-            } else if ((newpoint[1] == curpoint[1]) && (newnode.getAbsoluteNodeIndex() < curnode.getAbsoluteNodeIndex())) {
+            } else if ((newpoint[1] == curpoint[1]) && (newnode.getAbsoluteNodeIndex() < curnode
+                    .getAbsoluteNodeIndex())) {
                 nodelist.add(count, newnode);
                 insert = true;
             }
         }
 
-        if (!insert)
+        if (!insert) {
             nodelist.add(newnode);
+        }
     }
 
     private static void updateDeprecatedPos(Tool task) {
@@ -219,58 +242,62 @@ public class TaskGraphImp extends TaskImp
     }
 
     private static Double[] getPositionAsDoubles(Tool task) {
-        if (task.isParameterName(Task.GUI_X) && task.isParameterName(Task.GUI_Y))
+        if (task.isParameterName(Task.GUI_X) && task.isParameterName(Task.GUI_Y)) {
             return new Double[]{Double.parseDouble((String) task.getParameter(Task.GUI_X)),
                     Double.parseDouble((String) task.getParameter(Task.GUI_Y))};
-        else if (task.isParameterName(Task.DEPRECATED_GUI_XPOS) && task.isParameterName(Task.DEPRECATED_GUI_YPOS)) {
+        } else if (task.isParameterName(Task.DEPRECATED_GUI_XPOS) && task.isParameterName(Task.DEPRECATED_GUI_YPOS)) {
             updateDeprecatedPos(task);
             return getPositionAsDoubles(task);
-        } else
+        } else {
             return new Double[]{0.0, 0.0};
+        }
     }
 
     /**
      * @return the data types accepted on the specified node index
      */
     public String[] getDataInputTypes(int index) {
-        if (index >= getDataInputNodeCount())
+        if (index >= getDataInputNodeCount()) {
             return null;
+        }
 
         Node top = NodeUtils.getTopLevelNode(getDataInputNode(index));
         String[] types = top.getTask().getDataInputTypes(top.getNodeIndex());
 
-        if (types == null)
+        if (types == null) {
             return top.getTask().getDataInputTypes();
-        else
+        } else {
             return types;
+        }
     }
 
     /**
      * @return the data types accepted on the specified node index
      */
     public String[] getDataOutputTypes(int index) {
-        if (index >= getDataOutputNodeCount())
+        if (index >= getDataOutputNodeCount()) {
             return null;
+        }
 
         Node top = NodeUtils.getTopLevelNode(getDataOutputNode(index));
         String[] types = top.getTask().getDataOutputTypes(top.getNodeIndex());
 
-        if (types == null)
+        if (types == null) {
             return top.getTask().getDataOutputTypes();
-        else
+        } else {
             return types;
+        }
     }
 
 
     /**
-     * Constructs a new task for looping over the group, optionally preserving
-     * the original instance id in the new task. This method does not connect
-     * the control task, which should be done using
-     * TaskGraphUtils.connectControlTask()
+     * Constructs a new task for looping over the group, optionally preserving the original instance id in the new task.
+     * This method does not connect the control task, which should be done using TaskGraphUtils.connectControlTask()
      */
     public Task createControlTask(Tool tool, boolean preserveinst) throws TaskException {
-        if (controltask != null)
+        if (controltask != null) {
             removeControlTask();
+        }
 
         controltask = (Task) createTaskNoNotify(tool, preserveinst);
         new ControlLoopChecker(controltask);
@@ -327,16 +354,15 @@ public class TaskGraphImp extends TaskImp
     }
 
     /**
-     * @return the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED
-     *         or CONTROL_TASK_UNSTABLE)
+     * @return the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED or
+     *         CONTROL_TASK_UNSTABLE)
      */
     public int getControlTaskState() {
         return controlstate;
     }
 
     /**
-     * Sets the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED
-     * or CONTROL_TASK_UNSTABLE)
+     * Sets the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED or CONTROL_TASK_UNSTABLE)
      */
     public void setControlTaskState(int state) {
         if (state != controlstate) {
@@ -352,8 +378,9 @@ public class TaskGraphImp extends TaskImp
     public void addTaskGraphListener(final TaskGraphListener listener) {
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                if (!listeners.contains(listener))
+                if (!listeners.contains(listener)) {
                     listeners.add(listener);
+                }
             }
         });
     }
@@ -379,8 +406,8 @@ public class TaskGraphImp extends TaskImp
     }
 
     /**
-     * Create a new task in this taskgraph, optionally preserving the
-     * instance id from the original task in the new task.
+     * Create a new task in this taskgraph, optionally preserving the instance id from the original task in the new
+     * task.
      *
      * @return an interface to the new task
      */
@@ -409,26 +436,31 @@ public class TaskGraphImp extends TaskImp
      * Remove the specified task from the taskgraph.
      */
     public void removeTask(Task task) {
-        if (containsTask(task) && (task != controltask))
+        if (containsTask(task) && (task != controltask)) {
             removeTaskImp(task);
+        }
     }
 
     private void removeTaskImp(Task task) {
         Node[] nodes = task.getDataInputNodes();
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             task.removeDataInputNode(nodes[count]);
+        }
 
         nodes = task.getDataOutputNodes();
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             task.removeDataOutputNode(nodes[count]);
+        }
 
         nodes = task.getParameterInputNodes();
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             task.removeParameterInputNode((ParameterNode) nodes[count]);
+        }
 
         nodes = task.getParameterOutputNodes();
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             task.removeParameterOutputNode((ParameterNode) nodes[count]);
+        }
 
         notifyTaskRemoved(task, false, false);
 
@@ -440,16 +472,16 @@ public class TaskGraphImp extends TaskImp
 
 
     /**
-     * @return an array of all the tasks contained with this taskgraph,
-     *         optionally including the control task
+     * @return an array of all the tasks contained with this taskgraph, optionally including the control task
      */
     public Task[] getTasks(boolean includecontrol) {
         Task[] copy;
 
-        if ((!isControlTask()) || includecontrol)
+        if ((!isControlTask()) || includecontrol) {
             copy = new Task[tasks.size()];
-        else
+        } else {
             copy = new Task[tasks.size() - 1];
+        }
 
         Enumeration enumeration = tasks.elements();
         Task task;
@@ -459,10 +491,11 @@ public class TaskGraphImp extends TaskImp
             task = (Task) enumeration.nextElement();
 
             if (includecontrol || (task != controltask)) {
-                if (task == controltask)
+                if (task == controltask) {
                     copy[copy.length - 1] = task;
-                else
+                } else {
                     copy[count++] = task;
+                }
             }
         }
 
@@ -473,10 +506,11 @@ public class TaskGraphImp extends TaskImp
      * @return the task with the specified id
      */
     public Task getTask(String taskname) {
-        if (tasks.containsKey(taskname))
+        if (tasks.containsKey(taskname)) {
             return (Task) tasks.get(taskname);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -486,8 +520,9 @@ public class TaskGraphImp extends TaskImp
         Task[] tasks = getTasks(true);
 
         for (int count = 0; count < tasks.length; count++) {
-            if (tasks[count].getInstanceID().equals(instanceid))
+            if (tasks[count].getInstanceID().equals(instanceid)) {
                 return tasks[count];
+            }
         }
 
         return null;
@@ -497,10 +532,11 @@ public class TaskGraphImp extends TaskImp
      * @return the task within this taskgraph linked to the specified node
      */
     public Task getTask(Node node) {
-        if (containsTask(node.getTask()))
+        if (containsTask(node.getTask())) {
             return node.getTask();
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -518,8 +554,9 @@ public class TaskGraphImp extends TaskImp
         Task[] tasks = getTasks(false);
 
         for (int count = 0; count < tasks.length; count++) {
-            if (tasks[count].getInstanceID().equals(instanceid))
+            if (tasks[count].getInstanceID().equals(instanceid)) {
                 return true;
+            }
         }
 
         return false;
@@ -541,22 +578,23 @@ public class TaskGraphImp extends TaskImp
 
 
     /**
-     * Groups the specified tasks, returning the taskgraph created. A default mapping
-     * between group nodes and task nodes is created. This can be changed later through
-     * setDataInputNode etc. in TaskGraph.
+     * Groups the specified tasks, returning the taskgraph created. A default mapping between group nodes and task nodes
+     * is created. This can be changed later through setDataInputNode etc. in TaskGraph.
      */
     public TaskGraph groupTasks(String[] tasknames, String groupname) throws TaskException {
         Task[] tasks = new Task[tasknames.length];
 
-        for (int count = 0; count < tasks.length; count++)
+        for (int count = 0; count < tasks.length; count++) {
             tasks[count] = getTask(tasknames[count]);
+        }
 
         TRectangle bounds = TaskLayoutUtils.getBoundingBox(tasks);
 
         Cable[] cables = TaskGraphUtils.getInternalCables(tasks);
 
-        for (int count = 0; count < cables.length; count++)
+        for (int count = 0; count < cables.length; count++) {
             notifyCableDisconnected(cables[count], true, false);
+        }
 
         for (int count = 0; count < tasks.length; count++) {
             tasks[count].removeTaskListener(this);
@@ -569,7 +607,8 @@ public class TaskGraphImp extends TaskImp
         TaskGraph group = TaskGraphManager.getTaskGraphFactory(this).createGroupTask(tasks, this, true);
         group.setToolName(groupname);
 
-        TaskLayoutUtils.setPosition(group, new TPoint(bounds.getX() + (bounds.getWidth() / 2) - 0.5, bounds.getY() + (bounds.getHeight() / 2) - 0.5));
+        TaskLayoutUtils.setPosition(group, new TPoint(bounds.getX() + (bounds.getWidth() / 2) - 0.5,
+                bounds.getY() + (bounds.getHeight() / 2) - 0.5));
 
         this.tasks.put(group.getToolName() + "_TEMP_KEY" + Math.random(),
                 group);
@@ -591,9 +630,11 @@ public class TaskGraphImp extends TaskImp
      * Reconnect group nodes to nodes in the parent taskgraph when ungrouping tasks
      */
     private void groupNodes(Node[] nodes, boolean inputrecon) {
-        for (int count = 0; count < nodes.length; count++)
-            if (nodes[count].isConnected() && nodes[count].isBottomLevelNode())
+        for (int count = 0; count < nodes.length; count++) {
+            if (nodes[count].isConnected() && nodes[count].isBottomLevelNode()) {
                 notifyCableReconnected(nodes[count].getCable(), inputrecon);
+            }
+        }
     }
 
     /**
@@ -606,7 +647,8 @@ public class TaskGraphImp extends TaskImp
 
             TRectangle bounds = TaskLayoutUtils.getBoundingBox(grouptasks);
             TPoint grouppos = TaskLayoutUtils.getPosition(group);
-            TaskLayoutUtils.translateTo(grouptasks, new TPoint(grouppos.getX() - (bounds.getWidth() / 2) + 0.5, grouppos.getY() - (bounds.getHeight() / 2) + 0.5));
+            TaskLayoutUtils.translateTo(grouptasks, new TPoint(grouppos.getX() - (bounds.getWidth() / 2) + 0.5,
+                    grouppos.getY() - (bounds.getHeight() / 2) + 0.5));
 
             TaskGraphUtils.disconnectControlTask(group);
 
@@ -633,8 +675,9 @@ public class TaskGraphImp extends TaskImp
 
             Cable[] cables = TaskGraphUtils.getInternalCables(grouptasks);
 
-            for (int count = 0; count < cables.length; count++)
+            for (int count = 0; count < cables.length; count++) {
                 notifyCableConnected(cables[count], false, true);
+            }
 
             group.dispose();
         }
@@ -644,29 +687,31 @@ public class TaskGraphImp extends TaskImp
      * Reconnect group nodes to nodes in the parent taskgraph when ungrouping tasks
      */
     private void unGroupNodes(Node[] nodes) throws CableException {
-        for (int ncount = 0; ncount < nodes.length; ncount++)
+        for (int ncount = 0; ncount < nodes.length; ncount++) {
             if (!nodes[ncount].isBottomLevelNode()) {
-                if (nodes[ncount].getChildNode().getChildNode() != null)
+                if (nodes[ncount].getChildNode().getChildNode() != null) {
                     nodes[ncount].setChildNode(nodes[ncount].getChildNode().getChildNode());
-                else if (nodes[ncount].isConnected()) {
+                } else if (nodes[ncount].isConnected()) {
                     nodes[ncount].getCable().reconnect(nodes[ncount]);
                     notifyCableReconnected(nodes[ncount].getCable(), nodes[ncount].isInputNode());
-                } else
+                } else {
                     nodes[ncount].setChildNode(null);
+                }
             }
+        }
     }
 
 
     /**
-     * removes tasks and notifies listeners when the taskgraph is ungrouped,
-     * but does not dispose of the tasks
+     * removes tasks and notifies listeners when the taskgraph is ungrouped, but does not dispose of the tasks
      */
     public void ungroup() {
         Task[] taskarray = (Task[]) tasks.values().toArray(new Task[tasks.size()]);
         Cable[] cables = TaskGraphUtils.getInternalCables(taskarray);
 
-        for (int count = 0; count < cables.length; count++)
+        for (int count = 0; count < cables.length; count++) {
             notifyCableDisconnected(cables[count], false, true);
+        }
 
         for (int count = 0; count < taskarray.length; count++) {
             notifyTaskRemoved(taskarray[count], false, true);
@@ -703,31 +748,36 @@ public class TaskGraphImp extends TaskImp
      * Sets the parent of a group input/output node
      */
     public void setGroupNodeParent(Node groupnode, Node parentnode) {
-        if (!containsNode(parentnode))
+        if (!containsNode(parentnode)) {
             throw (new RuntimeException("Cannot set group node parent to node not in the taskgraph"));
+        }
 
-        if (groupnode.getTask() != this)
+        if (groupnode.getTask() != this) {
             throw (new RuntimeException("Cannot set parent for another grouptask's node"));
+        }
 
-        if (groupnode.isInputNode() != parentnode.isInputNode())
+        if (groupnode.isInputNode() != parentnode.isInputNode()) {
             throw (new RuntimeException("Non-matched parent node and group node (input/output) "));
+        }
 
         Node group = groupnode;
         Node parent = parentnode;
 
-        if (group.getParentNode() != null)
+        if (group.getParentNode() != null) {
             group.getParentNode().setChildNode(null);
+        }
 
-        if (parent.getChildNode() != null)
+        if (parent.getChildNode() != null) {
             parent.getChildNode().setParentNode(null);
+        }
 
         group.setParentNode(parent);
 
         try {
             if (parent.isConnected()) {
-                if (groupnode.isConnected())
+                if (groupnode.isConnected()) {
                     disconnect(parent.getCable());
-                else {
+                } else {
                     Cable cable = parent.getCable();
                     cable.reconnect(group);
                     notifyCableReconnected(cable, group.isInputNode());
@@ -748,15 +798,16 @@ public class TaskGraphImp extends TaskImp
     }
 
     /**
-     * Swaps the parents of two group nodes (without disconnecting either).
-     * Useful for reordering input/output nodes.
+     * Swaps the parents of two group nodes (without disconnecting either). Useful for reordering input/output nodes.
      */
     public void swapGroupNodeParents(Node groupnode1, Node groupnode2) {
-        if ((groupnode1.getTask() != this) || (groupnode2.getTask() != this))
+        if ((groupnode1.getTask() != this) || (groupnode2.getTask() != this)) {
             throw (new RuntimeException("Cannot set parent for another grouptask's node"));
+        }
 
-        if (groupnode1.isInputNode() != groupnode2.isInputNode())
+        if (groupnode1.isInputNode() != groupnode2.isInputNode()) {
             throw (new RuntimeException("Non-matched parent node and group node (input/output) "));
+        }
 
         Node node1 = groupnode1;
         Node node2 = groupnode2;
@@ -778,11 +829,13 @@ public class TaskGraphImp extends TaskImp
         if (node.getTask() == this) {
             Node group = node;
 
-            if (group.getParentNode() != null)
+            if (group.getParentNode() != null) {
                 group.getParentNode().setChildNode(null);
+            }
 
-            if (group.getChildNode() != null)
+            if (group.getChildNode() != null) {
                 group.getChildNode().setParentNode(null);
+            }
         }
 
         super.removeDataInputNode(node);
@@ -795,11 +848,13 @@ public class TaskGraphImp extends TaskImp
         if (node.getTask() == this) {
             Node group = node;
 
-            if (group.getParentNode() != null)
+            if (group.getParentNode() != null) {
                 group.getParentNode().setChildNode(null);
+            }
 
-            if (group.getChildNode() != null)
+            if (group.getChildNode() != null) {
                 group.getChildNode().setParentNode(null);
+            }
         }
 
         super.removeDataOutputNode(node);
@@ -810,8 +865,9 @@ public class TaskGraphImp extends TaskImp
      * Create a cable connecting sendnode on sendtask to recnode on rectask.
      */
     public Cable connect(Node sendnode, Node recnode) throws CableException {
-        if ((!containsNode(sendnode)) || (!containsNode(recnode)))
+        if ((!containsNode(sendnode)) || (!containsNode(recnode))) {
             throw (new RuntimeException("Cannot connect to a node outside taskgraph"));
+        }
 
         disconnect(sendnode.getCable());
         disconnect(recnode.getCable());
@@ -827,31 +883,29 @@ public class TaskGraphImp extends TaskImp
      */
     public void disconnect(Cable cable) throws CableException {
         if (cable != null && cable.isConnected()) {
-            if (!(containsNode(cable.getSendingNode()) && containsNode(cable.getReceivingNode())))
+            if (!(containsNode(cable.getSendingNode()) && containsNode(cable.getReceivingNode()))) {
                 throw (new CableException("Cannot disconnect a cable not contained in the taskgraph"));
+            }
 
             notifyCableDisconnected(cable, false, false);
             cable.disconnect();
         }
     }
 
-    public TaskGraphContext getContext() {
-        return context;
-    }
-
 
     /**
-     * This method is called when a tasks within this taskgraphs name is changed.
-     * It enforces the unique task name policy
+     * This method is called when a tasks within this taskgraphs name is changed. It enforces the unique task name
+     * policy
      */
     public void taskPropertyUpdate(TaskPropertyEvent event) {
-        if (event.getUpdatedProperty() == TaskPropertyEvent.TASK_NAME_UPDATE)
+        if (event.getUpdatedProperty() == TaskPropertyEvent.TASK_NAME_UPDATE) {
             taskNameUpdate(event.getTask());
+        }
     }
 
     /**
-     * This method is called when a tasks within this taskgraphs name is changed.
-     * It enforces the unique task name policy
+     * This method is called when a tasks within this taskgraphs name is changed. It enforces the unique task name
+     * policy
      */
     public void taskNameUpdate(Task task) {
         if (containsTask(task)) {
@@ -873,13 +927,15 @@ public class TaskGraphImp extends TaskImp
                 String base = getTaskNameBase(task.getToolName());
                 int idcount = getTaskNameNumber(task.getToolName());
 
-                while (tasks.containsKey(base + idcount))
+                while (tasks.containsKey(base + idcount)) {
                     idcount++;
+                }
 
                 task.setToolName(base + idcount);
                 tasks.put(task.getToolName(), task);
-            } else
+            } else {
                 tasks.put(task.getToolName(), task);
+            }
         }
     }
 
@@ -889,8 +945,9 @@ public class TaskGraphImp extends TaskImp
     private String getTaskNameBase(String taskname) {
         int count = taskname.length() - 1;
 
-        while (Character.isDigit(taskname.charAt(count)) && (count >= 0))
+        while (Character.isDigit(taskname.charAt(count)) && (count >= 0)) {
             count--;
+        }
 
         return taskname.substring(0, count + 1);
     }
@@ -901,13 +958,15 @@ public class TaskGraphImp extends TaskImp
     private int getTaskNameNumber(String taskname) {
         int count = taskname.length() - 1;
 
-        while (Character.isDigit(taskname.charAt(count)) && (count >= 0))
+        while (Character.isDigit(taskname.charAt(count)) && (count >= 0)) {
             count--;
+        }
 
-        if (count == taskname.length() - 1)
+        if (count == taskname.length() - 1) {
             return 1;
-        else
+        } else {
             return Integer.parseInt(taskname.substring(count + 1, taskname.length()));
+        }
     }
 
     /**
@@ -917,8 +976,7 @@ public class TaskGraphImp extends TaskImp
     }
 
     /**
-     * If the node being removed is one of this group's nodes the this removes
-     * the group node also.
+     * If the node being removed is one of this group's nodes the this removes the group node also.
      */
     public void nodeRemoved(TaskNodeEvent event) {
     }
@@ -942,14 +1000,17 @@ public class TaskGraphImp extends TaskImp
      */
     protected void notifyTaskCreated(final Task task, final boolean groupevent, final boolean ungroupevent) {
         final TaskGraph taskgraph = this;
-        final TaskGraphTaskEvent event = new TaskGraphTaskEvent(TaskGraphTaskEvent.TASK_CREATED, taskgraph, task, getTaskGroupEventId(groupevent, ungroupevent));
+        final TaskGraphTaskEvent event = new TaskGraphTaskEvent(TaskGraphTaskEvent.TASK_CREATED, taskgraph, task,
+                getTaskGroupEventId(groupevent, ungroupevent));
 
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                TaskGraphListener[] copy = (TaskGraphListener[]) listeners.toArray(new TaskGraphListener[listeners.size()]);
+                TaskGraphListener[] copy = (TaskGraphListener[]) listeners
+                        .toArray(new TaskGraphListener[listeners.size()]);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].taskCreated(event);
+                }
             }
         });
     }
@@ -959,15 +1020,18 @@ public class TaskGraphImp extends TaskImp
      */
     protected void notifyTaskRemoved(final Task task, final boolean groupevent, final boolean ungroupevent) {
         final TaskGraph taskgraph = this;
-        final TaskGraphTaskEvent event = new TaskGraphTaskEvent(TaskGraphTaskEvent.TASK_REMOVED, taskgraph, task, getTaskGroupEventId(groupevent, ungroupevent));
+        final TaskGraphTaskEvent event = new TaskGraphTaskEvent(TaskGraphTaskEvent.TASK_REMOVED, taskgraph, task,
+                getTaskGroupEventId(groupevent, ungroupevent));
 
 
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                TaskGraphListener[] copy = (TaskGraphListener[]) listeners.toArray(new TaskGraphListener[listeners.size()]);
+                TaskGraphListener[] copy = (TaskGraphListener[]) listeners
+                        .toArray(new TaskGraphListener[listeners.size()]);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].taskRemoved(event);
+                }
             }
         });
     }
@@ -978,14 +1042,17 @@ public class TaskGraphImp extends TaskImp
      */
     protected void notifyCableConnected(final Cable cable, final boolean groupevent, final boolean ungroupevent) {
         final TaskGraph taskgraph = this;
-        final TaskGraphCableEvent event = new TaskGraphCableEvent(TaskGraphCableEvent.CABLE_CONNECTED, taskgraph, cable, getCableGroupEventId(groupevent, ungroupevent));
+        final TaskGraphCableEvent event = new TaskGraphCableEvent(TaskGraphCableEvent.CABLE_CONNECTED, taskgraph, cable,
+                getCableGroupEventId(groupevent, ungroupevent));
 
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                TaskGraphListener[] copy = (TaskGraphListener[]) listeners.toArray(new TaskGraphListener[listeners.size()]);
+                TaskGraphListener[] copy = (TaskGraphListener[]) listeners
+                        .toArray(new TaskGraphListener[listeners.size()]);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].cableConnected(event);
+                }
             }
         });
     }
@@ -995,14 +1062,17 @@ public class TaskGraphImp extends TaskImp
      */
     protected void notifyCableDisconnected(final Cable cable, final boolean groupevent, final boolean ungroupevent) {
         final TaskGraph taskgraph = this;
-        final TaskGraphCableEvent event = new TaskGraphCableEvent(TaskGraphCableEvent.CABLE_DISCONNECTED, taskgraph, cable, getCableGroupEventId(groupevent, ungroupevent));
+        final TaskGraphCableEvent event = new TaskGraphCableEvent(TaskGraphCableEvent.CABLE_DISCONNECTED, taskgraph,
+                cable, getCableGroupEventId(groupevent, ungroupevent));
 
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                TaskGraphListener[] copy = (TaskGraphListener[]) listeners.toArray(new TaskGraphListener[listeners.size()]);
+                TaskGraphListener[] copy = (TaskGraphListener[]) listeners
+                        .toArray(new TaskGraphListener[listeners.size()]);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].cableDisconnected(event);
+                }
             }
         });
     }
@@ -1013,48 +1083,54 @@ public class TaskGraphImp extends TaskImp
     protected void notifyCableReconnected(final Cable cable, final boolean inputrecon) {
         int id;
 
-        if (inputrecon)
+        if (inputrecon) {
             id = TaskGraphCableEvent.CABLE_RECONNECTED_INPUT;
-        else
+        } else {
             id = TaskGraphCableEvent.CABLE_RECONNECTED_OUTPUT;
+        }
 
         final TaskGraph taskgraph = this;
-        final TaskGraphCableEvent event = new TaskGraphCableEvent(id, taskgraph, cable, TaskGraphCableEvent.NON_GROUP_EVENT);
+        final TaskGraphCableEvent event = new TaskGraphCableEvent(id, taskgraph, cable,
+                TaskGraphCableEvent.NON_GROUP_EVENT);
 
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                TaskGraphListener[] copy = (TaskGraphListener[]) listeners.toArray(new TaskGraphListener[listeners.size()]);
+                TaskGraphListener[] copy = (TaskGraphListener[]) listeners
+                        .toArray(new TaskGraphListener[listeners.size()]);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].cableReconnected(event);
+                }
             }
         });
     }
 
 
     /**
-     * Notifies all the taskgraph listeners that the state of the control task
-     * has changed
+     * Notifies all the taskgraph listeners that the state of the control task has changed
      */
     private void notifyControlTaskStateChanged(int state) {
         int eventstate;
 
-        if (state == CONTROL_TASK_CONNECTED)
+        if (state == CONTROL_TASK_CONNECTED) {
             eventstate = ControlTaskStateEvent.CONTROL_TASK_CONNECTED;
-        else if (state == CONTROL_TASK_DISCONNECTED)
+        } else if (state == CONTROL_TASK_DISCONNECTED) {
             eventstate = ControlTaskStateEvent.CONTROL_TASK_DISCONNECTED;
-        else
+        } else {
             eventstate = ControlTaskStateEvent.CONTROL_TASK_UNSTABLE;
+        }
 
         final TaskGraph taskgraph = this;
         final ControlTaskStateEvent event = new ControlTaskStateEvent(eventstate, taskgraph, state);
 
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                TaskGraphListener[] copy = (TaskGraphListener[]) listeners.toArray(new TaskGraphListener[listeners.size()]);
+                TaskGraphListener[] copy = (TaskGraphListener[]) listeners
+                        .toArray(new TaskGraphListener[listeners.size()]);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].controlTaskStateChanged(event);
+                }
             }
         });
     }
@@ -1064,37 +1140,39 @@ public class TaskGraphImp extends TaskImp
      * @return the task graph event id for grouping/ungrouping
      */
     private int getTaskGroupEventId(boolean groupevent, boolean ungroupevent) {
-        if (groupevent)
+        if (groupevent) {
             return TaskGraphTaskEvent.GROUP_EVENT;
-        else if (ungroupevent)
+        } else if (ungroupevent) {
             return TaskGraphTaskEvent.UNGROUP_EVENT;
-        else
+        } else {
             return TaskGraphTaskEvent.NON_GROUP_EVENT;
+        }
     }
 
     /**
      * @return the task graph event id for grouping/ungrouping
      */
     private int getCableGroupEventId(boolean groupevent, boolean ungroupevent) {
-        if (groupevent)
+        if (groupevent) {
             return TaskGraphCableEvent.GROUP_EVENT;
-        else if (ungroupevent)
+        } else if (ungroupevent) {
             return TaskGraphCableEvent.UNGROUP_EVENT;
-        else
+        } else {
             return TaskGraphCableEvent.NON_GROUP_EVENT;
+        }
     }
 
 
     /**
-     * cleans up any operations associated with this taskgraph and the tasks
-     * within it
+     * cleans up any operations associated with this taskgraph and the tasks within it
      */
     public void dispose() {
         removeTaskListener(this);
 
         Enumeration enumeration = tasks.elements();
-        while (enumeration.hasMoreElements())
+        while (enumeration.hasMoreElements()) {
             removeTask((Task) enumeration.nextElement());
+        }
 
         super.dispose();
     }

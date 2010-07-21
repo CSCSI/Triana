@@ -108,6 +108,7 @@ import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Home;
 import org.trianacode.taskgraph.util.Listing;
+import org.trianacode.taskgraph.util.Toolboxes;
 
 /**
  * Env allows a way of accessing various environment and system variables within Triana. Some methods convert from the
@@ -149,6 +150,7 @@ public final class Env {
     public static String TOOLBOX_STR = "toolbox";
     public static String TOOLBOX_TYPE_STR = "type";
     public static final String TOOLBOX_VIRTUAL = "virtual";
+    public static final String TOOLBOX_NAME = "name";
     public static String COLORS_STR = "colors";
     public static String COLOR_STR = "color";
     public static String TYPE_STR = "type";
@@ -360,7 +362,7 @@ public final class Env {
         configFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE);
         configBakFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE_BAK);
 
-        try {
+        /*try {
             String me = getToolboxPath();
             System.out.println("Env.initConfig MY PATH:" + me);
             logger.fine("my path:" + me);
@@ -368,7 +370,7 @@ public final class Env {
             tools.addToolBox(box);
         } catch (IOException e) {
             logger.warning("Could not find jar that I'm in!");
-        }
+        }*/
         if (!configFile.exists()) {// First time run so need to set up paths
             restoreDefaultConfig(tools);
         } else {// read from the file
@@ -1338,8 +1340,10 @@ public final class Env {
      */
     private static void writeConfigFile(ToolTable tools) {
         File marker = aquireConfigFileLock();
+
         PrintWriter bw = null;
         try {
+            Toolboxes.saveToolboxes(tools);
             bw = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
             DocumentHandler handler = new DocumentHandler();
 
@@ -1347,20 +1351,6 @@ public final class Env {
             Element root = handler.element(CONFIG_STR);
             root.setAttribute(CONFIG_VERSION_STR, CONFIG_VERSION);
             handler.setRoot(root);
-
-            // add the toolboxes
-            Element toolboxesElem = handler.element(TOOLBOXES_STR);
-            handler.add(toolboxesElem, root);
-
-            Toolbox[] toolboxes = tools.getToolBoxes();
-            for (int count = 0; count < toolboxes.length; count++) {
-                Element toolbox = handler.element(TOOLBOX_STR);
-                handler.add(toolboxes[count].getPath(), toolbox);
-
-                toolbox.setAttribute(TOOLBOX_TYPE_STR, toolboxes[count].getType());
-                toolbox.setAttribute(TOOLBOX_VIRTUAL, toolboxes[count].isVirtual() + "");
-                handler.add(toolbox, toolboxesElem);
-            }
 
             // add tool colors
             Element colorsElem = handler.element(COLORS_STR);
@@ -1526,6 +1516,9 @@ public final class Env {
     private static void readConfig(ToolTable tools, File file) throws Exception {
         BufferedReader br = null;
         try {
+
+            Toolboxes.loadToolboxes(tools);
+
             br = new BufferedReader(new FileReader(file));
             logger.info("Restoring From Triana Property File : " + file.getAbsolutePath());
             DocumentHandler handler = new DocumentHandler(br);
@@ -1550,39 +1543,6 @@ public final class Env {
                 String txt = name.getTextContent().trim();
                 addExcludedTool(txt);
             }
-
-            elementList = handler.getChildren(handler.getChild(root, TOOLBOXES_STR));
-            iter = elementList.iterator();
-            Element elem;
-            String toolbox;
-
-            List<Toolbox> boxes = new ArrayList<Toolbox>();
-            boolean hasDefault = false;
-            while (iter.hasNext()) {
-                elem = ((Element) iter.next());
-                toolbox = elem.getTextContent().trim();
-                String type = elem.getAttribute(TOOLBOX_TYPE_STR);
-                String virtual = elem.getAttribute(TOOLBOX_VIRTUAL);
-                boolean v = virtual != null && virtual.equals("true");
-                if (!v && !new File(toolbox).exists()) {
-                    logger.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
-                } else {
-                    if (type != null && type.length() > 0) {
-                        if (type.equals(ToolTable.USER_TOOLBOX)) {
-                            hasDefault = true;
-                        }
-                        boxes.add(new Toolbox(toolbox, type, v));
-                    } else {
-                        boxes.add(new Toolbox(toolbox, v));
-                    }
-                }
-            }
-            /*if (!hasDefault) {
-                Toolbox def = new Toolbox(new File(getResourceDir(), "toolboxes" + File.separator + ToolTable.USER_TOOLBOX), ToolTable.USER_TOOLBOX);
-                boxes.add(def);
-            }*/
-            // add them in one hit
-            tools.addToolBox(boxes.toArray(new Toolbox[boxes.size()]));
 
             elementList = handler.getChildren(handler.getChild(root, COLORS_STR));
             iter = elementList.iterator();

@@ -68,8 +68,8 @@ import javax.swing.JTree;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableListener;
+import org.trianacode.taskgraph.tool.ToolTableUtils;
 import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.util.ToolTableUtils;
 
 /**
  * A background thread that constantly checks whether any tools have been broken/ unbroken, repainting the tool tree

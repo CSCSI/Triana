@@ -58,23 +58,22 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolTableUtils;
 import org.trianacode.util.Env;
-import org.trianacode.util.ToolTableUtils;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "copy" actions.
  *
- * @author  Matthew Shields
- * @created May 2, 2003: 3:49:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class HelpAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -95,17 +94,20 @@ public class HelpAction extends AbstractAction implements ActionDisplayOptions {
     public void actionPerformed(ActionEvent e) {
         Tool tool = null;
 
-        if (selectionHandler.isSingleSelectedTool())
+        if (selectionHandler.isSingleSelectedTool()) {
             tool = selectionHandler.getSelectedTool();
+        }
 
-        if (tool != null)
+        if (tool != null) {
             showHelp(tool);
-        else
+        } else {
             GUIEnv.getApplicationFrame().showHelp();
+        }
     }
-   /**
-     * Attempt to display the helpfile for the tool in either the default browser or the
-     * internal page viewer.
+
+    /**
+     * Attempt to display the helpfile for the tool in either the default browser or the internal page viewer.
+     *
      * @see GUIEnv#openURL(java.lang.String url)
      */
     public void showHelp(Tool tool) {

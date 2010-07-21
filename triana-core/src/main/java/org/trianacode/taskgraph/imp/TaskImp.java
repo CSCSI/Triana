@@ -58,14 +58,29 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.event.*;
+import java.util.ArrayList;
+
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.InstanceIDManager;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphContext;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
-
-import java.util.ArrayList;
 
 /**
  * A task within a taskgraph.
@@ -73,8 +88,8 @@ import java.util.ArrayList;
 public class TaskImp extends ToolImp implements Task {
 
     /**
-     * the instance id of this task, all copies of a task within a parameter
-     * space (sharing the same parameters) have the same instance id
+     * the instance id of this task, all copies of a task within a parameter space (sharing the same parameters) have
+     * the same instance id
      */
     private String instanceid;
 
@@ -127,6 +142,8 @@ public class TaskImp extends ToolImp implements Task {
 
     private String subtext = "";
 
+    private TaskGraphContext context = new TaskGraphContext();
+
 
     public TaskImp(Tool tool, TaskFactory factory, boolean preserveinst) throws TaskException {
         try {
@@ -137,7 +154,9 @@ public class TaskImp extends ToolImp implements Task {
             this.setDefinitionType(tool.getDefinitionType());
             if (tool.getProxy() != null)
 
+            {
                 this.setProxy(ProxyFactory.cloneProxy(tool.getProxy()));
+            }
 
             this.instanceid = InstanceIDManager.registerID(this, tool, preserveinst);
 
@@ -162,12 +181,14 @@ public class TaskImp extends ToolImp implements Task {
             }
 
             RenderingHint[] hints = tool.getRenderingHints();
-            for (count = 0; count < hints.length; count++)
+            for (count = 0; count < hints.length; count++) {
                 this.addRenderingHint(hints[count]);
+            }
 
             String[] names = tool.getExtensionNames();
-            for (count = 0; count < names.length; count++)
+            for (count = 0; count < names.length; count++) {
                 addExtension(names[count], tool.getExtension(names[count]));
+            }
 
             this.setDataInputNodeCount(tool.getDataInputNodeCount());
             this.setDataOutputNodeCount(tool.getDataOutputNodeCount());
@@ -180,26 +201,30 @@ public class TaskImp extends ToolImp implements Task {
             }
 
             int paramout = tool.getParameterOutputNodeCount();
-            for (count = 0; count < paramout; count++)
+            for (count = 0; count < paramout; count++) {
                 addParameterOutputNode(tool.getParameterOutputName(count));
+            }
 
             String[] params = tool.getParameterNames();
             Object paramval;
             String paramtype;
 
             for (count = 0; count < params.length; count++) {
-                if (tool instanceof ToolImp)
+                if (tool instanceof ToolImp) {
                     paramval = ((ToolImp) tool).getParameter(params[count], false);
-                else
+                } else {
                     paramval = tool.getParameter(params[count]);
+                }
 
                 paramtype = tool.getParameterType(params[count]);
 
-                if (paramval != null)
+                if (paramval != null) {
                     this.setParameter(params[count], paramval);
+                }
 
-                if (paramtype != null)
+                if (paramtype != null) {
                     this.setParameterType(params[count], paramtype);
+                }
             }
         } catch (NodeException except) {
             throw (new TaskException(except));
@@ -233,8 +258,9 @@ public class TaskImp extends ToolImp implements Task {
         TaskGraph parent = getParent();
 
         while (parent != null) {
-            if (parent.getParent() != null)
+            if (parent.getParent() != null) {
                 taskname = parent.getToolName() + "." + taskname;
+            }
 
             parent = parent.getParent();
         }
@@ -257,8 +283,7 @@ public class TaskImp extends ToolImp implements Task {
     }
 
     /**
-     * All copies of a task within a parameter space (sharing the same
-     * parameters) have the same intance id.
+     * All copies of a task within a parameter space (sharing the same parameters) have the same intance id.
      *
      * @return the instance id of this task
      */
@@ -272,8 +297,9 @@ public class TaskImp extends ToolImp implements Task {
      */
 
     public void setProxy(Proxy proxy) throws TaskException {
-        if (getParent() != null)
+        if (getParent() != null) {
             throw (new TaskException("Cannot set proxy in " + getToolName() + ": Task already instantiated"));
+        }
 
         super.setProxy(proxy);
     }
@@ -289,8 +315,9 @@ public class TaskImp extends ToolImp implements Task {
      * Removes the proxy for this tool
      */
     public void removeProxy() throws TaskException {
-        if (getParent() != null)
+        if (getParent() != null) {
             throw (new TaskException("Cannot remove proxy in " + getToolName() + ": Task already instantiated"));
+        }
 
         super.removeProxy();
     }
@@ -335,8 +362,9 @@ public class TaskImp extends ToolImp implements Task {
 
         super.setParameter(name, value);
 
-        if (!value.equals(oldvalue))
+        if (!value.equals(oldvalue)) {
             notifyParameterSet(name, getParameterType(name), oldvalue, value);
+        }
     }
 
     /**
@@ -347,8 +375,9 @@ public class TaskImp extends ToolImp implements Task {
 
         super.removeParameter(name);
 
-        if (oldvalue != null)
+        if (oldvalue != null) {
             notifyParameterSet(name, getParameterType(name), oldvalue, null);
+        }
     }
 
 
@@ -368,8 +397,9 @@ public class TaskImp extends ToolImp implements Task {
      * Removes a data input node.
      */
     public void removeDataInputNode(Node node) {
-        if (innodes.contains(node))
+        if (innodes.contains(node)) {
             disposeNode((Node) node, innodes);
+        }
     }
 
     /**
@@ -397,11 +427,13 @@ public class TaskImp extends ToolImp implements Task {
      * Used by ToolFactory to set the number of input nodes.
      */
     public void setDataInputNodeCount(int nodeCount) throws NodeException {
-        while (getDataInputNodeCount() < nodeCount)
+        while (getDataInputNodeCount() < nodeCount) {
             addDataInputNode();
+        }
 
-        while (getDataInputNodeCount() > nodeCount)
+        while (getDataInputNodeCount() > nodeCount) {
             removeDataInputNode(getDataInputNode(getDataInputNodeCount() - 1));
+        }
     }
 
 
@@ -421,8 +453,9 @@ public class TaskImp extends ToolImp implements Task {
      * Removes a data output node.
      */
     public void removeDataOutputNode(Node node) {
-        if (outnodes.contains(node))
+        if (outnodes.contains(node)) {
             disposeNode((Node) node, outnodes);
+        }
     }
 
     /**
@@ -450,11 +483,13 @@ public class TaskImp extends ToolImp implements Task {
      * Used by ToolFactory to set the number of output nodes.
      */
     public void setDataOutputNodeCount(int nodeCount) throws NodeException {
-        while (getDataOutputNodeCount() < nodeCount)
+        while (getDataOutputNodeCount() < nodeCount) {
             addDataOutputNode();
+        }
 
-        while (getDataOutputNodeCount() > nodeCount)
+        while (getDataOutputNodeCount() > nodeCount) {
             removeDataOutputNode(getDataOutputNode(getDataOutputNodeCount() - 1));
+        }
     }
 
 
@@ -474,8 +509,9 @@ public class TaskImp extends ToolImp implements Task {
      * Removes a parameter input node.
      */
     public void removeParameterInputNode(ParameterNode node) {
-        if (inparams.contains(node))
+        if (inparams.contains(node)) {
             disposeNode((Node) node, inparams);
+        }
     }
 
     /**
@@ -490,8 +526,9 @@ public class TaskImp extends ToolImp implements Task {
             innodes[count].setTriggerNode(trigger[count]);
         }
 
-        while (getParameterInputNodeCount() > names.length)
+        while (getParameterInputNodeCount() > names.length) {
             removeParameterInputNode(getParameterInputNode(getParameterInputNodeCount() - 1));
+        }
 
         while (names.length > getParameterInputNodeCount()) {
             node = addParameterInputNode(names[getParameterInputNodeCount()]);
@@ -552,8 +589,9 @@ public class TaskImp extends ToolImp implements Task {
      * Removes a parameter output node.
      */
     public void removeParameterOutputNode(ParameterNode node) {
-        if (outparams.contains(node))
+        if (outparams.contains(node)) {
             disposeNode((Node) node, outparams);
+        }
     }
 
     /**
@@ -562,14 +600,17 @@ public class TaskImp extends ToolImp implements Task {
     public void setParameterOutputNames(String[] names) throws NodeException {
         ParameterNode[] outnodes = getParameterOutputNodes();
 
-        for (int count = 0; (count < names.length) && (count < outnodes.length); count++)
+        for (int count = 0; (count < names.length) && (count < outnodes.length); count++) {
             outnodes[count].setParameterName(names[count]);
+        }
 
-        while (getParameterOutputNodeCount() > names.length)
+        while (getParameterOutputNodeCount() > names.length) {
             removeParameterOutputNode(getParameterOutputNode(getParameterOutputNodeCount() - 1));
+        }
 
-        while (names.length > getParameterOutputNodeCount())
+        while (names.length > getParameterOutputNodeCount()) {
             addParameterOutputNode(names[getParameterOutputNodeCount()]);
+        }
     }
 
     /**
@@ -621,39 +662,41 @@ public class TaskImp extends ToolImp implements Task {
     }
 
     /**
-     * Returns the index of the specified node within the data input/output and parameter input/output nodes; or
-     * -1 if not attached to this task. The index returned is not unique, e.g. the first data input node and
-     * the first data output nodes will both return 0.
+     * Returns the index of the specified node within the data input/output and parameter input/output nodes; or -1 if
+     * not attached to this task. The index returned is not unique, e.g. the first data input node and the first data
+     * output nodes will both return 0.
      */
     public int getNodeIndex(Node node) {
-        if (innodes.contains(node))
+        if (innodes.contains(node)) {
             return innodes.indexOf(node);
-        else if (outnodes.contains(node))
+        } else if (outnodes.contains(node)) {
             return outnodes.indexOf(node);
-        else if (inparams.contains(node))
+        } else if (inparams.contains(node)) {
             return inparams.indexOf(node);
-        else if (outparams.contains(node))
+        } else if (outparams.contains(node)) {
             return outparams.indexOf(node);
-        else
+        } else {
             return -1;
+        }
     }
 
     /**
-     * This is a convience method to provide backward compatibility with TrianaGUI, in which parameter nodes
-     * where indexed after data nodes.
+     * This is a convience method to provide backward compatibility with TrianaGUI, in which parameter nodes where
+     * indexed after data nodes.
      * <p/>
-     * The absolute index of a data node is the same as its standard index.
-     * The absolute index of a parameter node is its standard index + the total number of data input nodes.
+     * The absolute index of a data node is the same as its standard index. The absolute index of a parameter node is
+     * its standard index + the total number of data input nodes.
      *
      * @return the absolute index of this node within its associated task.
      */
     public int getAbsoluteNodeIndex(Node node) {
-        if (getNodeIndex(node) == -1)
+        if (getNodeIndex(node) == -1) {
             return -1;
-        else if (isParameterInputNode(node))
+        } else if (isParameterInputNode(node)) {
             return getDataInputNodeCount() + getNodeIndex(node);
-        else if (isParameterOutputNode(node))
+        } else if (isParameterOutputNode(node)) {
             return getDataOutputNodeCount() + getNodeIndex(node);
+        }
 
         return getNodeIndex(node);
     }
@@ -703,10 +746,11 @@ public class TaskImp extends ToolImp implements Task {
      * @return the input node at the specified absolute index (data/parameter)
      */
     public Node getInputNode(int absoluteindex) {
-        if (absoluteindex >= getDataInputNodeCount())
+        if (absoluteindex >= getDataInputNodeCount()) {
             return getParameterInputNode(absoluteindex - getDataInputNodeCount());
-        else
+        } else {
             return getDataInputNode(absoluteindex);
+        }
     }
 
 
@@ -725,10 +769,11 @@ public class TaskImp extends ToolImp implements Task {
      * @return the output node at the specified absolute index (data/parameter)
      */
     public Node getOutputNode(int absoluteindex) {
-        if (absoluteindex >= getDataOutputNodeCount())
+        if (absoluteindex >= getDataOutputNodeCount()) {
             return getParameterOutputNode(absoluteindex - getDataOutputNodeCount());
-        else
+        } else {
             return getDataOutputNode(absoluteindex);
+        }
     }
 
 
@@ -766,8 +811,7 @@ public class TaskImp extends ToolImp implements Task {
 
 
     /**
-     * Sets the default input node requirement for this task (ESSENTIAL,
-     * ESSENTIAL_IF_CONNECTED or OPTIONAL)
+     * Sets the default input node requirement for this task (ESSENTIAL, ESSENTIAL_IF_CONNECTED or OPTIONAL)
      */
     public void setDefaultNodeRequirement(String requirement) {
         setParameterType(DEFAULT_NODE_REQUIREMENT, INTERNAL);
@@ -778,15 +822,15 @@ public class TaskImp extends ToolImp implements Task {
      * @return the default requirement for this task's input nodes
      */
     public String getDefaultNodeRequirement() {
-        if (isParameterName(DEFAULT_NODE_REQUIREMENT))
+        if (isParameterName(DEFAULT_NODE_REQUIREMENT)) {
             return (String) getParameter(DEFAULT_NODE_REQUIREMENT);
-        else
+        } else {
             return ESSENTIAL;
+        }
     }
 
     /**
-     * Sets the input node requirement for the specified node index (ESSENTIAL,
-     * ESSENTIAL_IF_CONNECTED or OPTIONAL)
+     * Sets the input node requirement for the specified node index (ESSENTIAL, ESSENTIAL_IF_CONNECTED or OPTIONAL)
      */
     public void setNodeRequirement(int index, String requirement) {
         setParameterType(NODE_REQUIREMENT + index, INTERNAL);
@@ -797,10 +841,11 @@ public class TaskImp extends ToolImp implements Task {
      * @return the requirement for this specified input node index.
      */
     public String getNodeRequirement(int index) {
-        if (isParameterName(NODE_REQUIREMENT + index))
+        if (isParameterName(NODE_REQUIREMENT + index)) {
             return (String) getParameter(NODE_REQUIREMENT + index);
-        else
+        } else {
             return getDefaultNodeRequirement();
+        }
     }
 
 
@@ -808,41 +853,44 @@ public class TaskImp extends ToolImp implements Task {
      * @return the number of times the task has been requested to execut
      */
     public int getExecutionRequestCount() {
-        if (isParameterName(EXECUTION_REQUEST_COUNT))
+        if (isParameterName(EXECUTION_REQUEST_COUNT)) {
             return Integer.parseInt((String) getParameter(EXECUTION_REQUEST_COUNT));
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
      * @return the number of times the task has been executed
      */
     public int getExecutionCount() {
-        if (isParameterName(EXECUTION_COUNT))
+        if (isParameterName(EXECUTION_COUNT)) {
             return Integer.parseInt((String) getParameter(EXECUTION_COUNT));
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
      * @return the current execution state of the task
      */
     public ExecutionState getExecutionState() {
-        if (isParameterName(EXECUTION_STATE))
+        if (isParameterName(EXECUTION_STATE)) {
             return (ExecutionState) getParameter(EXECUTION_STATE);
-        else
+        } else {
             return ExecutionState.UNKNOWN;
+        }
     }
 
     /**
-     * @return the error message associated with the current error (null if
-     *         the task is not in an error state)
+     * @return the error message associated with the current error (null if the task is not in an error state)
      */
     public String getErrorMessage() {
-        if (isParameterName(ERROR_MESSAGE))
+        if (isParameterName(ERROR_MESSAGE)) {
             return (String) getParameter(ERROR_MESSAGE);
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -856,8 +904,9 @@ public class TaskImp extends ToolImp implements Task {
             public void run() {
                 TaskPropertyEvent event = new TaskPropertyEvent(task, property, oldval, newval);
 
-                for (int count = 0; count < listenerarray.length; count++)
+                for (int count = 0; count < listenerarray.length; count++) {
                     listenerarray[count].taskPropertyUpdate(event);
+                }
             }
         });
     }
@@ -874,8 +923,9 @@ public class TaskImp extends ToolImp implements Task {
             public void run() {
                 TaskNodeEvent event = new TaskNodeEvent(TaskNodeEvent.NODE_ADDED, task, node, index, absindex);
 
-                for (int count = 0; count < listenerarray.length; count++)
+                for (int count = 0; count < listenerarray.length; count++) {
                     listenerarray[count].nodeAdded(event);
+                }
             }
         });
     }
@@ -892,8 +942,9 @@ public class TaskImp extends ToolImp implements Task {
             public void run() {
                 TaskNodeEvent event = new TaskNodeEvent(TaskNodeEvent.NODE_REMOVED, task, node, index, absindex);
 
-                for (int count = 0; count < listenerarray.length; count++)
+                for (int count = 0; count < listenerarray.length; count++) {
                     listenerarray[count].nodeRemoved(event);
+                }
             }
         });
     }
@@ -914,10 +965,11 @@ public class TaskImp extends ToolImp implements Task {
             }
         };
 
-        if (GUI.equals(type))
+        if (GUI.equals(type)) {
             event.run();
-        else
+        } else {
             TaskGraphEventDispatch.invokeLater(event);
+        }
     }
 
 
@@ -931,8 +983,9 @@ public class TaskImp extends ToolImp implements Task {
             public void run() {
                 TaskDisposedEvent event = new TaskDisposedEvent(task);
 
-                for (int count = 0; count < listenerarray.length; count++)
+                for (int count = 0; count < listenerarray.length; count++) {
                     listenerarray[count].taskDisposed(event);
+                }
             }
         });
     }
@@ -943,20 +996,24 @@ public class TaskImp extends ToolImp implements Task {
      */
     public void dispose() {
         Node[] nodes = (Node[]) innodes.toArray(new Node[innodes.size()]);
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             disposeNode(nodes[count], innodes);
+        }
 
         nodes = (Node[]) outnodes.toArray(new Node[outnodes.size()]);
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             disposeNode(nodes[count], outnodes);
+        }
 
         nodes = (Node[]) inparams.toArray(new Node[inparams.size()]);
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             disposeNode(nodes[count], inparams);
+        }
 
         nodes = (Node[]) outparams.toArray(new Node[outparams.size()]);
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             disposeNode(nodes[count], outparams);
+        }
 
         notifyTaskDisposed();
 
@@ -972,10 +1029,7 @@ public class TaskImp extends ToolImp implements Task {
     }
 
     public TaskGraphContext getContext() {
-        if (getParent() != null) {
-            return getParent().getContext();
-        }
-        return null;
+        return context;
     }
 
     public void setSubTitle(String subtext) {

@@ -1,6 +1,6 @@
 package org.trianacode.http;
 
-import java.io.OutputStream;
+import org.thinginitself.streamable.Streamable;
 
 /**
  * @author Andrew Harrison
@@ -9,5 +9,5 @@ import java.io.OutputStream;
 
 public interface Renderer {
 
-    public void render(OutputStream out);
+    public Streamable render();
 }

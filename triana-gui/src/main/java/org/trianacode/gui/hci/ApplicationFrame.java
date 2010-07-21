@@ -58,15 +58,96 @@
  */
 package org.trianacode.gui.hci;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.beans.PropertyVetoException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import java.util.logging.Logger;
+
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.plaf.FontUIResource;
 import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
-import org.trianacode.gui.action.*;
+import org.trianacode.gui.action.ActionDisplayOptions;
+import org.trianacode.gui.action.ActionTable;
+import org.trianacode.gui.action.MainTrianaKeyMapFactory;
+import org.trianacode.gui.action.SelectionManager;
+import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.action.ToolSelectionListener;
 import org.trianacode.gui.action.clipboard.CopyAction;
 import org.trianacode.gui.action.clipboard.CutAction;
 import org.trianacode.gui.action.clipboard.PasteAction;
-import org.trianacode.gui.action.files.*;
-import org.trianacode.gui.action.taskgraph.*;
-import org.trianacode.gui.action.tools.*;
+import org.trianacode.gui.action.files.CloseAction;
+import org.trianacode.gui.action.files.ExportAction;
+import org.trianacode.gui.action.files.FindAction;
+import org.trianacode.gui.action.files.HelpAction;
+import org.trianacode.gui.action.files.ImportAction;
+import org.trianacode.gui.action.files.NewAction;
+import org.trianacode.gui.action.files.OpenAction;
+import org.trianacode.gui.action.files.PrintAction;
+import org.trianacode.gui.action.files.RenderAction;
+import org.trianacode.gui.action.files.SaveAction;
+import org.trianacode.gui.action.files.SaveAsAction;
+import org.trianacode.gui.action.files.TaskGraphFileHandler;
+import org.trianacode.gui.action.taskgraph.ClearAction;
+import org.trianacode.gui.action.taskgraph.GroupAction;
+import org.trianacode.gui.action.taskgraph.OrganizeAction;
+import org.trianacode.gui.action.taskgraph.PauseAction;
+import org.trianacode.gui.action.taskgraph.ResetAction;
+import org.trianacode.gui.action.taskgraph.RunAction;
+import org.trianacode.gui.action.taskgraph.SelectAllAction;
+import org.trianacode.gui.action.taskgraph.TrianaWorkflowVerifier;
+import org.trianacode.gui.action.taskgraph.UnGroupAction;
+import org.trianacode.gui.action.taskgraph.ZoomAction;
+import org.trianacode.gui.action.taskgraph.ZoomOutAction;
+import org.trianacode.gui.action.tools.AddTriggerAction;
+import org.trianacode.gui.action.tools.CompileAction;
+import org.trianacode.gui.action.tools.ControlPropertiesAction;
+import org.trianacode.gui.action.tools.DecInNodeAction;
+import org.trianacode.gui.action.tools.DecOutNodeAction;
+import org.trianacode.gui.action.tools.DeleteAction;
+import org.trianacode.gui.action.tools.DeleteRefsAction;
+import org.trianacode.gui.action.tools.HistoryTrackingAction;
+import org.trianacode.gui.action.tools.IncInNodeAction;
+import org.trianacode.gui.action.tools.IncOutNodeAction;
+import org.trianacode.gui.action.tools.NodeEditorAction;
+import org.trianacode.gui.action.tools.PasteIntoAction;
+import org.trianacode.gui.action.tools.PropertiesAction;
+import org.trianacode.gui.action.tools.RemoveTriggerAction;
+import org.trianacode.gui.action.tools.RenameAction;
+import org.trianacode.gui.action.tools.RunScriptAction;
+import org.trianacode.gui.action.tools.ToggerErrorAction;
 import org.trianacode.gui.components.hidden.HiddenComponentModel;
 import org.trianacode.gui.components.map.MapComponentModel;
 import org.trianacode.gui.components.map.MapLocationComponentModel;
@@ -79,7 +160,11 @@ import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.extensions.ExtensionFinder;
 import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.gui.hci.color.ColorManager;
-import org.trianacode.gui.hci.tools.*;
+import org.trianacode.gui.hci.tools.BrokenToolMonitor;
+import org.trianacode.gui.hci.tools.TaskGraphView;
+import org.trianacode.gui.hci.tools.TaskGraphViewManager;
+import org.trianacode.gui.hci.tools.ToolTreeModel;
+import org.trianacode.gui.hci.tools.TrianaTreeRenderer;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.gui.service.LocalServer;
@@ -95,7 +180,15 @@ import org.trianacode.taskgraph.constants.HiddenToolConstants;
 import org.trianacode.taskgraph.constants.MapConstants;
 import org.trianacode.taskgraph.constants.ScriptConstants;
 import org.trianacode.taskgraph.constants.TextToolConstants;
-import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.event.ControlTaskStateEvent;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskGraphCableEvent;
+import org.trianacode.taskgraph.event.TaskGraphListener;
+import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
@@ -105,34 +198,13 @@ import org.trianacode.taskgraph.service.LocalDeployAssistant;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.ToolTableImp;
 import org.trianacode.util.Env;
-import org.trianacode.util.ToolTableImp;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.plaf.FontUIResource;
-import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.beans.PropertyVetoException;
-import java.io.File;
-import java.util.*;
-import java.util.List;
-import java.util.logging.Logger;
 
 
 /**
  * @author Mathew Shields & Ian Taylor
  * @version $Revision: 4051 $
- * @created December 21, 2001
- * @date $Date: 2007-10-31 17:51:40 +0000 (Wed, 31 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ApplicationFrame extends TrianaWindow
         implements TaskListener, TaskGraphListener, InternalFrameListener,
@@ -210,8 +282,9 @@ public class ApplicationFrame extends TrianaWindow
         while (enumeration.hasMoreElements()) {
             Object key = enumeration.nextElement();
 
-            if (key.toString().endsWith("font"))
+            if (key.toString().endsWith("font")) {
                 uiDefaults.put(key, font);
+            }
         }
 
         ApplicationFrame app = new ApplicationFrame("Triana");
@@ -268,7 +341,8 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     private void initObjectDeserializers() {
-        ObjectDeserializationManager.registerObjectDeserializer(Base64ObjectDeserializer.BASE64_OBJECT_DESERIALIZER, new Base64ObjectDeserializer());
+        ObjectDeserializationManager.registerObjectDeserializer(Base64ObjectDeserializer.BASE64_OBJECT_DESERIALIZER,
+                new Base64ObjectDeserializer());
     }
 
     /**
@@ -399,8 +473,7 @@ public class ApplicationFrame extends TrianaWindow
                     e.init(this);
                     ExtensionManager.registerExtension(e);
                 }
-            }
-            if (key.equals(Interceptor.class)) {
+            } else if (key.equals(Interceptor.class)) {
                 List<Object> exts = en.get(key);
                 for (Object o : exts) {
                     Interceptor e = (Interceptor) o;
@@ -602,20 +675,22 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     /**
-     * @return the taskgraph panel which is representing the specified task graph, or null if the
-     *         task isn't represented
+     * @return the taskgraph panel which is representing the specified task graph, or null if the task isn't
+     *         represented
      */
     public static TaskGraphPanel getTaskGraphPanelFor(TaskGraph group) {
         Enumeration enumeration = taskGraphConts.elements();
         TaskGraphPanel element = null;
 
-        while (enumeration.hasMoreElements() && ((element == null) || (element.getTaskGraph() != group)))
+        while (enumeration.hasMoreElements() && ((element == null) || (element.getTaskGraph() != group))) {
             element = (TaskGraphPanel) enumeration.nextElement();
+        }
 
-        if ((element != null) && (element.getTaskGraph() == group))
+        if ((element != null) && (element.getTaskGraph() == group)) {
             return element;
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -639,8 +714,8 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     /**
-     * Add a taskgraph panel for the specified taskgraph. This method creates a
-     * new instance of the specified taskgraph using the current taskgraph factory
+     * Add a taskgraph panel for the specified taskgraph. This method creates a new instance of the specified taskgraph
+     * using the current taskgraph factory
      *
      * @return the instance of taskgraph created using the current taskgraph factory
      */
@@ -753,9 +828,8 @@ public class ApplicationFrame extends TrianaWindow
 
 
     /**
-     * Registers the specified TrianaClient to handle the specified taskgraph.
-     * This is generally called when addTaskGraphPanel/addParentTaskGraphPanel
-     * is called and does not need to be called explicitally.
+     * Registers the specified TrianaClient to handle the specified taskgraph. This is generally called when
+     * addTaskGraphPanel/addParentTaskGraphPanel is called and does not need to be called explicitally.
      */
     public void registerTrianaClient(TaskGraph taskgraph, TrianaClient client) {
         clienttable.put(taskgraph, client);
@@ -769,14 +843,14 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     /**
-     * @return the TrianaClient for the specified taskgraph (null if none
-     *         registered)
+     * @return the TrianaClient for the specified taskgraph (null if none registered)
      */
     public TrianaClient getTrianaClient(TaskGraph taskgraph) {
-        if (clienttable.containsKey(taskgraph))
+        if (clienttable.containsKey(taskgraph)) {
             return (TrianaClient) clienttable.get(taskgraph);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -786,8 +860,11 @@ public class ApplicationFrame extends TrianaWindow
         BaseInternalFrame internalframe = (BaseInternalFrame) getInternalFrameFor(cont);
         Insets scrollinsets = cont.getContainer().getParent().getParent().getInsets();
 
-        internalframe.setSize(width + scrollinsets.left + scrollinsets.right + internalframe.getInsets().left + internalframe.getInsets().right,
-                height + scrollinsets.top + scrollinsets.bottom + internalframe.getInsets().top + internalframe.getInsets().bottom);
+        internalframe.setSize(
+                width + scrollinsets.left + scrollinsets.right + internalframe.getInsets().left + internalframe
+                        .getInsets().right,
+                height + scrollinsets.top + scrollinsets.bottom + internalframe.getInsets().top + internalframe
+                        .getInsets().bottom);
     }
 
 
@@ -805,9 +882,11 @@ public class ApplicationFrame extends TrianaWindow
         TaskGraphPanel[] panels = getTaskGraphPanels();
         String id = taskgraph.getInstanceID();
 
-        for (int count = 0; count < panels.length; count++)
-            if (id.equals(panels[count].getTaskGraph().getInstanceID()))
+        for (int count = 0; count < panels.length; count++) {
+            if (id.equals(panels[count].getTaskGraph().getInstanceID())) {
                 cleanUpWindows(panels[count].getTaskGraph());
+            }
+        }
     }
 
     /**
@@ -821,8 +900,8 @@ public class ApplicationFrame extends TrianaWindow
 
 
     /**
-     * Hides of a main triana window and all its sub windows. If the main triana is a parent this
-     * also disposes of the whole taskgraph.
+     * Hides of a main triana window and all its sub windows. If the main triana is a parent this also disposes of the
+     * whole taskgraph.
      */
     private void disposeTaskGraphPanel(TaskGraphPanel panel) {
         TaskGraph taskgraph = panel.getTaskGraph();
@@ -836,12 +915,15 @@ public class ApplicationFrame extends TrianaWindow
 
         cont = getTaskGraphPanelFor(taskgraph);
 
-        if (cont != null)
+        if (cont != null) {
             disposeWindow(cont);
+        }
 
-        for (int count = 0; count < tasks.length; count++)
-            if (tasks[count] instanceof TaskGraph)
+        for (int count = 0; count < tasks.length; count++) {
+            if (tasks[count] instanceof TaskGraph) {
                 cleanUpWindows((TaskGraph) tasks[count]);
+            }
+        }
 
         unregisterTrianaClient(taskgraph);
     }
@@ -878,28 +960,30 @@ public class ApplicationFrame extends TrianaWindow
 
 
     /**
-     * Called when the user wants to close the window. If the window is in another application then
-     * the window is just made invisible, but if it is a stand alone application then a really Quit
-     * ? window is given to ask the user if he/she really wants to quit or not.
+     * Called when the user wants to close the window. If the window is in another application then the window is just
+     * made invisible, but if it is a stand alone application then a really Quit ? window is given to ask the user if
+     * he/she really wants to quit or not.
      */
     public void cleanUp() {
         Env.stopConfigWriters();
 
         TaskGraphPanel[] cont = (TaskGraphPanel[]) parents.toArray(new TaskGraphPanel[parents.size()]);
 
-        for (int count = 0; count < cont.length; count++)
+        for (int count = 0; count < cont.length; count++) {
             closeTaskGraphPanel(cont[count]);
+        }
     }
 
     /**
-     * @return the current selected MainTriana panel within the main Triana application within e.g.
-     *         the reference to the frame within the workspace which has the focus
+     * @return the current selected MainTriana panel within the main Triana application within e.g. the reference to the
+     *         frame within the workspace which has the focus
      */
     public TaskGraphPanel getSelectedTaskGraphPanel() {
-        if (selected instanceof TaskGraphPanel)
+        if (selected instanceof TaskGraphPanel) {
             return (TaskGraphPanel) selected;
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -909,8 +993,9 @@ public class ApplicationFrame extends TrianaWindow
         BaseInternalFrame frame = (BaseInternalFrame) getInternalFrameFor(cont);
 
         if (frame != null) {
-            if (frame.getAssociatedButton().getParent() == null)
+            if (frame.getAssociatedButton().getParent() == null) {
                 workspace.add(frame);
+            }
 
             frame.selectFrameAndAssociatedButtons();
         }
@@ -929,10 +1014,11 @@ public class ApplicationFrame extends TrianaWindow
             element = (TaskGraphPanel) taskGraphConts.get(key);
         }
 
-        if (comp == element)
+        if (comp == element) {
             return key;
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -940,50 +1026,55 @@ public class ApplicationFrame extends TrianaWindow
      * @return true if only a single tool is selected
      */
     public boolean isSingleSelectedTool() {
-        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler))
+        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler)) {
             return ((ToolSelectionHandler) getSelectionHandler()).isSingleSelectedTool();
-        else
+        } else {
             return false;
+        }
     }
 
     /**
      * @return the currently selected tool (null if none selected)
      */
     public Tool getSelectedTool() {
-        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler))
+        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler)) {
             return ((ToolSelectionHandler) getSelectionHandler()).getSelectedTool();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
      * @return an array of the currently selected tools
      */
     public Tool[] getSelectedTools() {
-        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler))
+        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler)) {
             return ((ToolSelectionHandler) getSelectionHandler()).getSelectedTools();
-        else
+        } else {
             return new Tool[0];
+        }
     }
 
     /**
      * @return the triana client responsible for the selected tools (null if none)
      */
     public TrianaClient getSelectedTrianaClient() {
-        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler))
+        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler)) {
             return ((ToolSelectionHandler) getSelectionHandler()).getSelectedTrianaClient();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
      * @return the currently selected taskgraph (usually parent of selected tool)
      */
     public TaskGraph getSelectedTaskgraph() {
-        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler))
+        if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler)) {
             return ((ToolSelectionHandler) getSelectionHandler()).getSelectedTaskgraph();
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -1004,8 +1095,9 @@ public class ApplicationFrame extends TrianaWindow
         TaskGraphPanel[] comps = getTaskGraphPanels();
         int count = 0;
 
-        while ((count < comps.length) && (comps[count].getTaskGraph() != task))
+        while ((count < comps.length) && (comps[count].getTaskGraph() != task)) {
             count++;
+        }
 
         if (comps[count].getTaskGraph() == task) {
             BaseInternalFrame internalframe = (BaseInternalFrame) getInternalFrameFor(comps[count]);
@@ -1048,16 +1140,16 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method
-     * is called when tasks are removed from a taskgraph due to being grouped
-     * (they are placed in the new groups taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are placed in the new groups taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
         if (event.getTask() instanceof TaskGraph) {
             TaskGraphPanel panel = getTaskGraphPanelFor((TaskGraph) event.getTask());
 
-            if (panel != null)
+            if (panel != null) {
                 closeTaskGraphPanel(panel);
+            }
         }
     }
 
@@ -1090,8 +1182,9 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     public void treeNodesInserted(TreeModelEvent event) {
-        if (!toolboxTree.isExpanded(0))
+        if (!toolboxTree.isExpanded(0)) {
             toolboxTree.expandRow(0);
+        }
     }
 
     public void treeNodesRemoved(TreeModelEvent event) {
@@ -1105,13 +1198,15 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     public void componentMoved(ComponentEvent event) {
-        if (event.getSource() == this)
+        if (event.getSource() == this) {
             Env.setWindowPosition(getLocation());
+        }
     }
 
     public void componentResized(ComponentEvent event) {
-        if (event.getSource() == this)
+        if (event.getSource() == this) {
             Env.setWindowSize(getSize());
+        }
     }
 
     public void componentShown(ComponentEvent event) {
@@ -1121,10 +1216,11 @@ public class ApplicationFrame extends TrianaWindow
      * Invoked when a component gains the keyboard focus.
      */
     public void focusGained(FocusEvent event) {
-        if (event.getSource() == toolboxTree)
+        if (event.getSource() == toolboxTree) {
             selected = leaflistener;
-        else
+        } else {
             selected = event.getSource();
+        }
     }
 
     /**
@@ -1132,14 +1228,16 @@ public class ApplicationFrame extends TrianaWindow
      */
     public void focusLost(FocusEvent event) {
         // required to fix internal frame focus/selection bug
-        if (event.getComponent() instanceof TaskGraphPanel)
+        if (event.getComponent() instanceof TaskGraphPanel) {
             try {
                 JInternalFrame frame = getInternalFrameFor((TaskGraphPanel) event.getComponent());
 
-                if (frame != null)
+                if (frame != null) {
                     frame.setSelected(false);
+                }
             } catch (PropertyVetoException except) {
             }
+        }
     }
 
     /**
@@ -1176,9 +1274,9 @@ public class ApplicationFrame extends TrianaWindow
 
     private class TrianaShutdownHook extends Thread {
         /**
-         * If this thread was constructed using a separate <code>Runnable</code> run object, then
-         * that <code>Runnable</code> object's <code>run</code> method is called; otherwise, this
-         * method does nothing and returns.
+         * If this thread was constructed using a separate <code>Runnable</code> run object, then that
+         * <code>Runnable</code> object's <code>run</code> method is called; otherwise, this method does nothing and
+         * returns.
          * <p/>
          * Subclasses of <code>Thread</code> should override this method.
          *

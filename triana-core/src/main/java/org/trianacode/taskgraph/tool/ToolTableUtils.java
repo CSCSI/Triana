@@ -14,71 +14,61 @@
  * limitations under the License.
  */
 
-package org.trianacode.util;
-
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.imp.ToolImp;
-import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.tool.ClassLoaders;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
+package org.trianacode.taskgraph.tool;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
+
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 4:44:41 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ToolTableUtils {
 
-    static Logger log = Logger.getLogger("org.trianacode.util.ToolTableUtils");
+    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolTableUtils");
 
 
     /**
-     * Internal method that removes the directory detail above the toolbox level and
-     * returns the path as a Java style package path.
+     * Internal method that removes the directory detail above the toolbox level and returns the path as a Java style
+     * package path.
      */
     public static String qualifyPath(String qualifiedName, ToolTable tools) {
         String fullPath = qualifiedName;
         Toolbox[] toolboxes = tools.getToolBoxes();
         for (int i = 0; i < toolboxes.length; i++) {
-            String toolboxpath = toolboxes[i] + Env.separator();
+            String toolboxpath = toolboxes[i] + File.separator;
             qualifiedName = fullPath.replace(toolboxpath, "");
             if (!fullPath.equals(qualifiedName)) {
                 break;
             }
         }
-        qualifiedName = qualifiedName.replace(Env.separator(), ".");
+        qualifiedName = qualifiedName.replace(File.separator, ".");
         return qualifiedName;
     }
 
 
     /**
-     * Method to try and return the helpfile for the given tool. Checks first to see if
-     * the method is a valid URL, then a valid file and finally it checks to see if there
-     * is an appropriate file in the "help" directory for the tool.
-     *
-     * @TODO using this line currently
-     * return "file://" + file.toString();
-     * really should be using file.toUrl().toString() but it doesn't seem to work
+     * Method to try and return the helpfile for the given tool. Checks first to see if the method is a valid URL, then
+     * a valid file and finally it checks to see if there is an appropriate file in the "help" directory for the tool.
      */
     public static String getUnitHelpFilePath(Tool tool) {
         String helpLocation1 = tool.getToolBox() + File.separatorChar + tool.getToolPackage().replace('.',
-                File.separatorChar) + File.separatorChar + "help" + Env.separator();
+                File.separatorChar) + File.separatorChar + "help" + File.separator;
         String helpLocation2 = null;
 
         if (tool.getProxy() instanceof JavaProxy) {
-            helpLocation2 = tool.getToolBox() + File.separatorChar + ((JavaProxy) tool.getProxy()).getUnitPackage().replace(
-                    '.', File.separatorChar) + File.separatorChar + "help" + Env.separator();
+            helpLocation2 = tool.getToolBox() + File.separatorChar
+                    + ((JavaProxy) tool.getProxy()).getUnitPackage().replace(
+                    '.', File.separatorChar) + File.separatorChar + "help" + File.separator;
         }
 
         if (tool.isParameterName(ToolImp.HELP_FILE_PARAM)) {
@@ -134,8 +124,7 @@ public class ToolTableUtils {
     }
 
     /**
-     * @return true if the tool is broken (invalid parameter panel, invalid
-     *         xml file version)
+     * @return true if the tool is broken (invalid parameter panel, invalid xml file version)
      */
     public static boolean isBroken(Tool tool) {
 

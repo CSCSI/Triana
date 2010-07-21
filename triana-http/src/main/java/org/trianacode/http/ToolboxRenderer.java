@@ -1,7 +1,6 @@
 package org.trianacode.http;
 
-import java.io.OutputStream;
-
+import org.thinginitself.streamable.Streamable;
 import org.trianacode.taskgraph.tool.Toolbox;
 
 /**
@@ -20,6 +19,8 @@ public class ToolboxRenderer implements Renderer {
     }
 
     @Override
-    public void render(OutputStream out) {
+    public Streamable render() {
+
+        return null;
     }
 }

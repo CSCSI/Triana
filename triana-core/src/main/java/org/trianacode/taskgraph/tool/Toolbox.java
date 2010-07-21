@@ -23,8 +23,6 @@ import java.io.File;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 3, 2009: 11:26:18 AM
- * @date $Date:$ modified by $Author:$
  */
 
 public class Toolbox {
@@ -37,31 +35,38 @@ public class Toolbox {
     private String path;
     private String type;
     private boolean isVirtual;
+    private String name;
 
     public static final String INTERNAL = "internal";
 
-    public Toolbox(String path, String type, boolean virtual) {
+    public Toolbox(String path, String type, String name, boolean virtual) {
         this.path = path;
         this.type = type;
+        this.name = name;
         isVirtual = virtual;
     }
 
-    public Toolbox(String path, String type) {
-        this(path, type, false);
+    public Toolbox(String path, String type, String name) {
+        this(path, type, name, false);
+    }
+
+    public Toolbox(String path, String name) {
+        this(path, "No Type", name, false);
     }
 
     public Toolbox(String path) {
-        this(path, "No Type", false);
+        this(path, "No Type", "noname", false);
     }
 
-    public Toolbox(String path, boolean virtual) {
-        this(path, "No Type", virtual);
+    public Toolbox(String path, String name, boolean virtual) {
+        this(path, "No Type", name, virtual);
     }
 
     public Toolbox(File file, String type) {
         file.mkdirs();
         this.path = file.getAbsolutePath();
         this.type = type;
+        this.name = file.getName();
         isVirtual = false;
     }
 
@@ -75,6 +80,10 @@ public class Toolbox {
 
     public String getType() {
         return type;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean isVirtual() {

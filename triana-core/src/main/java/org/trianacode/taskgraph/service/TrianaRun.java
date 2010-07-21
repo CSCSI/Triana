@@ -59,24 +59,33 @@
 
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.TaskLayoutUtils;
 import org.trianacode.taskgraph.imp.CableImp;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.ToolTableImp;
+import org.trianacode.taskgraph.util.Toolboxes;
 
 
 /**
- * A class for running a taskgraph. Unlike TrianaExec, TrianaRun does not handle
- * synchronuizing between multiple invocations.
+ * A class for running a taskgraph. Unlike TrianaExec, TrianaRun does not handle synchronuizing between multiple
+ * invocations.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public class TrianaRun {
@@ -94,8 +103,7 @@ public class TrianaRun {
 
 
     /**
-     * Constructs a TrianaExec to execute a clone of the specified taskgraph.
-     * Uses a default tool table
+     * Constructs a TrianaExec to execute a clone of the specified taskgraph. Uses a default tool table
      */
     public TrianaRun(TaskGraph taskgraph) throws TaskGraphException {
         initToolTable();
@@ -103,8 +111,7 @@ public class TrianaRun {
     }
 
     /**
-     * Constructs a TrianaExec to execute a clone of the specified tool.
-     * Uses a default tool table.
+     * Constructs a TrianaExec to execute a clone of the specified tool. Uses a default tool table.
      */
     public TrianaRun(Tool tool) throws TaskGraphException {
         initToolTable();
@@ -117,9 +124,8 @@ public class TrianaRun {
      */
     public static void initToolTable() {
         if (TaskGraphManager.getToolTable() == null) {
-            //TODO
-            //TaskGraphManager.initToolTable(new ServerToolTable());
-            //Env.initConfig(TaskGraphManager.getToolTable(), false);
+            TaskGraphManager.initToolTable(new ToolTableImp());
+            Toolboxes.loadToolboxes(TaskGraphManager.getToolTable());
         }
     }
 
@@ -150,8 +156,8 @@ public class TrianaRun {
     }
 
     /**
-     * Initialises a dummy task with the specified tool name. This task acts
-     * as a place holder at the unconnected end of the exec cables.
+     * Initialises a dummy task with the specified tool name. This task acts as a place holder at the unconnected end of
+     * the exec cables.
      */
     private void initDummyTask() throws TaskException, NodeException {
         dummy = new TaskImp(new ToolImp(), new TaskFactoryImp(), false);
@@ -162,18 +168,19 @@ public class TrianaRun {
     }
 
     /**
-     * If an individual task was created then set its nodes as the taskgraphs
-     * parent nodes.
+     * If an individual task was created then set its nodes as the taskgraphs parent nodes.
      */
     private void initGroupNodes() throws NodeException {
         Node[] innodes = task.getInputNodes();
         Node[] outnodes = task.getOutputNodes();
 
-        for (int count = 0; count < innodes.length; count++)
+        for (int count = 0; count < innodes.length; count++) {
             taskgraph.addDataInputNode(innodes[count]);
+        }
 
-        for (int count = 0; count < outnodes.length; count++)
+        for (int count = 0; count < outnodes.length; count++) {
             taskgraph.addDataOutputNode(outnodes[count]);
+        }
     }
 
     /**
@@ -198,8 +205,8 @@ public class TrianaRun {
     }
 
     /**
-     * @return the taskgraph that is being executed. If a single task was executed
-     *         then this returns that task wrapped in a simple taskgraph.
+     * @return the taskgraph that is being executed. If a single task was executed then this returns that task wrapped
+     *         in a simple taskgraph.
      */
     public TaskGraph getTaskGraph() {
         return taskgraph;
@@ -249,11 +256,14 @@ public class TrianaRun {
         boolean finished = true;
 
         for (int count = 0; (count < tasks.length) && (finished); count++) {
-            if (tasks[count] instanceof RunnableInstance)
-                finished = finished && (((RunnableInstance) tasks[count]).getExecutionState() == ExecutionState.COMPLETE);
+            if (tasks[count] instanceof RunnableInstance) {
+                finished = finished && (((RunnableInstance) tasks[count]).getExecutionState()
+                        == ExecutionState.COMPLETE);
+            }
 
-            if (tasks[count] instanceof TaskGraph)
+            if (tasks[count] instanceof TaskGraph) {
                 finished = finished && isFinished((TaskGraph) tasks[count]);
+            }
         }
 
         return finished;
@@ -268,8 +278,7 @@ public class TrianaRun {
     }
 
     /**
-     * @return true if the input data on the specified node is successfully
-     * sent
+     * @return true if the input data on the specified node is successfully sent
      */
     public boolean isDataSent(int count) {
         return incables[count].isDataSent();
@@ -298,24 +307,23 @@ public class TrianaRun {
     }
 
     /**
-     * @return the data at the specified output node, automatically unpacking
-     *         it from any data message.
+     * @return the data at the specified output node, automatically unpacking it from any data message.
      */
     public Object receiveOutputData(int count) {
         return receiveOutputData(count, true);
     }
 
     /**
-     * @return the data at the specified output node, optionally unpacking
-     *         it from any data message.
+     * @return the data at the specified output node, optionally unpacking it from any data message.
      */
     public Object receiveOutputData(int count, boolean unpack) {
         Object data = outcables[count].recv();
 
-        if (unpack)
+        if (unpack) {
             return unpackResult(data);
-        else
+        } else {
             return data;
+        }
     }
 
 
@@ -325,8 +333,9 @@ public class TrianaRun {
     public boolean isOutputReady() {
         boolean ready = true;
 
-        for (int count = 0; (count < outcables.length) && ready; count++)
+        for (int count = 0; (count < outcables.length) && ready; count++) {
             ready = ready && outcables[count].isDataReady();
+        }
 
         return ready;
     }
@@ -335,10 +344,11 @@ public class TrianaRun {
     protected Object unpackResult(Object result) {
         Object unpacked;
 
-        if (result instanceof DataMessage)
+        if (result instanceof DataMessage) {
             unpacked = ((DataMessage) result).getData();
-        else
+        } else {
             unpacked = result;
+        }
 
         return unpacked;
     }
@@ -371,8 +381,7 @@ public class TrianaRun {
         }
 
         /**
-         * Called by a control task to run the specified task within a
-         * running taskgraph
+         * Called by a control task to run the specified task within a running taskgraph
          */
         public void runTask(Task task) throws SchedulerException {
             scheduler.runTask(task);
@@ -405,40 +414,44 @@ public class TrianaRun {
          * @return the node which receives data along this cable
          */
         public Node getReceivingNode() {
-            if (!output)
+            if (!output) {
                 return node;
-            else
+            } else {
                 return dummy.getInputNode(0);
+            }
         }
 
         /**
          * @return the node which receives data along this cable
          */
         public Task getReceivingTask() {
-            if (!output)
+            if (!output) {
                 return node.getTask();
-            else
+            } else {
                 return dummy;
+            }
         }
 
         /**
          * @return the node which sends data along this cable
          */
         public Node getSendingNode() {
-            if (output)
+            if (output) {
                 return node;
-            else
+            } else {
                 return dummy.getOutputNode(0);
+            }
         }
 
         /**
          * @return the task which sends data (via a node) along this cable
          */
         public Task getSendingTask() {
-            if (output)
+            if (output) {
                 return node.getTask();
-            else
+            } else {
                 return dummy;
+            }
         }
 
 
@@ -485,18 +498,21 @@ public class TrianaRun {
 
 
         public synchronized void send(Object data) {
-            if (suspended)
+            if (suspended) {
                 return;
+            }
 
             this.data = data;
 
-            if (!output)
+            if (!output) {
                 ((RunnableInstance) node.getTopLevelTask()).wakeUp(node.getTopLevelNode());
+            }
         }
 
         public synchronized void sendNonBlocking(Object data) {
-            if (suspended)
+            if (suspended) {
                 return;
+            }
 
             send(data);
         }
