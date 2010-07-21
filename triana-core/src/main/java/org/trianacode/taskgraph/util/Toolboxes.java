@@ -53,14 +53,12 @@ public class Toolboxes {
     }
 
     public static void loadToolboxes(ToolTable table) {
-        System.out.println("Toolboxes.loadToolboxes============================================");
         File file = new File(Home.home() + File.separator + "toolboxes.xml");
         if (!file.exists() || file.length() == 0) {
             File defToolbox = new File(Home.home() + File.separator + "toolbox");
             defToolbox.mkdirs();
             table.addToolBox(new Toolbox(defToolbox.getAbsolutePath(), Toolbox.INTERNAL, "user"));
             try {
-                System.out.println("Toolboxes.loadToolboxes ABOUT TO SAVE ON A LOAD");
                 saveToolboxes(table);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -99,10 +97,8 @@ public class Toolboxes {
                         log.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
                     } else {
                         if (type != null && type.length() > 0) {
-                            System.out.println("Toolboxes.loadToolboxes ============================= ADDED");
                             tbs.add(new Toolbox(toolbox, type, v));
                         } else {
-                            System.out.println("Toolboxes.loadToolboxes ============================= ADDED");
                             tbs.add(new Toolbox(toolbox, name, v));
                         }
                     }
