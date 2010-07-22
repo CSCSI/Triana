@@ -80,7 +80,7 @@ public class Output {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(bout));
             Template template = engine.getTemplate(templateType);
             template.merge(context, writer);
-            writer.flush();
+            writer.close();
             return new StreamableData(bout.toByteArray(), "text/html");
         }
         catch (ResourceNotFoundException rnfe) {
