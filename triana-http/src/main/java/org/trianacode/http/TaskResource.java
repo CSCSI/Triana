@@ -34,12 +34,9 @@ public class TaskResource extends Resource implements ExecutionControlListener {
     }
 
     public Resource getResource(RequestContext context) throws RequestProcessException {
-        System.out.println("TaskResource.getResource CALLED with target:" + context.getRequestTarget());
         if (context.getRequestTarget().equals(getPath().toString())) {
-            System.out.println("TaskResource.getResource return THIS");
             return this;
         }
-        System.out.println("TaskResource.getResource returning NULL");
         return null;
     }
 
@@ -55,13 +52,10 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
-        System.out.println("TaskResource.onPost CALLED");
-
         if (!started) {
             started = true;
             controller.begin();
         }
-
         if (started) {
             try {
                 Renderer renderer = nextTask.take();

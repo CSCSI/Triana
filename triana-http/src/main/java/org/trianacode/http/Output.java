@@ -35,7 +35,7 @@ public class Output {
         try {
             initVelocityEngine();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -48,11 +48,7 @@ public class Output {
 
 
     private static void initVelocityEngine() throws Exception {
-        // Initializes the velocity engine with properties. We should specify
-        // the resource loader as string and the class for
-        // string.resource.loader in properties
         Properties p = new Properties();
-
         p.setProperty("resource.loader", "string");
         p.setProperty("string.resource.loader.class",
                 "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
@@ -88,10 +84,10 @@ public class Output {
             return new StreamableData(bout.toByteArray(), "text/html");
         }
         catch (ResourceNotFoundException rnfe) {
-            System.out.println("Example : error : cannot find template " + templateType);
+            rnfe.printStackTrace();
         }
         catch (ParseErrorException pee) {
-            System.out.println("Example : Syntax error in template " + templateType + ":" + pee);
+            pee.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
