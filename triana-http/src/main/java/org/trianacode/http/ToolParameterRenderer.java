@@ -18,7 +18,6 @@ public class ToolParameterRenderer implements Renderer {
 
     private Task parent;
     private Tool tool;
-    private String templatePath;
 
     public ToolParameterRenderer(Task parent, Tool tool, String templatePath) {
         this.parent = parent;
