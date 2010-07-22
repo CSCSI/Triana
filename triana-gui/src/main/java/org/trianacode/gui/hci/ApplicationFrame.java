@@ -157,7 +157,6 @@ import org.trianacode.gui.components.text.TextToolComponentModel;
 import org.trianacode.gui.components.triana.TrianaColorModel;
 import org.trianacode.gui.components.triana.TrianaComponentModel;
 import org.trianacode.gui.extensions.Extension;
-import org.trianacode.gui.extensions.ExtensionFinder;
 import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.BrokenToolMonitor;
@@ -199,6 +198,7 @@ import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImp;
+import org.trianacode.taskgraph.util.ExtensionFinder;
 import org.trianacode.util.Env;
 
 

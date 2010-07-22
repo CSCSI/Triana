@@ -16,6 +16,7 @@
 
 package org.trianacode.taskgraph;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,8 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 10, 2009: 6:13:40 AM
- * @date $Date:$ modified by $Author:$
  */
 
 public class TaskGraphContext {
@@ -38,5 +37,9 @@ public class TaskGraphContext {
 
     public Object getProperty(String key) {
         return properties.get(key);
+    }
+
+    public Collection<String> getKeys() {
+        return properties.keySet();
     }
 }

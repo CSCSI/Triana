@@ -1,5 +1,9 @@
 package org.trianacode.http;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.thinginitself.streamable.Streamable;
 import org.trianacode.taskgraph.tool.Toolbox;
 
@@ -11,16 +15,20 @@ import org.trianacode.taskgraph.tool.Toolbox;
 public class ToolboxRenderer implements Renderer {
 
     private Toolbox toolbox;
-    private String templatePath;
 
     public ToolboxRenderer(Toolbox toolbox, String templatePath) {
         this.toolbox = toolbox;
-        this.templatePath = templatePath;
+        try {
+            Output.registerTemplate(Renderer.TOOLBOX_TEMPLATE, templatePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Streamable render() {
-
-        return null;
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("toolboxpath", toolbox.getPath());
+        return Output.output(properties, Renderer.TOOLBOX_TEMPLATE);
     }
 }

@@ -241,6 +241,15 @@ public class PoisonTask implements Task {
     }
 
     @Override
+    public Object getContextProperty(String name) {
+        return null;
+    }
+
+    @Override
+    public void setContextProperty(String name, Object value) {
+    }
+
+    @Override
     public void setSubTitle(String subtext) {
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.trianacode.gui.extensions;
+package org.trianacode.taskgraph.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
 import org.trianacode.taskgraph.tool.ClassLoaders;
-import org.trianacode.taskgraph.util.FileUtils;
 
 /**
  * Implements 1.3 ServiceProvider discovery mechanism. Adds the Java classpath as a search path by default. Other paths
@@ -44,7 +43,7 @@ import org.trianacode.taskgraph.util.FileUtils;
 
 public class ExtensionFinder {
 
-    static Logger log = Logger.getLogger("org.trianacode.gui.extensions.ExtensionFinder");
+    static Logger log = Logger.getLogger("org.trianacode.taskgraph.util.ExtensionFinder");
 
     private static List<File> searchDirs = new ArrayList<File>();
 

@@ -58,32 +58,40 @@
  */
 package org.trianacode.gui.extensions;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.util.ExtensionFinder;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.basic.BasicFileChooserUI;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-
 /**
- * Decorator design pattern implementation that adds import and export specific plugin
- * functionality to file dialogs in Triana. The import and export filters are dynamically
- * configured.
+ * Decorator design pattern implementation that adds import and export specific plugin functionality to file dialogs in
+ * Triana. The import and export filters are dynamically configured.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Apr 20, 2004: 5:24:55 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class FileImportExportDecorator implements ActionListener {
 
@@ -105,12 +113,11 @@ public class FileImportExportDecorator implements ActionListener {
     /**
      * Pops up a "Import Taskgraph" file chooser dialog.
      *
-     * @param parent the parent component of the dialog, can be <code>null</code>; see
-     *               <code>showDialog</code> for details
-     * @return the return state of the file chooser on popdown: <ul>
-     *         <li>JFileChooser.CANCEL_OPTION <li>JFileChooser.APPROVE_OPTION
-     *         <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is dismissed
-     *         </ul>
+     * @param parent the parent component of the dialog, can be <code>null</code>; see <code>showDialog</code> for
+     *               details
+     * @return the return state of the file chooser on popdown: <ul> <li>JFileChooser.CANCEL_OPTION
+     *         <li>JFileChooser.APPROVE_OPTION <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is
+     *         dismissed </ul>
      * @throws HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see GraphicsEnvironment#isHeadless
      */
@@ -120,7 +127,8 @@ public class FileImportExportDecorator implements ActionListener {
         java.util.List<Object> importers = ExtensionFinder.services(TaskGraphImporterInterface.class);
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
-            JOptionPane.showMessageDialog(parent, "No Taskgraph Importers currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
+            JOptionPane.showMessageDialog(parent, "No Taskgraph Importers currently available", "Export",
+                    JOptionPane.INFORMATION_MESSAGE,
                     GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
         }
@@ -140,12 +148,11 @@ public class FileImportExportDecorator implements ActionListener {
     /**
      * Pops up a "Import Tool" file chooser dialog.
      *
-     * @param parent the parent component of the dialog, can be <code>null</code>; see
-     *               <code>showDialog</code> for details
-     * @return the return state of the file chooser on popdown: <ul>
-     *         <li>JFileChooser.CANCEL_OPTION <li>JFileChooser.APPROVE_OPTION
-     *         <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is dismissed
-     *         </ul>
+     * @param parent the parent component of the dialog, can be <code>null</code>; see <code>showDialog</code> for
+     *               details
+     * @return the return state of the file chooser on popdown: <ul> <li>JFileChooser.CANCEL_OPTION
+     *         <li>JFileChooser.APPROVE_OPTION <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is
+     *         dismissed </ul>
      * @throws HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see GraphicsEnvironment#isHeadless
      */
@@ -154,7 +161,8 @@ public class FileImportExportDecorator implements ActionListener {
         java.util.List<Object> importers = ExtensionFinder.services(ToolImporterInterface.class);
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
-            JOptionPane.showMessageDialog(parent, "No Tool Importers currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
+            JOptionPane.showMessageDialog(parent, "No Tool Importers currently available", "Export",
+                    JOptionPane.INFORMATION_MESSAGE,
                     GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
         }
@@ -174,12 +182,11 @@ public class FileImportExportDecorator implements ActionListener {
     /**
      * Pops up a "Export Taskgraph" file chooser dialog.
      *
-     * @param parent the parent component of the dialog, can be <code>null</code>; see
-     *               <code>showDialog</code> for details
-     * @return the return state of the file chooser on popdown: <ul>
-     *         <li>JFileChooser.CANCEL_OPTION <li>JFileChooser.APPROVE_OPTION
-     *         <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is dismissed
-     *         </ul>
+     * @param parent the parent component of the dialog, can be <code>null</code>; see <code>showDialog</code> for
+     *               details
+     * @return the return state of the file chooser on popdown: <ul> <li>JFileChooser.CANCEL_OPTION
+     *         <li>JFileChooser.APPROVE_OPTION <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is
+     *         dismissed </ul>
      * @throws HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see GraphicsEnvironment#isHeadless
      */
@@ -188,7 +195,8 @@ public class FileImportExportDecorator implements ActionListener {
         java.util.List<Object> importers = ExtensionFinder.services(TaskGraphExporterInterface.class);
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
-            JOptionPane.showMessageDialog(parent, "No Taskgraph Exporters currently available", "Export", JOptionPane.INFORMATION_MESSAGE,
+            JOptionPane.showMessageDialog(parent, "No Taskgraph Exporters currently available", "Export",
+                    JOptionPane.INFORMATION_MESSAGE,
                     GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
         }
@@ -198,8 +206,11 @@ public class FileImportExportDecorator implements ActionListener {
         setOptionsForSelectedFilter();
 
         fc.setDialogType(JFileChooser.CUSTOM_DIALOG);
-        if ((fc.getSelectedFile() == null) && (GUIEnv.getSelectedTaskGraphPanel() != null))
-            fc.setSelectedFile(new File(fc.getCurrentDirectory().getPath() + File.separator + GUIEnv.getSelectedTaskGraphPanel().getTaskGraph().getToolName()));
+        if ((fc.getSelectedFile() == null) && (GUIEnv.getSelectedTaskGraphPanel() != null)) {
+            fc.setSelectedFile(new File(
+                    fc.getCurrentDirectory().getPath() + File.separator + GUIEnv.getSelectedTaskGraphPanel()
+                            .getTaskGraph().getToolName()));
+        }
 
         Display.centralise(outer);
         outer.setVisible(true);
@@ -216,8 +227,9 @@ public class FileImportExportDecorator implements ActionListener {
             if (fc.getUI() instanceof BasicFileChooserUI) {
                 String filename = ((BasicFileChooserUI) fc.getUI()).getFileName();
 
-                if ((filename != null) && (!filename.equals("")))
+                if ((filename != null) && (!filename.equals(""))) {
                     fc.setSelectedFile(new File(fc.getCurrentDirectory(), filename));
+                }
             }
 
             fc.approveSelection();
@@ -235,31 +247,30 @@ public class FileImportExportDecorator implements ActionListener {
     }
 
     /**
-     * Translates and returns the <code>TaskGraph</code> from the file choosen by the
-     * user.
+     * Translates and returns the <code>TaskGraph</code> from the file choosen by the user.
      *
-     * @return the imported taskgraph
-     *         thrown if the taskgraph or workflow format is invalid
-     *         or unparsable, non matching brackets for example.
+     * @return the imported taskgraph thrown if the taskgraph or workflow format is invalid or unparsable, non matching
+     *         brackets for example.
      * @throws java.io.IOException thrown if there is a file IO problem.
      */
     public TaskGraph importWorkflow() throws TaskGraphException, IOException {
-        if (!(getSelectedFilter() instanceof TaskGraphImporterInterface))
+        if (!(getSelectedFilter() instanceof TaskGraphImporterInterface)) {
             throw (new RuntimeException("Attempting to import workflow before Import Dialog shown"));
+        }
 
         return ((TaskGraphImporterInterface) getSelectedFilter()).importWorkflow(fc.getSelectedFile());
     }
 
     /**
-     * Converts the taskgraph to the appropriate format and writes it to the user choosen
-     * file.
+     * Converts the taskgraph to the appropriate format and writes it to the user choosen file.
      *
      * @param taskgraph the taskgraph to export
      * @throws java.io.IOException thrown if there is an IO problem writing the file.
      */
     public void exportWorkflow(TaskGraph taskgraph) throws IOException, TaskGraphException {
-        if (!(getSelectedFilter() instanceof TaskGraphExporterInterface))
+        if (!(getSelectedFilter() instanceof TaskGraphExporterInterface)) {
             throw (new RuntimeException("Attempting to export workflow before Export Dialog shown"));
+        }
 
         // Bug fix for not picking up file name text.
         ((TaskGraphExporterInterface) getSelectedFilter()).exportWorkflow(taskgraph,
@@ -279,26 +290,23 @@ public class FileImportExportDecorator implements ActionListener {
     }
 
     /**
-     * Translates and returns the an array of <code>Tool</code> objects from the file
-     * choosen by the user.
+     * Translates and returns the an array of <code>Tool</code> objects from the file choosen by the user.
      *
      * @param pack the suggested package for imported tools
      * @param pack
-     * @return the imported tool
-     *         thrown if the tool format is invalid or unparsable, non
-     *         matching brackets for example.
+     * @return the imported tool thrown if the tool format is invalid or unparsable, non matching brackets for example.
      * @throws java.io.IOException thrown if there is a file IO problem.
      */
     public Tool[] importTools(String pack) throws TaskGraphException, IOException {
-        if (!(getSelectedFilter() instanceof ToolImporterInterface))
+        if (!(getSelectedFilter() instanceof ToolImporterInterface)) {
             throw (new RuntimeException("Attempting to import tools before Import Dialog shown"));
+        }
 
         return ((ToolImporterInterface) getSelectedFilter()).importTools(fc.getSelectedFile(), pack);
     }
 
     /**
-     * Set the options based on choosen filter. Options button enabled,
-     * <code>FileFilter</code> filters.
+     * Set the options based on choosen filter. Options button enabled, <code>FileFilter</code> filters.
      */
 
     private void setOptionsForSelectedFilter() {

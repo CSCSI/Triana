@@ -66,8 +66,6 @@ import org.trianacode.taskgraph.tool.Tool;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 14th November
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface Task extends Tool {
 
@@ -124,8 +122,7 @@ public interface Task extends Tool {
     public TaskGraph getParent();
 
     /**
-     * All copies of a task within a parameter space (sharing the same
-     * parameters) have the same intance id.
+     * All copies of a task within a parameter space (sharing the same parameters) have the same intance id.
      *
      * @return the instance id of this task
      */
@@ -264,8 +261,7 @@ public interface Task extends Tool {
 
 
     /**
-     * Sets the default input node requirement for this task (ESSENTIAL,
-     * ESSENTIAL_IF_CONNECTED or OPTIONAL)
+     * Sets the default input node requirement for this task (ESSENTIAL, ESSENTIAL_IF_CONNECTED or OPTIONAL)
      */
     public void setDefaultNodeRequirement(String requirement);
 
@@ -275,8 +271,7 @@ public interface Task extends Tool {
     public String getDefaultNodeRequirement();
 
     /**
-     * Sets the node requirement for the specified input node index (ESSENTIAL,
-     * ESSENTIAL_IF_CONNECTED or OPTIONAL)
+     * Sets the node requirement for the specified input node index (ESSENTIAL, ESSENTIAL_IF_CONNECTED or OPTIONAL)
      */
     public void setNodeRequirement(int index, String requirement);
 
@@ -302,8 +297,7 @@ public interface Task extends Tool {
     public ExecutionState getExecutionState();
 
     /**
-     * @return the error message associated with the current error (null if
-     *         the task is not in an error state)
+     * @return the error message associated with the current error (null if the task is not in an error state)
      */
     public String getErrorMessage();
 
@@ -324,18 +318,18 @@ public interface Task extends Tool {
 
 
     /**
-     * Returns the index of the specified node within the data input/output and parameter input/output nodes; or
-     * -1 if not attached to this task. The index returned is not unique, e.g. the first data input node and
-     * the first data output nodes will both return 0.
+     * Returns the index of the specified node within the data input/output and parameter input/output nodes; or -1 if
+     * not attached to this task. The index returned is not unique, e.g. the first data input node and the first data
+     * output nodes will both return 0.
      */
     public int getNodeIndex(Node node);
 
     /**
-     * This is a convience method to provide backward compatibility with TrianaGUI, in which parameter nodes
-     * where indexed after data nodes.
+     * This is a convience method to provide backward compatibility with TrianaGUI, in which parameter nodes where
+     * indexed after data nodes.
      * <p/>
-     * The absolute index of a data node is the same as its standard index.
-     * The absolute index of a parameter node is its standard index + the total number of data input nodes.
+     * The absolute index of a data node is the same as its standard index. The absolute index of a parameter node is
+     * its standard index + the total number of data input nodes.
      *
      * @return the absolute index of this node within its associated task.
      */
@@ -369,6 +363,10 @@ public interface Task extends Tool {
     public void dispose();
 
     public TaskGraphContext getContext();
+
+    public Object getContextProperty(String name);
+
+    public void setContextProperty(String name, Object value);
 
     public void setSubTitle(String subtext);
 

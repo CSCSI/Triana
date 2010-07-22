@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraphContext;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 
 /**
@@ -39,25 +38,20 @@ public class ExecutionInterceptor implements Interceptor {
     }
 
     protected Object intercept(Node sendNode, Node receiveNode, Object data, boolean send) {
+        System.out.println("==========================ExecutionInterceptor.intercept==========================");
         Task task;
         if (send) {
             task = sendNode.getTask();
         } else {
             task = receiveNode.getTask();
         }
-        Task parent = task;
-        while (parent != null) {
-            parent = parent.getParent();
-        }
-        TaskGraphContext context = parent.getContext();
-        if (context == null) {
-            return data;
-        }
+
         String id;
         if (send) {
-            id = (String) context.getProperty(ExecutionBus.SEND_ID);
+            id = (String) task.getContextProperty(ExecutionBus.SEND_ID);
         } else {
-            id = (String) context.getProperty(ExecutionBus.RECEIVE_ID);
+            id = (String) task.getContextProperty(ExecutionBus.RECEIVE_ID);
+            System.out.println("ExecutionInterceptor.intercept got receive id:" + id);
         }
         if (id == null) {
             return data;

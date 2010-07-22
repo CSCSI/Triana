@@ -226,6 +226,7 @@ public class TaskImp extends ToolImp implements Task {
                     this.setParameterType(params[count], paramtype);
                 }
             }
+
         } catch (NodeException except) {
             throw (new TaskException(except));
         } catch (ProxyInstantiationException except) {
@@ -1030,6 +1031,21 @@ public class TaskImp extends ToolImp implements Task {
 
     public TaskGraphContext getContext() {
         return context;
+    }
+
+    public Object getContextProperty(String name) {
+        System.out.println("TaskImp.getContextProperty CALLED. I AM " + getToolName() + ", PARENT IS " + getParent());
+        //new Exception().printStackTrace();
+        Object ret = context.getProperty(name);
+        if (ret == null && getParent() != null) {
+            ret = getParent().getContextProperty(name);
+        }
+        return ret;
+    }
+
+    @Override
+    public void setContextProperty(String name, Object value) {
+        context.setProperty(name, value);
     }
 
     public void setSubTitle(String subtext) {

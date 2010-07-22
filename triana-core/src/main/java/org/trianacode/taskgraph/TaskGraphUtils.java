@@ -59,6 +59,7 @@
 package org.trianacode.taskgraph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -372,6 +373,12 @@ public class TaskGraphUtils {
                     connectControlTask(clone);
                 }
             }
+            TaskGraphContext context = taskgraph.getContext();
+            Collection<String> keys = context.getKeys();
+            for (String key : keys) {
+                clone.setContextProperty(key, context.getProperty(key));
+            }
+
 
             return clone;
         } catch (ClassCastException except) {
