@@ -257,7 +257,7 @@ public class TrianaRun {
 
         for (int count = 0; (count < tasks.length) && (finished); count++) {
             if (tasks[count] instanceof RunnableInstance) {
-                finished = finished && (((RunnableInstance) tasks[count]).getExecutionState()
+                finished = finished && ((tasks[count]).getExecutionState()
                         == ExecutionState.COMPLETE);
             }
 

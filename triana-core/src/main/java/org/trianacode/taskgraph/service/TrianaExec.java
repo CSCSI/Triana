@@ -59,29 +59,26 @@
 
 package org.trianacode.taskgraph.service;
 
+import java.util.ArrayList;
+
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.util.ArrayList;
-
 /**
- * A class for executing a Triana taskgraph. TrianaExec assumes that each
- * taskgraph invocation will correspond with a single set of output data, and
- * thereby synchronizes multiple invocations.
+ * A class for executing a Triana taskgraph. TrianaExec assumes that each taskgraph invocation will correspond with a
+ * single set of output data, and thereby synchronizes multiple invocations.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class TrianaExec {
 
     /**
-     * the time in milliseconds that the manager threads sleep when waiting for the
-     * previous data to be sent/the data to arrive.
+     * the time in milliseconds that the manager threads sleep when waiting for the previous data to be sent/the data to
+     * arrive.
      */
     public static long DATA_SLEEP_TIME = 500;
 
@@ -93,8 +90,7 @@ public class TrianaExec {
 
 
     /**
-     * Constructs a TrianaExec to execute a clone of the specified taskgraph.
-     * Uses a default tool table
+     * Constructs a TrianaExec to execute a clone of the specified taskgraph. Uses a default tool table
      */
     public TrianaExec(TaskGraph taskgraph) throws TaskGraphException {
         run = new TrianaRun(taskgraph);
@@ -102,8 +98,7 @@ public class TrianaExec {
     }
 
     /**
-     * Constructs a TrianaExec to execute a clone of the specified tool.
-     * Uses a default tool table.
+     * Constructs a TrianaExec to execute a clone of the specified tool. Uses a default tool table.
      */
     public TrianaExec(Tool tool) throws TaskGraphException {
         run = new TrianaRun(tool);
@@ -123,8 +118,8 @@ public class TrianaExec {
 
 
     /**
-     * @return the taskgraph that is being executed. If a single task was executed
-     *         then this returns that task wrapped in a simple taskgraph.
+     * @return the taskgraph that is being executed. If a single task was executed then this returns that task wrapped
+     *         in a simple taskgraph.
      */
     public TaskGraph getTaskGraph() {
         return run.getTaskGraph();
@@ -162,8 +157,8 @@ public class TrianaExec {
 
 
     /**
-     * Executes the taskgraph using the specified input data array. Automatically
-     * unpacks any result data contained in data messages.
+     * Executes the taskgraph using the specified input data array. Automatically unpacks any result data contained in
+     * data messages.
      */
     public Object[] run(Object[] data) throws TaskGraphException, SchedulerException {
         return run(data, true);
@@ -172,10 +167,10 @@ public class TrianaExec {
     /**
      * Executes the taskgraph using the specified input data array.
      *
-     * @param unpack sets whether data within data messages is automatically
-     *               unpacked in the results array
+     * @param unpack sets whether data within data messages is automatically unpacked in the results array
      */
     public Object[] run(Object[] data, boolean unpack) throws TaskGraphException, SchedulerException {
+        System.out.println("TrianaExec.run CALLED");
         ExecRun exec = new ExecRun(data, Thread.currentThread(), unpack);
         inmanager.addExecRun(exec);
 
@@ -320,11 +315,13 @@ public class TrianaExec {
             do {
                 ready = true;
 
-                for (int count = 0; (count < run.getInputNodeCount()) && (ready); count++)
+                for (int count = 0; (count < run.getInputNodeCount()) && (ready); count++) {
                     ready = ready && run.isDataSent(count);
+                }
 
-                if (!ready)
+                if (!ready) {
                     sleepThread(DATA_SLEEP_TIME);
+                }
             } while ((!ready) && (!stopped));
         }
 
@@ -336,16 +333,18 @@ public class TrianaExec {
                 outmanager.addExecRun(exec);
                 run.runTaskGraph();
 
-                for (int count = 0; (count < run.getOutputNodeCount()) && (count < indata.length); count++)
+                for (int count = 0; (count < run.getOutputNodeCount()) && (count < indata.length); count++) {
                     run.sendInputData(count, indata[count]);
+                }
             }
         }
 
         private void sleepThread(long length) {
             synchronized (this) {
                 try {
-                    if (!stopped)
+                    if (!stopped) {
                         this.wait(length);
+                    }
                 } catch (InterruptedException e) {
                 }
             }
@@ -410,11 +409,13 @@ public class TrianaExec {
             do {
                 ready = true;
 
-                for (int count = 0; (count < run.getOutputNodeCount()) && (ready); count++)
+                for (int count = 0; (count < run.getOutputNodeCount()) && (ready); count++) {
                     ready = ready && run.isOutputReady(count);
+                }
 
-                if (!ready)
+                if (!ready) {
                     sleepThread(DATA_SLEEP_TIME);
+                }
             } while ((!ready) && (!stopped));
         }
 
@@ -424,8 +425,9 @@ public class TrianaExec {
                 ExecRun exec = (ExecRun) outexec.remove(0);
                 Object[] outdata = new Object[run.getOutputNodeCount()];
 
-                for (int count = 0; count < outdata.length; count++)
+                for (int count = 0; count < outdata.length; count++) {
                     outdata[count] = run.receiveOutputData(count, exec.unpackData());
+                }
 
                 exec.setOutputData(outdata);
             }
@@ -434,8 +436,9 @@ public class TrianaExec {
         private void sleepThread(long length) {
             synchronized (this) {
                 try {
-                    if (!stopped)
+                    if (!stopped) {
                         this.wait(length);
+                    }
                 } catch (InterruptedException e) {
                 }
             }

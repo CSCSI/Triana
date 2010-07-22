@@ -58,25 +58,22 @@
  */
 package org.trianacode.taskgraph.service;
 
+import java.util.ArrayList;
+
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.event.NodeEvent;
 import org.trianacode.taskgraph.event.NodeListener;
 import org.trianacode.taskgraph.imp.CableImp;
-
-import java.util.ArrayList;
+import org.trianacode.taskgraph.interceptor.InterceptorChain;
 
 /**
- * A Local input/output implementation (i.e. implements IOCable) of the
- * GAPCable class for local delivery of data between the nodes of the
- * connected units of this cable.
+ * A Local input/output implementation (i.e. implements IOCable) of the GAPCable class for local delivery of data
+ * between the nodes of the connected units of this cable.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 29th April 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  * @see Scheduler
  */
 public abstract class LocalCable extends CableImp implements IOCable, java.io.Serializable, NodeListener {
@@ -97,9 +94,8 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
 
 
     /**
-     * A local cable must be created by giving a reference to a RunnableInstance
-     * object so that wehen we use non-blocking sending of data we can notify
-     * the RunnableInstance object when each packet has finished
+     * A local cable must be created by giving a reference to a RunnableInstance object so that wehen we use
+     * non-blocking sending of data we can notify the RunnableInstance object when each packet has finished
      */
     public void connect(Node sendnode, Node recnode) throws CableException {
         super.connect(sendnode, recnode);
@@ -129,11 +125,13 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
      * Updates the sending and receiving tasks
      */
     private void updateConnection() throws CableException {
-        if (!(getSendingNode().getTopLevelTask() instanceof RunnableInstance))
+        if (!(getSendingNode().getTopLevelTask() instanceof RunnableInstance)) {
             throw (new CableException("Inconsistent taskgraph; cannot attach a runnable cable to a non-runnable task"));
+        }
 
-        if (!(getReceivingNode().getTopLevelTask() instanceof RunnableInstance))
+        if (!(getReceivingNode().getTopLevelTask() instanceof RunnableInstance)) {
             throw (new CableException("Inconsistent taskgraph; cannot attach a runnable cable to a non-runnable task"));
+        }
 
         sendTask = (RunnableInstance) getSendingNode().getTopLevelTask();
         recTask = (RunnableInstance) getReceivingNode().getTopLevelTask();
@@ -182,8 +180,9 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
      * Returns the data from this connection if there is data there.
      */
     public Object recv() {
-        if (suspended)
+        if (suspended) {
             throw (new EmptyingException("Suspended cable: " + toString()));
+        }
 
         Object data = null;
 
@@ -205,45 +204,49 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
     }
 
     /**
-     * Blocking call to send the data from the sending task
-     * to the receiving task.
+     * Blocking call to send the data from the sending task to the receiving task.
      *
      * @param data the data to be sent
      */
     public synchronized void send(Object data) {
-        if (suspended)
+        if (suspended) {
             return;
+        }
 
         data = preSend(data, false);
 
-        if (data instanceof DataMessage)
+        if (data instanceof DataMessage) {
             setOutputType(((DataMessage) data).getData().getClass().getName());
+        }
 
-        if (monitor == null)
+        if (monitor == null) {
             buffer.add(data);
-        else
+        } else {
             monitor.put(data);
+        }
     }
 
     /**
-     * Non-blocking call to send the data from the sending task
-     * to the receiving task.
+     * Non-blocking call to send the data from the sending task to the receiving task.
      *
      * @param data the data to be sent
      */
     public synchronized void sendNonBlocking(Object data) {
-        if (suspended)
+        if (suspended) {
             return;
+        }
 
         data = preSend(data, false);
 
-        if (data instanceof DataMessage)
+        if (data instanceof DataMessage) {
             setOutputType(((DataMessage) data).getData().getClass().getName());
+        }
 
-        if (monitor == null)
+        if (monitor == null) {
             buffer.add(data);
-        else
+        } else {
             monitor.putButDontBlock(data);
+        }
     }
 
 
@@ -254,20 +257,19 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
         Node node = getSendingNode();
 
         while (node != null) {
-            if (type != null)
+            if (type != null) {
                 node.getTask().setParameter(Task.OUTPUT_TYPE + node.getAbsoluteNodeIndex(), type);
-            else
+            } else {
                 node.getTask().removeParameter(Task.OUTPUT_TYPE + node.getAbsoluteNodeIndex());
+            }
 
             node = node.getChildNode();
         }
     }
 
     /**
-     * Create a new monitor to provide the synchronisation between
-     * the OldUnit thread's. See the Producer/Consumer example
-     * in the Java Language Tutorial for an explanation of how this
-     * works.
+     * Create a new monitor to provide the synchronisation between the OldUnit thread's. See the Producer/Consumer
+     * example in the Java Language Tutorial for an explanation of how this works.
      */
     public void createMonitor() {
         destroyMonitor();
@@ -289,13 +291,15 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
 //            } catch (Exception e) {
 //            }
 //        }
-
-        monitor = null;
+        if (monitor != null) {
+            monitor.empty();
+            monitor = null;
+        }
     }
 
     /**
-     * When the garbage collector de-allocates space from this
-     * object we reset all references to other object we have used
+     * When the garbage collector de-allocates space from this object we reset all references to other object we have
+     * used
      */
     protected void finalize() throws Throwable {
         super.finalize();
@@ -321,7 +325,9 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
      */
     public void flush() {
         buffer.clear();
-        monitor.empty();
+        if (monitor != null) {
+            monitor.empty();
+        }
     }
 
     /**
@@ -339,7 +345,7 @@ public abstract class LocalCable extends CableImp implements IOCable, java.io.Se
         try {
             updateConnection();
         } catch (CableException except) {
-            throw(new RuntimeException("Invalid node parent change"));
+            throw (new RuntimeException("Invalid node parent change"));
         }
     }
 

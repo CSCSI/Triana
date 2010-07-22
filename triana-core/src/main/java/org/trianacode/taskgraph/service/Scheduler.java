@@ -58,17 +58,18 @@
  */
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
 /**
- * The scheduler is responsible for waking-up all the input tasks in a taskgraph when the
- * taskgraph is run.
+ * The scheduler is responsible for waking-up all the input tasks in a taskgraph when the taskgraph is run.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 20th May 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Scheduler implements SchedulerInterface {
 
@@ -89,8 +90,7 @@ public class Scheduler implements SchedulerInterface {
 
 
     /**
-     * Construct a scheduler for the given taskgraph and registers it with all
-     * the tasks in the taskgraph
+     * Construct a scheduler for the given taskgraph and registers it with all the tasks in the taskgraph
      */
     public Scheduler(TaskGraph taskgraph) {
         this.taskgraph = taskgraph;
@@ -113,20 +113,20 @@ public class Scheduler implements SchedulerInterface {
     }
 
     /**
-     * Runs the taskgraph by waking up all the input tasks. Attaches the
-     * specified object as a history clip-in
+     * Runs the taskgraph by waking up all the input tasks. Attaches the specified object as a history clip-in
      */
     public void runTaskGraph(HistoryClipIn history) throws SchedulerException {
         this.history = history;
 
-        if (tgState == ExecutionState.ERROR)
+        if (tgState == ExecutionState.ERROR) {
             throw (new SchedulerException("Run Error: Taskgraph is in an error state (try reseting)"));
-        else if (isSuspendedTasks(taskgraph))
+        } else if (isSuspendedTasks(taskgraph)) {
             throw (new SchedulerException("Run Error: Taskgraph contains suspended tasks"));
-        else if (tgState == ExecutionState.PAUSED)
+        } else if (tgState == ExecutionState.PAUSED) {
             resumeTaskGraph(taskgraph);
-        else
+        } else {
             runTaskGraph(taskgraph);
+        }
     }
 
 
@@ -160,19 +160,23 @@ public class Scheduler implements SchedulerInterface {
 
         Cable[] cables = TaskGraphUtils.getConnectedCables(TaskGraphUtils.getAllTasksRecursive(taskgraph, true));
 
-        for (int i = 0; i < cables.length; i++)
-            if (cables[i] instanceof InputCable)
+        for (int i = 0; i < cables.length; i++) {
+            if (cables[i] instanceof InputCable) {
                 ((InputCable) cables[i]).suspend();
-            else if (cables[i] instanceof OutputCable)
+            } else if (cables[i] instanceof OutputCable) {
                 ((OutputCable) cables[i]).suspend();
+            }
+        }
 
         // todo flush the units
 
-        for (int i = 0; i < cables.length; i++)
-            if (cables[i] instanceof InputCable)
+        for (int i = 0; i < cables.length; i++) {
+            if (cables[i] instanceof InputCable) {
                 ((InputCable) cables[i]).resume();
-            else if (cables[i] instanceof OutputCable)
+            } else if (cables[i] instanceof OutputCable) {
                 ((OutputCable) cables[i]).resume();
+            }
+        }
     }
 
 
@@ -180,10 +184,11 @@ public class Scheduler implements SchedulerInterface {
      * Runs the specified task (within a running taskgraph)
      */
     public void runTask(Task task) throws SchedulerException {
-        if (tgState == ExecutionState.RUNNING)
+        if (tgState == ExecutionState.RUNNING) {
             wakeTask(task);
-        else
+        } else {
             throw (new SchedulerException("Cannot run task " + task.getToolName() + ": Execution state = " + tgState));
+        }
     }
 
 
@@ -194,9 +199,12 @@ public class Scheduler implements SchedulerInterface {
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(taskgraph, true);
         boolean suspended = false;
 
-        for (int count = 0; (count < tasks.length) && (!suspended); count++)
-            if ((tasks[count] instanceof RunnableInstance))
-                suspended = suspended || (((RunnableInstance) tasks[count]).getExecutionState() == ExecutionState.SUSPENDED);
+        for (int count = 0; (count < tasks.length) && (!suspended); count++) {
+            if ((tasks[count] instanceof RunnableInstance)) {
+                suspended = suspended || (((RunnableInstance) tasks[count]).getExecutionState()
+                        == ExecutionState.SUSPENDED);
+            }
+        }
 
         return suspended;
     }
@@ -223,13 +231,14 @@ public class Scheduler implements SchedulerInterface {
             } else if (task instanceof TaskGraph) {
                 TaskGraph tgraph = ((TaskGraph) task);
 
-                if (tgraph.isControlTask() && tgraph.isControlTaskConnected())
+                if (tgraph.isControlTask() && tgraph.isControlTaskConnected()) {
                     wakeTask(tgraph.getControlTask());
-                else {
+                } else {
                     Task[] tasks = tgraph.getTasks(false);
 
-                    for (int count = 0; count < tasks.length; count++)
+                    for (int count = 0; count < tasks.length; count++) {
                         wakeTask(tasks[count]);
+                    }
                 }
             }
         }
@@ -240,19 +249,20 @@ public class Scheduler implements SchedulerInterface {
      */
     private void attachHistoryClipIn(Task task) {
         if ((history != null) && (task.getDataInputNodeCount() == 0)) {
-            if (task instanceof ClipableTaskInterface)
+            if (task instanceof ClipableTaskInterface) {
                 ((ClipableTaskInterface) task).queueClipIn(HistoryClipIn.HISTORY_CLIPIN_NAME, history.clone());
-            else
-                throw(new RuntimeException("Scheduler Error: Cannot attach history clip-in to " + task.getToolName()));
+            } else {
+                throw (new RuntimeException("Scheduler Error: Cannot attach history clip-in to " + task.getToolName()));
+            }
         }
     }
 
 
     /**
-     * Send all tasks in the task graph a wake up call (except the control
-     * task)
+     * Send all tasks in the task graph a wake up call (except the control task)
      */
     private void runTaskGraph(TaskGraph tgraph) {
+        System.out.println("Scheduler.runTaskGraph CALLED");
         if ((tgState != ExecutionState.ERROR) && (tgState != ExecutionState.RESETING)) {
             tgState = ExecutionState.RUNNING;
             wakeTask(tgraph);
@@ -267,24 +277,28 @@ public class Scheduler implements SchedulerInterface {
             tgState = ExecutionState.PAUSED;
             Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
 
-            for (int count = 0; count < tasks.length; count++)
-                if ((tasks[count] instanceof RunnableInstance))
+            for (int count = 0; count < tasks.length; count++) {
+                if ((tasks[count] instanceof RunnableInstance)) {
                     ((RunnableInstance) tasks[count]).pause();
+                }
+            }
         }
     }
 
     /**
-     * Sends a wake-up call to all tasks except tasks with zero input nodes (and
-     * tasks that are running continuously). This resumes paused tasks
+     * Sends a wake-up call to all tasks except tasks with zero input nodes (and tasks that are running continuously).
+     * This resumes paused tasks
      */
     private void resumeTaskGraph(TaskGraph tgraph) {
         if (tgState.equals(ExecutionState.PAUSED)) {
             tgState = ExecutionState.RUNNING;
             Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
 
-            for (int count = 0; count < tasks.length; count++)
-                if (tasks[count] instanceof RunnableInstance)
+            for (int count = 0; count < tasks.length; count++) {
+                if (tasks[count] instanceof RunnableInstance) {
                     ((RunnableInstance) tasks[count]).resume();
+                }
+            }
         }
     }
 
@@ -292,41 +306,50 @@ public class Scheduler implements SchedulerInterface {
      * Reset all tasks and flushes the taskgraph
      */
     private void resetTaskGraph(final TaskGraph tgraph) {
+        System.out.println("Scheduler.resetTaskGraph CALLED");
         if (tgState != ExecutionState.RESETING) {
             tgState = ExecutionState.RESETING;
 
             Runnable runnable = new Runnable() {
                 public void run() {
                     Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
-                    Cable[] cables = TaskGraphUtils.getConnectedCables(TaskGraphUtils.getAllTasksRecursive(taskgraph, true));
+                    Cable[] cables = TaskGraphUtils
+                            .getConnectedCables(TaskGraphUtils.getAllTasksRecursive(taskgraph, true));
 
-                    for (int i = 0; i < cables.length; i++)
-                        if (cables[i] instanceof OutputCable)
+                    for (int i = 0; i < cables.length; i++) {
+                        if (cables[i] instanceof OutputCable) {
                             ((OutputCable) cables[i]).suspend();
-                        else if (cables[i] instanceof InputCable)
+                        } else if (cables[i] instanceof InputCable) {
                             ((InputCable) cables[i]).suspend();
+                        }
+                    }
 
-                    for (int count = 0; count < tasks.length; count++)
-                        if ((tasks[count] instanceof RunnableInstance))
+                    for (int count = 0; count < tasks.length; count++) {
+                        if ((tasks[count] instanceof RunnableInstance)) {
                             ((RunnableInstance) tasks[count]).reset();
+                        }
+                    }
 
-                    for (int i = 0; i < cables.length; i++)
-                        if (cables[i] instanceof OutputCable)
+                    for (int i = 0; i < cables.length; i++) {
+                        if (cables[i] instanceof OutputCable) {
                             ((OutputCable) cables[i]).flush();
-                        else if (cables[i] instanceof InputCable)
+                        } else if (cables[i] instanceof InputCable) {
                             ((InputCable) cables[i]).flush();
+                        }
+                    }
 
                     boolean reset;
 
                     do {
                         reset = true;
 
-                        for (int count = 0; count < tasks.length; count++)
+                        for (int count = 0; count < tasks.length; count++) {
                             if ((tasks[count].getExecutionState() != ExecutionState.RESET) &&
                                     (tasks[count].getExecutionState() != ExecutionState.NOT_EXECUTABLE) &&
                                     (tasks[count].getExecutionState() != ExecutionState.UNKNOWN)) {
                                 reset = false;
                             }
+                        }
 
                         if (!reset) {
                             try {
@@ -336,11 +359,13 @@ public class Scheduler implements SchedulerInterface {
                         }
                     } while (!reset);
 
-                    for (int i = 0; i < cables.length; i++)
-                        if (cables[i] instanceof OutputCable)
+                    for (int i = 0; i < cables.length; i++) {
+                        if (cables[i] instanceof OutputCable) {
                             ((OutputCable) cables[i]).resume();
-                        else if (cables[i] instanceof InputCable)
+                        } else if (cables[i] instanceof InputCable) {
                             ((InputCable) cables[i]).resume();
+                        }
+                    }
 
                     tgState = ExecutionState.RESET;
                 }
@@ -357,9 +382,11 @@ public class Scheduler implements SchedulerInterface {
         tgState = ExecutionState.ERROR;
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
 
-        for (int count = 0; count < tasks.length; count++)
-            if ((tasks[count] instanceof RunnableInstance))
+        for (int count = 0; count < tasks.length; count++) {
+            if ((tasks[count] instanceof RunnableInstance)) {
                 ((RunnableInstance) tasks[count]).pause();
+            }
+        }
     }
 
 }

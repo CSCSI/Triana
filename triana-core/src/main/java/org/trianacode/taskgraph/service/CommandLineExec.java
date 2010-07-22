@@ -59,15 +59,21 @@
 
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.tool.Tool;
-
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.proxy.ProxyFactory;
+import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.tool.Tool;
 
 
 /**
@@ -75,8 +81,6 @@ import java.util.Iterator;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 29th October 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class CommandLineExec extends TrianaExec {
@@ -91,8 +95,7 @@ public class CommandLineExec extends TrianaExec {
 
 
     /**
-     * Constructs a TrianaExec to execute a clone of the specified taskgraph.
-     * Uses a default tool table
+     * Constructs a TrianaExec to execute a clone of the specified taskgraph. Uses a default tool table
      */
     public CommandLineExec(String appname, TaskGraph taskgraph) throws TaskGraphException {
         super(taskgraph);
@@ -100,8 +103,7 @@ public class CommandLineExec extends TrianaExec {
     }
 
     /**
-     * Constructs a TrianaExec to execute a clone of the specified tool.
-     * Uses a default tool table.
+     * Constructs a TrianaExec to execute a clone of the specified tool. Uses a default tool table.
      */
     public CommandLineExec(String appname, Tool tool) throws TaskGraphException {
         super(tool);
@@ -124,78 +126,78 @@ public class CommandLineExec extends TrianaExec {
     }
 
     /**
-     * Sets the specified parameter, where paramname is a mapped paramname
-     * or of the form groupname.taskname.paramname
+     * Sets the specified parameter, where paramname is a mapped paramname or of the form groupname.taskname.paramname
      */
     public void setParameter(String paramname, Object value) {
         String[] paramnames;
         Task subtask;
 
-        if (isMapped(paramname))
+        if (isMapped(paramname)) {
             paramnames = getMappedParameters(paramname);
-        else
+        } else {
             paramnames = new String[]{paramname};
+        }
 
         for (int count = 0; count < paramnames.length; count++) {
             subtask = getTask(paramnames[count]);
 
-            if (subtask != null)
+            if (subtask != null) {
                 subtask.setParameter(getParameterName(paramnames[count]), value);
+            }
         }
     }
 
     /**
-     * @return the specified parameter value, where paramname is a mapped
-     *         paramname or of the form groupname.taskname.paramname (returns null
-     *         if parameter not set). Note that if the paramname is mapped to multiple
-     *         parameters then the value of one is returned (but it is not
-     *         defined which one!).
+     * @return the specified parameter value, where paramname is a mapped paramname or of the form
+     *         groupname.taskname.paramname (returns null if parameter not set). Note that if the paramname is mapped to
+     *         multiple parameters then the value of one is returned (but it is not defined which one!).
      */
     public Object getParameter(String paramname) {
         Task subtask;
 
-        if (isMapped(paramname))
+        if (isMapped(paramname)) {
             paramname = getMappedParameters(paramname)[0];
+        }
 
         subtask = getTask(paramname);
 
-        if (subtask != null)
+        if (subtask != null) {
             return subtask.getParameter(getParameterName(paramname));
-        else
+        } else {
             return null;
+        }
     }
 
 
     /**
-     * Maps a parameter of the form groupname.taskname.paramname to a simple
-     * string (e.g. file). At the commandline the application user can
-     * write java TrianaExec -file afile.dat taskgraph.xml, as opposed to
-     * the full parameter name. Note that a string can be mapped to
-     * multiple parameter names. Also note that the preceeding - should not
-     * be included in the map string.
+     * Maps a parameter of the form groupname.taskname.paramname to a simple string (e.g. file). At the commandline the
+     * application user can write java TrianaExec -file afile.dat taskgraph.xml, as opposed to the full parameter name.
+     * Note that a string can be mapped to multiple parameter names. Also note that the preceeding - should not be
+     * included in the map string.
      */
     public void mapParameter(String map, String paramname) {
         mapParameter(map, paramname, null);
     }
 
     /**
-     * Maps a parameter of the form groupname.taskname.paramname to a simple
-     * string (e.g. verbose), along with the value that the parameter is set
-     * to (e.g. new Boolean(true)). At the commandline the application user can
-     * write java TrianaExec -verbose taskgraph.xml. Note that a string
-     * can be mapped to multiple parameter names+values.
+     * Maps a parameter of the form groupname.taskname.paramname to a simple string (e.g. verbose), along with the value
+     * that the parameter is set to (e.g. new Boolean(true)). At the commandline the application user can write java
+     * TrianaExec -verbose taskgraph.xml. Note that a string can be mapped to multiple parameter names+values.
      */
     public void mapParameter(String map, String paramname, Object value) {
-        if (map.startsWith("-"))
+        if (map.startsWith("-")) {
             map = map.substring(1);
+        }
 
-        if (!maptable.containsKey(map))
+        if (!maptable.containsKey(map)) {
             maptable.put(map, new ArrayList());
+        }
 
         ArrayList maplist = (ArrayList) maptable.get(map);
 
-        if (!maplist.contains(paramname))
+        if (!maplist.contains(paramname)) {
             maplist.add(new Mapping(paramname, value));
+        }
     }
 
     /**
@@ -216,25 +218,27 @@ public class CommandLineExec extends TrianaExec {
      * @return the parameter names mapped to the specified map
      */
     public String[] getMappedParameters(String map) {
-        if (!maptable.containsKey(map))
+        if (!maptable.containsKey(map)) {
             return new String[0];
+        }
 
         ArrayList mappings = (ArrayList) maptable.get(map);
         String[] paramnames = new String[mappings.size()];
 
-        for (int count = 0; count < paramnames.length; count++)
+        for (int count = 0; count < paramnames.length; count++) {
             paramnames[count] = ((Mapping) mappings.get(count)).getParameterName();
+        }
 
         return paramnames;
     }
 
     /**
-     * @return the value mapped to the specified map/paramname pair (or
-     *         null if not specified)
+     * @return the value mapped to the specified map/paramname pair (or null if not specified)
      */
     public boolean isMappedValue(String map, String paramname) {
-        if (!maptable.containsKey(map))
+        if (!maptable.containsKey(map)) {
             return false;
+        }
 
         ArrayList mappings = (ArrayList) maptable.get(map);
         Mapping mapping;
@@ -242,8 +246,9 @@ public class CommandLineExec extends TrianaExec {
         for (int count = 0; count < mappings.size(); count++) {
             mapping = (Mapping) mappings.get(count);
 
-            if (mapping.getParameterName().equals(paramname))
+            if (mapping.getParameterName().equals(paramname)) {
                 return mapping.getValue() != null;
+            }
         }
 
         return false;
@@ -251,12 +256,12 @@ public class CommandLineExec extends TrianaExec {
     }
 
     /**
-     * @return the value mapped to the specified map/paramname pair (or
-     *         null if not specified)
+     * @return the value mapped to the specified map/paramname pair (or null if not specified)
      */
     public Object getMappedValue(String map, String paramname) {
-        if (!maptable.containsKey(map))
+        if (!maptable.containsKey(map)) {
             return null;
+        }
 
         ArrayList mappings = (ArrayList) maptable.get(map);
         Mapping mapping;
@@ -264,8 +269,9 @@ public class CommandLineExec extends TrianaExec {
         for (int count = 0; count < mappings.size(); count++) {
             mapping = (Mapping) mappings.get(count);
 
-            if (mapping.getParameterName().equals(paramname))
+            if (mapping.getParameterName().equals(paramname)) {
                 return mapping.getValue();
+            }
         }
 
         return null;
@@ -273,8 +279,8 @@ public class CommandLineExec extends TrianaExec {
 
 
     /**
-     * Sets a description for the specified map string. This description
-     * can take the form "<item tag> main description" if required.
+     * Sets a description for the specified map string. This description can take the form "<item tag> main description"
+     * if required.
      */
     public void setDescription(String map, String description) {
         removeDescription(map);
@@ -287,8 +293,9 @@ public class CommandLineExec extends TrianaExec {
     public void removeDescription(String map) {
         Description desc = getDescriptionItem(map);
 
-        if (desc != null)
+        if (desc != null) {
             desclist.remove(desc);
+        }
     }
 
     /**
@@ -297,16 +304,16 @@ public class CommandLineExec extends TrianaExec {
     public String getFullDescription(String map) {
         Description desc = getDescriptionItem(map);
 
-        if (desc != null)
+        if (desc != null) {
             return desc.getDescription();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * @return the description string for the specified map. If the
-     *         description string was specified as "<item tag> main description"
-     *         then only the main description is returned.
+     * @return the description string for the specified map. If the description string was specified as "<item tag> main
+     *         description" then only the main description is returned.
      */
     public String getDescription(String map) {
         Description desc = getDescriptionItem(map);
@@ -314,18 +321,19 @@ public class CommandLineExec extends TrianaExec {
         if (desc != null) {
             String dstr = desc.getDescription();
 
-            if (dstr.startsWith("<") && (dstr.indexOf('>') > -1))
+            if (dstr.startsWith("<") && (dstr.indexOf('>') > -1)) {
                 return dstr.substring(dstr.indexOf('>') + 1).trim();
-            else
+            } else {
                 return desc.getDescription().trim();
-        } else
+            }
+        } else {
             return null;
+        }
     }
 
     /**
-     * @return the item tag for the specified map if the description
-     *         was specified as "<item tag> main description". Otherwise
-     *         null is returned.
+     * @return the item tag for the specified map if the description was specified as "<item tag> main description".
+     *         Otherwise null is returned.
      */
     public String getItemTag(String map) {
         Description desc = getDescriptionItem(map);
@@ -333,8 +341,9 @@ public class CommandLineExec extends TrianaExec {
         if (desc != null) {
             String dstr = desc.getDescription();
 
-            if (dstr.startsWith("<") && (dstr.indexOf('>') > -1))
+            if (dstr.startsWith("<") && (dstr.indexOf('>') > -1)) {
                 return dstr.substring(1, dstr.indexOf('>'));
+            }
         }
 
         return null;
@@ -351,8 +360,9 @@ public class CommandLineExec extends TrianaExec {
         while (desciter.hasNext()) {
             desc = (Description) desciter.next();
 
-            if (desc.getMap().equals(map))
+            if (desc.getMap().equals(map)) {
                 return desc;
+            }
         }
 
         return null;
@@ -363,26 +373,27 @@ public class CommandLineExec extends TrianaExec {
      * @return the paramname for the specified groupname.taskname.paramname
      */
     private String getParameterName(String paramname) {
-        if (paramname.indexOf('.') == -1)
+        if (paramname.indexOf('.') == -1) {
             return paramname;
-        else
+        } else {
             return paramname.substring(paramname.indexOf('.') + 1);
+        }
     }
 
     /**
-     * @return the task for the specified groupname.taskname.paramname
-     *         string
+     * @return the task for the specified groupname.taskname.paramname string
      */
     private Task getTask(String paramname) {
-        if (paramname.indexOf('.') == -1)
+        if (paramname.indexOf('.') == -1) {
             return getTask();
-        else {
+        } else {
             String[] tasknames = paramname.split("\\.");
             Task subtask = getTask();
 
             for (int count = 0; count < tasknames.length - 1; count++) {
-                if ((subtask == null) || (!(subtask instanceof TaskGraph)))
+                if ((subtask == null) || (!(subtask instanceof TaskGraph))) {
                     return null;
+                }
 
                 subtask = ((TaskGraph) subtask).getTask(tasknames[count]);
             }
@@ -395,8 +406,7 @@ public class CommandLineExec extends TrianaExec {
     /**
      * Initialises the parameters for the specified command line arguments.
      *
-     * @return either a help message or error message, or null if no
-     *         message is needed.
+     * @return either a help message or error message, or null if no message is needed.
      */
     public String initParameters(String[] args) {
         String maparg;
@@ -411,40 +421,45 @@ public class CommandLineExec extends TrianaExec {
             map = args[ptr].charAt(0) == '-';
             valused = false;
 
-            if (ptr + 1 < args.length)
+            if (ptr + 1 < args.length) {
                 val = args[ptr + 1];
-            else
+            } else {
                 val = null;
+            }
 
-            if (map && maparg.equals("?"))
+            if (map && maparg.equals("?")) {
                 return getHelpMessage();
-            else if (map && isMapped(maparg)) {
+            } else if (map && isMapped(maparg)) {
                 String[] params = getMappedParameters(maparg);
 
-                for (int count = 0; count < params.length; count++)
-                    if (isMappedValue(maparg, params[count]))
+                for (int count = 0; count < params.length; count++) {
+                    if (isMappedValue(maparg, params[count])) {
                         setParameter(params[count], getMappedValue(maparg, params[count]));
-                    else {
+                    } else {
                         setParameter(params[count], val);
                         valused = true;
                     }
+                }
             } else if (map && (getTask(maparg) != null)) {
                 setParameter(maparg, val);
                 valused = true;
             } else if (isMapped("#" + hashptr)) {
                 setParameter("#" + hashptr, args[ptr]);
                 hashptr++;
-            } else
+            } else {
                 return "Error: Unknown argument/option " + args[ptr] + "\n\n" + getHelpMessage();
+            }
 
-            if (valused)
+            if (valused) {
                 ptr++;
+            }
 
             ptr++;
         }
 
-        if (hashptr <= getNumberOfRequiredArguments())
+        if (hashptr <= getNumberOfRequiredArguments()) {
             return "Error: Incomplete arguments\n\n" + getHelpMessage();
+        }
 
         return null;
     }
@@ -460,23 +475,26 @@ public class CommandLineExec extends TrianaExec {
         mess += "Usage: java " + appname + " [options]";
 
         for (int count = 1; count <= getNumberOfRequiredArguments(); count++) {
-            if (getItemTag("#" + count) != null)
+            if (getItemTag("#" + count) != null) {
                 mess += " <" + getItemTag("#" + count) + ">";
-            else
+            } else {
                 mess += " <#" + count + ">";
+            }
         }
 
         mess += "\n";
 
         for (int count = 1; count <= getNumberOfRequiredArguments(); count++) {
             if ((getDescription("#" + count) != null) && (!getDescription("#" + count).equals(""))) {
-                if (getItemTag("#" + count) != null)
+                if (getItemTag("#" + count) != null) {
                     tmp = "    <" + getItemTag("#" + count) + ">";
-                else
+                } else {
                     tmp = "    <#" + count + ">";
+                }
 
-                while (tmp.length() < optionlen)
+                while (tmp.length() < optionlen) {
                     tmp += " ";
+                }
 
                 mess += tmp + getDescription("#" + count) + "\n";
             }
@@ -484,8 +502,9 @@ public class CommandLineExec extends TrianaExec {
 
         mess += "\n";
 
-        if (desclist.size() > 0)
+        if (desclist.size() > 0) {
             mess += "Where options include:\n";
+        }
 
         while (iter.hasNext()) {
             desc = (Description) iter.next();
@@ -493,13 +512,15 @@ public class CommandLineExec extends TrianaExec {
             if (!desc.getMap().startsWith("#")) {
                 tmp = "    -" + desc.map + " ";
 
-                if (getItemTag(desc.getMap()) != null)
+                if (getItemTag(desc.getMap()) != null) {
                     tmp += "<" + getItemTag(desc.getMap()) + ">  ";
-                else
+                } else {
                     tmp += " ";
+                }
 
-                while (tmp.length() < optionlen)
+                while (tmp.length() < optionlen) {
                     tmp += " ";
+                }
 
                 mess += tmp + getDescription(desc.getMap()) + "\n";
             }
@@ -518,8 +539,9 @@ public class CommandLineExec extends TrianaExec {
             desc = (Description) iter.next();
             length = 5 + desc.getMap().length() + 2;
 
-            if (getItemTag(desc.getMap()) != null)
+            if (getItemTag(desc.getMap()) != null) {
                 length += 3 + getItemTag(desc.getMap()).length();
+            }
 
             maxlength = Math.max(maxlength, length);
         }
@@ -529,6 +551,7 @@ public class CommandLineExec extends TrianaExec {
 
 
     public static void main(String[] args) {
+        System.out.println("CommandLineExec.main CALLED");
         if (args.length == 0) {
             System.out.println("Error: Taskgraph xml file not specified");
             System.out.println("Usage: java CommandLineExec <xmlfile>");
@@ -542,7 +565,10 @@ public class CommandLineExec extends TrianaExec {
             return;
         }
 
-        /*try {
+        try {
+            ProxyFactory.initProxyFactory();
+            TaskGraphManager.initTaskGraphManager();
+
             XMLReader reader = new XMLReader(new FileReader(file));
             CommandLineExec exec = new CommandLineExec("CommandLineExec <xmlfile> ", reader.readComponent());
 
@@ -551,6 +577,14 @@ public class CommandLineExec extends TrianaExec {
             exec.initParameters(argsub);
 
             exec.run(new Object[0]);
+            while (!exec.isFinished()) {
+                System.out.println("CommandLineExec.main WAITING FOR TASKGRAPH TO FINISH");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+
+                }
+            }
             exec.dispose();
         } catch (FileNotFoundException except) {
             System.out.println("File not found: " + file.getAbsolutePath());
@@ -560,7 +594,8 @@ public class CommandLineExec extends TrianaExec {
             System.out.println("Error running taskgraph: " + except.getMessage());
         } catch (IOException except) {
             except.printStackTrace();
-        }*/
+        }
+        System.exit(0);
     }
 
 

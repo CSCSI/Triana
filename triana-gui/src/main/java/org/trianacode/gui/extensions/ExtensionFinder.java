@@ -16,10 +16,13 @@
 
 package org.trianacode.gui.extensions;
 
-import org.trianacode.taskgraph.tool.ClassLoaders;
-import org.trianacode.taskgraph.util.FileUtils;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,16 +31,15 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
+import org.trianacode.taskgraph.tool.ClassLoaders;
+import org.trianacode.taskgraph.util.FileUtils;
+
 /**
- * Implements 1.3 ServiceProvider discovery mechanism.
- * Adds the Java classpath as a search path by default.
- * Other paths can be added.
- * TODO - make this cache entries for a one time hit?
+ * Implements 1.3 ServiceProvider discovery mechanism. Adds the Java classpath as a search path by default. Other paths
+ * can be added. TODO - make this cache entries for a one time hit?
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 28, 2009: 8:38:21 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ExtensionFinder {
@@ -65,7 +67,7 @@ public class ExtensionFinder {
 
     public static void addSearchPaths(List<File> files) {
         for (File file : files) {
-            if(!searchDirs.contains(file)) {
+            if (!searchDirs.contains(file)) {
                 searchDirs.add(file);
             }
         }
@@ -83,7 +85,7 @@ public class ExtensionFinder {
         List provs = new ArrayList<Class>();
         provs.add(provider);
         Map<Class, List<Object>> ret = services(provs);
-        if(ret != null && ret.get(provider) != null) {
+        if (ret != null && ret.get(provider) != null) {
             return ret.get(provider);
         }
         return new ArrayList<Object>();
@@ -94,6 +96,46 @@ public class ExtensionFinder {
         log.fine("searching for providers:" + file.getAbsolutePath());
         Map<Class, List<Object>> ret = new HashMap<Class, List<Object>>();
         if (file.isDirectory()) {
+            File meta = new File(file, "META-INF");
+            if (meta.exists()) {
+                File services = new File(meta, "services");
+                if (services.exists()) {
+                    for (Class provider : providers) {
+                        File prov = new File(services, provider.getName());
+                        if (prov.exists()) {
+                            List<Object> impls = null;
+                            try {
+                                BufferedReader reader = new BufferedReader(
+                                        new InputStreamReader(new FileInputStream(prov)));
+                                String line;
+                                impls = new ArrayList<Object>();
+                                List<String> done = new ArrayList<String>();
+                                while ((line = reader.readLine()) != null) {
+                                    log.fine("got next service provider:" + line);
+                                    try {
+                                        if (!done.contains(line)) {
+                                            Class cls = ClassLoaders.forName(line);
+                                            if (provider.isAssignableFrom(cls)) {
+                                                Object p = cls.newInstance();
+                                                impls.add(p);
+                                            }
+                                            done.add(line);
+                                        }
+                                    } catch (Exception e1) {
+                                        log.fine("Exception thrown trying to load service provider class " + line + ":"
+                                                + FileUtils.formatThrowable(e1));
+                                    }
+                                }
+                            } catch (IOException e) {
+                                log.fine("error thrown while reading file:" + e.getMessage());
+                            }
+                            if (impls.size() > 0) {
+                                ret.put(provider, impls);
+                            }
+                        }
+                    }
+                }
+            }
             File[] children = file.listFiles(new FilenameFilter() {
                 public boolean accept(File file, String s) {
                     if (s.endsWith(".jar")) {
@@ -136,7 +178,8 @@ public class ExtensionFinder {
                                                 done.add(line);
                                             }
                                         } catch (Exception e1) {
-                                            log.fine("Exception thrown trying to load service provider class " + line + ":" + FileUtils.formatThrowable(e1));
+                                            log.fine("Exception thrown trying to load service provider class " + line
+                                                    + ":" + FileUtils.formatThrowable(e1));
                                         }
                                     }
                                 }
@@ -147,7 +190,8 @@ public class ExtensionFinder {
                         }
                     }
                 } catch (IOException e) {
-                    log.fine("Exception thrown trying to load service providers from file " + file + ":" + FileUtils.formatThrowable(e));
+                    log.fine("Exception thrown trying to load service providers from file " + file + ":" + FileUtils
+                            .formatThrowable(e));
                 }
             }
 
