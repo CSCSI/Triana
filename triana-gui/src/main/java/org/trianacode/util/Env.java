@@ -361,15 +361,6 @@ public final class Env {
         configFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE);
         configBakFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE_BAK);
 
-        /*try {
-            String me = getToolboxPath();
-            System.out.println("Env.initConfig MY PATH:" + me);
-            logger.fine("my path:" + me);
-            Toolbox box = new Toolbox(me, Toolbox.INTERNAL);
-            tools.addToolBox(box);
-        } catch (IOException e) {
-            logger.warning("Could not find jar that I'm in!");
-        }*/
         if (!configFile.exists()) {// First time run so need to set up paths
             restoreDefaultConfig(tools);
         } else {// read from the file
@@ -1513,8 +1504,6 @@ public final class Env {
     private static void readConfig(ToolTable tools, File file) throws Exception {
         BufferedReader br = null;
         try {
-
-            Toolboxes.loadToolboxes(tools);
 
             br = new BufferedReader(new FileReader(file));
             logger.info("Restoring From Triana Property File : " + file.getAbsolutePath());

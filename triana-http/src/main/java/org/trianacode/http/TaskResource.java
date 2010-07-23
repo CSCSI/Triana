@@ -1,7 +1,7 @@
 package org.trianacode.http;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 import org.thinginitself.http.Http;
 import org.thinginitself.http.Path;
@@ -22,15 +22,16 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     private Task task;
     private ExecutionController controller;
-    private BlockingQueue<Renderer> nextTask = new ArrayBlockingQueue<Renderer>(3);
+    private BlockingQueue<Renderer> nextTask = new SynchronousQueue<Renderer>();
     private boolean started = false;
 
 
-    public TaskResource(Task task) {
-        super(new Path(task.getToolName()),
-                new Http.Method[]{Http.Method.GET, Http.Method.POST});
+    public TaskResource(Task task, String path) {
+        super(new Path(path),
+                new Http.Method[]{Http.Method.POST});
         this.task = task;
         controller = new ExecutionController(task, this);
+
     }
 
     public Resource getResource(RequestContext context) throws RequestProcessException {
@@ -41,30 +42,20 @@ public class TaskResource extends Resource implements ExecutionControlListener {
     }
 
     @Override
-    public Path getPath() {
-        return new Path(task.getToolName());
-    }
-
-    @Override
-    public void onGet(RequestContext requestContext) throws RequestProcessException {
-        requestContext.setResponseEntity(new ToolRenderer(task, "/templates/tool.tpl").render());
-    }
-
-    @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
         if (!started) {
             started = true;
             controller.begin();
-        }
-        if (started) {
-            try {
-                Renderer renderer = nextTask.take();
-                requestContext.setResponseEntity(renderer.render());
-                requestContext.setSendBody(true);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        } else {
             controller.resume();
+        }
+        try {
+            Renderer renderer = nextTask.take();
+
+            requestContext.setResponseEntity(renderer.render());
+            requestContext.setSendBody(true);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -85,9 +76,10 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     @Override
     public void executionSuspended(Task task) {
+        System.out.println("TaskResource.executionSuspended for task " + task.getToolName());
         if (isDisplayTask(task)) {
             try {
-                ToolParameterRenderer renderer = new ToolParameterRenderer(this.task, task,
+                ToolParameterRenderer renderer = new ToolParameterRenderer(this.task, task, getPath().toString(),
                         "/templates/tool-params.tpl");
                 nextTask.put(renderer);
             } catch (InterruptedException e) {

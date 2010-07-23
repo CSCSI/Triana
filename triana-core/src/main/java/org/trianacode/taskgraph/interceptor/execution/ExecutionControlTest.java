@@ -4,9 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.util.EngineInit;
 
 /**
  * @author Andrew Harrison
@@ -26,8 +25,7 @@ public class ExecutionControlTest implements ExecutionControlListener {
     public static void main(String[] args) throws Exception {
 
         File file = new File(args[0]);
-        ProxyFactory.initProxyFactory();
-        TaskGraphManager.initTaskGraphManager();
+        EngineInit.init();
         XMLReader reader = new XMLReader(new FileReader(file));
         ExecutionControlTest test = new ExecutionControlTest((Task) reader.readComponent());
         test.start();

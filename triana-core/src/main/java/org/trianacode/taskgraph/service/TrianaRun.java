@@ -74,10 +74,10 @@ import org.trianacode.taskgraph.imp.CableImp;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableImp;
-import org.trianacode.taskgraph.util.Toolboxes;
+import org.trianacode.taskgraph.util.EngineInit;
 
 
 /**
@@ -123,10 +123,7 @@ public class TrianaRun {
      * Create and initialise a new tool table
      */
     public static void initToolTable() {
-        if (TaskGraphManager.getToolTable() == null) {
-            TaskGraphManager.initToolTable(new ToolTableImp());
-            Toolboxes.loadToolboxes(TaskGraphManager.getToolTable());
-        }
+        EngineInit.init();
     }
 
     /**
@@ -474,7 +471,7 @@ public class TrianaRun {
         public Object recv() {
             Object tempdata = data;
             data = null;
-            return tempdata;
+            return InterceptorChain.interceptSend(getSendingNode(), getReceivingNode(), tempdata);
         }
 
 
@@ -502,7 +499,7 @@ public class TrianaRun {
                 return;
             }
 
-            this.data = data;
+            this.data = InterceptorChain.interceptSend(getSendingNode(), getReceivingNode(), data);
 
             if (!output) {
                 ((RunnableInstance) node.getTopLevelTask()).wakeUp(node.getTopLevelNode());

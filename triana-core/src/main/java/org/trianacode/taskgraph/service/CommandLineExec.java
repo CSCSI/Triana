@@ -70,10 +70,9 @@ import java.util.Iterator;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.util.EngineInit;
 
 
 /**
@@ -566,8 +565,7 @@ public class CommandLineExec extends TrianaExec {
         }
 
         try {
-            ProxyFactory.initProxyFactory();
-            TaskGraphManager.initTaskGraphManager();
+            EngineInit.init();
 
             XMLReader reader = new XMLReader(new FileReader(file));
             CommandLineExec exec = new CommandLineExec("CommandLineExec <xmlfile> ", reader.readComponent());
@@ -580,7 +578,7 @@ public class CommandLineExec extends TrianaExec {
             while (!exec.isFinished()) {
                 System.out.println("CommandLineExec.main WAITING FOR TASKGRAPH TO FINISH");
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
 
                 }

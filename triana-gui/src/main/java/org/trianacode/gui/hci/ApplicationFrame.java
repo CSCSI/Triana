@@ -73,8 +73,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -188,17 +186,12 @@ import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
 import org.trianacode.taskgraph.event.TaskListener;
 import org.trianacode.taskgraph.event.TaskNodeEvent;
 import org.trianacode.taskgraph.event.TaskPropertyEvent;
-import org.trianacode.taskgraph.interceptor.Interceptor;
-import org.trianacode.taskgraph.interceptor.InterceptorChain;
-import org.trianacode.taskgraph.proxy.ProxyFactory;
-import org.trianacode.taskgraph.ser.Base64ObjectDeserializer;
-import org.trianacode.taskgraph.ser.ObjectDeserializationManager;
 import org.trianacode.taskgraph.service.LocalDeployAssistant;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImp;
-import org.trianacode.taskgraph.util.ExtensionFinder;
+import org.trianacode.taskgraph.util.EngineInit;
 import org.trianacode.util.Env;
 
 
@@ -306,13 +299,9 @@ public class ApplicationFrame extends TrianaWindow
             logger.info("Initialising");
             SplashScreen splash = new SplashScreen();
             splash.showSplashScreen(5);
-
-            initObjectDeserializers();
-
-
+            tools = new ToolTableImp();
+            EngineInit.init(tools, Extension.class);
             splash.setSplashProgress(Env.getString("toolsInitLabel"));
-            ProxyFactory.initProxyFactory();
-            TaskGraphManager.initTaskGraphManager();
             initTools();
             initActionTable();
             initWorkflowVerifiers();
@@ -340,10 +329,6 @@ public class ApplicationFrame extends TrianaWindow
         }
     }
 
-    private void initObjectDeserializers() {
-        ObjectDeserializationManager.registerObjectDeserializer(Base64ObjectDeserializer.BASE64_OBJECT_DESERIALIZER,
-                new Base64ObjectDeserializer());
-    }
 
     /**
      * @return the cuurently loaded tool table
@@ -460,28 +445,12 @@ public class ApplicationFrame extends TrianaWindow
      * Discover and initialize the extension classes and populate the extension manager
      */
     private void initExtensions() {
-        List ext = new ArrayList<Class>();
-        ext.add(Extension.class);
-        ext.add(Interceptor.class);
-        Map<Class, List<Object>> en = ExtensionFinder.services(ext);
-        Set<Class> keys = en.keySet();
-        for (Class key : keys) {
-            if (key.equals(Extension.class)) {
-                List<Object> exts = en.get(key);
-                for (Object o : exts) {
-                    Extension e = (Extension) o;
-                    e.init(this);
-                    ExtensionManager.registerExtension(e);
-                }
-            } else if (key.equals(Interceptor.class)) {
-                List<Object> exts = en.get(key);
-                for (Object o : exts) {
-                    Interceptor e = (Interceptor) o;
-                    InterceptorChain.register(e);
-                }
-            }
+        List<Object> en = EngineInit.getExtensions(Extension.class);
+        for (Object o : en) {
+            Extension e = (Extension) o;
+            e.init(this);
+            ExtensionManager.registerExtension(e);
         }
-
     }
 
 
@@ -590,8 +559,7 @@ public class ApplicationFrame extends TrianaWindow
      */
     public void initTools() {
         logger.fine("Init");
-        tools = new ToolTableImp();
-        TaskGraphManager.initToolTable(tools);
+
 
         tools.init();
 

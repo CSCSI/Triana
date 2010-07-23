@@ -1,20 +1,15 @@
 package org.trianacode.taskgraph.interceptor.execution;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.interceptor.Interceptor;
-import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.service.SchedulerException;
 import org.trianacode.taskgraph.service.TrianaExec;
-import org.trianacode.taskgraph.util.ExtensionFinder;
 
 /**
  * @author Andrew Harrison
@@ -25,33 +20,16 @@ public class ExecutionController {
 
     private Task task;
     private ExecutionControlListener listener;
-    private Task currentTask = null;
     private ExecutionQueue queue;
     private TrianaExec exec;
+    private BlockingQueue<Task> currTask = new ArrayBlockingQueue<Task>(3);
+
 
     private Executor executor = Executors.newFixedThreadPool(3);
 
     public ExecutionController(Task task, ExecutionControlListener listener) {
         this.task = task;
         this.listener = listener;
-        initExtensions();
-    }
-
-    private void initExtensions() {
-        List ext = new ArrayList<Class>();
-
-        ext.add(Interceptor.class);
-        Map<Class, List<Object>> en = ExtensionFinder.services(ext);
-        Set<Class> keys = en.keySet();
-        for (Class key : keys) {
-            if (key.equals(Interceptor.class)) {
-                List<Object> exts = en.get(key);
-                for (Object o : exts) {
-                    Interceptor e = (Interceptor) o;
-                    InterceptorChain.register(e);
-                }
-            }
-        }
     }
 
     public void begin() {
@@ -75,14 +53,12 @@ public class ExecutionController {
     }
 
     public void resume() {
-        if (currentTask != null) {
+        try {
+            Task currentTask = currTask.take();
             System.out.println("ExecutionController.resume " + currentTask.getToolName());
-            try {
-                queue.putReadyTask(currentTask);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            executor.execute(new RunThread());
+            queue.putReadyTask(currentTask);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -91,17 +67,23 @@ public class ExecutionController {
         @Override
         public void run() {
             System.out.println("ExecutionController$RunThread.run ENTER");
-            try {
-                currentTask = queue.getBlockingTask();
-                if (currentTask instanceof PoisonTask) {
-                    System.out.println("ExecutionController$RunThread.run RECEIVED POISON TASK. JOB DONE");
-                    currentTask = null;
-                    listener.executionComplete(task);
-                } else {
-                    listener.executionSuspended(currentTask);
+            while (true) {
+                try {
+                    Task curr = queue.getBlockingTask();
+                    if (curr instanceof PoisonTask) {
+                        System.out.println("ExecutionController$RunThread.run RECEIVED POISON TASK. JOB DONE");
+                        listener.executionComplete(task);
+                        break;
+                    } else {
+                        System.out.println(
+                                "ExecutionController$RunThread.run RECEIVED TASK " + curr.getToolName());
+                        currTask.put(curr);
+                        listener.executionSuspended(curr);
+
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -119,7 +101,7 @@ public class ExecutionController {
 
             while (!exec.isFinished()) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -18,10 +18,12 @@ public class ToolParameterRenderer implements Renderer {
 
     private Task parent;
     private Tool tool;
+    private String path;
 
-    public ToolParameterRenderer(Task parent, Tool tool, String templatePath) {
+    public ToolParameterRenderer(Task parent, Tool tool, String path, String templatePath) {
         this.parent = parent;
         this.tool = tool;
+        this.path = path;
         try {
             Output.registerTemplate(Renderer.TOOL_PARAMETER_TEMPLATE, templatePath);
         } catch (IOException e) {
@@ -32,6 +34,7 @@ public class ToolParameterRenderer implements Renderer {
     @Override
     public Streamable render() {
         Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("path", path);
         properties.put("toolname", parent.getToolName());
         properties.put("toolpackage", parent.getToolPackage());
         properties.put("subtoolname", tool.getToolName());
