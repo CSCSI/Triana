@@ -51,7 +51,6 @@ public class TaskResource extends Resource implements ExecutionControlListener {
         }
         try {
             Renderer renderer = nextTask.take();
-
             requestContext.setResponseEntity(renderer.render());
             requestContext.setSendBody(true);
         } catch (InterruptedException e) {
