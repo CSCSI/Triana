@@ -32,7 +32,7 @@ public class ResourceSpawn extends MemoryTarget {
         TaskResource res = new TaskResource(task, path);
         store.put(res);
         ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_INSTANCE_TEMPLATE);
-        r.init(task, task.getToolName());
+        r.init(task, path);
         context.setResponseEntity(r.render());
     }
 }

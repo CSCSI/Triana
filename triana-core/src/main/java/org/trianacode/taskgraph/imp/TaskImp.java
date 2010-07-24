@@ -280,13 +280,17 @@ public class TaskImp extends ToolImp implements Task {
         if (taskgraph != null) {
             TaskGraph ult = taskgraph.getParent();
             if (ult != null) {
+                System.out.println("TaskImp.getUltimateParent " + ult.getToolName());
                 return ult;
             }
+            System.out.println("TaskImp.getUltimateParent " + taskgraph.getToolName());
             return taskgraph;
         }
         if (this instanceof TaskGraph) {
+            System.out.println("TaskImp.getUltimateParent " + getToolName());
             return (TaskGraph) this;
         }
+        System.out.println("TaskImp.getUltimateParent returning null");
         return null;
     }
 
