@@ -71,7 +71,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.trianacode.Bootstrapper.Epicenter;
+import org.trianacode.bootstrap.Epicenter;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.ParameterNode;

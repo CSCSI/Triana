@@ -1,4 +1,4 @@
-package org.trianacode.Bootstrapper;
+package org.trianacode.bootstrap;
 
 import org.trianacode.http.TrianaHttpServer;
 
