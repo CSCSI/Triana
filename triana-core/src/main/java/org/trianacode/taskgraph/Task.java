@@ -121,6 +121,8 @@ public interface Task extends Tool {
      */
     public TaskGraph getParent();
 
+    public TaskGraph getUltimateParent();
+
     /**
      * All copies of a task within a parameter space (sharing the same parameters) have the same intance id.
      *

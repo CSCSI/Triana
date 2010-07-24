@@ -34,6 +34,10 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     }
 
+    public Task getTask() {
+        return task;
+    }
+
     public Resource getResource(RequestContext context) throws RequestProcessException {
         if (context.getRequestTarget().equals(getPath().toString())) {
             return this;
@@ -78,9 +82,9 @@ public class TaskResource extends Resource implements ExecutionControlListener {
         System.out.println("TaskResource.executionSuspended for task " + task.getToolName());
         if (isDisplayTask(task)) {
             try {
-                ToolParameterRenderer renderer = new ToolParameterRenderer(this.task, task, getPath().toString(),
-                        "/templates/tool-params.tpl");
-                nextTask.put(renderer);
+                ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_PARAMETER_TEMPLATE);
+                r.init(task, task.getToolName());
+                nextTask.put(r);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -92,8 +96,9 @@ public class TaskResource extends Resource implements ExecutionControlListener {
     @Override
     public void executionComplete(Task task) {
         try {
-            TaskCompleteRenderer renderer = new TaskCompleteRenderer(task, "/templates/tool-complete.tpl");
-            nextTask.put(renderer);
+            ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_COMPLETED_TEMPLATE);
+            r.init(task, task.getToolName());
+            nextTask.put(r);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

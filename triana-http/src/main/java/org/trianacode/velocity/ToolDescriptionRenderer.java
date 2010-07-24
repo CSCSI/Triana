@@ -1,10 +1,11 @@
-package org.trianacode.http;
+package org.trianacode.velocity;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.thinginitself.streamable.Streamable;
+import org.trianacode.http.ToolRenderer;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**
@@ -12,19 +13,27 @@ import org.trianacode.taskgraph.tool.Tool;
  * @version 1.0.0 Jul 20, 2010
  */
 
-public class ToolInstanceRenderer implements Renderer {
+public class ToolDescriptionRenderer implements ToolRenderer {
 
     private Tool tool;
     private String path;
+    private String templatePath = "/templates/tool.tpl";
 
-    public ToolInstanceRenderer(Tool tool, String path, String templatePath) {
+
+    @Override
+    public void init(Tool tool, String path) {
         this.tool = tool;
         this.path = path;
         try {
-            Output.registerTemplate(Renderer.TOOL_INSTANCE_TEMPLATE, templatePath);
+            Output.registerTemplate(ToolDescriptionRenderer.TOOL_DESCRIPTION_TEMPLATE, templatePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String[] getRenderTypes() {
+        return new String[]{ToolDescriptionRenderer.TOOL_DESCRIPTION_TEMPLATE};
     }
 
     @Override
@@ -33,6 +42,6 @@ public class ToolInstanceRenderer implements Renderer {
         properties.put("path", path);
         properties.put("toolname", tool.getToolName());
         properties.put("toolpackage", tool.getToolPackage());
-        return Output.output(properties, Renderer.TOOL_INSTANCE_TEMPLATE);
+        return Output.output(properties, ToolDescriptionRenderer.TOOL_DESCRIPTION_TEMPLATE);
     }
 }

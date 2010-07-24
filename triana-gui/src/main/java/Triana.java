@@ -57,18 +57,16 @@
  *
  */
 
-import org.trianacode.Bootstrap.Epicenter;
-import org.trianacode.gui.hci.ApplicationFrame;
-
 import java.util.logging.Logger;
+
+import org.trianacode.gui.hci.ApplicationFrame;
+import org.trianacode.http.Epicenter;
 
 /**
  * Main Launcher Class
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 21, 2004: 7:06:33 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Triana {
     static Logger log = Logger.getLogger("Triana");
@@ -89,44 +87,43 @@ public class Triana {
     public static void main(String[] args) throws Exception {
 
         epicenter = new Epicenter();       // Just a place to find things easier ....  Change as you feel fit.
-        
+
         // ToDo: should have factory code to put OS specifics in
-		/*String myOSName = Env.os();
-        if (myOSName.equals("osx")) {
-            UIManager.setLookAndFeel(QuaquaManager.getLookAndFeelClassName());
-        }
-		else if(myOSName.equals("Windows XP") || myOSName.equals("Windows 2000")
-                || myOSName.equals("Windows NT") || myOSName.equals("windows") )
+        /*String myOSName = Env.os();
+          if (myOSName.equals("osx")) {
+              UIManager.setLookAndFeel(QuaquaManager.getLookAndFeelClassName());
+          }
+          else if(myOSName.equals("Windows XP") || myOSName.equals("Windows 2000")
+                  || myOSName.equals("Windows NT") || myOSName.equals("windows") )
 
-		{
-			//XP Look and feel
-			try
-			{
-			  UIManager.setLookAndFeel(
-			  	"net.java.plaf.windows.WindowsLookAndFeel"
-			  );
-			}
-			catch ( Exception e )
-			{
-				//this error is non critical
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			//assume linux / unix
-			try
-			{
-				UIManager.setLookAndFeel(new MetouiaLookAndFeel());
-			}
-			catch(Exception e)
-			{
-				//this error is non critical
-				e.printStackTrace();
-			}
-		}*/
+          {
+              //XP Look and feel
+              try
+              {
+                UIManager.setLookAndFeel(
+                    "net.java.plaf.windows.WindowsLookAndFeel"
+                );
+              }
+              catch ( Exception e )
+              {
+                  //this error is non critical
+                  e.printStackTrace();
+              }
+          }
+          else
+          {
+              //assume linux / unix
+              try
+              {
+                  UIManager.setLookAndFeel(new MetouiaLookAndFeel());
+              }
+              catch(Exception e)
+              {
+                  //this error is non critical
+                  e.printStackTrace();
+              }
+          }*/
         boolean starttriana = true;
-
 
 
         for (int count = 0; count < args.length; count++) {
@@ -138,9 +135,9 @@ public class Triana {
 
         if (starttriana) {
             ApplicationFrame.initTriana();
-        }
-        else
+        } else {
             System.exit(0);
+        }
     }
 
     /**
@@ -152,9 +149,11 @@ public class Triana {
 
         System.out.println("Usage: triana <options>");
         System.out.println("where possible options include:");
-        System.out.println("     " + DEBUG_ARG + getPadStr(DEBUG_ARG, colwidth) + "Stream debug information to command line");
+        System.out.println(
+                "     " + DEBUG_ARG + getPadStr(DEBUG_ARG, colwidth) + "Stream debug information to command line");
         System.out.println("     " + NODEBUG_ARG + getPadStr(NODEBUG_ARG, colwidth) + "Disable all debug output");
-        System.out.println("     " + HELP_ARG1 + " " + HELP_ARG2 + getPadStr(HELP_ARG1 + " " + HELP_ARG2, colwidth) + "Show argument help");
+        System.out.println("     " + HELP_ARG1 + " " + HELP_ARG2 + getPadStr(HELP_ARG1 + " " + HELP_ARG2, colwidth)
+                + "Show argument help");
     }
 
     /**

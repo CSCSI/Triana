@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.trianacode.http.RendererRegistry;
+import org.trianacode.http.ToolRenderer;
+import org.trianacode.http.ToolboxRenderer;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
@@ -45,10 +48,14 @@ public class EngineInit {
 
     private static void initExtensions(Class... exten) {
         List ext = new ArrayList<Class>();
-        for (Class aClass : exten) {
-            ext.add(aClass);
-        }
         ext.add(Interceptor.class);
+        ext.add(ToolRenderer.class);
+        ext.add(ToolboxRenderer.class);
+        for (Class aClass : exten) {
+            if (!ext.contains(aClass)) {
+                ext.add(aClass);
+            }
+        }
         extensions = ExtensionFinder.services(ext);
         Set<Class> keys = extensions.keySet();
         for (Class key : keys) {
@@ -57,6 +64,18 @@ public class EngineInit {
                 for (Object o : exts) {
                     Interceptor e = (Interceptor) o;
                     InterceptorChain.register(e);
+                }
+            } else if (key.equals(ToolRenderer.class)) {
+                List<Object> exts = extensions.get(key);
+                for (Object o : exts) {
+                    ToolRenderer e = (ToolRenderer) o;
+                    RendererRegistry.registerToolRenderer(e);
+                }
+            } else if (key.equals(ToolboxRenderer.class)) {
+                List<Object> exts = extensions.get(key);
+                for (Object o : exts) {
+                    ToolboxRenderer e = (ToolboxRenderer) o;
+                    RendererRegistry.registerToolboxRenderer(e);
                 }
             }
         }

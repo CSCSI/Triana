@@ -31,5 +31,13 @@
     <version>0.1</version>
     <url>http://www.trianacode.org</url>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.thinginitself</groupId>
+            <artifactId>restless</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 
 </project>

@@ -34,6 +34,11 @@ public class PoisonTask implements Task {
     }
 
     @Override
+    public TaskGraph getUltimateParent() {
+        return null;
+    }
+
+    @Override
     public String getInstanceID() {
         return null;
     }

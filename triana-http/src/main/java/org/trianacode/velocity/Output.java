@@ -1,4 +1,4 @@
-package org.trianacode.http;
+package org.trianacode.velocity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

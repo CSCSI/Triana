@@ -276,6 +276,20 @@ public class TaskImp extends ToolImp implements Task {
         return taskgraph;
     }
 
+    public TaskGraph getUltimateParent() {
+        if (taskgraph != null) {
+            TaskGraph ult = taskgraph.getParent();
+            if (ult != null) {
+                return ult;
+            }
+            return taskgraph;
+        }
+        if (this instanceof TaskGraph) {
+            return (TaskGraph) this;
+        }
+        return null;
+    }
+
     /**
      * Sets the taskgraph that this task is located within
      */

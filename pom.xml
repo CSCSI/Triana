@@ -41,7 +41,7 @@
         <module>triana-gui</module>
         <module>triana-types</module>
         <module>triana-interceptors</module>
-        <module>triana-http</module>
+        <module>triana-velocity</module>
         <!--<module>triana-tool</module>-->
         <module>triana-app</module>
     </modules>

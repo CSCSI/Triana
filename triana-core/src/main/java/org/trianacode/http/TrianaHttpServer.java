@@ -8,7 +8,6 @@ import java.io.Serializable;
 import org.thinginitself.http.HttpPeer;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.util.EngineInit;
 
@@ -38,12 +37,12 @@ public class TrianaHttpServer {
 
     /**
      * Adds a blob of data (Java object) and makes it available via restless as a resource
-     * 
+     *
      * @param deploymentURL
      * @param workflowObject
      */
     public void addDataResource(String deploymentURL, Serializable workflowObject) {
-        new DataResource(deploymentURL,workflowObject,peer);
+        new DataResource(deploymentURL, workflowObject, peer);
     }
 
     public void start() throws IOException {

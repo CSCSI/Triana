@@ -25,9 +25,9 @@
         <version>0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>triana-http</artifactId>
+    <artifactId>triana-velocity</artifactId>
     <packaging>jar</packaging>
-    <name>Triana HTTP</name>
+    <name>Triana Velocity</name>
     <version>0.1</version>
     <url>http://www.trianacode.org</url>
 
@@ -45,16 +45,11 @@
             <version>0.1</version>
             <scope>compile</scope>
         </dependency>
-		<dependency>
-		  <groupId>org.apache.velocity</groupId>
-		  <artifactId>velocity</artifactId>
-		  <version>1.6.4</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.thinginitself</groupId>
-		  <artifactId>restless</artifactId>
-		  <version>0.1-SNAPSHOT</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.6.4</version>
+        </dependency>
     </dependencies>
 
 </project>

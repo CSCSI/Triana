@@ -21,7 +21,9 @@ public class ResourceSpawn extends MemoryTarget {
     public ResourceSpawn(Task task) {
         super(task.getToolName());
         this.task = task;
-        Resource res = new Resource(task.getToolName(), new ToolRenderer(task, "/templates/tool.tpl").render());
+        ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_DESCRIPTION_TEMPLATE);
+        r.init(task, task.getToolName());
+        Resource res = new Resource(task.getToolName(), r.render());
         store.put(res);
     }
 
@@ -29,6 +31,8 @@ public class ResourceSpawn extends MemoryTarget {
         String path = task.getToolName() + "/" + count.incrementAndGet();
         TaskResource res = new TaskResource(task, path);
         store.put(res);
-        context.setResponseEntity(new ToolInstanceRenderer(task, path, "/templates/tool-instance.tpl").render());
+        ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_INSTANCE_TEMPLATE);
+        r.init(task, task.getToolName());
+        context.setResponseEntity(r.render());
     }
 }
