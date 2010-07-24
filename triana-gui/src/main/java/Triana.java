@@ -57,6 +57,7 @@
  *
  */
 
+import org.trianacode.Bootstrap.Epicenter;
 import org.trianacode.gui.hci.ApplicationFrame;
 
 import java.util.logging.Logger;
@@ -72,6 +73,8 @@ import java.util.logging.Logger;
 public class Triana {
     static Logger log = Logger.getLogger("Triana");
 
+    static Epicenter epicenter;
+
     /**
      * the triana arguments
      */
@@ -85,7 +88,8 @@ public class Triana {
      */
     public static void main(String[] args) throws Exception {
 
-
+        epicenter = new Epicenter();       // Just a place to find things easier ....  Change as you feel fit.
+        
         // ToDo: should have factory code to put OS specifics in
 		/*String myOSName = Env.os();
         if (myOSName.equals("osx")) {
@@ -122,6 +126,8 @@ public class Triana {
 			}
 		}*/
         boolean starttriana = true;
+
+
 
         for (int count = 0; count < args.length; count++) {
             if (args[count].equals(HELP_ARG1) || args[count].equals(HELP_ARG2)) {

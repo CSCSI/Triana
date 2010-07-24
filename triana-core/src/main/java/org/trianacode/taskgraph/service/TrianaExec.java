@@ -223,6 +223,7 @@ public class TrianaExec {
          * @return the input data
          */
         public Object[] getInputData() {
+            System.out.println("Input Data is " + indata);
             return indata;
         }
 
@@ -238,6 +239,7 @@ public class TrianaExec {
          */
         public void setOutputData(Object[] outdata) {
             this.outdata = outdata;
+            System.out.println("Output Data is " + outdata[0]);
             thread.interrupt();
         }
 
