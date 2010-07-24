@@ -58,13 +58,20 @@
  */
 package org.trianacode.taskgraph.service;
 
-import java.io.*;
-import java.net.URL;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.trianacode.Bootstrap.Epicenter;
+import org.trianacode.Bootstrapper.Epicenter;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.ParameterNode;
@@ -78,7 +85,6 @@ import org.trianacode.taskgraph.clipin.ClipInStore;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataNotResolvableException;
 import org.trianacode.taskgraph.databus.DataResolver;
-import org.trianacode.taskgraph.databus.LocalDataBus;
 import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.TrianaObjectInputStream;
@@ -521,8 +527,8 @@ public class RunnableTask extends AbstractRunnableTask
             data = ((DataMessage) mess).getData();
 
             //Now this is always a URL so we can cast....
-            
-            WorkflowDataPacket packet = (WorkflowDataPacket)data;
+
+            WorkflowDataPacket packet = (WorkflowDataPacket) data;
 
             // IAN T - gets the data by resolving the URL rather than just accepting the data as is.
             try {
@@ -683,12 +689,13 @@ public class RunnableTask extends AbstractRunnableTask
             ClipInBucket extract = clipins.extract(node);
 
             // IAN T - Need to map GUI choice of data sending to databus here:
-            
-            WorkflowDataPacket packet = DataBus.getDataBusFor(DataBus.DataBusType.LOCAL_HTTP).addObject((Serializable)data, true);
-            Epicenter.getHttpServer().addDataResource(packet.getDataLocation().getPath(),(Serializable)data);
+
+            WorkflowDataPacket packet = DataBus.getDataBusFor(DataBus.DataBusType.LOCAL_HTTP)
+                    .addObject((Serializable) data, true);
+            Epicenter.getHttpServer().addDataResource(packet.getDataLocation().getPath(), (Serializable) data);
 
             System.out.println("RunnableTask.output ENTER URL = " + packet);
-            DataMessage mess = new DataMessage(packet , extract);
+            DataMessage mess = new DataMessage(packet, extract);
 
             if (blocking) {
                 ((OutputCable) node.getCable()).send(mess);
