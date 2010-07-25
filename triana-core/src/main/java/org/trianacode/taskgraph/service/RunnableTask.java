@@ -692,6 +692,7 @@ public class RunnableTask extends AbstractRunnableTask
 
             WorkflowDataPacket packet = DataBus.getDataBusFor(DataBus.DataBusType.LOCAL_HTTP)
                     .addObject((Serializable) data, true);
+            
             Epicenter.getHttpServer().addDataResource(packet.getDataLocation().getPath(), (Serializable) data);
 
             System.out.println("RunnableTask.output ENTER URL = " + packet);
