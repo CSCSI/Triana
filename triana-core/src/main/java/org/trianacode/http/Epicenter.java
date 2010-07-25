@@ -8,7 +8,7 @@ package org.trianacode.http;
 public class Epicenter {
     private static TrianaHttpServer httpServer;
 
-    public Epicenter() {
+    static {
         httpServer = new TrianaHttpServer();
     }
 
