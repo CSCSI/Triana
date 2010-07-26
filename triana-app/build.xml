@@ -9,39 +9,57 @@
     <property name="core-classes" value="../triana-core/target/classes"/>
     <property name="gui-classes" value="../triana-gui/target/classes"/>
     <property name="types-classes" value="../triana-types/target/classes"/>
+    <property name="velocity-classes" value="../triana-velocity/target/classes"/>
     <!--<property name="toolbox-classes" value="../triana-toolbox/target/classes"/>-->
 
 
-    <target name="triana-app" depends="clean">
-        <mkdir dir="target"/>
-        <mkdir dir="target/classes"/>
-        <copy todir="target/classes" overwrite="yes">
+    <target name="triana-app">
+
+        <mkdir dir="dist"/>
+        <mkdir dir="dist/classes"/>
+        <path id="jar.class.path">
+            <fileset dir="dist/lib">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+        <copy todir="dist/classes" overwrite="yes">
             <fileset dir="${core-classes}" includes="**/**"/>
         </copy>
-        <copy todir="target/classes" overwrite="yes">
-            <fileset dir="${gui-classes}" includes="**/**"/>
+        <copy todir="dist/classes" overwrite="yes">
+            <fileset dir="${gui-classes}" includes="**/**" excludes=".svn"/>
         </copy>
-        <copy todir="target/classes" overwrite="yes">
-            <fileset dir="${types-classes}" includes="**/**"/>
+        <copy todir="dist/classes" overwrite="yes">
+            <fileset dir="${types-classes}" includes="**/**" excludes=".svn"/>
+        </copy>
+        <copy todir="dist/classes" overwrite="yes">
+            <fileset dir="${velocity-classes}" includes="**/**" excludes=".svn"/>
         </copy>
         <!--
         <copy todir="target/classes" overwrite="yes">
                     <fileset dir="${toolbox-classes}" includes="**/**"/>
         </copy>
         -->
-
-        <jar jarfile="target/triana-app-${version}.jar" basedir="target/classes"/>
-        <copy todir="target" overwrite="yes">
+        <manifestclasspath property="manifest.classpath.prop" jarfile="dist/triana-app-${version}.jar">
+            <classpath refid="jar.class.path"/>
+        </manifestclasspath>
+        <jar jarfile="dist/triana-app-${version}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="Triana"/>
+                <attribute name="Class-Path" value=". ${manifest.classpath.prop}"/>
+            </manifest>
+            <fileset dir="dist/classes" includes="**/**" excludes=".svn"/>
+        </jar>
+        <copy todir="dist" overwrite="yes">
             <fileset dir="bin" includes="**/*.sh,**/*.bat,**/*.properties"/>
             <filterset begintoken="@" endtoken="@">
                 <filter token="version" value="${version}"/>
             </filterset>
         </copy>
-        <chmod dir="target" perm="775" includes="**/*.sh,**/*.bat"/>
+        <chmod dir="dist" perm="775" includes="**/*.sh,**/*.bat"/>
     </target>
 
     <target name="clean">
-        <delete dir="target"/>
+        <delete dir="dist"/>
     </target>
 
 
@@ -49,7 +67,7 @@
         <exec executable="mvn">
             <arg value="-e"/>
             <arg value="install:install-file"/>
-            <arg value="-Dfile=target/triana-app-${version}.jar"/>
+            <arg value="-Dfile=dist/triana-app-${version}.jar"/>
             <arg value="-DpomFile=pom.xml"/>
             <arg value="-Dversion=${version}"/>
             <arg value="-Dpackaging=jar"/>
@@ -60,7 +78,7 @@
         <exec executable="mvn">
             <arg value="-e"/>
             <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=target/triana-app-${version}.jar"/>
+            <arg value="-Dfile=dist/triana-app-${version}.jar"/>
             <arg value="-DpomFile=pom.xml"/>
             <arg value="-Dversion=${version}"/>
             <arg value="-Durl=scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven"/>

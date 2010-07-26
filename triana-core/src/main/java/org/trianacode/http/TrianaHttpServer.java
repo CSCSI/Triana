@@ -1,9 +1,11 @@
 package org.trianacode.http;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.thinginitself.http.HttpPeer;
 import org.trianacode.taskgraph.Task;
@@ -61,14 +63,20 @@ public class TrianaHttpServer {
      * @throws TaskGraphException
      */
     public void addWorkflow(String workflowFile) throws IOException, TaskGraphException {
-        File file = new File(workflowFile);
-        XMLReader reader = new XMLReader(new FileReader(file));
+        Reader r = null;
+        try {
+            URL url = new URL(workflowFile);
+            r = new UrlReader(url);
+        } catch (MalformedURLException e) {
+            r = new FileReader(workflowFile);
+        }
+        XMLReader reader = new XMLReader(r);
         ResourceSpawn res = new ResourceSpawn((Task) reader.readComponent());
         addTask(res);
     }
 
     public static void main(String[] args) throws Exception {
-        TrianaHttpServer serverTriana = new TrianaHttpServer();
+        TrianaHttpServer serverTriana = Epicenter.getHttpServer();
         serverTriana.addWorkflow(args[0]);
     }
 }
