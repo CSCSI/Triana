@@ -127,7 +127,6 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
 
         for (int toolcount = 0; toolcount < tools.length; toolcount++)
             insertTool(tools[toolcount]);
-
     }
 
 

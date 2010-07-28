@@ -104,6 +104,7 @@ public class ToolTableImp extends AbstractToolTable {
             log.fine("Not pasting. Tool already exists with name " + tool.getQualifiedToolName());
             return;
         }
+        
         String location = getPasteFileLocation(tool.getToolName(), pack, toolbox);
         tool.setDefinitionPath(location);
         tool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
