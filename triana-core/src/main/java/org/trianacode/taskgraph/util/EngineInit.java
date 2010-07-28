@@ -1,5 +1,6 @@
 package org.trianacode.taskgraph.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Set;
 import org.trianacode.http.RendererRegistry;
 import org.trianacode.http.ToolRenderer;
 import org.trianacode.http.ToolboxRenderer;
+import org.trianacode.http.TrianaHttp;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
@@ -29,6 +31,11 @@ public class EngineInit {
     private static Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
 
     public static void init(ToolTable table, Class... extensions) {
+        try {
+            TrianaHttp.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         if (TaskGraphManager.getToolTable() == null) {
@@ -36,8 +43,10 @@ public class EngineInit {
                 table = new ToolTableImp();
             }
             TaskGraphManager.initToolTable(table);
-            Toolboxes.loadToolboxes(TaskGraphManager.getToolTable());
         }
+
+        Toolboxes.loadToolboxes(TaskGraphManager.getToolTable());
+
         initObjectDeserializers();
         initExtensions(extensions);
     }
