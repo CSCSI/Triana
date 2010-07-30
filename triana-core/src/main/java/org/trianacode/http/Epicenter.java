@@ -6,13 +6,14 @@ package org.trianacode.http;
  * Settings | File Templates.
  */
 public class Epicenter {
-    private static TrianaHttpServer httpServer;
+  //  private static TrianaHttpServer httpServer;
 
     static {
-        httpServer = new TrianaHttpServer();
+   //     httpServer = new TrianaHttpServer();
     }
 
     public static TrianaHttpServer getHttpServer() {
-        return httpServer;
+    //    return httpServer;
+        return null;
     }
 }

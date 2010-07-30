@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import mil.navy.nrl.discovery.WebBootstrap;
+import mil.navy.nrl.discovery.types.ServiceTypes;
+import mil.navy.nrl.discovery.web.template.WebDefines;
 import org.trianacode.http.RendererRegistry;
 import org.trianacode.http.ToolRenderer;
 import org.trianacode.http.ToolboxRenderer;
-import org.trianacode.http.TrianaHttp;
+import org.trianacode.http.TrianaHttpServer;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
@@ -31,11 +34,25 @@ public class EngineInit {
     private static Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
 
     public static void init(ToolTable table, Class... extensions) {
+ //       try {
+  //          new TrianaHttpServer().start();
+   //     } catch (IOException e) {
+     //       throw new RuntimeException(e);
+       // }
+
+        ServiceTypes st = new ServiceTypes();
+
+        st.registerServiceType("http._tcp", "HTTP is cool....");
+
+        WebDefines webDefines = new WebDefines(null,null,null,null,null);
+
         try {
-            TrianaHttp.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            WebBootstrap wd = new WebBootstrap("TrianaServer", "triana", "Triana Bonjour Service!",
+                    "Published Services", webDefines ,st);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         if (TaskGraphManager.getToolTable() == null) {
