@@ -9,7 +9,6 @@ public class WebGUICreator {
 
     public WebGUICreator(String input) {
         guiInit(input);
-        System.out.println("testme2");
     }
 
     public String guiInit(String input) {
