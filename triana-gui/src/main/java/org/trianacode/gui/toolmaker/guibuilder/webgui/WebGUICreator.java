@@ -9,6 +9,7 @@ public class WebGUICreator {
 
     public WebGUICreator(String input) {
         guiInit(input);
+        System.out.println("testme2");
     }
 
     public String guiInit(String input) {
@@ -32,7 +33,7 @@ public class WebGUICreator {
                 String checkbox = "Checkbox";
                 String scroller = "Scroller";
                 String textfield = "TextField";
-                String filechooser = "FileChooser";
+                String filechooser = "File";
                 String textlabel = "Label";
 
                 String currentline = lines[i];
@@ -57,7 +58,7 @@ public class WebGUICreator {
                 if (index4 != -1) {
                     htmloutput += textfield(currentline);
                 }
-                // File browser -
+                // File browser - Done with simple HTML... may need to revise with jQuery/JS
                 int index5 = currentline.indexOf(filechooser);
                 if (index5 != -1) {
                     htmloutput += filechooser(currentline);
@@ -111,11 +112,11 @@ public class WebGUICreator {
             int index = filechoosertext.indexOf("$");
             title = filechoosertext.substring(0, (index - 1));
             int index2 = filechoosertext.indexOf("File");
-            stringbuffer = filechoosertext.substring(index2+7);
+            stringbuffer = filechoosertext.substring(index2+4);
         }
 
         String[] words = stringbuffer.split(" ");
-        //This code is to find the name of the element
+        //This code is to find the name of the gui element
         String[] allwords = filechoosertext.split(" ");
         for (int i=0; i<allwords.length;i++){
             if(allwords[i].startsWith("$")){
@@ -123,10 +124,8 @@ public class WebGUICreator {
             }
         }
 
-
-
+        output = title + " <input type = \"file\" name = " + name + "\"/>";
         return output;
-
     }
 
     // Text Box Method
@@ -156,7 +155,7 @@ public class WebGUICreator {
                 name = allwords[i+1];
             }
         }
-
+        
         //String[] stri = textfieldbox.split(" ");
         output = title + " <input type = \"text\" name = " + name + "\"" + "value=\"" + defaulttext + "\"/>";
         return output;
@@ -183,7 +182,6 @@ public class WebGUICreator {
 
             // Find last word...
             String[] words = checkboxline.split(" ");
-
             for (int j=0; j<words.length;j++){
                 int index2 = checkboxline.indexOf("$");
                 if (j == index2){
@@ -245,10 +243,69 @@ public class WebGUICreator {
     }
 
     public String scroller(String input) {
+
+        // guilines += "Choose Value to out $title Number IntScroller 0 100 69 false\n";
+        // guilines += "Please choose a value $title scrollbar Scroller 0 239 34 true\n";
+
+        String scrollertest = input;
+        String title = "";
+        String stringbuffer = "";
+        String outputtemp = "";
         String output = "";
+        String name = "";
+        String min = "";
+        String max = "";
+        String step = "";
+        String defaultvalue = "";
+
+        // Title is everything from beginning of string til the $ sign -1
+        for (int i = 0; i < scrollertest.length(); i++) {
+            int index = scrollertest.indexOf("$");
+            title = scrollertest.substring(0, (index - 1));
+        }
+
+        //Split entire string into seperate words
+        String[] allwords = scrollertest.split(" ");
+
+        //Go through all words
+        for (int i=0; i<allwords .length;i++){
+            if(allwords[i].equals("IntScroller")){
+                // Do nothing and increments are integer values anyway?
+                step = "1";
+            }
+            if(allwords[i].equals("Scroller")){
+                step = "0.01";
+            }
+            if(i == (allwords.length-1)){
+                defaultvalue = allwords[i-1];
+                max = allwords[i-2];
+                min = allwords[i-3];
+            }
+                       
+            //This code is to find the name of the gui element
+            if(allwords[i].startsWith("$")){
+                name = allwords[i+1];
+            }
+        }
+
+//        System.out.println("default value: " +  defaultvalue);
+//        System.out.println("min value: " +  min);
+//        System.out.println("max value: " +  max);
+//        System.out.println("step/increment value: " + step);
+
+        output = title + " <input type=\"range\" name=\"" + name + "\" min=\"" + min + "\" max=\"" + max + "\" value=\"" + defaultvalue + "\" step=\"" + step +
+                         "\" onchange=\"showValue(this.value)\"/>\n";
+
+        output += "<span id=\"range\">" + defaultvalue + "</span>\n";
+        output += "<script type=\"text/javascript\">\n";
+        output += "function showValue(newValue)\n";
+        output += "{\n";
+        output += "document.getElementById(\"range\").innerHTML=newValue;\n";
+        output += "}\n";
+        output += "</script>\n";
+
         return output;
     }
-
 
     private static int countLines(String str) {
         String[] lines = str.split("\r\n|\r|\n");
