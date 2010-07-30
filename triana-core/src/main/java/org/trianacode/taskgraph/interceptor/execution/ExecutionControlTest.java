@@ -5,7 +5,7 @@ import java.io.FileReader;
 
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.ser.XMLReader;
-import org.trianacode.taskgraph.util.EngineInit;
+import org.trianacode.EngineInit;
 
 /**
  * @author Andrew Harrison

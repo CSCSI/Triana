@@ -67,12 +67,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import org.trianacode.EngineInit;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.util.EngineInit;
 
 
 /**

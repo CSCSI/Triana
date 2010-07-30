@@ -77,7 +77,7 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.util.EngineInit;
+import org.trianacode.EngineInit;
 
 
 /**
