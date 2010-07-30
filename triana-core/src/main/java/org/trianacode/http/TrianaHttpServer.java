@@ -11,7 +11,6 @@ import org.thinginitself.http.HttpPeer;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
-import org.trianacode.taskgraph.util.EngineInit;
 
 /**
  * @author Andrew Harrison
@@ -29,7 +28,6 @@ public class TrianaHttpServer {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        EngineInit.init();
     }
 
     public void addTask(ResourceSpawn task) {
@@ -75,8 +73,7 @@ public class TrianaHttpServer {
         addTask(res);
     }
 
-    public static void main(String[] args) throws Exception {
-        TrianaHttpServer serverTriana = Epicenter.getHttpServer();
-        serverTriana.addWorkflow(args[0]);
+    public HttpPeer getHTTPPeerInstance() {
+        return peer;
     }
 }

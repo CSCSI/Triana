@@ -11,10 +11,7 @@ import java.util.Set;
 import mil.navy.nrl.discovery.WebBootstrap;
 import mil.navy.nrl.discovery.types.ServiceTypes;
 import mil.navy.nrl.discovery.web.template.WebDefines;
-import org.trianacode.http.RendererRegistry;
-import org.trianacode.http.ToolRenderer;
-import org.trianacode.http.ToolboxRenderer;
-import org.trianacode.http.TrianaHttpServer;
+import org.trianacode.http.*;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
@@ -31,28 +28,15 @@ import org.trianacode.taskgraph.tool.ToolTableImp;
 
 public class EngineInit {
 
+    static HTTPServices httpServices;
+
     private static Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
 
-    public static void init(ToolTable table, Class... extensions) {
- //       try {
-  //          new TrianaHttpServer().start();
-   //     } catch (IOException e) {
-     //       throw new RuntimeException(e);
-       // }
+    public static void init(ToolTable table, Class... extensions) throws Exception {
 
-        ServiceTypes st = new ServiceTypes();
-
-        st.registerServiceType("http._tcp", "HTTP is cool....");
-
-        WebDefines webDefines = new WebDefines(null,null,null,null,null);
-
-        try {
-            WebBootstrap wd = new WebBootstrap("TrianaServer", "triana", "Triana Bonjour Service!",
-                    "Published Services", webDefines ,st);
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
+        httpServices = new HTTPServices();
+        httpServices.startServices();
+        
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         if (TaskGraphManager.getToolTable() == null) {
@@ -68,7 +52,7 @@ public class EngineInit {
         initExtensions(extensions);
     }
 
-    public static void init() {
+    public static void init() throws Exception {
         init(null, new Class[0]);
     }
 
