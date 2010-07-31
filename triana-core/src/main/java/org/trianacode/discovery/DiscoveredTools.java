@@ -1,4 +1,4 @@
-package org.trianacode.toolloading;
+package org.trianacode.discovery;
 
 import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
 import mil.navy.nrl.discovery.api.ServiceInfo;
@@ -6,7 +6,7 @@ import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
 import mil.navy.nrl.discovery.json.*;
 import mil.navy.nrl.discovery.tools.DNSServiceNames;
 import mil.navy.nrl.discovery.web.resources.ServiceResource;
-import org.trianacode.toolloading.toolinfo.ToolMetadata;
+import org.trianacode.discovery.toolinfo.ToolMetadata;
 
 import java.util.*;
 

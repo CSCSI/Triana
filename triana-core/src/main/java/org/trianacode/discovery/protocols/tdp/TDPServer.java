@@ -1,14 +1,12 @@
-package org.trianacode.toolloading.protocols.tdp;
+package org.trianacode.discovery.protocols.tdp;
 
 import mil.navy.nrl.discovery.ProtoSD;
-import mil.navy.nrl.discovery.api.ServiceInfo;
 import org.thinginitself.http.Http;
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableObject;
-import org.thinginitself.streamable.StreamableString;
 import org.trianacode.http.HTTPServices;
 
 import java.io.IOException;

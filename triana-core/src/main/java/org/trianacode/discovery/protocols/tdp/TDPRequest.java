@@ -1,4 +1,4 @@
-package org.trianacode.toolloading.protocols.tdp;
+package org.trianacode.discovery.protocols.tdp;
 
 import java.io.Serializable;
 

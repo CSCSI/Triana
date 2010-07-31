@@ -1,6 +1,6 @@
-package org.trianacode.toolloading.protocols;
+package org.trianacode.discovery.protocols;
 
-import org.trianacode.toolloading.protocols.tdp.TDP;
+import org.trianacode.discovery.protocols.tdp.TDP;
 
 import java.util.Hashtable;
 

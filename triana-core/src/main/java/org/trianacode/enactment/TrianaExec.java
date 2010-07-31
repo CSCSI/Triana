@@ -57,13 +57,14 @@
  *
  */
 
-package org.trianacode.taskgraph.service;
+package org.trianacode.enactment;
 
 import java.util.ArrayList;
 
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.service.SchedulerException;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**

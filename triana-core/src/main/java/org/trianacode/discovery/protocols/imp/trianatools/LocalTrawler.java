@@ -1,9 +1,9 @@
-package org.trianacode.toolloading.protocols.imp.trianatools;
+package org.trianacode.discovery.protocols.imp.trianatools;
 
 import org.thinginitself.http.HttpPeer;
-import org.trianacode.toolloading.protocols.tdp.TDPRequest;
-import org.trianacode.toolloading.protocols.tdp.TDPResponse;
-import org.trianacode.toolloading.protocols.tdp.TDPServer;
+import org.trianacode.discovery.protocols.tdp.TDPRequest;
+import org.trianacode.discovery.protocols.tdp.TDPResponse;
+import org.trianacode.discovery.protocols.tdp.TDPServer;
 
 /**
  * Searches for local Triana tools on this instance of Triana and exposes them to

@@ -1,9 +1,8 @@
-package org.trianacode.toolloading;
+package org.trianacode.discovery;
 
 import mil.navy.nrl.discovery.WebBootstrap;
 import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
-import org.trianacode.toolloading.protocols.ServiceTypesAndProtocols;
-import org.trianacode.toolloading.protocols.imp.trianatools.LocalTrawler;
+import org.trianacode.discovery.protocols.ServiceTypesAndProtocols;
 
 /**
  * Created by IntelliJ IDEA.

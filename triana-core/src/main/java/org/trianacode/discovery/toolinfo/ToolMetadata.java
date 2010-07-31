@@ -1,4 +1,4 @@
-package org.trianacode.toolloading.toolinfo;
+package org.trianacode.discovery.toolinfo;
 
 /**
  * Basic information required for displaying tools in the tooltree

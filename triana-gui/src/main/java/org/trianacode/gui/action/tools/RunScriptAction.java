@@ -73,7 +73,7 @@ import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.constants.ScriptConstants;
 import org.trianacode.taskgraph.service.NonRunnableClient;
 import org.trianacode.taskgraph.service.SchedulerException;
-import org.trianacode.taskgraph.service.TrianaRun;
+import org.trianacode.enactment.TrianaRun;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableListener;

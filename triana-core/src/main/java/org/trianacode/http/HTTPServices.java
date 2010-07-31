@@ -5,10 +5,8 @@ import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
 import mil.navy.nrl.discovery.types.ServiceTypes;
 import mil.navy.nrl.discovery.web.template.WebDefines;
 import org.thinginitself.http.HttpPeer;
-import org.trianacode.toolloading.DiscoverTools;
-import org.trianacode.toolloading.DiscoveredTools;
-
-import java.io.IOException;
+import org.trianacode.discovery.DiscoverTools;
+import org.trianacode.discovery.DiscoveredTools;
 
 /**
  * Starts off the HTTP and discovery services...

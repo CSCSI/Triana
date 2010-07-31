@@ -6,10 +6,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.trianacode.enactment.TrianaExec;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.service.SchedulerException;
-import org.trianacode.taskgraph.service.TrianaExec;
 
 /**
  * @author Andrew Harrison
