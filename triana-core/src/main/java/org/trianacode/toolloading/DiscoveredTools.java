@@ -1,96 +1,105 @@
 package org.trianacode.toolloading;
 
+import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
 import mil.navy.nrl.discovery.api.ServiceInfo;
 import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
 import mil.navy.nrl.discovery.json.*;
 import mil.navy.nrl.discovery.tools.DNSServiceNames;
 import mil.navy.nrl.discovery.web.resources.ServiceResource;
+import org.trianacode.toolloading.toolinfo.ToolMetadata;
 
 import java.util.*;
 
 /**
- * List of discovered tools from all supported bonjour protocols
+ * List of discovered tools from all supported bonjour protocols.  Tools are stored
+ * as lists of tools according to their service type.
  *
  * User: scmijt
  * Date: Jul 30, 2010
  * Time: 11:44:32 AM
  * To change this template use File | Settings | File Templates.
  */
-public class DiscoveredTools {
+public class DiscoveredTools implements DiscoveredServicesInterface {
 
-    private Hashtable<String,List> serviceTypes;
+    private Hashtable<ServiceInfoEndpoint,List> tools;
+
+    private List<ServiceInfoEndpoint> protocols;
 
     public DiscoveredTools() {
-        serviceTypes= new Hashtable<String,List>();
+        tools = new Hashtable<ServiceInfoEndpoint ,List>();
+        protocols=new ArrayList<ServiceInfoEndpoint>();
     }
 
+    public void addService(ServiceInfoEndpoint serviceInfoEndpoint) {
+        if(!protocols.contains(serviceInfoEndpoint))
+            protocols.add(serviceInfoEndpoint);
+    }
 
-    public void addService(ServiceResource service) {
+    public void removeService(ServiceInfo serviceInfo) {
 
-        System.out.println("Adding service : " + service.getInfo().getServiceName());
+        List listCopy = new ArrayList(protocols);
 
-        final String serviceType= DNSServiceNames.getServiceTypeFrom(service.getInfo().getQualifiedServiceType());
+        ServiceInfoEndpoint toDelete=null;
+
+        if (listCopy != null) {
+            for (final Iterator iterator = listCopy.iterator(); iterator.hasNext();) {
+                ServiceInfoEndpoint service = ((ServiceInfoEndpoint) iterator.next());
+
+                if (service.getServiceName().equals(serviceInfo.getServiceName())
+                        && (service.getQualifiedServiceType().equals(serviceInfo.getQualifiedServiceType())))
+                    toDelete=service;
+            }
+            if (toDelete!=null) {
+                protocols.remove(toDelete);
+            }
+        }
+    }
+
+    public void addTool(ToolMetadata tool, ServiceInfoEndpoint serviceType) {
+
+        System.out.println("Adding tool : " + tool.getDisplayName());
 
         List list = null;
 
-        synchronized (serviceTypes)
+        synchronized (tools)
         {
-            list = serviceTypes.get(serviceType);
+            list = tools.get(serviceType);
             if (list == null) { // create a list for this service type
                 list = Collections.synchronizedList(new LinkedList<ServiceResource>());
                 System.out.println("Adding service type " + serviceType);
-                serviceTypes.put(serviceType, list);
+                tools.put(serviceType, list);
             }
-            System.out.println("Adding service to list ");
-            if (!list.contains(service))
-                list.add(service); // add the service
+            System.out.println("Adding tool to list ");
+            if (!list.contains(tool))
+                list.add(tool); // add the service
         }
     }
 
 
-    protected void removeService(ServiceResource service) {
 
-        final String serviceType=DNSServiceNames.getServiceTypeFrom(service.getInfo().getQualifiedServiceType());
-
+    protected void removeTool(ToolMetadata toolMetadata, ServiceInfoEndpoint serviceType) {
         List list = null;
         ArrayList listCopy = null;
-        synchronized (serviceTypes) {
-            list = (List) serviceTypes.get(serviceType);
-
-            if (list != null) {
-                list.remove(service);
-            }
-        }
-    }
-
-    protected void removeService(ServiceInfo serviceinfo) {
-
-        final String serviceType=DNSServiceNames.getServiceTypeFrom(serviceinfo.getQualifiedServiceType());
-
-        List list = null;
-        ArrayList listCopy = null;
-        synchronized (serviceTypes) {
-            list = (List) serviceTypes.get(serviceType);
+        synchronized (tools) {
+            list = (List) tools.get(serviceType);
 
             if (list != null) {
                 listCopy = new ArrayList(list);
             }
         }
-        ServiceResource toDelete=null;
+        ToolMetadata toDelete=null;
         if (listCopy != null) {
             for (final Iterator iterator = listCopy.iterator(); iterator.hasNext();) {
-                ServiceResource service = ((ServiceResource) iterator.next());
+                ToolMetadata tool = ((ToolMetadata) iterator.next());
 
-                if (service.getInfo().getServiceName().equals(serviceinfo.getServiceName())
-                        && (service.getInfo().getQualifiedServiceType().equals(serviceinfo.getQualifiedServiceType())))
-                    toDelete=service;
+                if (tool.getToolName().equals(toolMetadata.getToolName())
+                        && (tool.getUrl().equals(toolMetadata.getUrl())))
+                    toDelete=tool;
             }
             if (toDelete!=null) {
                 list.remove(toDelete);
-                toDelete.getWebPeer().removeTarget(toDelete); // remove the tool from Web peer also
             }
         }
-
     }
 
     /**
@@ -101,24 +110,24 @@ public class DiscoveredTools {
     public String getHTMLList() {
         StringBuffer serverList = new StringBuffer();
 
-        Enumeration keys = serviceTypes.keys();
+        Enumeration keys = tools.keys();
 
-        System.out.println("Retrieving Service List .... with values " + serviceTypes.size());
+        System.out.println("Retrieving tool List .... with values " + tools.size());
 
         while (keys.hasMoreElements()){
-            String key = (String)keys.nextElement();
+            ServiceInfoEndpoint key = (ServiceInfoEndpoint)keys.nextElement();
             System.out.println("Retrieving Key is: " + key);
 
-            List serviceType = serviceTypes.get(key);
+            List serviceType = tools.get(key);
 
             serverList.append("<b>" + key + "</b>");
             serverList.append("<ol>");
 
-            for (Object service: serviceType) {
-                ServiceResource serviceResource = (ServiceResource)service;
-                serverList.append(serviceResource.getInfo().getServiceName() +
-                 " -  <a href=" + serviceResource.getServiceURL() +
-                 "> View Service Details" + "</a><br>\n");
+            for (Object tool: serviceType) {
+                ToolMetadata t= (ToolMetadata)tool;
+                serverList.append(t.getDisplayName() +
+                        " -  <a href=" + t.getUrl() +
+                        "> View Service Details" + "</a><br>\n");
             }
             serverList.append("</ol>");
         }
@@ -127,41 +136,55 @@ public class DiscoveredTools {
     }
 
 
-      /**
+    /**
      * Gets HTML list of all the services, arranged in type order
      * @return
      */
-   public String getJsTreeList() {
-        Enumeration keys = serviceTypes.keys();
+    public String getJsTreeList() {
+        Enumeration keys = tools.keys();
         JsTree tree = new JsTree();
 
-        System.out.println("Retrieving Service List .... with values " + serviceTypes.size());
+        String type;
+        System.out.println("Retrieving tool List .... with values " + tools.size());
 
         while (keys.hasMoreElements()){
-            String key = (String)keys.nextElement();
+            ServiceInfoEndpoint key = (ServiceInfoEndpoint)keys.nextElement();
 
-            List serviceType = serviceTypes.get(key);
+            List serviceType = tools.get(key);
 
-            Node serviceTypeTreeNode = new Node(key);
+            type = DNSServiceNames.getServiceTypeFrom(key.getQualifiedServiceType());
+            Node serviceTypeTreeNode = new Node(type);
 
             tree.add(serviceTypeTreeNode);
 
-            for (Object service: serviceType) {
-                ServiceResource serviceResource = (ServiceResource)service;
-                Attribute attr = new Attribute(serviceResource.getRelativeServiceURL());
-                ServiceInfoEndpoint info=serviceResource.getInfo();
-                Node serviceDetails = new Node(info.getServiceName() + "/" + info.getServiceAddress() + "/" + info.getPort());
-                //serviceDetails.setAttr(attr);
+            for (Object tool: serviceType) {
+                ToolMetadata tr= (ToolMetadata)tool;
+                Attribute attr = new Attribute(key.getServiceAddress() + ":"
+                        + key.getPort() + "/" +  tr.getUrl());
 
-                serviceTypeTreeNode.getChildren().add(serviceDetails);
+                Node lastNode = recurseToolTree(tr.getUrl(),serviceTypeTreeNode);
 
-                LeafNode child = new LeafNode("Go To Service Definition ...", attr);
-
-                serviceDetails.getChildren().add(new LeafNodeObject(child));
+                LeafNode child = new LeafNode(tr.getDisplayName(), attr);
+                lastNode.getChildren().add(new LeafNodeObject(child));
             }
         }
 
         return tree.doSerializeJSON();
     }
 
+
+    private Node recurseToolTree(String toolURL, Node thisLevel) {
+
+        int index = toolURL.indexOf("/");
+
+        if (index!=-1) {
+            String mylevel= toolURL.substring(0,index);
+            String rest= toolURL.substring(index+1); // rest of url
+
+            Node nextLevel = new Node(mylevel);
+            thisLevel.getChildren().add(nextLevel);
+            recurseToolTree(rest,nextLevel);
+        }
+        return thisLevel;
+    }
 }

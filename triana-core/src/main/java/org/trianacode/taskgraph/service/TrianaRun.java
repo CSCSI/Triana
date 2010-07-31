@@ -123,7 +123,11 @@ public class TrianaRun {
      * Create and initialise a new tool table
      */
     public static void initToolTable() {
-        EngineInit.init();
+        try {
+            EngineInit.init();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     /**

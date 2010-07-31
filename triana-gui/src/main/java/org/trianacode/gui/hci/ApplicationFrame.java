@@ -191,7 +191,7 @@ import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImp;
-import org.trianacode.taskgraph.util.EngineInit;
+import org.trianacode.EngineInit;
 import org.trianacode.util.Env;
 
 

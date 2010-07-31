@@ -1,14 +1,18 @@
 package org.trianacode.http;
 
 import mil.navy.nrl.discovery.WebBootstrap;
+import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
 import mil.navy.nrl.discovery.types.ServiceTypes;
 import mil.navy.nrl.discovery.web.template.WebDefines;
 import org.thinginitself.http.HttpPeer;
+import org.trianacode.toolloading.DiscoverTools;
+import org.trianacode.toolloading.DiscoveredTools;
 
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
+ * Starts off the HTTP and discovery services...
+ *
  * User: scmijt
  * Date: Jul 30, 2010
  * Time: 12:06:44 PM
@@ -18,6 +22,8 @@ public class HTTPServices {
     static TrianaHttpServer workflowServer;
     static HttpPeer httpEngine;
     static WebBootstrap bonjourServer;
+    static DiscoveredServicesInterface discoveredServices;
+    static DiscoverTools discoverTools;
 
     public HTTPServices() {}
 
@@ -36,11 +42,32 @@ public class HTTPServices {
 
         WebDefines webDefines = new WebDefines(null,null,null,null,null);
 
+        discoveredServices = new DiscoveredTools();
+                
         try {
-            bonjourServer = new WebBootstrap(httpEngine, "TrianaServer", "triana", "Triana Bonjour Service!",
+            bonjourServer = new WebBootstrap(discoveredServices, httpEngine, "TrianaServer", "triana", "Triana Bonjour Service!",
                     "Published Services", webDefines ,st);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
+        discoverTools=new DiscoverTools(bonjourServer, discoveredServices);
+
+    }
+
+    public static TrianaHttpServer getWorkflowServer() {
+        return workflowServer;
+    }
+
+    public static HttpPeer getHttpEngine() {
+        return httpEngine;
+    }
+
+    public static WebBootstrap getBonjourServer() {
+        return bonjourServer;
+    }
+
+    public static DiscoveredServicesInterface getDiscoveredServices() {
+        return discoveredServices;
     }
 }

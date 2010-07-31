@@ -565,7 +565,11 @@ public class CommandLineExec extends TrianaExec {
         }
 
         try {
-            EngineInit.init();
+            try {
+                EngineInit.init();
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
 
             XMLReader reader = new XMLReader(new FileReader(file));
             CommandLineExec exec = new CommandLineExec("CommandLineExec <xmlfile> ", reader.readComponent());
