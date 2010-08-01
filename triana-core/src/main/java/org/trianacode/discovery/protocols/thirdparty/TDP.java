@@ -1,4 +1,4 @@
-package org.trianacode.discovery.protocols.tdp;
+package org.trianacode.discovery.protocols.thirdparty;
 
 /**
  * Interface for a Triana discovery protocol

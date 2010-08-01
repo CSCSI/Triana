@@ -1,4 +1,4 @@
-package org.trianacode.discovery.protocols.imp.trianatools;
+package org.trianacode.discovery.protocols.tdp.imp.trianatools;
 
 import org.thinginitself.http.HttpPeer;
 import org.trianacode.discovery.protocols.tdp.TDPRequest;
