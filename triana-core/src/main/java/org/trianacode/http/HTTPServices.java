@@ -43,7 +43,8 @@ public class HTTPServices {
         discoveredServices = new DiscoveredTools();
                 
         try {
-            bonjourServer = new WebBootstrap(discoveredServices, httpEngine, "TrianaServer", "triana", "Triana Bonjour Service!",
+            bonjourServer = new WebBootstrap(discoveredServices, httpEngine,
+                    "TrianaServer", "triana", "Triana Bonjour Service!",
                     "Published Services", webDefines ,st);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

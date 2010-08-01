@@ -1,4 +1,4 @@
-package org.trianacode.discovery.protocols;
+package org.trianacode.discovery.protocols.thirdparty;
 
 import org.trianacode.discovery.protocols.tdp.TDP;
 

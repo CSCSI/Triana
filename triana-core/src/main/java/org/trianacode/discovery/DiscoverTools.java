@@ -2,7 +2,7 @@ package org.trianacode.discovery;
 
 import mil.navy.nrl.discovery.WebBootstrap;
 import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
-import org.trianacode.discovery.protocols.ServiceTypesAndProtocols;
+import org.trianacode.discovery.protocols.thirdparty.ServiceTypesAndProtocols;
 
 /**
  * Created by IntelliJ IDEA.
