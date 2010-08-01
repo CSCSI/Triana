@@ -3,7 +3,7 @@ package org.trianacode.discovery.toolinfo;
 /**
  * Basic information required for displaying tools in the tooltree
  * 
- * User: scmijt
+ * User: Ian Taylor
  * Date: Jul 30, 2010
  * Time: 11:43:13 AM
  * To change this template use File | Settings | File Templates.

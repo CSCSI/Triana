@@ -10,13 +10,13 @@ package org.trianacode.discovery.protocols.thirdparty;
  */
 public class ProtocolMetadata {
     String description;
-    TDP protocol =null;
+    BonjourService protocol =null;
 
     ProtocolMetadata(String description) {
         this.description = description;
     }
 
-    public ProtocolMetadata(String description, TDP protocol) {
+    public ProtocolMetadata(String description, BonjourService protocol) {
         this.description = description;
         this.protocol = protocol;
     }
@@ -30,11 +30,11 @@ public class ProtocolMetadata {
         this.description = description;
     }
 
-    public TDP getProtocol() {
+    public BonjourService getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(TDP protocol) {
+    public void setProtocol(BonjourService protocol) {
         this.protocol = protocol;
     }
 }

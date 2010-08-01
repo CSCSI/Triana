@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
- * A base implementation of a Triana Discovery Protocol (TDP) server, which
+ * A base implementation of a Triana Discovery Protocol (BonjourService) server, which
  * handles requests and delegates the handling of those requests to the
  * specific protocol.
  *
- * User: scmijt
+ * User: Ian Taylor
  * Date: Jul 30, 2010
  * Time: 11:54:53 AM
  * To change this template use File | Settings | File Templates.

@@ -24,7 +24,7 @@ public class ServiceTypesAndProtocols {
      * @param description
      * @param protocol
      */
-    public void registerServiceType(String type, String description, TDP protocol) {
+    public void registerServiceType(String type, String description, BonjourService protocol) {
         types.put(type, new ProtocolMetadata(description, protocol));
     }
 
@@ -45,7 +45,7 @@ public class ServiceTypesAndProtocols {
      * @param type
      * @return
      */
-    public TDP getProtocolFor(String type) {
+    public BonjourService getProtocolFor(String type) {
         ProtocolMetadata metadata = types.get(type);
         if (metadata!=null)
             return metadata.getProtocol();
