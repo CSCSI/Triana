@@ -60,7 +60,6 @@
 import java.util.logging.Logger;
 
 import org.trianacode.gui.hci.ApplicationFrame;
-import org.trianacode.http.Epicenter;
 
 /**
  * Main Launcher Class
@@ -70,8 +69,6 @@ import org.trianacode.http.Epicenter;
  */
 public class Triana {
     static Logger log = Logger.getLogger("Triana");
-
-    static Epicenter epicenter;
 
     /**
      * the triana arguments
@@ -86,7 +83,6 @@ public class Triana {
      */
     public static void main(String[] args) throws Exception {
 
-        epicenter = new Epicenter();       // Just a place to find things easier ....  Change as you feel fit.
 
         // ToDo: should have factory code to put OS specifics in
         /*String myOSName = Env.os();
