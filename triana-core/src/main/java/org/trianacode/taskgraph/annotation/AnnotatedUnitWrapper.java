@@ -69,7 +69,11 @@ public class AnnotatedUnitWrapper extends Unit {
 
         setDefaultOutputNodes(outputs.length);
         setMinimumOutputNodes(0);
-        setMaximumOutputNodes(Integer.MAX_VALUE);
+        if (outputs.length == 0) {
+            setMaximumOutputNodes(0);
+        } else {
+            setMaximumOutputNodes(Integer.MAX_VALUE);
+        }
         StringBuilder sb = new StringBuilder();
         try {
             for (String s : params.keySet()) {

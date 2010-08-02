@@ -72,7 +72,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.trianacode.http.HTTPServices;
-import org.trianacode.http.TrianaHttpServer;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.ParameterNode;
@@ -609,14 +608,17 @@ public class RunnableTask extends AbstractRunnableTask
         }
         catch (NotSerializableException except) {
             // TODO
+            except.printStackTrace();
             //throw(new RuntimeException(Env.getString("serializeError") + ": " + except.getMessage()));
         }
         catch (IOException except) {
             // TODO
+            except.printStackTrace();
             //throw(new RuntimeException(Env.getString("outputError") + ": " + except.getMessage()));
         }
         catch (ClassNotFoundException except) {
             // TODO
+            except.printStackTrace();
             //throw(new RuntimeException(Env.getString("outputError") + ": " + except.getMessage()));
         }
     }
@@ -693,7 +695,7 @@ public class RunnableTask extends AbstractRunnableTask
 
             WorkflowDataPacket packet = DataBus.getDataBusFor(DataBus.DataBusType.LOCAL_HTTP)
                     .addObject((Serializable) data, true);
-            
+
             HTTPServices.getWorkflowServer().addDataResource(packet.getDataLocation().getPath(), (Serializable) data);
 
             System.out.println("RunnableTask.output ENTER URL = " + packet);
