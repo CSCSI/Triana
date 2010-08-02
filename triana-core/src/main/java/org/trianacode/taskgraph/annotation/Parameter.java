@@ -1,11 +1,9 @@
 package org.trianacode.taskgraph.annotation;
 
 /**
- * An annotation to allow parameters to be defined. This annotation should be aplied to fields. In addition, setter and
- * getter methods should be supplied for accessing and mutating the field. These methods should follow standard bean
- * conventions.
+ * An annotation to allow parameters to be defined. This annotation should be applied to fields.
  * <p/>
- * A parameter can be given a name. If one is not given then the name of the field is used.
+ * no gui will be generated
  *
  * @author Andrew Harrison
  * @version 1.0.0 Jul 11, 2010
@@ -15,5 +13,4 @@ package org.trianacode.taskgraph.annotation;
 @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 public @interface Parameter {
 
-    String name() default "";
 }

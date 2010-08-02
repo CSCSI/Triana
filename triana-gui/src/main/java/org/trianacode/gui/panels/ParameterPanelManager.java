@@ -273,9 +273,9 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
 
         GUICreaterPanel panel = ((GUICreaterPanel) paramPanel);
         for (int i = 0; i < panel.getRows(); ++i) {
-            String rowValue = (String) task.getParameter(panel.getRow(i).getParameterName());
+            Object rowValue = task.getParameter(panel.getRow(i).getParameterName());
             if (rowValue != null) {
-                panel.getRow(i).setValue(rowValue);
+                panel.getRow(i).setValue(rowValue.toString());
             } else {
                 String msg = "Error generating panel for: " + task.getToolName() + "\n"
                         + "Unit: " + task.getProxy().toString() + "\n"

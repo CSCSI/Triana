@@ -60,23 +60,28 @@
 package org.trianacode.gui.panels;
 
 
+import java.awt.Container;
+import java.awt.Window;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.event.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 
 /**
  * A base panel that provides methods for updating task parameters.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created Today's date
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public abstract class ParameterPanel extends JPanel
         implements WindowButtonConstants, TaskListener {
@@ -92,8 +97,8 @@ public abstract class ParameterPanel extends JPanel
     private JMenuBar menubar;
 
     /**
-     * a hashtable of parameter changes that are not yet commited. These changes are committed by
-     * seleting apply or ok on the window.
+     * a hashtable of parameter changes that are not yet commited. These changes are committed by seleting apply or ok
+     * on the window.
      */
     private Hashtable params = new Hashtable();
 
@@ -112,8 +117,9 @@ public abstract class ParameterPanel extends JPanel
 
 
     public void setTask(Task task) {
-        if (this.task != null)
+        if (this.task != null) {
             throw (new RuntimeException("Error: Task for " + getClass().getName() + " already set"));
+        }
 
         this.task = task;
         task.addTaskListener(this);
@@ -131,17 +137,19 @@ public abstract class ParameterPanel extends JPanel
      * Sets a paremeter in the associated task to the specified value.
      * <p/>
      * If the panel is attached to a group then parameter names of the form taskname.paramname or
-     * groupname.taskname.paramname will set the parameter within the specified sub task. If the
-     * panel isn't attached to a group then the groupname.taskname section is ignored.
+     * groupname.taskname.paramname will set the parameter within the specified sub task. If the panel isn't attached to
+     * a group then the groupname.taskname section is ignored.
      *
      * @param name  the name of the parameter to be set
      * @param value the value the parameter is set to
      */
     public void setParameter(String name, Object value) {
-        params.put(name, value);
+        if (name != null && value != null) {
+            params.put(name, value);
 
-        if (isAutoCommit()) {
-            getTask(name).setParameter(getParameterName(name), value);
+            if (isAutoCommit()) {
+                getTask(name).setParameter(getParameterName(name), value);
+            }
         }
     }
 
@@ -153,8 +161,9 @@ public abstract class ParameterPanel extends JPanel
     public void removeParameter(String name) {
         params.put(name, new NullToken());
 
-        if (isAutoCommit())
+        if (isAutoCommit()) {
             getTask(name).removeParameter(getParameterName(name));
+        }
     }
 
     /**
@@ -166,10 +175,11 @@ public abstract class ParameterPanel extends JPanel
     public Object getParameter(String name) {
         Task task = getTask(name);
 
-        if (task != null)
+        if (task != null) {
             return task.getParameter(getParameterName(name));
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -181,16 +191,17 @@ public abstract class ParameterPanel extends JPanel
     public boolean isParameterName(String name) {
         Task task = getTask(name);
 
-        if (task != null)
+        if (task != null) {
             return task.isParameterName(getParameterName(name));
-        else
+        } else {
             return false;
+        }
     }
 
 
     /**
-     * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by default. It should be
-     * overridden if the panel has different preferred set of buttons.
+     * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by default. It should be overridden if the
+     * panel has different preferred set of buttons.
      *
      * @return the panels preferred button combination (as defined in Windows Constants).
      */
@@ -199,8 +210,8 @@ public abstract class ParameterPanel extends JPanel
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel prefers to be
-     * allowed to be hidden behind the main triana window.
+     * This method returns true by default. It should be overridden if the panel prefers to be allowed to be hidden
+     * behind the main triana window.
      *
      * @return true by default
      */
@@ -209,16 +220,16 @@ public abstract class ParameterPanel extends JPanel
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel does not want the
-     * user to be able to change the auto commit state
+     * This method returns true by default. It should be overridden if the panel does not want the user to be able to
+     * change the auto commit state
      */
     public boolean isAutoCommitVisible() {
         return true;
     }
 
     /**
-     * This method returns false by default. It should be overridden if the panel wants parameter
-     * changes to be commited automatically
+     * This method returns false by default. It should be overridden if the panel wants parameter changes to be commited
+     * automatically
      */
     public boolean isAutoCommitByDefault() {
         return false;
@@ -243,30 +254,29 @@ public abstract class ParameterPanel extends JPanel
      * @return true if parameters are automatically committed
      */
     public boolean isAutoCommit() {
-        if (window != null)
+        if (window != null) {
             return window.isAutoCommit();
-        else
+        } else {
             return isAutoCommitByDefault();
+        }
     }
 
 
     /**
-     * This method is called when the task is set for this panel. It is overridden to create the
-     * panel layout.
+     * This method is called when the task is set for this panel. It is overridden to create the panel layout.
      */
     public abstract void init();
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset all the panels
-     * components to the values specified by the associated task, e.g. a component representing a
-     * parameter called "noise" should be set to the value returned by a
-     * getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public abstract void reset();
 
     /**
-     * This method is called when the panel is finished with. It should dispose of any components
-     * (e.g. windows) used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public abstract void dispose();
 
@@ -275,24 +285,25 @@ public abstract class ParameterPanel extends JPanel
      * Disposes of the parameter panel, calls dispose on the subclassing panel
      */
     public void disposePanel() {
-        if (task != null)
+        if (task != null) {
             task.removeTaskListener(this);
+        }
 
         dispose();
     }
 
 
     /**
-     * This method is called when a parameter in the associated task is updated. It should be
-     * overridden to update the GUI in response to the parameter update
+     * This method is called when a parameter in the associated task is updated. It should be overridden to update the
+     * GUI in response to the parameter update
      */
     public void parameterUpdate(String paramname, Object value) {
     }
 
 
     /**
-     * Called when the ok button is clicked on the parameter window. Calls applyClicked by default
-     * to commit any parameter changes.
+     * Called when the ok button is clicked on the parameter window. Calls applyClicked by default to commit any
+     * parameter changes.
      */
     public void okClicked() {
         commitParameterChanges();
@@ -300,8 +311,7 @@ public abstract class ParameterPanel extends JPanel
     }
 
     /**
-     * Called when the cancel button is clicked on the parameter window. Parameter changes are not
-     * commited.
+     * Called when the cancel button is clicked on the parameter window. Parameter changes are not commited.
      */
     public void cancelClicked() {
         reset();
@@ -309,8 +319,7 @@ public abstract class ParameterPanel extends JPanel
     }
 
     /**
-     * Called when the apply button is clicked on the parameter window. Commits any parameter
-     * changes.
+     * Called when the apply button is clicked on the parameter window. Commits any parameter changes.
      */
     public void applyClicked() {
         commitParameterChanges();
@@ -335,10 +344,11 @@ public abstract class ParameterPanel extends JPanel
                 task = getTask(key);
                 paramname = getParameterName(key);
 
-                if (value instanceof NullToken)
+                if (value instanceof NullToken) {
                     task.removeParameter(paramname);
-                else
+                } else {
                     task.setParameter(paramname, value);
+                }
             }
         }
     }
@@ -359,19 +369,24 @@ public abstract class ParameterPanel extends JPanel
         String[] parts = key.split("\\.");
         Task task = getTask();
 
-        if (!(task instanceof TaskGraph))
+        if (!(task instanceof TaskGraph)) {
             return task;
+        }
 
-        if (parts.length == 1)
+        if (parts.length == 1) {
             return task;
-        else {
-            for (int count = 0; count < parts.length - 1; count++)
-                if (!(task instanceof TaskGraph))
-                    throw(new RuntimeException("Invalid parameter key: " + key + " (" + task.getToolName() + " not a group task)"));
-                else if (((TaskGraph) task).getTask(parts[count]) == null)
-                    throw(new RuntimeException("Invalid parameter key: " + key + " (" + task.getToolName() + " not found in group)"));
-                else
+        } else {
+            for (int count = 0; count < parts.length - 1; count++) {
+                if (!(task instanceof TaskGraph)) {
+                    throw (new RuntimeException(
+                            "Invalid parameter key: " + key + " (" + task.getToolName() + " not a group task)"));
+                } else if (((TaskGraph) task).getTask(parts[count]) == null) {
+                    throw (new RuntimeException(
+                            "Invalid parameter key: " + key + " (" + task.getToolName() + " not found in group)"));
+                } else {
                     task = ((TaskGraph) task).getTask(parts[count]);
+                }
+            }
         }
 
         return task;
@@ -384,13 +399,15 @@ public abstract class ParameterPanel extends JPanel
     protected Window getWindow() {
         Container parent = getParent();
 
-        while ((parent != null) && (!(parent instanceof Window)))
+        while ((parent != null) && (!(parent instanceof Window))) {
             parent = parent.getParent();
+        }
 
-        if (parent != null)
+        if (parent != null) {
             return (Window) parent;
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -409,8 +426,7 @@ public abstract class ParameterPanel extends JPanel
 
 
     /**
-     * Called when the core properties of a task change i.e. its name, whether it is running
-     * continuously etc.
+     * Called when the core properties of a task change i.e. its name, whether it is running continuously etc.
      */
     public void taskPropertyUpdate(TaskPropertyEvent event) {
     }
@@ -425,9 +441,7 @@ public abstract class ParameterPanel extends JPanel
 
             if (SwingUtilities.isEventDispatchThread()) {
                 parameterUpdate(paramname, value);
-            }
-
-            else {
+            } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         parameterUpdate(paramname, value);

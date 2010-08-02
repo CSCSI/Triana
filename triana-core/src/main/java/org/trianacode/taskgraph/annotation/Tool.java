@@ -20,4 +20,6 @@ public @interface Tool {
     String displayName() default "";
 
     String displayPackage() default "";
+
+    String panelClass() default "";
 }

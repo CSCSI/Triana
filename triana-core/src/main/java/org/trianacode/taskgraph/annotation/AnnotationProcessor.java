@@ -14,17 +14,22 @@ public class AnnotationProcessor {
 
     public static AnnotatedUnitWrapper createUnit(Object annotatedObject) {
         Class annotated = annotatedObject.getClass();
+        Map<String, String> guiLines = new HashMap<String, String>();
         String name = null;
+
         String pkge = null;
+        String panelClass = null;
         Tool t = (Tool) annotated.getAnnotation(Tool.class);
         if (t == null) {
             return null;
         }
         name = t.displayName();
         pkge = t.displayPackage();
+        panelClass = t.panelClass();
+
         AnnotatedUnitWrapper wrapper = null;
         Method[] methods = annotated.getDeclaredMethods();
-        Map<String, Method[]> ps = new HashMap<String, Method[]>();
+        Map<String, Field> ps = new HashMap<String, Field>();
         for (Method method : methods) {
             Process p = method.getAnnotation(Process.class);
             if (p != null) {
@@ -45,17 +50,91 @@ public class AnnotationProcessor {
                         outputs);
             }
         }
-        Field[] fields = annotated.getFields();
+        Field[] fields = annotated.getDeclaredFields();
         for (Field field : fields) {
+            boolean hasParam = false;
+            String paramName = field.getName();
+
             Parameter param = field.getAnnotation(Parameter.class);
             if (param != null) {
-                String paramName = param.name();
-                if (paramName.isEmpty()) {
-                    paramName = field.getName();
+                hasParam = true;
+                ps.put(paramName, field);
+            }
+            if (!hasParam) {
+                TextFieldParameter textField = field.getAnnotation(TextFieldParameter.class);
+                if (textField != null) {
+                    hasParam = true;
+                    String txt = processGuiTextField(textField, field);
+                    if (txt != null) {
+                        ps.put(paramName, field);
+                        guiLines.put(paramName, txt);
+                    }
                 }
-                Method[] beans = getBeanMethods(field, annotated);
-                if (beans != null) {
-                    ps.put(paramName, beans);
+            }
+            if (!hasParam) {
+                TextAreaParameter textArea = field.getAnnotation(TextAreaParameter.class);
+                if (textArea != null) {
+                    hasParam = true;
+                    String txt = processGuiTextArea(textArea, field);
+                    if (txt != null) {
+                        ps.put(paramName, field);
+                        guiLines.put(paramName, txt);
+                    }
+                }
+            }
+            if (!hasParam) {
+                ChoiceParameter choice = field.getAnnotation(ChoiceParameter.class);
+                if (choice != null) {
+                    hasParam = true;
+                    String txt = processGuiChoice(choice, field);
+                    if (txt != null) {
+                        ps.put(paramName, field);
+                        guiLines.put(paramName, txt);
+                    }
+                }
+            }
+            if (!hasParam) {
+                SliderParameter scroll = field.getAnnotation(SliderParameter.class);
+                if (scroll != null) {
+                    hasParam = true;
+                    String txt = processGuiScroller(scroll, field);
+                    if (txt != null) {
+                        ps.put(paramName, field);
+                        guiLines.put(paramName, txt);
+                    }
+                }
+            }
+            if (!hasParam) {
+                FileParameter file = field.getAnnotation(FileParameter.class);
+                if (file != null) {
+                    hasParam = true;
+                    String txt = processGuiFile(file, field);
+                    if (txt != null) {
+                        ps.put(paramName, field);
+                        guiLines.put(paramName, txt);
+                    }
+                }
+            }
+            if (!hasParam) {
+                LabelParameter label = field.getAnnotation(LabelParameter.class);
+                if (label != null) {
+                    hasParam = true;
+                    String txt = processGuiLabel(label, field);
+                    if (txt != null) {
+                        ps.put(paramName, field);
+                        guiLines.put(paramName, txt);
+                    }
+                }
+            }
+            if (!hasParam) {
+                CheckboxParameter label = field.getAnnotation(CheckboxParameter.class);
+                if (label != null) {
+                    hasParam = true;
+                    String txt = processGuiBoolean(label, field);
+                    if (txt != null) {
+                        ps.put(paramName, field);
+                        guiLines.put(paramName, txt);
+                    }
                 }
             }
         }
@@ -63,51 +142,111 @@ public class AnnotationProcessor {
             for (String s : ps.keySet()) {
                 wrapper.addAnnotatedParameter(s, ps.get(s));
             }
+            if (guiLines.size() > 0) {
+                wrapper.setGuiLines(guiLines);
+            }
+            if (panelClass != null) {
+                wrapper.setPanelClass(panelClass);
+            }
         }
+
         return wrapper;
 
     }
 
-    private static Method[] getBeanMethods(Field field, Class cls) {
-        Class val = field.getType();
-        String name = field.getName();
-        String methodField = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
-        Method getter = null;
-        try {
-            getter = cls.getMethod("get" + methodField);
-        } catch (NoSuchMethodException e) {
+    private static String processGuiTextField(TextFieldParameter field, Field f) {
+        String title = field.title();
+        String value = field.value();
+        StringBuilder sb = new StringBuilder();
+        if (title.isEmpty()) {
+            title = f.getName();
         }
-        Method setter = null;
-        if (val.equals(boolean.class) || val.equals(Boolean.class)) {
-            try {
-                setter = cls.getMethod("is" + methodField);
-            } catch (NoSuchMethodException e) {
-                try {
-                    setter = cls.getMethod("set" + methodField);
-                } catch (NoSuchMethodException e1) {
+        sb.append(title).append(" $title ").append(f.getName()).append(" TextField ").append(value);
+        return sb.toString();
 
-                }
-            }
-        } else {
-            try {
-                setter = cls.getMethod("set" + methodField);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
-        if (setter == null || getter == null) {
-            return null;
-        }
-        if (getter.getParameterTypes().length != 0 || !getter.getReturnType().equals(val)) {
-            return null;
-        }
-        if (setter.getParameterTypes().length != 1
-                || !setter.getParameterTypes()[0].equals(val)
-                || !setter.getReturnType().equals(void.class)) {
-            return null;
-        }
-        return new Method[]{getter, setter};
+    }
 
+    private static String processGuiTextArea(TextAreaParameter field, Field f) {
+        String title = field.title();
+        String value = field.value();
+        StringBuilder sb = new StringBuilder();
+        if (title.isEmpty()) {
+            title = f.getName();
+        }
+        sb.append(title).append(" $title ").append(f.getName()).append(" TextArea ").append(value);
+        return sb.toString();
+
+    }
+
+    private static String processGuiChoice(ChoiceParameter field, Field f) {
+        String title = field.title();
+        String[] values = field.values();
+        if (values.length == 0) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        if (title.isEmpty()) {
+            title = f.getName();
+        }
+        sb.append(title).append(" $title ").append(f.getName()).append(" Choice ");
+        for (String value : values) {
+            sb.append(" ").append(value);
+        }
+        return sb.toString();
+
+    }
+
+    private static String processGuiFile(FileParameter field, Field f) {
+        String title = field.title();
+        String filename = field.filename();
+        String[] exts = field.extensions();
+        StringBuilder sb = new StringBuilder();
+        if (title.isEmpty()) {
+            title = f.getName();
+        }
+        sb.append(title).append(" $title ").append(f.getName()).append(" File ").append(filename);
+        for (String ext : exts) {
+            if (!ext.startsWith("*.")) {
+                ext = "*." + ext;
+            }
+            sb.append(" ").append(ext);
+        }
+        return sb.toString();
+
+    }
+
+    private static String processGuiScroller(SliderParameter field, Field f) {
+        String title = field.title();
+        String type = field.integer() == true ? " IntScroller " : " Scroller ";
+        StringBuilder sb = new StringBuilder();
+        if (title.isEmpty()) {
+            title = f.getName();
+        }
+        sb.append(title).append(" $title ").append(f.getName()).append(type).append(field.min()).append(" ")
+                .append(field.max()).append(" ").append(field.current());
+        return sb.toString();
+
+    }
+
+    private static String processGuiLabel(LabelParameter field, Field f) {
+        String title = field.title();
+        StringBuilder sb = new StringBuilder();
+        if (title.isEmpty()) {
+            title = f.getName();
+        }
+        sb.append(title).append(" $title ").append(f.getName()).append(" Label ");
+        return sb.toString();
+
+    }
+
+    private static String processGuiBoolean(CheckboxParameter field, Field f) {
+        String title = field.title();
+        StringBuilder sb = new StringBuilder();
+        if (title.isEmpty()) {
+            title = f.getName();
+        }
+        sb.append(title).append(" $title ").append(f.getName()).append(" Checkbox ").append(field.value());
+        return sb.toString();
 
     }
 

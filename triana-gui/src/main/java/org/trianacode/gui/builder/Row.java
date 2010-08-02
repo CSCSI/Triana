@@ -58,13 +58,8 @@
  */
 package org.trianacode.gui.builder;
 
-import org.trianacode.gui.panels.TFileChooser;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -72,19 +67,31 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+import org.trianacode.gui.panels.TFileChooser;
+import org.trianacode.util.Env;
+
 /**
- * This is a class used to represt one row of the interface builder's
- * building screen. A JTextField followed by a JComboBox and then 3
- * JTextFields.  We include here convenient methods for setting the
- * various fields and gettting to the various fields.
+ * This is a class used to represt one row of the interface builder's building screen. A JTextField followed by a
+ * JComboBox and then 3 JTextFields.  We include here convenient methods for setting the various fields and gettting to
+ * the various fields.
+ * <p/>
+ * <p> Its more general use though is in GUICreaterPanel where it is again used to store each row of the user
+ * interface's information.
  *
- * <p> Its more general use though is in GUICreaterPanel where it
- * is again used to store each row of the user interface's information.
- *
- * @author      Ian Taylor
- * @created     24 Nov 1999
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class Row extends JPanel implements ActionListener {
 
@@ -95,6 +102,7 @@ public class Row extends JPanel implements ActionListener {
     public static final int CHOICE = 5;
     public static final int FILE = 6;
     public static final int LABEL = 7;
+    public static final int TEXTAREA = 8;
 
     private int type;
 
@@ -114,6 +122,8 @@ public class Row extends JPanel implements ActionListener {
     private JButton browse;
     private Filter filefilter;
 
+    private Class clazz;
+
     /**
      * used for textfield, checkbox and choice parameter input
      */
@@ -125,92 +135,101 @@ public class Row extends JPanel implements ActionListener {
     }
 
     /**
-     * Each line given to a Row in order to initialise it is given in
-     * the following format :-</p>
-     *
+     * Each line given to a Row in order to initialise it is given in the following format :-</p>
+     * <p/>
      * <pre>this is the title $title paramName GUItype parameters</pre>
-     *
+     * <p/>
      * This function retruns the title of the parameter
      */
     public static Vector<String> getParTitle(Vector<String> sv) {
         Vector<String> s = new Vector<String>();
-        for (int i = 0; i < sv.size(); ++i)
-            if (!sv.get(i).equalsIgnoreCase("$title"))
+        for (int i = 0; i < sv.size(); ++i) {
+            if (!sv.get(i).equalsIgnoreCase("$title")) {
                 s.addElement(sv.get(i));
-            else
+            } else {
                 return s;
+            }
+        }
 
         return new Vector<String>(); // no title yet
     }
 
     public static String getParTitleAsString(Vector<String> sv) {
         Vector<String> vec = getParTitle(sv);
-        if(vec.size() == 0) {
+        if (vec.size() == 0) {
             return "";
         }
         String s = "";
-        for (int i = 0; i < vec.size(); ++i)
+        for (int i = 0; i < vec.size(); ++i) {
             s = s + vec.get(i) + " ";
+        }
         s = s + "\n";
         return s;
 
     }
 
     /**
-     * Each line given to a Row in order to initialise it is given in
-     * the following format :-</p>
-     *
+     * Each line given to a Row in order to initialise it is given in the following format :-</p>
+     * <p/>
      * <pre>this is the title $title paramName GUItype parameters</pre>
-     *
+     * <p/>
      * This function returns everything but the title of the parameter
      */
     public static Vector<String> getRest(Vector<String> sv) {
         Vector<String> s = new Vector<String>();
         int j = 0;
-        while ((j < sv.size()) && (!sv.get(j).equalsIgnoreCase("$title")))
+        while ((j < sv.size()) && (!sv.get(j).equalsIgnoreCase("$title"))) {
             ++j;
+        }
 
         if (j == sv.size()) // no title this time
+        {
             return sv;
+        }
 
-        for (int i = j + 1; i < sv.size(); ++i)
+        for (int i = j + 1; i < sv.size(); ++i) {
             s.addElement(sv.get(i));
+        }
 
         return s;
     }
 
 
     /**
-     *  Tests if these two Row have the same type
+     * Tests if these two Row have the same type
      */
     public boolean equals(Object row) {
-        if (row instanceof Row)
-            if (((Row) row).type == type)
+        if (row instanceof Row) {
+            if (((Row) row).type == type) {
                 return true;
+            }
+        }
         return false;
     }
 
     /**
-     * @return the string representation of the type represented by
-     * this Row object
+     * @return the string representation of the type represented by this Row object
      */
     public String typeToString() {
-        if (type == SCROLLER)
+        if (type == SCROLLER) {
             return "Scroller";
-        else if (type == INTSCROLLER)
+        } else if (type == INTSCROLLER) {
             return "IntScroller";
-        else if (type == TEXTFIELD)
+        } else if (type == TEXTFIELD) {
             return "TextField";
-        else if (type == CHECKBOX)
+        } else if (type == TEXTAREA) {
+            return "TextArea";
+        } else if (type == CHECKBOX) {
             return "Checkbox";
-        else if (type == CHOICE)
+        } else if (type == CHOICE) {
             return "Choice";
-        else if (type == FILE)
+        } else if (type == FILE) {
             return "File";
-        else if (type == LABEL)
+        } else if (type == LABEL) {
             return "Label";
-        else
+        } else {
             return "undefined";
+        }
     }
 
 
@@ -223,8 +242,7 @@ public class Row extends JPanel implements ActionListener {
 
 
     /**
-     * Creates a new row for the GUI interface from the various
-     * arguments contained within a StringVector.
+     * Creates a new row for the GUI interface from the various arguments contained within a StringVector.
      */
     public void creater(Vector<String> line, GUICreaterPanel listener) {
         setLayout(new BorderLayout());
@@ -239,17 +257,22 @@ public class Row extends JPanel implements ActionListener {
             double cur = 0.0;
 
             if (line.size() > 1)  // got a min
+            {
                 min = Double.parseDouble(line.get(2));
+            }
             if (line.size() > 2)  // got a max
+            {
                 max = Double.parseDouble(line.get(3));
+            }
             if (line.size() > 3)  // got a min
+            {
                 cur = Double.parseDouble(line.get(4));
+            }
 
             if (line.get(1).equals("Scroller")) {
                 scroll = new Scroller(Scroller.FLOAT, min, max, cur);
                 type = SCROLLER;
-            }
-            else {
+            } else {
                 scroll = new Scroller(Scroller.INTEGER, min, max, cur);
                 type = INTSCROLLER;
             }
@@ -268,15 +291,15 @@ public class Row extends JPanel implements ActionListener {
 //            scroll.getScrollbar ().addChangeListener(listener);
             scroll.getDisplay().addActionListener(listener);
 
-        }
-
-        else if (line.get(1).equals("Checkbox")) {
+        } else if (line.get(1).equals("Checkbox")) {
             type = CHECKBOX;
 
             if (line.size() > 2)  // got a CHECKBOX value
+            {
                 paramcomp = new JCheckBox("", Boolean.parseBoolean(line.get(2)));
-            else
+            } else {
                 paramcomp = new JCheckBox("", false);
+            }
 
             title.setHorizontalAlignment(JLabel.RIGHT);
 
@@ -287,21 +310,20 @@ public class Row extends JPanel implements ActionListener {
             add(tmppanel, BorderLayout.WEST);
 
             ((JCheckBox) paramcomp).addItemListener(listener);
-        }
-
-        else if (line.get(1).equals("TextField")) {
+        } else if (line.get(1).equals("TextField")) {
             type = TEXTFIELD;
 
             if (line.size() > 2) { // got an element in TextField
                 String ln = "";
-                for (int i = 2; i < line.size(); ++i)
+                for (int i = 2; i < line.size(); ++i) {
                     ln += line.get(i) + " ";
+                }
                 ln = ln.trim();
 
                 paramcomp = new JTextField(ln, 20);
-            }
-            else
+            } else {
                 paramcomp = new JTextField(20);
+            }
 
             title.setHorizontalAlignment(JLabel.RIGHT);
 
@@ -313,9 +335,35 @@ public class Row extends JPanel implements ActionListener {
 
             ((JTextField) paramcomp).addActionListener(listener);
             paramcomp.addFocusListener(listener);
-        }
+        } else if (line.get(1).equals("TextArea")) {
+            type = TEXTAREA;
 
-        else if (line.get(1).equals("Choice")) {
+            if (line.size() > 2) { // got an element in TextField
+                String ln = "";
+                for (int i = 2; i < line.size(); ++i) {
+                    ln += line.get(i) + " ";
+                }
+                ln = ln.trim();
+                paramcomp = new JTextArea(5, 20);
+                ((JTextArea) paramcomp).setText(ln);
+            } else {
+                paramcomp = new JTextArea(5, 20);
+            }
+            ((JTextArea) paramcomp).setLineWrap(false);
+            ((JTextArea) paramcomp).setWrapStyleWord(true);
+            title.setHorizontalAlignment(JLabel.LEFT);
+
+            JPanel tmppanel = new JPanel(new BorderLayout());
+            tmppanel.add(title, BorderLayout.NORTH);
+            JScrollPane scroll = new JScrollPane(paramcomp, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            title.setBorder(new EmptyBorder(0, 0, 3, 0));
+            tmppanel.add(scroll, BorderLayout.CENTER);
+            tmppanel.setBorder(new EmptyBorder(0, 0, 3, 0));
+            add(tmppanel, BorderLayout.CENTER);
+
+            paramcomp.addFocusListener(listener);
+        } else if (line.get(1).equals("Choice")) {
             type = CHOICE;
 
             paramcomp = new JComboBox();
@@ -325,8 +373,9 @@ public class Row extends JPanel implements ActionListener {
                     String choice = "";
 
                     for (int count = 2; count < line.size(); count++) {
-                        if (!(choice.equals("")))
+                        if (!(choice.equals(""))) {
                             choice += " ";
+                        }
 
                         choice += line.get(count);
 
@@ -337,10 +386,11 @@ public class Row extends JPanel implements ActionListener {
                             choice = "";
                         }
                     }
-                }
-                else
-                    for (int count = 2; count < line.size(); ++count)
+                } else {
+                    for (int count = 2; count < line.size(); ++count) {
                         ((JComboBox) paramcomp).addItem(line.get(count));
+                    }
+                }
 
                 ((JComboBox) paramcomp).setSelectedItem(line.get(2));
             }
@@ -355,45 +405,48 @@ public class Row extends JPanel implements ActionListener {
             add(tmppanel, BorderLayout.WEST);
 
             ((JComboBox) paramcomp).addActionListener(listener);
-        }
-        else if (line.get(1).equals("File")) {
+        } else if (line.get(1).equals("File")) {
             type = FILE;
 
             title.setHorizontalAlignment(JLabel.RIGHT);
             paramcomp = new JTextField(20);
 
-            if ((line.size() > 2) && (!line.get(2).equals("null")))
+            if ((line.size() > 2) && (!line.get(2).equals("null"))) {
                 ((JTextField) paramcomp).setText(line.get(2));
+            }
 
             if (line.size() > 3) {
                 filefilter = new Filter();
 
-                for (int count = 3; (count < line.size()) && (filefilter != null); ++count)
-                    if (line.get(count).equals("*.*"))
+                for (int count = 3; (count < line.size()) && (filefilter != null); ++count) {
+                    if (line.get(count).equals("*.*")) {
                         filefilter = null;
-                    else {
+                    } else {
                         String entry = line.get(count);
 
-                        if (entry.lastIndexOf('.') > -1)
+                        if (entry.lastIndexOf('.') > -1) {
                             filefilter.addEnding(entry.substring(entry.lastIndexOf('.') + 1));
+                        }
                     }
+                }
             }
 
-            browse = new JButton(Env.getString("Browse"));
+            browse = new JButton(Env.getString("Select"));
             browse.addActionListener(this);
 
             JPanel parampanel = new JPanel(new BorderLayout());
             parampanel.add(paramcomp, BorderLayout.SOUTH);
 
             JPanel filepanel = new JPanel(new BorderLayout());
+            filepanel.add(title, BorderLayout.WEST);
             filepanel.add(parampanel, BorderLayout.CENTER);
             filepanel.add(browse, BorderLayout.EAST);
 
-            JPanel titlepanel = new JPanel(new BorderLayout());
-            titlepanel.add(title, BorderLayout.SOUTH);
+            //JPanel titlepanel = new JPanel(new BorderLayout());
+            //titlepanel.add(title, BorderLayout.SOUTH);
 
             JPanel tmppanel = new JPanel(new BorderLayout());
-            tmppanel.add(titlepanel, BorderLayout.CENTER);
+            //tmppanel.add(titlepanel, BorderLayout.WEST);
             tmppanel.add(filepanel, BorderLayout.EAST);
             tmppanel.setBorder(new EmptyBorder(0, 0, 3, 0));
             add(tmppanel, BorderLayout.WEST);
@@ -405,21 +458,20 @@ public class Row extends JPanel implements ActionListener {
             browse.addActionListener(listener);
             ((JTextField) paramcomp).addActionListener(listener);
             paramcomp.addFocusListener(listener);
-        }
-
-        else if (line.get(1).equals("Label")) {
+        } else if (line.get(1).equals("Label")) {
             type = LABEL;
 
-            if (line.size() > 2) { // got an element in TextField
+            if (line.size() > 2) { // got an element in Label
                 String ln = "";
-                for (int i = 2; i < line.size(); ++i)
+                for (int i = 2; i < line.size(); ++i) {
                     ln += line.get(i) + " ";
+                }
                 ln = ln.trim();
 
                 paramcomp = new JLabel(ln);
-            }
-            else
+            } else {
                 paramcomp = new JLabel();
+            }
 
             title.setHorizontalAlignment(JLabel.RIGHT);
 
@@ -435,47 +487,52 @@ public class Row extends JPanel implements ActionListener {
      * @return the value of this row as a string.
      */
     public String getValue() {
-        if (type == INTSCROLLER)
+        if (type == INTSCROLLER) {
             return scroll.getDisplay().getText();
-        else if (type == SCROLLER)
+        } else if (type == SCROLLER) {
             return scroll.getDisplay().getText();
-        else if (type == TEXTFIELD)
+        } else if (type == TEXTFIELD) {
             return ((JTextField) paramcomp).getText();
-        else if (type == CHECKBOX)
+        } else if (type == TEXTAREA) {
+            return ((JTextArea) paramcomp).getText();
+        } else if (type == CHECKBOX) {
             return String.valueOf(((JCheckBox) paramcomp).isSelected());
-        else if (type == CHOICE)
+        } else if (type == CHOICE) {
             return (String) ((JComboBox) paramcomp).getSelectedItem();
-        else if (type == FILE)
+        } else if (type == FILE) {
             return ((JTextField) paramcomp).getText();
-        else if (type == LABEL)
+        } else if (type == LABEL) {
             return ((JLabel) paramcomp).getText();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
      * Sets the value for this particular Row.
      */
     public void setValue(String value) {
-        if (type == SCROLLER)
+        if (type == SCROLLER) {
             scroll.setValue(Double.parseDouble(value));
-        else if (type == INTSCROLLER)
-            scroll.setValue(Double.parseDouble(value));
-        else if (type == CHECKBOX)
+        } else if (type == INTSCROLLER) {
+            scroll.setValue(Integer.parseInt(value));
+        } else if (type == CHECKBOX) {
             ((JCheckBox) paramcomp).setSelected(Boolean.parseBoolean(value));
-        else if (type == TEXTFIELD)
+        } else if (type == TEXTFIELD) {
             ((JTextField) paramcomp).setText(value);
-        else if (type == CHOICE)
+        } else if (type == TEXTAREA) {
+            ((JTextArea) paramcomp).setText(value);
+        } else if (type == CHOICE) {
             ((JComboBox) paramcomp).setSelectedItem(value);
-        else if (type == FILE)
+        } else if (type == FILE) {
             ((JTextField) paramcomp).setText(value);
-        else if (type == LABEL)
+        } else if (type == LABEL) {
             ((JLabel) paramcomp).setText(value);
+        }
     }
 
     /**
-     * @return the parameter name for this row i.e. what parameter
-     * this row is used to edit.
+     * @return the parameter name for this row i.e. what parameter this row is used to edit.
      */
     public String getParameterName() {
         return param;
@@ -486,16 +543,17 @@ public class Row extends JPanel implements ActionListener {
      * @return true if this row uses the specified component
      */
     public boolean containsComponent(Component comp) {
-        if ((comp != null) && (comp == paramcomp))
+        if ((comp != null) && (comp == paramcomp)) {
             return true;
-        else if ((scroll != null) && (comp == scroll.getScrollbar()))
+        } else if ((scroll != null) && (comp == scroll.getScrollbar())) {
             return true;
-        else if ((scroll != null) && (comp == scroll.getDisplay()))
+        } else if ((scroll != null) && (comp == scroll.getDisplay())) {
             return true;
-        else if ((browse != null) && (comp == browse))
+        } else if ((browse != null) && (comp == browse)) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -503,16 +561,18 @@ public class Row extends JPanel implements ActionListener {
             TFileChooser chooser = new TFileChooser(Env.DATA_DIRECTORY);
             File current = new File(((JTextField) paramcomp).getText());
 
-            if (current.isDirectory())
+            if (current.isDirectory()) {
                 chooser.setCurrentDirectory(current);
-            else if (current.exists())
+            } else if (current.exists()) {
                 chooser.setSelectedFile(current);
+            }
 
             chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             chooser.setMultiSelectionEnabled(false);
 
-            if (filefilter != null)
+            if (filefilter != null) {
                 chooser.setFileFilter(filefilter);
+            }
 
             int retval = chooser.showDialog(this, Env.getString("OK"));
 
@@ -533,10 +593,11 @@ public class Row extends JPanel implements ActionListener {
         public void addEnding(String ending) {
             endings.add(ending);
 
-            if (description.equals(""))
+            if (description.equals("")) {
                 description = "*." + ending;
-            else
+            } else {
                 description = description + " *." + ending;
+            }
         }
 
 
@@ -548,8 +609,9 @@ public class Row extends JPanel implements ActionListener {
             Iterator iter = endings.iterator();
             boolean accept = file.isDirectory();
 
-            while (iter.hasNext() && (!accept))
+            while (iter.hasNext() && (!accept)) {
                 accept = file.getName().endsWith((String) iter.next());
+            }
 
             return accept;
         }
