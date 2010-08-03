@@ -15,6 +15,8 @@ package org.trianacode.taskgraph.annotation;
  * the input nodes.
  * <p/>
  * If gather is used, the inputs are aggregated into an array or List and passed to the method.
+ * <p/>
+ * Parameters that are changed during the execution of the method are updated via the setParameter() method.
  *
  * @author Andrew Harrison
  * @version 1.0.0 Jul 10, 2010
