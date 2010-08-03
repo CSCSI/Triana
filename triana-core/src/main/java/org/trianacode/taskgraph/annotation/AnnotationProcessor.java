@@ -2,7 +2,9 @@ package org.trianacode.taskgraph.annotation;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,11 +35,29 @@ public class AnnotationProcessor {
         for (Method method : methods) {
             Process p = method.getAnnotation(Process.class);
             if (p != null) {
+                boolean aggr = p.gather();
+                System.out.println("AnnotationProcessor.createUnit gather:" + aggr);
+                boolean willAggr = false;
                 Class[] params = method.getParameterTypes();
-                String[] inputs = new String[params.length];
-                for (int i = 0; i < params.length; i++) {
-                    Class param = params[i];
-                    inputs[i] = convert(param);
+                System.out.println("AnnotationProcessor.createUnit parameters:" + params.length);
+                String[] inputs = null;
+                if (aggr && params.length == 1) {
+                    Class coll = params[0];
+                    if (coll.isArray()) {
+                        inputs = new String[]{convert(coll.getComponentType())};
+                        willAggr = true;
+                    } else if (Collection.class.isAssignableFrom(coll) || coll.equals(List.class)) {
+                        inputs = new String[]{"java.lang.Object"};
+                        willAggr = true;
+                    }
+                    System.out.println("AnnotationProcessor.createUnit created aggregated input type:" + inputs[0]);
+                }
+                if (inputs == null) {
+                    inputs = new String[params.length];
+                    for (int i = 0; i < params.length; i++) {
+                        Class param = params[i];
+                        inputs[i] = convert(param);
+                    }
                 }
                 String[] outputs;
                 Class ret = method.getReturnType();
@@ -47,7 +67,8 @@ public class AnnotationProcessor {
                     outputs = new String[]{convert(ret)};
                 }
                 wrapper = new AnnotatedUnitWrapper(name, pkge, annotatedObject, method, inputs,
-                        outputs);
+                        outputs, willAggr);
+                break;
             }
         }
         Field[] fields = annotated.getDeclaredFields();

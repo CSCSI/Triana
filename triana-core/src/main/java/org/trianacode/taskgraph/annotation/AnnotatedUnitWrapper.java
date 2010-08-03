@@ -22,11 +22,13 @@ public class AnnotatedUnitWrapper extends Unit {
     private String[] outputs;
     private Map<String, String> guiLines = new HashMap<String, String>();
     private String panelClass = null;
+    private boolean aggregate = false;
+    private boolean isArray = false;
 
     private Map<String, Field> params = new HashMap<String, Field>();
 
     public AnnotatedUnitWrapper(String name, String pkge, Object annotated, Method process, String[] inputs,
-                                String[] outputs) {
+                                String[] outputs, boolean aggregate) {
         setToolName(annotated.getClass().getSimpleName());
         setToolPackage(getPackageName(annotated.getClass().getName()));
         if (name != null) {
@@ -43,6 +45,22 @@ public class AnnotatedUnitWrapper extends Unit {
         this.process = process;
         this.inputs = inputs;
         this.outputs = outputs;
+        this.aggregate = aggregate;
+        for (String input : inputs) {
+            System.out.println("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
+        }
+        for (String output : outputs) {
+            System.out.println("AnnotatedUnitWrapper.AnnotatedUnitWrapper OUTPUT:" + output);
+        }
+        if (aggregate) {
+            Class[] clss = process.getParameterTypes();
+            if (clss.length == 1) {
+                Class cls = clss[0];
+                if (cls.isArray()) {
+                    isArray = true;
+                }
+            }
+        }
     }
 
     public void setPanelClass(String panelClass) {
@@ -53,10 +71,6 @@ public class AnnotatedUnitWrapper extends Unit {
         this.guiLines = map;
     }
 
-    public void addGuiLine(String field, String guiLine) {
-        this.guiLines.put(field, guiLine);
-    }
-
     public void addAnnotatedParameter(String name, Field f) {
         f.setAccessible(true);
         params.put(name, f);
@@ -65,8 +79,11 @@ public class AnnotatedUnitWrapper extends Unit {
     public void init() {
         setDefaultInputNodes(inputs.length);
         setMinimumInputNodes(inputs.length);
-        setMaximumInputNodes(inputs.length);
-
+        if (aggregate) {
+            setMaximumInputNodes(Integer.MAX_VALUE);
+        } else {
+            setMaximumInputNodes(inputs.length);
+        }
         setDefaultOutputNodes(outputs.length);
         setMinimumOutputNodes(0);
         if (outputs.length == 0) {
@@ -181,12 +198,59 @@ public class AnnotatedUnitWrapper extends Unit {
 
     @Override
     public void process() throws Exception {
-        List<Object> objects = new ArrayList<Object>();
-        for (int count = 0; count < getInputNodeCount(); count++) {
-            objects.add(getInputAtNode(count));
+        Class[] clss = process.getParameterTypes();
+
+        List<Object> ins = new ArrayList<Object>();
+        if (aggregate) {
+            for (int count = 0; count < getInputNodeCount(); count++) {
+                Object o = getInputAtNode(count);
+                ins.add(o);
+            }
+        } else {
+            for (int count = 0; count < getInputNodeCount(); count++) {
+                Object o = getInputAtNode(count);
+                if (clss.length >= count) {
+                    if (clss[count].isAssignableFrom(o.getClass())) {
+                        ins.add(o);
+                    } else {
+                        throw new Exception("class is not assignable");
+                    }
+                } else {
+                    throw new Exception("parameter length is less than inputs");
+                }
+            }
+        }
+        Object[] input = null;
+        if (aggregate) {
+            if (isArray) {
+                input = new Object[]{ins.toArray(new Object[ins.size()])};
+            } else { // it's a list or a collection
+                input = new Object[]{ins};
+            }
+        } else {
+            input = ins.toArray(new Object[ins.size()]);
         }
 
-        Object ret = process.invoke(annotated, objects.toArray(new Object[objects.size()]));
+        Map<String, Object> currentParams = new HashMap<String, Object>();
+        for (String s : params.keySet()) {
+            currentParams.put(s, params.get(s).get(annotated));
+        }
+        Object ret = process.invoke(annotated, input);
+        for (String s : currentParams.keySet()) {
+            Object param = currentParams.get(annotated);
+            Object now = params.get(s).get(annotated);
+            if (now != null) {
+                if (!now.equals(param)) {
+                    setParameter(s, now);
+                }
+            } else {
+                if (param != null) {
+                    if (!now.equals(param)) {
+                        setParameter(s, now);
+                    }
+                }
+            }
+        }
         if (ret != null) {
             output(ret);
         }

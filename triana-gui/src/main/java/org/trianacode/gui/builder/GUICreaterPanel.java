@@ -174,7 +174,7 @@ public class GUICreaterPanel extends ParameterPanel
             row = getRowForParameter(paramname);
 
             if ((row != null) && (getTask().getParameter(paramname) != null)) {
-                row.setValue((String) getTask().getParameter(paramname));
+                row.setValue(getTask().getParameter(paramname).toString());
             }
         }
     }
