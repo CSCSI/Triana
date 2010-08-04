@@ -239,6 +239,11 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                 }
             } else {
                 toolBoxItems.remove(selected);
+                try {
+                    Toolboxes.saveToolboxes(tools);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
 
         }
