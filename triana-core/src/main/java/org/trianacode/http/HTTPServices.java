@@ -19,8 +19,6 @@ import org.trianacode.discovery.DiscoveredTools;
 public class HTTPServices {
     static TrianaHttpServer workflowServer;
     static HttpPeer httpEngine;
-    static WebBootstrap bonjourServer;
-    static DiscoveredServicesInterface discoveredServices;
     static DiscoverTools discoverTools;
 
     public HTTPServices() {}
@@ -34,24 +32,7 @@ public class HTTPServices {
 
         httpEngine =  workflowServer.getHTTPPeerInstance();
 
-        ServiceTypes st = new ServiceTypes();
-
-        st.registerServiceType("http._tcp", "HTTP is cool....");
-
-        WebDefines webDefines = new WebDefines(null,null,null,null,null);
-
-        discoveredServices = new DiscoveredTools();
-                
-        try {
-            bonjourServer = new WebBootstrap(discoveredServices, httpEngine,
-                    "TrianaServer", "triana", "Triana Bonjour Service!",
-                    "Published Services", webDefines ,st);
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        discoverTools=new DiscoverTools(bonjourServer, discoveredServices);
-
+        discoverTools=new DiscoverTools(httpEngine);
     }
 
     public static TrianaHttpServer getWorkflowServer() {
@@ -62,11 +43,4 @@ public class HTTPServices {
         return httpEngine;
     }
 
-    public static WebBootstrap getBonjourServer() {
-        return bonjourServer;
-    }
-
-    public static DiscoveredServicesInterface getDiscoveredServices() {
-        return discoveredServices;
-    }
 }

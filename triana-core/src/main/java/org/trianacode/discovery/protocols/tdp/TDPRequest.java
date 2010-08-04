@@ -30,7 +30,7 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 public class TDPRequest implements Serializable {
-    enum Request {GET_TOOLS_LIST, GET_UPDATED_TOOL_LIST, RESOLVE_TOOL_LIST}
+    public static enum Request {GET_TOOLS_LIST, GET_UPDATED_TOOL_LIST, RESOLVE_TOOL_LIST}
 
 
     Request request;
@@ -42,5 +42,9 @@ public class TDPRequest implements Serializable {
      */
     public TDPRequest(Request request) {
         this.request = request;
+    }
+
+    public Request getRequest() {
+        return request;
     }
 }

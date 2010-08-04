@@ -7,6 +7,7 @@ import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableObject;
+import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.http.HTTPServices;
 
 import java.io.IOException;
@@ -23,12 +24,12 @@ import java.io.ObjectInputStream;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class TDPServer extends Resource {
-    ProtoSD discovery;
+
+    public static String command = "tdp";
 
     public TDPServer(HttpPeer httpPeer) {
-        super("remotecontrol", Http.Method.GET);
+        super(command, Http.Method.GET);
         httpPeer.addTarget(this);
-        discovery = HTTPServices.getBonjourServer().getDiscovery();
     }
 
     public void onPost(RequestContext context) {

@@ -1,5 +1,7 @@
 package org.trianacode.discovery.toolinfo;
 
+import java.net.URL;
+
 /**
  * Basic information required for displaying tools in the tooltree
  * 
@@ -15,14 +17,14 @@ public class ToolMetadata {
 
     // url for the unit.
     
-    private String url;
+    private URL url;
 
     // Triana unit class that will wrap this unit - if null then it is assumed
     // that this unit is a Triana unit and a wrapper is not needed
 
     private Class unitWrapper;
 
-    public ToolMetadata(String toolName, String displayName, String url, Class unitWrapper) {
+    public ToolMetadata(String toolName, String displayName, URL url, Class unitWrapper) {
         this.toolName = toolName;
         this.displayName = displayName;
         this.url = url;
@@ -37,11 +39,21 @@ public class ToolMetadata {
         return displayName;
     }
 
-    public String getUrl() {
+    public URL getUrl() {
         return url;
     }
 
     public Class getUnitWrapper() {
         return unitWrapper;
+    }
+
+    public String toString() {
+        StringBuffer toolinfo = new StringBuffer();
+        toolinfo.append("Tool Name: " + toolName + "\n");
+        toolinfo.append("Display Name: " + displayName + "\n");
+        toolinfo.append("Tool URL: " + url + "\n");
+        toolinfo.append("Tool wrapper: " + unitWrapper + "\n");
+
+        return toolinfo.toString();
     }
 }

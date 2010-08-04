@@ -24,8 +24,10 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
     private Hashtable<ServiceInfoEndpoint,List> tools;
 
     private List<ServiceInfoEndpoint> protocols;
+    DiscoverTools discoverTools;
 
-    public DiscoveredTools() {
+    public DiscoveredTools(DiscoverTools discoverTools) {
+        this.discoverTools=discoverTools;
         tools = new Hashtable<ServiceInfoEndpoint ,List>();
         protocols=new ArrayList<ServiceInfoEndpoint>();
     }
@@ -33,6 +35,15 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
     public void addService(ServiceInfoEndpoint serviceInfoEndpoint) {
         if(!protocols.contains(serviceInfoEndpoint))
             protocols.add(serviceInfoEndpoint);
+    }
+
+
+    public Hashtable<ServiceInfoEndpoint, List> getTools() {
+        return tools;
+    }
+
+    public List<ServiceInfoEndpoint> getProtocols() {
+        return protocols;
     }
 
     public void removeService(ServiceInfo serviceInfo) {
@@ -162,7 +173,7 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
                 Attribute attr = new Attribute(key.getServiceAddress() + ":"
                         + key.getPort() + "/" +  tr.getUrl());
 
-                Node lastNode = recurseToolTree(tr.getUrl(),serviceTypeTreeNode);
+                Node lastNode = recurseToolTree(tr.getUrl().getPath(),serviceTypeTreeNode);
 
                 LeafNode child = new LeafNode(tr.getDisplayName(), attr);
                 lastNode.getChildren().add(new LeafNodeObject(child));

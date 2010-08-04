@@ -23,7 +23,7 @@ public class ToolData extends ToolMetadata {
     Object[] outputTypes;
     String popUpDescription;
 
-    public ToolData(String toolName, String displayName, String url, Class unitWrapper) {
+    public ToolData(String toolName, String displayName, URL url, Class unitWrapper) {
         super(toolName, displayName, url, unitWrapper);
     }
 
