@@ -7,6 +7,7 @@ import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableObject;
+import org.thinginitself.streamable.StreamableString;
 import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.http.HTTPServices;
 
@@ -28,7 +29,8 @@ public abstract class TDPServer extends Resource {
     public static String command = "tdp";
 
     public TDPServer(HttpPeer httpPeer) {
-        super(command, Http.Method.GET);
+        super(command, Http.Method.POST);
+        System.out.println("TDPServer: Added following target to the http container - " + command);
         httpPeer.addTarget(this);
     }
 
@@ -46,15 +48,21 @@ public abstract class TDPServer extends Resource {
             r = new ObjectInputStream(stream.getInputStream());
             request = (TDPRequest)r.readObject();
 
-            System.out.println(request.toString());
+            System.out.println("Got a " + request.toString());
         } catch (IOException e) {
-            output="Received object is not a Pegasus workflow object!!!!!  Permission denied";
+            output="Received object is not a TDPRequest object!!!!!  Permission denied";
         } catch (ClassNotFoundException e) {
         }
 
         TDPResponse response = handleRequest(request);
-        
-        context.setResponseEntity(new StreamableObject(response));
+
+        System.out.println("Returning " + response.toString());
+
+        try {
+            context.setResponseEntity(new StreamableString(DiscoverTools.objectToString(response)));
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     public abstract TDPResponse handleRequest(TDPRequest request);

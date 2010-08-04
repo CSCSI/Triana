@@ -11,6 +11,7 @@ import org.thinginitself.http.Resource;
 import org.thinginitself.http.Response;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableObject;
+import org.thinginitself.streamable.StreamableString;
 import org.trianacode.discovery.protocols.tdp.TDPRequest;
 import org.trianacode.discovery.protocols.tdp.TDPResponse;
 import org.trianacode.discovery.protocols.tdp.TDPServer;
@@ -20,8 +21,7 @@ import org.trianacode.discovery.toolinfo.ToolMetadata;
 import sun.misc.Timeable;
 import sun.misc.Timer;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.List;
 
 
@@ -45,6 +45,7 @@ public class DiscoverTools implements Timeable {
         tdpProtocols= new ServiceTypesAndProtocols();
 
         this.httpEngine=httpEngine;
+        startServices();
 
         //  scan every 10 seconds....
 
@@ -58,7 +59,6 @@ public class DiscoverTools implements Timeable {
         WebDefines webDefines = new WebDefines(null,null,null,null,null);
 
         discoveredServices = new DiscoveredTools(this);
-        startServices();
 
         try {
             bonjourServer = new WebBootstrap((DiscoveredServicesInterface)discoveredServices, httpEngine,
@@ -81,38 +81,63 @@ public class DiscoverTools implements Timeable {
             String endpoint = "http://" + protocol.getServiceAddress() + ":" + protocol.getPort() + "/" + TDPServer.command;
 
             TDPRequest request = new TDPRequest(TDPRequest.Request.GET_TOOLS_LIST);
-            
-            RequestContext c = new RequestContext(endpoint);
-            c.setResource(new Resource(new StreamableObject(request)));
 
-            TDPResponse data;
-            ObjectInputStream r = null;
-            
+
             try {
-                Response response = httpEngine.post(c);
-
-                Streamable stream = response.getContext().getResponseEntity();
-
-                System.out.println("Response is " + response.getOutcome());
-
-                r = new ObjectInputStream(stream.getInputStream());
-                data = (TDPResponse)r.readObject();
+                TDPResponse data = sendMessageToServer(request, endpoint);
 
                 List<ToolMetadata> tools = data.getTools();
 
                 for (ToolMetadata toolmd: tools) {
                     System.out.println(toolmd.toString());
                 }
-
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException ee) {
-                ee.printStackTrace();
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
     }
 
+    private TDPResponse sendMessageToServer(TDPRequest request, String endpoint) throws IOException, ClassNotFoundException  {
+        TDPResponse data;
+        ObjectInputStream r = null;
 
+        RequestContext c = new RequestContext(endpoint);
+
+        Response response = sendRequest(c,request);
+
+        Streamable stream = response.getContext().getResponseEntity();
+
+        System.out.println("Response is " + response.getOutcome());
+
+        r = new ObjectInputStream(stream.getInputStream());
+        data = (TDPResponse)r.readObject();
+        return data;
+    }
+
+    private Response sendRequestNotWorking(RequestContext c, TDPRequest request) throws IOException {
+        c.setResource(new Resource(new StreamableObject(request)));
+        return httpEngine.post(c);
+
+    }
+
+    private Response sendRequest(RequestContext c, TDPRequest request) throws IOException {
+
+
+        c.setResource(new Resource(new StreamableString(objectToString(request))));
+        return httpEngine.post(c);
+    }
+
+    public static String objectToString(Serializable object) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+         ObjectOutputStream ou = new ObjectOutputStream(out);
+         ou.writeObject(object);
+         ou.flush();
+        String output = out.toString();
+        out.close();
+        return output;
+    }
     public static WebBootstrap getBonjourServer() {
         return bonjourServer;
     }
