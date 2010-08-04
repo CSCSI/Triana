@@ -58,19 +58,18 @@
  */
 package triana.types.util;
 
+import triana.types.audio.AudioChannelFormat;
+
 
 /**
- * SpectralChannelFormat is a format for representing
- * frequency-domain data or data that have been put through a
- * Fourier transform. It contains methods to set and
- * read relevant additional information, such as the
- * frequency range of the data.
- *
+ * SpectralChannelFormat is a format for representing frequency-domain data or data that have been put through a Fourier
+ * transform. It contains methods to set and read relevant additional information, such as the frequency range of the
+ * data.
+ * <p/>
  * <p>It implements the ChannelFormat interface
- * @author      Ian Taylor
- * @created     6 January 2001
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class SpectralChannelFormat implements ChannelFormat {
 
@@ -80,8 +79,8 @@ public class SpectralChannelFormat implements ChannelFormat {
     public int samplingRate = 44100;
 
     /**
-     * The number of points contained within this spectral representation.
-     * This is needed to calculate the spectral resolution
+     * The number of points contained within this spectral representation. This is needed to calculate the spectral
+     * resolution
      */
     public int numberOfPoints = samplingRate;
 
@@ -92,15 +91,14 @@ public class SpectralChannelFormat implements ChannelFormat {
     public String channelName = "Audio";
 
     /**
-     * Variable indicating whether the data are stored as a two-sided
-     * transform, <i>i.e.</i> containing both the positive and negative frequency
-     * data.
+     * Variable indicating whether the data are stored as a two-sided transform, <i>i.e.</i> containing both the
+     * positive and negative frequency data.
      */
     public boolean twoSided = false;
 
     /**
-     * Indicates whether the data represent a narrow bandwidth
-     * derived from a full-band spectrum in the given dimension <i>dim</i>..
+     * Indicates whether the data represent a narrow bandwidth derived from a full-band spectrum in the given dimension
+     * <i>dim</i>..
      */
     public boolean narrow;
 
@@ -111,8 +109,8 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Creates an SpectralChannelFormat Object with a given sampling rate and sample size (in bits)
-     * It formats the audio to the default PCM, names the chanel Audio.
+     * Creates an SpectralChannelFormat Object with a given sampling rate and sample size (in bits) It formats the audio
+     * to the default PCM, names the chanel Audio.
      */
     public SpectralChannelFormat(int srate, int numberOfPoints,
                                  boolean twoSided, boolean narrow, String chanName) {
@@ -124,8 +122,8 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Creates an SpectralChannelFormat Object with a given sampling rate and sample size (in bits)
-     * It formats the audio to the default PCM, names the chanel Audio.
+     * Creates an SpectralChannelFormat Object with a given sampling rate and sample size (in bits) It formats the audio
+     * to the default PCM, names the chanel Audio.
      */
     public SpectralChannelFormat(int srate, int numberOfPoints,
                                  boolean twoSided, boolean narrow) {
@@ -133,10 +131,8 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Returns the frequency resolution
-     * of the data associated with the independent variable indexed
-     * by the given value of <i>dim</i>, <i>i.e.</i>
-     * the step in frequency from one data point to the next.
+     * Returns the frequency resolution of the data associated with the independent variable indexed by the given value
+     * of <i>dim</i>, <i>i.e.</i> the step in frequency from one data point to the next.
      *
      * @return double The frequency resolution
      */
@@ -159,13 +155,10 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Returns <i>true</i> if the data are stored as a two-sided
-     * transform, <i>i.e.</i> containing both the positive and negative frequency
-     * data. If <i>false</i>, the data are one-sided, containing only positive
-     * frequencies. If the data set is multi-dimensional, then one-sided
-     * means that only positive frequencies for the first independent
-     * variable, <i>dim</i> = 0, are stored. Thus, there is no <i>dim</i> parameter for
-     * this method.
+     * Returns <i>true</i> if the data are stored as a two-sided transform, <i>i.e.</i> containing both the positive and
+     * negative frequency data. If <i>false</i>, the data are one-sided, containing only positive frequencies. If the
+     * data set is multi-dimensional, then one-sided means that only positive frequencies for the first independent
+     * variable, <i>dim</i> = 0, are stored. Thus, there is no <i>dim</i> parameter for this method.
      *
      * @return boolean True if data are two-sided in frequency space
      */
@@ -174,19 +167,18 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Returns the number of points in the data set
-     * whose transform could have led to the present data, or equivalently
-     * the number of points in the two-sided full-bandwidth spectrum
-     * from which the present spectrum could have been derived. This
-     * depends on which independent variable one is examining (<i>dim</i>).
+     * Returns the number of points in the data set whose transform could have led to the present data, or equivalently
+     * the number of points in the two-sided full-bandwidth spectrum from which the present spectrum could have been
+     * derived. This depends on which independent variable one is examining (<i>dim</i>).
      *
      * @return int The number of points in the original data set
      */
     public int getOriginalN() {
-        if (twoSided)
+        if (twoSided) {
             return numberOfPoints;
-        else
-            return numberOfPoints * 2;  // BFS, Is this correct ?
+        } else {
+            return numberOfPoints * 2;
+        }  // BFS, Is this correct ?
     }
 
     /**
@@ -197,8 +189,8 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Returns <i>true</i> if the data represent a narrow bandwidth
-     * derived from a full-band spectrum in the given dimension <i>dim</i>..
+     * Returns <i>true</i> if the data represent a narrow bandwidth derived from a full-band spectrum in the given
+     * dimension <i>dim</i>..
      *
      * @return boolean True if data are narrow-band
      */
@@ -207,9 +199,8 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Returns the (non-negative) value
-     * of the lowest frequency in the frequency band held in the object,
-     * for the given dimension <i>dim</i>.
+     * Returns the (non-negative) value of the lowest frequency in the frequency band held in the object, for the given
+     * dimension <i>dim</i>.
      *
      * @return double The lowest frequency represented in the given direction
      */
@@ -218,9 +209,8 @@ public class SpectralChannelFormat implements ChannelFormat {
     }
 
     /**
-     * Returns the (non-negative) value
-     * of the highest frequency in the frequency band held in the object,
-     * for the given dimension <i>dim</i>.
+     * Returns the (non-negative) value of the highest frequency in the frequency band held in the object, for the given
+     * dimension <i>dim</i>.
      *
      * @return double The highest frequency represented in the given direction
      */
@@ -230,22 +220,23 @@ public class SpectralChannelFormat implements ChannelFormat {
 
 
     /**
-     * @return true if the given object has the same parameters
-     * as this object
+     * @return true if the given object has the same parameters as this object
      */
     public boolean equals(Object obj) {
-        if (!(obj instanceof AudioChannelFormat))
+        if (!(obj instanceof AudioChannelFormat)) {
             return false;
+        }
         SpectralChannelFormat au = (SpectralChannelFormat) obj;
 
         if ((getSamplingRate() == au.getSamplingRate()) &&
                 (getPoints() == au.getPoints()) &&
                 (getChannelName().equals(au.getChannelName())) &&
                 (isNarrow() == au.isNarrow()) &&
-                (isTwoSided() == au.isTwoSided()))
+                (isTwoSided() == au.isTwoSided())) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**

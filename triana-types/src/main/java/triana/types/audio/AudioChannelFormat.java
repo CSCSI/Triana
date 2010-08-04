@@ -56,34 +56,30 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package triana.types.util;
+package triana.types.audio;
 
 
 import javax.sound.sampled.AudioFormat;
+import triana.types.util.ChannelFormat;
+import triana.types.util.Str;
+import triana.types.util.StringSplitter;
 
 
 /**
+ * The AudioChannelFormat includes aspects of the sound format other than the number of channels. This class consists of
+ * the following parameters :
+ * <p/>
+ * <ol> <li> sample rate : the sample rate, specified as an int <li> sample size : the number of bits used to store each
+ * sample <li> channel name : the name of this channel <li> audio encoding : the audio encoding used e.g. PCM, U_LAW,
+ * GSM etc </ol>
+ * <p/>
+ * One ubiquitous type of audio encoding is pulse-code modulation (PCM), which is simply a linear (proportional)
+ * representation of the sound waveform. With PCM, the number stored in each sample is proportional to the instantaneous
+ * amplitude of the sound pressure at that point in time. The numbers are frequently signed or unsigned integers.
+ * Besides PCM, other encodings include mu-law and a-law, which are nonlinear mappings of the sound amplitude that are
+ * often used for recording speech.
  *
- * The AudioChannelFormat includes aspects of the sound format other than the
- * number of channels. This class consists of the following parameters :
- *
- * <ol>
- *    <li> sample rate : the sample rate, specified as an int
- *    <li> sample size : the number of bits used to store each sample
- *    <li> channel name : the name of this channel
- *    <li> audio encoding : the audio encoding used e.g. PCM, U_LAW, GSM etc
- * </ol>
- *
- * One ubiquitous type of audio encoding is pulse-code modulation (PCM), which is
- * simply a linear (proportional) representation of the sound waveform. With PCM,
- * the number stored in each sample is proportional to the instantaneous amplitude
- * of the sound pressure at that point in time. The numbers are frequently signed
- * or unsigned integers. Besides PCM, other encodings include mu-law and
- * a-law, which are nonlinear mappings of the sound amplitude that are often
- * used for recording speech.
- *
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
 
@@ -95,8 +91,9 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
     static {
         try {
             String os = System.getProperty("os.name");
-            if (os.startsWith("Windows"))
+            if (os.startsWith("Windows")) {
                 bigendian = false;
+            }
         }
         catch (Exception ee) { // ha ha! windows by default ...
             bigendian = false;
@@ -144,8 +141,7 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
     public String channelName = "Audio";
 
     /**
-     * The encoding for this piece of audio e.g. PCM, U_LAW, MP3 etc.
-     * Default is PCM.
+     * The encoding for this piece of audio e.g. PCM, U_LAW, MP3 etc. Default is PCM.
      */
     public int encoding = PCM;
 
@@ -156,8 +152,8 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
     }
 
     /**
-     * Creates an AudioChannelFormat Object with a given sampling rate and sample size (in bits)
-     * It formats the audio to the default PCM, names the chanel Audio.
+     * Creates an AudioChannelFormat Object with a given sampling rate and sample size (in bits) It formats the audio to
+     * the default PCM, names the chanel Audio.
      */
     public AudioChannelFormat(int srate, short sampSize) {
         samplingRate = srate;
@@ -167,8 +163,7 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
     }
 
     /**
-     * Creates an AudioChannelFormat Object with a given sampling rate, sample size
-     * and format for this audio.
+     * Creates an AudioChannelFormat Object with a given sampling rate, sample size and format for this audio.
      */
     public AudioChannelFormat(int srate, short sampSize, int format) {
         this(srate, sampSize);
@@ -176,8 +171,8 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
     }
 
     /**
-     * Creates an AudioChannelFormat Object with a given sampling rate, sample size,
-     * format for this audio and a name for this channel
+     * Creates an AudioChannelFormat Object with a given sampling rate, sample size, format for this audio and a name
+     * for this channel
      */
     public AudioChannelFormat(int srate, short sampSize, int format, String channelName) {
         this(srate, sampSize);
@@ -194,8 +189,7 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
 
 
     /**
-     * Creates an AudioChannelFormat from the given javax.sound.sampled
-     * AudioFormat Object.
+     * Creates an AudioChannelFormat from the given javax.sound.sampled AudioFormat Object.
      */
     public AudioChannelFormat(AudioFormat au) {
         this((int) au.getSampleRate(), (short) au.getSampleSizeInBits());
@@ -203,49 +197,48 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
     }
 
     /**
-     * Gets a Javax.sound.sampled AudioFormat Object from this
-     * format
+     * Gets a Javax.sound.sampled AudioFormat Object from this format
      */
     public AudioFormat getAudioFormat() {
         int channels = 1;
         return new AudioFormat(getAudioFormatEncoding(encoding),
-                               samplingRate, sampleSize, channels,
-                               getSampleSizeInBytes() * channels, (float) samplingRate, bigendian);
+                samplingRate, sampleSize, channels,
+                getSampleSizeInBytes() * channels, (float) samplingRate, bigendian);
     }
 
 
     /**
-     * translates between the AudioChannelFormat (our format) and the AudioFormat Object
-     * in java sound.
+     * translates between the AudioChannelFormat (our format) and the AudioFormat Object in java sound.
      */
     public static AudioFormat.Encoding getAudioFormatEncoding(int encoding) {
-        if (encoding == PCM_UNSIGNED)
+        if (encoding == PCM_UNSIGNED) {
             return AudioFormat.Encoding.PCM_UNSIGNED;
-        else if (encoding == PCM)
+        } else if (encoding == PCM) {
             return AudioFormat.Encoding.PCM_SIGNED;
-        else if (encoding == A_LAW)
+        } else if (encoding == A_LAW) {
             return AudioFormat.Encoding.ALAW;
-        else if (encoding == U_LAW)
+        } else if (encoding == U_LAW) {
             return AudioFormat.Encoding.ULAW;
-        else
+        } else {
             return AudioFormat.Encoding.PCM_SIGNED;
+        }
     }
 
     /**
-     * translates between the AudioChannelFormat (our format) and the AudioFormat Object
-     * in java sound.
+     * translates between the AudioChannelFormat (our format) and the AudioFormat Object in java sound.
      */
     public static int getEncoding(AudioFormat.Encoding encoding) {
-        if (encoding == AudioFormat.Encoding.PCM_UNSIGNED)
+        if (encoding == AudioFormat.Encoding.PCM_UNSIGNED) {
             return PCM_UNSIGNED;
-        else if (encoding == AudioFormat.Encoding.PCM_SIGNED)
+        } else if (encoding == AudioFormat.Encoding.PCM_SIGNED) {
             return PCM;
-        else if (encoding == AudioFormat.Encoding.ALAW)
+        } else if (encoding == AudioFormat.Encoding.ALAW) {
             return A_LAW;
-        else if (encoding == AudioFormat.Encoding.ULAW)
+        } else if (encoding == AudioFormat.Encoding.ULAW) {
             return U_LAW;
-        else
+        } else {
             return PCM;
+        }
     }
 
     /**
@@ -281,27 +274,29 @@ public class AudioChannelFormat implements java.io.Serializable, ChannelFormat {
      */
     public int getSampleSizeInBytes() {
         int bytes = sampleSize / 8;
-        if ((sampleSize % 8) > 0)
+        if ((sampleSize % 8) > 0) {
             ++bytes;
+        }
         return bytes;
     }
 
     /**
-     * @return true if the given object has the same parameters
-     * as this object
+     * @return true if the given object has the same parameters as this object
      */
     public boolean equals(Object obj) {
-        if (!(obj instanceof AudioChannelFormat))
+        if (!(obj instanceof AudioChannelFormat)) {
             return false;
+        }
         AudioChannelFormat au = (AudioChannelFormat) obj;
 
         if ((getSamplingRate() == au.getSamplingRate()) &&
                 (getSampleSize() == au.getSampleSize()) &&
                 (getChannelName().equals(au.getChannelName())) &&
-                (getEncoding() == au.getEncoding()))
+                (getEncoding() == au.getEncoding())) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
