@@ -116,15 +116,13 @@ public class DiscoverTools implements Timeable {
         return data;
     }
 
-    private Response sendRequestNotWorking(RequestContext c, TDPRequest request) throws IOException {
+    private Response sendRequest(RequestContext c, TDPRequest request) throws IOException {
         c.setResource(new Resource(new StreamableObject(request)));
         return httpEngine.post(c);
 
     }
 
-    private Response sendRequest(RequestContext c, TDPRequest request) throws IOException {
-
-
+    private Response sendRequestByHand(RequestContext c, TDPRequest request) throws IOException {
         c.setResource(new Resource(new StreamableString(objectToString(request))));
         return httpEngine.post(c);
     }

@@ -58,11 +58,7 @@ public abstract class TDPServer extends Resource {
 
         System.out.println("Returning " + response.toString());
 
-        try {
-            context.setResponseEntity(new StreamableString(DiscoverTools.objectToString(response)));
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        context.setResponseEntity(new StreamableObject(response));
     }
 
     public abstract TDPResponse handleRequest(TDPRequest request);
