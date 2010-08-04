@@ -1,10 +1,12 @@
 package org.trianacode.discovery;
 
-import mil.navy.nrl.discovery.WebBootstrap;
-import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
-import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
-import mil.navy.nrl.discovery.types.ServiceTypes;
-import mil.navy.nrl.discovery.web.template.WebDefines;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.List;
+
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
@@ -18,19 +20,18 @@ import org.trianacode.discovery.protocols.tdp.TDPServer;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.LocalTrawler;
 import org.trianacode.discovery.protocols.thirdparty.ServiceTypesAndProtocols;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
+import mil.navy.nrl.discovery.WebBootstrap;
+import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
+import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
+import mil.navy.nrl.discovery.types.ServiceTypes;
+import mil.navy.nrl.discovery.web.template.WebDefines;
 import sun.misc.Timeable;
 import sun.misc.Timer;
 
-import java.io.*;
-import java.util.List;
-
 
 /**
- * Created by IntelliJ IDEA.
- * User: scmijt
- * Date: Jul 30, 2010
- * Time: 2:37:49 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: scmijt Date: Jul 30, 2010 Time: 2:37:49 PM To change this template use File |
+ * Settings | File Templates.
  */
 public class DiscoverTools implements Timeable {
     static WebBootstrap bonjourServer;
@@ -42,9 +43,9 @@ public class DiscoverTools implements Timeable {
     HttpPeer httpEngine;
 
     public DiscoverTools(HttpPeer httpEngine) {
-        tdpProtocols= new ServiceTypesAndProtocols();
+        tdpProtocols = new ServiceTypesAndProtocols();
 
-        this.httpEngine=httpEngine;
+        this.httpEngine = httpEngine;
         startServices();
 
         //  scan every 10 seconds....
@@ -56,14 +57,14 @@ public class DiscoverTools implements Timeable {
 
         st.registerServiceType("http._tcp", "HTTP is cool....");
 
-        WebDefines webDefines = new WebDefines(null,null,null,null,null);
+        WebDefines webDefines = new WebDefines(null, null, null, null, null);
 
         discoveredServices = new DiscoveredTools(this);
 
         try {
-            bonjourServer = new WebBootstrap((DiscoveredServicesInterface)discoveredServices, httpEngine,
+            bonjourServer = new WebBootstrap((DiscoveredServicesInterface) discoveredServices, httpEngine,
                     "TrianaServer", "triana", "Triana Bonjour Service!",
-                    "Published Services", webDefines ,st);
+                    "Published Services", webDefines, st);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -76,9 +77,10 @@ public class DiscoverTools implements Timeable {
     public void tick(sun.misc.Timer timer) {
         Object[] protocols = discoveredServices.getProtocols().toArray();
 
-        for (Object obj: protocols) {
-            ServiceInfoEndpoint protocol = (ServiceInfoEndpoint)obj;
-            String endpoint = "http://" + protocol.getServiceAddress() + ":" + protocol.getPort() + "/" + TDPServer.command;
+        for (Object obj : protocols) {
+            ServiceInfoEndpoint protocol = (ServiceInfoEndpoint) obj;
+            String endpoint = "http://" + protocol.getServiceAddress() + ":" + protocol.getPort() + "/"
+                    + TDPServer.command;
 
             TDPRequest request = new TDPRequest(TDPRequest.Request.GET_TOOLS_LIST);
 
@@ -88,7 +90,7 @@ public class DiscoverTools implements Timeable {
 
                 List<ToolMetadata> tools = data.getTools();
 
-                for (ToolMetadata toolmd: tools) {
+                for (ToolMetadata toolmd : tools) {
                     System.out.println(toolmd.toString());
                 }
             } catch (IOException e) {
@@ -99,20 +101,21 @@ public class DiscoverTools implements Timeable {
         }
     }
 
-    private TDPResponse sendMessageToServer(TDPRequest request, String endpoint) throws IOException, ClassNotFoundException  {
+    private TDPResponse sendMessageToServer(TDPRequest request, String endpoint)
+            throws IOException, ClassNotFoundException {
         TDPResponse data;
         ObjectInputStream r = null;
 
         RequestContext c = new RequestContext(endpoint);
 
-        Response response = sendRequest(c,request);
+        Response response = sendRequest(c, request);
 
-        Streamable stream = response.getContext().getResponseEntity();
+        RequestContext rc = response.getContext();
+        Streamable stream = rc.getResource().getStreamable();
 
-        System.out.println("Response is " + response.getOutcome());
 
         r = new ObjectInputStream(stream.getInputStream());
-        data = (TDPResponse)r.readObject();
+        data = (TDPResponse) r.readObject();
         return data;
     }
 
@@ -129,13 +132,14 @@ public class DiscoverTools implements Timeable {
 
     public static String objectToString(Serializable object) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-         ObjectOutputStream ou = new ObjectOutputStream(out);
-         ou.writeObject(object);
-         ou.flush();
+        ObjectOutputStream ou = new ObjectOutputStream(out);
+        ou.writeObject(object);
+        ou.flush();
         String output = out.toString();
         out.close();
         return output;
     }
+
     public static WebBootstrap getBonjourServer() {
         return bonjourServer;
     }
