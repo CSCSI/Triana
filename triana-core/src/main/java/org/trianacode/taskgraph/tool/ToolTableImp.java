@@ -104,7 +104,7 @@ public class ToolTableImp extends AbstractToolTable {
             log.fine("Not pasting. Tool already exists with name " + tool.getQualifiedToolName());
             return;
         }
-        
+
         String location = getPasteFileLocation(tool.getToolName(), pack, toolbox);
         tool.setDefinitionPath(location);
         tool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
@@ -218,6 +218,7 @@ public class ToolTableImp extends AbstractToolTable {
         try {
             stats = toolHandler.add(toolFile, toolbox);
         } catch (ToolException e) {
+            log.fine("exception thrown adding tool:" + FileUtils.formatThrowable(e));
             //notifyToolRemoved(stats.getTool());
 
         }
@@ -309,7 +310,7 @@ public class ToolTableImp extends AbstractToolTable {
                         return true;
                     } else {
                         for (String ext : exts) {
-                            if (file.getName().endsWith(ext)) {
+                            if (s.endsWith(ext)) {
                                 return true;
                             }
                         }

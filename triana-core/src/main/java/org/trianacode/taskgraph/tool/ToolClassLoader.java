@@ -60,7 +60,7 @@ public class ToolClassLoader extends URLClassLoader {
             return;
         }
         if (box.isDirectory()) {
-            addPath(box.getAbsolutePath());
+            //addPath(box.getAbsolutePath());
             File[] files = box.listFiles();
             if (files == null) {
                 return;
@@ -71,8 +71,11 @@ public class ToolClassLoader extends URLClassLoader {
                     continue;
                 }
                 if (file.isDirectory()) {
+
                     if (name.equals("classes")) {
                         addPath(file.getAbsolutePath());
+                    } else if (name.equals("src")) {
+                        continue;
                     } else {
                         addToolBox(file.getAbsolutePath());
                     }

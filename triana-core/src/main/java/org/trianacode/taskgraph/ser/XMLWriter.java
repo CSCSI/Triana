@@ -250,15 +250,18 @@ public class XMLWriter implements XMLConstants {
                 System.out.println("XMLWriter.addParams is transient " + tool.getParameterType(paramNames[i])
                         .startsWith(Tool.TRANSIENT));
                 if (preserveinst || (!tool.getParameterType(paramNames[i]).startsWith(Tool.TRANSIENT))) {
-                    System.out.println("XMLWriter.addParams WRITING ATTRIBUTE " + paramNames[i]);
-                    Element current = handler.element(PARAM_TAG);
-                    current.setAttribute(NAME_TAG, paramNames[i]);
+                    if (!tool.getParameterType(paramNames[i]).equals(Tool.INTERNAL)) {
+                        System.out.println("XMLWriter.addParams WRITING ATTRIBUTE " + paramNames[i]);
+                        Element current = handler.element(PARAM_TAG);
+                        current.setAttribute(NAME_TAG, paramNames[i]);
 
-                    Element val = handler.element(VALUE_TAG);
-                    handler.add(ObjectMarshaller.marshallJavaToElement(val, tool.getParameter(paramNames[i])), current);
-                    current.setAttribute(PARAM_TYPE_TAG,
-                            tool.getParameterType(paramNames[i]));
-                    handler.add(current, param);
+                        Element val = handler.element(VALUE_TAG);
+                        handler.add(ObjectMarshaller.marshallJavaToElement(val, tool.getParameter(paramNames[i])),
+                                current);
+                        current.setAttribute(PARAM_TYPE_TAG,
+                                tool.getParameterType(paramNames[i]));
+                        handler.add(current, param);
+                    }
                 }
             }
         }
@@ -403,7 +406,7 @@ public class XMLWriter implements XMLConstants {
     private void addProxy(Tool tool, Element parent) {
         Proxy proxy = tool.getProxy();
 
-        if (proxy != null) {
+        if (proxy != null && !(tool instanceof TaskGraph)) {
             Element elem = handler.element(PROXY_TAG);
             elem.setAttribute(TYPE_TAG, proxy.getType());
 

@@ -17,11 +17,14 @@
 package org.trianacode.taskgraph.tool;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,6 +43,7 @@ import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
 
@@ -118,6 +122,8 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         return new ToolStatus(tool, ToolStatus.Status.OK);
     }
 
+    //private List<String> written = new ArrayList<String>();
+
     public List<ToolStatus> add(File file, String toolbox) throws ToolException {
         log.fine("FileToolFormatHandler.add file:" + file.getAbsolutePath());
         List<ToolStatus> ret = new ArrayList<ToolStatus>();
@@ -125,8 +131,15 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             if (file.getName().endsWith(".xml")) {
                 log.fine("file is XML:" + file.getAbsolutePath());
                 Tool tool = readXMLStream(new FileInputStream(file), file.getAbsolutePath(), toolbox);
+
                 if (tool != null && tools.get(createId(tool)) == null) {
+                    log.fine("Adding tool " + tool.getToolName());
                     ret.add(initTool(tool, file));
+                    /*if(!written.contains(file.getAbsolutePath())) {
+                    System.out.println("FileToolFormatHandler.add WRITING OUT TOOL:" + tool.getQualifiedToolName());
+                    writeXMLStream(tool, new FileOutputStream(file));
+                    written.add(file.getAbsolutePath());
+                    }*/
                 }
             } else if (file.getName().endsWith(".jar")) {
                 log.fine("file is JAR:" + file.getAbsolutePath());
@@ -165,16 +178,18 @@ public class FileToolFormatHandler implements ToolFormatHandler {
                 if (ch == null) {
                     ch = TypesMap.getAnnotated(file.getAbsolutePath());
                 }
-                log.fine("FileToolFormatHandler.add class hierarchy after trying annotations:" + ch);
+                log.fine("FileToolFormatHandler.add class hierarchy after trying annotations:" + ch + " for file "
+                        + file);
 
                 if (ch != null) {
                     Tool tool = read(ch.getName(), toolbox, ch.getFile());
-                    if (tool != null) {
+                    if (tool != null && tools.get(createId(tool)) == null) {
                         ret.add(initTool(tool, file));
                     }
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ToolException(e.getMessage());
         }
         return ret;
@@ -280,17 +295,21 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         try {
             reader = new XMLReader(new BufferedReader(new InputStreamReader(in)));
         } catch (IOException e) {
-            log.fine("error reading xml file " + e.getMessage());
+            log.fine("error reading xml file " + FileUtils.formatThrowable(e));
             return null;
         }
         Tool tool = null;
         try {
             tool = reader.readComponent();
         } catch (Exception e) {
+            e.printStackTrace();
+            log.fine("error reading xml file " + FileUtils.formatThrowable(e));
             throw new ToolException("Error reading tool :" + FileUtils.formatThrowable(e));
         }
         if (tool != null) {
+            log.fine("FileToolFormatHandler.readXMLStream tool is not null");
             if (tool.getToolPackage().equals("")) {
+                log.fine("tool package is null");
                 //TODO  or not todo
                 //tool.setToolPackage(getToolPackageName(filePath, tool.getToolName()));
             }
@@ -298,7 +317,18 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             tool.setToolBox(toolbox);
             return tool;
         }
+        log.fine("FileToolFormatHandler.readXMLStream tool is null");
         return null;
+    }
+
+    private void writeXMLStream(Tool tool, OutputStream out) {
+        try {
+            XMLWriter writer = new XMLWriter(new BufferedWriter(new OutputStreamWriter(out)));
+            writer.writeComponent(tool);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private URL[] initJar(Tool tool, File file) {
@@ -406,6 +436,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
     private File[] getRootFromDefinition(Tool tool, File file) {
         String name = tool.getToolName();
         if (name == null) {
+
             return null;
         }
         String pkg = tool.getToolPackage();
@@ -420,10 +451,10 @@ public class FileToolFormatHandler implements ToolFormatHandler {
             if (root != null) {
                 defRoot = root;
             } else {
-                names.add(0, "xml");
-                root = matches(names, file);
+                //names.add(names.size(), "xml");
+                root = file.getParentFile();//matches(names, file);
                 if (root != null) {
-                    defRoot = new File(root, "xml");
+                    defRoot = file;//new File(root, "xml");
                 }
             }
         } else if (file.getName().endsWith(".class")) {

@@ -16,13 +16,27 @@
 
 package org.trianacode.taskgraph.util;
 
-import org.trianacode.taskgraph.tool.ClassLoaders;
-
-import javax.swing.*;
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.*;
-import java.io.*;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,13 +46,14 @@ import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.zip.ZipFile;
 
+import javax.swing.ImageIcon;
+import org.trianacode.taskgraph.tool.ClassLoaders;
+
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 24, 2009: 9:31:17 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class FileUtils {
@@ -51,8 +66,8 @@ public class FileUtils {
 
 
     /**
-     * deletes files recursively. can optionally delete the parent file as well. So, if the parent file
-     * is not a directory, and incParent is false, then nothing will be deleted.
+     * deletes files recursively. can optionally delete the parent file as well. So, if the parent file is not a
+     * directory, and incParent is false, then nothing will be deleted.
      *
      * @param parent    file to delete. If this is a directory then any children are deleted.
      * @param incParent boolean that determines if the parent file is also deleted.
@@ -81,6 +96,10 @@ public class FileUtils {
         for (StackTraceElement stackTraceElement : trace) {
             sb.append("\t\n").append(stackTraceElement);
         }
+        Throwable cause = t.getCause();
+        if (cause != null) {
+            sb.append(formatThrowable(cause));
+        }
         return sb.toString();
     }
 
@@ -102,15 +121,14 @@ public class FileUtils {
 
 
     /**
-     * Copies files and directories recursively. The destination does not
-     * have to exist yet.
+     * Copies files and directories recursively. The destination does not have to exist yet.
      *
      * @param src  the source file to copy. Can be a file or a directory.
      * @param dest the destination to copy to. Can be a file or directory.
      * @return a List of the newly created Files
      * @throws java.io.FileNotFoundException if src does not exist
-     * @throws java.io.IOException           if src is a directory and dest exists
-     *                                       and is not a directory, or an IO error occurs.
+     * @throws java.io.IOException           if src is a directory and dest exists and is not a directory, or an IO
+     *                                       error occurs.
      */
     public static List<File> copyFilesRecursive(File src, File dest) throws IOException {
         ArrayList<File> list = new ArrayList<File>();
@@ -149,8 +167,7 @@ public class FileUtils {
 
 
     /**
-     * Deletes the file at the given file location. If the file
-     * is a directory then the directory must be empty for the
+     * Deletes the file at the given file location. If the file is a directory then the directory must be empty for the
      * operation to be successful.
      */
     public static void deleteFile(String loc) {
@@ -159,43 +176,40 @@ public class FileUtils {
     }
 
     /**
-     * Determines whether the given path or file is an internet
-     * address or not
+     * Determines whether the given path or file is an internet address or not
      */
     public static boolean isOnInternet(String fileOrPath) {
-        if (fileOrPath.indexOf("://") != -1)
+        if (fileOrPath.indexOf("://") != -1) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
-     * Determines whether the file specified
-     * is a directory. Files specified as string could be internet
-     * paths or local paths.  This function will determine which
-     * one it is.
+     * Determines whether the file specified is a directory. Files specified as string could be internet paths or local
+     * paths.  This function will determine which one it is.
      */
     public static boolean isDirectory(String loc) {
         if (loc.indexOf("://") == -1) {
             return new File(loc).isDirectory();
-        } else
+        } else {
             try {
                 return isDirectory(new URL(correctURL(loc)));
             } catch (MalformedURLException url) {
             }
+        }
 
         return false;
     }
 
     /**
-     * Checks whether the <code>child</child> is contained by the <code>parent</code>
-     * directory.
+     * Checks whether the <code>child</child> is contained by the <code>parent</code> directory.
      *
      * @param parent String representing the parent directory
      * @param child  String representing the child file or directory
-     * @return <b>False</b> if <code>parent</code> is not a directory, or <code>parent</code>
-     *         equals <code>child</code>, <b>True</b> if and only if <code>child</code> is contained
-     *         in <code>parent</code>.
+     * @return <b>False</b> if <code>parent</code> is not a directory, or <code>parent</code> equals <code>child</code>,
+     *         <b>True</b> if and only if <code>child</code> is contained in <code>parent</code>.
      */
     public static boolean isParent(String parent, String child) {
         File parentFile = new File(parent);
@@ -205,8 +219,9 @@ public class FileUtils {
                 String s = childFile.getParent();
                 while (s != null) {
                     childFile = new File(s);
-                    if (parentFile.equals(childFile))
+                    if (parentFile.equals(childFile)) {
                         return true;
+                    }
                     s = childFile.getParent();
                 }
             }
@@ -215,13 +230,13 @@ public class FileUtils {
     }
 
     /**
-     * Converts a URL address which may have machine dependant
-     * path separators contained within it to an appropraite
-     * URL address e.g. can have http://www.comp.com/\file\on\d\
-     * for example which should be http://www.comp.com/file/on/d/
+     * Converts a URL address which may have machine dependant path separators contained within it to an appropraite URL
+     * address e.g. can have http://www.comp.com/\file\on\d\ for example which should be http://www.comp.com/file/on/d/
      */
     public static String correctURL(String file) {
-        if (file.indexOf("http://") == -1) return file;
+        if (file.indexOf("http://") == -1) {
+            return file;
+        }
 
         String fn = file.replace('\\', '/');
         // System.out.println("Changed to " + fn);
@@ -230,32 +245,35 @@ public class FileUtils {
 
 
     /**
-     * Determines whether the internet location and file specified
-     * is in fact a directory. This is determined by checking whether
+     * Determines whether the internet location and file specified is in fact a directory. This is determined by
+     * checking whether
      * there exists a <pre> <title>Index Of ..... </title></pre> exists
-     * on the first line of the html file which is the typical
-     * thing included on the first line if a directory is given to
-     * a server
+     * on the first line of the html file which is the typical thing included on the first line if a directory is given
+     * to a server
      */
     public static boolean isDirectory(URL loc) {
         // if the file has a . in it i.e. tmp.java then dismiss it
 
         String s = correctURL(loc.toString());
 
-        if (s.indexOf(".", s.lastIndexOf("/")) != -1)
+        if (s.indexOf(".", s.lastIndexOf("/")) != -1) {
             return false;
+        }
 
-        if (!s.endsWith("/"))
+        if (!s.endsWith("/")) {
             s = s + "/";
+        }
 
         try {
             Vector<String> str = FileUtils.readAndSplitFile(FileUtils.createReader(s));
 
-            if (str.size() == 0)
+            if (str.size() == 0) {
                 return false;
+            }
 
-            if (str.get(0).toLowerCase().indexOf("<title>index of") != -1)
+            if (str.get(0).toLowerCase().indexOf("<title>index of") != -1) {
                 return true;
+            }
 
             // before returning false we need to check that the server
             // hasn't added a /index.html file to the end and passed this
@@ -278,8 +296,7 @@ public class FileUtils {
 
 
     /**
-     * Lists the filenames and directories within a URL if
-     * that URL is a directory
+     * Lists the filenames and directories within a URL if that URL is a directory
      */
 
     public static Vector<String> listInternetDirectory(URL loc) {
@@ -297,18 +314,23 @@ public class FileUtils {
                 int pos2 = st.indexOf("\"", pos);
                 int pos3 = st.indexOf("/", pos);
                 if (pos3 > 0) // i.e. a / was found
+                {
                     pos2 = Math.min(pos2, pos3);
+                }
                 String fn;
-                if (pos2 > 0)
+                if (pos2 > 0) {
                     fn = str.get(i).substring(pos, pos2);
-                else
+                } else {
                     fn = (str.get(i).substring(pos).trim());
+                }
 
                 fn = fn.replace("\\", "/");
                 fn = fn.trim();
 
                 cfile = loc.toString();
-                if (!cfile.endsWith("/")) cfile += "/";
+                if (!cfile.endsWith("/")) {
+                    cfile += "/";
+                }
                 cfile += fn;
 
                 System.out.println("File extracted = " + cfile);
@@ -321,8 +343,9 @@ public class FileUtils {
                     // and empty ones and ../ directories
                     files.addElement(fn);
                     System.out.println("Added " + fn + " to listing..");
-                } else
+                } else {
                     System.out.println("Rejected " + fn);
+                }
             }
         }
         return files;
@@ -338,11 +361,9 @@ public class FileUtils {
     }
 
     /**
-     * Copies the file from the first location to the second.  If the
-     * second location exists then the user is prompted to ask
-     * if he/she wants to overwrite the exisiting file.  They are given
-     * dates of the files also.  The full Bill Gates effect!!!!!!
-     * The mode can be either ASCII or BINARY.
+     * Copies the file from the first location to the second.  If the second location exists then the user is prompted
+     * to ask if he/she wants to overwrite the exisiting file.  They are given dates of the files also.  The full Bill
+     * Gates effect!!!!!! The mode can be either ASCII or BINARY.
      *
      * @return false if the file could not be copied, true if successful
      */
@@ -357,18 +378,22 @@ public class FileUtils {
 
         File f1;
         File f2;
-        if ((loc1 == null) || (loc2 == null))
+        if ((loc1 == null) || (loc2 == null)) {
             return false;
+        }
 
         f1 = new File(loc1);
         f2 = new File(loc2);
 
-        if (!f1.exists())
+        if (!f1.exists()) {
             return false;
+        }
 
         if (f2.isDirectory()) // add source file name if none chosen
+        {
             loc2 = loc2 + File.separator +
                     loc1.substring(loc1.lastIndexOf(File.separator) + 1);
+        }
 
         f2 = new File(loc2);
 
@@ -418,11 +443,9 @@ public class FileUtils {
     }
 
     /**
-     * creates a buffered writer for a specified local or networked
-     * text file. Just give the protocol and path if its a networked file
-     * e.g. :-
-     * http:///www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Help/Wave.html
-     * or the absolute file name if its a local file. </p><p>
+     * creates a buffered writer for a specified local or networked text file. Just give the protocol and path if its a
+     * networked file e.g. :- http:///www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Help/Wave.html or the absolute file name
+     * if its a local file. </p><p>
      *
      * @param name the name of the file you wish to make a writer for.
      */
@@ -463,8 +486,8 @@ public class FileUtils {
     }
 
     /**
-     * creates a buffered writer for a specified local file, with an
-     * option to append.  Just give the absolute file name.</p><p>
+     * creates a buffered writer for a specified local file, with an option to append.  Just give the absolute file
+     * name.</p><p>
      *
      * @param name the name of the file you wish to make a writer for.
      */
@@ -483,11 +506,9 @@ public class FileUtils {
     }
 
     /**
-     * creates a buffered reader for a specified local or networked
-     * text file. Just give the protocol and path if its a networked file
-     * e.g. :-
-     * http:///www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Help/Wave.html
-     * or the absolute file name if its a local file. </p><p>
+     * creates a buffered reader for a specified local or networked text file. Just give the protocol and path if its a
+     * networked file e.g. :- http:///www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Help/Wave.html or the absolute file name
+     * if its a local file. </p><p>
      *
      * @param name the name of the file you wish to make a reader for.
      */
@@ -522,8 +543,8 @@ public class FileUtils {
     }
 
     /**
-     * return true if the specified file (or Directory) exists either on a network or a local
-     * server.  The function automatically detects where the file is.
+     * return true if the specified file (or Directory) exists either on a network or a local server.  The function
+     * automatically detects where the file is.
      *
      * @param name the name of the file.
      */
@@ -569,8 +590,9 @@ public class FileUtils {
      */
     public static void closeReader(BufferedReader br) {
         try {
-            if (br != null)
+            if (br != null) {
                 br.close();
+            }
         } catch (IOException io) {
             System.out.println("Couldn't close Writer " + br);
         }
@@ -582,8 +604,9 @@ public class FileUtils {
      * @param pw the writer to close.
      */
     public static void closeWriter(PrintWriter pw) {
-        if (pw != null)
+        if (pw != null) {
             pw.close();
+        }
     }
 
     /**
@@ -605,25 +628,23 @@ public class FileUtils {
     }
 
     /**
-     * Write the specified StringVector to the file, writing
-     * each element on a separate line
+     * Write the specified StringVector to the file, writing each element on a separate line
      */
     public static void writeToFile(String name, Vector<String> contents) {
         PrintWriter pw = createWriter(name);
 
-        for (int i = 0; i < contents.size(); ++i)
+        for (int i = 0; i < contents.size(); ++i) {
             pw.println(contents.get(i));
+        }
 
         closeWriter(pw);
     }
 
 
     /**
-     * Creates a reader for a specified local or networked
-     * binary file. Just give the protocol and path if its a networked file
-     * e.g. :-
-     * http:///www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Help/Wave.html
-     * or the absolute file name if its a local file. </p><p>
+     * Creates a reader for a specified local or networked binary file. Just give the protocol and path if its a
+     * networked file e.g. :- http:///www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Help/Wave.html or the absolute file name
+     * if its a local file. </p><p>
      *
      * @param name the name of the file you wish to make a reader for.
      */
@@ -641,11 +662,9 @@ public class FileUtils {
     }
 
     /**
-     * Creates an output stream for a specified local or networked
-     * binary file. Just give the protocol and path if its a networked file
-     * e.g. :-
-     * http:///www.astro.cf.ac.uk/Triana/data.bin
-     * or the absolute file name if its a local file. </p><p>
+     * Creates an output stream for a specified local or networked binary file. Just give the protocol and path if its a
+     * networked file e.g. :- http:///www.astro.cf.ac.uk/Triana/data.bin or the absolute file name if its a local file.
+     * </p><p>
      *
      * @param name the name of the file you wish to make an output stream for.
      */
@@ -670,8 +689,9 @@ public class FileUtils {
      */
     public static void closeOutputStream(DataOutputStream dos) {
         try {
-            if (dos != null)
+            if (dos != null) {
                 dos.close();
+            }
         } catch (IOException io) {
             System.out.println("Couldn't close Output Stream " + dos);
         }
@@ -682,8 +702,9 @@ public class FileUtils {
      */
     public static void closeInputStream(DataInputStream di) {
         try {
-            if (di != null)
+            if (di != null) {
                 di.close();
+            }
         } catch (IOException io) {
             System.out.println("Couldn't close Input Stream " + di);
         }
@@ -703,16 +724,15 @@ public class FileUtils {
     }
 
     /**
-     * Loads in a sound file from the internet or local disk.  It auto-detects
-     * what protocol it should use.
+     * Loads in a sound file from the internet or local disk.  It auto-detects what protocol it should use.
      */
     public static AudioClip getAudioClip(String audioFile) {
         AudioClip audio = null;
 
         try {
-            if (FileUtils.isOnInternet(audioFile))
+            if (FileUtils.isOnInternet(audioFile)) {
                 audio = getAudioClip(new URL(audioFile));
-            else {
+            } else {
                 URL url = FileUtils.class.getResource(audioFile);
                 if (url != null) {
                     audio = getAudioClip(url);
@@ -726,10 +746,8 @@ public class FileUtils {
     }
 
     /**
-     * Loads in a Triana system sound file via the internet (if it is an applet)
-     * or local disk.  It auto-detects what protocol it should use.
-     * It looks in the triana/system/sounds directory for
-     * the sound file called "audioFile"
+     * Loads in a Triana system sound file via the internet (if it is an applet) or local disk.  It auto-detects what
+     * protocol it should use. It looks in the triana/system/sounds directory for the sound file called "audioFile"
      */
     public static AudioClip getSystemAudioClip(String audioFile) {
         return getAudioClip("system" + "/" +
@@ -737,11 +755,9 @@ public class FileUtils {
     }
 
     /**
-     * Plays a Triana system sound file by loading it across the internet
-     * (if Triana is an applet)or local disk.  It auto-detects what protocol
-     * it should use.
-     * It looks in the %TRIANA%/system/sounds directory for
-     * the sound file called "audioFile"
+     * Plays a Triana system sound file by loading it across the internet (if Triana is an applet)or local disk.  It
+     * auto-detects what protocol it should use. It looks in the %TRIANA%/system/sounds directory for the sound file
+     * called "audioFile"
      */
     public static void playSystemAudio(String audioFile) {
         final AudioClip audio = getSystemAudioClip(audioFile);
@@ -758,20 +774,19 @@ public class FileUtils {
     }
 
     /**
-     * Loads in an image from the internet or local disk.  It auto-detects
-     * what protocol it should use.
+     * Loads in an image from the internet or local disk.  It auto-detects what protocol it should use.
      * <p/>
-     * This is legacy and only used by some Units - core Triana classes should use
-     * {@link #getSystemImage}
+     * This is legacy and only used by some Units - core Triana classes should use {@link #getSystemImage}
      */
     public static Image getImage(String imageName) {
         Image image;
 
         try {
-            if (FileUtils.isOnInternet(imageName))
+            if (FileUtils.isOnInternet(imageName)) {
                 image = Toolkit.getDefaultToolkit().getImage(new URL(imageName));
-            else
+            } else {
                 image = Toolkit.getDefaultToolkit().getImage(imageName);
+            }
         } catch (Exception e) {
             System.out.println("Couldn't load image " + imageName);
             image = null;
@@ -781,24 +796,23 @@ public class FileUtils {
 
 
     /**
-     * Loads in a triana system image icon from the internet or local disk.  It auto-detects
-     * what protocol it should use and looks in the triana/system/icons directory for
-     * the image called "imageName"
+     * Loads in a triana system image icon from the internet or local disk.  It auto-detects what protocol it should use
+     * and looks in the triana/system/icons directory for the image called "imageName"
      */
     public static ImageIcon getSystemImageIcon(String imageName) {
         Image image = getSystemImage(imageName);
 
-        if (image == null)
+        if (image == null) {
             return null;
-        else
+        } else {
             return new ImageIcon(image);
+        }
     }
 
 
     /**
-     * Loads in a triana system image from the internet or local disk.  It auto-detects
-     * what protocol it should use and looks in the triana/system/icons directory for
-     * the image called "imageName"
+     * Loads in a triana system image from the internet or local disk.  It auto-detects what protocol it should use and
+     * looks in the triana/system/icons directory for the image called "imageName"
      */
     public static Image getSystemImage(String imageName) {
         imageName = imageName.replace(File.separatorChar, '/');
@@ -812,8 +826,9 @@ public class FileUtils {
         if (imageResource == null) {
             logger.warning("error loading icon: " + imageURL);
             return null;
-        } else
+        } else {
             return Toolkit.getDefaultToolkit().getImage(imageResource);
+        }
     }
 
 
@@ -823,28 +838,25 @@ public class FileUtils {
     public static String getFileNameNoSuffix(String fullName) {
         String name = (new File(fullName)).getName();
 
-        if (name.lastIndexOf('.') > -1)
+        if (name.lastIndexOf('.') > -1) {
             return name.substring(0, name.lastIndexOf('.'));
-        else
+        } else {
             return name;
+        }
     }
 
     /**
-     * This function splits up the CLASSPATH and the TOOLBOXES environment
-     * variables into the various specified paths. A Vector is returned
-     * containing the paths found.  We also take into account that paths
-     * can be internet address also by including an internet address in the
-     * following form in your environment variables :- </p>
+     * This function splits up the CLASSPATH and the TOOLBOXES environment variables into the various specified paths. A
+     * Vector is returned containing the paths found.  We also take into account that paths can be internet address also
+     * by including an internet address in the following form in your environment variables :- </p>
      * <p/>
-     * <center>
-     * protocol://server/directory<br>
-     * for example<br>
-     * http://www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Release/classes<br>
+     * <center> protocol://server/directory<br> for example<br> http://www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Release/classes<br>
      * </center>
      */
     public static Vector splitPath(String path) {
-        if (path == null)
+        if (path == null) {
             return null;
+        }
 
         Vector paths = new Vector(10);
         // 10's quite a lot, should be OK
@@ -872,8 +884,9 @@ public class FileUtils {
 
             if (aNetwork != -1) { // an internet directory
                 if ((!newpath.endsWith("/")) && (!newpath.endsWith(".tbx"))
-                        && (!newpath.endsWith(".html")))
+                        && (!newpath.endsWith(".html"))) {
                     newpath = newpath + "/";
+                }
                 path.replace("+", ":");  // swap +'s with :'s
                 try {
                     urlPath = new URL(newpath);
@@ -886,18 +899,22 @@ public class FileUtils {
                 ZipFile z = null;
                 if (newpath.indexOf(".zip") != -1) { // a zip file
                     try {
-                        if (newpath != null)
+                        if (newpath != null) {
                             z = new ZipFile(newpath);
-                        if (z != null)
-                            if (!paths.contains(z))
+                        }
+                        if (z != null) {
+                            if (!paths.contains(z)) {
                                 paths.addElement(z);
+                            }
+                        }
                     } catch (IOException io) {
                         // System.out.println(newpath + " not a zipfile!");
                     }
                 } else {
                     if ((!newpath.endsWith(File.separator)) &&
-                            (!newpath.endsWith(".tbx")) && (!newpath.endsWith(".html")))
+                            (!newpath.endsWith(".tbx")) && (!newpath.endsWith(".html"))) {
                         newpath = newpath + File.separator;
+                    }
                     paths.addElement(newpath);
                 }
             }
@@ -907,16 +924,14 @@ public class FileUtils {
     }
 
     /**
-     * This function splits the next line read from the specified
-     * BufferReader into a vector of Strings contained within the line.
-     * Each string is split up if they are separated by a single white
-     * space. The function returns a StringVector which is basically,
-     * a Vector which only stores strings, so we don't have type-cast
-     * all the time.
+     * This function splits the next line read from the specified BufferReader into a vector of Strings contained within
+     * the line. Each string is split up if they are separated by a single white space. The function returns a
+     * StringVector which is basically, a Vector which only stores strings, so we don't have type-cast all the time.
      */
     public static Vector<String> readAndSplitLine(BufferedReader br) {
-        if (br == null)
+        if (br == null) {
             return null;
+        }
 
         String line;
 
@@ -927,17 +942,17 @@ public class FileUtils {
             return null;
         }
 
-        if (line == null)
+        if (line == null) {
             return null;
+        }
 
         return splitLine(line);
     }
 
     /**
-     * Skips the empty lines in a file and returns the next non-empty line
-     * or null if the end of the file is reached. The line returned
-     * is a vector of string with one string representing each word
-     * or whatever in the file, like readAndSplitLine
+     * Skips the empty lines in a file and returns the next non-empty line or null if the end of the file is reached.
+     * The line returned is a vector of string with one string representing each word or whatever in the file, like
+     * readAndSplitLine
      *
      * @see #readAndSplitLine
      */
@@ -946,16 +961,16 @@ public class FileUtils {
 
         do {
             line = FileUtils.readAndSplitLine(br);
-            if (line == null)
+            if (line == null) {
                 return null;
+            }
         } while ((line.size() < 1) || ((line.size() == 1) &&
                 (line.get(0).equals(""))));
         return line;
     }
 
     /**
-     * Skips the empty lines in a file and returns the next non-empty line
-     * or null if the end of the file is reached.
+     * Skips the empty lines in a file and returns the next non-empty line or null if the end of the file is reached.
      *
      * @see #readAndSplitLine
      */
@@ -964,8 +979,9 @@ public class FileUtils {
         String line;
         do {
             line = br.readLine();
-            if (line == null)
+            if (line == null) {
                 return null;
+            }
             line = line.trim();
         } while (line.length() < 1);
 
@@ -973,12 +989,9 @@ public class FileUtils {
     }
 
     /**
-     * This function splits the line into a vector of Strings
-     * separated by spaces.
-     * Each string is split up if they are separated by a single white
-     * space. The function returns a StringVector which is basically,
-     * a Vector which only stores strings, so we don't have type-cast
-     * all the time.
+     * This function splits the line into a vector of Strings separated by spaces. Each string is split up if they are
+     * separated by a single white space. The function returns a StringVector which is basically, a Vector which only
+     * stores strings, so we don't have type-cast all the time.
      */
     public static Vector<String> splitLine(String line) {
         Vector<String> items = new Vector<String>(10);  // 10 should be OK
@@ -994,11 +1007,8 @@ public class FileUtils {
 
 
     /**
-     * Reads all the file pointed to by the given reader
-     * into the returned string.  This function also closes
-     * the file (since we have read it all!). </p>
-     * <p> For example, to open, read all, and close a file you
-     * type :- </p>
+     * Reads all the file pointed to by the given reader into the returned string.  This function also closes the file
+     * (since we have read it all!). </p> <p> For example, to open, read all, and close a file you type :- </p>
      * <pre>
      * String template = FileUtils.readFile(FileUtils.createReader(fileName));
      * </pre>
@@ -1007,12 +1017,14 @@ public class FileUtils {
         String line;
         String str = "";
 
-        if (br == null)
+        if (br == null) {
             return str;
+        }
 
         try {
-            while ((line = br.readLine()) != null)
+            while ((line = br.readLine()) != null) {
                 str = str + line + "\n";
+            }
         } catch (IOException ee) {
             System.out.println("Couldn't input from " + br.toString());
             return null;
@@ -1025,11 +1037,9 @@ public class FileUtils {
 
 
     /**
-     * Reads the file specified by the given Filename and
-     * puts it into a string. This uses DataInputStream to
-     * read the file fully and then create a string
-     * which is a lot faster than reading a line at a time.
-     * Use this function for speed.
+     * Reads the file specified by the given Filename and puts it into a string. This uses DataInputStream to read the
+     * file fully and then create a string which is a lot faster than reading a line at a time. Use this function for
+     * speed.
      */
     public static String readFile(String filename) {
         String st = null;
@@ -1068,25 +1078,24 @@ public class FileUtils {
     }
 
     /**
-     * This function splits the file into a vector of Strings,
-     * each item in the vector representing one line. Used for
-     * loading in the TrianaType file and useful for splitting up
-     * file into a vector of easily accessable lines.
-     * This function also closes
-     * the file (since we have read it all!)
+     * This function splits the file into a vector of Strings, each item in the vector representing one line. Used for
+     * loading in the TrianaType file and useful for splitting up file into a vector of easily accessable lines. This
+     * function also closes the file (since we have read it all!)
      */
     public static Vector<String> readAndSplitFile(BufferedReader br) {
         Vector<String> lines = new Vector<String>(10);  // 10 should be OK
 
 
-        if (br == null)
+        if (br == null) {
             return null;
+        }
 
         String line;
 
         try {
-            while ((line = br.readLine()) != null)
+            while ((line = br.readLine()) != null) {
                 lines.addElement(line);
+            }
         } catch (IOException ee) {
             System.out.println("Couldn't input from " + br.toString());
             return null;
@@ -1098,12 +1107,9 @@ public class FileUtils {
     }
 
     /**
-     * This function splits the file into a vector of Strings,
-     * each item in the vector representing one line. Used for
-     * loading in the TrianaType file and useful for splitting up
-     * file into a vector of easily accessable lines.
-     * This function also closes
-     * the file (since we have read it all!)
+     * This function splits the file into a vector of Strings, each item in the vector representing one line. Used for
+     * loading in the TrianaType file and useful for splitting up file into a vector of easily accessable lines. This
+     * function also closes the file (since we have read it all!)
      */
     public static Vector<String> readAndSplitFile(String fileName) {
         try {
@@ -1114,12 +1120,9 @@ public class FileUtils {
     }
 
     /**
-     * Convert the given fileName into a machine independant form
-     * by making use of the environment variables to set up
-     * relative paths etc. for example, instead of using
-     * /home/specta/ian/grodcl/dir/file.name we would use
-     * $TRIANA/dir/file.name so that we could convert the
-     * file to the relevant directory on any machine.
+     * Convert the given fileName into a machine independant form by making use of the environment variables to set up
+     * relative paths etc. for example, instead of using /home/specta/ian/grodcl/dir/file.name we would use
+     * $TRIANA/dir/file.name so that we could convert the file to the relevant directory on any machine.
      */
     public static String convertToVirtualName(String fileName) {
         // start with the largest path and then all sub paths
@@ -1127,8 +1130,9 @@ public class FileUtils {
 
         String newFile = new String(correctURL(fileName));
 
-        if (fileName.trim().equals(""))
+        if (fileName.trim().equals("")) {
             return fileName;
+        }
 
 /*        System.out.println("File = " + newFile);
         if (Env.home().length() <= newFile.length())
@@ -1136,9 +1140,11 @@ public class FileUtils {
         System.out.println("File = " + Env.home());
   */
         String userHome = System.getProperty("user.home");
-        if (userHome.length() <= newFile.length())
-            if (newFile.substring(0, userHome.length()).equalsIgnoreCase(userHome))
+        if (userHome.length() <= newFile.length()) {
+            if (newFile.substring(0, userHome.length()).equalsIgnoreCase(userHome)) {
                 newFile = "$USER_HOME" + newFile.substring(userHome.length());
+            }
+        }
 
         return newFile;
     }
@@ -1152,20 +1158,24 @@ public class FileUtils {
 
         String newFile = new String(fileName);
 
-        if (fileName.trim().equals(""))
+        if (fileName.trim().equals("")) {
             return fileName;
+        }
 
 
-        if (newFile.indexOf("$USER_HOME") != -1)
+        if (newFile.indexOf("$USER_HOME") != -1) {
             newFile = System.getProperty("user.home") + newFile.substring("$USER_HOME".length());
+        }
 
         if (newFile.indexOf("://") == -1) {
             if (newFile.indexOf("/") != -1) { // created on Unix
-                if (!File.separator.equals("/"))
+                if (!File.separator.equals("/")) {
                     newFile = newFile.replace('/', File.separator.charAt(0));
+                }
             } else { // created on a DOS machine
-                if (File.separator.equals("/"))
+                if (File.separator.equals("/")) {
                     newFile = newFile.replace('\\', '/');
+                }
             }
         } else {
             if ((newFile.indexOf('\\')) != -1) {
@@ -1178,21 +1188,14 @@ public class FileUtils {
     }
 
     /**
-     * Gets a Listing Object for the given directory, the given
-     * searchstring (i.e. a wildcard based matcher) and a flag
-     * indicating whether the FileList should recurse into
-     * other directories or not.  </p>
-     * <p> The searchFilter can be any unix style (or DOS style) search
-     * expression when using <i>ls</i> or <i>dir</i>. This can also
-     * be a file, directory or null.  If its a file then this class
-     * can be used to determine whether the file exists or not (i.e.
-     * if fileFound() == 0 or exists() == false then the file
-     * does not exist. If searchFilter is a  directory then the
-     * directory is listed (if it exists) and if it is set to null
-     * then the search is based on the first argument (i.e. the searchdir).
-     * This is useful for just lsiting the contents of the directory.</p
-     * <p> The searchdir can contain "./" or "../" (unix) or ".\" "..\"
-     * in dos.
+     * Gets a Listing Object for the given directory, the given searchstring (i.e. a wildcard based matcher) and a flag
+     * indicating whether the FileList should recurse into other directories or not.  </p> <p> The searchFilter can be
+     * any unix style (or DOS style) search expression when using <i>ls</i> or <i>dir</i>. This can also be a file,
+     * directory or null.  If its a file then this class can be used to determine whether the file exists or not (i.e.
+     * if fileFound() == 0 or exists() == false then the file does not exist. If searchFilter is a  directory then the
+     * directory is listed (if it exists) and if it is set to null then the search is based on the first argument (i.e.
+     * the searchdir). This is useful for just lsiting the contents of the directory.</p <p> The searchdir can contain
+     * "./" or "../" (unix) or ".\" "..\" in dos.
      */
     public static Listing listFileNames(String searchdir, String searchFilter,
                                         boolean recurseDirs) {
@@ -1206,30 +1209,25 @@ public class FileUtils {
     }
 
     /**
-     * Gets a Listing Object for the given directory, the given
-     * searchstring (i.e. a wildcard based matcher) and a flag
-     * indicating whether the FileList should recurse into
-     * other directories or not.  </p>
-     * <p> The searchFilter can be any unix style (or DOS style) search
-     * expression when using <i>ls</i> or <i>dir</i>. This can also
-     * be a file, directory or null.  If its a file then this class
-     * can be used to determine whether the file exists or not (i.e.
-     * if fileFound() == 0 or exists() == false then the file
-     * does not exist. If searchFilter is a  directory then the
-     * directory is listed (if it exists) and if it is set to null
-     * then the search is based on the first argument (i.e. the searchdir).
-     * This is useful for just lsiting the contents of the directory.</p
-     * <p> The searchdir can contain "./" or "../" (unix) or ".\" "..\"
-     * in dos.
+     * Gets a Listing Object for the given directory, the given searchstring (i.e. a wildcard based matcher) and a flag
+     * indicating whether the FileList should recurse into other directories or not.  </p> <p> The searchFilter can be
+     * any unix style (or DOS style) search expression when using <i>ls</i> or <i>dir</i>. This can also be a file,
+     * directory or null.  If its a file then this class can be used to determine whether the file exists or not (i.e.
+     * if fileFound() == 0 or exists() == false then the file does not exist. If searchFilter is a  directory then the
+     * directory is listed (if it exists) and if it is set to null then the search is based on the first argument (i.e.
+     * the searchdir). This is useful for just lsiting the contents of the directory.</p <p> The searchdir can contain
+     * "./" or "../" (unix) or ".\" "..\" in dos.
      */
     public static Listing listDirNames(String searchdir, String searchFilter,
                                        boolean recurseDirs) {
         if (searchdir.indexOf("://") != -1) {
-            if (!searchdir.endsWith("/"))
+            if (!searchdir.endsWith("/")) {
                 searchdir = searchdir + "/";
+            }
         } else {
-            if (!searchdir.endsWith(File.separator))
+            if (!searchdir.endsWith(File.separator)) {
                 searchdir = searchdir + File.separator;
+            }
         }
 
         String absDir = absolutePath(searchdir);
@@ -1243,21 +1241,14 @@ public class FileUtils {
 
 
     /**
-     * Gets a Listing Object for the given directory, the given
-     * searchstring (i.e. a wildcard based matcher) and a flag
-     * indicating whether the FileList should recurse into
-     * other directories or not.  </p>
-     * <p> The searchFilter can be any unix style (or DOS style) search
-     * expression when using <i>ls</i> or <i>dir</i>. This can also
-     * be a file, directory or null.  If its a file then this class
-     * can be used to determine whether the file exists or not (i.e.
-     * if fileFound() == 0 or exists() == false then the file
-     * does not exist. If searchFilter is a  directory then the
-     * directory is listed (if it exists) and if it is set to null
-     * then the search is based on the first argument (i.e. the searchdir).
-     * This is useful for just lsiting the contents of the directory.</p
-     * <p> The searchdir can contain "./" or "../" (unix) or ".\" "..\"
-     * in dos.
+     * Gets a Listing Object for the given directory, the given searchstring (i.e. a wildcard based matcher) and a flag
+     * indicating whether the FileList should recurse into other directories or not.  </p> <p> The searchFilter can be
+     * any unix style (or DOS style) search expression when using <i>ls</i> or <i>dir</i>. This can also be a file,
+     * directory or null.  If its a file then this class can be used to determine whether the file exists or not (i.e.
+     * if fileFound() == 0 or exists() == false then the file does not exist. If searchFilter is a  directory then the
+     * directory is listed (if it exists) and if it is set to null then the search is based on the first argument (i.e.
+     * the searchdir). This is useful for just lsiting the contents of the directory.</p <p> The searchdir can contain
+     * "./" or "../" (unix) or ".\" "..\" in dos.
      */
     public static Listing listAllFiles(String searchdir,
                                        String searchFilter, boolean recurseDirs) {
@@ -1273,13 +1264,13 @@ public class FileUtils {
 
 
     /**
-     * @return the absolute path of the given directory i.e. the
-     *         path may contain many ../'s or ./'s in its path. This
+     * @return the absolute path of the given directory i.e. the path may contain many ../'s or ./'s in its path. This
      *         works out the correct path
      */
     public static String absolutePath(String path) {
-        if (path.indexOf("://") != -1)
+        if (path.indexOf("://") != -1) {
             return path;
+        }
 
         File f = new File(path);
         String s = null;
@@ -1294,20 +1285,20 @@ public class FileUtils {
     }
 
     /**
-     * Finds all file names in the specified directory and in
-     * all directories lower down in the tree. This list includes
-     * directories also and is highly structured. It contains
-     * a Vector of File Object (representing file and directory)
-     * names and Vectors containing listings of other directories.
-     * These other such directories also have the same format.
+     * Finds all file names in the specified directory and in all directories lower down in the tree. This list includes
+     * directories also and is highly structured. It contains a Vector of File Object (representing file and directory)
+     * names and Vectors containing listings of other directories. These other such directories also have the same
+     * format.
      */
     public static Listing listDir(String dir, boolean recurse) {
-        if (dir == null)
+        if (dir == null) {
             return null;
+        }
 
         try {
-            if (dir.indexOf("://") != -1)
+            if (dir.indexOf("://") != -1) {
                 return listDir(new URL(dir), recurse);
+            }
         }
         catch (MalformedURLException murl) {
 
@@ -1320,8 +1311,9 @@ public class FileUtils {
 
         String[] dirlist = listDir(dir);
 
-        if (dirlist == null)
+        if (dirlist == null) {
             return null;
+        }
 
         for (int i = 0; i < dirlist.length; ++i) {
             file = new File(dir + File.separator + dirlist[i]);
@@ -1331,31 +1323,35 @@ public class FileUtils {
             if ((file.isDirectory()) && (recurse)) {
                 Listing f = listDir(file.getPath(), recurse);
                 if (f != null) // don't add it if its empty
+                {
                     filelist.addElement(f);
+                }
             }
         }
 
-        if (filelist.size() > 0)
+        if (filelist.size() > 0) {
             return filelist;
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * returns a list of file names in the given directory
-     * or returns null if the directory is empty or if it
-     * does not exist.
+     * returns a list of file names in the given directory or returns null if the directory is empty or if it does not
+     * exist.
      */
     public static String[] listDir(String dir) {
-        if (dir == null)
+        if (dir == null) {
             return null;
+        }
 
         try {
             if (dir.indexOf("://") != -1) {
                 Vector<String> sv = listInternetDirectory(new URL(dir));
                 String[] s = new String[sv.size()];
-                for (int i = 0; i < sv.size(); ++i)
+                for (int i = 0; i < sv.size(); ++i) {
                     s[i] = sv.get(i);
+                }
                 return s;
             }
         }
@@ -1366,26 +1362,26 @@ public class FileUtils {
         }
 
         File file = new File(dir);
-        if ((!file.exists()) || (!file.isDirectory()))
+        if ((!file.exists()) || (!file.isDirectory())) {
             return null;
+        }
 
         String[] files = file.list();
 
-        if ((files == null) || (files.length == 0))
+        if ((files == null) || (files.length == 0)) {
             return null;
-        else
+        } else {
             return files;
+        }
 
     }
 
 
     /**
-     * Finds all file names in the specified directory and in
-     * all directories lower down in the tree. This list includes
-     * directories also and is highly structured. It contains
-     * a Vector of File Object (representing file and directory)
-     * names and Vectors containing listings of other directories.
-     * These other such directories also have the same format.
+     * Finds all file names in the specified directory and in all directories lower down in the tree. This list includes
+     * directories also and is highly structured. It contains a Vector of File Object (representing file and directory)
+     * names and Vectors containing listings of other directories. These other such directories also have the same
+     * format.
      */
     public static Listing listDir(URL dir, boolean recurse) {
         try {
@@ -1413,14 +1409,16 @@ public class FileUtils {
         Vector<String> dirlist = listInternetDirectory(dir);
 
 
-        if (dirlist == null)
+        if (dirlist == null) {
             return null;
+        }
 
         for (int i = 0; i < dirlist.size(); ++i) {
-            if (!sdir.endsWith("/"))
+            if (!sdir.endsWith("/")) {
                 file = dir + "/" + dirlist.get(i);
-            else
+            } else {
                 file = dir + dirlist.get(i);
+            }
 
             filelist.addElement(file); // add it whether its a
             // directory or a normal file
@@ -1436,14 +1434,17 @@ public class FileUtils {
             if (FileUtils.isDirectory(furl) && (recurse)) {
                 Listing f = listDir(furl, recurse);
                 if (f != null) // don't add it if its empty
+                {
                     filelist.addElement(f);
+                }
             }
         }
 
-        if (filelist.size() > 0)
+        if (filelist.size() > 0) {
             return filelist;
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -1473,8 +1474,9 @@ public class FileUtils {
         if (base.exists()) {
             File[] baseList = base.listFiles(exfilter);
 
-            if (baseList != null)
+            if (baseList != null) {
                 list(baseList, exfilter, new EndsWithFilter(endsWith), list);
+            }
         }
     }
 
@@ -1485,8 +1487,9 @@ public class FileUtils {
         if (base.exists()) {
             File[] baseList = base.listFiles(exfilter);
 
-            if (baseList != null)
+            if (baseList != null) {
                 list(baseList, exfilter, new EndsWithFilters(endsWith), list);
+            }
         }
     }
 
@@ -1494,13 +1497,15 @@ public class FileUtils {
         File[] dirfiles;
 
         for (int count = 0; count < files.length; count++) {
-            if (filter.matches(files[count]))
+            if (filter.matches(files[count])) {
                 list.add(files[count]);
+            }
 
             dirfiles = files[count].listFiles(exfilter);
 
-            if (dirfiles != null)
+            if (dirfiles != null) {
                 list(dirfiles, exfilter, filter, list);
+            }
         }
     }
 
@@ -1515,8 +1520,9 @@ public class FileUtils {
         public boolean accept(File pathname) {
             boolean accept = true;
 
-            for (int count = 0; (count < exclude.length) && (accept); count++)
+            for (int count = 0; (count < exclude.length) && (accept); count++) {
                 accept = (!pathname.getName().equalsIgnoreCase(exclude[count])) && accept;
+            }
 
             return accept;
         }

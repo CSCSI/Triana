@@ -58,24 +58,22 @@
  */
 package org.trianacode.gui.hci.tools;
 
+import java.util.Hashtable;
+
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import org.trianacode.gui.hci.ToolFilter;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import java.util.Hashtable;
-
 /**
  * A model for laying out and updating a tree of tools.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener {
 
@@ -116,17 +114,19 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
     private void repopulate() {
         nodes.clear();
 
-        if (filter == null)
+        if (filter == null) {
             setRoot(new DefaultMutableTreeNode(ROOT_NAME));
-        else
+        } else {
             setRoot(new DefaultMutableTreeNode(filter.getRoot()));
+        }
 
         nodes.put("", getRoot());
 
         Tool[] tools = tooltable.getTools();
 
-        for (int toolcount = 0; toolcount < tools.length; toolcount++)
+        for (int toolcount = 0; toolcount < tools.length; toolcount++) {
             insertTool(tools[toolcount]);
+        }
     }
 
 
@@ -141,8 +141,9 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
      * Sets the filter to be used to generate virtual package names
      */
     public void setToolFilter(ToolFilter filter) {
-        if (this.filter != null)
+        if (this.filter != null) {
             this.filter.dispose();
+        }
 
         if (filter != null) {
             this.filter = filter;
@@ -153,14 +154,15 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
     }
 
     /**
-     * @return the virtual package name for the specfied tool using the current
-     *         tool filter, null if the tool is being ignored
+     * @return the virtual package name for the specfied tool using the current tool filter, null if the tool is being
+     *         ignored
      */
     public String[] getFilteredPackages(Tool tool) {
-        if (filter == null)
+        if (filter == null) {
             return new String[]{tool.getToolPackage()};
-        else
+        } else {
             return filter.getFilteredPackage(tool);
+        }
     }
 
     /**
@@ -170,9 +172,9 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
         final String[] filtpack = getFilteredPackages(tool);
 
         if (filtpack != null) {
-            if (SwingUtilities.isEventDispatchThread())
+            if (SwingUtilities.isEventDispatchThread()) {
                 insertTool(tool, filtpack);
-            else {
+            } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         insertTool(tool, filtpack);
@@ -194,8 +196,7 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
     }
 
     /**
-     * Recursively creates nodes for the specified packages (if they
-     * don't already exist)
+     * Recursively creates nodes for the specified packages (if they don't already exist)
      */
     private void addPackages(String pack) {
         if (!nodes.containsKey(pack)) {
@@ -233,15 +234,17 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
             child = (DefaultMutableTreeNode) parent.getChildAt(count);
 
             if (newobj instanceof String) {
-                if (!(child.getUserObject() instanceof String))
+                if (!(child.getUserObject() instanceof String)) {
                     compare = -1;
-                else
+                } else {
                     compare = newobj.toString().compareToIgnoreCase(child.getUserObject().toString());
+                }
             } else {
-                if (child.getUserObject() instanceof String)
+                if (child.getUserObject() instanceof String) {
                     compare = 1;
-                else
+                } else {
                     compare = newobj.toString().compareToIgnoreCase(child.getUserObject().toString());
+                }
             }
 
             // distinguish between different tools with the same name
@@ -251,18 +254,21 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
                 compare = newloc.compareToIgnoreCase(childloc);
             }
 
-            if (compare == 0)
+            if (compare == 0) {
                 removeNodeFromParent(child);
+            }
 
             if (compare <= 0) {
                 insertNodeInto(newnode, parent, count);
                 inserted = true;
-            } else
+            } else {
                 count++;
+            }
         }
 
-        if (!inserted)
+        if (!inserted) {
             insertNodeInto(newnode, parent, count);
+        }
     }
 
     /**
@@ -271,11 +277,12 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
     public void deleteTool(Tool tool) {
         String[] filtpack = getFilteredPackages(tool);
 
-        if (filtpack != null)
+        if (filtpack != null) {
             for (int count = 0; count < filtpack.length; count++) {
                 removeNode(tool, filtpack[count]);
                 removePackages(filtpack[count]);
             }
+        }
     }
 
     /**
@@ -311,8 +318,9 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
             removeNodeFromParent(packnode);
             nodes.remove(pack);
 
-            if (pack.lastIndexOf('.') > -1)
+            if (pack.lastIndexOf('.') > -1) {
                 removePackages(pack.substring(0, pack.lastIndexOf('.')));
+            }
         }
     }
 

@@ -311,6 +311,7 @@ public class XMLReader implements XMLConstants {
         List types = handler.getChildren(component, TYPE_TAG);
         String[] result = new String[types.size()];
         for (int i = 0; i < types.size(); i++) {
+
             result[i] = ((Element) types.get(i)).getTextContent();
         }
         return result;
@@ -490,6 +491,8 @@ public class XMLReader implements XMLConstants {
             } catch (ProxyInstantiationException except) {
                 throw (new TaskException("Cannot instantiate " + type + " proxy: " + except.getMessage(), except));
             }
+        } else {
+            //tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
         }
     }
 

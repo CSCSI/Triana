@@ -1,5 +1,28 @@
 package org.trianacode.discovery.protocols.tdp.imp.trianatools;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
+
+import org.w3c.dom.Element;
 import org.thinginitself.http.HttpPeer;
 import org.trianacode.discovery.protocols.tdp.TDPRequest;
 import org.trianacode.discovery.protocols.tdp.TDPResponse;
@@ -11,29 +34,21 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
-import org.trianacode.taskgraph.tool.*;
+import org.trianacode.taskgraph.tool.JarHelper;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolClassLoader;
+import org.trianacode.taskgraph.tool.ToolException;
+import org.trianacode.taskgraph.tool.ToolFormatHandler;
+import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.taskgraph.tool.TypesMap;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Home;
-import org.w3c.dom.Element;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 /**
- * Searches for local Triana tools on this instance of Triana and exposes them to
- * the network.
- *
- * User: scmijt
- * Date: Jul 30, 2010
- * Time: 2:57:41 PM
- * To change this template use File | Settings | File Templates.
+ * Searches for local Triana tools on this instance of Triana and exposes them to the network.
+ * <p/>
+ * User: scmijt Date: Jul 30, 2010 Time: 2:57:41 PM To change this template use File | Settings | File Templates.
  */
 public class LocalTrawler extends TDPServer {
 
@@ -52,12 +67,12 @@ public class LocalTrawler extends TDPServer {
 
     @Override
     public TDPResponse handleRequest(TDPRequest request) {
-        if (request.getRequest()==TDPRequest.Request.GET_TOOLS_LIST) {
+        if (request.getRequest() == TDPRequest.Request.GET_TOOLS_LIST) {
             loadToolboxes();
             addTools();
 
         }
-        
+
         return new TDPResponse(tools);
     }
 
@@ -66,7 +81,7 @@ public class LocalTrawler extends TDPServer {
     }
 
 
-      public void loadToolboxes() {
+    public void loadToolboxes() {
         File file = new File(Home.home() + File.separator + "toolboxes.xml");
         if (!file.exists() || file.length() == 0) {
             File defToolbox = new File(Home.home() + File.separator + "toolbox");
@@ -140,7 +155,7 @@ public class LocalTrawler extends TDPServer {
     }
 
 
-       /**
+    /**
      * Add a tool box path to the current tool boxes This also gets the tool class loader to find paths within the tool
      * box to add to its classpath And gets the types map to parse all the class files and jar files and categorize them
      * according to their classes,superclass and interfaces.
@@ -209,7 +224,7 @@ public class LocalTrawler extends TDPServer {
         return files;
     }
 
-       /**
+    /**
      * Add a tool to the tool tables that is located at the specified location
      *
      * @param toolFile the tool file
@@ -234,7 +249,7 @@ public class LocalTrawler extends TDPServer {
                 log.fine("ToolTableImp.addTool stats:" + stat.getStatus());
                 if (stat.getStatus() == ToolFormatHandler.ToolStatus.Status.NOT_MODIFIED) {
                     continue;
-                } 
+                }
                 ret.add(stat.getTool());
             }
 
@@ -247,10 +262,11 @@ public class LocalTrawler extends TDPServer {
         List<ToolFormatHandler.ToolStatus> ret = new ArrayList<ToolFormatHandler.ToolStatus>();
         try {
             if (file.getName().endsWith(".xml")) {
-                log.fine("file is XML:" + file.getAbsolutePath());
+                log.fine("LocalTrawler.add file is XML:" + file.getAbsolutePath());
                 Tool tool = readXMLStream(new FileInputStream(file), file.getAbsolutePath(), toolbox);
                 if (tool != null) {
-                    tools.add(new ToolMetadata(tool.getToolName(),tool.getDisplayName(),new URL(file.toString()),null));
+                    tools.add(new ToolMetadata(tool.getToolName(), tool.getDisplayName(), new URL(file.toString()),
+                            null));
                 }
             } else if (file.getName().endsWith(".jar")) {
                 log.fine("file is JAR:" + file.getAbsolutePath());
@@ -262,7 +278,8 @@ public class LocalTrawler extends TDPServer {
                         InputStream in = helper.getStream(potential);
                         Tool tool = readXMLStream(in, file.getAbsolutePath(), toolbox);
                         if (tool != null) {
-                            tools.add(new ToolMetadata(tool.getToolName(),tool.getDisplayName(),new URL(file.toString()),null));
+                            tools.add(new ToolMetadata(tool.getToolName(), tool.getDisplayName(),
+                                    new URL(file.toString()), null));
                         }
                     } else if (potential.endsWith(".class")) {
                         URL url = createJarURL(file, potential);
@@ -274,8 +291,9 @@ public class LocalTrawler extends TDPServer {
                             }
                             if (ch != null) {
                                 Tool tool = read(ch.getName(), toolbox, ch.getFile());
-                                if (tool != null ) {
-                                    tools.add(new ToolMetadata(tool.getToolName(),tool.getDisplayName(),new URL(file.toString()),null));
+                                if (tool != null) {
+                                    tools.add(new ToolMetadata(tool.getToolName(), tool.getDisplayName(),
+                                            new URL(file.toString()), null));
                                 }
                             }
                         }
@@ -294,7 +312,8 @@ public class LocalTrawler extends TDPServer {
                 if (ch != null) {
                     Tool tool = read(ch.getName(), toolbox, ch.getFile());
                     if (tool != null) {
-                        tools.add(new ToolMetadata(tool.getToolName(),tool.getDisplayName(),new URL(file.toString()),null));
+                        tools.add(new ToolMetadata(tool.getToolName(), tool.getDisplayName(), new URL(file.toString()),
+                                null));
                     }
                 }
             }

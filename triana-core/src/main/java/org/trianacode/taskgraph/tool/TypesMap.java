@@ -47,11 +47,17 @@ public class TypesMap {
 
     public static void load(File file) throws IOException {
         Map<String, ClassHierarchy> hiers = parser.readFile(file);
-        allByName.putAll(hiers);
+        for (String s : hiers.keySet()) {
+            if (allByName.get(s) == null) {
+                allByName.put(s, hiers.get(s));
+            }
+        }
         for (String s : hiers.keySet()) {
             ClassHierarchy ch = hiers.get(s);
             if (ch.isAnnotated()) {
-                annotated.put(ch.getFile(), ch);
+                if (annotated.get(ch.getFile()) == null) {
+                    annotated.put(ch.getFile(), ch);
+                }
             }
         }
     }
@@ -102,7 +108,7 @@ public class TypesMap {
             }
         }
         long end = System.currentTimeMillis();
-        System.out.println("TypeMap.find time:" + (end - now));
+        //System.out.println("TypeMap.find time:" + (end - now));
         return new ArrayList<ClassHierarchy>(ret);
     }
 
@@ -117,7 +123,6 @@ public class TypesMap {
             return false;
         }
         if (!ch.isPublic() || !ch.isConcrete()) {
-
             return false;
         }
         String[] intfs = ch.getInterfaces();

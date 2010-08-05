@@ -68,7 +68,11 @@ public class ClassParser {
     }
 
     public Map<String, ClassHierarchy> analyseClassFile(File file) throws IOException {
+
         Map<String, ClassHierarchy> map = new HashMap<String, ClassHierarchy>();
+        if (file.getName().startsWith(".") || file.getName().equals("CVS")) {
+            return map;
+        }
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (int i = 0; i < files.length; i++) {

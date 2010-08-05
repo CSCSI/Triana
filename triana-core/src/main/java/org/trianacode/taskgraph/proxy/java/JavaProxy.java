@@ -90,7 +90,7 @@ public class JavaProxy implements Proxy {
     }
 
     public JavaProxy(String unitname, String unitpackage) {
-        this.unitname = unitname;
+        this.unitname = hackUnitName(unitname);
         this.unitpackage = unitpackage;
     }
 
@@ -104,7 +104,22 @@ public class JavaProxy implements Proxy {
         }
 
         this.unitname = (String) instdetails.get(JavaConstants.UNIT_NAME);
+        this.unitname = hackUnitName(unitname);
         this.unitpackage = (String) instdetails.get(JavaConstants.UNIT_PACKAGE);
+    }
+
+    private String hackUnitName(String unitname) {
+        return unitname;
+        /*if (unitname.indexOf(".") > -1) {
+            unitname = unitname.substring(unitname.lastIndexOf(".") + 1, unitname.length());
+        }
+        String num = unitname.substring(unitname.length() - 1, unitname.length());
+        try {
+            Integer.parseInt(num);
+        } catch (NumberFormatException e) {
+            return unitname;
+        }
+        return unitname.substring(0, unitname.length() - 1);*/
     }
 
 

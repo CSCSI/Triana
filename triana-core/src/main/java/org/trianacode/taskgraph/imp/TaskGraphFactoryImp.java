@@ -230,7 +230,9 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
      */
     public Task createTask(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskException {
         try {
-            if ((tool.getProxy() == null) && (tool instanceof TaskGraph)) {
+            // ANDREW - temporary until tools are converted
+            //if ((tool.getProxy() == null) && (tool instanceof TaskGraph)) {
+            if ((tool instanceof TaskGraph)) {
                 return TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, parent, preserveinst);
             } else {
                 TaskFactory factory = getRegisteredTaskGraphFactory(tool);
