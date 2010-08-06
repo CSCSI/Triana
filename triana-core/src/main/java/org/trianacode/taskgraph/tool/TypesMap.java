@@ -39,24 +39,28 @@ import org.trianacode.taskgraph.tool.creators.type.ClassParser;
 public class TypesMap {
 
     private static Map<String, ClassHierarchy> allByName = new ConcurrentHashMap<String, ClassHierarchy>();
+    private static Map<String, ClassHierarchy> allByPath = new ConcurrentHashMap<String, ClassHierarchy>();
+
     private static Map<String, Map<String, ClassHierarchy>> allByType
             = new ConcurrentHashMap<String, Map<String, ClassHierarchy>>();
     private static Map<String, ClassHierarchy> annotated = new ConcurrentHashMap<String, ClassHierarchy>();
     private static ClassParser parser = new ClassParser();
-    private static Set<String> deadEnds = new HashSet<String>();
+    private static Map<String, String> deadEnds = new ConcurrentHashMap<String, String>();
 
     public static void load(File file) throws IOException {
         Map<String, ClassHierarchy> hiers = parser.readFile(file);
-        for (String s : hiers.keySet()) {
-            if (allByName.get(s) == null) {
-                allByName.put(s, hiers.get(s));
-            }
-        }
         for (String s : hiers.keySet()) {
             ClassHierarchy ch = hiers.get(s);
             if (ch.isAnnotated()) {
                 if (annotated.get(ch.getFile()) == null) {
                     annotated.put(ch.getFile(), ch);
+                }
+            } else {
+                if (allByName.get(s) == null) {
+                    allByName.put(s, ch);
+                }
+                if (allByPath.get(s) == null) {
+                    allByPath.put(ch.getFile(), ch);
                 }
             }
         }
@@ -72,13 +76,27 @@ public class TypesMap {
      * @return
      */
     public static ClassHierarchy isType(String path, String type) {
+        /*ClassHierarchy ret = allByPath.get(path);
+        if(ret == null) {
+            return null;
+        }
+        if(ret.getName().equals(type)) {
+            return ret;
+        }
+        String superClass = ret.getSuperClass();
+        if(superClass != null) {
+            if(findSuperType(superClass)) {
+                return ret;
+            }
+        }
+        return null;*/
         Map<String, ClassHierarchy> mapped = allByType.get(type);
         if (mapped != null && mapped.get(path) != null) {
             return mapped.get(path);
         }
         for (String hier : allByName.keySet()) {
-            if (isType(allByName, hier, type)) {
-                ClassHierarchy ch = allByName.get(hier);
+            ClassHierarchy ch = isType(allByName, hier, type, true);
+            if (ch != null) {
                 addToTypes(type, ch);
                 if (ch.getFile().equals(path)) {
                     return ch;
@@ -95,7 +113,6 @@ public class TypesMap {
         }
         types.put(ch.getFile(), ch);
         allByType.put(type, types);
-
     }
 
 
@@ -103,8 +120,9 @@ public class TypesMap {
         long now = System.currentTimeMillis();
         Set<ClassHierarchy> ret = new HashSet<ClassHierarchy>();
         for (String hier : allByName.keySet()) {
-            if (isType(allByName, hier, type)) {
-                ret.add(allByName.get(hier));
+            ClassHierarchy ch = isType(allByName, hier, type, true);
+            if (ch != null) {
+                ret.add(ch);
             }
         }
         long end = System.currentTimeMillis();
@@ -116,40 +134,83 @@ public class TypesMap {
         return annotated.get(path);
     }
 
+    private static boolean findSuperType(String type) {
 
-    private static boolean isType(Map<String, ClassHierarchy> hiers, String hier, String type) {
-        ClassHierarchy ch = hiers.get(hier);
-        if (ch == null || deadEnds.contains(hier)) {
+        ClassHierarchy ch = allByName.get(type);
+        if (ch == null) {
             return false;
         }
-        if (!ch.isPublic() || !ch.isConcrete()) {
+
+        if (!ch.isPublic()) {
             return false;
         }
+
         String[] intfs = ch.getInterfaces();
         for (String intf : intfs) {
             if (intf.equals(type)) {
                 return true;
             }
         }
-        for (String intf : intfs) {
-            boolean is = isType(hiers, intf, type);
-            if (is) {
+
+        String superClass = ch.getSuperClass();
+        if (superClass != null) {
+            if (superClass.equals(type)) {
                 return true;
-            } else {
-                deadEnds.add(intf);
+            }
+
+            return findSuperType(superClass);
+        }
+        //deadEnds.put(hier, type);
+        return false;
+
+    }
+
+
+    private static ClassHierarchy isType(Map<String, ClassHierarchy> hiers, String hier, String type,
+                                         boolean mustBeConcrete) {
+        ClassHierarchy ch = hiers.get(hier);
+        if (ch == null) {
+            return null;
+        }
+        if (deadEnds.get(hier) != null) {
+            return null;
+        }
+        if (!ch.isPublic()) {
+            return null;
+        }
+        if (!ch.isConcrete() && mustBeConcrete) {
+            return null;
+        }
+
+        String[] intfs = ch.getInterfaces();
+        for (String intf : intfs) {
+            if (intf.equals(type)) {
+                return ch;
             }
         }
 
         String superClass = ch.getSuperClass();
-        if (superClass.equals(type)) {
-            return true;
-        } else {
-            boolean b = isType(hiers, superClass, type);
-            if (!b) {
-                deadEnds.add(hier);
+        if (superClass != null) {
+            if (superClass.equals(type)) {
+                return ch;
             }
-            return b;
+            try {
+                Class cls = ClassLoaders.forName(superClass);
+                Class sc = cls.getSuperclass();
+                while (sc != null) {
+                    if (sc.getName().equals(type)) {
+                        return ch;
+                    }
+                    sc = sc.getSuperclass();
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            //return isType(hiers, superClass, type, false);
         }
+        deadEnds.put(hier, type);
+        return null;
+
     }
 
 

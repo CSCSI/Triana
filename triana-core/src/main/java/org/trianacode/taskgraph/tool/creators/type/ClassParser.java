@@ -21,6 +21,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -74,7 +75,16 @@ public class ClassParser {
             return map;
         }
         if (file.isDirectory()) {
-            File[] files = file.listFiles();
+            File[] files = file.listFiles(new FilenameFilter() {
+
+                @Override
+                public boolean accept(File file, String s) {
+                    if (file.getName().equals("lib")) {
+                        return false;
+                    }
+                    return true;
+                }
+            });
             for (int i = 0; i < files.length; i++) {
 
                 if (files[i].isDirectory() || files[i].getName().endsWith(".class")) {

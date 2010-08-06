@@ -58,24 +58,32 @@
  */
 package org.trianacode.gui.hci;
 
-import org.trianacode.gui.hci.tools.ToolTreeModel;
-import org.trianacode.gui.hci.tools.filters.*;
-
-import javax.swing.*;
-import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.JTree;
+import javax.swing.tree.TreePath;
+import org.trianacode.gui.hci.tools.ToolTreeModel;
+import org.trianacode.gui.hci.tools.filters.AllPackagesFilter;
+import org.trianacode.gui.hci.tools.filters.AllToolsFilter;
+import org.trianacode.gui.hci.tools.filters.DataTypeFilter;
+import org.trianacode.gui.hci.tools.filters.InputToolsFilter;
+import org.trianacode.gui.hci.tools.filters.OutputToolsFilter;
+import org.trianacode.gui.hci.tools.filters.SearchFilter;
+import org.trianacode.gui.hci.tools.filters.SubPackageFilter;
 
 /**
  * A ToolBar for searching and filtering of units in the unit tree view
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Nov 15, 2002; 4:43:06 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class SearchToolBar extends JToolBar implements ActionListener, FocusListener {
 
@@ -103,8 +111,7 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
     private JTree tree;
 
     /**
-     * A string representing the last selected filter (required to stop a
-     * second event that is generated refiltering)
+     * A string representing the last selected filter (required to stop a second event that is generated refiltering)
      */
     private String filtertxt = "";
 
@@ -127,7 +134,7 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
     private void createWidgets() {
         JPanel searchpanel = new JPanel(new BorderLayout());
         searchField = new JComboBox(filters);
-        searchField.setPrototypeDisplayValue("01234567890123456");
+        searchField.setPrototypeDisplayValue("012345678901234567890123456");
         searchField.setEditable(true);
         searchField.setSelectedIndex(0);
         searchField.addActionListener(this);
@@ -162,10 +169,11 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
         if (!filtertxt.equals(item)) {
             filtertxt = item.toString();
 
-            if (item instanceof ToolFilter)
+            if (item instanceof ToolFilter) {
                 model.setToolFilter((ToolFilter) item);
-            else if (item instanceof String)
+            } else if (item instanceof String) {
                 model.setToolFilter(new SearchFilter((String) item));
+            }
 
             tree.expandPath(new TreePath(model.getRoot()));
         }
@@ -176,8 +184,9 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == searchField)
+        if (e.getSource() == searchField) {
             initFilter();
+        }
     }
 
 
@@ -185,8 +194,9 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
     }
 
     public void focusLost(FocusEvent event) {
-        if (event.getSource() == searchField)
+        if (event.getSource() == searchField) {
             initFilter();
+        }
     }
 
 

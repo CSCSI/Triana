@@ -90,7 +90,7 @@ public class ToolClassLoader extends URLClassLoader {
                 addPath(box.getAbsolutePath());
             }
         }
-        System.out.println("ToolClassLoader.addToolBox CLASSPATH:" + getClassPath());
+        log.fine("ToolClassLoader.addToolBox CLASSPATH:" + getClassPath());
     }
 
 

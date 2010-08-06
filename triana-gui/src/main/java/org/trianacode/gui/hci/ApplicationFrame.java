@@ -97,6 +97,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.FontUIResource;
 import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
+import org.trianacode.EngineInit;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.MainTrianaKeyMapFactory;
@@ -191,7 +192,6 @@ import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImp;
-import org.trianacode.EngineInit;
 import org.trianacode.util.Env;
 
 
@@ -530,6 +530,7 @@ public class ApplicationFrame extends TrianaWindow
 
         toolPanel.add(searchtoolbar, BorderLayout.NORTH);
         JScrollPane scroll = new JScrollPane(toolboxTree);
+
         toolPanel.add(scroll, BorderLayout.CENTER);
 
         JScrollPane scrollWork = new JScrollPane(workspace);

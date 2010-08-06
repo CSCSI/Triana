@@ -93,12 +93,7 @@ public final class TypeChecking {
      * @return boolean <i>True</i> if any of the output types are consistent with any of the input types
      */
     public static boolean isCompatibility(Class[] outTypes, Class[] inTypes) {
-        for (Class inType : inTypes) {
-            System.out.println("TypeChecking.isCompatibility in class:" + inType);
-        }
-        for (Class outType : outTypes) {
-            System.out.println("TypeChecking.isCompatibility out class:" + outType);
-        }
+
         boolean match = false;
 
         for (int outcount = 0; (!match) && (outcount < outTypes.length); ++outcount) {
@@ -160,15 +155,11 @@ public final class TypeChecking {
         if (intypes == null) {
             intypes = rectask.getDataInputTypes();
         }
-        for (String type : intypes) {
-            System.out.println("TypeChecking.classForTrianaType TYPE:" + type + " FOR TASK " + rectask.getToolName());
-        }
+
         try {
             boolean b = (isCompatibility(classForTrianaType(outtypes), classForTrianaType(intypes)));
-            System.out.println("TypeChecking.isCompatibility:" + b);
             return b;
         } catch (NoClassDefFoundError except) {
-            System.err.println("Error: Cannot find class: " + except.getMessage());
             return false;
         }
     }
@@ -213,7 +204,6 @@ public final class TypeChecking {
             array = true;
             name = name.substring(0, name.indexOf("[]"));
         }
-        System.out.println("TypeChecking.classForTrianaType NAME:" + name);
         Class javaType = null;
         try {      // look for the full type Type next
             javaType = ClassLoaders.forName(name);

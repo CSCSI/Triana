@@ -195,6 +195,7 @@ public class FileToolFormatHandler implements ToolFormatHandler {
         return ret;
     }
 
+
     public void delete(Tool tool) {
         String id = createId(tool);
         ToolUrl tu = tools.get(id);
