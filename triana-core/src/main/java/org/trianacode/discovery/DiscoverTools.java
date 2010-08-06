@@ -50,8 +50,10 @@ public class DiscoverTools implements Timeable {
 
         //  scan every 10 seconds....
 
-        timer = new Timer(this, 10000);
-        timer.cont();
+       // timer = new Timer(this, 10000);
+       // timer.cont();
+
+        tick(null);
 
         ServiceTypes st = new ServiceTypes();
 
@@ -84,11 +86,12 @@ public class DiscoverTools implements Timeable {
 
             TDPRequest request = new TDPRequest(TDPRequest.Request.GET_TOOLS_LIST);
 
-
             try {
                 TDPResponse data = sendMessageToServer(request, endpoint);
 
                 List<ToolMetadata> tools = data.getTools();
+
+                System.out.println("Here's the list of tools found from the bonjour service  !!");
 
                 for (ToolMetadata toolmd : tools) {
                     System.out.println(toolmd.toString());
@@ -125,7 +128,7 @@ public class DiscoverTools implements Timeable {
 
     }
 
-    private Response sendRequestByHand(RequestContext c, TDPRequest request) throws IOException {
+ /**   private Response sendRequestByHand(RequestContext c, TDPRequest request) throws IOException {
         c.setResource(new Resource(new StreamableString(objectToString(request))));
         return httpEngine.post(c);
     }
@@ -138,7 +141,7 @@ public class DiscoverTools implements Timeable {
         String output = out.toString();
         out.close();
         return output;
-    }
+    }  */
 
     public static WebBootstrap getBonjourServer() {
         return bonjourServer;
