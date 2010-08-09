@@ -1,0 +1,30 @@
+TRIANA TODO LIST
+================
+
+This is an (internal) place to put bug reports/fixes and feature requests.
+If you have something more substantial than a note/paragraph, e.g. a diff/fix,
+then number it (e.g. "1"), add the number in this file, and check in a separate file ("1.txt") into the parent directory of this file
+with the diff/fix in it.
+
+One day, we'll set up JIRA :-)
+
+
+
+BUGS
+====
+
+
+
+
+
+
+
+FEATURE REQUESTS
+================
+
+
+
+
+
+
+
