@@ -15,7 +15,7 @@ BUGS
 
 Found while playing around with the GUI. If you create a group of tools, with a set number of inputs and outputs, and wire them all up in the "root" window, and then add some more input or output connectors to the sub-group, this change isn't updated in the root window. 
 
-
+update: I found the "Resolve Group Nodes" option in one of the right-click menus, which sorts it all out.
 
 
 
