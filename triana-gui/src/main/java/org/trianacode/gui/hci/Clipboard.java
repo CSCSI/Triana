@@ -67,8 +67,6 @@ import org.trianacode.taskgraph.tool.Tool;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th Feb 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Clipboard {
 
@@ -78,8 +76,7 @@ public class Clipboard {
     private static Tool[] clipboard = new Tool[0];
 
     /**
-     * A flag indicating whether the tools have already been repackaged to
-     * reflect the correct paste subpackage.
+     * A flag indicating whether the tools have already been repackaged to reflect the correct paste subpackage.
      */
     private static boolean repack;
 
@@ -88,8 +85,8 @@ public class Clipboard {
      * Stores tasks that are being cut or copied in the clipboard.
      *
      * @param tools      the tools being stored in the clipboard
-     * @param repackaged a flag indicating whether the tools have already been
-     *                   repackaged to reflect the correct paste subpackage.
+     * @param repackaged a flag indicating whether the tools have already been repackaged to reflect the correct paste
+     *                   subpackage.
      */
     public static void putTools(Tool[] tools, boolean repackaged) throws TaskGraphException {
         clipboard = new Tool[tools.length];
@@ -104,8 +101,8 @@ public class Clipboard {
     /**
      * Retrieves copies of the tasks stored in the clipboard
      *
-     * @param repackaged a flag indiacting whether the returned tools should
-     *                   be repackaged to reflact the correct paste subpackage
+     * @param repackaged a flag indiacting whether the returned tools should be repackaged to reflact the correct paste
+     *                   subpackage
      */
     public static Tool[] getTools(boolean repackaged) {
         try {
@@ -114,8 +111,9 @@ public class Clipboard {
             for (int count = 0; count < clipboard.length; count++) {
                 temp[count] = TaskGraphUtils.cloneTool(clipboard[count]);
 
-                if (repackaged && (!repack))
+                if (repackaged && (!repack)) {
                     temp[count].setToolPackage("");
+                }
             }
 
             return temp;

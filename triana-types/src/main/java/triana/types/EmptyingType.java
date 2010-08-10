@@ -60,14 +60,10 @@ package triana.types;
 
 
 /**
- * A EmptyingType is used by the monitor class to flush data
- * out of the networks i.e. there maybe data to collect
+ * A EmptyingType is used by the monitor class to flush data out of the networks i.e. there maybe data to collect
  *
- *
- * @author      Ian Taylor
- * @created     27 August 1998
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class EmptyingType extends TrianaType {
 

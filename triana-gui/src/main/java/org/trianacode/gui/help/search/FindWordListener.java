@@ -59,8 +59,7 @@
 package org.trianacode.gui.help.search;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public interface FindWordListener {
     public void wordFound(FindWordEvent event);

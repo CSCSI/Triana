@@ -59,33 +59,50 @@
 
 package org.trianacode.gui.hci;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.logging.Logger;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.windows.ErrorDialog;
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.IncompatibleTypeException;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.TPoint;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphFactory;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.TaskLayoutUtils;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
 import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.logging.Logger;
-
 /**
- * A gui class with static methods for handling taskgraph operations, such as
- * create task and connect nodes.
+ * A gui class with static methods for handling taskgraph operations, such as create task and connect nodes.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 22nd June 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class TaskGraphHandler {
@@ -94,10 +111,9 @@ public class TaskGraphHandler {
 
 
     /**
-     * Creates a unit from a ToolImp object and places it on this MainTriana
-     * at the position indicated and sets it to be the only selected ToolImp.
-     * A reference to the toolbox which the tool came from and the position
-     * within that toolbox is also given.
+     * Creates a unit from a ToolImp object and places it on this MainTriana at the position indicated and sets it to be
+     * the only selected ToolImp. A reference to the toolbox which the tool came from and the position within that
+     * toolbox is also given.
      */
     public static void createTask(final Tool tool, final TaskGraphPanel panel, final int x, final int y) {
         Thread taskThread = new Thread(new Runnable() {
@@ -108,13 +124,14 @@ public class TaskGraphHandler {
                 try {
                     Tool newtool;
 
-                    if (tool instanceof TaskGraph)
+                    if (tool instanceof TaskGraph) {
                         newtool = ((TaskGraph) tool);
-                    else {
+                    } else {
                         RenderingHint hint = getTaskGraphFactoryHint(tool, panel);
 
-                        if (hint == null)
+                        if (hint == null) {
                             return;
+                        }
 
                         newtool = TaskGraphUtils.cloneTool(tool);
                         ((Tool) newtool).addRenderingHint(hint);
@@ -126,11 +143,13 @@ public class TaskGraphHandler {
 
                     TaskComponent[] comps = panel.getTaskComponents();
 
-                    for (int count = 0; count < comps.length; count++)
+                    for (int count = 0; count < comps.length; count++) {
                         comps[count].setSelected(false);
+                    }
 
-                    if (newtool instanceof Tool)
+                    if (newtool instanceof Tool) {
                         TaskLayoutUtils.setPosition((Tool) newtool, new TPoint(x, y), panel.getLayoutDetails());
+                    }
 
                     Task task = panel.getTaskGraph().createTask(newtool, false);
 
@@ -139,7 +158,8 @@ public class TaskGraphHandler {
 
                         if (connect) {
                             TPoint pos = TaskLayoutUtils.getPosition(task, panel.getLayoutDetails());
-                            new AutoConnect().autoConnect(task, (int)pos.getX(), (int)pos.getY(), panel.getTaskGraph());
+                            new AutoConnect()
+                                    .autoConnect(task, (int) pos.getX(), (int) pos.getY(), panel.getTaskGraph());
                         }
                     }
 
@@ -147,8 +167,9 @@ public class TaskGraphHandler {
                 } catch (TaskException except) {
                     new ErrorDialog(Env.getString("taskError") + ": " + tool.getToolName(), except.getMessage());
                 } finally {
-                    if (progressBar != null)
+                    if (progressBar != null) {
                         progressBar.disposeProgressBar();
+                    }
                 }
             }
         });
@@ -158,9 +179,8 @@ public class TaskGraphHandler {
     }
 
     /**
-     * Gets the taskgraph factory rendering hint for the specified tool. This
-     * method should not be used with taskgraphs (a RuntimeException will be
-     * thrown!).
+     * Gets the taskgraph factory rendering hint for the specified tool. This method should not be used with taskgraphs
+     * (a RuntimeException will be thrown!).
      *
      * @return the taskgraph factory rendering hint, or null if cancelled
      */
@@ -168,25 +188,30 @@ public class TaskGraphHandler {
         TaskGraphFactory factory = TaskGraphManager.getTaskGraphFactory(panel.getTaskGraph());
         Proxy proxy = newtool.getProxy();
 
-        if (newtool instanceof TaskGraphFactory)
+        if (newtool instanceof TaskGraphFactory) {
             throw (new RuntimeException("getTaskGraphFactoryHint should not be called with TaskGraph instances"));
+        }
 
-        if (proxy == null)
+        if (proxy == null) {
             throw (new TaskException("No Proxy set in " + newtool.getToolName()));
+        }
 
         TaskFactory[] factories = factory.getRegisteredTaskGraphFactories(proxy.getType());
         String factoryname;
 
-        if (factories.length == 0)
+        if (factories.length == 0) {
             throw (new TaskException("No TaskFactory set in for Proxy type: " + proxy.getType()));
+        }
 
-        if (factories.length == 1)
+        if (factories.length == 1) {
             factoryname = factories[0].getFactoryName();
-        else
+        } else {
             factoryname = showSelectTaskFactoryDialog(newtool.getToolName(), proxy.getType(), factories);
+        }
 
-        if (factoryname == null)
+        if (factoryname == null) {
             return null;
+        }
 
         RenderingHintImp hint = new RenderingHintImp(TaskGraphFactory.TASKGRAPH_FACTORY_RENDENRING_HINT, true);
         hint.setRenderingDetail(TaskGraphFactory.FACTORY_NAME, factoryname);
@@ -201,15 +226,27 @@ public class TaskGraphHandler {
     public static void connect(TaskGraphPanel panel, Node outnode, Node innode) {
         try {
 
-            logger.fine(outnode.getTask().getToolName() + " attempting to connect to " + innode.getTask().getToolName());
+            logger.fine(
+                    outnode.getTask().getToolName() + " attempting to connect to " + innode.getTask().getToolName());
 
-			panel.getTaskGraph().connect(outnode, innode);
+            panel.getTaskGraph().connect(outnode, innode);
         } catch (IncompatibleTypeException except) {
-            new ErrorDialog(Env.getString("cableError") + ": " + outnode.getTask().getToolName() + "->" + innode.getTask().getToolName(), "Error connecting " + outnode.getTask().getToolName() + " to " + innode.getTask().getToolName() + ": Incompatible Types");
+            new ErrorDialog(
+                    Env.getString("cableError") + ": " + outnode.getTask().getToolName() + "->" + innode.getTask()
+                            .getToolName(),
+                    "Error connecting " + outnode.getTask().getToolName() + " to " + innode.getTask().getToolName()
+                            + ": Incompatible Types");
         } catch (IncompatibleProxyException except) {
-            new ErrorDialog(Env.getString("cableError") + ": " + outnode.getTask().getToolName() + "->" + innode.getTask().getToolName(), "Error connecting " + outnode.getTask().getToolName() + " to " + innode.getTask().getToolName() + ": Incompatible Proxies (" + outnode.getTopLevelTask().getProxy().getType() + "->" + innode.getTopLevelTask().getProxy().getType() + ")");
+            new ErrorDialog(
+                    Env.getString("cableError") + ": " + outnode.getTask().getToolName() + "->" + innode.getTask()
+                            .getToolName(),
+                    "Error connecting " + outnode.getTask().getToolName() + " to " + innode.getTask().getToolName()
+                            + ": Incompatible Proxies (" + outnode.getTopLevelTask().getProxy().getType() + "->"
+                            + innode.getTopLevelTask().getProxy().getType() + ")");
         } catch (CableException except) {
-            new ErrorDialog(Env.getString("cableError") + ": " + outnode.getTask().getToolName() + "->" + innode.getTask().getToolName(), except.getMessage());
+            new ErrorDialog(
+                    Env.getString("cableError") + ": " + outnode.getTask().getToolName() + "->" + innode.getTask()
+                            .getToolName(), except.getMessage());
         }
     }
 
@@ -221,10 +258,11 @@ public class TaskGraphHandler {
         SelectTaskFactoryDialog dialog = new SelectTaskFactoryDialog(toolname, proxyname, factories);
         dialog.show();
 
-        if (dialog.isAccepted())
+        if (dialog.isAccepted()) {
             return dialog.getFactoryName();
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -258,15 +296,17 @@ public class TaskGraphHandler {
          * @return the name of the taskgraph factory
          */
         public String getFactoryName() {
-            if (list.getSelectedValue() != null)
+            if (list.getSelectedValue() != null) {
                 return ((TaskFactoryItem) list.getSelectedValue()).getTaskFactory().getFactoryName();
-            else
+            } else {
                 return null;
+            }
         }
 
 
         private void initLayout(String proxyname) {
-            JScrollPane scroll = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            JScrollPane scroll = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             list.setPrototypeCellValue("01234567890123456789012345");
             list.setVisibleRowCount(10);
             list.addListSelectionListener(this);
@@ -304,21 +344,24 @@ public class TaskGraphHandler {
         private void populateList(TaskFactory[] factories) {
             DefaultListModel model = (DefaultListModel) list.getModel();
 
-            for (int count = 0; count < factories.length; count++)
+            for (int count = 0; count < factories.length; count++) {
                 addSorted(new TaskFactoryItem(factories[count]), model);
+            }
 
-            if (model.size() > 0)
+            if (model.size() > 0) {
                 list.setSelectedIndex(0);
+            }
 
             ok.setEnabled(model.size() > 0);
         }
 
         private void addSorted(TaskFactoryItem item, DefaultListModel model) {
-            for (int count = 0; count < model.size(); count++)
+            for (int count = 0; count < model.size(); count++) {
                 if (item.toString().compareTo(model.getElementAt(count).toString()) < 0) {
                     model.add(count, item);
                     return;
                 }
+            }
 
             model.addElement(item);
         }
@@ -341,7 +384,7 @@ public class TaskGraphHandler {
          * Called whenever the value of the selection changes.
          */
         public void valueChanged(ListSelectionEvent event) {
-            if (event.getSource() == list)
+            if (event.getSource() == list) {
                 if (list.getSelectedIndex() != -1) {
                     TaskFactory factory = ((TaskFactoryItem) list.getSelectedValue()).getTaskFactory();
                     description.setText(factory.getFactoryDescription());
@@ -350,6 +393,7 @@ public class TaskGraphHandler {
                     description.setText(null);
                     ok.setEnabled(false);
                 }
+            }
         }
 
     }

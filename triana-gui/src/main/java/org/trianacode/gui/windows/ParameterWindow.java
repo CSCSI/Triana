@@ -58,26 +58,35 @@
  */
 package org.trianacode.gui.windows;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ParameterWindowInterface;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 
 /**
- * ParamaterWindow in Version 3 of Triana is a simple window for containing ParameterPanels. It
- * inherits from JDialog and provides default buttons for OK, CANCEL & APPLY.
+ * ParamaterWindow in Version 3 of Triana is a simple window for containing ParameterPanels. It inherits from JDialog
+ * and provides default buttons for OK, CANCEL & APPLY.
  *
  * @author 1st December 1999
  * @version $Revision: 4048 $
- * @created Ian Taylor
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ParameterWindow extends JDialog
         implements ActionListener, ItemListener, ContainerListener,
@@ -99,20 +108,18 @@ public class ParameterWindow extends JDialog
     private boolean accepted = false;
 
     /**
-     * A flag indicating whether the parameter is automatically disposed when
-     * ok/cancel are choosen (true by default)
+     * A flag indicating whether the parameter is automatically disposed when ok/cancel are choosen (true by default)
      */
     private boolean autodispose = true;
 
     /**
-     * A checkbox that indicates whether parameter changes are automatically commited, or it is waited until apply/ok
-     * is clicked
+     * A checkbox that indicates whether parameter changes are automatically commited, or it is waited until apply/ok is
+     * clicked
      */
     private JCheckBox autocommit = new JCheckBox("Auto commit", false);
 
     /**
-     * An array list of all the parameter window listeners to be notified when
-     * the window is hidden
+     * An array list of all the parameter window listeners to be notified when the window is hidden
      */
     private ArrayList listeners = new ArrayList();
 
@@ -148,13 +155,15 @@ public class ParameterWindow extends JDialog
     }
 
     public static Frame getFrame(Component comp) {
-        while ((comp != null) && (!(comp instanceof Frame)))
+        while ((comp != null) && (!(comp instanceof Frame))) {
             comp = comp.getParent();
+        }
 
-        if (comp instanceof Frame)
+        if (comp instanceof Frame) {
             return (Frame) comp;
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -162,8 +171,9 @@ public class ParameterWindow extends JDialog
      * Adds a listener to be notified when the window is hidden
      */
     public void addParameterWindowListener(ParameterWindowListener listener) {
-        if (!listeners.contains(listener))
+        if (!listeners.contains(listener)) {
             listeners.add(listener);
+        }
     }
 
     /**
@@ -175,18 +185,18 @@ public class ParameterWindow extends JDialog
 
 
     /**
-     * <p>Sets the targets for this ParameterWindow to the particular task which has the
-     * following parameter panel (i.e. the Customizer) and which displays a default title
-     * on the top of the window. This function also creates the relevant menu
-     * items relevant to UnitPanelWindows and lays out the window by putting the
-     * customizing panel in the window with an OK on the bottom.
+     * <p>Sets the targets for this ParameterWindow to the particular task which has the following parameter panel (i.e.
+     * the Customizer) and which displays a default title on the top of the window. This function also creates the
+     * relevant menu items relevant to UnitPanelWindows and lays out the window by putting the customizing panel in the
+     * window with an OK on the bottom.
      */
     public void setParameterPanel(ParameterPanel paramPanel) {
         parameterPanel = paramPanel;
         parameterPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
 
-        if ((getTitle() == null) && (parameterPanel.getTask() != null))
+        if ((getTitle() == null) && (parameterPanel.getTask() != null)) {
             setTitle(parameterPanel.getTask().getToolName());
+        }
 
         getContentPane().removeAll();
 
@@ -204,7 +214,8 @@ public class ParameterWindow extends JDialog
 
             getRootPane().setDefaultButton(ok);
 
-            if ((buttons == WindowButtonConstants.OK_CANCEL_BUTTONS) || (buttons == WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS)) {
+            if ((buttons == WindowButtonConstants.OK_CANCEL_BUTTONS) || (buttons
+                    == WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS)) {
                 JButton cancel = new JButton(Env.getString("Cancel"));
                 buttonpanel.add(cancel);
                 cancel.addActionListener(this);
@@ -228,8 +239,9 @@ public class ParameterWindow extends JDialog
         autocommit.addItemListener(this);
         autocommit.setSelected(paramPanel.isAutoCommitByDefault());
 
-        if (paramPanel.getMenuBar() != null)
+        if (paramPanel.getMenuBar() != null) {
             setJMenuBar(paramPanel.getMenuBar());
+        }
 
         paramPanel.setWindowInterface(this);
 
@@ -273,16 +285,14 @@ public class ParameterWindow extends JDialog
 
 
     /**
-     * @return true if the panel is automatically disposed when ok/canel are
-     *         chosen (true by default)
+     * @return true if the panel is automatically disposed when ok/canel are chosen (true by default)
      */
     public boolean isAutoDispose() {
         return autodispose;
     }
 
     /**
-     * Sets whether the panel is automatically disposed when ok/canel are
-     * chosen (true by default)
+     * Sets whether the panel is automatically disposed when ok/canel are chosen (true by default)
      */
     public void setAutoDispose(boolean state) {
         autodispose = state;
@@ -315,8 +325,10 @@ public class ParameterWindow extends JDialog
      * Invoked when help is requested and pulls up a help window
      * containing the specific help.
      */
+
     public void showHelp() {
-        Help.setTitle(Env.getString("Help") + " " + Env.getString("for") + " " + parameterPanel.getTask().getToolName());
+        Help.setTitle(
+                Env.getString("Help") + " " + Env.getString("for") + " " + parameterPanel.getTask().getToolName());
         Help.setFile(parameterPanel.getTask().getHelpFile());
     }
 
@@ -324,47 +336,50 @@ public class ParameterWindow extends JDialog
      * Resets the accepted flag.
      */
     public void setVisible(boolean state) {
-        if (state == true)
+        if (state == true) {
             accepted = false;
+        }
 
         super.setVisible(state);
     }
 
 
     /**
-     * Invoked when an action occurs i.e. either a help
-     * or a OldUnit Properties menu option may have been chosen.
+     * Invoked when an action occurs i.e. either a help or a OldUnit Properties menu option may have been chosen.
      */
     public void actionPerformed(ActionEvent e) {
         String label = e.getActionCommand();
 
-        if (label.equals(Env.getString("Help")))
+        if (label.equals(Env.getString("Help"))) {
             showHelp();
-        else if (label.equals(Env.getString("OK"))) {
+        } else if (label.equals(Env.getString("OK"))) {
             accepted = true;
             parameterPanel.okClicked();
 
             setVisible(false);
             notifyWindowHidden();
 
-            if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE)
+            if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE) {
                 dispose();
+            }
         } else if (label.equals(Env.getString("Cancel"))) {
             parameterPanel.cancelClicked();
 
             setVisible(false);
             notifyWindowHidden();
 
-            if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE)
+            if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE) {
                 dispose();
+            }
         } else if (label.equals(Env.getString("Apply"))) {
             parameterPanel.applyClicked();
         }
     }
 
     private void notifyWindowHidden() {
-        for (Iterator iter = listeners.iterator(); iter.hasNext();)
+        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
             ((ParameterWindowListener) iter.next()).parameterWindowHidden(this);
+        }
     }
 
 
@@ -372,8 +387,9 @@ public class ParameterWindow extends JDialog
      * Calls apply clicked on the parameter panel when auto commit is selected
      */
     public void itemStateChanged(ItemEvent event) {
-        if ((event.getSource() == autocommit) && (autocommit.isSelected()))
+        if ((event.getSource() == autocommit) && (autocommit.isSelected())) {
             parameterPanel.applyClicked();
+        }
     }
 
 
@@ -387,8 +403,9 @@ public class ParameterWindow extends JDialog
 
     public void dispose() {
         if (parameterPanel != null) {
-            if (autodispose)
+            if (autodispose) {
                 parameterPanel.disposePanel();
+            }
 
             remove(parameterPanel);
         }

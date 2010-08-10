@@ -58,15 +58,12 @@
  */
 
 package org.trianacode.taskgraph.proxy;
+
 /**
- * The exception thrown when invalid proxy instance details are used to
- * initiate a proxy.
+ * The exception thrown when invalid proxy instance details are used to initiate a proxy.
  *
- * @author      Ian Wang
- * @created     25th November 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 

@@ -48,6 +48,12 @@ import org.xml.sax.InputSource;
 
 public class DocumentHandler {
 
+    private static TransformerFactory tf = TransformerFactory.newInstance();
+
+    static {
+        tf.setAttribute("indent-number", new Integer(2));
+    }
+
     private Document doc;
 
     public DocumentHandler() throws IOException {
@@ -55,6 +61,7 @@ public class DocumentHandler {
         if (doc == null) {
             throw new IOException("could not create a new document!");
         }
+
     }
 
     public DocumentHandler(InputStream in) throws IOException {
@@ -219,8 +226,6 @@ public class DocumentHandler {
 
 
     private StreamResult transform(Document doc, Writer out, boolean indent) throws IOException {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        tf.setAttribute("indent-number", new Integer(2));
         Transformer t = null;
         try {
             t = tf.newTransformer();
@@ -246,8 +251,7 @@ public class DocumentHandler {
     }
 
     private StreamResult transform(Document doc, OutputStream out, boolean indent) throws IOException {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        tf.setAttribute("indent-number", new Integer(2));
+
         Transformer t = null;
         try {
             t = tf.newTransformer();

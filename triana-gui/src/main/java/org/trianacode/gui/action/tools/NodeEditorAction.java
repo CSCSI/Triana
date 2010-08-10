@@ -59,6 +59,10 @@
 
 package org.trianacode.gui.action.tools;
 
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -69,18 +73,11 @@ import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-
 /**
  * The action for showing the node editor
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 21st June 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class NodeEditorAction extends AbstractAction implements ActionDisplayOptions {
@@ -99,8 +96,9 @@ public class NodeEditorAction extends AbstractAction implements ActionDisplayOpt
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task))
+        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task)) {
             showNodeEditorFor((Task) selhandler.getSelectedTool(), e.getSource());
+        }
     }
 
 
@@ -110,7 +108,8 @@ public class NodeEditorAction extends AbstractAction implements ActionDisplayOpt
      * @param source the source object asking for the node editor to be shown
      */
     protected void showNodeEditorFor(Task task, Object source) {
-        ParameterWindow nodeEditorWindow = new ParameterWindow(GUIEnv.getApplicationFrame(), WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS, true);
+        ParameterWindow nodeEditorWindow = new ParameterWindow(GUIEnv.getApplicationFrame(),
+                WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS, true);
         nodeEditorWindow.setTitle(Env.getString("NodeEditor") + ": " + task.getToolName());
 
         NodeEditor nodeEditor = new NodeEditor();

@@ -58,28 +58,25 @@
  */
 package org.trianacode.gui.extensions;
 
+import java.awt.Component;
+
 import javax.swing.filechooser.FileFilter;
-import java.awt.*;
 
 /**
- * Common methods used by all format filters in Triana. A format filter is a mechanism by
- * which Triana is able to import other workflow or taskgraph formats into the internal
- * format, export the internal format to other external formats or import tools to the
- * component library.
+ * Common methods used by all format filters in Triana. A format filter is a mechanism by which Triana is able to import
+ * other workflow or taskgraph formats into the internal format, export the internal format to other external formats or
+ * import tools to the component library.
  * <p/>
- * Format filters are used as extensions to a JFileDialog to automatically provide
- * extensions to filter files and handle their import or export.
+ * Format filters are used as extensions to a JFileDialog to automatically provide extensions to filter files and handle
+ * their import or export.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Apr 21, 2004: 6:16:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public abstract class AbstractFormatFilter {
 
     /**
-     * Short description of the filter that will appear as the selection item in the list
-     * of filters.
+     * Short description of the filter that will appear as the selection item in the list of filters.
      */
     public abstract String getFilterDescription();
 
@@ -98,8 +95,7 @@ public abstract class AbstractFormatFilter {
     public abstract FileFilter getDefaultFileFilter();
 
     /**
-     * Returns <b>true</b> if this filter has user configurable options, <b>false</b>
-     * otherwise.
+     * Returns <b>true</b> if this filter has user configurable options, <b>false</b> otherwise.
      *
      * @return true if this filter has user options
      */
@@ -108,21 +104,18 @@ public abstract class AbstractFormatFilter {
     /**
      * Pops up a the options dialog for this filter if there is one
      *
-     * @param parent the parent component of the dialog, can be <code>null</code>; see
-     *               <code>showDialog</code> for details
-     * @return the return state of the file chooser on popdown: <ul>
-     *         <li>JFileChooser.CANCEL_OPTION <li>JFileChooser.APPROVE_OPTION
-     *         <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is dismissed
-     *         </ul>
-     * @throws java.awt.HeadlessException if GraphicsEnvironment.isHeadless() returns
-     *                                    true.
+     * @param parent the parent component of the dialog, can be <code>null</code>; see <code>showDialog</code> for
+     *               details
+     * @return the return state of the file chooser on popdown: <ul> <li>JFileChooser.CANCEL_OPTION
+     *         <li>JFileChooser.APPROVE_OPTION <li>JFileCHooser.ERROR_OPTION if an error occurs or the dialog is
+     *         dismissed </ul>
+     * @throws java.awt.HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public abstract int showOptionsDialog(Component parent);
 
     /**
-     * Overrides the default <code>toString</code> method to return the filter
-     * description
+     * Overrides the default <code>toString</code> method to return the filter description
      *
      * @return a string representation of the object.
      */

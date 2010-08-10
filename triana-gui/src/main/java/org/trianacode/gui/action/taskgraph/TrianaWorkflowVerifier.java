@@ -59,6 +59,7 @@
 
 package org.trianacode.gui.action.taskgraph;
 
+import javax.swing.JOptionPane;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.service.WorkflowActions;
 import org.trianacode.gui.service.WorkflowException;
@@ -69,20 +70,12 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-
 /**
- * Checks a pre-run workflow to see whether it has any ProtoServices, and if
- * so prompts the user to distribute these services or cancel the run.
+ * Checks a pre-run workflow to see whether it has any ProtoServices, and if so prompts the user to distribute these
+ * services or cancel the run.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 29th July 2004
- * <<<<<<< TrianaWorkflowVerifier.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * =======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * >>>>>>> 1.2.2.1
  */
 
 public class TrianaWorkflowVerifier implements WorkflowVerifier {
@@ -99,7 +92,8 @@ public class TrianaWorkflowVerifier implements WorkflowVerifier {
      *
      * @return true if the action should preceed.
      */
-    public int authorizeWorkflowAction(String action, TaskGraph taskgraph, ExecutionState state) throws WorkflowException {
+    public int authorizeWorkflowAction(String action, TaskGraph taskgraph, ExecutionState state)
+            throws WorkflowException {
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(taskgraph, true);
         boolean error = (state == ExecutionState.ERROR);
         boolean suspend = false;
@@ -107,32 +101,42 @@ public class TrianaWorkflowVerifier implements WorkflowVerifier {
         for (int count = 0; (count < tasks.length) && (!error) && (!suspend); count++) {
             Task task = tasks[count];
 
-            if (task.getExecutionState() == ExecutionState.SUSPENDED)
+            if (task.getExecutionState() == ExecutionState.SUSPENDED) {
                 suspend = true;
+            }
         }
 
         if (error) {
             String name = taskgraph.getToolName();
-            if (name.equals(""))
+            if (name.equals("")) {
                 name = "Workflow";
+            }
 
             String[] options = new String[]{"Reset and ReRun", "Cancel"};
 
-            int result = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(), name + " contains error state tasks!", Env.getString("Run") + " Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon(), options, options[0]);
+            int result = JOptionPane
+                    .showOptionDialog(GUIEnv.getApplicationFrame(), name + " contains error state tasks!",
+                            Env.getString("Run") + " Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE,
+                            GUIEnv.getTrianaIcon(), options, options[0]);
 
-            if (result == 0)
+            if (result == 0) {
                 return RESET_AND_RUN;
-            else
+            } else {
                 return CANCEL;
+            }
         } else if (suspend) {
             String name = taskgraph.getToolName();
-            if (name.equals(""))
+            if (name.equals("")) {
                 name = "Workflow";
+            }
 
-            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot run " + name + " as it contains suspended tasks! Please try again later.", Env.getString("Run") + " Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
+            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                    "Cannot run " + name + " as it contains suspended tasks! Please try again later.",
+                    Env.getString("Run") + " Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return CANCEL;
-        } else
+        } else {
             return AUTHORIZE;
+        }
     }
 
 }

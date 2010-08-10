@@ -58,6 +58,17 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -70,17 +81,11 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
 import org.trianacode.util.PrintUtilities;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-
 /**
  * Action to handle workflow/taskgraph Exporting.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class PrintAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -106,7 +111,8 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
                 PrintPanel panel = new PrintPanel(taskgraph != null);
                 panel.init();
 
-                ParameterWindow window = new ParameterWindow(GUIEnv.getApplicationFrame(), WindowButtonConstants.OK_CANCEL_BUTTONS, true);
+                ParameterWindow window = new ParameterWindow(GUIEnv.getApplicationFrame(),
+                        WindowButtonConstants.OK_CANCEL_BUTTONS, true);
                 window.setTitle(Env.getString("Print") + "...");
                 window.setParameterPanel(panel);
                 Display.centralise(window);
@@ -119,15 +125,21 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
                     if (panel.isPrintSelectedTaskgraph()) {
                         TaskGraphPanel taskgraphpanel = GUIEnv.getTaskGraphPanelFor(taskgraph);
 
-                        if (taskgraphpanel != null)
+                        if (taskgraphpanel != null) {
                             comp = taskgraphpanel.getContainer();
-                        else
-                            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
-                    } else
+                        } else {
+                            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                                    "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE,
+                                    GUIEnv.getTrianaIcon());
+                        }
+                    } else {
                         comp = GUIEnv.getApplicationFrame();
+                    }
 
-                    if (comp != null)
-                        PrintUtilities.printComponent(comp, panel.isScaleToPageSize(), panel.isPrintSelectedTaskgraph());
+                    if (comp != null) {
+                        PrintUtilities
+                                .printComponent(comp, panel.isScaleToPageSize(), panel.isPrintSelectedTaskgraph());
+                    }
                 }
             }
         };
@@ -166,8 +178,7 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
         }
 
         /**
-         * This method is called when the task is set for this panel. It is overridden
-         * to create the panel layout.
+         * This method is called when the task is set for this panel. It is overridden to create the panel layout.
          */
         public void init() {
             setLayout(new BorderLayout(0, 5));

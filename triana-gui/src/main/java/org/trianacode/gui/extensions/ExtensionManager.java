@@ -60,20 +60,18 @@
 package org.trianacode.gui.extensions;
 
 
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.tool.Tool;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.swing.Action;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * The manager responsible for handling extension classes.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 4th May 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class ExtensionManager {
@@ -88,8 +86,9 @@ public class ExtensionManager {
      * Register an extension
      */
     public static void registerExtension(Extension extension) {
-        if (!extlist.contains(extension))
+        if (!extlist.contains(extension)) {
             extlist.add(extension);
+        }
     }
 
     /**
@@ -110,8 +109,9 @@ public class ExtensionManager {
         for (Iterator it = extlist.iterator(); it.hasNext();) {
             action = ((Extension) it.next()).getWorkspaceAction(tool);
 
-            if (action != null)
+            if (action != null) {
                 exts.add(action);
+            }
         }
 
         return (Action[]) exts.toArray(new Action[exts.size()]);
@@ -127,16 +127,16 @@ public class ExtensionManager {
         for (Iterator it = extlist.iterator(); it.hasNext();) {
             action = ((Extension) it.next()).getTreeAction(tool);
 
-            if (action != null)
+            if (action != null) {
                 exts.add(action);
+            }
         }
 
         return (Action[]) exts.toArray(new Action[exts.size()]);
     }
 
     /**
-     * @return an array of the workfloe actions of the specified type
-     * (Extension.TOOL_TYPE or Extension.SERVICE_TYPE)
+     * @return an array of the workfloe actions of the specified type (Extension.TOOL_TYPE or Extension.SERVICE_TYPE)
      */
     public static Action[] getWorkflowExtensions(int type) {
         ArrayList exts = new ArrayList();
@@ -145,8 +145,9 @@ public class ExtensionManager {
         for (Iterator it = extlist.iterator(); it.hasNext();) {
             action = ((Extension) it.next()).getWorkflowAction(type);
 
-            if (action != null)
+            if (action != null) {
                 exts.add(action);
+            }
         }
 
         return (Action[]) exts.toArray(new Action[exts.size()]);

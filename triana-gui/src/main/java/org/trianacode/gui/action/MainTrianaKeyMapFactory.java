@@ -58,15 +58,16 @@
  */
 package org.trianacode.gui.action;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
 
 /**
  * A class for building InputMap and ActionMap key binding classes.
  *
- * @author  Matthew Shields
- * @created May 8, 2003: 12:09:55 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class MainTrianaKeyMapFactory implements Actions {
 
@@ -82,8 +83,7 @@ public class MainTrianaKeyMapFactory implements Actions {
     private ActionMap acmap;
 
     /**
-     * Create a Factory to return the InputMap and ActionMap classes for the selected
-     * SelectionManager.
+     * Create a Factory to return the InputMap and ActionMap classes for the selected SelectionManager.
      *
      * @see SelectionManager
      */

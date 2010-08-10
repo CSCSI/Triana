@@ -58,22 +58,20 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
 /**
  * Action class to handle all "properties" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class PropertiesAction extends AbstractAction {
 
@@ -94,8 +92,9 @@ public class PropertiesAction extends AbstractAction {
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task))
+        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task)) {
             ParameterPanelManager.showParameterWindowFor((Task) selhandler.getSelectedTool(), e.getSource());
+        }
     }
 
 }

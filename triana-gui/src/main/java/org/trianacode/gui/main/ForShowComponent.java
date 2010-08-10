@@ -60,19 +60,16 @@
 package org.trianacode.gui.main;
 
 
+import java.awt.Component;
+
 import org.trianacode.taskgraph.Node;
 
-import java.awt.*;
-
 /**
- * An interface that is implemented by components that can be used as show
- * indicators for the inputs to/outputs from a open group.
+ * An interface that is implemented by components that can be used as show indicators for the inputs to/outputs from a
+ * open group.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th July 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public interface ForShowComponent {

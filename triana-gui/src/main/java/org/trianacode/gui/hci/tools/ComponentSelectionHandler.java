@@ -69,11 +69,8 @@ import org.trianacode.taskgraph.tool.Tool;
 /**
  * A selection handler for a single preselected task.
  *
- * @author      Ian Wang
- * @created
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class ComponentSelectionHandler implements ToolSelectionHandler {
@@ -115,10 +112,11 @@ public class ComponentSelectionHandler implements ToolSelectionHandler {
     }
 
     public Tool[] getSelectedTools() {
-        if (task == null)
+        if (task == null) {
             return new Tool[0];
-        else
-            return new Tool[] {task};
+        } else {
+            return new Tool[]{task};
+        }
     }
 
     /**

@@ -58,15 +58,13 @@
  */
 package org.trianacode.gui.main.imp;
 
-import java.awt.*;
+import java.awt.Graphics;
 
 /**
  * This is a class for drawing a thick line.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created Tue May 14 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ThickLine {
 

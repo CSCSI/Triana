@@ -64,8 +64,6 @@ package org.trianacode.gui.action;
  *
  * @author Ian Wang
  * @version $Revision: 4051 $
- * @created 22nd June 2004
- * @date $Date: 2007-10-31 17:51:40 +0000 (Wed, 31 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public interface Actions {

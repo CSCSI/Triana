@@ -58,28 +58,35 @@
  */
 package org.trianacode.gui.main.imp;
 
+import java.awt.Color;
+import java.awt.Component;
+
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.main.ForShowComponent;
 import org.trianacode.gui.main.NodeComponent;
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeUtils;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.event.NodeEvent;
+import org.trianacode.taskgraph.event.NodeListener;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.imp.ToolImp;
 
-import java.awt.*;
-
 /**
- * ForShowTool is a class for showing what tools within group
- * are connected to in upper groups.  They provide an icon
- * which is smaller that normal units and just indicates
- * the connection
+ * ForShowTool is a class for showing what tools within group are connected to in upper groups.  They provide an icon
+ * which is smaller that normal units and just indicates the connection
  * <p/>
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 24 March 1997
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ForShowTool extends TrianaTool implements NodeListener, TaskListener, ForShowComponent {
 
@@ -143,10 +150,11 @@ public class ForShowTool extends TrianaTool implements NodeListener, TaskListene
             DummyTask dummytask = new DummyTask();
             Node dummynode;
 
-            if (node.isInputNode())
+            if (node.isInputNode()) {
                 dummynode = dummytask.addDataOutputNode();
-            else
+            } else {
                 dummynode = dummytask.addDataInputNode();
+            }
 
             nodecomp = new TrianaNode(dummynode, false);
             setNodeComponent(dummynode, nodecomp);
@@ -160,23 +168,27 @@ public class ForShowTool extends TrianaTool implements NodeListener, TaskListene
      * Called when the tool is repainted and the current shownode and showtask are invalid
      */
     private void updateTool(boolean disconnect) {
-        if (bottomintnode != null)
+        if (bottomintnode != null) {
             bottomintnode.removeNodeListener(this);
+        }
 
-        if (bottomconnnode != null)
+        if (bottomconnnode != null) {
             bottomconnnode.removeNodeListener(this);
+        }
 
-        if (showtask != null)
+        if (showtask != null) {
             showtask.removeTaskListener(this);
+        }
 
         bottomintnode = NodeUtils.getBottomLevelNode(node);
         bottomintnode.addNodeListener(this);
 
         if ((bottomintnode.isConnected()) && (!disconnect)) {
-            if (bottomintnode.isInputNode())
+            if (bottomintnode.isInputNode()) {
                 bottomconnnode = bottomintnode.getCable().getSendingNode();
-            else
+            } else {
                 bottomconnnode = bottomintnode.getCable().getReceivingNode();
+            }
 
             showtask = bottomconnnode.getTask();
             connectflag = true;
@@ -227,12 +239,13 @@ public class ForShowTool extends TrianaTool implements NodeListener, TaskListene
      * Gets the real name for the task this tool is representing
      */
     public String getToolName() {
-        if (node == null)
+        if (node == null) {
             return "";
-        else if (!connectflag)
+        } else if (!connectflag) {
             return "NULL";
-        else
+        } else {
             return showtask.getToolName();
+        }
     }
 
 
@@ -240,15 +253,15 @@ public class ForShowTool extends TrianaTool implements NodeListener, TaskListene
      * @return FORSHOW_CONNECTED_COLOR
      */
     public Color getToolColor() {
-        if ((bottomintnode == null) || (!bottomintnode.isConnected()))
+        if ((bottomintnode == null) || (!bottomintnode.isConnected())) {
             return ColorManager.getColor(SHOW_TOOL_UNCONNECTED_ELEMENT);
-        else
+        } else {
             return ColorManager.getColor(SHOW_TOOL_CONNECTED_ELEMENT);
+        }
     }
 
     /**
-     * @return the color of the stripe on the tool, or the standard tool color
-     *         if no stipes
+     * @return the color of the stripe on the tool, or the standard tool color if no stipes
      */
     public Color getStripeColor() {
         return getToolColor();
@@ -307,8 +320,7 @@ public class ForShowTool extends TrianaTool implements NodeListener, TaskListene
     }
 
     /**
-     * Called when the name of the parameter the node is inputting/outputting is set.
-     * No-op.
+     * Called when the name of the parameter the node is inputting/outputting is set. No-op.
      */
     public void parameterNameSet(NodeEvent event) {
     }
@@ -332,28 +344,26 @@ public class ForShowTool extends TrianaTool implements NodeListener, TaskListene
      * Called when the core properties of a task change i.e. its name, whether it is running continuously etc.
      */
     public void taskPropertyUpdate(TaskPropertyEvent event) {
-        if (event.getUpdatedProperty() == TaskPropertyEvent.TASK_NAME_UPDATE)
+        if (event.getUpdatedProperty() == TaskPropertyEvent.TASK_NAME_UPDATE) {
             updateToolName();
+        }
     }
 
 
     /**
-     * Called when the value of a parameter is changed, including when a parameter is removed.
-     * No-op.
+     * Called when the value of a parameter is changed, including when a parameter is removed. No-op.
      */
     public void parameterUpdated(ParameterUpdateEvent event) {
     }
 
     /**
-     * Called when a data input node is added.
-     * No-op.
+     * Called when a data input node is added. No-op.
      */
     public void nodeAdded(TaskNodeEvent event) {
     }
 
     /**
-     * Called before a data input node is removed.
-     * No-op.
+     * Called before a data input node is removed. No-op.
      */
     public void nodeRemoved(TaskNodeEvent event) {
     }

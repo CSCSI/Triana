@@ -17,6 +17,8 @@
 
 package org.trianacode.taskgraph.tool.creators.type;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,11 +26,14 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
+import org.trianacode.taskgraph.util.UrlUtils;
 
 public class ClassParser {
 
@@ -61,15 +66,39 @@ public class ClassParser {
         if (file.isDirectory() || file.getName().endsWith(".class")) {
             return analyseClassFile(file);
         } else if (file.getName().endsWith(".zip") || file.getName().endsWith(".jar")) {
-            return analyseClassFiles(file, new ZipFile(file.getAbsoluteFile()));
+            return analyseClassFiles(file.toURI().toURL(), new ZipInputStream(new FileInputStream(file)));
         } else {
             throw new IOException(file + " is an invalid file.");
+        }
+    }
+
+    public Map<String, ClassHierarchy> readURL(URL url) throws IOException {
+        Map<String, ClassHierarchy> map = new HashMap<String, ClassHierarchy>();
+        if (UrlUtils.isFile(url)) {
+            try {
+                return readFile(new File(url.toURI()));
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                return map;
+            }
+        }
+        String path = url.getPath();
+
+        if (path.endsWith(".class")) {
+            ClassHierarchy ch = getClasses(url.openStream(), url.toString());
+            if (ch != null) {
+                map.put(ch.getName(), ch);
+            }
+            return map;
+        } else if (path.endsWith(".zip") || path.endsWith(".jar")) {
+            return analyseClassFiles(url, new ZipInputStream(url.openStream()));
+        } else {
+            throw new IOException(url + " is an invalid URL.");
         }
 
     }
 
     public Map<String, ClassHierarchy> analyseClassFile(File file) throws IOException {
-
         Map<String, ClassHierarchy> map = new HashMap<String, ClassHierarchy>();
         if (file.getName().startsWith(".") || file.getName().equals("CVS")) {
             return map;
@@ -89,8 +118,9 @@ public class ClassParser {
 
                 if (files[i].isDirectory() || files[i].getName().endsWith(".class")) {
                     map.putAll(analyseClassFile(files[i]));
-                } else if (files[i].getName().endsWith(".jar")) {
-                    map.putAll(analyseClassFiles(files[i], new ZipFile(files[i])));
+                } else if (files[i].getName().endsWith(".jar") || files[i].getName().endsWith(".zip")) {
+                    map.putAll(analyseClassFiles(files[i].toURI().toURL(),
+                            new ZipInputStream(new FileInputStream(files[i]))));
                 }
             }
         } else {
@@ -102,20 +132,26 @@ public class ClassParser {
         return map;
     }
 
-    public Map<String, ClassHierarchy> analyseClassFiles(File f, ZipFile zipFile) throws IOException {
+    public Map<String, ClassHierarchy> analyseClassFiles(URL path, ZipInputStream zipFile) throws IOException {
         Map<String, ClassHierarchy> strings = new HashMap<String, ClassHierarchy>();
 
-        Enumeration entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
+        ZipEntry entry;
+        while ((entry = zipFile.getNextEntry()) != null) {
             if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
-                InputStream stream = zipFile.getInputStream(entry);
-                ClassHierarchy ch = getClasses(stream, f);
+                byte[] buff = new byte[2048];
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                int c;
+                while ((c = zipFile.read(buff)) != -1) {
+                    bout.write(buff, 0, c);
+                }
+                ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+                ClassHierarchy ch = getClasses(bin, path.toString());
                 if (ch != null) {
-                    String jarpath = f.toURI().toURL().toString();
+                    String jarpath = path.toString();
                     ch.setFile("jar:" + jarpath + "!/" + entry.getName());
                     strings.put(ch.getName(), ch);
                 }
+
             }
         }
         return strings;
@@ -125,7 +161,7 @@ public class ClassParser {
         InputStream stream = null;
         try {
             stream = new FileInputStream(file);
-            return getClasses(stream, file);
+            return getClasses(stream, UrlUtils.fromFile(file).toString());
         } catch (IOException e) {
             throw e;
         } finally {
@@ -136,9 +172,9 @@ public class ClassParser {
         }
     }
 
-    public ClassHierarchy getClasses(InputStream stream, File file) throws IOException {
+    public ClassHierarchy getClasses(InputStream stream, String path) throws IOException {
         DataInputStream dataStream = new DataInputStream(stream);
-        return getPoolClasses(dataStream, file);
+        return getPoolClasses(dataStream, path);
     }
 
     public static boolean isPrimitive(String name) {
@@ -153,7 +189,7 @@ public class ClassParser {
     }
 
 
-    private ClassHierarchy getPoolClasses(DataInputStream stream, File f) throws IOException {
+    private ClassHierarchy getPoolClasses(DataInputStream stream, String path) throws IOException {
         HashMap<Integer, Integer> classRefs = new HashMap<Integer, Integer>();
         HashMap<Integer, UTF8Constant> names = new HashMap<Integer, UTF8Constant>();
 
@@ -235,7 +271,7 @@ public class ClassParser {
         }
         ClassHierarchy hier = new ClassHierarchy(createClassName(currStrings[0]));
         hier.setAccess(access);
-        hier.setFile(f.getAbsolutePath());
+        hier.setFile(path);
         int parent = stream.readUnsignedShort();
         index = classRefs.get(parent);
         if (index == null) {

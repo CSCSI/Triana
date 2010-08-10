@@ -59,6 +59,11 @@
 
 package org.trianacode.gui.hci;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.SwingUtilities;
 import org.trianacode.gui.main.IndicationCableInterface;
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
@@ -68,20 +73,10 @@ import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-
 /**
- * A class for handling mouse functions on a node. This functionality was
- * originally in ToolMouseHandler
+ * A class for handling mouse functions on a node. This functionality was originally in ToolMouseHandler
  *
  * @author Ian Wang
- * @versbion $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class NodeMouseHandler implements MouseListener, MouseMotionListener {
@@ -103,59 +98,63 @@ public class NodeMouseHandler implements MouseListener, MouseMotionListener {
 
 
     /**
-     * @return the node component an event is associated with (or null if
-     *         unknown)
+     * @return the node component an event is associated with (or null if unknown)
      */
     private NodeComponent getNodeComponent(MouseEvent event) {
-        if (!(event.getSource() instanceof NodeComponent))
+        if (!(event.getSource() instanceof NodeComponent)) {
             return null;
+        }
 
         return (NodeComponent) event.getSource();
     }
 
 
     /**
-     * Invoked when the mouse button has been clicked (pressed
-     * and released) on a component.
+     * Invoked when the mouse button has been clicked (pressed and released) on a component.
      */
     public void mouseClicked(MouseEvent event) {
         NodeComponent comp = getNodeComponent(event);
 
-        if (comp == null)
+        if (comp == null) {
             return;
+        }
 
         if (SwingUtilities.isRightMouseButton(event)) {
             if (comp.isOutputNode() && comp.isConnectable()) {
                 Task task = comp.getNode().getTask();
 
-                if (!task.isParameterName(Tool.OUTPUT_POLICY))
+                if (!task.isParameterName(Tool.OUTPUT_POLICY)) {
                     task.setParameter(Tool.OUTPUT_POLICY, Tool.COPY_OUTPUT);
-                else if (task.getParameter(Tool.OUTPUT_POLICY).equals(Tool.COPY_OUTPUT))
+                } else if (task.getParameter(Tool.OUTPUT_POLICY).equals(Tool.COPY_OUTPUT)) {
                     task.setParameter(Tool.OUTPUT_POLICY, Tool.CLONE_MULTIPLE_OUTPUT);
-                else
+                } else {
                     task.setParameter(Tool.OUTPUT_POLICY, Tool.COPY_OUTPUT);
+                }
             }
 
             comp.getComponent().invalidate();
             comp.getComponent().validate();
             comp.getComponent().repaint();
-        } if (event.getClickCount() == 2)
+        }
+        if (event.getClickCount() == 2) {
             try {
                 Node node = comp.getNode();
 
                 if (node.getTask().getParent() != null) {
                     TaskGraphUtils.disconnectControlTask(node.getTask().getParent());
 
-                    if (node.getChildNode() != null)
+                    if (node.getChildNode() != null) {
                         node.getChildNode().getTask().removeNode(node.getChildNode());
-                    else if (node.isConnected())
+                    } else if (node.isConnected()) {
                         node.getTask().getParent().disconnect(node.getCable());
+                    }
 
                     TaskGraphUtils.connectControlTask(node.getTask().getParent());
                 }
             } catch (TaskGraphException except) {
                 except.printStackTrace();
             }
+        }
     }
 
     /**
@@ -177,13 +176,15 @@ public class NodeMouseHandler implements MouseListener, MouseMotionListener {
         if (panel instanceof IndicationCableInterface) {
             NodeComponent comp = getNodeComponent(event);
 
-            if (comp == null)
+            if (comp == null) {
                 return;
+            }
 
-            if (comp.isOutputNode() && comp.isConnectable())
+            if (comp.isOutputNode() && comp.isConnectable()) {
                 output = comp;
-            else
+            } else {
                 output = null;
+            }
         }
     }
 
@@ -195,8 +196,9 @@ public class NodeMouseHandler implements MouseListener, MouseMotionListener {
             if (output != null) {
                 NodeComponent comp = ((IndicationCableInterface) panel).getIndicationNode();
 
-                if ((comp != null) && comp.isInputNode() && comp.isConnectable())
+                if ((comp != null) && comp.isInputNode() && comp.isConnectable()) {
                     TaskGraphHandler.connect(panel, output.getNode(), comp.getNode());
+                }
             }
 
             ((IndicationCableInterface) panel).clearIndicationCableInterface();
@@ -206,24 +208,21 @@ public class NodeMouseHandler implements MouseListener, MouseMotionListener {
 
 
     /**
-     * Invoked when a mouse button is pressed on a component and then
-     * dragged.  <code>MOUSE_DRAGGED</code> events will continue to be
-     * delivered to the component where the drag originated until the
-     * mouse button is released (regardless of whether the mouse position
-     * is within the bounds of the component).
+     * Invoked when a mouse button is pressed on a component and then dragged.  <code>MOUSE_DRAGGED</code> events will
+     * continue to be delivered to the component where the drag originated until the mouse button is released
+     * (regardless of whether the mouse position is within the bounds of the component).
      * <p/>
-     * Due to platform-dependent Drag&Drop implementations,
-     * <code>MOUSE_DRAGGED</code> events may not be delivered during a native
-     * Drag&Drop operation.
+     * Due to platform-dependent Drag&Drop implementations, <code>MOUSE_DRAGGED</code> events may not be delivered
+     * during a native Drag&Drop operation.
      */
     public void mouseDragged(MouseEvent event) {
-        if ((output != null) && (panel instanceof IndicationCableInterface))
+        if ((output != null) && (panel instanceof IndicationCableInterface)) {
             ((IndicationCableInterface) panel).drawIndicationCableInterface(output.getComponent(), event.getPoint());
+        }
     }
 
     /**
-     * Invoked when the mouse cursor has been moved onto a component
-     * but no buttons have been pushed.
+     * Invoked when the mouse cursor has been moved onto a component but no buttons have been pushed.
      */
     public void mouseMoved(MouseEvent e) {
     }

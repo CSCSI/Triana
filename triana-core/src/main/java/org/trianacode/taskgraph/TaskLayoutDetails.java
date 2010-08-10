@@ -60,14 +60,11 @@
 package org.trianacode.taskgraph;
 
 /**
- * Details of the Triana workspace layout used to translate between the Triana
- * co-ordinate system and the screen co-ordinates
+ * Details of the Triana workspace layout used to translate between the Triana co-ordinate system and the screen
+ * co-ordinates
  *
- * @author      Ian Wang
- * @created
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface TaskLayoutDetails {

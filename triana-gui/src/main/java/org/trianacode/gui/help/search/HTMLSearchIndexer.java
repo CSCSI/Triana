@@ -63,8 +63,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class HTMLSearchIndexer extends SearchIndexer {
 
@@ -89,16 +88,24 @@ public class HTMLSearchIndexer extends SearchIndexer {
             int index;
 
             // Recurse in to directories
-            if ((new File(dir, file)).isDirectory()) return true;
+            if ((new File(dir, file)).isDirectory()) {
+                return true;
+            }
 
             // Ignore files without extensions
-            if ((index = file.lastIndexOf(".")) < 0) return false;
+            if ((index = file.lastIndexOf(".")) < 0) {
+                return false;
+            }
 
             // Get the extension
             ext = file.substring(index + 1).toLowerCase();
 
-            if (ext.equals("html")) return true;
-            if (ext.equals("htm")) return true;
+            if (ext.equals("html")) {
+                return true;
+            }
+            if (ext.equals("htm")) {
+                return true;
+            }
 
             return false;
         }
@@ -151,8 +158,7 @@ public class HTMLSearchIndexer extends SearchIndexer {
 
         if (!title.toString().equals("Untitled")) {
             docInfo.setTitle(title.toString());
-        }
-        else {
+        } else {
             docInfo.setTitle(file.getName());
         }
 
@@ -161,10 +167,14 @@ public class HTMLSearchIndexer extends SearchIndexer {
 
     protected boolean subArrayEquals(char[] bigArray, int offset,
                                      char[] smallArray) {
-        if (bigArray.length < (smallArray.length + offset)) return false;
+        if (bigArray.length < (smallArray.length + offset)) {
+            return false;
+        }
 
         for (int i = smallArray.length - 1; i >= 0; i--) {
-            if (bigArray[i + offset] != smallArray[i]) return false;
+            if (bigArray[i + offset] != smallArray[i]) {
+                return false;
+            }
         }
 
         return true;
@@ -183,7 +193,9 @@ public class HTMLSearchIndexer extends SearchIndexer {
         ptr = 0;
 
         for (; ;) {
-            if (ptr >= charArray.length) break;
+            if (ptr >= charArray.length) {
+                break;
+            }
 
             if (inTag) {
                 if (charArray[ptr] == '>') {
@@ -192,41 +204,37 @@ public class HTMLSearchIndexer extends SearchIndexer {
                     // Fudge time - quick and nasty solution
                     if (tagString.startsWith("title")) {
                         inTitle = true;
-                    }
-                    else if (tagString.startsWith("/title")) {
+                    } else if (tagString.startsWith("/title")) {
                         inTitle = false;
                     }
 
                     inTag = false;
-                }
-                else {
+                } else {
                     tag.append(Character.toLowerCase(charArray[ptr]));
                 }
 
                 ptr++;
-            }
-            else if (inTitle) {
+            } else if (inTitle) {
                 // Nasty fudge time - must improve
                 if (charArray[ptr] == '<') {
                     inTag = true;
                     tag = new StringBuffer();
-                }
-                else
+                } else {
                     title.append(charArray[ptr]);
+                }
 
                 ptr++;
-            }
-            else {
+            } else {
                 if (Character.isLetterOrDigit(charArray[ptr])) {
-                    if (!inTag && !inComment) sb.append(charArray[ptr]);
+                    if (!inTag && !inComment) {
+                        sb.append(charArray[ptr]);
+                    }
                     ptr++;
-                }
-                else {
+                } else {
                     if (sb.length() > 0) {
                         if (isCaseSensitive()) {
                             results.add(sb.toString(), docInfo);
-                        }
-                        else {
+                        } else {
                             results.add(sb.toString().toLowerCase(), docInfo);
                         }
                         sb = new StringBuffer();
@@ -235,17 +243,14 @@ public class HTMLSearchIndexer extends SearchIndexer {
                     if (subArrayEquals(charArray, ptr, html_comment_on)) {
                         inComment = true;
                         ptr += html_comment_on.length;
-                    }
-                    else if (subArrayEquals(charArray, ptr, html_comment_off)) {
+                    } else if (subArrayEquals(charArray, ptr, html_comment_off)) {
                         inComment = false;
                         ptr += html_comment_off.length;
-                    }
-                    else if (charArray[ptr] == '<') {
+                    } else if (charArray[ptr] == '<') {
                         inTag = true;
                         tag = new StringBuffer();
                         ptr++;
-                    }
-                    else {
+                    } else {
                         ptr++;
                     }
                 }
@@ -255,8 +260,7 @@ public class HTMLSearchIndexer extends SearchIndexer {
         if (sb.length() > 0) {
             if (isCaseSensitive()) {
                 results.add(sb.toString(), docInfo);
-            }
-            else {
+            } else {
                 results.add(sb.toString().toLowerCase(), docInfo);
             }
         }

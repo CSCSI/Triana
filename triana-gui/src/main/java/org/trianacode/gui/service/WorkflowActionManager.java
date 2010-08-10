@@ -16,19 +16,17 @@
 
 package org.trianacode.gui.service;
 
-import org.trianacode.taskgraph.ExecutionState;
-import org.trianacode.taskgraph.TaskGraph;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.TaskGraph;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 1:29:41 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class WorkflowActionManager implements WorkflowActions, WorkflowVerifierConstants {
@@ -39,28 +37,28 @@ public class WorkflowActionManager implements WorkflowActions, WorkflowVerifierC
 
 
     /**
-     * Registers a workflow verifier using its default workflow actions. Note
-     * that workflow verifiers are consulted in reverse of the order they are
-     * registered.
+     * Registers a workflow verifier using its default workflow actions. Note that workflow verifiers are consulted in
+     * reverse of the order they are registered.
      */
     public static void registerWorkflowAction(WorkflowVerifier verifier) {
         registerWorkflowAction(verifier.getDefaultWorkflowActions(), verifier);
     }
 
     /**
-     * Registers a workflow verifier, overriding its default workflow actions
-     * with the specified actions. Note that workflow verifiers are consulted in
-     * reverse of the order they are registered.
+     * Registers a workflow verifier, overriding its default workflow actions with the specified actions. Note that
+     * workflow verifiers are consulted in reverse of the order they are registered.
      */
     public static void registerWorkflowAction(String[] actions, WorkflowVerifier verifier) {
         for (int count = 0; count < actions.length; count++) {
-            if (!vtable.containsKey(actions[count]))
+            if (!vtable.containsKey(actions[count])) {
                 vtable.put(actions[count], new ArrayList());
+            }
 
             ArrayList list = (ArrayList) vtable.get(actions[count]);
 
-            if (!list.contains(verifier))
+            if (!list.contains(verifier)) {
                 list.add(0, verifier);
+            }
         }
     }
 
@@ -78,14 +76,16 @@ public class WorkflowActionManager implements WorkflowActions, WorkflowVerifierC
     public static void unregisterWorkflowAction(String[] actions, WorkflowVerifier verifier) {
         ArrayList list;
 
-        for (int count = 0; count < actions.length; count++)
+        for (int count = 0; count < actions.length; count++) {
             if (vtable.containsKey(actions[count])) {
                 list = (ArrayList) vtable.get(actions[count]);
                 list.remove(verifier);
 
-                if (list.isEmpty())
+                if (list.isEmpty()) {
                     vtable.remove(list);
+                }
             }
+        }
     }
 
 
@@ -94,15 +94,17 @@ public class WorkflowActionManager implements WorkflowActions, WorkflowVerifierC
      *
      * @return AUTHORIZE, CANCEL, RESET or RESET_AND_RUN
      */
-    public static int authorizeWorkflowAction(String action, TaskGraph taskgraph, ExecutionState state) throws WorkflowException {
+    public static int authorizeWorkflowAction(String action, TaskGraph taskgraph, ExecutionState state)
+            throws WorkflowException {
         int result = AUTHORIZE;
 
         if (vtable.containsKey(action)) {
             ArrayList list = (ArrayList) vtable.get(action);
             WorkflowVerifier[] verifiers = (WorkflowVerifier[]) list.toArray(new WorkflowVerifier[list.size()]);
 
-            for (int count = 0; (count < verifiers.length) && (result == AUTHORIZE); count++)
+            for (int count = 0; (count < verifiers.length) && (result == AUTHORIZE); count++) {
                 result = verifiers[count].authorizeWorkflowAction(action, taskgraph, state);
+            }
         }
 
         return result;

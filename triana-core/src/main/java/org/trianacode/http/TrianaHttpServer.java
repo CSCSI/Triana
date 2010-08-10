@@ -64,7 +64,7 @@ public class TrianaHttpServer {
         Reader r = null;
         try {
             URL url = new URL(workflowFile);
-           // r = new UrlReader(url);
+            // r = new UrlReader(url);
         } catch (MalformedURLException e) {
             r = new FileReader(workflowFile);
         }

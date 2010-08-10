@@ -64,20 +64,14 @@ import org.trianacode.taskgraph.Node;
 // for debug output
 
 /**
- * This class is used by the LocalCable class to ensure that all
- * the information that is being sent out of a sending unit
- * is being received by a receiving unit and visa-verse. It does this
- * by using Java monitors to provide the necessary synchronization
- * needed between the sending and receiving units within the
- * the Triana system. There is one monitor set up for each connection
- * (i.e. by using a GAPCable) made.
+ * This class is used by the LocalCable class to ensure that all the information that is being sent out of a sending
+ * unit is being received by a receiving unit and visa-verse. It does this by using Java monitors to provide the
+ * necessary synchronization needed between the sending and receiving units within the the Triana system. There is one
+ * monitor set up for each connection (i.e. by using a GAPCable) made.
  *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @see LocalCable
- *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Monitor implements Runnable, java.io.Serializable {
 
@@ -106,8 +100,7 @@ public class Monitor implements Runnable, java.io.Serializable {
     private boolean blockingput = false;
 
     /**
-     * Creates a new monitor for a particular connection name
-     * and a RunnableInstance object (i.e. a LocalCable).
+     * Creates a new monitor for a particular connection name and a RunnableInstance object (i.e. a LocalCable).
      */
     public Monitor(RunnableInstance sn, RunnableInstance rn, Node innode) {
         this.sender = sn;
@@ -121,13 +114,13 @@ public class Monitor implements Runnable, java.io.Serializable {
 
 
     /**
-     * The Sending unit calls this method when it has data which is ready
-     * to be sent to the receiving unit. The monitor then waits until the unit
-     * is ready to receive the data before releasing the data
+     * The Sending unit calls this method when it has data which is ready to be sent to the receiving unit. The monitor
+     * then waits until the unit is ready to receive the data before releasing the data
      */
     public synchronized void put(Object data) throws EmptyingException {
-        if (blockingput)
-            throw(new RuntimeException("Monitor Error: Cannot put data on blocked monitior"));
+        if (blockingput) {
+            throw (new RuntimeException("Monitor Error: Cannot put data on blocked monitior"));
+        }
 
         blockingput = true;
         threadAlive = null;
@@ -142,12 +135,13 @@ public class Monitor implements Runnable, java.io.Serializable {
 
 
     /**
-     * This puts the data on this connection but does not block the unit.
-     * Instead it puts it in the background and waits in a separate thread
+     * This puts the data on this connection but does not block the unit. Instead it puts it in the background and waits
+     * in a separate thread
      */
     public void putButDontBlock(Object data) {
-        if (blockingput)
-            throw(new RuntimeException("Monitor Error: Cannot put data on blocked monitor"));
+        if (blockingput) {
+            throw (new RuntimeException("Monitor Error: Cannot put data on blocked monitor"));
+        }
 
         this.tempdata = data;
 
@@ -168,10 +162,11 @@ public class Monitor implements Runnable, java.io.Serializable {
                 wait();
 
                 if (data instanceof EmptyingType) {
-                    if (put)
+                    if (put) {
                         throw (new EmptyingException("Empty at monitor (put)"));
-                    else
+                    } else {
                         throw (new EmptyingException("Empty at monitor (get)"));
+                    }
                 }
             } catch (InterruptedException e) {
             }
@@ -179,8 +174,7 @@ public class Monitor implements Runnable, java.io.Serializable {
     }
 
     /**
-     * Makes the tempdata available by releasing the monitor and waking up
-     * the receiving unit.
+     * Makes the tempdata available by releasing the monitor and waking up the receiving unit.
      */
     public synchronized void release() {
         data = tempdata;
@@ -190,14 +184,14 @@ public class Monitor implements Runnable, java.io.Serializable {
         myNotify();
         // notify the get method that data has been received
 
-        if ((receiver != null) && (data != null))
+        if ((receiver != null) && (data != null)) {
             receiver.wakeUp(node.getTopLevelNode());
+        }
     }
 
     /**
-     * The Receiving unit calls this method when it wants to receive data.
-     * It then waits until it is <i>notified</i> that the data is ready
-     * to be received.
+     * The Receiving unit calls this method when it wants to receive data. It then waits until it is <i>notified</i>
+     * that the data is ready to be received.
      */
     public synchronized Object get() throws EmptyingException {
         waitingForData = true;
@@ -208,8 +202,9 @@ public class Monitor implements Runnable, java.io.Serializable {
         available = false;
         myNotify(); // let's put method know that the data has been received
 
-        if (sender != null)
-            sender.finished(); // lets the Cable know we've finished
+        if (sender != null) {
+            sender.finished();
+        } // lets the Cable know we've finished
 
         return data;
         // monitor is released by the Receiver
@@ -217,8 +212,7 @@ public class Monitor implements Runnable, java.io.Serializable {
 
 
     /**
-     * Replaces the basic notifyAll fuction to keep a note of
-     * whether this monitor is being notified or released
+     * Replaces the basic notifyAll fuction to keep a note of whether this monitor is being notified or released
      */
     public void myNotify() {
         notifyAll();
@@ -231,8 +225,9 @@ public class Monitor implements Runnable, java.io.Serializable {
     public void run() {
         block(true);
 
-        if (threadAlive != null)
+        if (threadAlive != null) {
             release();
+        }
 
         threadAlive = null;
     }
@@ -260,17 +255,13 @@ public class Monitor implements Runnable, java.io.Serializable {
 
 
     /**
-     * The Receiving unit calls this method when it wants to receive data
-     * which may or may not be there.  If it is available then the unit
-     * returns true and then can go ahead and call the get() method to
-     * retrieve the date otherwise it return false.  This method is used
-     * to implement the idea of an optional() connection within Triana
-     * e.g. if an input node is
-     * marked optional then the unit can quite happily process its
-     * information without contribution from this input i.e. the input
-     * does not block the unit.  However if data is ready at the input
-     * then the unit can retrieve it and use it.
-     *
+     * The Receiving unit calls this method when it wants to receive data which may or may not be there.  If it is
+     * available then the unit returns true and then can go ahead and call the get() method to retrieve the date
+     * otherwise it return false.  This method is used to implement the idea of an optional() connection within Triana
+     * e.g. if an input node is marked optional then the unit can quite happily process its information without
+     * contribution from this input i.e. the input does not block the unit.  However if data is ready at the input then
+     * the unit can retrieve it and use it.
+     * <p/>
      * see RunnableUnit#optional
      */
     public boolean isReady() {
@@ -279,8 +270,8 @@ public class Monitor implements Runnable, java.io.Serializable {
 
 
     /**
-     * When the garbage collector de-allocates space from this
-     * object we reset all references to other object we have used
+     * When the garbage collector de-allocates space from this object we reset all references to other object we have
+     * used
      */
     public void finalize() throws Throwable {
         super.finalize();
@@ -290,7 +281,7 @@ public class Monitor implements Runnable, java.io.Serializable {
     }
 
     private class EmptyingType {
-        
+
     }
 }
 

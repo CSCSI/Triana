@@ -63,19 +63,15 @@ import org.trianacode.taskgraph.Node;
 
 
 /**
- * Communication interface between data monitors and runnable instances. The
- * monitor sends a finished notification when it has finished outputting its
- * data, allowing the runnable instance to continue with its execution (assuming
- * sends are blocking). When data is received by the monitor the runnable
- * instance is sent a wake-up call to allow it to start processing.
+ * Communication interface between data monitors and runnable instances. The monitor sends a finished notification when
+ * it has finished outputting its data, allowing the runnable instance to continue with its execution (assuming sends
+ * are blocking). When data is received by the monitor the runnable instance is sent a wake-up call to allow it to start
+ * processing.
  *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @see LocalCable
  * @see Monitor
- *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface RunnableInstance {
 
@@ -97,18 +93,16 @@ public interface RunnableInstance {
 
 
     /**
-     * Indicates to the runnable instance that a wake-up signal has been received
-     * from the scheduler. It is up to a task to respond to this wake-up, or to
-     * ignore it if wake-ups have not been received from all the nodes a task
-     * requires to execute.
+     * Indicates to the runnable instance that a wake-up signal has been received from the scheduler. It is up to a task
+     * to respond to this wake-up, or to ignore it if wake-ups have not been received from all the nodes a task requires
+     * to execute.
      */
     public void wakeUp();
 
     /**
-     * Indicates to the runnable instance that a wake-up signal has been received
-     * from the specified node (e.g. data is available on that node). A runnable
-     * instance should only run when it has received wake-ups from all the nodes
-     * it requires to execute.
+     * Indicates to the runnable instance that a wake-up signal has been received from the specified node (e.g. data is
+     * available on that node). A runnable instance should only run when it has received wake-ups from all the nodes it
+     * requires to execute.
      */
     public void wakeUp(Node node);
 
@@ -129,9 +123,8 @@ public interface RunnableInstance {
     public void reset();
 
     /**
-     * Tell the data monitor that this thread monitor has completed outputting
-     * the data i.e. the data has been received by the receiving process.
-     *
+     * Tell the data monitor that this thread monitor has completed outputting the data i.e. the data has been received
+     * by the receiving process.
      */
     public void finished();
 

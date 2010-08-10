@@ -24,8 +24,6 @@ import org.trianacode.taskgraph.tool.ToolTable;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 12:56:23 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface TrianaClient {
 
@@ -36,8 +34,7 @@ public interface TrianaClient {
     public void run() throws ClientException;
 
     /**
-     * Sends a message to the sever to run the taskgraph. The specfied
-     * history clip-ins is attached to every input task
+     * Sends a message to the sever to run the taskgraph. The specfied history clip-ins is attached to every input task
      */
     public void run(HistoryClipIn history) throws ClientException;
 

@@ -59,6 +59,17 @@
 package org.trianacode.gui.hci;
 
 
+import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.event.MouseListener;
+import java.util.Hashtable;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
 import org.trianacode.gui.hci.color.ColorTableEntry;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.windows.ErrorDialog;
@@ -69,22 +80,12 @@ import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.applet.Applet;
-import java.awt.*;
-import java.awt.event.MouseListener;
-import java.util.Hashtable;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.logging.Logger;
-
 /**
- * Class GUIEnv sets stores classes which are accessed from other GUI objects
- * e.g. a number of object need access to the main ApplicationFrame
+ * Class GUIEnv sets stores classes which are accessed from other GUI objects e.g. a number of object need access to the
+ * main ApplicationFrame
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class GUIEnv {
 
@@ -97,8 +98,8 @@ public class GUIEnv {
     private static boolean standalone = true;
 
     /**
-     * A list of the GAPCable Colours for Triana Types. If these are edited
-     * then this is non null and represents the users choice of colours.
+     * A list of the GAPCable Colours for Triana Types. If these are edited then this is non null and represents the
+     * users choice of colours.
      */
     private static TreeMap cableColours = null;
     private static String iconTheme = "crystalicons";
@@ -111,8 +112,8 @@ public class GUIEnv {
     }
 
     /**
-     * Only can set within this package. Sets the main application window.
-     * Called from within ApplicationFrame. DO NOT CALL FROM ELSEWHERE
+     * Only can set within this package. Sets the main application window. Called from within ApplicationFrame. DO NOT
+     * CALL FROM ELSEWHERE
      */
     static void setApplicationFrame(ApplicationFrame ap) {
         app = ap;
@@ -155,8 +156,8 @@ public class GUIEnv {
     }
 
     /**
-     * @return the MainTriana panel which is representing the specified task
-     *         graph, or null if the task isn't represented
+     * @return the MainTriana panel which is representing the specified task graph, or null if the task isn't
+     *         represented
      */
     public static TaskGraphPanel getTaskGraphPanelFor(TaskGraph group) {
         return app.getTaskGraphPanelFor(group);
@@ -168,18 +169,20 @@ public class GUIEnv {
     public static TrianaClient getTrianaClientFor(Task task) {
         TaskGraph parent;
 
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             parent = (TaskGraph) task;
-        else
+        } else {
             parent = task.getParent();
+        }
 
         TrianaClient client = null;
 
         while ((parent != null) && (client == null)) {
             client = app.getTrianaClient(parent);
 
-            if (client == null)
+            if (client == null) {
                 parent = parent.getParent();
+            }
         }
 
         return client;
@@ -265,8 +268,9 @@ public class GUIEnv {
      */
     public static void openURL(String url) {
         if (getHTMLViewerCommand().equals(Env.getString("defaultViewer"))) {
-            if (Help.tryActualFile(url) == -1)
+            if (Help.tryActualFile(url) == -1) {
                 Help.setFile(url);
+            }
         } else {
             showEditorFor(getHTMLViewerCommand(), url);
         }
@@ -274,8 +278,7 @@ public class GUIEnv {
     }
 
     /**
-     * Runs the given editor (the editor string is the command-line
-     * for the editor) for the particular fileName.
+     * Runs the given editor (the editor string is the command-line for the editor) for the particular fileName.
      */
     public static void showEditorFor(String editor, String filename) {
         try {
@@ -452,16 +455,14 @@ public class GUIEnv {
     }
 
     /**
-     * @return the refernce to the applet object if this run is an applet,
-     *         null otherwise.
+     * @return the refernce to the applet object if this run is an applet, null otherwise.
      */
     public static Applet getApplet() {
         return Env.applet;
     }
 
     /**
-     * @return a hashtable containing each Triana type and its
-     *         associated colour.  These are taken from the system types
+     * @return a hashtable containing each Triana type and its associated colour.  These are taken from the system types
      *         file or from the users configuration file
      */
     public static TreeMap getCableColours() {  // set up colours
@@ -473,10 +474,11 @@ public class GUIEnv {
      */
     public static Color getCableColour(String type) {
         Object col = cableColours.get(type.substring(type.lastIndexOf(".") + 1));
-        if (col instanceof Color)
+        if (col instanceof Color) {
             return (Color) col;
-        else
+        } else {
             return Color.black;
+        }
     }
 
     public static void setCableColor(String type, Color color) {
@@ -491,8 +493,7 @@ public class GUIEnv {
     }
 
     /**
-     * loads default colours for the types from the system's type file.  This
-     * is used when Triana is first run.
+     * loads default colours for the types from the system's type file.  This is used when Triana is first run.
      */
     public static void loadDefaultColours() {
         Vector<String> types = Env.getTrianaTypesAndDefaultColors();
@@ -500,20 +501,24 @@ public class GUIEnv {
             Color c;
             Vector<String> sv = FileUtils.splitLine(types.get(i));
             if (sv.size() == 4)  // they have a colour
+            {
                 c = new Color(Integer.parseInt(sv.get(1)),
                         Integer.parseInt(sv.get(2)), Integer.parseInt(sv.get(3)));
-            else
-                c = new Color(0, 0, 0); // set to black if no colour is set
-            if (sv.size() != 0)
+            } else {
+                c = new Color(0, 0, 0);
+            } // set to black if no colour is set
+            if (sv.size() != 0) {
                 cableColours.put(sv.get(0), c);
+            }
         }
     }
 
 
     public static ImageIcon getIcon(String file) {
         ImageIcon sysIcon = FileUtils.getSystemImageIcon(iconTheme + "/" + file);
-        if (sysIcon == null)
+        if (sysIcon == null) {
             logger.severe("Icon " + file + " not found.");
+        }
         return sysIcon;
     }
 
@@ -523,8 +528,7 @@ public class GUIEnv {
     }
 
     /**
-     * Returns the name of the icon to use when TrianaWindow is
-     * iconified.
+     * Returns the name of the icon to use when TrianaWindow is iconified.
      *
      * @return name of the icon.
      */
@@ -533,8 +537,7 @@ public class GUIEnv {
     }
 
     /**
-     * Returns an image to use as the icon when TrianaWindow is
-     * iconified.
+     * Returns an image to use as the icon when TrianaWindow is iconified.
      *
      * @return image to use.
      */

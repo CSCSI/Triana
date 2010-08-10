@@ -59,20 +59,22 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class provides a custom internal frame. Each internal frame
- * is assigned an associated toggle button and an optional radio button
- * menu item. These buttons reside in the
- * {@link com.tomtessier.scrollabledesktop.DesktopResizableToolBar
- * DesktopResizableToolBar} and
- * {@link com.tomtessier.scrollabledesktop.DesktopMenu DesktopMenu}.
- * classes respectively.
+ * <p/>
+ * This class provides a custom internal frame. Each internal frame is assigned an associated toggle button and an
+ * optional radio button menu item. These buttons reside in the {@link com.tomtessier.scrollabledesktop.DesktopResizableToolBar
+ * DesktopResizableToolBar} and {@link com.tomtessier.scrollabledesktop.DesktopMenu DesktopMenu}. classes respectively.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  9-Aug-2001
@@ -88,22 +90,22 @@ public class BaseInternalFrame extends JInternalFrame {
     private int initialHeight;
 
     /**
-     *  creates the BaseInternalFrame
+     * creates the BaseInternalFrame
      *
-     * @param title the string displayed in the title bar of the internal frame
-     * @param icon the ImageIcon displayed in the title bar of the internal frame
+     * @param title         the string displayed in the title bar of the internal frame
+     * @param icon          the ImageIcon displayed in the title bar of the internal frame
      * @param frameContents the contents of the internal frame
-     * @param isClosable determines whether the frame is closable
+     * @param isClosable    determines whether the frame is closable
      */
     public BaseInternalFrame(String title,
                              ImageIcon icon, JPanel frameContents,
                              boolean isClosable) {
 
         super(title, // title
-              true, //resizable
-              isClosable, //closable
-              true, //maximizable
-              true);//iconifiable
+                true, //resizable
+                isClosable, //closable
+                true, //maximizable
+                true);//iconifiable
 
         this.isClosable = isClosable;
 
@@ -183,17 +185,16 @@ public class BaseInternalFrame extends JInternalFrame {
 
 
     /**
-     *  sets the associated menu button
+     * sets the associated menu button
      *
-     * @param associatedMenuButton the menu button to associate with
-     * the internal frame
+     * @param associatedMenuButton the menu button to associate with the internal frame
      */
     public void setAssociatedMenuButton(JRadioButtonMenuItem associatedMenuButton) {
         this.associatedMenuButton = associatedMenuButton;
     }
 
     /**
-     *  returns the associated menu button
+     * returns the associated menu button
      *
      * @return the JRadioButtonMenuItem object associated with this internal frame
      */
@@ -202,17 +203,16 @@ public class BaseInternalFrame extends JInternalFrame {
     }
 
     /**
-     *  sets the associated toggle button
+     * sets the associated toggle button
      *
-     * @param associatedButton the toggle button to associate with
-     * the internal frame
+     * @param associatedButton the toggle button to associate with the internal frame
      */
     public void setAssociatedButton(JToggleButton associatedButton) {
         this.associatedButton = associatedButton;
     }
 
     /**
-     *  returns the associated toggle button
+     * returns the associated toggle button
      *
      * @return the JToggleButton object associated with this internal frame
      */
@@ -221,21 +221,18 @@ public class BaseInternalFrame extends JInternalFrame {
     }
 
     /**
-     *  returns the initial dimensions of this internal frame. Necessary so that
-     * internal frames can be restored to their default sizes when the cascade
-     * frame positioning mode is chosen in
-     * {@link com.tomtessier.scrollabledesktop.FramePositioning FramePositioning}.
+     * returns the initial dimensions of this internal frame. Necessary so that internal frames can be restored to their
+     * default sizes when the cascade frame positioning mode is chosen in {@link com.tomtessier.scrollabledesktop.FramePositioning
+     * FramePositioning}.
      *
-     * @return the Dimension object representing the initial dimensions of
-     * this internal frame
+     * @return the Dimension object representing the initial dimensions of this internal frame
      */
     public Dimension getInitialDimensions() {
         return new Dimension(initialWidth, initialHeight);
     }
 
     /**
-     *  returns the toString() representation of this object. Useful for
-     * debugging purposes.
+     * returns the toString() representation of this object. Useful for debugging purposes.
      *
      * @return the toString() representation of this object
      */
@@ -245,8 +242,7 @@ public class BaseInternalFrame extends JInternalFrame {
 
 
     /**
-     *  selects the current frame, along with any toggle and menu
-     * buttons that may be associated with it
+     * selects the current frame, along with any toggle and menu buttons that may be associated with it
      */
     public void selectFrameAndAssociatedButtons() {
 

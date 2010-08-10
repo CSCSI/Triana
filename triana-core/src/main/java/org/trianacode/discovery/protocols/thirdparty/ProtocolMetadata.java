@@ -2,15 +2,12 @@ package org.trianacode.discovery.protocols.thirdparty;
 
 /**
  * Metadata for a service type
- *
- * User: scmijt
- * Date: Jul 27, 2010
- * Time: 3:34:50 PM
- * To change this template use File | Settings | File Templates.
+ * <p/>
+ * User: scmijt Date: Jul 27, 2010 Time: 3:34:50 PM To change this template use File | Settings | File Templates.
  */
 public class ProtocolMetadata {
     String description;
-    BonjourService protocol =null;
+    BonjourService protocol = null;
 
     ProtocolMetadata(String description) {
         this.description = description;

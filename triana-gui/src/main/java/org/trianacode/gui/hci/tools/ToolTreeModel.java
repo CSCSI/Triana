@@ -58,15 +58,17 @@
  */
 package org.trianacode.gui.hci.tools;
 
+import java.net.URL;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.trianacode.gui.hci.ToolFilter;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 
 /**
@@ -75,7 +77,7 @@ import org.trianacode.taskgraph.tool.Toolbox;
  * @author Ian Wang
  * @version $Revision: 4048 $
  */
-public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener {
+public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
 
     /**
      * The default tree root text
@@ -249,9 +251,9 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
 
             // distinguish between different tools with the same name
             if ((compare == 0) && (newobj instanceof Tool) && (child.getUserObject() instanceof Tool)) {
-                String newloc = ((Tool) newobj).getDefinitionPath();
-                String childloc = ((Tool) child.getUserObject()).getDefinitionPath();
-                compare = newloc.compareToIgnoreCase(childloc);
+                URL newloc = ((Tool) newobj).getDefinitionPath();
+                URL childloc = ((Tool) child.getUserObject()).getDefinitionPath();
+                compare = newloc.toString().compareToIgnoreCase(childloc.toString());
             }
 
             if (compare == 0) {
@@ -324,6 +326,20 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolTableListener
         }
     }
 
+
+    @Override
+    public void toolsAdded(List<Tool> tools) {
+        for (Tool tool : tools) {
+            insertTool(tool);
+        }
+    }
+
+    @Override
+    public void toolsRemoved(List<Tool> tools) {
+        for (Tool tool : tools) {
+            deleteTool(tool);
+        }
+    }
 
     /**
      * Called when a new tool is added

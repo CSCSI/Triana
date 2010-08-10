@@ -61,25 +61,17 @@ package org.trianacode.gui.windows;
 import org.trianacode.gui.panels.ScrollerPanel;
 
 /**
- *
- * This window allows a scaler or a number to be input into a Triana unit.
- * If there is an unit which requires one parameter to be passed to it
- * in the form of a double-precision floating point value,
- * programmers should consider using this class.
- * The original scroller's provided by java deal with
- * integers.  Here, we scale the integers to
+ * This window allows a scaler or a number to be input into a Triana unit. If there is an unit which requires one
+ * parameter to be passed to it in the form of a double-precision floating point value, programmers should consider
+ * using this class. The original scroller's provided by java deal with integers.  Here, we scale the integers to
  * produce a scroller which allows floating point values.</p>
+ * <p/>
+ * <p>Also, see the parameter windows for the Wave, Adder, Subtracter, Divider and Multiplier units for examples of what
+ * this class looks like.  Also other units e.g. Wave are created by inheriting from ScrollerWindow and then adding
+ * extra functionality to the basic look of the window.
  *
- * <p>Also, see the parameter windows for the Wave, Adder, Subtracter,
- * Divider and Multiplier units for examples of what this class looks
- * like.  Also other units e.g. Wave are created by inheriting from
- * ScrollerWindow and then adding extra functionality to the basic
- * look of the window.
- *
- * @author      Ian Taylor
- * @created     1 Dec 1999
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class ScrollerWindow extends ParameterWindow {
 
@@ -92,10 +84,9 @@ public class ScrollerWindow extends ParameterWindow {
     }
 
     /**
-     * Creates a new Scroller Window for a particular unit with a specified
-     * title and parameter name.  It also sets the minimum, maximum and current
-     * scrollbar values to 1, 100 and 1 repectively.  Call setValues to change
-     * these defaults.
+     * Creates a new Scroller Window for a particular unit with a specified title and parameter name.  It also sets the
+     * minimum, maximum and current scrollbar values to 1, 100 and 1 repectively.  Call setValues to change these
+     * defaults.
      */
     public ScrollerWindow(Object unit, String textForUser) {
         setObject(unit, textForUser);
@@ -131,8 +122,7 @@ public class ScrollerWindow extends ParameterWindow {
     }
 
     /**
-     * Updates the widgets within the scroll window so
-     * to reflect changes in parameters
+     * Updates the widgets within the scroll window so to reflect changes in parameters
      */
     public void updateWidgets() {
         scrollerPanel.updateWidgets();
@@ -167,8 +157,7 @@ public class ScrollerWindow extends ParameterWindow {
     }
 
     /**
-     * Does a layout on the Scroller Window, i.e. does a layout on the
-     * scrollerPanel.
+     * Does a layout on the Scroller Window, i.e. does a layout on the scrollerPanel.
      */
     protected void layoutWindow() {
         //scrollerPanel.layoutPanel();

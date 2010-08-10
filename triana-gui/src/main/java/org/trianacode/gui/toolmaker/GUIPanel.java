@@ -58,6 +58,32 @@
  */
 package org.trianacode.gui.toolmaker;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.trianacode.gui.builder.GUICreaterPanel;
 import org.trianacode.gui.toolmaker.guibuilder.BuilderPanel;
 import org.trianacode.gui.windows.ParameterWindow;
@@ -66,25 +92,11 @@ import org.trianacode.gui.windows.WizardInterface;
 import org.trianacode.gui.windows.WizardPanel;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Vector;
-
 /**
  * A tool wizard panel for specifying the tools graphical interface.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created Today's date
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class GUIPanel extends JPanel
         implements WizardPanel, ItemListener, ActionListener, ListSelectionListener {
@@ -154,8 +166,7 @@ public class GUIPanel extends JPanel
 
 
     /**
-     * Constructs a GUIPanel that builds an interface for the parameters defined
-     * in the specified parameter panel.
+     * Constructs a GUIPanel that builds an interface for the parameters defined in the specified parameter panel.
      */
     public GUIPanel(ParamsPanelInterface parampanel) {
         this.parampanel = parampanel;
@@ -223,16 +234,16 @@ public class GUIPanel extends JPanel
         for (int count = 0; count < size; count++) {
             line = builderpanel.getGUILine(getParameterAt(count));
 
-            if ((line != null) && (!line.equals("")))
+            if ((line != null) && (!line.equals(""))) {
                 lines.add(line);
+            }
         }
 
         return (String[]) lines.toArray(new String[lines.size()]);
     }
 
     /**
-     * @return the name of the parameter in the parameter list at the specified
-     *         index
+     * @return the name of the parameter in the parameter list at the specified index
      */
     private String getParameterAt(int count) {
         String listentry = (String) paramlist.getModel().getElementAt(count);
@@ -246,10 +257,11 @@ public class GUIPanel extends JPanel
     public String getCustomPanelName() {
         String custname = customclass.getText();
 
-        if (custname.indexOf('.') == -1)
+        if (custname.indexOf('.') == -1) {
             return custname;
-        else
+        } else {
             return custname.substring(custname.lastIndexOf('.') + 1);
+        }
     }
 
     /**
@@ -259,8 +271,9 @@ public class GUIPanel extends JPanel
         String full = customclass.getText();
         String packageName = full.replaceAll(getCustomPanelName(), "");
 
-        if (packageName.endsWith("."))
+        if (packageName.endsWith(".")) {
             packageName = packageName.substring(0, packageName.length() - 1);
+        }
         return packageName;
 
     }
@@ -270,9 +283,11 @@ public class GUIPanel extends JPanel
      * Sets the gui builder lines, setting isUsingGUIBuilder yo true
      */
     public void setGUIBuilderLines(String[] lines) {
-        for (int count = 0; count < lines.length; count++)
-            if (!lines.equals(""))
+        for (int count = 0; count < lines.length; count++) {
+            if (!lines.equals("")) {
                 builderpanel.setGUILine(getParam(lines[count]), lines[count]);
+            }
+        }
 
         guibuild.setSelected(true);
     }
@@ -319,8 +334,7 @@ public class GUIPanel extends JPanel
 
 
     /**
-     * @return the panel for selecting which type of gui is built (either gui-builder,
-     *         custom or node)
+     * @return the panel for selecting which type of gui is built (either gui-builder, custom or node)
      */
     private JPanel getSelectionPanel() {
         ButtonGroup group = new ButtonGroup();
@@ -368,7 +382,8 @@ public class GUIPanel extends JPanel
         buildercont.add(builderpanel, BorderLayout.CENTER);
         buildercont.add(previewpanel, BorderLayout.SOUTH);
 
-        JScrollPane scroll = new JScrollPane(paramlist, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroll = new JScrollPane(paramlist, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         paramlist.setPrototypeCellValue("1234567890123456789012345");
         paramlist.setVisibleRowCount(6);
         paramlist.addListSelectionListener(this);
@@ -442,8 +457,9 @@ public class GUIPanel extends JPanel
         Object[] objs = ((DefaultListModel) paramlist.getModel()).toArray();
         String[] params = new String[objs.length];
 
-        for (int count = 0; count < params.length; count++)
+        for (int count = 0; count < params.length; count++) {
             params[count] = getParameterName((String) objs[count]);
+        }
 
         return params;
     }
@@ -488,8 +504,9 @@ public class GUIPanel extends JPanel
         String[] params = getGUIParams();
         boolean found = false;
 
-        for (int count = 0; (!found) && (count < params.length); count++)
+        for (int count = 0; (!found) && (count < params.length); count++) {
             found = params[count].equals(param);
+        }
 
         return found;
     }
@@ -528,10 +545,13 @@ public class GUIPanel extends JPanel
         String[] params = parampanel.getParameterNames();
 
         for (int count = 0; count < params.length; count++) {
-            if ((!containsGUIParam(params[count])) && (parampanel.getParameterType(params[count]).equals(UnitWizard.USER_ACCESSIBLE)))
+            if ((!containsGUIParam(params[count])) && (parampanel.getParameterType(params[count]).equals(
+                    UnitWizard.USER_ACCESSIBLE))) {
                 model.addElement(getParameterStr(params[count], builderpanel.getComponent(params[count])));
-            else if ((containsGUIParam(params[count])) && (!parampanel.getParameterType(params[count]).equals(UnitWizard.USER_ACCESSIBLE)))
+            } else if ((containsGUIParam(params[count])) && (!parampanel.getParameterType(params[count])
+                    .equals(UnitWizard.USER_ACCESSIBLE))) {
                 model.removeElement(getParameterStr(params[count], builderpanel.getComponent(params[count])));
+            }
         }
 
         String[] guiparams = getGUIParams();
@@ -541,8 +561,9 @@ public class GUIPanel extends JPanel
         for (int count1 = 0; count1 < guiparams.length; count1++) {
             found = false;
 
-            for (int count2 = 0; (count2 < params.length) && (!found); count2++)
+            for (int count2 = 0; (count2 < params.length) && (!found); count2++) {
                 found = guiparams[count1].equals(params[count2]);
+            }
 
             if (!found) {
                 model.removeElementAt(count1 - delcount);
@@ -550,22 +571,26 @@ public class GUIPanel extends JPanel
             }
         }
 
-        if (!showhidden.isSelected())
+        if (!showhidden.isSelected()) {
             removeHidden();
+        }
 
         if (model.getSize() > 0) {
             paramlist.setSelectedIndex(0);
             builderpanel.setCurrentParameter(getParameterName((String) paramlist.getSelectedValue()));
-        } else
+        } else {
             builderpanel.setCurrentParameter(null);
+        }
     }
 
     private void removeHidden() {
         DefaultListModel model = (DefaultListModel) paramlist.getModel();
 
-        for (int count = 0; count < model.getSize(); count++)
-            if (getComponent((String) model.get(count)).equals(Env.getString("hidden")))
+        for (int count = 0; count < model.getSize(); count++) {
+            if (getComponent((String) model.get(count)).equals(Env.getString("hidden"))) {
                 model.remove(count--);
+            }
+        }
     }
 
     /**
@@ -587,7 +612,8 @@ public class GUIPanel extends JPanel
 
             paramlist.addListSelectionListener(this);
             paramlist.setSelectedIndex(index - 1);
-        } else if ((event.getSource() == movedown) && (paramlist.getSelectedIndex() > -1) && (paramlist.getSelectedIndex() < paramlist.getModel().getSize() - 1)) {
+        } else if ((event.getSource() == movedown) && (paramlist.getSelectedIndex() > -1) && (
+                paramlist.getSelectedIndex() < paramlist.getModel().getSize() - 1)) {
             paramlist.removeListSelectionListener(this);
 
             String entry = (String) paramlist.getSelectedValue();
@@ -602,18 +628,20 @@ public class GUIPanel extends JPanel
             String[] lines = getGUIBuilderLines();
             String str = "";
 
-            for (int count = 0; count < lines.length; count++)
+            for (int count = 0; count < lines.length; count++) {
                 str += lines[count] + '\n';
+            }
 
             Vector<String> strvect = GUICreaterPanel.splitLine(str);
             GUICreaterPanel guicreate = new GUICreaterPanel(strvect);
             ParameterWindow window;
             Window frame = getWindow();
 
-            if (frame instanceof Frame)
+            if (frame instanceof Frame) {
                 window = new ParameterWindow((Frame) frame, WindowButtonConstants.OK_BUTTON, true);
-            else
+            } else {
                 window = new ParameterWindow((Dialog) frame, WindowButtonConstants.OK_BUTTON, true);
+            }
 
             window.setLocation(frame.getLocationOnScreen().x + 150, frame.getLocationOnScreen().y + 150);
             window.setTitle(Env.getString("previewGUI"));
@@ -625,8 +653,9 @@ public class GUIPanel extends JPanel
 
     public void itemStateChanged(ItemEvent event) {
         if ((event.getSource() == guibuild) || (event.getSource() == custom) || (event.getSource() == none)) {
-            if (!showhidden.isSelected())
+            if (!showhidden.isSelected()) {
                 removeHidden();
+            }
 
             paramlist.setEnabled(guibuild.isSelected());
             moveup.setEnabled(guibuild.isSelected());
@@ -661,11 +690,13 @@ public class GUIPanel extends JPanel
     private void repack() {
         Component comp = getParent();
 
-        while ((comp != null) && (!(comp instanceof Window)))
+        while ((comp != null) && (!(comp instanceof Window))) {
             comp = comp.getParent();
+        }
 
-        if (comp != null)
+        if (comp != null) {
             ((Window) comp).pack();
+        }
     }
 
 
@@ -675,25 +706,29 @@ public class GUIPanel extends JPanel
     private Window getWindow() {
         Component comp = getParent();
 
-        while ((comp != null) && (!(comp instanceof Window)))
+        while ((comp != null) && (!(comp instanceof Window))) {
             comp = comp.getParent();
+        }
 
-        if (comp instanceof Window)
+        if (comp instanceof Window) {
             return (Window) comp;
-        else
+        } else {
             return null;
+        }
     }
 
 
     public void valueChanged(ListSelectionEvent event) {
         if (event.getSource() == paramlist) {
-            if (!showhidden.isSelected())
+            if (!showhidden.isSelected()) {
                 removeHidden();
+            }
 
-            if (paramlist.getSelectedValue() != null)
+            if (paramlist.getSelectedValue() != null) {
                 builderpanel.setCurrentParameter(getParameterName((String) paramlist.getSelectedValue()));
-            else
+            } else {
                 builderpanel.setCurrentParameter(null);
+            }
         }
     }
 

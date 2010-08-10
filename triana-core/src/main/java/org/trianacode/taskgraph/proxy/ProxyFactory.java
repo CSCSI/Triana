@@ -67,11 +67,8 @@ import java.util.logging.Logger;
 /**
  * A factory class for instantiating proxies from a map of its instance details.
  *
- * @author      Ian Wang
- * @created     24th November 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 
@@ -135,8 +132,9 @@ public class ProxyFactory {
      * @return an instantiated proxy from a map of its instance details
      */
     public static Proxy createProxy(String type, Map instdetails) throws ProxyInstantiationException {
-        if (!isProxyType(type))
+        if (!isProxyType(type)) {
             throw (new RuntimeException("No Proxy Instantiator registered for type " + type));
+        }
 
         return getProxyInstantiator(type).createProxy(type, instdetails);
     }
@@ -145,11 +143,13 @@ public class ProxyFactory {
      * @return an instantiated proxy from a map of its instance details
      */
     public static Proxy cloneProxy(Proxy proxy) throws ProxyInstantiationException {
-        if (proxy == null)
+        if (proxy == null) {
             return null;
+        }
 
-        if (!isProxyType(proxy.getType()))
+        if (!isProxyType(proxy.getType())) {
             throw (new RuntimeException("No Proxy Instantiator registered for type " + proxy.getType()));
+        }
 
         return getProxyInstantiator(proxy.getType()).cloneProxy(proxy);
     }

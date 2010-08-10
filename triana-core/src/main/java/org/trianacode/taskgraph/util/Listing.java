@@ -24,8 +24,6 @@ import java.util.Vector;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 10:17:22 AM
- * @date $Date:$ modified by $Author:$
  */
 
 public class Listing {
@@ -68,8 +66,7 @@ public class Listing {
 
 
     /**
-     * A listing with all of the files removed, just the directory
-     * structure remains. Use one of the toString methods to
+     * A listing with all of the files removed, just the directory structure remains. Use one of the toString methods to
      * have formatted output.
      */
     public Listing justDirStructure() {
@@ -84,8 +81,7 @@ public class Listing {
     }
 
     /**
-     * A listing with all of the files removed, just the directory
-     * structure remains. Use one of the toString methods to
+     * A listing with all of the files removed, just the directory structure remains. Use one of the toString methods to
      * have formatted output.
      */
     public Listing justDirStructure(String search) {
@@ -108,24 +104,24 @@ public class Listing {
 
 
     /**
-     * Finds the first available file i.e. non Listing = directory
-     * in this Listing. Recursion again!
+     * Finds the first available file i.e. non Listing = directory in this Listing. Recursion again!
      */
     public String findAFile() {
         String s = null;
 
-        for (int i = 0; i < size(); ++i)
-            if (!(elementAt(i) instanceof Listing))
+        for (int i = 0; i < size(); ++i) {
+            if (!(elementAt(i) instanceof Listing)) {
                 return elementAt(i).toString();
-            else if ((s = ((Listing) elementAt(i)).findAFile()) != null)
+            } else if ((s = ((Listing) elementAt(i)).findAFile()) != null) {
                 return s;
+            }
+        }
         return null;
     }
 
     /**
-     * Recurses this list and returns and editted version i.e. a refined
-     * search on specific file name matches or Listings with directory
-     * occurances removed.
+     * Recurses this list and returns and editted version i.e. a refined search on specific file name matches or
+     * Listings with directory occurances removed.
      */
     public Listing recurseAndEdit(int mode, String s) {
         Object o;
@@ -138,26 +134,29 @@ public class Listing {
             if ((mode & DIR) > 0) {
                 for (i = 0; i < size(); ++i) {
                     o = elementAt(i);
-                    if (o instanceof Listing)
+                    if (o instanceof Listing) {
                         l.addElement(((Listing) o).recurseAndEdit(mode, s));
-                    else if (FileUtils.isDirectory(o.toString()))
+                    } else if (FileUtils.isDirectory(o.toString())) {
                         l.addElement(o);
+                    }
                 }
             } else if ((mode & FILE) > 0) {
                 for (i = 0; i < size(); ++i) {
                     o = elementAt(i);
-                    if (o instanceof Listing)
+                    if (o instanceof Listing) {
                         l.addElement(((Listing) o).recurseAndEdit(mode, s));
-                    else if (!FileUtils.isDirectory(o.toString()))
+                    } else if (!FileUtils.isDirectory(o.toString())) {
                         l.addElement(o);
+                    }
                 }
             } else {
                 for (i = 0; i < size(); ++i) {
                     o = elementAt(i);
-                    if (o instanceof Listing)
+                    if (o instanceof Listing) {
                         l.addElement(((Listing) o).recurseAndEdit(mode, s));
-                    else if (matched(o.toString(), s))
+                    } else if (matched(o.toString(), s)) {
                         l.addElement(o);
+                    }
                 }
             }
             return l;
@@ -166,36 +165,38 @@ public class Listing {
         if ((mode & DIR) > 0) {
             for (i = 0; i < size(); ++i) {
                 o = elementAt(i);
-                if ((o instanceof File) && (((File) o).isDirectory()))
+                if ((o instanceof File) && (((File) o).isDirectory())) {
                     l.addElement(o);
-                else if (o instanceof Listing)
+                } else if (o instanceof Listing) {
                     l.addElement(((Listing) o).recurseAndEdit(mode, s));
+                }
             }
         } else if ((mode & FILE) > 0) {
             for (i = 0; i < size(); ++i) {
                 o = elementAt(i);
-                if ((o instanceof File) && (((File) o).isFile()))
+                if ((o instanceof File) && (((File) o).isFile())) {
                     l.addElement(o);
-                else if (o instanceof Listing)
+                } else if (o instanceof Listing) {
                     l.addElement(((Listing) o).recurseAndEdit(mode, s));
+                }
             }
         } else if (s != null) {
             for (i = 0; i < size(); ++i) {
                 o = elementAt(i);
 
-                if ((o instanceof File) && (matched(((File) o).getName(), s)))
+                if ((o instanceof File) && (matched(((File) o).getName(), s))) {
                     l.addElement(o);
-                else if (o instanceof Listing)
+                } else if (o instanceof Listing) {
                     l.addElement(((Listing) o).recurseAndEdit(mode, s));
+                }
             }
         }
         return l;
     }
 
     /**
-     * matches the file to the given matching string.  The matching
-     * String can contain waitForWilcards etc and this unction will match
-     * accordingly.
+     * matches the file to the given matching string.  The matching String can contain waitForWilcards etc and this
+     * unction will match accordingly.
      */
     public boolean matched(String item, String matchStr) {
         Vector matchList = new Vector(10);
@@ -203,9 +204,9 @@ public class Listing {
         boolean waitForWildcard = false;
         String s;
 
-        if ((matchMemory != null) && (matchMemory.equals(matchStr)))
+        if ((matchMemory != null) && (matchMemory.equals(matchStr))) {
             matchList = lastMatch;
-        else {
+        } else {
             for (int i = 0; i < matchStr.length(); ++i) {
                 if ((matchStr.substring(i, i + 1).equals("*")) ||
                         (matchStr.substring(i, i + 1).equals("?"))) {
@@ -223,14 +224,16 @@ public class Listing {
             }
         }
 
-        if (waitForWildcard)
+        if (waitForWildcard) {
             matchList.addElement(matchStr.substring(j));
+        }
 
         j = 0;
         int i = 0;
 
-        if (matchList.size() == 0)
+        if (matchList.size() == 0) {
             return false;
+        }
 
         String st = (String) matchList.elementAt(i);
 
@@ -238,15 +241,17 @@ public class Listing {
             s = (String) matchList.elementAt(i);
 
             // System.out.println("Matching " + item + " with " + s + " and j = " + j);
-            if (s.equals("?"))
+            if (s.equals("?")) {
                 ++j; // must move at least one
-            else if (!s.equals("*")) {
+            } else if (!s.equals("*")) {
                 int t = j;
                 j = item.indexOf(s, j);
-                if ((st.equals("?")) && (j != t))
+                if ((st.equals("?")) && (j != t)) {
                     return false;
-                if (j != -1)
+                }
+                if (j != -1) {
                     j = j + s.length();
+                }
             }
 
             ++i;
@@ -257,26 +262,28 @@ public class Listing {
 
         // System.out.println("s = " + s + " and j = " + j + " len = " + item.length());
 
-        if (j == -1)
+        if (j == -1) {
             return false;
-        else {
-            if (s.equals("*"))
+        } else {
+            if (s.equals("*")) {
                 return true;
+            }
 
-            if ((s.equals("?")) && (j != item.length()))
+            if ((s.equals("?")) && (j != item.length())) {
                 return false;
+            }
 
-            if (j == item.length())
+            if (j == item.length()) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         }
     }
 
 
     /**
-     * @return the <i>i</i>th element within the Listing. This could
-     *         be a File or a Listing.
+     * @return the <i>i</i>th element within the Listing. This could be a File or a Listing.
      */
     public Object elementAt(int i) {
         return listing.elementAt(i);
@@ -284,21 +291,19 @@ public class Listing {
 
 
     /**
-     * @return a listing as a set of Strings. If longFormat is
-     *         true then the format of the listing
-     *         will be in long format (i.e. with file details etc).
+     * @return a listing as a set of Strings. If longFormat is true then the format of the listing will be in long
+     *         format (i.e. with file details etc).
      */
     public String[] toStrings(boolean longFormat) {
-        if (!longFormat)
+        if (!longFormat) {
             return convertToStrings();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * Recurses through the Listing and returns an
-     * array of strings containing each element within the
-     * Listing.
+     * Recurses through the Listing and returns an array of strings containing each element within the Listing.
      */
     public String[] convertToStrings() {
         Vector filelist = new Vector(10);
@@ -306,34 +311,35 @@ public class Listing {
 
         for (int i = 0; i < size(); ++i) {
             el = elementAt(i);
-            if ((el instanceof File) || (el instanceof String))
+            if ((el instanceof File) || (el instanceof String)) {
                 filelist.addElement(el.toString());
-            else { // must be a Listing
+            } else { // must be a Listing
                 String[] lowerl = ((Listing) el).convertToStrings();
-                for (int j = 0; j < lowerl.length; ++j)
+                for (int j = 0; j < lowerl.length; ++j) {
                     filelist.addElement(lowerl[j].toString());
+                }
             }
         }
 
         String[] st = new String[filelist.size()];
 
-        for (int i = 0; i < filelist.size(); ++i)
+        for (int i = 0; i < filelist.size(); ++i) {
             st[i] = (String) filelist.elementAt(i);
+        }
         return st;
     }
 
 
     /**
-     * @return a listing as a string with carriage returns between
-     *         each item. If longFormat is
-     *         true then the format of the listing
-     *         will be in long format (i.e. with file details etc).
+     * @return a listing as a string with carriage returns between each item. If longFormat is true then the format of
+     *         the listing will be in long format (i.e. with file details etc).
      */
     public String toString(boolean longFormat) {
         String[] s = toStrings(longFormat);
         String ret = "";
-        for (int i = 0; i < s.length; ++i)
+        for (int i = 0; i < s.length; ++i) {
             ret = ret + s[i] + "\n";
+        }
         return ret;
     }
 

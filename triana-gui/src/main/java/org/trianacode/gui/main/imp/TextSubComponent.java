@@ -59,20 +59,17 @@
 
 package org.trianacode.gui.main.imp;
 
+import javax.swing.JComponent;
+import javax.swing.ToolTipManager;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskSubComponent;
 
-import javax.swing.*;
-
 /**
- * An extension to TextIcon that makes it an instance of ToolComponent. This
- * means that when the text icon is clicked (etc.) then this is equivalent
- * to the main tool being clicked.
+ * An extension to TextIcon that makes it an instance of ToolComponent. This means that when the text icon is clicked
+ * (etc.) then this is equivalent to the main tool being clicked.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12 July 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class TextSubComponent extends TextIcon implements TaskSubComponent {
@@ -102,10 +99,11 @@ public class TextSubComponent extends TextIcon implements TaskSubComponent {
      * @return the tool tip that appears when the mouse hovers over this tool
      */
     public String getToolTipText() {
-        if (main.getComponent() instanceof JComponent)
+        if (main.getComponent() instanceof JComponent) {
             return ((JComponent) main.getComponent()).getToolTipText();
-        else
+        } else {
             return "";
+        }
     }
 
 

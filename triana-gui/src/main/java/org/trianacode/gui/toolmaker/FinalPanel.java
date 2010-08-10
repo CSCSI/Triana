@@ -59,15 +59,11 @@
 package org.trianacode.gui.toolmaker;
 
 
-import org.trianacode.gui.windows.WizardInterface;
-import org.trianacode.gui.windows.WizardPanel;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -76,13 +72,22 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.trianacode.gui.windows.WizardInterface;
+import org.trianacode.gui.windows.WizardPanel;
+import org.trianacode.util.Env;
+
 /**
  * The final tool wizard panel prompting the user to press finish to generate code
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 14th August
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class FinalPanel extends JPanel implements WizardPanel, ChangeListener, ActionListener {
 
@@ -204,10 +209,11 @@ public class FinalPanel extends JPanel implements WizardPanel, ChangeListener, A
         packageName.setText(toolpanel.getUnitPackage());
         author.setText(toolpanel.getAuthor());
         if (toolPlaceHolder.getText().equals("")) {
-            if (toolpanel.getUnitPackage().equals(""))
+            if (toolpanel.getUnitPackage().equals("")) {
                 currentPlaceHolder = toolpanel.getUnitName();
-            else
+            } else {
                 currentPlaceHolder = toolpanel.getUnitPackage() + "." + toolpanel.getUnitName();
+            }
 
             toolPlaceHolder.setText(currentPlaceHolder);
             currentPlaceHolder = getPlaceHolderFile();
@@ -265,8 +271,9 @@ public class FinalPanel extends JPanel implements WizardPanel, ChangeListener, A
     private void repack() {
         Component comp = getParent();
 
-        while ((comp != null) && (!(comp instanceof Window)))
+        while ((comp != null) && (!(comp instanceof Window))) {
             comp = comp.getParent();
+        }
 
         ((Window) comp).pack();
     }
@@ -318,14 +325,17 @@ public class FinalPanel extends JPanel implements WizardPanel, ChangeListener, A
     }
 
     private void checkAndAddDir(String dirName) {
-        if (!dirItems.contains(dirName))
-            if (!(new File(dirName)).exists())
+        if (!dirItems.contains(dirName)) {
+            if (!(new File(dirName)).exists()) {
                 dirItems.add(dirName);
+            }
+        }
     }
 
     private void checkAndAddFile(String fileName) {
-        if (!fileItems.contains(fileName))
+        if (!fileItems.contains(fileName)) {
             fileItems.add(fileName);
+        }
     }
 
     private void addFilesToPanel() {
@@ -360,8 +370,9 @@ public class FinalPanel extends JPanel implements WizardPanel, ChangeListener, A
             JLabel label = new JLabel(Env.getString("overwritten"));
             label.setForeground(Color.red);
             labelpanel.add(label, BorderLayout.CENTER);
-        } else
+        } else {
             labelpanel.add(new JLabel(Env.getString("createFollowing")), BorderLayout.WEST);
+        }
 
 
         repack();
@@ -372,10 +383,12 @@ public class FinalPanel extends JPanel implements WizardPanel, ChangeListener, A
         String placeNameStr = getPlaceHolderFile();
         if (placeholderChk.isSelected()) {
             fileItems.remove(currentPlaceHolder);
-            if (!fileItems.contains(placeNameStr))
+            if (!fileItems.contains(placeNameStr)) {
                 fileItems.add(placeNameStr);
-        } else
+            }
+        } else {
             fileItems.remove(placeNameStr);
+        }
         addFilesToPanel();
     }
 

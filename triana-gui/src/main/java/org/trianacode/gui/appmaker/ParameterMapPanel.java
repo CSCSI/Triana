@@ -59,6 +59,28 @@
 
 package org.trianacode.gui.appmaker;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.GridLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.windows.WizardInterface;
 import org.trianacode.gui.windows.WizardPanel;
@@ -69,23 +91,9 @@ import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 /**
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 4th November 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class ParameterMapPanel extends JPanel
@@ -171,8 +179,9 @@ public class ParameterMapPanel extends JPanel
         valpanel.add(vallabel);
         descpanel.add(desclabel);
 
-        for (int count = 0; count < 5; count++)
+        for (int count = 0; count < 5; count++) {
             addParamItemPanel();
+        }
 
         JPanel itempanel = new JPanel(new BorderLayout());
         itempanel.add(mappanel, BorderLayout.WEST);
@@ -285,16 +294,16 @@ public class ParameterMapPanel extends JPanel
             paramcombo = (JComboBox) paramiter.next();
 
             if ((!mapfield.getText().equals("")) && (!maps.contains(mapfield.getText())) &&
-                    (paramcombo.getSelectedItem() != null))
+                    (paramcombo.getSelectedItem() != null)) {
                 maps.add(mapfield.getText());
+            }
         }
 
         return (String[]) maps.toArray(new String[maps.size()]);
     }
 
     /**
-     * @return the parameters that are mapped to the specified map string
-     *         (in the form groupname.taskname.paramname)
+     * @return the parameters that are mapped to the specified map string (in the form groupname.taskname.paramname)
      */
     public String[] getMappedParameters(String map) {
         Iterator mapiter = maplist.iterator();
@@ -307,16 +316,16 @@ public class ParameterMapPanel extends JPanel
             mapfield = (JTextField) mapiter.next();
             paramcombo = (JComboBox) paramiter.next();
 
-            if (mapfield.getText().equals(map))
+            if (mapfield.getText().equals(map)) {
                 params.add(paramcombo.getSelectedItem());
+            }
         }
 
         return (String[]) params.toArray(new String[params.size()]);
     }
 
     /**
-     * @return the value mapped to the specified map/parameter combination,
-     *         or null if no value is mapped
+     * @return the value mapped to the specified map/parameter combination, or null if no value is mapped
      */
     public String getMappedValue(String map, String parameter) {
         Iterator mapiter = maplist.iterator();
@@ -332,10 +341,11 @@ public class ParameterMapPanel extends JPanel
             valfield = (JTextField) valiter.next();
 
             if ((mapfield.getText().equals(map)) && (paramcombo.getSelectedItem().equals(parameter))) {
-                if (valfield.getText().equals(""))
+                if (valfield.getText().equals("")) {
                     return null;
-                else
+                } else {
                     return valfield.getText();
+                }
             }
         }
 
@@ -357,8 +367,9 @@ public class ParameterMapPanel extends JPanel
             descfield = (JTextField) desciter.next();
 
             if (mapfield.getText().equals(map)) {
-                if (!desc.equals(""))
+                if (!desc.equals("")) {
                     desc += '\n';
+                }
 
                 desc += descfield.getText();
             }
@@ -381,9 +392,12 @@ public class ParameterMapPanel extends JPanel
                     XMLReader reader = new XMLReader(new FileReader(filename));
                     tool = reader.readComponent();
                 } catch (IOException except) {
-                    JOptionPane.showMessageDialog(null, "Error reading " + filename, "IO Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
+                    JOptionPane
+                            .showMessageDialog(null, "Error reading " + filename, "IO Error", JOptionPane.ERROR_MESSAGE,
+                                    GUIEnv.getTrianaIcon());
                 } catch (TaskGraphException except) {
-                    JOptionPane.showMessageDialog(null, "Invalid taskgraph file: " + filename, "Taskgraph Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
+                    JOptionPane.showMessageDialog(null, "Invalid taskgraph file: " + filename, "Taskgraph Error",
+                            JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                 }
 
                 if (tool != null) {
@@ -399,8 +413,9 @@ public class ParameterMapPanel extends JPanel
 
                         Iterator listiter = list.iterator();
 
-                        while (listiter.hasNext())
+                        while (listiter.hasNext()) {
                             ((DefaultComboBoxModel) comboBox.getModel()).addElement(listiter.next());
+                        }
 
                         comboBox.setSelectedItem(null);
                     }
@@ -419,15 +434,18 @@ public class ParameterMapPanel extends JPanel
     private void makeParameterList(Tool tool, ArrayList list, String base) {
         String[] paramnames = tool.getParameterNames();
 
-        for (int count = 0; count < paramnames.length; count++)
-            if (tool.getParameterType(paramnames[count]).equals(Tool.USER_ACCESSIBLE))
+        for (int count = 0; count < paramnames.length; count++) {
+            if (tool.getParameterType(paramnames[count]).equals(Tool.USER_ACCESSIBLE)) {
                 list.add(base + paramnames[count]);
+            }
+        }
 
         if (tool instanceof TaskGraph) {
             Task[] tasks = ((TaskGraph) tool).getTasks(true);
 
-            for (int count = 0; count < tasks.length; count++)
+            for (int count = 0; count < tasks.length; count++) {
                 makeParameterList(tasks[count], list, base + tasks[count] + '.');
+            }
         }
     }
 
@@ -483,8 +501,9 @@ public class ParameterMapPanel extends JPanel
                 mapfield = (JTextField) iter.next();
                 exist = mapfield.getText().equals("#" + count);
 
-                if ((empty == null) && mapfield.getText().equals(""))
+                if ((empty == null) && mapfield.getText().equals("")) {
                     empty = mapfield;
+                }
             }
 
             if (!exist) {
@@ -505,8 +524,9 @@ public class ParameterMapPanel extends JPanel
     private void repack() {
         Component comp = getParent();
 
-        while ((comp != null) && (!(comp instanceof Window)))
+        while ((comp != null) && (!(comp instanceof Window))) {
             comp = comp.getParent();
+        }
 
         ((Window) comp).pack();
     }
@@ -541,13 +561,14 @@ public class ParameterMapPanel extends JPanel
      * Invoked when a component loses the keyboard focus.
      */
     public void focusLost(FocusEvent event) {
-        if (event.getSource() == argfield)
+        if (event.getSource() == argfield) {
             initArgumentOptions();
-        else if (maplist.contains(event.getSource())) {
+        } else if (maplist.contains(event.getSource())) {
             JTextField source = (JTextField) event.getSource();
 
-            while (source.getText().startsWith("-"))
+            while (source.getText().startsWith("-")) {
                 source.setText(source.getText().substring(1));
+            }
         }
     }
 

@@ -58,29 +58,25 @@
  */
 package triana.types;
 
-import triana.types.util.FlatArray;
-import triana.types.util.Triplet;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import triana.types.util.FlatArray;
+import triana.types.util.Triplet;
+
 /**
- * SampleSet stores a complex double[] array (as two real arrays, one for
- * the real part and the other for the imaginary part) by extending the
- * VectorType class and implementing the Signal interface.
- * This requires two further parameters
+ * SampleSet stores a complex double[] array (as two real arrays, one for the real part and the other for the imaginary
+ * part) by extending the VectorType class and implementing the Signal interface. This requires two further parameters
  * for the sampling frequency and the acquisition time.
  *
+ * @author Ian Taylor
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  * @see SampleSet
  * @see ComplexSpectrum
  * @see Signal
  * @see VectorType
- * @author      Ian Taylor
- * @author      Bernard Schutz
- * @created     09 January 2001
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
 
@@ -92,55 +88,35 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
      */
 
     /**
-     * The sampling frequency, which should be set to
-     * zero if data is obtained by irregular sampling.
+     * The sampling frequency, which should be set to zero if data is obtained by irregular sampling.
      */
     private double samplingRate;
 
     /**
-     * The time of acquisition of the first
-     * element of the data set. It is measured in seconds from the zero
-     * of time.
+     * The time of acquisition of the first element of the data set. It is measured in seconds from the zero of time.
      */
     private double acquisitionTime;
 
     /**
-     * (Parameter that is kept for consistency with previous versions,
-     * but which is obsolete. It must be kept to the right values by
-     * the <i>updateObsoletePointers</i> method and/or constructors and
-     * <i>set...</i> methods.)
-     * </p><p>
-     * Synonym for the array stored in the
-     * Hashtable dataContainer and accessed by getDataReal().
-     * Constructors identify this pointer with the
-     * array held in dataContainer; setData() is overridden to do this
-     * identification as well.
+     * (Parameter that is kept for consistency with previous versions, but which is obsolete. It must be kept to the
+     * right values by the <i>updateObsoletePointers</i> method and/or constructors and <i>set...</i> methods.) </p><p>
+     * Synonym for the array stored in the Hashtable dataContainer and accessed by getDataReal(). Constructors identify
+     * this pointer with the array held in dataContainer; setData() is overridden to do this identification as well.
      */
     public double[] real;
 
     /**
-     * (Parameter that is kept for consistency with previous versions,
-     * but which is obsolete. It must be kept to the right values by
-     * the <i>updateObsoletePointers</i> method and/or constructors and
-     * <i>set...</i> methods.)
-     * </p><p>
-     * Synonym for the array stored in the
-     * Hashtable dataContainer and accessed by getDataImag().
-     * Constructors identify this pointer with the
-     * array held in dataContainer; setData() is overridden to do this
-     * identification as well.
+     * (Parameter that is kept for consistency with previous versions, but which is obsolete. It must be kept to the
+     * right values by the <i>updateObsoletePointers</i> method and/or constructors and <i>set...</i> methods.) </p><p>
+     * Synonym for the array stored in the Hashtable dataContainer and accessed by getDataImag(). Constructors identify
+     * this pointer with the array held in dataContainer; setData() is overridden to do this identification as well.
      */
     public double[] imag;
 
     /**
-     * (Parameter that is kept for consistency with previous versions,
-     * but which is obsolete. It must be kept to the right values by
-     * the <i>updateObsoletePointers</i> method and/or constructors and
-     * <i>set...</i> methods.)
-     * </p><p>
-     * Synonym for samplingRate.
-     * It is kept up-to-date by method
-     * updateObsoletePointers below.
+     * (Parameter that is kept for consistency with previous versions, but which is obsolete. It must be kept to the
+     * right values by the <i>updateObsoletePointers</i> method and/or constructors and <i>set...</i> methods.) </p><p>
+     * Synonym for samplingRate. It is kept up-to-date by method updateObsoletePointers below.
      */
     public double samplingFrequency;
 
@@ -156,14 +132,12 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Creates a new ComplexSampleSet with a certain sampling frequency and number
-     * of samples. It allocates memory for the data but does not initialise it.
-     * Use initialiseData to set all elements to zero if necessary.
-     * This Constructor also sets the Triplet for the independent variable
-     * to generate data starting at 0 with step <i>1/samplingFrequency</i>, which
-     * is the sampling interval.
+     * Creates a new ComplexSampleSet with a certain sampling frequency and number of samples. It allocates memory for
+     * the data but does not initialise it. Use initialiseData to set all elements to zero if necessary. This
+     * Constructor also sets the Triplet for the independent variable to generate data starting at 0 with step
+     * <i>1/samplingFrequency</i>, which is the sampling interval.
      *
-     * @param sf The sampling frequency
+     * @param sf      The sampling frequency
      * @param samples The number of samples
      * @see #setDataArrayReal
      * @see #initialiseData
@@ -175,18 +149,15 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
         setData(new double[samples], new double[samples]);
         if (sf > 0) {
             setX(new Triplet(samples, 0, 1 / sf));
-        }
-        else {
+        } else {
             setX(new double[samples]);
         }
     }
 
     /**
-     * Creates a new ComplexSampleSet with given sampling times.
-     * It allocates memory for the data but does not initialise it.
-     * Use <i>initialiseData</i> to set all elements to zero if necessary.
-     * If the data are not uniform, the constructor sets the sampling
-     * rate to zero as a signal that the data are irregularly sampled.
+     * Creates a new ComplexSampleSet with given sampling times. It allocates memory for the data but does not
+     * initialise it. Use <i>initialiseData</i> to set all elements to zero if necessary. If the data are not uniform,
+     * the constructor sets the sampling rate to zero as a signal that the data are irregularly sampled.
      *
      * @param samplingTimes The sampling times array
      * @see #setDataArrayReal
@@ -197,8 +168,7 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
         this();
         if (Triplet.testUniform(samplingTimes)) {
             samplingRate = 1.0 / (samplingTimes[1] - samplingTimes[0]);
-        }
-        else {
+        } else {
             samplingRate = 0;
         }
         setData(new double[samplingTimes.length], new double[samplingTimes.length]);
@@ -206,16 +176,13 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Creates a new ComplexSampleSet with a certain sampling frequency, number
-     * of samples, and data acquisition time.
-     * It allocates memory for the data but does not initialise it.
-     * Use <i>initialiseData</i> to set all elements to zero if necessary.
-     * This Constructor also sets the Triplet for the independent variable
-     * to generate data starting at the acquisition time and with step
-     * <i>1/samplingFrequency</i>, which is the sampling interval.
+     * Creates a new ComplexSampleSet with a certain sampling frequency, number of samples, and data acquisition time.
+     * It allocates memory for the data but does not initialise it. Use <i>initialiseData</i> to set all elements to
+     * zero if necessary. This Constructor also sets the Triplet for the independent variable to generate data starting
+     * at the acquisition time and with step <i>1/samplingFrequency</i>, which is the sampling interval.
      *
-     * @param sf The sampling frequency
-     * @param samples The number of samples
+     * @param sf              The sampling frequency
+     * @param samples         The number of samples
      * @param acquisitionTime The time of the first sample, in seconds
      * @see #setDataArrayReal
      * @see #initialiseData
@@ -224,18 +191,18 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     public ComplexSampleSet(double sf, int samples, double acquisitionTime) {
         this(sf, samples);
         setAcquisitionTime(acquisitionTime);
-        if (sf > 0) setX(new Triplet(samples, acquisitionTime, 1 / sf));
+        if (sf > 0) {
+            setX(new Triplet(samples, acquisitionTime, 1 / sf));
+        }
     }
 
     /**
-     * Creates a new ComplexSampleSet with the given sampling times and data
-     * acquisition time. It allocates memory for the sampled data but
-     * does not initialise it. Use <i>initialiseData</i> to set all elements
-     * to zero if necessary. If the sampling times are not uniform, the
-     * sampling rate is set to zero as a signal
-     * that the data are irregularly sampled.
+     * Creates a new ComplexSampleSet with the given sampling times and data acquisition time. It allocates memory for
+     * the sampled data but does not initialise it. Use <i>initialiseData</i> to set all elements to zero if necessary.
+     * If the sampling times are not uniform, the sampling rate is set to zero as a signal that the data are irregularly
+     * sampled.
      *
-     * @param samplingTimes The sampling times array
+     * @param samplingTimes   The sampling times array
      * @param acquisitionTime The time of the first sample, in seconds
      * @see #setDataArrayReal
      * @see #initialiseData
@@ -246,10 +213,9 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Creates a new ComplexSampleSet with a certain sampling frequency and
-     * arrays containing the sampled data. This Constructor also sets the
-     * Triplet for the independent variable to generate data starting at 0
-     * with step 1/samplingFrequency, which is the sampling interval.
+     * Creates a new ComplexSampleSet with a certain sampling frequency and arrays containing the sampled data. This
+     * Constructor also sets the Triplet for the independent variable to generate data starting at 0 with step
+     * 1/samplingFrequency, which is the sampling interval.
      *
      * @param sf The sampling frequency
      * @param dr The real part of the sampled data
@@ -262,15 +228,13 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Creates a new ComplexSampleSet with the given sampling times and
-     * arrays containing the sampled data. If the sampling times are not
-     * uniformly spaced, the
-     * Constructor sets the sampling rate to zero
-     * as a signal that the data are irregularly sampled.
+     * Creates a new ComplexSampleSet with the given sampling times and arrays containing the sampled data. If the
+     * sampling times are not uniformly spaced, the Constructor sets the sampling rate to zero as a signal that the data
+     * are irregularly sampled.
      *
      * @param samplingTimes The sampling times array
-     * @param dr The real part of the sampled data
-     * @param di The imaginary part of the sampled data
+     * @param dr            The real part of the sampled data
+     * @param di            The imaginary part of the sampled data
      */
     public ComplexSampleSet(double[] samplingTimes, double[] dr, double[] di) {
         this(samplingTimes);
@@ -278,34 +242,32 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Creates a new ComplexSampleSet with a certain sampling frequency, the
-     * arrays of sampled data, and the acquisition time of the first sample.
-     * This Constructor also sets the Triplet for the independent variable
-     * to generate data starting at the acquisition time and with step
-     * <i>1/samplingFrequency</i>, which is the sampling interval.
+     * Creates a new ComplexSampleSet with a certain sampling frequency, the arrays of sampled data, and the acquisition
+     * time of the first sample. This Constructor also sets the Triplet for the independent variable to generate data
+     * starting at the acquisition time and with step <i>1/samplingFrequency</i>, which is the sampling interval.
      *
-     * @param sf The sampling frequency
-     * @param dr The real part of the sampled data
-     * @param di The imaginary part of the sampled data
+     * @param sf              The sampling frequency
+     * @param dr              The real part of the sampled data
+     * @param di              The imaginary part of the sampled data
      * @param acquisitionTime The time of the first sample, in seconds
      * @see triana.types.util.Triplet
      */
     public ComplexSampleSet(double sf, double[] dr, double[] di, double acquisitionTime) {
         this(sf, dr, di);
         setAcquisitionTime(acquisitionTime);
-        if (sf > 0) setX(new Triplet(dr.length, acquisitionTime, 1 / sf));
+        if (sf > 0) {
+            setX(new Triplet(dr.length, acquisitionTime, 1 / sf));
+        }
     }
 
     /**
-     * Creates a new ComplexSampleSet with the given sampling times,
-     * data arrays, and data acquisition time. If the data are not
-     * uniformly sampled,
-     * the Constructor sets the sampling frequency to zero as a signal
-     * that the data are irregularly sampled.
+     * Creates a new ComplexSampleSet with the given sampling times, data arrays, and data acquisition time. If the data
+     * are not uniformly sampled, the Constructor sets the sampling frequency to zero as a signal that the data are
+     * irregularly sampled.
      *
-     * @param samplingTimes The sampling times
-     * @param dr The real part of the sampled data
-     * @param di The imaginary part of the sampled data
+     * @param samplingTimes   The sampling times
+     * @param dr              The real part of the sampled data
+     * @param di              The imaginary part of the sampled data
      * @param acquisitionTime The time of the first sample, in seconds
      */
     public ComplexSampleSet(double[] samplingTimes, double[] dr, double[] di, double acquisitionTime) {
@@ -314,21 +276,19 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Creates a ComplexSampleSet from a (real) SampleSet by setting the
-     * imaginary part of the data to zero. The second argument allows the
-     * user to choose whether to copy the old data to the new or simply
-     * pass a reference to the old data.
+     * Creates a ComplexSampleSet from a (real) SampleSet by setting the imaginary part of the data to zero. The second
+     * argument allows the user to choose whether to copy the old data to the new or simply pass a reference to the old
+     * data.
      *
-     * @param ss The input data set
-     * @param copy True if the new data are to be a copy of the old,
-     false if passed by reference
+     * @param ss   The input data set
+     * @param copy True if the new data are to be a copy of the old, false if passed by reference
      */
     public ComplexSampleSet(SampleSet ss, boolean copy) {
         this(ss.getSamplingRate(), ss.size(), ss.getAcquisitionTime());
         if (copy) {
-            if (ss.isTriplet())
+            if (ss.isTriplet()) {
                 this.setX(ss.getXTriplet().copy());
-            else {
+            } else {
                 double[] oldX = ss.getXArray();
                 double[] newX = new double[oldX.length];
                 System.arraycopy(oldX, 0, newX, 0, oldX.length);
@@ -340,20 +300,19 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
             double[] tmpi = new double[tmpr.length];
             FlatArray.initializeArray(tmpi);
             this.setData(tmpr, tmpi);
-        }
-        else {
-            if (ss.isTriplet())
+        } else {
+            if (ss.isTriplet()) {
                 this.setX(ss.getXTriplet());
-            else
+            } else {
                 this.setX(ss.getXArray());
+            }
             this.setData(ss.getData(), new double[ss.getData().length]);
         }
     }
 
     /**
-     * Creates a ComplexSampleSet from a (real) SampleSet by setting the
-     * imaginary part of the data to zero. The new data are simply
-     * a reference to the old data.
+     * Creates a ComplexSampleSet from a (real) SampleSet by setting the imaginary part of the data to zero. The new
+     * data are simply a reference to the old data.
      *
      * @param ss The input data set
      */
@@ -362,9 +321,8 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Added by I. Taylor, August 2001 : This function sets the default labeling
-     * scheme used for the axis by this data type. All constructors call this
-     * function to set default values for the axis.
+     * Added by I. Taylor, August 2001 : This function sets the default labeling scheme used for the axis by this data
+     * type. All constructors call this function to set default values for the axis.
      */
     public void setDefaultAxisLabelling() {
         String labelx = "Time (Secs)";
@@ -378,55 +336,50 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
      */
 
     /**
-     * Returns the sampling frequency of the data. If
-     * the data are irregularly sampled it returns 0.
+     * Returns the sampling frequency of the data. If the data are irregularly sampled it returns 0.
      *
      * @return double The sampling frequency
      */
     public double getSamplingRate() {
-        if (isUniform()) return samplingRate;
+        if (isUniform()) {
+            return samplingRate;
+        }
         return 0;
     }
 
     /**
-     * Sets the sampling rate of the signal and
-     * adjusts the data for the independent variable accordingly.
-     * If the sampling frequency argument <i>r</i> is negative, nothing is done.
-     * If it is zero, irregular sampling is assumed. If positive, the
-     * sampling frequency is set to <i>r</i> and the independent data is changed
-     * if necessary to reflect this rate. This method
-     * also writes the new sampling frequency into the <i>description</i>
-     * StringVector and (for
-     * compatibility) sets the obsolete variables <i>samplingFrequency</i>
-     * and <i>frequencyResolution</i>.
+     * Sets the sampling rate of the signal and adjusts the data for the independent variable accordingly. If the
+     * sampling frequency argument <i>r</i> is negative, nothing is done. If it is zero, irregular sampling is assumed.
+     * If positive, the sampling frequency is set to <i>r</i> and the independent data is changed if necessary to
+     * reflect this rate. This method also writes the new sampling frequency into the <i>description</i> StringVector
+     * and (for compatibility) sets the obsolete variables <i>samplingFrequency</i> and <i>frequencyResolution</i>.
      *
      * @param r The sampling rate
      */
     public void setSamplingRate(double r) {
-        if (r < 0) return;
+        if (r < 0) {
+            return;
+        }
         samplingRate = r;
         if (r > 0) {
-            if (isTriplet(0))
+            if (isTriplet(0)) {
                 getXTriplet().setStep(1 / r);
-            else {
+            } else {
                 double[] x = getXArray();
                 setX(new Triplet(x.length, x[0], 1 / r));
             }
-        }
-        else {
-            if (isTriplet(0)) setX((Triplet) null);
+        } else {
+            if (isTriplet(0)) {
+                setX((Triplet) null);
+            }
         }
         this.updateObsoletePointers();
     }
 
     /**
-
-     /**
-     * Returns the acquisition time as a double
-     * giving the number of seconds since the reference time, which
-     * should be the same reference time as for the method <i>setAcquisitionTime</i>.
-     * The time is the moment of acquisition of the first sample in the data
-     * set.
+     * /** Returns the acquisition time as a double giving the number of seconds since the reference time, which should
+     * be the same reference time as for the method <i>setAcquisitionTime</i>. The time is the moment of acquisition of
+     * the first sample in the data set.
      *
      * @return double The time of acquisition in seconds since the reference time
      */
@@ -435,12 +388,9 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Sets the acquisition time. This
-     * method also writes the acquisition time into the description
-     * StringVector. If the given acquisition time is not equal
-     * to the starting time of the independent variable, all values
-     * of the independent variable are shifted by the difference
-     * between the given time and the previous starting time.
+     * Sets the acquisition time. This method also writes the acquisition time into the description StringVector. If the
+     * given acquisition time is not equal to the starting time of the independent variable, all values of the
+     * independent variable are shifted by the difference between the given time and the previous starting time.
      *
      * @param t The acquisition time
      */
@@ -448,12 +398,16 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
         double[] d;
         int j;
         double shift;
-        if (isTriplet(0))
+        if (isTriplet(0)) {
             getXTriplet().setStart(t);
-        else {
+        } else {
             d = getXArray();
             shift = t - d[0];
-            if (shift != 0) for (j = 0; j < d.length; j++) d[j] += shift;
+            if (shift != 0) {
+                for (j = 0; j < d.length; j++) {
+                    d[j] += shift;
+                }
+            }
         }
         acquisitionTime = t;
     }
@@ -463,7 +417,6 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
      * Methods that are part of Version 1 of ComplexSampleSet and are kept for
      * consistency, but which is obsolete and should be eliminated
      */
-
 
 
     /**
@@ -498,57 +451,37 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
      */
 
     /**
-     * Adds zeros between existing data values using the method of
-     * the same name in VectorType. Adjusts<i>samplingRate</i>
-     * accordingly. If  added before the first sample, then it
-     * adjusts the value of <i>acquisitionTime</i> so that it
-     * gives the time of the first zero if the previous
-     * first data point is acquired at the previous value
-     * of <i>acquisitionTime</i>.
+     * Adds zeros between existing data values using the method of the same name in VectorType.
+     * Adjusts<i>samplingRate</i> accordingly. If  added before the first sample, then it adjusts the value of
+     * <i>acquisitionTime</i> so that it gives the time of the first zero if the previous first data point is acquired
+     * at the previous value of <i>acquisitionTime</i>.
      */
     public void interpolateZeros(int factor, boolean before) {
-        if (factor <= 0) return;
+        if (factor <= 0) {
+            return;
+        }
         super.interpolateZeros(factor, before);
         setSamplingRate(getSamplingRate() * (factor + 1));
-        if (before) setAcquisitionTime(getAcquisitionTime() - factor / getSamplingRate());
+        if (before) {
+            setAcquisitionTime(getAcquisitionTime() - factor / getSamplingRate());
+        }
     }
 
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         ComplexSampleSet s = null;
@@ -568,24 +501,16 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
 
 
     /**
-     * Copies modifiable parameters from the argument object
-     * to the current object. The copying is by value, not by
-     * reference. Parameters are defined as data not held in
-     * <i>dataContainer</i>. They are modifiable if they have
-     * <i>set...</i> methods. Parameters that cannot be modified, but
-     * which are set by constructors, should be placed correctly
-     * into the copied object when it is constructed.
-     * </p><p>
-     * In ComplexSpectrum, the new parameters are <i>resolution</i>,
-     * <i>highestFrequency</i>, <i>twoSided</i>, <i>narrow</i>, <i>nFull</i>. The obsolete parameters
-     * <i>samplingFrequency</i> and <i>frequencyResolution</i> are generated automatically
-     * when the other parameters are copied and set.
-     * </p><p>
-     * This must be overridden by any subclass that defines new parameters.
-     * The overriding method should invoke its <i>super</i> method. It should use
-     * the <i>set...</i> and <i>get...</i> methods for the parameters in question.
-     * This method is protected so that it cannot be called except by
-     * objects that inherit from this one. It is called by <i>copyMe()</i>.
+     * Copies modifiable parameters from the argument object to the current object. The copying is by value, not by
+     * reference. Parameters are defined as data not held in <i>dataContainer</i>. They are modifiable if they have
+     * <i>set...</i> methods. Parameters that cannot be modified, but which are set by constructors, should be placed
+     * correctly into the copied object when it is constructed. </p><p> In ComplexSpectrum, the new parameters are
+     * <i>resolution</i>, <i>highestFrequency</i>, <i>twoSided</i>, <i>narrow</i>, <i>nFull</i>. The obsolete parameters
+     * <i>samplingFrequency</i> and <i>frequencyResolution</i> are generated automatically when the other parameters are
+     * copied and set. </p><p> This must be overridden by any subclass that defines new parameters. The overriding
+     * method should invoke its <i>super</i> method. It should use the <i>set...</i> and <i>get...</i> methods for the
+     * parameters in question. This method is protected so that it cannot be called except by objects that inherit from
+     * this one. It is called by <i>copyMe()</i>.
      *
      * @param source Data object that contains the data to be copied.
      */
@@ -597,21 +522,14 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
 
 
     /**
-     * Used when Triana types want to be able to
-     * send ASCII data to other programs using strings.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<<PRE>
-     *      super.outputToStream(dos)
-     * </PRE>to get output from superior classes, and then new parameters defined
-     * for the current subclass must be output. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to send ASCII data to other programs using strings.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<<PRE>
+     * super.outputToStream(dos) </PRE>to get output from superior classes, and then new parameters defined for the
+     * current subclass must be output. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dos The data output stream
      */
@@ -622,21 +540,14 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
     }
 
     /**
-     * Used when Triana types want to be able to
-     * receive ASCII data from the output of other programs.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<PRE>
-     *      super.inputFromStream(dis)
-     * </PRE>to get input from superior classes, and then new parameters defined
-     * for the current subclass must be input. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to receive ASCII data from the output of other programs.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<PRE>
+     * super.inputFromStream(dis) </PRE>to get input from superior classes, and then new parameters defined for the
+     * current subclass must be input. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dis The data input stream
      */
@@ -648,21 +559,12 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
 
 
     /**
-     * Tests the argument object to determine if
-     * it makes sense to perform arithmetic operations between
-     * it and the current object.
-     * </p><p>
-     * In ComplexSampleSet, the method first tests that the input object
-     * is compatible with superior classes, and then (if it is a
-     * ComplexSampleSet) it tests if it has the same sampling rate as the
-     * current object.
-     * </p><p>
-     * Classes derived from this should over-ride this method with further
-     * tests as appropriate. The over-riding method should normally have the
-     * first lines <PRE>
-     *      boolean test = super.isCompatible( obj );
-     * </PRE>followed by other tests. If other types
-     * not subclassed from GraphType or Const should be allowed to be
+     * Tests the argument object to determine if it makes sense to perform arithmetic operations between it and the
+     * current object. </p><p> In ComplexSampleSet, the method first tests that the input object is compatible with
+     * superior classes, and then (if it is a ComplexSampleSet) it tests if it has the same sampling rate as the current
+     * object. </p><p> Classes derived from this should over-ride this method with further tests as appropriate. The
+     * over-riding method should normally have the first lines <PRE> boolean test = super.isCompatible( obj );
+     * </PRE>followed by other tests. If other types not subclassed from GraphType or Const should be allowed to be
      * compatible then other tests must be implemented.
      *
      * @param obj The data object to be compared with the current one
@@ -670,33 +572,34 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
      */
     public boolean isCompatible(TrianaType obj) {
         boolean test = super.isCompatible(obj);
-        if ((test) && (obj instanceof ComplexSampleSet)) test = (getSamplingRate() == ((ComplexSampleSet) obj).getSamplingRate());
+        if ((test) && (obj instanceof ComplexSampleSet)) {
+            test = (getSamplingRate() == ((ComplexSampleSet) obj).getSamplingRate());
+        }
         return test;
     }
 
 
     /**
-     * Determines whether the argument TrianaType is equal to
-     * the current ComplexSampleSet. They are equal if the argument is
-     * a ComplexSampleSet with the same size, parameters, and data.
-     * </p><p>
-     * This method must be over-ridden in derived types. In a derived
-     * type called xxx the method should begin<PRE>
-     *	     if ( !( obj instanceof xxx ) ) return false;
-     *       if ( !isCompatible( obj ) ) return false;
-     * </PRE>followed by tests that are specific to type xxx (testing its
-     * own parameters) and then as a last line<PRE>
-     * 	     return super.equals( obj );
-     * </PRE>This line invokes the other equals methods up the chain to
-     * GraphType. Each superior object tests its own parameters.
+     * Determines whether the argument TrianaType is equal to the current ComplexSampleSet. They are equal if the
+     * argument is a ComplexSampleSet with the same size, parameters, and data. </p><p> This method must be over-ridden
+     * in derived types. In a derived type called xxx the method should begin<PRE> if ( !( obj instanceof xxx ) ) return
+     * false; if ( !isCompatible( obj ) ) return false; </PRE>followed by tests that are specific to type xxx (testing
+     * its own parameters) and then as a last line<PRE> return super.equals( obj ); </PRE>This line invokes the other
+     * equals methods up the chain to GraphType. Each superior object tests its own parameters.
      *
      * @param obj The object being tested
      * @return <i>true</i> if they are equal or <i>false</i> otherwise
      */
     public boolean equals(TrianaType obj) {
-        if (!(obj instanceof ComplexSampleSet)) return false;
-        if (!isCompatible(obj)) return false;
-        if (getAcquisitionTime() != ((ComplexSampleSet) obj).getAcquisitionTime()) return false;
+        if (!(obj instanceof ComplexSampleSet)) {
+            return false;
+        }
+        if (!isCompatible(obj)) {
+            return false;
+        }
+        if (getAcquisitionTime() != ((ComplexSampleSet) obj).getAcquisitionTime()) {
+            return false;
+        }
         return super.equals(obj);
     }
 
@@ -716,6 +619,7 @@ public class ComplexSampleSet extends VectorType implements AsciiComm, Signal {
      *       super.updateObsoletePointers;
      * </PRE>
      */
+
     protected void updateObsoletePointers() {
         samplingFrequency = samplingRate;
         real = getDataReal();

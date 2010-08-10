@@ -59,9 +59,6 @@
 package org.trianacode.gui.builder;
 
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -69,13 +66,17 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.JButton;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 /**
  * This implements a scroller which works on floating point values
  *
- * @author      Ian Taylor
- * @created     1 Dec 1999
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class Scroller implements ChangeListener, FocusListener {
 
@@ -101,8 +102,7 @@ public class Scroller implements ChangeListener, FocusListener {
     public static int FLOAT = 1;
 
     /**
-     * Represents value of the scroller as a double-precision floating-point
-     * number.
+     * Represents value of the scroller as a double-precision floating-point number.
      */
     public double value;
 
@@ -147,12 +147,14 @@ public class Scroller implements ChangeListener, FocusListener {
 
         value = cur;
 
-        if (max < value)
+        if (max < value) {
             max = value;
+        }
 
 
-        if (min > value)
+        if (min > value) {
             min = value;
+        }
 
 
         this.min = min;
@@ -184,9 +186,9 @@ public class Scroller implements ChangeListener, FocusListener {
     }
 
     private void updateDisplay() {
-        if (type == INTEGER)
+        if (type == INTEGER) {
             display.setText(String.valueOf((int) value));
-        else {
+        } else {
             long pow = Math.round(Math.pow(10, DECIMAL_PLACES));
             long slidertempval = Math.round(value * pow);
             String minus = "";
@@ -199,13 +201,14 @@ public class Scroller implements ChangeListener, FocusListener {
             if (DECIMAL_PLACES > 0) {
                 String remain = String.valueOf(slidertempval % pow);
 
-                while (remain.length() < DECIMAL_PLACES)
+                while (remain.length() < DECIMAL_PLACES) {
                     remain = "0" + remain;
+                }
 
                 display.setText(minus + String.valueOf(slidertempval / pow) + '.' + remain);
-            }
-            else
+            } else {
                 display.setText(minus + String.valueOf(slidertempval / pow));
+            }
         }
 
         display.fireActionEvent();
@@ -267,24 +270,25 @@ public class Scroller implements ChangeListener, FocusListener {
         }
 
         /**
-         * this class is a hack because we need to fire an action event from the display
-         * when its text is updates - in Java V1.4 we would not need this because there
-         * is a getActionListeners() method in JTextfield.
+         * this class is a hack because we need to fire an action event from the display when its text is updates - in
+         * Java V1.4 we would not need this because there is a getActionListeners() method in JTextfield.
          */
 
         private ArrayList listeners = new ArrayList();
 
 
         public synchronized void addActionListener(ActionListener listener) {
-            if (!listeners.contains(listener))
+            if (!listeners.contains(listener)) {
                 listeners.add(listener);
+            }
 
             super.addActionListener(listener);
         }
 
         public synchronized void removeActionListener(ActionListener listener) {
-            if (listeners.contains(listener))
+            if (listeners.contains(listener)) {
                 listeners.remove(listener);
+            }
 
             super.removeActionListener(listener);
         }
@@ -294,8 +298,9 @@ public class Scroller implements ChangeListener, FocusListener {
             ActionEvent event = new ActionEvent(this, 0, getText());
             Iterator iter = listeners.iterator();
 
-            while (iter.hasNext())
+            while (iter.hasNext()) {
                 ((ActionListener) iter.next()).actionPerformed(event);
+            }
         }
 
     }

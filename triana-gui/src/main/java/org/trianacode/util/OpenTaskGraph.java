@@ -23,8 +23,6 @@ import java.util.Vector;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 10:15:53 AM
- * @date $Date:$ modified by $Author:$
  */
 
 public class OpenTaskGraph {

@@ -58,13 +58,17 @@
  */
 package org.trianacode.gui.help.search;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class SearchResults implements Serializable {
     protected Vector hashVector;
@@ -83,7 +87,9 @@ public class SearchResults implements Serializable {
             element = (KeyValuePair) enumeration.nextElement();
 
             if (element.key.equals(word)) {
-                if (!element.vector.contains(object)) element.vector.addElement(object);
+                if (!element.vector.contains(object)) {
+                    element.vector.addElement(object);
+                }
                 return;
             }
         }
@@ -184,13 +190,16 @@ public class SearchResults implements Serializable {
         Vector vector = null;
         File[] files = null;
 
-        if ((vector = get(word)) == null) return null;
+        if ((vector = get(word)) == null) {
+            return null;
+        }
 
         if (vector.size() > 0) {
             files = new File[vector.size()];
 
-            for (int i = 0; i < vector.size(); i++)
+            for (int i = 0; i < vector.size(); i++) {
                 files[i] = (File) hashVector.elementAt(i);
+            }
         }
 
         return files;

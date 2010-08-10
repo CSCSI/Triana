@@ -61,10 +61,8 @@ package triana.types.image;
 /**
  * The Histogram object
  *
- * @author      Melanie Rhianna Lewis
- * @created     2 Sep 1997
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Melanie Rhianna Lewis
+ * @version $Revision: 4048 $
  */
 public class ImageHistogram {
     int[] histogram;
@@ -84,8 +82,7 @@ public class ImageHistogram {
     public void setHistogram(int[] histogram) {
         if (histogram == null) {
             this.histogram = null;
-        }
-        else {
+        } else {
             this.histogram = new int[histogram.length];
             System.arraycopy(histogram, 0, this.histogram, 0, histogram.length);
         }
@@ -104,7 +101,9 @@ public class ImageHistogram {
         int count = 0;
 
         for (i = 0; i < histogram.length; i++) {
-            if (histogram[i] != 0) count++;
+            if (histogram[i] != 0) {
+                count++;
+            }
         }
 
         return count;
@@ -114,13 +113,16 @@ public class ImageHistogram {
         int i;
         int max;
 
-        if (histogram == null) return -1;
+        if (histogram == null) {
+            return -1;
+        }
 
         max = histogram[0];
 
         for (i = 0; i < histogram.length; i++) {
-            if (histogram[i] > max)
+            if (histogram[i] > max) {
                 max = histogram[i];
+            }
         }
 
         return max;
@@ -130,13 +132,16 @@ public class ImageHistogram {
         int i;
         int min;
 
-        if (histogram == null) return -1;
+        if (histogram == null) {
+            return -1;
+        }
 
         min = histogram[0];
 
         for (i = 0; i < histogram.length; i++) {
-            if (histogram[i] < min)
+            if (histogram[i] < min) {
                 min = histogram[i];
+            }
         }
 
         return min;
@@ -146,7 +151,9 @@ public class ImageHistogram {
         int i;
 
         for (i = histogram.length - 1; i >= 0; i--) {
-            if (histogram[i] != 0) return i;
+            if (histogram[i] != 0) {
+                return i;
+            }
         }
 
         return -1;
@@ -156,7 +163,9 @@ public class ImageHistogram {
         int i;
 
         for (i = 0; i < histogram.length; i++) {
-            if (histogram[i] != 0) return i;
+            if (histogram[i] != 0) {
+                return i;
+            }
         }
 
         return -1;
@@ -169,9 +178,9 @@ public class ImageHistogram {
         for (i = 0; i < histogram.length; i++) {
             if (i > 0) {
                 string += ", " + Integer.toString(histogram[i]);
-            }
-            else
+            } else {
                 string = Integer.toString(histogram[i]);
+            }
         }
 
         return string;

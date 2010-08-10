@@ -58,21 +58,25 @@
  */
 package org.trianacode.gui.help;
 
-import org.trianacode.gui.hci.GUIEnv;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.Document;
+import org.trianacode.gui.hci.GUIEnv;
+
 /**
  * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class HtmlPane extends JScrollPane implements HyperlinkListener {
     private JEditorPane editorPane;
@@ -172,9 +176,8 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
     }
 
     /**
-     * Follows the reference in an link.  This is an internal function
-     * which doesn't carry out and history functions.  This is useful for
-     * calling from history functions!
+     * Follows the reference in an link.  This is an internal function which doesn't carry out and history functions.
+     * This is useful for calling from history functions!
      *
      * @param url the URL to follow
      */
@@ -254,8 +257,7 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
     }
 
     /**
-     * Notification of a change relative to a
-     * hyperlink.
+     * Notification of a change relative to a hyperlink.
      */
     public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -264,9 +266,7 @@ public class HtmlPane extends JScrollPane implements HyperlinkListener {
     }
 
     /**
-     * temporary class that loads synchronously (although
-     * later than the request so that a cursor change
-     * can be done).
+     * temporary class that loads synchronously (although later than the request so that a cursor change can be done).
      */
     class PageLoader implements Runnable {
         URL url;

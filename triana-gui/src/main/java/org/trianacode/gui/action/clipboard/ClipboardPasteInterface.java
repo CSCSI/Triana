@@ -63,10 +63,8 @@ import org.trianacode.taskgraph.TaskGraphException;
 /**
  * Class Description Here...
  *
- * @author  Matthew Shields
- * @created May 7, 2003: 2:26:06 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface ClipboardPasteInterface {
     /**

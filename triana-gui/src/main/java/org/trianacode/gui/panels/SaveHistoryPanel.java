@@ -59,23 +59,26 @@
 
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.util.Env;
+
 /**
  * A panel for specifying the auto save history file and sequence number policy
  *
- * @author      Ian Wang
- * @created     25th March 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class SaveHistoryPanel extends ParameterPanel implements ActionListener {
@@ -114,8 +117,8 @@ public class SaveHistoryPanel extends ParameterPanel implements ActionListener {
 
 
     /**
-     * This method returns true by default. It should be overridden if the panel
-     * prefers to be allowed to be hidden behind the main triana window.
+     * This method returns true by default. It should be overridden if the panel prefers to be allowed to be hidden
+     * behind the main triana window.
      *
      * @return true by default
      */
@@ -124,16 +127,16 @@ public class SaveHistoryPanel extends ParameterPanel implements ActionListener {
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel
-     * does not want the user to be able to change the auto commit state
+     * This method returns true by default. It should be overridden if the panel does not want the user to be able to
+     * change the auto commit state
      */
     public boolean isAutoCommitVisible() {
         return false;
     }
 
     /**
-     * This method returns false by default. It should be overridden if the panel
-     * wants parameter changes to be commited automatically
+     * This method returns false by default. It should be overridden if the panel wants parameter changes to be commited
+     * automatically
      */
     public boolean isAutoCommitByDefault() {
         return false;
@@ -141,8 +144,7 @@ public class SaveHistoryPanel extends ParameterPanel implements ActionListener {
 
 
     /**
-     * This method is called when the task is set for this panel. It is overridden
-     * to create the panel layout.
+     * This method is called when the task is set for this panel. It is overridden to create the panel layout.
      */
     public void init() {
         setLayout(new BorderLayout(0, 3));
@@ -165,18 +167,17 @@ public class SaveHistoryPanel extends ParameterPanel implements ActionListener {
     }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset
-     * all the panels components to the values specified by the associated task,
-     * e.g. a component representing a parameter called "noise" should be set to
-     * the value returned by a getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public void reset() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**
-     * This method is called when the panel is finished with. It should dispose
-     * of any components (e.g. windows) used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.

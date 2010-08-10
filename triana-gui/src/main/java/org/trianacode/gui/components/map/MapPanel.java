@@ -59,12 +59,28 @@
 
 package org.trianacode.gui.components.map;
 
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Hashtable;
+
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.action.ToolSelectionListener;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.TaskLayoutDetails;
 import org.trianacode.taskgraph.constants.MapConstants;
 import org.trianacode.taskgraph.event.ControlTaskStateEvent;
 import org.trianacode.taskgraph.event.TaskGraphCableEvent;
@@ -73,20 +89,11 @@ import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-import java.awt.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Hashtable;
-
 /**
  * A component that layouts the tasks out using geographic co-ordinates.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 20th September 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 
@@ -148,8 +155,9 @@ public class MapPanel extends JPanel implements TaskGraphPanel, TaskGraphListene
         if (taskgraph.isRenderingHint(MapConstants.MAP_RENDERING_HINT)) {
             RenderingHint hint = taskgraph.getRenderingHint(MapConstants.MAP_RENDERING_HINT);
 
-            if ((hint != null) && (hint.getRenderingDetail(MapConstants.MAP_IMAGE_URL) != null))
+            if ((hint != null) && (hint.getRenderingDetail(MapConstants.MAP_IMAGE_URL) != null)) {
                 map = loadMap((String) hint.getRenderingDetail(MapConstants.MAP_IMAGE_URL));
+            }
         }
     }
 
@@ -175,8 +183,9 @@ public class MapPanel extends JPanel implements TaskGraphPanel, TaskGraphListene
     public void init() {
         Task[] tasks = taskgraph.getTasks(false);
 
-        for (int count = 0; count < tasks.length; count++)
+        for (int count = 0; count < tasks.length; count++) {
             initializeTaskComponent(tasks[count]);
+        }
     }
 
     /**
@@ -234,10 +243,11 @@ public class MapPanel extends JPanel implements TaskGraphPanel, TaskGraphListene
      * @return the layout details for this taskgraph panel
      */
     public TaskLayoutDetails getLayoutDetails() {
-        if (layout != null)
+        if (layout != null) {
             return new MapLayout(new Dimension(800, 600));
-        else
+        } else {
             return layout;
+        }
     }
 
 
@@ -245,10 +255,11 @@ public class MapPanel extends JPanel implements TaskGraphPanel, TaskGraphListene
      * @return the task component for the specified task (null if unknown)
      */
     public TaskComponent getTaskComponent(Task task) {
-        if (comptable.containsKey(task))
+        if (comptable.containsKey(task)) {
             return (TaskComponent) comptable.get(task);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -311,8 +322,9 @@ public class MapPanel extends JPanel implements TaskGraphPanel, TaskGraphListene
 
         if (map != null) {
             Dimension size = getSize();
-            if ((map.getWidth(this) != -1) && (map.getHeight(this) != -1))
+            if ((map.getWidth(this) != -1) && (map.getHeight(this) != -1)) {
                 graphs.drawImage(map, 0, 0, size.width, size.height, this);
+            }
         }
     }
 
@@ -327,16 +339,16 @@ public class MapPanel extends JPanel implements TaskGraphPanel, TaskGraphListene
             public void run() {
                 Task task = evt.getTask();
 
-                if (!TaskGraphUtils.isControlTask(task))
+                if (!TaskGraphUtils.isControlTask(task)) {
                     initializeTaskComponent(task);
+                }
             }
         });
     }
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method
-     * is called when tasks are removed from a taskgraph due to being grouped
-     * (they are placed in the new groups taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are placed in the new groups taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
         final TaskGraphTaskEvent evt = event;

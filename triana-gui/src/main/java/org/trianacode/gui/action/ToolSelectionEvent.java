@@ -60,19 +60,16 @@
 package org.trianacode.gui.action;
 
 
+import java.util.EventObject;
+
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
-
-import java.util.EventObject;
 
 /**
  * The event that is generated
  *
- * @author      Ian Wang
- * @created     13th August 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class ToolSelectionEvent extends EventObject {
@@ -109,10 +106,11 @@ public class ToolSelectionEvent extends EventObject {
      * @return the selected tool (null if none selected)
      */
     public Tool getSelectedTool() {
-        if (seltools.length > 0)
+        if (seltools.length > 0) {
             return seltools[0];
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -123,8 +121,7 @@ public class ToolSelectionEvent extends EventObject {
     }
 
     /**
-     * @return the selected taskgraph (the taskgraph the selected tools are in),
-     * or null if none.
+     * @return the selected taskgraph (the taskgraph the selected tools are in), or null if none.
      */
     public TaskGraph getSelectedTaskgraph() {
         return seltaskgraph;

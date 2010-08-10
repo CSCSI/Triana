@@ -60,14 +60,10 @@
 package org.trianacode.taskgraph.constants;
 
 /**
- * The tool class constants used to suggest a tool should appear stripey on
- * the GUI.
+ * The tool class constants used to suggest a tool should appear stripey on the GUI.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 5th July 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public interface StripeToolConstants {

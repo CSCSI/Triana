@@ -58,6 +58,34 @@
  */
 package org.trianacode.gui.panels;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.util.Hashtable;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.trianacode.gui.SpringUtilities;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
@@ -68,25 +96,11 @@ import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.util.Hashtable;
-
 /**
  * The main options panel for Triana user settings
  *
  * @author Matthew Shields
  * @version $Revsion$
- * @created Apr 29, 2003: 1:43:29 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class OptionsPanel extends ParameterPanel implements ActionListener, WindowListener {
 
@@ -125,23 +139,22 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel does not want the
-     * user to be able to change the auto commit state
+     * This method returns true by default. It should be overridden if the panel does not want the user to be able to
+     * change the auto commit state
      */
     public boolean isAutoCommitVisible() {
         return false;
     }
 
     /**
-     * This method is called when the task is set for this panel. It is overridden to create the
-     * panel layout.
+     * This method is called when the task is set for this panel. It is overridden to create the panel layout.
      */
     public void init() {
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("General", getGeneralPanel());
         tabs.addTab("External Tools", getExternalTools());
         tabs.addTab("Colours", getColourChooser());
-        
+
         this.setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
     }
@@ -155,7 +168,8 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
             autoconnectChk = addCheckBox(panel, Env.getString("autoConnect"), GUIEnv.isAutoConnect());
             restoreChk = addCheckBox(panel, Env.getString("restoreLast"), GUIEnv.restoreLast());
             enableTipsChk = addCheckBox(panel, Env.getString("showToolTips"), GUIEnv.showPopUpDescriptions());
-            enableExtendedTipsChk = addCheckBox(panel, Env.getString("showExtendedTips"), GUIEnv.showExtendedDescriptions());
+            enableExtendedTipsChk = addCheckBox(panel, Env.getString("showExtendedTips"),
+                    GUIEnv.showExtendedDescriptions());
             showNodeEditIconsChk = addCheckBox(panel, Env.getString("showNodeEditIcons"), GUIEnv.showNodeEditIcons());
             convertToDoubleChk = addCheckBox(panel, Env.getString("convertToDouble"), Env.getConvertToDouble());
             smoothCables = addCheckBox(panel, "Smooth Cables", GUIEnv.isSmoothCables());
@@ -231,9 +245,8 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     }
 
     /**
-     * Simple option validation, checks to see if external tools exist or if the fields have been
-     * left with their default values. It is up to the user to check that the external tool is
-     * capable of interacting with triana.
+     * Simple option validation, checks to see if external tools exist or if the fields have been left with their
+     * default values. It is up to the user to check that the external tool is capable of interacting with triana.
      *
      * @return true if the simple validation is succesful, false otherwise.
      */
@@ -253,8 +266,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
             htmlViewerTextField.setText(Env.getString("defaultViewer"));
             htmlViewerTextField.setCaretPosition(0);
             valid = false;
-        }
-        else {
+        } else {
             GUIEnv.setHTMLViewerCommand(htmlViewerTextField.getText());
         }
 
@@ -265,8 +277,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
                 htmlEditorTextField.setText(Env.getString("defaultEditor"));
                 htmlEditorTextField.setCaretPosition(0);
             }
-        }
-        else {
+        } else {
             GUIEnv.setHTMLEditorCommand(htmlEditorTextField.getText());
         }
 
@@ -277,8 +288,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
                 codeEditorTextField.setText(Env.getString("defaultEditor"));
                 codeEditorTextField.setCaretPosition(0);
             }
-        }
-        else {
+        } else {
             GUIEnv.setJavaEditorCommand(codeEditorTextField.getText());
         }
 
@@ -289,8 +299,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
                 javacTextField.setText(Env.getCompilerCommand());
                 javacTextField.setCaretPosition(0);
             }
-        }
-        else {
+        } else {
             Env.setCompilerCommand(javacTextField.getText());
         }
         return valid;
@@ -311,8 +320,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
         if (tool.getText().equals(Env.getString("defaultEditor"))
                 || tool.getText().equals(Env.getString("defaultViewer"))) {
             return true;
-        }
-        else if ((new File(tool.getText())).exists()) {
+        } else if ((new File(tool.getText())).exists()) {
             return true;
         }
         return false;
@@ -439,17 +447,16 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset all the panels
-     * components to the values specified by the associated task, e.g. a component representing a
-     * parameter called "noise" should be set to the value returned by a
-     * getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public void reset() {
     }
 
     /**
-     * This method is called when the panel is finished with. It should dispose of any components
-     * (e.g. windows) used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public void dispose() {
     }
@@ -460,8 +467,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == classpathButton) {
             handleClasspath();
-        }
-        else {
+        } else {
             TFileChooser chooser = new TFileChooser();
             chooser.setMultiSelectionEnabled(false);
             chooser.setDialogTitle("Select " + e.getActionCommand());
@@ -473,18 +479,15 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
                     htmlViewerTextField.setText(chooser.getSelectedFile().getAbsolutePath());
                     htmlViewerTextField.setCaretPosition(0);
 
-                }
-                else if (e.getActionCommand().equals(Env.getString("htmlEditor"))) {
+                } else if (e.getActionCommand().equals(Env.getString("htmlEditor"))) {
                     htmlEditorTextField.setText(chooser.getSelectedFile().getAbsolutePath());
                     htmlEditorTextField.setCaretPosition(0);
 
-                }
-                else if (e.getActionCommand().equals(Env.getString("codeEditor"))) {
+                } else if (e.getActionCommand().equals(Env.getString("codeEditor"))) {
                     codeEditorTextField.setText(chooser.getSelectedFile().getAbsolutePath());
                     codeEditorTextField.setCaretPosition(0);
 
-                }
-                else if (e.getActionCommand().equals(Env.getString("javaCompiler"))) {
+                } else if (e.getActionCommand().equals(Env.getString("javaCompiler"))) {
                     javacTextField.setText(chooser.getSelectedFile().getAbsolutePath());
                     javacTextField.setCaretPosition(0);
 
@@ -529,8 +532,9 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     public void windowDeactivated(WindowEvent e) {
         if (paramwin.isAccepted()) {
             ClassPathPanel classPathPanel = ((ClassPathPanel) paramwin.getParameterPanel());
-            if (classPathPanel.isRetainCPCheck())
+            if (classPathPanel.isRetainCPCheck()) {
                 Env.setClasspath(classPathPanel.getClasspath());
+            }
         }
     }
 

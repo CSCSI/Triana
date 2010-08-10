@@ -58,12 +58,19 @@
  */
 package org.trianacode.gui.help.search;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class IndexProgressDialog extends JDialog
         implements SearchIndexerListener {
@@ -87,7 +94,7 @@ public class IndexProgressDialog extends JDialog
         Dimension frameSize = getSize();
 
         setLocation((screenSize.width - frameSize.width) / 2,
-                    (screenSize.height - frameSize.height) / 2);
+                (screenSize.height - frameSize.height) / 2);
     }
 
     public void indexUpdate(SearchIndexerEvent e) {

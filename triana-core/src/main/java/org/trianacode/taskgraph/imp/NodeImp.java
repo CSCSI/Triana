@@ -58,19 +58,21 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.*;
+import java.util.ArrayList;
+
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.event.NodeEvent;
 import org.trianacode.taskgraph.event.NodeListener;
-
-import java.util.ArrayList;
 
 /**
  * An input/output NodeCable associated with a Task.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 24rd April
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class NodeImp implements NodeListener, Node {
 
@@ -124,8 +126,9 @@ public class NodeImp implements NodeListener, Node {
     public void addNodeListener(final NodeListener listener) {
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                if ((listeners != null) && (!listeners.contains(listener)))
+                if ((listeners != null) && (!listeners.contains(listener))) {
                     listeners.add(listener);
+                }
             }
         });
     }
@@ -146,26 +149,28 @@ public class NodeImp implements NodeListener, Node {
      * @return the index of this node within its associated task
      */
     public int getNodeIndex() {
-        if (task != null)
+        if (task != null) {
             return task.getNodeIndex(this);
-        else
+        } else {
             return -1;
+        }
     }
 
     /**
-     * This is a convience method to provide backward compatibility with TrianaGUI, in which parameter nodes
-     * where indexed after data nodes.
+     * This is a convience method to provide backward compatibility with TrianaGUI, in which parameter nodes where
+     * indexed after data nodes.
      * <p/>
-     * The absolute index of a data node is the same as its standard index.
-     * The absolute index of a parameter node is its standard index + the total number of data input node.
+     * The absolute index of a data node is the same as its standard index. The absolute index of a parameter node is
+     * its standard index + the total number of data input node.
      *
      * @return the absolute index of this node within its associated Task.
      */
     public int getAbsoluteNodeIndex() {
-        if (task != null)
+        if (task != null) {
             return task.getAbsoluteNodeIndex(this);
-        else
+        } else {
             return -1;
+        }
     }
 
 
@@ -196,20 +201,22 @@ public class NodeImp implements NodeListener, Node {
      * @return true if this node is connected to a cable
      */
     public boolean isConnected() {
-        if (isBottomLevelNode())
+        if (isBottomLevelNode()) {
             return cable != null;
-        else
+        } else {
             return getBottomLevelNode().isConnected();
+        }
     }
 
     /**
      * @return the cable this node is connected to
      */
     public Cable getCable() {
-        if (isBottomLevelNode())
+        if (isBottomLevelNode()) {
             return cable;
-        else
+        } else {
             return getBottomLevelNode().getCable();
+        }
     }
 
 
@@ -243,42 +250,47 @@ public class NodeImp implements NodeListener, Node {
 
 
     /**
-     * @return true if data is not required at this node for the task to run.
-     *         Note that parameter nodes are optional by default.
+     * @return true if data is not required at this node for the task to run. Note that parameter nodes are optional by
+     *         default.
      */
     public boolean isOptional() {
-        if (task == null)
+        if (task == null) {
             return true;
+        }
 
-        if (isOutputNode())
+        if (isOutputNode()) {
             return true;
+        }
 
-        if (isTopLevelNode())
+        if (isTopLevelNode()) {
             return task.getNodeRequirement(getNodeIndex()).equals(Task.OPTIONAL);
-        else
+        } else {
             return getTopLevelNode().isOptional();
+        }
     }
 
     /**
-     * @return true if data is essential at this node only if the node is
-     *         connected
+     * @return true if data is essential at this node only if the node is connected
      */
     public boolean isEssentialIfConnected() {
-        if (task == null)
+        if (task == null) {
             return false;
+        }
 
-        if (isOutputNode())
+        if (isOutputNode()) {
             return false;
+        }
 
-        if (isTopLevelNode())
+        if (isTopLevelNode()) {
             return task.getNodeRequirement(getNodeIndex()).equals(Task.ESSENTIAL_IF_CONNECTED);
-        else
+        } else {
             return getTopLevelNode().isEssentialIfConnected();
+        }
     }
 
     /**
-     * @return true if data is essential at this node for the task to run.
-     *         Note that data nodes are essential by default.
+     * @return true if data is essential at this node for the task to run. Note that data nodes are essential by
+     *         default.
      */
     public boolean isEssential() {
         return (!isOptional()) && (!isEssentialIfConnected());
@@ -296,18 +308,20 @@ public class NodeImp implements NodeListener, Node {
      * Sets the parent group node for this node
      */
     public void setParentNode(Node node) {
-        if ((node == null) && (parent != null))
+        if ((node == null) && (parent != null)) {
             removeThisNode();
-        else if (node != null) {
-            if (parent != null)
+        } else if (node != null) {
+            if (parent != null) {
                 parent.removeNodeListener(this);
+            }
 
             parent = node;
 
             notifyParentNodeChanged();
 
-            if (parent != null)
+            if (parent != null) {
                 parent.addNodeListener(this);
+            }
         }
     }
 
@@ -322,70 +336,68 @@ public class NodeImp implements NodeListener, Node {
      * Sets the child group node for this node
      */
     public void setChildNode(Node node) {
-        if (child != null)
+        if (child != null) {
             child.removeNodeListener(this);
+        }
 
         child = node;
         notifyChildNodeChanged();
 
-        if (child != null)
+        if (child != null) {
             child.addNodeListener(this);
+        }
     }
 
 
     /**
-     * @return true if this is a top level group node (i.e. it is attached
-     *         directly to an actual (non-group) task)
+     * @return true if this is a top level group node (i.e. it is attached directly to an actual (non-group) task)
      */
     public boolean isTopLevelNode() {
         return parent == null;
     }
 
     /**
-     * @return the top level parent node in the parent/child group node
-     *         hierarchy
+     * @return the top level parent node in the parent/child group node hierarchy
      */
     public Node getTopLevelNode() {
         Node top = this;
 
-        while (top.getParentNode() != null)
+        while (top.getParentNode() != null) {
             top = top.getParentNode();
+        }
 
         return top;
     }
 
     /**
-     * @return the top level parent task in the parent/child group task
-     *         hierarchy
+     * @return the top level parent task in the parent/child group task hierarchy
      */
     public Task getTopLevelTask() {
         return getTopLevelNode().getTask();
     }
 
     /**
-     * @return true if this is a bottom level group node (i.e. it is attached
-     *         directly to a actual cable task)
+     * @return true if this is a bottom level group node (i.e. it is attached directly to a actual cable task)
      */
     public boolean isBottomLevelNode() {
         return child == null;
     }
 
     /**
-     * @return the bottom level parent node in the parent/child group node
-     *         hierarchy
+     * @return the bottom level parent node in the parent/child group node hierarchy
      */
     public Node getBottomLevelNode() {
         Node bottom = this;
 
-        while (bottom.getChildNode() != null)
+        while (bottom.getChildNode() != null) {
             bottom = bottom.getChildNode();
+        }
 
         return bottom;
     }
 
     /**
-     * @return the bottom level parent task in the parent/child group task
-     *         hierarchy
+     * @return the bottom level parent task in the parent/child group task hierarchy
      */
     public Task getBottomLevelTask() {
         return getBottomLevelNode().getTask();
@@ -411,15 +423,17 @@ public class NodeImp implements NodeListener, Node {
 
         if (task != null) {
             if (isInputNode()) {
-                if (isParameterNode())
+                if (isParameterNode()) {
                     task.removeParameterInputNode((ParameterNode) this);
-                else
+                } else {
                     task.removeDataInputNode(this);
+                }
             } else {
-                if (isParameterNode())
+                if (isParameterNode()) {
                     task.removeParameterOutputNode((ParameterNode) this);
-                else
+                } else {
                     task.removeDataOutputNode(this);
+                }
             }
         }
     }
@@ -435,8 +449,9 @@ public class NodeImp implements NodeListener, Node {
                 NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
                 NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].nodeConnected(event);
+                }
             }
         });
     }
@@ -452,15 +467,15 @@ public class NodeImp implements NodeListener, Node {
                 NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
                 NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].nodeDisconnected(event);
+                }
             }
         });
     }
 
     /**
-     * Notifies all the node listeners that the name of the parameter this node
-     * is inputting/outputting has been set.
+     * Notifies all the node listeners that the name of the parameter this node is inputting/outputting has been set.
      */
     protected void notifyParameterNameSet() {
         final Node node = this;
@@ -470,15 +485,15 @@ public class NodeImp implements NodeListener, Node {
                 NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
                 NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].parameterNameSet(event);
+                }
             }
         });
     }
 
     /**
-     * Notifies all the node listeners that a node in the parent hierarchy has
-     * changed.
+     * Notifies all the node listeners that a node in the parent hierarchy has changed.
      */
     protected void notifyParentNodeChanged() {
         final Node node = this;
@@ -488,15 +503,15 @@ public class NodeImp implements NodeListener, Node {
                 NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
                 NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].nodeParentChanged(event);
+                }
             }
         });
     }
 
     /**
-     * Notifies all the node listeners that a node in the child hierarchy has
-     * changed.
+     * Notifies all the node listeners that a node in the child hierarchy has changed.
      */
     protected void notifyChildNodeChanged() {
         final Node node = this;
@@ -506,8 +521,9 @@ public class NodeImp implements NodeListener, Node {
                 NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
                 NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].nodeChildChanged(event);
+                }
             }
         });
     }
@@ -517,16 +533,18 @@ public class NodeImp implements NodeListener, Node {
      * Called when a node is connected to a cable.
      */
     public void nodeConnected(NodeEvent event) {
-        if (event.getNode() == child)
+        if (event.getNode() == child) {
             notifyNodeConnected();
+        }
     }
 
     /**
      * Called before a node is diconnected from a cable.
      */
     public void nodeDisconnected(NodeEvent event) {
-        if (event.getNode() == child)
+        if (event.getNode() == child) {
             notifyNodeDisconnected();
+        }
     }
 
     /**
@@ -534,8 +552,9 @@ public class NodeImp implements NodeListener, Node {
      */
     public void nodeParentChanged(NodeEvent event) {
         if (event.getNode() == parent) {
-            if (getTopLevelNode() == null)
+            if (getTopLevelNode() == null) {
                 removeThisNode();
+            }
 
             notifyParentNodeChanged();
         }
@@ -554,8 +573,9 @@ public class NodeImp implements NodeListener, Node {
      * Called when the name of the parameter the node is inputting/outputting is set.
      */
     public void parameterNameSet(NodeEvent event) {
-        if (event.getNode() == parent)
+        if (event.getNode() == parent) {
             notifyParameterNameSet();
+        }
     }
 
 

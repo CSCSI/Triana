@@ -59,6 +59,10 @@
 
 package org.trianacode.gui.action.taskgraph;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JMenu;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -68,17 +72,11 @@ import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.TaskLayoutUtils;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
 /**
  * The action for showing the node editor
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 21st June 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class ResolveNodesAction extends AbstractAction implements ActionDisplayOptions {
@@ -108,12 +106,13 @@ public class ResolveNodesAction extends AbstractAction implements ActionDisplayO
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selhandler.getSelectedTaskgraph() != null)
+        if (selhandler.getSelectedTaskgraph() != null) {
             try {
                 TaskLayoutUtils.resolveGroupNodes(selhandler.getSelectedTaskgraph());
-            } catch(TaskGraphException except) {
+            } catch (TaskGraphException except) {
                 ErrorDialog.show(GUIEnv.getApplicationFrame(), except);
             }
+        }
     }
 
 }

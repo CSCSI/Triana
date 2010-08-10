@@ -72,17 +72,16 @@ import java.util.NoSuchElementException;
 
 /**
  * A Hashtable that uses ints as the keys.
- * <P>
- * Use just like java.util.Hashtable, except that the keys must be ints.
- * This is much faster than creating a new Integer for each access.
- * <P>
- * <A HREF="/resources/classes/Acme/IntHashtable.java">Fetch the software.</A><BR>
- * <A HREF="/resources/classes/Acme.tar.gz">Fetch the entire Acme package.</A>
- * <P>
- * @see java.util.Hashtable
+ * <p/>
+ * Use just like java.util.Hashtable, except that the keys must be ints. This is much faster than creating a new Integer
+ * for each access.
+ * <p/>
+ * <A HREF="/resources/classes/Acme/IntHashtable.java">Fetch the software.</A><BR> <A
+ * HREF="/resources/classes/Acme.tar.gz">Fetch the entire Acme package.</A>
+ * <p/>
  *
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
+ * @see java.util.Hashtable
  */
 public class IntHashtable extends Dictionary implements Cloneable {
     /// The hash table data.
@@ -107,9 +106,11 @@ public class IntHashtable extends Dictionary implements Cloneable {
     // is less than or equal to zero.
     // @exception IllegalArgumentException If the load factor is
     // less than or equal to zero.
+
     public IntHashtable(int initialCapacity, float loadFactor) {
-        if (initialCapacity <= 0 || loadFactor <= 0.0)
+        if (initialCapacity <= 0 || loadFactor <= 0.0) {
             throw new IllegalArgumentException();
+        }
         this.loadFactor = loadFactor;
         table = new IntHashtableEntry[initialCapacity];
         threshold = (int) (initialCapacity * loadFactor);
@@ -118,6 +119,7 @@ public class IntHashtable extends Dictionary implements Cloneable {
     /// Constructs a new, empty hashtable with the specified initial
     // capacity.
     // @param initialCapacity the initial number of buckets
+
     public IntHashtable(int initialCapacity) {
         this(initialCapacity, 0.75f);
     }
@@ -125,22 +127,26 @@ public class IntHashtable extends Dictionary implements Cloneable {
     /// Constructs a new, empty hashtable. A default capacity and load factor
     // is used. Note that the hashtable will automatically grow when it gets
     // full.
+
     public IntHashtable() {
         this(101, 0.75f);
     }
 
     /// Returns the number of elements contained in the hashtable.
+
     public int size() {
         return count;
     }
 
     /// Returns true if the hashtable contains no elements.
+
     public boolean isEmpty() {
         return count == 0;
     }
 
     /// Returns an enumeration of the hashtable's keys.
     // @see IntHashtable#elements
+
     public synchronized Enumeration keys() {
         return new IntHashtableEnumerator(table, true);
     }
@@ -148,6 +154,7 @@ public class IntHashtable extends Dictionary implements Cloneable {
     /// Returns an enumeration of the elements. Use the Enumeration methods
     // on the returned object to fetch the elements sequentially.
     // @see IntHashtable#keys
+
     public synchronized Enumeration elements() {
         return new IntHashtableEnumerator(table, false);
     }
@@ -158,14 +165,17 @@ public class IntHashtable extends Dictionary implements Cloneable {
     // @exception NullPointerException If the value being searched
     // for is equal to null.
     // @see IntHashtable#containsKey
+
     public synchronized boolean contains(Object value) {
-        if (value == null)
+        if (value == null) {
             throw new NullPointerException();
+        }
         IntHashtableEntry tab[] = table;
         for (int i = tab.length; i-- > 0;) {
             for (IntHashtableEntry e = tab[i]; e != null; e = e.next) {
-                if (e.value.equals(value))
+                if (e.value.equals(value)) {
                     return true;
+                }
             }
         }
         return false;
@@ -174,13 +184,15 @@ public class IntHashtable extends Dictionary implements Cloneable {
     /// Returns true if the collection contains an element for the key.
     // @param key the key that we are looking for
     // @see IntHashtable#contains
+
     public synchronized boolean containsKey(int key) {
         IntHashtableEntry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (IntHashtableEntry e = tab[index]; e != null; e = e.next) {
-            if (e.hash == hash && e.key == key)
+            if (e.hash == hash && e.key == key) {
                 return true;
+            }
         }
         return false;
     }
@@ -191,22 +203,26 @@ public class IntHashtable extends Dictionary implements Cloneable {
     // @returns the element for the key or null if the key
     // 		is not defined in the hash table.
     // @see IntHashtable#put
+
     public synchronized Object get(int key) {
         IntHashtableEntry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (IntHashtableEntry e = tab[index]; e != null; e = e.next) {
-            if (e.hash == hash && e.key == key)
+            if (e.hash == hash && e.key == key) {
                 return e.value;
+            }
         }
         return null;
     }
 
     /// A get method that takes an Object, for compatibility with
     // java.util.Dictionary.  The Object must be an Integer.
+
     public Object get(Object okey) {
-        if (!(okey instanceof Integer))
+        if (!(okey instanceof Integer)) {
             throw new InternalError("key is not an Integer");
+        }
         Integer ikey = (Integer) okey;
         int key = ikey.intValue();
         return get(key);
@@ -215,6 +231,7 @@ public class IntHashtable extends Dictionary implements Cloneable {
     /// Rehashes the content of the table into a bigger table.
     // This method is called automatically when the hashtable's
     // size exceeds the threshold.
+
     protected void rehash() {
         int oldCapacity = table.length;
         IntHashtableEntry oldTable[] = table;
@@ -246,10 +263,12 @@ public class IntHashtable extends Dictionary implements Cloneable {
     // is equal to null.
     // @see IntHashtable#get
     // @return the old value of the key, or null if it did not have one.
+
     public synchronized Object put(int key, Object value) {
         // Make sure the value is not null.
-        if (value == null)
+        if (value == null) {
             throw new NullPointerException();
+        }
 
         // Makes sure the key is not already in the hashtable.
         IntHashtableEntry tab[] = table;
@@ -282,9 +301,11 @@ public class IntHashtable extends Dictionary implements Cloneable {
 
     /// A put method that takes an Object, for compatibility with
     // java.util.Dictionary.  The Object must be an Integer.
+
     public Object put(Object okey, Object value) {
-        if (!(okey instanceof Integer))
+        if (!(okey instanceof Integer)) {
             throw new InternalError("key is not an Integer");
+        }
         Integer ikey = (Integer) okey;
         int key = ikey.intValue();
         return put(key, value);
@@ -294,16 +315,18 @@ public class IntHashtable extends Dictionary implements Cloneable {
     // key is not present.
     // @param key the key that needs to be removed
     // @return the value of key, or null if the key was not found.
+
     public synchronized Object remove(int key) {
         IntHashtableEntry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (IntHashtableEntry e = tab[index], prev = null; e != null; prev = e, e = e.next) {
             if (e.hash == hash && e.key == key) {
-                if (prev != null)
+                if (prev != null) {
                     prev.next = e.next;
-                else
+                } else {
                     tab[index] = e.next;
+                }
                 --count;
                 return e.value;
             }
@@ -313,32 +336,38 @@ public class IntHashtable extends Dictionary implements Cloneable {
 
     /// A remove method that takes an Object, for compatibility with
     // java.util.Dictionary.  The Object must be an Integer.
+
     public Object remove(Object okey) {
-        if (!(okey instanceof Integer))
+        if (!(okey instanceof Integer)) {
             throw new InternalError("key is not an Integer");
+        }
         Integer ikey = (Integer) okey;
         int key = ikey.intValue();
         return remove(key);
     }
 
     /// Clears the hash table so that it has no more elements in it.
+
     public synchronized void clear() {
         IntHashtableEntry tab[] = table;
-        for (int index = tab.length; --index >= 0;)
+        for (int index = tab.length; --index >= 0;) {
             tab[index] = null;
+        }
         count = 0;
     }
 
     /// Creates a clone of the hashtable. A shallow copy is made,
     // the keys and elements themselves are NOT cloned. This is a
     // relatively expensive operation.
+
     public synchronized Object clone() {
         try {
             IntHashtable t = (IntHashtable) super.clone();
             t.table = new IntHashtableEntry[table.length];
-            for (int i = table.length; i-- > 0;)
+            for (int i = table.length; i-- > 0;) {
                 t.table[i] = (table[i] != null) ?
                         (IntHashtableEntry) table[i].clone() : null;
+            }
             return t;
         }
         catch (CloneNotSupportedException e) {
@@ -348,6 +377,7 @@ public class IntHashtable extends Dictionary implements Cloneable {
     }
 
     /// Converts to a rather lengthy String.
+
     public synchronized String toString() {
         int max = size() - 1;
         StringBuffer buf = new StringBuffer();
@@ -359,8 +389,9 @@ public class IntHashtable extends Dictionary implements Cloneable {
             String s1 = k.nextElement().toString();
             String s2 = e.nextElement().toString();
             buf.append(s1 + "=" + s2);
-            if (i < max)
+            if (i < max) {
                 buf.append(", ");
+            }
         }
         buf.append("}");
         return buf.toString();
@@ -398,18 +429,23 @@ class IntHashtableEnumerator implements Enumeration {
     }
 
     public boolean hasMoreElements() {
-        if (entry != null)
+        if (entry != null) {
             return true;
-        while (index-- > 0)
-            if ((entry = table[index]) != null)
+        }
+        while (index-- > 0) {
+            if ((entry = table[index]) != null) {
                 return true;
+            }
+        }
         return false;
     }
 
     public Object nextElement() {
-        if (entry == null)
-            while ((index-- > 0) && ((entry = table[index]) == null))
+        if (entry == null) {
+            while ((index-- > 0) && ((entry = table[index]) == null)) {
                 ;
+            }
+        }
         if (entry != null) {
             IntHashtableEntry e = entry;
             entry = e.next;

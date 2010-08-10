@@ -60,15 +60,12 @@ package triana.types;
 
 
 /**
- * Const is a wrapper for basic base number types e.g. int, float, long,
- * short and double. It stores a single real or complex number of one of
- * those types.
+ * Const is a wrapper for basic base number types e.g. int, float, long, short and double. It stores a single real or
+ * complex number of one of those types.
  *
- * @author      Ian Taylor
- * @author      Bernard Schutz
- * @created     13 January 2001
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class Const extends Number implements Arithmetic, Comparable {
 
@@ -100,13 +97,14 @@ public class Const extends Number implements Arithmetic, Comparable {
         if ((number instanceof Const) && (((Const) number).isComplex())) {
             this.real = ((Const) number).getReal();
             this.imag = ((Const) number).getImag();
-        } else
+        } else {
             this.real = number.doubleValue();
+        }
     }
 
     /**
-     * Creates a new Const from the specified string, which should be of the
-     * format "1.0", or "1.0 + 1.0i" for complex numbers.
+     * Creates a new Const from the specified string, which should be of the format "1.0", or "1.0 + 1.0i" for complex
+     * numbers.
      *
      * @param str the const string
      */
@@ -131,30 +129,33 @@ public class Const extends Number implements Arithmetic, Comparable {
      * @return a string representing the complex number
      */
     private static String getComplexString(double real, double imag) {
-        if ((imag == Double.NaN) || (imag == 0))
+        if ((imag == Double.NaN) || (imag == 0)) {
             return String.valueOf(real);
-        else
+        } else {
             return String.valueOf(real) + " + " + String.valueOf(imag) + "i";
+        }
     }
 
     /**
      * @return the real part from a string
      */
     private static double getReal(String str) throws NumberFormatException {
-        if (str.indexOf('+') == -1)
+        if (str.indexOf('+') == -1) {
             return new Double(str.trim()).doubleValue();
-        else
+        } else {
             return new Double(str.substring(0, str.indexOf('+')).trim()).doubleValue();
+        }
     }
 
     /**
      * @return the real part from a string
      */
     private static double getImag(String str) throws NumberFormatException {
-        if ((str.indexOf('+') == -1) || (str.indexOf('i') == -1))
+        if ((str.indexOf('+') == -1) || (str.indexOf('i') == -1)) {
             return 0;
-        else
+        } else {
             return new Double(str.substring(str.indexOf('+'), str.indexOf('i')).trim()).doubleValue();
+        }
     }
 
 
@@ -212,14 +213,16 @@ public class Const extends Number implements Arithmetic, Comparable {
 
 
     /**
-     * Returns <i>true</i> if the specified Object has the same value as
-     * the Const (the Object must be an instance of number).
+     * Returns <i>true</i> if the specified Object has the same value as the Const (the Object must be an instance of
+     * number).
      *
      * @param num The object to be tested
      * @return <I>True</I> if the given Object is a Const whose contents equal those of the current one
      */
     public boolean equals(Object num) {
-        if (!(num instanceof Number)) return false;
+        if (!(num instanceof Number)) {
+            return false;
+        }
 
         Const cst = new Const((Number) num);
 
@@ -227,26 +230,27 @@ public class Const extends Number implements Arithmetic, Comparable {
     }
 
     /**
-     * Compares this object with the specified object for order.  Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.<p>
+     * Compares this object with the specified object for order.  Returns a negative integer, zero, or a positive
+     * integer as this object is less than, equal to, or greater than the specified object.<p>
      */
     public int compareTo(Object num) {
-        if (!(num instanceof Number))
+        if (!(num instanceof Number)) {
             throw (new ClassCastException("Cannot compare Const with " + num.getClass().getName()));
+        }
 
         Const cst = new Const((Number) num);
 
-        if (getReal() < cst.getReal())
+        if (getReal() < cst.getReal()) {
             return -1;
-        else if (getReal() > cst.getReal())
+        } else if (getReal() > cst.getReal()) {
             return 1;
-        else if (getImag() < cst.getImag())
+        } else if (getImag() < cst.getImag()) {
             return -1;
-        else if (getImag() > cst.getImag())
+        } else if (getImag() > cst.getImag()) {
             return 1;
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
@@ -263,8 +267,9 @@ public class Const extends Number implements Arithmetic, Comparable {
             cst.setImag(getImag() + cst.getImag());
 
             return cst;
-        } else
-            throw(new ClassCastException("Invalid arithmetic: Cannot add Const and " + obj.getClass().getName()));
+        } else {
+            throw (new ClassCastException("Invalid arithmetic: Cannot add Const and " + obj.getClass().getName()));
+        }
     }
 
     /**
@@ -281,8 +286,9 @@ public class Const extends Number implements Arithmetic, Comparable {
             cst.setImag(getImag() - cst.getImag());
 
             return cst;
-        } else
-            throw(new ClassCastException("Invalid arithmetic: Cannot subtract Const and " + obj.getClass().getName()));
+        } else {
+            throw (new ClassCastException("Invalid arithmetic: Cannot subtract Const and " + obj.getClass().getName()));
+        }
     }
 
     /**
@@ -304,8 +310,9 @@ public class Const extends Number implements Arithmetic, Comparable {
             cst.setImag(tr * oi + ti * or);
 
             return cst;
-        } else
-            throw(new ClassCastException("Invalid arithmetic: Cannot multipy Const and " + obj.getClass().getName()));
+        } else {
+            throw (new ClassCastException("Invalid arithmetic: Cannot multipy Const and " + obj.getClass().getName()));
+        }
     }
 
     /**
@@ -330,49 +337,42 @@ public class Const extends Number implements Arithmetic, Comparable {
             cst.setImag(-tr * oi + ti * or);
 
             return cst;
-        } else
-            throw(new ClassCastException("Invalid arithmetic: Cannot divide Const by " + obj.getClass().getName()));
+        } else {
+            throw (new ClassCastException("Invalid arithmetic: Cannot divide Const by " + obj.getClass().getName()));
+        }
     }
 
     /**
-     * Returns the value of the specified number as an <code>int</code>.
-     * This may involve rounding or truncation.
+     * Returns the value of the specified number as an <code>int</code>. This may involve rounding or truncation.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>int</code>.
+     * @return the numeric value represented by this object after conversion to type <code>int</code>.
      */
     public int intValue() {
         return new Double(getReal()).intValue();
     }
 
     /**
-     * Returns the value of the specified number as a <code>long</code>.
-     * This may involve rounding or truncation.
+     * Returns the value of the specified number as a <code>long</code>. This may involve rounding or truncation.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>long</code>.
+     * @return the numeric value represented by this object after conversion to type <code>long</code>.
      */
     public long longValue() {
         return new Double(getReal()).longValue();
     }
 
     /**
-     * Returns the value of the specified number as a <code>float</code>.
-     * This may involve rounding.
+     * Returns the value of the specified number as a <code>float</code>. This may involve rounding.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>float</code>.
+     * @return the numeric value represented by this object after conversion to type <code>float</code>.
      */
     public float floatValue() {
         return new Double(getReal()).floatValue();
     }
 
     /**
-     * Returns the value of the specified number as a <code>double</code>.
-     * This may involve rounding.
+     * Returns the value of the specified number as a <code>double</code>. This may involve rounding.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>double</code>.
+     * @return the numeric value represented by this object after conversion to type <code>double</code>.
      */
     public double doubleValue() {
         return getReal();
@@ -380,13 +380,14 @@ public class Const extends Number implements Arithmetic, Comparable {
 
 
     /**
-     * @return  a string representation of the object.
+     * @return a string representation of the object.
      */
     public String toString() {
-        if (isComplex())
+        if (isComplex()) {
             return getComplexString(real, imag);
-        else
+        } else {
             return String.valueOf(real);
+        }
     }
 
 }

@@ -60,14 +60,11 @@
 package org.trianacode.taskgraph;
 
 /**
- * A listener interface implemented by classes that wish to be notified when
- * an instance id is registered/unregistered for a task.
+ * A listener interface implemented by classes that wish to be notified when an instance id is registered/unregistered
+ * for a task.
  *
- * @author      Ian Wang
- * @created     2nd August 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface InstanceIDListener {

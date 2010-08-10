@@ -58,20 +58,18 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.event.ActionEvent;
+
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
-
-import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "properties" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ControlPropertiesAction extends PropertiesAction {
 
@@ -91,8 +89,11 @@ public class ControlPropertiesAction extends PropertiesAction {
      */
     public void actionPerformed(ActionEvent e) {
         if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof TaskGraph)) {
-            if (((TaskGraph) selhandler.getSelectedTool()).isControlTask())
-                ParameterPanelManager.showParameterWindowFor(((TaskGraph) selhandler.getSelectedTool()).getControlTask(), e.getSource());
+            if (((TaskGraph) selhandler.getSelectedTool()).isControlTask()) {
+                ParameterPanelManager
+                        .showParameterWindowFor(((TaskGraph) selhandler.getSelectedTool()).getControlTask(),
+                                e.getSource());
+            }
         }
     }
 

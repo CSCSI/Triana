@@ -59,18 +59,19 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
+import java.awt.Graphics;
+
+import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.DesktopIconUI;
-import java.awt.*;
 
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class provides an empty DesktopIconUI for
- * {@link com.tomtessier.scrollabledesktop.BaseDesktopPane BaseDesktopPane}.
+ * <p/>
+ * This class provides an empty DesktopIconUI for {@link com.tomtessier.scrollabledesktop.BaseDesktopPane
+ * BaseDesktopPane}.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  29-Jul-2001
@@ -79,8 +80,7 @@ import java.awt.*;
 public class EmptyDesktopIconUI extends DesktopIconUI {
 
     /**
-     * stores the instance of this class. Used by
-     * {@link com.tomtessier.scrollabledesktop.EmptyDesktopIconUI#createUI(JComponent)
+     * stores the instance of this class. Used by {@link com.tomtessier.scrollabledesktop.EmptyDesktopIconUI#createUI(JComponent)
      * createUI}.
      */
     protected static EmptyDesktopIconUI desktopIconUI;
@@ -100,8 +100,8 @@ public class EmptyDesktopIconUI extends DesktopIconUI {
 
 
     /**
-     * overrides the paint method with a blank routine so that no
-     * component is displayed when an internal frame is iconified
+     * overrides the paint method with a blank routine so that no component is displayed when an internal frame is
+     * iconified
      *
      * @param g the reference to the Graphics object used to paint the desktop
      */

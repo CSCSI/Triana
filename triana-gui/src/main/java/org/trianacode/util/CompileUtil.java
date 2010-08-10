@@ -59,8 +59,6 @@
 package org.trianacode.util;
 
 
-import org.trianacode.gui.panels.ScrollingMessageFrame;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -69,15 +67,15 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.trianacode.gui.panels.ScrollingMessageFrame;
+
 
 /**
- * CompileUtil is a class which finds the java compiler and compiles
- * a java source file.  Its intended to be used for the Triana units.
+ * CompileUtil is a class which finds the java compiler and compiles a java source file.  Its intended to be used for
+ * the Triana units.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 1 Dec 1999
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public final class CompileUtil {
 
@@ -263,8 +261,9 @@ public final class CompileUtil {
      * shows/hides the compile screen
      */
     public void setCompileScreenVisible(boolean state) {
-        if (isCompilerScreenEnabled())
+        if (isCompilerScreenEnabled()) {
             compileScreen.setVisible(state);
+        }
     }
 
 
@@ -277,12 +276,12 @@ public final class CompileUtil {
 
 
     /**
-     * Adds a ".java" extension to the file if it hasn't already got
-     * one.
+     * Adds a ".java" extension to the file if it hasn't already got one.
      */
     private final static String addJavaToFile(String javaFile) {
-        if (!javaFile.endsWith(".java"))
+        if (!javaFile.endsWith(".java")) {
             javaFile += ".java";
+        }
 
         return javaFile;
     }
@@ -312,7 +311,9 @@ public final class CompileUtil {
         String args = getCompilerArguments();
         if (!args.equals("")) {
             StringTokenizer tok = new StringTokenizer(args);
-            while (tok.hasMoreTokens()) ;
+            while (tok.hasMoreTokens()) {
+                ;
+            }
             commmandStrVector.add(tok.nextToken());
         }
         if (!sourcepath.equals("")) {
@@ -326,11 +327,13 @@ public final class CompileUtil {
         commmandStrVector.add(destDir);
 
         File cmdFile = new File(getCompilerLocation());
-        if (cmdFile.isAbsolute() && !cmdFile.exists())
+        if (cmdFile.isAbsolute() && !cmdFile.exists()) {
             throw (new FileNotFoundException("Java compiler not found: " + getCompilerLocation()));
+        }
 
-        if (!new File(destDir).exists())
+        if (!new File(destDir).exists()) {
             new File(destDir).mkdirs();
+        }
 
         StringBuffer compilerStrBuff = new StringBuffer();
         for (Iterator iterator = commmandStrVector.iterator(); iterator.hasNext();) {
@@ -351,8 +354,9 @@ public final class CompileUtil {
 
             errorreader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((str = errorreader.readLine()) != null) {
-                if (!str.startsWith("Note:"))
+                if (!str.startsWith("Note:")) {
                     errors = true;
+                }
 
                 errLog += str + "\n";
             }

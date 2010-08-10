@@ -16,8 +16,8 @@
 
 package org.trianacode.interceptors;
 
-import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.interceptor.Interceptor;
 
 
 /**
@@ -25,8 +25,6 @@ import org.trianacode.taskgraph.Node;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 29, 2009: 11:18:12 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class LoggingInterceptor implements Interceptor {

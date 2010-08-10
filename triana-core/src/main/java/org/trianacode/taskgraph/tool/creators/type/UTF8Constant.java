@@ -79,9 +79,9 @@ public class UTF8Constant {
             return list.toArray(new String[list.size()]);
         } else {
             str = trimString(str);
-            if (str != null)
+            if (str != null) {
                 return new String[]{str};
-            else {
+            } else {
                 return new String[0];
             }
         }

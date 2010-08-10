@@ -63,10 +63,8 @@ import org.trianacode.taskgraph.Cable;
 /**
  * Class Description Here...
  *
- * @author      Matthew Shields
- * @created     Jul 5, 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
  */
 public interface InputCable extends Cable {
 
@@ -76,9 +74,8 @@ public interface InputCable extends Cable {
     public boolean isDataReady();
 
     /**
-     * Returns the data from if there is data there. If not then this function
-     * returns NOT_READY if the data is not ready to be received or
-     * NOT_CONNECTED if there is no cable connected to the input.
+     * Returns the data from if there is data there. If not then this function returns NOT_READY if the data is not
+     * ready to be received or NOT_CONNECTED if there is no cable connected to the input.
      */
     public Object recv();
 

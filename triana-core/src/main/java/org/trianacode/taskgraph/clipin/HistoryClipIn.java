@@ -62,10 +62,8 @@ package org.trianacode.taskgraph.clipin;
 import org.trianacode.taskgraph.TaskGraph;
 
 /**
- * @author      Ian Wang
- * @created     21st February 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface HistoryClipIn extends ClipIn {
@@ -77,8 +75,7 @@ public interface HistoryClipIn extends ClipIn {
 
 
     /**
-     * @return a taskgraph of the history for the object this clip-in is
-     * attached to.
+     * @return a taskgraph of the history for the object this clip-in is attached to.
      */
     public TaskGraph getHistory();
 

@@ -58,6 +58,21 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
+import java.awt.BorderLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -67,28 +82,24 @@ import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.TaskLayoutUtils;
 import org.trianacode.taskgraph.constants.ControlToolConstants;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "select all" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class GroupAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -122,13 +133,17 @@ public class GroupAction extends AbstractAction implements ActionDisplayOptions 
                 TaskGraph taskgraph = tasks[0].getParent();
                 boolean parenterror = (taskgraph == null);
 
-                for (int count = 1; (count < tasks.length) && (!parenterror); count++)
-                    parenterror = parenterror || (tasks[count].getParent() == null) || (tasks[count].getParent() != taskgraph);
+                for (int count = 1; (count < tasks.length) && (!parenterror); count++) {
+                    parenterror = parenterror || (tasks[count].getParent() == null) || (tasks[count].getParent()
+                            != taskgraph);
+                }
 
-                if (parenterror)
-                    new ErrorDialog("Error: Cannot group tasks with different parent taskgraphs/null parent taskgraphs");
-                else
+                if (parenterror) {
+                    new ErrorDialog(
+                            "Error: Cannot group tasks with different parent taskgraphs/null parent taskgraphs");
+                } else {
                     groupTasks(tasks, taskgraph, selhandler.getSelectedTrianaClient());
+                }
             } catch (ArrayStoreException except) {
                 new ErrorDialog("Error: Cannot group non-instantiated tools");
             }
@@ -155,8 +170,9 @@ public class GroupAction extends AbstractAction implements ActionDisplayOptions 
                 String[] tasknames = new String[tasks.length];
 
                 if (tasks.length > 0) {
-                    for (int count = 0; count < tasks.length; count++)
+                    for (int count = 0; count < tasks.length; count++) {
                         tasknames[count] = tasks[count].getToolName();
+                    }
 
                     TaskGraph group = taskgraph.groupTasks(tasknames, panel.getGroupName());
                     TaskLayoutUtils.translateToOrigin(group.getTasks(false));
@@ -176,23 +192,22 @@ public class GroupAction extends AbstractAction implements ActionDisplayOptions 
     }
 
 
-    private class NewGroupPanel extends ParameterPanel implements ToolTableListener {
+    private class NewGroupPanel extends ParameterPanel implements ToolListener {
 
         private JTextField name = new JTextField("New Group", 18);
         private JComboBox controllist = new JComboBox(new DefaultComboBoxModel());
 
         /**
-         * This method returns true by default. It should be overridden if the panel
-         * does not want the user to be able to change the auto commit state
+         * This method returns true by default. It should be overridden if the panel does not want the user to be able
+         * to change the auto commit state
          */
         public boolean isAutoCommitVisible() {
             return false;
         }
 
         /**
-         * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by
-         * default. It should be overridden if the panel has different preferred set
-         * of buttons.
+         * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by default. It should be overridden if the
+         * panel has different preferred set of buttons.
          *
          * @return the panels preferred button combination (as defined in Windows Constants).
          */
@@ -214,16 +229,16 @@ public class GroupAction extends AbstractAction implements ActionDisplayOptions 
         public Tool getControlTool() {
             Object obj = controllist.getSelectedItem();
 
-            if ((obj == null) || (!(obj instanceof Tool)))
+            if ((obj == null) || (!(obj instanceof Tool))) {
                 return null;
-            else
+            } else {
                 return (Tool) obj;
+            }
         }
 
 
         /**
-         * This method is called when the task is set for this panel. It is overridden
-         * to create the panel layout.
+         * This method is called when the task is set for this panel. It is overridden to create the panel layout.
          */
         public void init() {
             setLayout(new BorderLayout());
@@ -263,27 +278,42 @@ public class GroupAction extends AbstractAction implements ActionDisplayOptions 
         private void handlePopulateTool(Tool tool) {
             DefaultComboBoxModel model = (DefaultComboBoxModel) controllist.getModel();
 
-            if (tool.isRenderingHint(ControlToolConstants.CONTROL_TOOL_RENDERING_HINT))
+            if (tool.isRenderingHint(ControlToolConstants.CONTROL_TOOL_RENDERING_HINT)) {
                 model.addElement(tool);
+            }
         }
 
         /**
-         * This method is called when the panel is reset or cancelled. It should reset
-         * all the panels components to the values specified by the associated task,
-         * e.g. a component representing a parameter called "noise" should be set to
-         * the value returned by a getTool().getParameter("noise") call.
+         * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+         * values specified by the associated task, e.g. a component representing a parameter called "noise" should be
+         * set to the value returned by a getTool().getParameter("noise") call.
          */
         public void reset() {
         }
 
         /**
-         * This method is called when the panel is finished with. It should dispose
-         * of any components (e.g. windows) used by the panel.
+         * This method is called when the panel is finished with. It should dispose of any components (e.g. windows)
+         * used by the panel.
          */
         public void dispose() {
             tools.removeToolTableListener(this);
         }
 
+
+        @Override
+        public void toolsAdded(java.util.List<Tool> tools) {
+            for (Tool tool : tools) {
+                handlePopulateTool(tool);
+            }
+        }
+
+        @Override
+        public void toolsRemoved(List<Tool> tools) {
+            for (Tool tool : tools) {
+                DefaultComboBoxModel model = (DefaultComboBoxModel) controllist.getModel();
+                model.removeElement(tool);
+            }
+        }
 
         /**
          * Called when a new tool is added

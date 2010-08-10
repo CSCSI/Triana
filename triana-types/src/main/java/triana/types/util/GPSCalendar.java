@@ -64,39 +64,30 @@ import java.util.TimeZone;
 
 
 /**
- * Class GPSCalendar provides a conversion between GPS time (in seconds or
- * milliseconds) and normal dates (UTC time). It uses the Java
- * GregorianCalendar class to handle dates, and adds the information to
- * normalize counting of GPS seconds. The user creates an instance of
- * this class by giving a time in conventional form -- by giving the year,
- * month, etc -- or by giving the GPS time in seconds. Then the instance
- * can return information about the time -- conventional UTC time
- * information or GPS information -- by using various get methods.
+ * Class GPSCalendar provides a conversion between GPS time (in seconds or milliseconds) and normal dates (UTC time). It
+ * uses the Java GregorianCalendar class to handle dates, and adds the information to normalize counting of GPS seconds.
+ * The user creates an instance of this class by giving a time in conventional form -- by giving the year, month, etc --
+ * or by giving the GPS time in seconds. Then the instance can return information about the time -- conventional UTC
+ * time information or GPS information -- by using various get methods.
+ * <p/>
+ * The Calendar is constructed using the GMT time zone. This prevents offsets between dates computed using the local
+ * time zone and those referred to the reference epoch of the Java Calendar and Date classes, namely January 1, 1970,
+ * 00:00:00 GMT. All UTC times returned are thus referred to GMT.
  *
- * The Calendar is constructed using the GMT time zone. This prevents
- * offsets between dates computed using the local time zone and those
- * referred to the reference epoch of the Java Calendar and Date classes,
- * namely January 1, 1970, 00:00:00 GMT. All UTC times returned are thus
- * referred to GMT.
- *
- * @author      Rob Davies
- * @author      Bernard Schutz
- * @created     27 October 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Rob Davies
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class GPSCalendar extends GregorianCalendar {
 
     /**
-     * The number of milliseconds from the reference epoch of the Calendar
-     * (which is the time January 1, 1970, 00:00:00 GMT) to
-     * the GPS reference epoch (January 6, 1980, 00:00:00 GMT).
+     * The number of milliseconds from the reference epoch of the Calendar (which is the time January 1, 1970, 00:00:00
+     * GMT) to the GPS reference epoch (January 6, 1980, 00:00:00 GMT).
      */
     private long gpsEpochMSec = 315964800000L;
 
     /**
-     * Default empty constructor. The Calendar is set to the present time
-     * using the GMT time zone.
+     * Default empty constructor. The Calendar is set to the present time using the GMT time zone.
      */
     public GPSCalendar() {
         super(TimeZone.getTimeZone("GMT"));
@@ -106,8 +97,7 @@ public class GPSCalendar extends GregorianCalendar {
     }
 
     /**
-     * Construct a Calendar using the GPS time in milliseconds to define
-     * the time and setting the time zone to GMT.
+     * Construct a Calendar using the GPS time in milliseconds to define the time and setting the time zone to GMT.
      */
     public GPSCalendar(long gpsMilliSec) {
         super(TimeZone.getTimeZone("GMT"));
@@ -118,8 +108,7 @@ public class GPSCalendar extends GregorianCalendar {
     }
 
     /**
-     * Construct a GPSCalendar Calendar using conventional time notation
-     * (not hours) as referred to GMT.
+     * Construct a GPSCalendar Calendar using conventional time notation (not hours) as referred to GMT.
      */
     public GPSCalendar(int year, int month, int day, int min, int sec) {
         super(TimeZone.getTimeZone("GMT"));
@@ -131,8 +120,7 @@ public class GPSCalendar extends GregorianCalendar {
     }
 
     /**
-     * Construct a GPSCalendar Calendar using conventional time notation
-     * (including hours) as referred to GMT.
+     * Construct a GPSCalendar Calendar using conventional time notation (including hours) as referred to GMT.
      */
     public GPSCalendar(int year, int month, int day, int hour, int min, int sec) {
         super(TimeZone.getTimeZone("GMT"));
@@ -159,11 +147,9 @@ public class GPSCalendar extends GregorianCalendar {
      */
 
     /**
-     * Get the GPS seconds corresponding to the time set in the current
-     * Calendar. Fractions of a second are truncated. Avoid using this
-     * method because its name is ambiguous. Use the identical method
-     * getGPSSeconds(), for which this is an alias. Kept for compatibility
-     * with previous versions.
+     * Get the GPS seconds corresponding to the time set in the current Calendar. Fractions of a second are truncated.
+     * Avoid using this method because its name is ambiguous. Use the identical method getGPSSeconds(), for which this
+     * is an alias. Kept for compatibility with previous versions.
      *
      * @return long The GPS time in seconds corresponding to this time
      */
@@ -172,8 +158,7 @@ public class GPSCalendar extends GregorianCalendar {
     }
 
     /**
-     * Get the GPS seconds corresponding to the time set in the current
-     * Calendar. Fractions of a second are truncated.
+     * Get the GPS seconds corresponding to the time set in the current Calendar. Fractions of a second are truncated.
      *
      * @return long The GPS time in seconds corresponding to this time
      */
@@ -189,8 +174,7 @@ public class GPSCalendar extends GregorianCalendar {
     }
 
     /**
-     * Get the GPS time in milliseconds corresponding to the time set
-     * in the current Calendar.
+     * Get the GPS time in milliseconds corresponding to the time set in the current Calendar.
      *
      * @return long The GPS time in milliseconds corresponding to this time
      */
@@ -206,8 +190,7 @@ public class GPSCalendar extends GregorianCalendar {
     }
 
     /**
-     * Set the time of this Calendar by giving the GPS time in
-     * seconds.
+     * Set the time of this Calendar by giving the GPS time in seconds.
      *
      * @param gpsTime The GPS time in seconds
      */
@@ -217,9 +200,8 @@ public class GPSCalendar extends GregorianCalendar {
     }
 
     /**
-     * Get the time corresponding to the date of this Calendar
-     * in milliseconds from the reference time for Java Calendars (not
-     * the GPS time in milliseconds).
+     * Get the time corresponding to the date of this Calendar in milliseconds from the reference time for Java
+     * Calendars (not the GPS time in milliseconds).
      *
      * @return long The Calendar time in milliseconds
      */

@@ -16,21 +16,19 @@
 
 package org.trianacode.taskgraph.clipin;
 
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.Task;
-
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.Task;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 28, 2009: 5:46:53 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ClipInBucket implements Serializable {
@@ -60,8 +58,9 @@ public class ClipInBucket implements Serializable {
     ClipInBucket(ClipInBucket bucket, Node node) {
         String names[] = bucket.getClipInNames();
 
-        for (int count = 0; count < names.length; count++)
+        for (int count = 0; count < names.length; count++) {
             this.bucket.put(names[count], bucket.getClipIn(names[count], node));
+        }
     }
 
 
@@ -81,9 +80,8 @@ public class ClipInBucket implements Serializable {
 
 
     /**
-     * Inserts the clip-ins in the specified clip-in bucket into this bucket,
-     * intializing all the clip-ins in the insertion bucket. This method is
-     * called when data is input by a unit.
+     * Inserts the clip-ins in the specified clip-in bucket into this bucket, intializing all the clip-ins in the
+     * insertion bucket. This method is called when data is input by a unit.
      *
      * @param insert the clip-ins to be inserted into the bucket
      * @param node   the node the data arrived on
@@ -92,14 +90,17 @@ public class ClipInBucket implements Serializable {
         String[] names = insert.getClipInNames();
         Object[] clipins = new Object[names.length];
 
-        for (int count = 0; count < clipins.length; count++)
+        for (int count = 0; count < clipins.length; count++) {
             clipins[count] = insert.getClipIn(names[count]);
+        }
 
-        for (int count = 0; count < names.length; count++)
+        for (int count = 0; count < names.length; count++) {
             initialize(names[count], clipins[count], node);
+        }
 
-        for (int count = 0; count < names.length; count++)
+        for (int count = 0; count < names.length; count++) {
             bucket.put(names[count], clipins[count]);
+        }
     }
 
     /**
@@ -108,22 +109,24 @@ public class ClipInBucket implements Serializable {
     private void initialize(String name, Object clipin, Node node) {
         Object exist = null;
 
-        if (bucket.containsKey(name))
+        if (bucket.containsKey(name)) {
             exist = bucket.get(name);
+        }
 
         if (exist != clipin) {
-            if ((clipin != null) && (clipin instanceof ClipIn))
+            if ((clipin != null) && (clipin instanceof ClipIn)) {
                 ((ClipIn) clipin).initializeAttach(new AttachInfo(task, node, this));
+            }
 
-            if ((exist != null) && (exist instanceof ClipIn))
+            if ((exist != null) && (exist instanceof ClipIn)) {
                 ((ClipIn) exist).finalizeAttach(new AttachInfo(task, null, this));
+            }
         }
     }
 
     /**
-     * Extracts a copy of the clip-in bucket for attaching to the data being
-     * output from the task, finializing all the clip-ins in the extracted bucket
-     * This method is called when data is output by a unit.
+     * Extracts a copy of the clip-in bucket for attaching to the data being output from the task, finializing all the
+     * clip-ins in the extracted bucket This method is called when data is output by a unit.
      *
      * @param node the node the data is being output from
      */
@@ -132,8 +135,8 @@ public class ClipInBucket implements Serializable {
     }
 
     /**
-     * Removes and finalizes all the clip-ins currently in the bucket. This
-     * method is usually called after a unit has finished processing
+     * Removes and finalizes all the clip-ins currently in the bucket. This method is usually called after a unit has
+     * finished processing
      */
     public void empty() {
         Object clipin;
@@ -141,8 +144,9 @@ public class ClipInBucket implements Serializable {
         for (Iterator iter = bucket.values().iterator(); iter.hasNext();) {
             clipin = iter.next();
 
-            if (clipin instanceof ClipIn)
+            if (clipin instanceof ClipIn) {
                 ((ClipIn) clipin).finalizeAttach(new AttachInfo(task, null, this));
+            }
         }
 
         bucket.clear();
@@ -150,9 +154,8 @@ public class ClipInBucket implements Serializable {
 
 
     /**
-     * Puts the specified clip-in into the bucket, initializing the clip-in
-     * being inserted. If there is already a clip-in for the specified name then
-     * that clip-in is finialized and removed.
+     * Puts the specified clip-in into the bucket, initializing the clip-in being inserted. If there is already a
+     * clip-in for the specified name then that clip-in is finialized and removed.
      */
     public void putClipIn(String name, Object clipin) {
         initialize(name, clipin, null);
@@ -160,8 +163,7 @@ public class ClipInBucket implements Serializable {
     }
 
     /**
-     * Removes the clip-in for the specified name from the bucket. The clip-in
-     * being removed is finalized.
+     * Removes the clip-in for the specified name from the bucket. The clip-in being removed is finalized.
      *
      * @return the removed clip-in (or null if unknown)
      */
@@ -169,26 +171,25 @@ public class ClipInBucket implements Serializable {
         if (bucket.containsKey(name)) {
             Object clipin = bucket.get(name);
 
-            if (clipin instanceof ClipIn)
+            if (clipin instanceof ClipIn) {
                 ((ClipIn) clipin).finalizeAttach(new AttachInfo(task, null, this));
+            }
         }
 
         return bucket.remove(name);
     }
 
     /**
-     * @return the clip-in with the specified name, or null if none exists.
-     *         If the clip-in object is an instance of the ClipIn interface then
-     *         a finalized copy is returned.
+     * @return the clip-in with the specified name, or null if none exists. If the clip-in object is an instance of the
+     *         ClipIn interface then a finalized copy is returned.
      */
     public Object getClipIn(String name) {
         return getClipIn(name, null);
     }
 
     /**
-     * @return the clip-in with the specified name, or null if none exists.
-     *         If the clip-in object is an instance of the ClipIn interface then
-     *         a finalized copy is returned.
+     * @return the clip-in with the specified name, or null if none exists. If the clip-in object is an instance of the
+     *         ClipIn interface then a finalized copy is returned.
      */
     private Object getClipIn(String name, Node node) {
         if (bucket.containsKey(name)) {
@@ -197,13 +198,15 @@ public class ClipInBucket implements Serializable {
             if (clipin instanceof ClipIn) {
                 clipin = ((ClipIn) clipin).clone();
 
-                if (isAttached())
+                if (isAttached()) {
                     ((ClipIn) clipin).finalizeAttach(new AttachInfo(task, node, this));
+                }
             }
 
             return clipin;
-        } else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -234,10 +237,11 @@ public class ClipInBucket implements Serializable {
             key = (String) enumeration.nextElement();
             clipin = bucket.get(key);
 
-            if (clipin instanceof ClipIn)
+            if (clipin instanceof ClipIn) {
                 store.setClipIn(key, ((ClipIn) clipin).clone());
-            else
+            } else {
                 store.setClipIn(key, clipin);
+            }
         }
 
         return store;
@@ -247,13 +251,15 @@ public class ClipInBucket implements Serializable {
      * Restores the state stored in a clip-in store
      */
     public void restoreClipInStore(ClipInStore store) {
-        if (!store.getTask().getInstanceID().equals(task.getInstanceID()))
+        if (!store.getTask().getInstanceID().equals(task.getInstanceID())) {
             throw (new RuntimeException("ClipIn Bucket Error: Attempt to restore ClipInStore to different task"));
+        }
 
         bucket.clear();
 
         String[] names = store.getClipInNames();
-        for (int count = 0; count < names.length; count++)
+        for (int count = 0; count < names.length; count++) {
             bucket.put(names[count], store.getClipIn(names[count]));
+        }
     }
 }

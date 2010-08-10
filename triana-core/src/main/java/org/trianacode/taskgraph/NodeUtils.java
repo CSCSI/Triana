@@ -62,10 +62,8 @@ package org.trianacode.taskgraph;
 /**
  * A suite of utility methods that make handling control tasks easier
  *
- * @author      Ian Wang
- * @created     Today's date
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class NodeUtils {
 
@@ -77,10 +75,13 @@ public class NodeUtils {
         TaskGraph taskgraph = top.getTask().getParent();
 
         while ((top != null) && (taskgraph.getControlTask() == top.getTask())) {
-            if (top.isInputNode())
-                top = top.getTask().getDataOutputNode(taskgraph.getDataOutputNodeCount() + top.getNodeIndex()).getCable().getReceivingNode().getTopLevelNode();
-            else
-                top = top.getTask().getDataInputNode(taskgraph.getDataInputNodeCount() + top.getNodeIndex()).getCable().getSendingNode().getTopLevelNode();
+            if (top.isInputNode()) {
+                top = top.getTask().getDataOutputNode(taskgraph.getDataOutputNodeCount() + top.getNodeIndex())
+                        .getCable().getReceivingNode().getTopLevelNode();
+            } else {
+                top = top.getTask().getDataInputNode(taskgraph.getDataInputNodeCount() + top.getNodeIndex()).getCable()
+                        .getSendingNode().getTopLevelNode();
+            }
 
             taskgraph = top.getTask().getParent();
         }
@@ -103,24 +104,33 @@ public class NodeUtils {
         Node bottom = node.getBottomLevelNode();
         Node connect = null;
 
-        if (bottom.isConnected())
-            if (bottom.isInputNode())
+        if (bottom.isConnected()) {
+            if (bottom.isInputNode()) {
                 connect = bottom.getCable().getSendingNode();
-            else
+            } else {
                 connect = bottom.getCable().getReceivingNode();
+            }
+        }
 
         while (bottom.isConnected() && (bottom.getTask().getParent() != null) &&
                 (bottom.getTask().getParent().getControlTask() == connect.getTask())) {
-            if (connect.isInputNode())
-                bottom = connect.getTask().getDataOutputNode(connect.getNodeIndex() - connect.getTask().getParent().getDataInputNodeCount()).getBottomLevelNode();
-            else
-                bottom = connect.getTask().getDataInputNode(connect.getNodeIndex() - connect.getTask().getParent().getDataOutputNodeCount()).getBottomLevelNode();
+            if (connect.isInputNode()) {
+                bottom = connect.getTask().getDataOutputNode(
+                        connect.getNodeIndex() - connect.getTask().getParent().getDataInputNodeCount())
+                        .getBottomLevelNode();
+            } else {
+                bottom = connect.getTask().getDataInputNode(
+                        connect.getNodeIndex() - connect.getTask().getParent().getDataOutputNodeCount())
+                        .getBottomLevelNode();
+            }
 
-            if (bottom.isConnected())
-                if (bottom.isInputNode())
+            if (bottom.isConnected()) {
+                if (bottom.isInputNode()) {
                     connect = bottom.getCable().getSendingNode();
-                else
+                } else {
                     connect = bottom.getCable().getReceivingNode();
+                }
+            }
         }
 
         return bottom;

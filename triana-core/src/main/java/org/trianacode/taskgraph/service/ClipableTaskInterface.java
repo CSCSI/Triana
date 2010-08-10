@@ -63,13 +63,10 @@ import org.trianacode.taskgraph.clipin.ClipInStore;
 
 
 /**
- * The interface used by Unit to access RunnableTask. RunnableTasks implement
- * the data handling capability of a Task.
+ * The interface used by Unit to access RunnableTask. RunnableTasks implement the data handling capability of a Task.
  *
- * @author      Ian Wang
- * @created     21st February 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface ClipableTaskInterface {
@@ -80,15 +77,13 @@ public interface ClipableTaskInterface {
     public Object getClipIn(String name);
 
     /**
-     * @return the clip-in in with the specified name that arrived with the
-     * given object. Only the clip-ins of the objects for the current
-     * process can be retrieved.
+     * @return the clip-in in with the specified name that arrived with the given object. Only the clip-ins of the
+     *         objects for the current process can be retrieved.
      */
     public Object getClipIn(Object data, String name);
 
     /**
-     * @return true if a clip-in with the specified name exists in the
-     * clip-in bucket,
+     * @return true if a clip-in with the specified name exists in the clip-in bucket,
      */
     public boolean isClipInName(String name);
 
@@ -98,13 +93,13 @@ public interface ClipableTaskInterface {
     public void putClipIn(String name, Object clipin);
 
     /**
-     * Queue the specified clip-in to be inserted into the clip-in bucket
-     * when the task is next run
+     * Queue the specified clip-in to be inserted into the clip-in bucket when the task is next run
      */
     public void queueClipIn(String name, Object clipin);
 
     /**
      * Remove the clip-in with the specified name from the clip-in bucket
+     *
      * @return the removed clip-in (or null if unknown)
      */
     public Object removeClipIn(String name);

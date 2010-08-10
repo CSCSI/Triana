@@ -58,6 +58,12 @@
  */
 package org.trianacode.gui.action.clipboard;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JMenu;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.hci.GUIEnv;
@@ -66,17 +72,11 @@ import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
 /**
  * Action class to handle all "copy" actions.
  *
- * @author  Matthew Shields
- * @created May 2, 2003: 3:49:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CopyAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -106,8 +106,7 @@ public class CopyAction extends AbstractAction implements ActionDisplayOptions {
 
         if (Env.os().equals("osx")) {
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK));
-        }
-        else {
+        } else {
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
         }
     }

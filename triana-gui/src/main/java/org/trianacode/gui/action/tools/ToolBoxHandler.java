@@ -58,6 +58,10 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.Frame;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ToolBoxPanel;
 import org.trianacode.gui.windows.ParameterWindow;
@@ -65,17 +69,11 @@ import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
 /**
  * Handler class for displaying the toolbox path panel
-
- * @author  Matthew Shields
- * @created Apr 7, 2003: 2:08:32 PM
+ *
+ * @author Matthew Shields
  * @version $Revsion$
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolBoxHandler implements WindowListener {
 
@@ -89,56 +87,47 @@ public class ToolBoxHandler implements WindowListener {
     }
 
     /**
-     * Invoked when the user attempts to close the window
-     * from the window's system menu.  If the program does not
-     * explicitly hide or dispose the window while processing
-     * this event, the window close operation will be cancelled.
+     * Invoked when the user attempts to close the window from the window's system menu.  If the program does not
+     * explicitly hide or dispose the window while processing this event, the window close operation will be cancelled.
      */
     public void windowClosing(WindowEvent e) {
     }
 
     /**
-     * Invoked when a window has been closed as the result
-     * of calling dispose on the window.
+     * Invoked when a window has been closed as the result of calling dispose on the window.
      */
     public void windowClosed(WindowEvent e) {
     }
 
     /**
-     * Invoked when a window is changed from a normal to a
-     * minimized state. For many platforms, a minimized window
-     * is displayed as the icon specified in the window's
-     * iconImage property.
+     * Invoked when a window is changed from a normal to a minimized state. For many platforms, a minimized window is
+     * displayed as the icon specified in the window's iconImage property.
+     *
      * @see Frame#setIconImage
      */
     public void windowIconified(WindowEvent e) {
     }
 
     /**
-     * Invoked when a window is changed from a minimized
-     * to a normal state.
+     * Invoked when a window is changed from a minimized to a normal state.
      */
     public void windowDeiconified(WindowEvent e) {
     }
 
     /**
-     * Invoked when the Window is set to be the active Window. Only a Frame or
-     * a Dialog can be the active Window. The native windowing system may
-     * denote the active Window or its children with special decorations, such
-     * as a highlighted title bar. The active Window is always either the
-     * focused Window, or the first Frame or Dialog that is an owner of the
-     * focused Window.
+     * Invoked when the Window is set to be the active Window. Only a Frame or a Dialog can be the active Window. The
+     * native windowing system may denote the active Window or its children with special decorations, such as a
+     * highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that
+     * is an owner of the focused Window.
      */
     public void windowActivated(WindowEvent e) {
     }
 
     /**
-     * Invoked when a Window is no longer the active Window. Only a Frame or a
-     * Dialog can be the active Window. The native windowing system may denote
-     * the active Window or its children with special decorations, such as a
-     * highlighted title bar. The active Window is always either the focused
-     * Window, or the first Frame or Dialog that is an owner of the focused
-     * Window.
+     * Invoked when a Window is no longer the active Window. Only a Frame or a Dialog can be the active Window. The
+     * native windowing system may denote the active Window or its children with special decorations, such as a
+     * highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that
+     * is an owner of the focused Window.
      */
     public void windowDeactivated(WindowEvent e) {
     }
@@ -154,7 +143,7 @@ public class ToolBoxHandler implements WindowListener {
 
 
         paramwin.setLocation((paramwin.getToolkit().getScreenSize().width / 2) - (paramwin.getSize().width / 2),
-                             (paramwin.getToolkit().getScreenSize().height / 2) - (paramwin.getSize().height / 2));
+                (paramwin.getToolkit().getScreenSize().height / 2) - (paramwin.getSize().height / 2));
 
         paramwin.setVisible(true);
 

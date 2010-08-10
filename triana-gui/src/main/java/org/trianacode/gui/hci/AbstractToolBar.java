@@ -59,16 +59,21 @@
 
 package org.trianacode.gui.hci;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JToolBar;
 
 /**
  * An abstract toolbar class that provides functionality for all Triana toolbars
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 29th March 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class AbstractToolBar extends JToolBar {

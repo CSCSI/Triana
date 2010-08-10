@@ -58,21 +58,26 @@
  */
 package org.trianacode.gui.windows;
 
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.util.Env;
 
 /**
  * A dialog for selecting an item from a list
  *
- * @author      Ian Wang
- * @created     9th August
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class ComboDialog extends JDialog implements ActionListener {
 
@@ -116,7 +121,7 @@ public class ComboDialog extends JDialog implements ActionListener {
     /**
      * Constructs a modal combo dialog offering the specified item choices
      *
-     * @param title the dialog title
+     * @param title    the dialog title
      * @param editable a flag indicating whether the combo is editable
      */
     public ComboDialog(String[] items, Frame parent, String title, boolean editable) {
@@ -127,7 +132,7 @@ public class ComboDialog extends JDialog implements ActionListener {
     /**
      * Constructs a modal combo dialog offering the specified item choices
      *
-     * @param title the dialog title
+     * @param title    the dialog title
      * @param editable a flag indicating whether the combo is editable
      */
     public ComboDialog(String[] items, Dialog parent, String title, boolean editable) {
@@ -146,8 +151,9 @@ public class ComboDialog extends JDialog implements ActionListener {
         combo.setEditable(editable);
         combo.setPrototypeDisplayValue("01234567890123456789");
 
-        for (int count = 0; count < items.length; count++)
+        for (int count = 0; count < items.length; count++) {
             model.addElement(items[count]);
+        }
 
         JPanel listpanel = new JPanel(new BorderLayout(3, 0));
         listpanel.add(label, BorderLayout.WEST);
@@ -196,10 +202,11 @@ public class ComboDialog extends JDialog implements ActionListener {
      * @return an array of the selected items, or null if the cancel button was clicked
      */
     public String getSelectedItem() {
-        if (!approve)
+        if (!approve) {
             return null;
-        else
+        } else {
             return (String) combo.getSelectedItem();
+        }
     }
 
 

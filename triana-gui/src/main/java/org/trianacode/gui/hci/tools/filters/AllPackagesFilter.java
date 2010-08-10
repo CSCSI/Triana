@@ -62,13 +62,10 @@ import org.trianacode.gui.hci.ToolFilter;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**
- * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes
- * Input.SignalProc
+ * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes Input.SignalProc
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class AllPackagesFilter implements ToolFilter {
 
@@ -96,8 +93,8 @@ public class AllPackagesFilter implements ToolFilter {
 
 
     /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     *         ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * @return the filtered packages for the tool, empty array if the tool is ignored. (e.g. a tool in SignalPro.Input
+     *         could become Input.SignalProc)
      */
     public String[] getFilteredPackage(Tool tool) {
         String pkg = tool.getToolPackage();
@@ -124,15 +121,14 @@ public class AllPackagesFilter implements ToolFilter {
     }
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * This method is called when the filter is choosen. The initialisation of the filter should be implemented here
      */
     public void init() {
     }
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * This method is called when the filter is unchoosen. Any disposal related to the filter should be implemented
+     * here
      */
     public void dispose() {
     }

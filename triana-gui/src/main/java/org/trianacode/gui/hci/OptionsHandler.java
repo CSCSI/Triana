@@ -58,21 +58,18 @@
  */
 package org.trianacode.gui.hci;
 
+import javax.swing.JOptionPane;
 import org.trianacode.gui.panels.OptionsPanel;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-
 /**
  * A self contained class for listening a user request for the options panel and displaying it
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Apr 29, 2003: 1:42:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class OptionsHandler {
 
@@ -91,7 +88,8 @@ public class OptionsHandler {
         do {
             panel = new OptionsPanel(tools);
             panel.init();
-            ParameterWindow paramwin = new ParameterWindow(GUIEnv.getApplicationFrame(), WindowButtonConstants.OK_CANCEL_BUTTONS, true);
+            ParameterWindow paramwin = new ParameterWindow(GUIEnv.getApplicationFrame(),
+                    WindowButtonConstants.OK_CANCEL_BUTTONS, true);
             paramwin.setTitle(Env.getString("TrianaOptionTitle"));
             paramwin.setParameterPanel(panel);
 

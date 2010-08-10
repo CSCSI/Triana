@@ -1,30 +1,27 @@
 package org.trianacode.taskgraph.databus;
 
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.service.RunnableNodeInterface;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
- * The databus accepts a number of data stores that are capable of storing and retrieving objects
- * using their URL as an identifier.   Thus, objects are stored:
- *
+ * The databus accepts a number of data stores that are capable of storing and retrieving objects using their URL as an
+ * identifier.   Thus, objects are stored:
+ * <p/>
  * put(url, object)
- *
+ * <p/>
  * into the store.
- *
+ * <p/>
  * Once the data has been retrieved
- * 
- * User: scmijt
- * Date: Jul 23, 2010
- * Time: 4:30:01 PM
- * To change this template use File | Settings | File Templates.
+ * <p/>
+ * User: scmijt Date: Jul 23, 2010 Time: 4:30:01 PM To change this template use File | Settings | File Templates.
  */
 public class DataBus extends ArrayList<DatabusInterface> {
 
-    public enum DataBusType {LOCAL_HTTP, ATTIC};
-    
+    public enum DataBusType {
+        LOCAL_HTTP, ATTIC
+    }
+
+    ;
+
     private static DataBus databuses = new DataBus();
 
     static LocalDataBus local = new LocalDataBus();
@@ -37,23 +34,24 @@ public class DataBus extends ArrayList<DatabusInterface> {
 
     /**
      * Gets the databus objects that are registered on this VM.
-     * 
+     *
      * @return
      */
-    public static DataBus getDataBus(){
+    public static DataBus getDataBus() {
         return databuses;
     }
 
     /**
      * Gets a databus for a particular databus type e.g. local, http
-     * 
+     *
      * @param type
      * @return
      */
     public static DatabusInterface getDataBusFor(DataBusType type) {
-        if (type.equals(DataBusType.LOCAL_HTTP))
+        if (type.equals(DataBusType.LOCAL_HTTP)) {
             return local;
-        else
+        } else {
             return null;
+        }
     }
 }

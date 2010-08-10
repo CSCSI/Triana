@@ -63,8 +63,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class UrlHistory extends Vector {
     private int urlIndex;
@@ -87,7 +86,9 @@ public class UrlHistory extends Vector {
         urlIndex++;
         urlCount = urlIndex + 1;
 
-        if (urlCount > elementCount) setSize(urlCount + 10);
+        if (urlCount > elementCount) {
+            setSize(urlCount + 10);
+        }
 
         setElementAt(url, urlIndex);
         // System.out.println("*** Adding URL ***");
@@ -95,7 +96,9 @@ public class UrlHistory extends Vector {
     }
 
     public URL getPreviousUrl() {
-        if (urlIndex <= 0) return null;
+        if (urlIndex <= 0) {
+            return null;
+        }
 
         urlIndex--;
         processUrlEvent(new UrlEvent(this));
@@ -103,7 +106,9 @@ public class UrlHistory extends Vector {
     }
 
     public URL getNextUrl() {
-        if (urlIndex >= (urlCount - 1)) return null;
+        if (urlIndex >= (urlCount - 1)) {
+            return null;
+        }
 
         urlIndex++;
         processUrlEvent(new UrlEvent(this));

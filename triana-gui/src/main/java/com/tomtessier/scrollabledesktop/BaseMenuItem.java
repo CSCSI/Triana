@@ -59,16 +59,18 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class creates a generic base menu item. ActionListener, mnemonic,
- * keyboard shortcut, and title are set via the constructor.
+ * <p/>
+ * This class creates a generic base menu item. ActionListener, mnemonic, keyboard shortcut, and title are set via the
+ * constructor.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  29-Jan-2001
@@ -80,11 +82,10 @@ public class BaseMenuItem extends JMenuItem {
     /**
      * creates the BaseMenuItem
      *
-     * @param listener the action listener to assign
+     * @param listener  the action listener to assign
      * @param itemTitle the title of the item
-     * @param mnemonic the mnemonic used to access the menu
-     * @param shortcut the keyboard shortcut used to access the menu.
-     *      -1 indicates no shortcut.
+     * @param mnemonic  the mnemonic used to access the menu
+     * @param shortcut  the keyboard shortcut used to access the menu. -1 indicates no shortcut.
      */
     public BaseMenuItem(ActionListener listener,
                         String itemTitle,

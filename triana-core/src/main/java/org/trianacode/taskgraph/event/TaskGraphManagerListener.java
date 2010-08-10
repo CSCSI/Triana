@@ -60,13 +60,11 @@
 package org.trianacode.taskgraph.event;
 
 /**
- * A listener interface implemented by classes interested in receiving taskgraph manager events,
- * such as notification when a new taskgraph is created.
+ * A listener interface implemented by classes interested in receiving taskgraph manager events, such as notification
+ * when a new taskgraph is created.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 22nd March 2006
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public interface TaskGraphManagerListener {

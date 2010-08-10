@@ -17,8 +17,8 @@
 package org.trianacode.taskgraph;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class Description Here...
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TaskGraphContext {
 
-    private Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
+    private Map<String, Object> properties = new HashMap<String, Object>();
 
     public void setProperty(String key, Object value) {
         properties.put(key, value);

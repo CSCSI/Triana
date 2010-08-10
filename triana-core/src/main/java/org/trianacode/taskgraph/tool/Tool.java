@@ -58,6 +58,8 @@
  */
 package org.trianacode.taskgraph.tool;
 
+import java.net.URL;
+
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.TaskException;
@@ -197,7 +199,7 @@ public interface Tool {
      * @return the location directory that held the definition file this tool was generated from. This could be XML or a
      *         Java .class file. Other things might be supported in the future.
      */
-    public String getDefinitionPath();
+    public URL getDefinitionPath();
 
     /**
      * @return the path to the toolbox that this tool has been loaded from.
@@ -397,7 +399,7 @@ public interface Tool {
     /**
      * Used by ToolTable to set the location of the file this tool was loaded from
      */
-    public void setDefinitionPath(String filepath);
+    public void setDefinitionPath(URL url);
 
     /**
      * Used by ToolTable to set the location of the toolbox this tool was loaded from

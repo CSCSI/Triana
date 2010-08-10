@@ -60,21 +60,24 @@
 package org.trianacode.gui.main;
 
 
-import org.trianacode.taskgraph.*;
-
-import java.awt.*;
+import java.awt.Point;
 import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.TPoint;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.TaskLayoutUtils;
+
 /**
  * Algorithms for organizing the task gtaph layout
  *
- * @author      Ian Wang
- * @created     19th April 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TaskGraphOrganize {
@@ -86,16 +89,16 @@ public class TaskGraphOrganize {
 
 
     public static void organizeTaskGraph(int policy, TaskGraph taskgraph) {
-        if (policy == TREE_ORGANIZE)
+        if (policy == TREE_ORGANIZE) {
             treeOrganize(taskgraph);
-        else
+        } else {
             graphOrganize(taskgraph);
+        }
     }
 
 
     /**
-     * Organises the taskgraph (and its sub-taskgraphs) into a tree
-     * pattern.
+     * Organises the taskgraph (and its sub-taskgraphs) into a tree pattern.
      */
     public static void treeOrganize(TaskGraph taskgraph) {
         Task[] endtasks = getEndTasks(taskgraph);
@@ -109,9 +112,11 @@ public class TaskGraphOrganize {
         }
 
         Task[] tasks = taskgraph.getTasks(false);
-        for (int count = 0; count < tasks.length; count++)
-            if (tasks[count] instanceof TaskGraph)
+        for (int count = 0; count < tasks.length; count++) {
+            if (tasks[count] instanceof TaskGraph) {
                 treeOrganize((TaskGraph) tasks[count]);
+            }
+        }
     }
 
     /**
@@ -127,20 +132,22 @@ public class TaskGraphOrganize {
             outnodes = tasks[count].getDataOutputNodes();
             endtask = true;
 
-            for (int nodecount = 0; (nodecount < outnodes.length) && endtask; nodecount++)
-                if (outnodes[nodecount].isConnected())
+            for (int nodecount = 0; (nodecount < outnodes.length) && endtask; nodecount++) {
+                if (outnodes[nodecount].isConnected()) {
                     endtask = false;
+                }
+            }
 
-            if (endtask)
+            if (endtask) {
                 endtasks.add(tasks[count]);
+            }
         }
 
         return (Task[]) endtasks.toArray(new Task[endtasks.size()]);
     }
 
     /**
-     * Recursively organize the task and its subtasks, returning the area
-     * of the organized tasks
+     * Recursively organize the task and its subtasks, returning the area of the organized tasks
      */
     private static Dimension2D organizeTask(Task task, ArrayList handled, double top) {
         Node[] innodes = task.getInputNodes();
@@ -150,15 +157,17 @@ public class TaskGraphOrganize {
 
         handled.add(task);
 
-        for (int count = 0; count < innodes.length; count++)
+        for (int count = 0; count < innodes.length; count++) {
             if ((innodes[count].isConnected()) && (!handled.contains(innodes[count].getCable().getSendingTask()))) {
                 subsize = organizeTask(innodes[count].getCable().getSendingTask(), handled, height + top);
 
-                if (subsize.getWidth() > width)
+                if (subsize.getWidth() > width) {
                     width = subsize.getWidth();
+                }
 
                 height += subsize.getHeight() + 0.5;
             }
+        }
 
         height = Math.max(height - 0.5, 1);
         width += 0.5;
@@ -171,8 +180,7 @@ public class TaskGraphOrganize {
 
 
     /**
-     * Using a hill-climbing heuristic to organize the taskgraph so that a
-     * there is minimal cable conflicts
+     * Using a hill-climbing heuristic to organize the taskgraph so that a there is minimal cable conflicts
      */
     private static void graphOrganize(TaskGraph taskgraph) {
         Task tasks[] = taskgraph.getTasks(false);
@@ -245,23 +253,25 @@ public class TaskGraphOrganize {
         do {
             x = (int) Math.floor(Math.random() * ((layoutgrid.length - 1) / 2)) * 2 + 1;
             y = (int) Math.floor(Math.random() * ((layoutgrid[0].length - 1) / 2)) * 2 + 1;
-        } while(layoutgrid[x][y] != null);
+        } while (layoutgrid[x][y] != null);
 
         return new Point(x, y);
     }
 
     /**
-     * @return the score for the give layout based on the number of cable
-     * conflicts
+     * @return the score for the give layout based on the number of cable conflicts
      */
-    private static int[][] initScoreGrid(Task[][] layoutgrid, Task[]  tasks, Hashtable postable, Hashtable cablepoints) {
+    private static int[][] initScoreGrid(Task[][] layoutgrid, Task[] tasks, Hashtable postable, Hashtable cablepoints) {
         Cable[] cables = TaskGraphUtils.getInternalCables(tasks);
         int[][] scoregrid = new int[layoutgrid.length][layoutgrid[0].length];
 
-        for (int count1 = 0; count1 < scoregrid.length; count1++)
-            for (int count2 = 0; count2 < scoregrid[count1].length; count2++)
-                if (layoutgrid[count1][count2] != null)
+        for (int count1 = 0; count1 < scoregrid.length; count1++) {
+            for (int count2 = 0; count2 < scoregrid[count1].length; count2++) {
+                if (layoutgrid[count1][count2] != null) {
                     updateScoreGrid(scoregrid, new Point(count1, count2), 1);
+                }
+            }
+        }
 
         Point[] cablepos;
 
@@ -269,8 +279,9 @@ public class TaskGraphOrganize {
             cablepos = getCablePositions(cables[count], postable);
             cablepoints.put(cables[count], cablepos);
 
-            for (int pcount = 0; pcount < cablepos.length; pcount++)
+            for (int pcount = 0; pcount < cablepos.length; pcount++) {
                 updateScoreGrid(scoregrid, cablepos[pcount], 1);
+            }
         }
 
         return scoregrid;
@@ -279,7 +290,8 @@ public class TaskGraphOrganize {
     /**
      * change the score grid to reflect the changes in the task positions
      */
-    private static void updateScoreGrid(Task task, int[][] scoregrid, Hashtable postable, Point newpos, Hashtable cablepoints) {
+    private static void updateScoreGrid(Task task, int[][] scoregrid, Hashtable postable, Point newpos,
+                                        Hashtable cablepoints) {
         Node[] innodes;
         Node[] outnodes;
         innodes = task.getInputNodes();
@@ -290,35 +302,42 @@ public class TaskGraphOrganize {
         postable.put(task, newpos);
         updateScoreGrid(scoregrid, newpos, 1);
 
-        for (int ncount = 0; ncount < innodes.length; ncount++)
-            if ((innodes[ncount].isConnected()) && (cablepoints.containsKey(innodes[ncount].getCable())))
+        for (int ncount = 0; ncount < innodes.length; ncount++) {
+            if ((innodes[ncount].isConnected()) && (cablepoints.containsKey(innodes[ncount].getCable()))) {
                 updateCable(innodes[ncount].getCable(), scoregrid, postable, cablepoints);
+            }
+        }
 
-        for (int ncount = 0; ncount < outnodes.length; ncount++)
-            if ((outnodes[ncount].isConnected()) && (cablepoints.containsKey(outnodes[ncount].getCable())))
+        for (int ncount = 0; ncount < outnodes.length; ncount++) {
+            if ((outnodes[ncount].isConnected()) && (cablepoints.containsKey(outnodes[ncount].getCable()))) {
                 updateCable(outnodes[ncount].getCable(), scoregrid, postable, cablepoints);
+            }
+        }
     }
 
     /**
      * Update the score grid to reflect the new cable position
      */
     private static void updateCable(Cable cable, int[][] scoregrid, Hashtable postable, Hashtable cablepoints) {
-        Point[] points = (Point []) cablepoints.get(cable);
+        Point[] points = (Point[]) cablepoints.get(cable);
 
-        for (int pcount = 0; pcount < points.length; pcount++)
+        for (int pcount = 0; pcount < points.length; pcount++) {
             updateScoreGrid(scoregrid, points[pcount], -1);
+        }
 
         points = getCablePositions(cable, postable);
         cablepoints.put(cable, points);
 
-        for (int pcount = 0; pcount < points.length; pcount++)
+        for (int pcount = 0; pcount < points.length; pcount++) {
             updateScoreGrid(scoregrid, points[pcount], 1);
+        }
     }
 
     private static void updateScoreGrid(int[][] scoregrid, Point point, int val) {
         if ((point.x >= 0) && (point.x < scoregrid.length) &&
-                (point.y >= 0) && (point.y < scoregrid[0].length))
+                (point.y >= 0) && (point.y < scoregrid[0].length)) {
             scoregrid[point.x][point.y] += val;
+        }
     }
 
     /**
@@ -340,15 +359,17 @@ public class TaskGraphOrganize {
                 points.add(new Point(recpos.x - count - 1, recpos.y));
             }
 
-            if (xdiff > 1)
+            if (xdiff > 1) {
                 for (int count = 0; count < Math.abs(ydiff) + 1; count++) {
-                    if (ydiff > 0)
+                    if (ydiff > 0) {
                         points.add(new Point(sendpos.x + (xdiff / 2), sendpos.y + count));
-                    else
+                    } else {
                         points.add(new Point(sendpos.x + (xdiff / 2), sendpos.y - count));
+                    }
                 }
+            }
         } else {
-            if (Math.abs(ydiff) > 1)
+            if (Math.abs(ydiff) > 1) {
                 for (int count = 0; count < Math.abs(ydiff) / 2; count++) {
                     if (ydiff > 0) {
                         points.add(new Point(sendpos.x + 1, sendpos.y + count));
@@ -358,9 +379,11 @@ public class TaskGraphOrganize {
                         points.add(new Point(recpos.x - 1, recpos.y + count));
                     }
                 }
+            }
 
-            for (int count = 0; count < Math.abs(xdiff) + 3; count++)
+            for (int count = 0; count < Math.abs(xdiff) + 3; count++) {
                 points.add(new Point(sendpos.x + 1 - count, sendpos.y + (ydiff / 2)));
+            }
         }
 
         return (Point[]) points.toArray(new Point[points.size()]);
@@ -373,13 +396,15 @@ public class TaskGraphOrganize {
     private static int getConflictScore(int[][] scoregrid) {
         int score = 0;
 
-        for (int count1 = 0; count1 < scoregrid.length; count1++)
+        for (int count1 = 0; count1 < scoregrid.length; count1++) {
             for (int count2 = 0; count2 < scoregrid[count1].length; count2++) {
                 score += scoregrid[count1][count2];
 
-                if (scoregrid[count1][count2] > 1)
+                if (scoregrid[count1][count2] > 1) {
                     score += (scoregrid[count1][count2] - 1) * GRAPH_CONFLICT_WEIGHT;
+                }
             }
+        }
 
         return score;
     }
@@ -414,7 +439,6 @@ public class TaskGraphOrganize {
         }
 
     }
-
 
 
 }

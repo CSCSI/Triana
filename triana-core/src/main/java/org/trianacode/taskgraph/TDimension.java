@@ -21,9 +21,6 @@ package org.trianacode.taskgraph;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Feb 13, 2008: 8:16:33 PM
- * @date $Date:$ modified by $Author:$
- * Put your notes here...
  */
 
 public class TDimension {

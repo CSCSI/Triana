@@ -74,6 +74,7 @@ import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
+import org.trianacode.taskgraph.util.UrlUtils;
 import org.trianacode.util.Env;
 
 
@@ -765,7 +766,7 @@ public class UnitWizard implements WizardListener {
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
-            tools.refreshLocation(saveFile, placeholder.getToolBox());
+            tools.refreshLocation(UrlUtils.toURL(saveFile), placeholder.getToolBox());
             return true;
         } catch (TaskException except) {
             System.err.println("Error Generating Placeholder: " + except.getMessage());

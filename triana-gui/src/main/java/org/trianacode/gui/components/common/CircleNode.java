@@ -59,22 +59,22 @@
 
 package org.trianacode.gui.components.common;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.AbstractButton;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.TrianaLayoutConstants;
 import org.trianacode.taskgraph.Node;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * A semi circular node
  *
- * @author      Ian Wang
- * @created     18th July 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class CircleNode extends AbstractButton implements NodeComponent {
@@ -100,7 +100,8 @@ public class CircleNode extends AbstractButton implements NodeComponent {
         this.node = node;
         this.connectable = connectable;
 
-        setPreferredSize(new Dimension(TrianaLayoutConstants.DEFAULT_NODE_SIZE.width, TrianaLayoutConstants.DEFAULT_NODE_SIZE.height));
+        setPreferredSize(new Dimension(TrianaLayoutConstants.DEFAULT_NODE_SIZE.width,
+                TrianaLayoutConstants.DEFAULT_NODE_SIZE.height));
     }
 
     /**
@@ -119,8 +120,7 @@ public class CircleNode extends AbstractButton implements NodeComponent {
 
 
     /**
-     * @return true if the node represented by this component can be connected
-     *         to/connected from
+     * @return true if the node represented by this component can be connected to/connected from
      */
     public boolean isConnectable() {
         return connectable;

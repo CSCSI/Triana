@@ -58,19 +58,16 @@
  */
 package org.trianacode.taskgraph.imp;
 
+import java.net.InetAddress;
+
 import org.trianacode.taskgraph.InstanceIDFactory;
 import org.trianacode.taskgraph.Task;
 
-import java.net.InetAddress;
-
 /**
- * A basic implementation of instance id factory that generates unique ids
- * for each task.
+ * A basic implementation of instance id factory that generates unique ids for each task.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 9th May 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class InstanceIDFactoryImp implements InstanceIDFactory {
 
@@ -84,7 +81,8 @@ public class InstanceIDFactoryImp implements InstanceIDFactory {
         String id;
 
         try {
-            id = task.getToolName() + "-" + InetAddress.getLocalHost().getHostAddress() + "-" + factoryid + "-" + System.currentTimeMillis();
+            id = task.getToolName() + "-" + InetAddress.getLocalHost().getHostAddress() + "-" + factoryid + "-" + System
+                    .currentTimeMillis();
         } catch (Exception except) {
             id = task.getToolName() + "-" + factoryid + "-" + System.currentTimeMillis();
         }

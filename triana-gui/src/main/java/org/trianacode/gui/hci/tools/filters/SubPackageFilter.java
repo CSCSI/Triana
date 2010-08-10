@@ -58,20 +58,17 @@
  */
 package org.trianacode.gui.hci.tools.filters;
 
-import org.trianacode.gui.hci.ToolFilter;
-import org.trianacode.taskgraph.tool.Tool;
-
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.trianacode.gui.hci.ToolFilter;
+import org.trianacode.taskgraph.tool.Tool;
+
 /**
- * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes
- * Input.SignalProc
+ * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes Input.SignalProc
  *
- * @author      Ian Wang
- * @created     12th Feb 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class SubPackageFilter implements ToolFilter {
 
@@ -98,16 +95,17 @@ public class SubPackageFilter implements ToolFilter {
 
 
     /**
-     * @return the filtered package for the tool, null if the tool is to be
-     * ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * @return the filtered package for the tool, null if the tool is to be ignored. (e.g. a tool in SignalPro.Input
+     *         could become Input.SignalProc)
      */
     public String[] getFilteredPackage(Tool tool) {
         String[] names = splitPackage(tool.getToolPackage());
 
-        if (names.length < 2)
+        if (names.length < 2) {
             return new String[]{tool.getToolPackage()};
-        else
+        } else {
             return new String[]{names[1]};
+        }
     }
 
     /**
@@ -116,23 +114,23 @@ public class SubPackageFilter implements ToolFilter {
     private static String[] splitPackage(String pack) {
         Vector packagenames = new Vector();
         StringTokenizer tok = new StringTokenizer(pack, ".");
-        while (tok.hasMoreTokens())
+        while (tok.hasMoreTokens()) {
             packagenames.add(tok.nextToken());
+        }
 
         return (String[]) packagenames.toArray(new String[packagenames.size()]);
     }
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * This method is called when the filter is choosen. The initialisation of the filter should be implemented here
      */
     public void init() {
     }
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * This method is called when the filter is unchoosen. Any disposal related to the filter should be implemented
+     * here
      */
     public void dispose() {
     }

@@ -59,6 +59,10 @@
 
 package org.trianacode.gui.components.text;
 
+import java.awt.Component;
+
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import org.trianacode.gui.components.common.CircleNode;
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.TaskComponent;
@@ -66,19 +70,17 @@ import org.trianacode.gui.main.imp.TextSubComponent;
 import org.trianacode.gui.main.imp.TrianaToolLayout;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.event.*;
-
-import javax.swing.*;
-import java.awt.*;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 
 /**
  * A task component that displays a number on the main triana workspace
  *
- * @author      Ian Wang
- * @created     18th July 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TextTaskComponent extends JPanel implements TaskComponent, TaskListener, SwingConstants {
@@ -98,7 +100,8 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
 
     /**
      * Constructs a text task component
-     * @param task the task being represented
+     *
+     * @param task  the task being represented
      * @param param the param name containing the text to be displayed
      */
     public TextTaskComponent(Task task, String param) {
@@ -107,7 +110,8 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
 
     /**
      * Constructs a text task component
-     * @param task the task being represented
+     *
+     * @param task  the task being represented
      * @param param the param name containing the text to be displayed
      * @param align the text alignment (LEFT, RIGHT, CENTER)
      */
@@ -131,15 +135,18 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
         add(textcomp, TrianaToolLayout.MAIN);
 
         Node[] nodes = task.getInputNodes();
-        for(int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             add(new CircleNode(nodes[count]), TrianaToolLayout.INPUT_NODE);
+        }
 
         nodes = task.getOutputNodes();
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             add(new CircleNode(nodes[count]), TrianaToolLayout.OUTPUT_NODE);
+        }
 
-        if (task.isParameterName(param))
+        if (task.isParameterName(param)) {
             textcomp.setText(task.getParameter(param).toString());
+        }
     }
 
     /**
@@ -154,9 +161,11 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
      */
     public NodeComponent getNodeComponent(Node node) {
         Component[] comps = getComponents();
-        for (int count = 0; count < comps.length; count++)
-            if ((comps[count] instanceof NodeComponent) && (((NodeComponent) comps[count]).getNode() == node))
+        for (int count = 0; count < comps.length; count++) {
+            if ((comps[count] instanceof NodeComponent) && (((NodeComponent) comps[count]).getNode() == node)) {
                 return (NodeComponent) comps[count];
+            }
+        }
 
         return null;
     }
@@ -201,10 +210,11 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
      */
     public void parameterUpdated(ParameterUpdateEvent event) {
         if (event.getParameterName().equals(param)) {
-            if (event.getNewValue() != null)
+            if (event.getNewValue() != null) {
                 textcomp.setText(event.getNewValue().toString());
-            else
+            } else {
                 textcomp.setText("");
+            }
 
             invalidateAndRepaint();
         }
@@ -214,10 +224,11 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
      * Called when a data input node is added.
      */
     public void nodeAdded(TaskNodeEvent event) {
-        if (event.getNode().isInputNode())
+        if (event.getNode().isInputNode()) {
             add(new CircleNode(event.getNode()), TrianaToolLayout.INPUT_NODE);
-        else
+        } else {
             add(new CircleNode(event.getNode()), TrianaToolLayout.OUTPUT_NODE);
+        }
 
         invalidateAndRepaint();
     }
@@ -227,9 +238,12 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
      */
     public void nodeRemoved(TaskNodeEvent event) {
         Component[] comps = getComponents();
-        for (int count = 0; count < comps.length; count++)
-            if ((comps[count] instanceof NodeComponent) && (((NodeComponent) comps[count]).getNode() == event.getNode()))
+        for (int count = 0; count < comps.length; count++) {
+            if ((comps[count] instanceof NodeComponent) && (((NodeComponent) comps[count]).getNode() == event
+                    .getNode())) {
                 remove(comps[count]);
+            }
+        }
 
         invalidateAndRepaint();
     }

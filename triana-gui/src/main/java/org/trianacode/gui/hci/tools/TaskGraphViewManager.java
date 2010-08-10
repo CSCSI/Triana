@@ -59,6 +59,12 @@
 
 package org.trianacode.gui.hci.tools;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JPopupMenu;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.RenderingHint;
@@ -67,21 +73,13 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-
 /**
- * The TaskGraphViewManager maintains the current view for each taskgraph and
- * returns the appropriate tree icon, workspace popup, tool component based on
- * that mode. The TaskGraphViewManager also maintains the default view keyed
- * by taskgraph tool class.
+ * The TaskGraphViewManager maintains the current view for each taskgraph and returns the appropriate tree icon,
+ * workspace popup, tool component based on that mode. The TaskGraphViewManager also maintains the default view keyed by
+ * taskgraph tool class.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th May 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class TaskGraphViewManager {
@@ -133,9 +131,8 @@ public class TaskGraphViewManager {
 
 
     /**
-     * Registers a TaskGraphView for a particular taskgraph tool clas. Note
-     * that if a taskgraph has two view then the later registered takes
-     * precedence. Automatically adds the view to the available views list.
+     * Registers a TaskGraphView for a particular taskgraph tool clas. Note that if a taskgraph has two view then the
+     * later registered takes precedence. Automatically adds the view to the available views list.
      */
     public static void registerTaskGraphView(String toolclass, TaskGraphView view) {
         addTaskGraphView(view);
@@ -146,9 +143,8 @@ public class TaskGraphViewManager {
     }
 
     /**
-     * Unregisters the TaskGraphView for a particular taskgraph tool class.
-     * Note that this method does not automatically remove the mode from the
-     * available views list, use removeTaskGraphView.
+     * Unregisters the TaskGraphView for a particular taskgraph tool class. Note that this method does not automatically
+     * remove the mode from the available views list, use removeTaskGraphView.
      */
     public static void unregisterTaskGraphView(String toolclass) {
         classviews.remove(toolclass);
@@ -161,8 +157,9 @@ public class TaskGraphViewManager {
      * Adds the taskgraph view to the available views list
      */
     public static void addTaskGraphView(TaskGraphView view) {
-        if (!views.contains(view))
+        if (!views.contains(view)) {
             views.add(view);
+        }
     }
 
     /**
@@ -203,16 +200,16 @@ public class TaskGraphViewManager {
 
 
     /**
-     * @return the tree icon for the specified tool (if null is returned then the
-     *         default leaf icon is used)
+     * @return the tree icon for the specified tool (if null is returned then the default leaf icon is used)
      */
     public static Icon getTreeIcon(Tool tool) {
         TaskGraphView mode;
 
-        if (tool instanceof TaskGraph)
+        if (tool instanceof TaskGraph) {
             mode = getView((TaskGraph) tool);
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getTreeIcon(tool);
     }
@@ -223,10 +220,11 @@ public class TaskGraphViewManager {
     public static String getTreeToolTip(Tool tool, boolean extended) {
         TaskGraphView mode;
 
-        if (tool instanceof TaskGraph)
+        if (tool instanceof TaskGraph) {
             mode = getView((TaskGraph) tool);
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getTreeToolTip(tool, extended);
     }
@@ -237,10 +235,11 @@ public class TaskGraphViewManager {
     public static JPopupMenu getTreePopup(Tool tool) {
         TaskGraphView mode;
 
-        if (tool instanceof TaskGraph)
+        if (tool instanceof TaskGraph) {
             mode = getView((TaskGraph) tool);
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getTreePopup(tool);
     }
@@ -252,12 +251,13 @@ public class TaskGraphViewManager {
     public static String getWorkspaceToolTip(Task task, boolean extended) {
         TaskGraphView mode;
 
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             mode = getView((TaskGraph) task);
-        else if (task.getParent() != null)
+        } else if (task.getParent() != null) {
             mode = getView(task.getParent());
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getWorkspaceToolTip(task, extended);
     }
@@ -268,20 +268,20 @@ public class TaskGraphViewManager {
     public static JPopupMenu getWorkspacePopup(Task task) {
         TaskGraphView mode;
 
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             mode = getView((TaskGraph) task);
-        else if (task.getParent() != null)
+        } else if (task.getParent() != null) {
             mode = getView(task.getParent());
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getWorkspacePopup(task);
     }
 
 
     /**
-     * @return the right-click popup menu for an open group (right-click on
-     *         workspace background)
+     * @return the right-click popup menu for an open group (right-click on workspace background)
      */
     public static JPopupMenu getOpenGroupPopup(TaskGraph taskgraph) {
         TaskGraphView mode = getView(taskgraph);
@@ -298,18 +298,18 @@ public class TaskGraphViewManager {
 
 
     /**
-     * @return the action that is invoked when the task is activated (e.g.
-     *         double-clicked).
+     * @return the action that is invoked when the task is activated (e.g. double-clicked).
      */
     public static Action getTaskAction(Task task) {
         TaskGraphView mode;
 
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             mode = getView((TaskGraph) task);
-        else if (task.getParent() != null)
+        } else if (task.getParent() != null) {
             mode = getView(task.getParent());
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getTaskAction(task);
     }
@@ -320,48 +320,49 @@ public class TaskGraphViewManager {
     public static TaskComponent getTaskComponent(Task task) {
         TaskGraphView mode;
 
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             mode = getView((TaskGraph) task);
-        else if (task.getParent() != null)
+        } else if (task.getParent() != null) {
             mode = getView(task.getParent());
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getTaskComponent(task);
     }
 
     /**
-     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined
-     *               in UpdateActionConstants)
+     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined in UpdateActionConstants)
      * @return true if the update action icon should be shown for the specified action
      */
     public static boolean isUpdateIcon(Task task, String action) {
         TaskGraphView mode;
 
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             mode = getView((TaskGraph) task);
-        else if (task.getParent() != null)
+        } else if (task.getParent() != null) {
             mode = getView(task.getParent());
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.isUpdateIcon(task, action);
     }
 
     /**
-     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined
-     *               in UpdateActionConstants)
+     * @param action the update action (e.g. INCREASE_INPUT_NODES_ACTION as defined in UpdateActionConstants)
      * @return the action associated with the specified update action.
      */
     public static Action getUpdateAction(Task task, String action) {
         TaskGraphView mode;
 
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             mode = getView((TaskGraph) task);
-        else if (task.getParent() != null)
+        } else if (task.getParent() != null) {
             mode = getView(task.getParent());
-        else
+        } else {
             mode = getDefaultTaskgraphView();
+        }
 
         return mode.getUpdateAction(task, action);
     }
@@ -379,11 +380,11 @@ public class TaskGraphViewManager {
     private static TaskGraphView getView(TaskGraph taskgraph) {
         TaskGraphView mode;
 
-        if (modetable.containsKey(taskgraph))
+        if (modetable.containsKey(taskgraph)) {
             mode = (TaskGraphView) modetable.get(taskgraph);
-        else if (viewcache.containsKey(taskgraph))
+        } else if (viewcache.containsKey(taskgraph)) {
             mode = (TaskGraphView) viewcache.get(taskgraph);
-        else {
+        } else {
             mode = locateView(taskgraph);
             viewcache.put(taskgraph, mode);
         }
@@ -412,11 +413,13 @@ public class TaskGraphViewManager {
             }
         }
 
-        if (view == null)
+        if (view == null) {
             view = getDefaultTaskgraphView();
+        }
 
-        if (view == null)
+        if (view == null) {
             throw (new RuntimeException("Default taskgraph view view not set on TaskGraphViewManager"));
+        }
 
         return view;
     }

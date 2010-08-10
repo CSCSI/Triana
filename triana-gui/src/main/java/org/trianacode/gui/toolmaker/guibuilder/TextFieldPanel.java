@@ -59,19 +59,20 @@
 package org.trianacode.gui.toolmaker.guibuilder;
 
 
-import org.trianacode.util.Env;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import org.trianacode.util.Env;
 
 /**
  * The panel for defining a gui builder text field component
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TextFieldPanel extends JPanel implements ComponentPanelInterface {
 
@@ -141,10 +142,11 @@ public class TextFieldPanel extends JPanel implements ComponentPanelInterface {
      * notifies the panel of the default parameter value
      */
     public void notifyDefaultValue(String value) {
-        if (value == null)
+        if (value == null) {
             defval = "";
-        else
+        } else {
             defval = value;
+        }
     }
 
 }

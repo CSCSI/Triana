@@ -58,23 +58,22 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
 /**
  * Action class to handle all "close" actions.
  *
- * @author  Matthew Shields
- * @created May 2, 2003: 3:49:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CloseAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -83,7 +82,7 @@ public class CloseAction extends AbstractAction implements ActionDisplayOptions 
         putValue(ACTION_COMMAND_KEY, Env.getString("Close"));
         putValue(NAME, Env.getString("Close"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W,
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     }
 
     /**
@@ -92,8 +91,9 @@ public class CloseAction extends AbstractAction implements ActionDisplayOptions 
     public void actionPerformed(ActionEvent e) {
         TaskGraphPanel panel = GUIEnv.getApplicationFrame().getSelectedTaskGraphPanel();
 
-        if (panel != null)
+        if (panel != null) {
             GUIEnv.getApplicationFrame().closeTaskGraphPanel(panel);
+        }
     }
 
 }

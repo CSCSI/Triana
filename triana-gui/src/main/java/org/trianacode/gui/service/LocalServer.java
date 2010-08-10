@@ -16,21 +16,25 @@
 
 package org.trianacode.gui.service;
 
+import java.util.Vector;
+
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
-import org.trianacode.taskgraph.service.*;
+import org.trianacode.taskgraph.service.ClientException;
+import org.trianacode.taskgraph.service.RunnableInstance;
+import org.trianacode.taskgraph.service.Scheduler;
+import org.trianacode.taskgraph.service.SchedulerException;
+import org.trianacode.taskgraph.service.SchedulerInterface;
+import org.trianacode.taskgraph.service.TrianaClient;
+import org.trianacode.taskgraph.service.TrianaServer;
 import org.trianacode.taskgraph.tool.ToolTable;
-
-import java.util.Vector;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 1:26:51 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class LocalServer implements TrianaClient, TrianaServer {
@@ -83,16 +87,18 @@ public class LocalServer implements TrianaClient, TrianaServer {
                 int result = WorkflowActionManager.CANCEL;
 
                 try {
-                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RUN_ACTION, taskgraph, scheduler.getExecutionState());
+                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RUN_ACTION, taskgraph,
+                            scheduler.getExecutionState());
                 } catch (WorkflowException except) {
                     except.printStackTrace();
                 }
 
                 try {
-                    if (result == WorkflowActionManager.AUTHORIZE)
+                    if (result == WorkflowActionManager.AUTHORIZE) {
                         scheduler.runTaskGraph();
-                    else
+                    } else {
                         handleCancel(result, null);
+                    }
                 }
                 catch (SchedulerException except) {
                     except.printStackTrace();
@@ -106,8 +112,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
     }
 
     /**
-     * Sends a message to the sever to run the taskgraph. The specfied
-     * history clip-ins is attached to every input task
+     * Sends a message to the sever to run the taskgraph. The specfied history clip-ins is attached to every input task
      */
     public void run(final HistoryClipIn history) throws ClientException {
         Thread thread = new Thread() {
@@ -115,16 +120,18 @@ public class LocalServer implements TrianaClient, TrianaServer {
                 int result = WorkflowActionManager.CANCEL;
 
                 try {
-                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RUN_ACTION, taskgraph, scheduler.getExecutionState());
+                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RUN_ACTION, taskgraph,
+                            scheduler.getExecutionState());
                 } catch (WorkflowException except) {
                     except.printStackTrace();
                 }
 
                 try {
-                    if (result == WorkflowActionManager.AUTHORIZE)
+                    if (result == WorkflowActionManager.AUTHORIZE) {
                         scheduler.runTaskGraph(history);
-                    else
+                    } else {
                         handleCancel(result, history);
+                    }
                 } catch (SchedulerException except) {
                     except.printStackTrace();
                 }
@@ -138,8 +145,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
 
 
     /**
-     * Sends a message to the sever to run the specified task within a
-     * running taskgraph
+     * Sends a message to the sever to run the specified task within a running taskgraph
      */
     public void runTask(Task task) throws SchedulerException {
         scheduler.runTask(task);
@@ -155,16 +161,18 @@ public class LocalServer implements TrianaClient, TrianaServer {
                 int result = WorkflowActionManager.CANCEL;
 
                 try {
-                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.PAUSE_ACTION, taskgraph, scheduler.getExecutionState());
+                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.PAUSE_ACTION, taskgraph,
+                            scheduler.getExecutionState());
                 } catch (WorkflowException except) {
                     except.printStackTrace();
                 }
 
                 try {
-                    if (result == WorkflowActionManager.AUTHORIZE)
+                    if (result == WorkflowActionManager.AUTHORIZE) {
                         scheduler.pauseTaskGraph();
-                    else
+                    } else {
                         handleCancel(result, null);
+                    }
                 } catch (SchedulerException except) {
                     except.printStackTrace();
                 }
@@ -185,16 +193,18 @@ public class LocalServer implements TrianaClient, TrianaServer {
                 int result = WorkflowActionManager.CANCEL;
 
                 try {
-                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RESET_ACTION, taskgraph, scheduler.getExecutionState());
+                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RESET_ACTION, taskgraph,
+                            scheduler.getExecutionState());
                 } catch (WorkflowException except) {
                     except.printStackTrace();
                 }
 
                 try {
-                    if (result == WorkflowActionManager.AUTHORIZE)
+                    if (result == WorkflowActionManager.AUTHORIZE) {
                         scheduler.resetTaskGraph();
-                    else
+                    } else {
                         handleCancel(result, null);
+                    }
                 } catch (SchedulerException except) {
                     except.printStackTrace();
                 }
@@ -222,20 +232,23 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Handles the various cancel results from the WorkflowActionManager
      */
     private void handleCancel(int result, HistoryClipIn history) throws SchedulerException {
-        if (result == WorkflowActionManager.CANCEL)
+        if (result == WorkflowActionManager.CANCEL) {
             return;
-        else if (result == WorkflowActionManager.RESET)
+        } else if (result == WorkflowActionManager.RESET) {
             handleResetAfterCancel();
-        else if (result == WorkflowActionManager.RESET_AND_RUN)
+        } else if (result == WorkflowActionManager.RESET_AND_RUN) {
             handleResetRunAfterCancel(history);
+        }
     }
 
     private void handleResetAfterCancel() throws SchedulerException {
         try {
-            int newresult = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RESET_ACTION, taskgraph, scheduler.getExecutionState());
+            int newresult = WorkflowActionManager
+                    .authorizeWorkflowAction(WorkflowActions.RESET_ACTION, taskgraph, scheduler.getExecutionState());
 
-            if (newresult == WorkflowActionManager.AUTHORIZE)
+            if (newresult == WorkflowActionManager.AUTHORIZE) {
                 scheduler.resetTaskGraph();
+            }
         } catch (WorkflowException except) {
 
         }
@@ -245,7 +258,8 @@ public class LocalServer implements TrianaClient, TrianaServer {
         int newresult = WorkflowActionManager.CANCEL;
 
         try {
-            newresult = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RESET_ACTION, taskgraph, scheduler.getExecutionState());
+            newresult = WorkflowActionManager
+                    .authorizeWorkflowAction(WorkflowActions.RESET_ACTION, taskgraph, scheduler.getExecutionState());
         } catch (WorkflowException except) {
             except.printStackTrace();
         }
@@ -254,13 +268,15 @@ public class LocalServer implements TrianaClient, TrianaServer {
             if (newresult == WorkflowActionManager.AUTHORIZE) {
                 scheduler.resetTaskGraph();
 
-                newresult = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RUN_ACTION, taskgraph, scheduler.getExecutionState());
+                newresult = WorkflowActionManager
+                        .authorizeWorkflowAction(WorkflowActions.RUN_ACTION, taskgraph, scheduler.getExecutionState());
 
                 if (newresult == WorkflowActionManager.AUTHORIZE) {
-                    if (history != null)
+                    if (history != null) {
                         scheduler.runTaskGraph(history);
-                    else
+                    } else {
                         scheduler.runTaskGraph();
+                    }
                 }
             }
         } catch (WorkflowException except) {

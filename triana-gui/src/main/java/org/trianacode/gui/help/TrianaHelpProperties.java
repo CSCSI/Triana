@@ -63,14 +63,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class TrianaHelpProperties extends PropertiesEx {
 
     /**
-     * Returns the applications home directory.  If it is null it
-     * uses the value set in TrianaCalcDefaults.
+     * Returns the applications home directory.  If it is null it uses the value set in TrianaCalcDefaults.
      */
     public final static String getHomeDirectory() {
         String homeDirectory;
@@ -91,6 +89,7 @@ public class TrianaHelpProperties extends PropertiesEx {
 
     /**
      * Get the user's home directory
+     *
      * @return The user's home directory as a String
      */
     public final static String getUserHomeDirectory() {
@@ -99,6 +98,7 @@ public class TrianaHelpProperties extends PropertiesEx {
 
     /**
      * Get the user's name
+     *
      * @return The user name as a String
      */
     public final static String getUserName() {
@@ -114,8 +114,7 @@ public class TrianaHelpProperties extends PropertiesEx {
         if (System.getProperty("os.name").trim().toLowerCase().indexOf("windows") > -1) {
             directory = getUserHomeDirectory() + File.separator + "tcalc" +
                     File.separator + "help";
-        }
-        else {
+        } else {
             directory = getUserHomeDirectory() + File.separator + ".trianahelp";
         }
 
@@ -128,7 +127,7 @@ public class TrianaHelpProperties extends PropertiesEx {
     public void loadUserSettings() {
         try {
             loadPropertiesFile(getSettingsDirectory() +
-                               File.separator + "thelprc");
+                    File.separator + "thelprc");
         }
         catch (FileNotFoundException ex1) {
             System.err.println("[TrianaHelpProperties: Can't open settings file]");
@@ -144,7 +143,7 @@ public class TrianaHelpProperties extends PropertiesEx {
     public void saveUserSettings() {
         try {
             savePropertiesFile(getSettingsDirectory(),
-                               "thelprc", "TrianaHelp main settings");
+                    "thelprc", "TrianaHelp main settings");
         }
         catch (IOException ex2) {
             System.err.println("[TrianaHelpProperties: Can't open settings file]");
@@ -153,8 +152,9 @@ public class TrianaHelpProperties extends PropertiesEx {
 
     /**
      * Saves properties to a file.
-     * @param path The path of the file to save
-     * @param file The name of the file to save
+     *
+     * @param path   The path of the file to save
+     * @param file   The name of the file to save
      * @param header A text comment which is used as a header in the file
      * @see #savePropertiesFile(File, String)
      * @see #savePropertiesFile(String, String)
@@ -164,7 +164,9 @@ public class TrianaHelpProperties extends PropertiesEx {
             throws IOException {
         File propertiesFile = new File(path, file);
 
-        if (!propertiesFile.exists()) checkDirectory(path);
+        if (!propertiesFile.exists()) {
+            checkDirectory(path);
+        }
 
         savePropertiesFile(propertiesFile, header);
     }

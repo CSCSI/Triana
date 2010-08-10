@@ -59,20 +59,20 @@
 
 package org.trianacode.gui.panels;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * Parameter panel class for free text area
  *
- * @author  Matthew Shields
- * @created Jun 6, 2003: 6:02:57 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TextAreaPanel extends ParameterPanel {
 
-    private JTextArea text = new JTextArea(20,20);
+    private JTextArea text = new JTextArea(20, 20);
 
     /**
      * Auto commit is turned off
@@ -99,16 +99,16 @@ public class TextAreaPanel extends ParameterPanel {
     }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset all the panels components to
-     * the values specified by the associated task, e.g. a component representing a parameter called "noise"
-     * should be set to the value returned by a getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public void reset() {
     }
 
     /**
-     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows)
-     * used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public void dispose() {
     }

@@ -58,24 +58,33 @@
  */
 package org.trianacode.gui.toolmaker.guibuilder;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.panels.ParameterPanelImp;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * The panel for defining a gui builder choice component
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ChoicePanel extends JPanel implements ActionListener, ComponentPanelInterface {
 
@@ -124,7 +133,8 @@ public class ChoicePanel extends JPanel implements ActionListener, ComponentPane
         add.addActionListener(this);
         remove.addActionListener(this);
 
-        JScrollPane scroll = new JScrollPane(choices, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroll = new JScrollPane(choices, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         choices.setPrototypeCellValue("1234567890123456789012345");
         choices.setVisibleRowCount(6);
 
@@ -153,8 +163,9 @@ public class ChoicePanel extends JPanel implements ActionListener, ComponentPane
         String str = title.getText() + " $title " + param + " Choice";
         DefaultListModel model = (DefaultListModel) choices.getModel();
 
-        for (int count = 0; count < model.getSize(); count++)
+        for (int count = 0; count < model.getSize(); count++) {
             str += " [" + model.elementAt(count) + "]";
+        }
 
         return str;
     }
@@ -169,8 +180,9 @@ public class ChoicePanel extends JPanel implements ActionListener, ComponentPane
         title.setText(strs[0]);
 
         for (int count = 3; count < strs.length; count++) {
-            if (!(choice.equals("")))
+            if (!(choice.equals(""))) {
                 choice += " ";
+            }
 
             choice += strs[count];
 
@@ -193,11 +205,12 @@ public class ChoicePanel extends JPanel implements ActionListener, ComponentPane
 
 
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == add)
+        if (event.getSource() == add) {
             addChoice();
-        else if (event.getSource() == remove) {
-            if (choices.getSelectedValue() != null)
+        } else if (event.getSource() == remove) {
+            if (choices.getSelectedValue() != null) {
                 ((DefaultListModel) choices.getModel()).removeElement(choices.getSelectedValue());
+            }
         }
     }
 
@@ -207,8 +220,9 @@ public class ChoicePanel extends JPanel implements ActionListener, ComponentPane
     public void addChoice() {
         Component parent = getParent();
 
-        while ((parent != null) && (!(parent instanceof Frame)) && (!(parent instanceof Dialog)))
+        while ((parent != null) && (!(parent instanceof Frame)) && (!(parent instanceof Dialog))) {
             parent = parent.getParent();
+        }
 
         if (parent != null) {
             JTextField value = new JTextField(15);
@@ -220,10 +234,11 @@ public class ChoicePanel extends JPanel implements ActionListener, ComponentPane
 
             ParameterWindow window;
 
-            if (parent instanceof Frame)
+            if (parent instanceof Frame) {
                 window = new ParameterWindow((Frame) parent, WindowButtonConstants.OK_CANCEL_BUTTONS, true);
-            else
+            } else {
                 window = new ParameterWindow((Dialog) parent, WindowButtonConstants.OK_CANCEL_BUTTONS, true);
+            }
 
             window.setParameterPanel(valuepanel);
             window.setLocation(getLocationOnScreen().x + 150, getLocationOnScreen().y + 40);

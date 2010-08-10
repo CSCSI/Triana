@@ -64,13 +64,11 @@ import org.trianacode.taskgraph.tool.ToolTable;
 
 /**
  * WTF??
- * 
+ * <p/>
  * The interface that discovery communicate to the Triana clients via.
  *
- * @author      Ian Wang
- * @created     Today's date
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public interface TrianaServer {
 
@@ -81,8 +79,7 @@ public interface TrianaServer {
 
 
     /**
-     * Called by a control task to run the specified task within a
-     * running taskgraph
+     * Called by a control task to run the specified task within a running taskgraph
      */
     public void runTask(Task task) throws SchedulerException;
 

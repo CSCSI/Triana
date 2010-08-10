@@ -62,18 +62,14 @@ package org.trianacode.taskgraph.service;
 import org.trianacode.taskgraph.Task;
 
 /**
- * A TaskGraphManagerListener instance that attaches execution listeners to
- * created tasks. If auto-save history tracking is enabled these listeners
- * automatically write out the history.
- *
+ * A TaskGraphManagerListener instance that attaches execution listeners to created tasks. If auto-save history tracking
+ * is enabled these listeners automatically write out the history.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 22nd March 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
-public class HistoryTrackerAutoSave implements ExecutionListener  {
+public class HistoryTrackerAutoSave implements ExecutionListener {
 
     public static final String AUTO_SAVE = "autoSave";
     public static final String AUTO_SAVE_FILENAME = "autoSaveFilename";
@@ -87,13 +83,15 @@ public class HistoryTrackerAutoSave implements ExecutionListener  {
     }
 
     public void executionFinished(ExecutionEvent event) {
-        if (!(event.getRunnableInstance() instanceof Task))
+        if (!(event.getRunnableInstance() instanceof Task)) {
             return;
+        }
 
         Task task = (Task) event.getRunnableInstance();
 
-        if (!String.valueOf(Boolean.TRUE).equals(task.getParameter(AUTO_SAVE)))
+        if (!String.valueOf(Boolean.TRUE).equals(task.getParameter(AUTO_SAVE))) {
             return;
+        }
 
 /*
             RunnableTask task = (RunnableTask) event.getRunnableInstance();

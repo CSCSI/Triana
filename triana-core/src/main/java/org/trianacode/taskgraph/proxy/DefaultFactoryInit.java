@@ -68,7 +68,6 @@ import org.trianacode.taskgraph.service.RunnableTaskFactory;
 
 /**
  * The default ProxyFactory, TaskGraphManager and ServiceManager setup.
- *
  */
 
 
@@ -78,8 +77,7 @@ public class DefaultFactoryInit {
     private static boolean taskgraphinit = false;
 
     /**
-     * Initialises the proxy factory with the default instantiators. Repeat
-     * calls to this method have no effect.
+     * Initialises the proxy factory with the default instantiators. Repeat calls to this method have no effect.
      */
     public static void initProxyFactory() {
         if (!proxyinit) {
@@ -106,8 +104,8 @@ public class DefaultFactoryInit {
     }
 
     /**
-     * Initialises the default and non-runnable factories in the taskgraph
-     * manager. Repeat calls to this method have no effect.
+     * Initialises the default and non-runnable factories in the taskgraph manager. Repeat calls to this method have no
+     * effect.
      */
     public static void initTaskGraphManager() {
         if (!taskgraphinit) {

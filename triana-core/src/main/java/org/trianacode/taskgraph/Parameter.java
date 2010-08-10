@@ -23,8 +23,6 @@ import org.trianacode.taskgraph.tool.Tool;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 28, 2009: 7:42:41 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class Parameter {

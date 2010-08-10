@@ -59,16 +59,19 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class coordinates state changes between other classes in the system.
- * Based upon the "mediator" design pattern.
+ * <p/>
+ * This class coordinates state changes between other classes in the system. Based upon the "mediator" design pattern.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  11-Aug-2001
@@ -85,8 +88,7 @@ public class DesktopMediator implements DesktopConstants {
     /**
      * creates the DesktopMediator object.
      *
-     * @param mainPane a reference to the JScrollableDesktopPane that this
-     *      object is to mediate.
+     * @param mainPane a reference to the JScrollableDesktopPane that this object is to mediate.
      */
     public DesktopMediator(JScrollableDesktopPane mainPane) {
 
@@ -102,8 +104,7 @@ public class DesktopMediator implements DesktopConstants {
 
 
     /**
-     * registers a menubar with the mediator, applying the "Window" menu items
-     * to that menubar in the process.
+     * registers a menubar with the mediator, applying the "Window" menu items to that menubar in the process.
      *
      * @param mb the menubar to register
      */
@@ -117,16 +118,14 @@ public class DesktopMediator implements DesktopConstants {
     /**
      * adds an internal frame to the scrollable desktop pane
      *
-     * @param title the title displayed in the title bar of the internal frame
-     * @param icon the icon displayed in the title bar of the internal frame
+     * @param title         the title displayed in the title bar of the internal frame
+     * @param icon          the icon displayed in the title bar of the internal frame
      * @param frameContents the contents of the internal frame
-     * @param isClosable <code>boolean</code> indicating whether internal frame
-     *          is closable
-     * @param x x coordinates of internal frame within the scrollable desktop
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
-     * @param y y coordinates of internal frame within the scrollable desktop
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
-     *
+     * @param isClosable    <code>boolean</code> indicating whether internal frame is closable
+     * @param x             x coordinates of internal frame within the scrollable desktop <code>-1</code> indicates the
+     *                      virtual desktop is to determine the position
+     * @param y             y coordinates of internal frame within the scrollable desktop <code>-1</code> indicates the
+     *                      virtual desktop is to determine the position
      * @return the internal frame that was created
      */
     public JInternalFrame add(String title, ImageIcon icon,
@@ -152,10 +151,10 @@ public class DesktopMediator implements DesktopConstants {
      * adds an internal frame to the scrollable desktop pane
      *
      * @param f the internal frame of class BaseInternalFrame to add
-     * @param x x coordinates of internal frame within the scrollable desktop
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
-     * @param y y coordinates of internal frame within the scrollable desktop
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
+     * @param x x coordinates of internal frame within the scrollable desktop <code>-1</code> indicates the virtual
+     *          desktop is to determine the position
+     * @param y y coordinates of internal frame within the scrollable desktop <code>-1</code> indicates the virtual
+     *          desktop is to determine the position
      */
     public void add(JInternalFrame frame, int x, int y) {
 
@@ -192,11 +191,10 @@ public class DesktopMediator implements DesktopConstants {
 
 
     /**
-     * removes the secondary components associated with an internal frame,
-     * such as toggle and menu buttons, and selects the next available frame
+     * removes the secondary components associated with an internal frame, such as toggle and menu buttons, and selects
+     * the next available frame
      *
-     * @param f the internal frame whose associated components are
-     *   to be removed
+     * @param f the internal frame whose associated components are to be removed
      */
     public void removeAssociatedComponents(BaseInternalFrame f) {
 
@@ -285,8 +283,8 @@ public class DesktopMediator implements DesktopConstants {
     /**
      * propogates setAutoTile to DesktopScrollPane
      *
-     * @param tileMode <code>true</code> indicates tile internal frames,
-     *         <code>false</code> indicates cascade internal frames
+     * @param tileMode <code>true</code> indicates tile internal frames, <code>false</code> indicates cascade internal
+     *                 frames
      */
     public void setAutoTile(boolean tileMode) {
         desktopScrollpane.setAutoTile(tileMode);

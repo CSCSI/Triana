@@ -58,13 +58,13 @@
  */
 package org.trianacode.gui.help;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
+
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class TrianaHelpHandler implements ActionListener {
     // Static variable which gets initialised the first time and instance
@@ -137,8 +137,9 @@ public class TrianaHelpHandler implements ActionListener {
      * Initialises the help window.  Sets the title and the help file.
      */
     public void initFrame(String helpFile, String title) {
-        if (helpFrame == null)
+        if (helpFrame == null) {
             return;
+        }
         HtmlPane htmlPane = helpFrame.getHtmlPane();
         htmlPane.setIndex(helpFile);
         htmlPane.setPage(helpFile);
@@ -147,16 +148,14 @@ public class TrianaHelpHandler implements ActionListener {
     }
 
     /**
-     * An action listener which opens the help window, sets the title and
-     * index pages and loads the appropriate page.
+     * An action listener which opens the help window, sets the title and index pages and loads the appropriate page.
      */
     public void actionPerformed(ActionEvent e) {
         initFrame(helpFile, title);
     }
 
     /**
-     * A class which responds to the CloseFrameEvent from TrianaHelpFrame and
-     * closes the help window.
+     * A class which responds to the CloseFrameEvent from TrianaHelpFrame and closes the help window.
      */
     class CloseListener implements CloseFrameListener {
         public void frameClosing(CloseFrameEvent e) {

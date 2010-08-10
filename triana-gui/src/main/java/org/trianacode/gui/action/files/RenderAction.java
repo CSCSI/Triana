@@ -58,11 +58,11 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "render" actions, this displays a graphical representation of the taskgraph with no
@@ -70,8 +70,6 @@ import java.awt.event.ActionEvent;
  *
  * @author Matthew Shields
  * @version $Revision: 4051 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-31 17:51:40 +0000 (Wed, 31 Oct 2007) $ modified by $Author: spxmss $
  */
 public class RenderAction extends AbstractAction implements ActionDisplayOptions {
 

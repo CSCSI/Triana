@@ -59,26 +59,24 @@
 package org.trianacode.taskgraph.service;
 
 /**
- * Thrown when a unit receives a data type which is not compatible with its
- * allowed input types.
+ * Thrown when a unit receives a data type which is not compatible with its allowed input types.
  *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class NotCompatibleException extends RuntimeException {
     /**
-     * Constructs an NotCompatibleException with no detail message.
-     * A detail message is a String that describes this particular exception.
+     * Constructs an NotCompatibleException with no detail message. A detail message is a String that describes this
+     * particular exception.
      */
     public NotCompatibleException() {
         super();
     }
 
     /**
-     * Constructs an NotCompatibleException with the specified detail message.
-     * A detail message is a String that describes this particular exception.
+     * Constructs an NotCompatibleException with the specified detail message. A detail message is a String that
+     * describes this particular exception.
+     *
      * @param s the String that contains a detailed message
      */
     public NotCompatibleException(String s) {

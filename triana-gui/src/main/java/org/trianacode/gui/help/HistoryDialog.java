@@ -58,15 +58,25 @@
  */
 package org.trianacode.gui.help;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class HistoryDialog extends JDialog {
     UrlHistory urlHistory;
@@ -157,7 +167,7 @@ public class HistoryDialog extends JDialog {
         Dimension frameSize = getSize();
 
         setLocation((screenSize.width - frameSize.width) / 2,
-                    (screenSize.height - frameSize.height) / 2);
+                (screenSize.height - frameSize.height) / 2);
     }
 
     public void setUrlHistory(UrlHistory urlHistory) {
@@ -171,7 +181,9 @@ public class HistoryDialog extends JDialog {
 
         int count = urlHistory.countUrls();
         URL[] urls = new URL[count];
-        for (int i = 0; i < count; i++) urls[i] = (URL) urlHistory.elementAt(i);
+        for (int i = 0; i < count; i++) {
+            urls[i] = (URL) urlHistory.elementAt(i);
+        }
 
         list.setListData(urls);
         setVisible(true);

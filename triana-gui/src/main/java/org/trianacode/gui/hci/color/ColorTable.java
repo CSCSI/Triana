@@ -58,26 +58,16 @@
  */
 package org.trianacode.gui.hci.color;
 
-import org.trianacode.gui.hci.GUIEnv;
-
-import java.awt.*;
+import java.awt.Color;
 import java.util.Hashtable;
+
+import org.trianacode.gui.hci.GUIEnv;
 
 /**
  * A lookup table between color names and actual color values
  *
- * @author Ian Wang
-<<<<<<< ColorTable.java
- * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.3.2.1
- * @created 6th May 2003
-<<<<<<< ColorTable.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.3.2.1
+ * @author Ian Wang <<<<<<< ColorTable.java
+ * @version $Revision: 4048 $ >>>>>>> 1.3.2.1
  */
 
 public class ColorTable {
@@ -99,7 +89,7 @@ public class ColorTable {
 
     private ColorTable() {
         ColorTableEntry[] colorTableEntries = GUIEnv.getColorTableEntries();
-        synchronized(coltable) {
+        synchronized (coltable) {
             for (int i = 0; i < colorTableEntries.length; i++) {
                 ColorTableEntry colorTableEntry = colorTableEntries[i];
                 coltable.put(colorTableEntry.getColorname(), colorTableEntry.getColor());
@@ -109,8 +99,8 @@ public class ColorTable {
 
 
     /**
-     * Initializes the default color for the specified color name. This color is used when a
-     * specific color for a model has not been initialised.
+     * Initializes the default color for the specified color name. This color is used when a specific color for a model
+     * has not been initialised.
      */
     public void initDefaultColor(String colorname, Color color) {
         synchronized (defaulttable) {
@@ -144,14 +134,15 @@ public class ColorTable {
     public Color getColor(ColorModel model, String colorname) {
         String key = model.getModelName() + ":" + colorname;
 
-        if (coltable.containsKey(key))
+        if (coltable.containsKey(key)) {
             return (Color) coltable.get(key);
-        else if (defaulttable.containsKey(key))
+        } else if (defaulttable.containsKey(key)) {
             return (Color) defaulttable.get(key);
-        else if (defaulttable.containsKey(colorname))
+        } else if (defaulttable.containsKey(colorname)) {
             return (Color) defaulttable.get(colorname);
-        else
+        } else {
             throw (new RuntimeException("Unknown color: " + key));
+        }
     }
 
     public void reset() {
@@ -159,8 +150,9 @@ public class ColorTable {
     }
 
     public static ColorTable instance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new ColorTable();
+        }
         return instance;
     }
 }

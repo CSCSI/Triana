@@ -1,6 +1,5 @@
 package org.trianacode;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,20 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import mil.navy.nrl.discovery.WebBootstrap;
-import mil.navy.nrl.discovery.types.ServiceTypes;
-import mil.navy.nrl.discovery.web.template.WebDefines;
-import org.trianacode.http.*;
+import org.trianacode.http.HTTPServices;
+import org.trianacode.http.RendererRegistry;
+import org.trianacode.http.ToolRenderer;
+import org.trianacode.http.ToolboxRenderer;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.ser.Base64ObjectDeserializer;
 import org.trianacode.taskgraph.ser.ObjectDeserializationManager;
+import org.trianacode.taskgraph.tool.ToolResolver;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableImp;
+import org.trianacode.taskgraph.tool.ToolTableImpl;
 import org.trianacode.taskgraph.util.ExtensionFinder;
-import org.trianacode.taskgraph.util.Toolboxes;
 
 /**
  * @author Andrew Harrison
@@ -30,28 +29,30 @@ import org.trianacode.taskgraph.util.Toolboxes;
 
 public class EngineInit {
 
-    static HTTPServices httpServices;
+    private static HTTPServices httpServices;
+    private static ToolResolver resolver = new ToolResolver();
 
     private static Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
 
     public static void init(ToolTable table, Class... extensions) throws Exception {
-
-        httpServices = new HTTPServices();
-        httpServices.startServices();
-        
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         if (TaskGraphManager.getToolTable() == null) {
             if (table == null) {
-                table = new ToolTableImp();
+                table = new ToolTableImpl(resolver);
             }
             TaskGraphManager.initToolTable(table);
         }
-
-        Toolboxes.loadToolboxes(TaskGraphManager.getToolTable());
-
         initObjectDeserializers();
         initExtensions(extensions);
+
+        resolver.resolve();
+        httpServices = new HTTPServices();
+        httpServices.startServices(resolver);
+    }
+
+    public static ToolResolver getToolResolver() {
+        return resolver;
     }
 
     public static void init() throws Exception {

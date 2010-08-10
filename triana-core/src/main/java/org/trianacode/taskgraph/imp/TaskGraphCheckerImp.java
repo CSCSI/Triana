@@ -59,56 +59,66 @@
 
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphChecker;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.event.ControlTaskStateEvent;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskGraphCableEvent;
+import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 
 /**
- * A class responsible for maintaining the consitency of taskgraphs with regards
- * to the input/output nodes on their control tasks. For example, if a group
- * input node is deleted, then the corresponding loop out node on the control
+ * A class responsible for maintaining the consitency of taskgraphs with regards to the input/output nodes on their
+ * control tasks. For example, if a group input node is deleted, then the corresponding loop out node on the control
  * task is also deleted.
  *
- * @author      Ian Wang
- * @created     3rd June 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TaskGraphCheckerImp implements TaskGraphChecker {
 
     /**
-     * Sets this taskgraph checker to monitor the specified taskgraph, and any
-     * sub-taskgraphs
+     * Sets this taskgraph checker to monitor the specified taskgraph, and any sub-taskgraphs
      */
     public void monitorTaskGraph(TaskGraph taskgraph) {
         taskgraph.addTaskGraphListener(this);
 
-        if (taskgraph.getControlTask() != null)
+        if (taskgraph.getControlTask() != null) {
             taskgraph.getControlTask().addTaskListener(this);
+        }
 
         Task[] tasks = taskgraph.getTasks(true);
 
-        for (int count = 0; count < tasks.length; count++)
-            if (tasks[count] instanceof TaskGraph)
+        for (int count = 0; count < tasks.length; count++) {
+            if (tasks[count] instanceof TaskGraph) {
                 monitorTaskGraph((TaskGraph) tasks[count]);
+            }
+        }
     }
 
     /**
-     * Removes this taskgraph checker from monitoring the specified taskgraph,
-     * and any sub-taskgraphs
+     * Removes this taskgraph checker from monitoring the specified taskgraph, and any sub-taskgraphs
      */
     public void unmonitorTaskGraph(TaskGraph taskgraph) {
         taskgraph.removeTaskGraphListener(this);
 
-        if (taskgraph.getControlTask() != null)
+        if (taskgraph.getControlTask() != null) {
             taskgraph.getControlTask().removeTaskListener(this);
+        }
 
         Task[] tasks = taskgraph.getTasks(true);
 
-        for (int count = 0; count < tasks.length; count++)
-            if (tasks[count] instanceof TaskGraph)
+        for (int count = 0; count < tasks.length; count++) {
+            if (tasks[count] instanceof TaskGraph) {
                 unmonitorTaskGraph((TaskGraph) tasks[count]);
+            }
+        }
     }
 
 
@@ -119,24 +129,26 @@ public class TaskGraphCheckerImp implements TaskGraphChecker {
         if (event.getTask().getParent() != null) {
             TaskGraph taskgraph = event.getTask().getParent();
 
-            if (taskgraph.getControlTask() == event.getTask())
+            if (taskgraph.getControlTask() == event.getTask()) {
                 event.getTask().addTaskListener(this);
+            }
         }
 
-        if (event.getTask() instanceof TaskGraph)
+        if (event.getTask() instanceof TaskGraph) {
             monitorTaskGraph((TaskGraph) event.getTask());
+        }
     }
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method is
-     * called when tasks are removed from a taskgraph due to being grouped (they
-     * are place in the group's taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are place in the group's taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
         event.getTask().removeTaskListener(this);
 
-        if (event.getTask() instanceof TaskGraph)
+        if (event.getTask() instanceof TaskGraph) {
             unmonitorTaskGraph((TaskGraph) event.getTask());
+        }
     }
 
     /**
@@ -155,11 +167,13 @@ public class TaskGraphCheckerImp implements TaskGraphChecker {
      * Called before a connection between two tasks is removed.
      */
     public void cableDisconnected(TaskGraphCableEvent event) {
-        if (event.getCable() != null)
+        if (event.getCable() != null) {
             nodeDisconnected(event.getCable().getSendingNode());
+        }
 
-        if (event.getCable() != null)
+        if (event.getCable() != null) {
             nodeDisconnected(event.getCable().getReceivingNode());
+        }
     }
 
     /**
@@ -178,13 +192,21 @@ public class TaskGraphCheckerImp implements TaskGraphChecker {
             Task controltask = node.getTask().getParent().getControlTask();
             Task parent = node.getTask().getParent();
 
-            if (TaskGraphUtils.isControlTask(controltask) && taskgraph.isControlTaskConnected() && (node.isDataNode())) {
-                if (node.isInputNode() && (node.getNodeIndex() >= parent.getDataInputNodeCount()) && (node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount()))
-                    // remove opposite output node
-                    controltask.removeDataOutputNode(controltask.getDataOutputNode(node.getNodeIndex() - parent.getDataInputNodeCount()));
-                else if (node.isOutputNode() && (node.getNodeIndex() >= parent.getDataOutputNodeCount()) && (node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount()))
-                    // remove opposite input node
-                    controltask.removeDataInputNode(controltask.getDataInputNode(node.getNodeIndex() - parent.getDataOutputNodeCount()));
+            if (TaskGraphUtils.isControlTask(controltask) && taskgraph.isControlTaskConnected()
+                    && (node.isDataNode())) {
+                if (node.isInputNode() && (node.getNodeIndex() >= parent.getDataInputNodeCount()) && (
+                        node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount()))
+                // remove opposite output node
+                {
+                    controltask.removeDataOutputNode(
+                            controltask.getDataOutputNode(node.getNodeIndex() - parent.getDataInputNodeCount()));
+                } else if (node.isOutputNode() && (node.getNodeIndex() >= parent.getDataOutputNodeCount()) && (
+                        node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount()))
+                // remove opposite input node
+                {
+                    controltask.removeDataInputNode(
+                            controltask.getDataInputNode(node.getNodeIndex() - parent.getDataOutputNodeCount()));
+                }
             }
         }
     }
@@ -209,8 +231,7 @@ public class TaskGraphCheckerImp implements TaskGraphChecker {
     }
 
     /**
-     * If the node being removed is a group nodes the this removes the
-     * corresponding loop node on the control task
+     * If the node being removed is a group nodes the this removes the corresponding loop node on the control task
      */
     public void nodeRemoved(TaskNodeEvent event) {
         Node node = event.getNode();
@@ -220,28 +241,33 @@ public class TaskGraphCheckerImp implements TaskGraphChecker {
             Task parent = taskgraph;
             Task controltask = event.getTask().getParent().getControlTask();
 
-            if (TaskGraphUtils.isControlTask(event.getTask()) && taskgraph.isControlTaskConnected() && node.isDataNode()) {
+            if (TaskGraphUtils.isControlTask(event.getTask()) && taskgraph.isControlTaskConnected() && node
+                    .isDataNode()) {
                 int oldstate = taskgraph.getControlTaskState();
                 taskgraph.setControlTaskState(TaskGraph.CONTROL_TASK_UNSTABLE);
 
                 Node opnode = null;
 
                 if (node.isInputNode()) {
-                    if (node.getNodeIndex() < parent.getDataInputNodeCount())
+                    if (node.getNodeIndex() < parent.getDataInputNodeCount()) {
                         opnode = controltask.getDataOutputNode(parent.getDataOutputNodeCount() + node.getNodeIndex());
-                    else if (node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount())
+                    } else if (node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount()) {
                         opnode = controltask.getDataOutputNode(node.getNodeIndex() - parent.getDataInputNodeCount());
+                    }
 
-                    if (opnode != null)
+                    if (opnode != null) {
                         controltask.removeDataOutputNode(opnode);
+                    }
                 } else {
-                    if (node.getNodeIndex() < parent.getDataOutputNodeCount())
+                    if (node.getNodeIndex() < parent.getDataOutputNodeCount()) {
                         opnode = controltask.getDataInputNode(parent.getDataInputNodeCount() + node.getNodeIndex());
-                    else if (node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount())
+                    } else if (node.getNodeIndex() < parent.getDataInputNodeCount() + parent.getDataOutputNodeCount()) {
                         opnode = controltask.getDataInputNode(node.getNodeIndex() - parent.getDataOutputNodeCount());
+                    }
 
-                    if (opnode != null)
+                    if (opnode != null) {
                         controltask.removeDataInputNode(opnode);
+                    }
                 }
 
                 taskgraph.setControlTaskState(oldstate);
@@ -255,8 +281,9 @@ public class TaskGraphCheckerImp implements TaskGraphChecker {
     public void taskDisposed(TaskDisposedEvent event) {
         event.getTask().removeTaskListener(this);
 
-        if (event.getTask() instanceof TaskGraph)
+        if (event.getTask() instanceof TaskGraph) {
             ((TaskGraph) event.getTask()).removeTaskGraphListener(this);
+        }
     }
 
 }

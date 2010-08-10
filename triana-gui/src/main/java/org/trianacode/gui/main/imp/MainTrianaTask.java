@@ -58,32 +58,27 @@
  */
 package org.trianacode.gui.main.imp;
 
-import org.trianacode.gui.hci.tools.TaskGraphViewManager;
-import org.trianacode.gui.hci.tools.UpdateActionConstants;
-import org.trianacode.taskgraph.Task;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Action;
+import org.trianacode.gui.hci.tools.TaskGraphViewManager;
+import org.trianacode.gui.hci.tools.UpdateActionConstants;
+import org.trianacode.taskgraph.Task;
+
 
 /**
- * MainTrianaTask is a class which creates the a Triana
- * Icon consisting of a set of input nodes and output nodes.
+ * MainTrianaTask is a class which creates the a Triana Icon consisting of a set of input nodes and output nodes.
  * <p/>
- * A MainTrianaTask is TrianaTool which is a JPanel, which is a Container,
- * which is a JComponent and therefore has the ability to ommit event to
- * the relevant listeners. MainTrianaTask contains two Vectors (in java.util) to
- * store the pointers to the TrianaNode Objects.  Vector can be increased
- * and decreased in size.
+ * A MainTrianaTask is TrianaTool which is a JPanel, which is a Container, which is a JComponent and therefore has the
+ * ability to ommit event to the relevant listeners. MainTrianaTask contains two Vectors (in java.util) to store the
+ * pointers to the TrianaNode Objects.  Vector can be increased and decreased in size.
  * <p/>
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created April 2, 1997
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class MainTrianaTask extends TrianaTask implements MouseListener, ActionListener {
 
@@ -117,9 +112,8 @@ public class MainTrianaTask extends TrianaTask implements MouseListener, ActionL
 
 
     /**
-     * Notifies this component that it now has a parent component.
-     * When this method is invoked, the chain of parent components is
-     * set up with <code>KeyboardAction</code> event listeners.
+     * Notifies this component that it now has a parent component. When this method is invoked, the chain of parent
+     * components is set up with <code>KeyboardAction</code> event listeners.
      *
      * @see #registerKeyboardAction
      */
@@ -130,8 +124,9 @@ public class MainTrianaTask extends TrianaTask implements MouseListener, ActionL
             initPlusMinusIcons();
             invalidateSize();
 
-            if (getMainComponent() != null)
+            if (getMainComponent() != null) {
                 getMainComponent().addMouseListener(this);
+            }
 
             init = true;
         }
@@ -170,17 +165,19 @@ public class MainTrianaTask extends TrianaTask implements MouseListener, ActionL
         Task task = getTaskInterface();
         Action action = null;
 
-        if (event.getSource() == addinput)
+        if (event.getSource() == addinput) {
             action = TaskGraphViewManager.getUpdateAction(task, UpdateActionConstants.INCREASE_INPUT_NODES_ACTION);
-        else if (event.getSource() == removeinput)
+        } else if (event.getSource() == removeinput) {
             action = TaskGraphViewManager.getUpdateAction(task, UpdateActionConstants.DECREASE_INPUT_NODES_ACTION);
-        else if (event.getSource() == addoutput)
+        } else if (event.getSource() == addoutput) {
             action = TaskGraphViewManager.getUpdateAction(task, UpdateActionConstants.INCREASE_OUTPUT_NODES_ACTION);
-        else if (event.getSource() == removeoutput)
+        } else if (event.getSource() == removeoutput) {
             action = TaskGraphViewManager.getUpdateAction(task, UpdateActionConstants.DECREASE_OUTPUT_NODES_ACTION);
+        }
 
         if (action != null) {
-            ActionEvent evt = new ActionEvent(getTaskInterface(), ActionEvent.ACTION_PERFORMED, (String) action.getValue(Action.ACTION_COMMAND_KEY), event.getWhen(), event.getModifiers());
+            ActionEvent evt = new ActionEvent(getTaskInterface(), ActionEvent.ACTION_PERFORMED,
+                    (String) action.getValue(Action.ACTION_COMMAND_KEY), event.getWhen(), event.getModifiers());
             action.actionPerformed(evt);
 
             updatePlusMinusVisible();
@@ -191,9 +188,12 @@ public class MainTrianaTask extends TrianaTask implements MouseListener, ActionL
         Task task = getTaskInterface();
 
         addinput.setVisible(TaskGraphViewManager.isUpdateIcon(task, UpdateActionConstants.INCREASE_INPUT_NODES_ACTION));
-        addoutput.setVisible(TaskGraphViewManager.isUpdateIcon(task, UpdateActionConstants.INCREASE_OUTPUT_NODES_ACTION));
-        removeinput.setVisible(TaskGraphViewManager.isUpdateIcon(task, UpdateActionConstants.DECREASE_INPUT_NODES_ACTION));
-        removeoutput.setVisible(TaskGraphViewManager.isUpdateIcon(task, UpdateActionConstants.DECREASE_OUTPUT_NODES_ACTION));
+        addoutput.setVisible(
+                TaskGraphViewManager.isUpdateIcon(task, UpdateActionConstants.INCREASE_OUTPUT_NODES_ACTION));
+        removeinput
+                .setVisible(TaskGraphViewManager.isUpdateIcon(task, UpdateActionConstants.DECREASE_INPUT_NODES_ACTION));
+        removeoutput.setVisible(
+                TaskGraphViewManager.isUpdateIcon(task, UpdateActionConstants.DECREASE_OUTPUT_NODES_ACTION));
     }
 
 
@@ -229,8 +229,9 @@ public class MainTrianaTask extends TrianaTask implements MouseListener, ActionL
         removeinput.removeActionListener(this);
         removeoutput.removeActionListener(this);
 
-        if (getTaskInterface() != null)
+        if (getTaskInterface() != null) {
             getTaskInterface().removeTaskListener(this);
+        }
 
         super.dispose();
     }

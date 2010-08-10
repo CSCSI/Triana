@@ -59,7 +59,6 @@
 package triana.types;
 
 
-
 public class DefaultType extends TrianaType {
 
     public DefaultType() {

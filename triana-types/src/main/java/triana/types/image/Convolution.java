@@ -62,10 +62,8 @@ package triana.types.image;
 import java.awt.image.ImageProducer;
 
 /**
- * @author      Ian Taylor
- * @created     Wed May 15 16:43:30 BST 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class Convolution {
     PixelMap sourceMap, destMap;

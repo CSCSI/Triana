@@ -59,33 +59,30 @@
 package org.trianacode.gui.extensions;
 
 
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-
 import java.io.File;
 import java.io.IOException;
 
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+
 
 /**
- * Interface used to provide dynamic discovery of taskgraph/workflow import filters. These
- * filters are added to the import dialog at run time.
+ * Interface used to provide dynamic discovery of taskgraph/workflow import filters. These filters are added to the
+ * import dialog at run time.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Apr 21, 2004: 5:29:17 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  * @see FileImportExportDecorator
  */
 public interface TaskGraphImporterInterface {
 
     /**
-     * Translates and returns the <code>TaskGraph</code> from the file choosen by the
-     * user.
+     * Translates and returns the <code>TaskGraph</code> from the file choosen by the user.
      *
      * @param file
      * @return the imported taskgraph
-     * @throws TaskGraphException thrown if the taskgraph or workflow format is invalid or
-     *                            unparsable, non matching brackets for example.
+     * @throws TaskGraphException thrown if the taskgraph or workflow format is invalid or unparsable, non matching
+     *                            brackets for example.
      * @throws IOException        thrown if there is a file IO problem.
      */
     public TaskGraph importWorkflow(File file) throws TaskGraphException, IOException;

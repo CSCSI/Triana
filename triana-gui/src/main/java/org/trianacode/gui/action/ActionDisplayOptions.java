@@ -61,10 +61,8 @@ package org.trianacode.gui.action;
 /**
  * Interface that holds the display options for Actions. Icon, name or both.
  *
- * @author  Matthew Shields
- * @created May 7, 2003: 2:55:02 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface ActionDisplayOptions {
     public static int DISPLAY_ICON = 0;

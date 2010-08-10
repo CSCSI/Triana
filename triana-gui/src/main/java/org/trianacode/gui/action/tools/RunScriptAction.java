@@ -58,6 +58,30 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import org.trianacode.enactment.TrianaRun;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -69,32 +93,25 @@ import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskLayoutUtils;
 import org.trianacode.taskgraph.constants.ScriptConstants;
 import org.trianacode.taskgraph.service.NonRunnableClient;
 import org.trianacode.taskgraph.service.SchedulerException;
-import org.trianacode.enactment.TrianaRun;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle running Triana scripts.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class RunScriptAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -115,19 +132,20 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selectionHandler.isSingleSelectedTool() && (selectionHandler.getSelectedTool() instanceof Task))
+        if (selectionHandler.isSingleSelectedTool() && (selectionHandler.getSelectedTool() instanceof Task)) {
             handleRunScript((Task) selectionHandler.getSelectedTool(), e.getSource());
+        }
     }
 
     /**
-     * Handles running a script on the specified task. The script is choosen
-     * via a GUI.
+     * Handles running a script on the specified task. The script is choosen via a GUI.
      */
     public void handleRunScript(Task task, Object source) {
         RunScriptPanel panel = new RunScriptPanel((Task) task, source);
         panel.init();
 
-        ParameterWindow scriptWindow = new ParameterWindow(GUIEnv.getApplicationFrame(), panel.getPreferredButtons(), true);
+        ParameterWindow scriptWindow = new ParameterWindow(GUIEnv.getApplicationFrame(), panel.getPreferredButtons(),
+                true);
         scriptWindow.setTitle(Env.getString("runScript") + ": " + task.getToolName());
         scriptWindow.setParameterPanel(panel);
 
@@ -143,13 +161,13 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
     /**
      * Handles running the specified script on the specified task
      */
-    public static void runScript(Task task, TaskGraph script, ToolTable tools, boolean replace, boolean open, boolean view) {
+    public static void runScript(Task task, TaskGraph script, ToolTable tools, boolean replace, boolean open,
+                                 boolean view) {
         runScript(task, script, tools, replace, open, view, null);
     }
 
     /**
-     * Handles running the specified script on the specified task, anchoring the
-     * script window to the specified source.
+     * Handles running the specified script on the specified task, anchoring the script window to the specified source.
      */
     public static void runScript(final Task task, final TaskGraph script, final ToolTable tools,
                                  final boolean replace, final boolean open, final boolean view,
@@ -184,10 +202,12 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
         TrianaRun run = new TrianaRun(script);
         run.setDummyToolName("Script");
 
-        if (view)
-            GUIEnv.getApplicationFrame().addChildTaskGraphPanel((TaskGraph) run.getTaskGraph(), new NonRunnableClient(tools));
-        else
+        if (view) {
+            GUIEnv.getApplicationFrame()
+                    .addChildTaskGraphPanel((TaskGraph) run.getTaskGraph(), new NonRunnableClient(tools));
+        } else {
             GUIEnv.getApplicationFrame().registerTrianaClient(run.getTaskGraph(), new NonRunnableClient(tools));
+        }
 
         boolean accepted = showParameterWindow(run.getTaskGraph(), source);
 
@@ -214,25 +234,28 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
 
         if (view) {
             TaskGraphPanel panel = GUIEnv.getTaskGraphPanelFor(run.getTaskGraph());
-            if (panel != null)
+            if (panel != null) {
                 GUIEnv.getApplicationFrame().closeTaskGraphPanel(panel);
-        } else
+            }
+        } else {
             GUIEnv.getApplicationFrame().unregisterTrianaClient(run.getTaskGraph());
+        }
 
         run.dispose();
         return result;
     }
 
     private static void receiveOutputData(TrianaRun run, Object[] result) {
-        for (int count = 0; count < run.getOutputNodeCount(); count++)
-            if (run.isOutputReady(count))
+        for (int count = 0; count < run.getOutputNodeCount(); count++) {
+            if (run.isOutputReady(count)) {
                 result[count] = run.receiveOutputData(count);
+            }
+        }
     }
 
 
     /**
-     * Show the parameter window for the specified task, and wait until the
-     * panel is either accepted or rejected.
+     * Show the parameter window for the specified task, and wait until the panel is either accepted or rejected.
      *
      * @return true if the panel is accepted
      */
@@ -240,7 +263,8 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
         ParameterPanel panel = ParameterPanelManager.getParameterPanel(task);
 
         if (panel != null) {
-            ParameterWindow paramWindow = new ParameterWindow(GUIEnv.getApplicationFrame(), WindowButtonConstants.OK_CANCEL_BUTTONS, true);
+            ParameterWindow paramWindow = new ParameterWindow(GUIEnv.getApplicationFrame(),
+                    WindowButtonConstants.OK_CANCEL_BUTTONS, true);
             paramWindow.setAutoDispose(true);
             paramWindow.setTitle(task.getToolName());
             paramWindow.setParameterPanel(panel);
@@ -253,21 +277,23 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             paramWindow.setLocation(loc);
             paramWindow.setVisible(true);
 
-            while (paramWindow.isVisible())
+            while (paramWindow.isVisible()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException except) {
                 }
+            }
 
             return paramWindow.isAccepted();
-        } else
+        } else {
             return true;
+        }
     }
 
 
     /**
-     * Handles the result from a script, such as replacing original task, opening
-     * output view and distributing protoservices.
+     * Handles the result from a script, such as replacing original task, opening output view and distributing
+     * protoservices.
      */
     private static void handleScriptResult(Object[] result, final Task task, String scriptname,
                                            final boolean replace, final boolean open) throws TaskGraphException {
@@ -278,22 +304,27 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             if (replace && (result[0] instanceof Tool)) {
                 newtask = TaskLayoutUtils.replaceTask(task, (Tool) result[0], false);
 
-                if ((open) && (newtask instanceof TaskGraph))
-                    GUIEnv.getApplicationFrame().addChildTaskGraphPanel((TaskGraph) newtask, GUIEnv.getTrianaClientFor(newtask));
-                else if (open)
-                    JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Cannot display script output as it is not a TaskGraph", Env.getString("runScript") + ": " + scriptname, JOptionPane.ERROR_MESSAGE,
+                if ((open) && (newtask instanceof TaskGraph)) {
+                    GUIEnv.getApplicationFrame()
+                            .addChildTaskGraphPanel((TaskGraph) newtask, GUIEnv.getTrianaClientFor(newtask));
+                } else if (open) {
+                    JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                            "Cannot display script output as it is not a TaskGraph",
+                            Env.getString("runScript") + ": " + scriptname, JOptionPane.ERROR_MESSAGE,
                             GUIEnv.getTrianaIcon());
+                }
 
                 checkProtoService(newtask, scriptname);
                 handleresult++;
             }
 
             if (open) {
-                for (int count = handleresult; count < result.length; count++)
+                for (int count = handleresult; count < result.length; count++) {
                     if (result[count] instanceof TaskGraph) {
                         newtask = GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) result[count]);
                         checkProtoService(newtask, scriptname);
                     }
+                }
             }
         }
     }
@@ -309,7 +340,7 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
     }
 
 
-    private class RunScriptPanel extends ParameterPanel implements ToolTableListener, TreeSelectionListener {
+    private class RunScriptPanel extends ParameterPanel implements ToolListener, TreeSelectionListener {
 
         private Task runtask;
         private Object source;
@@ -346,8 +377,7 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
 
 
         /**
-         * This method is called when the task is set for this panel. It is overridden
-         * to create the panel layout.
+         * This method is called when the task is set for this panel. It is overridden to create the panel layout.
          */
         public void init() {
             setLayout(new BorderLayout(8, 0));
@@ -355,7 +385,8 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             populateScriptList();
             tools.addToolTableListener(this);
 
-            JScrollPane scroll = new JScrollPane(scripttree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane scroll = new JScrollPane(scripttree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             scripttree.setPreferredSize(new JLabel("01234567890123456789012345678901234567890").getPreferredSize());
             scripttree.setVisibleRowCount(10);
             scripttree.addTreeSelectionListener(this);
@@ -368,7 +399,8 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             infopanel.add(new JLabel("Package:"));
             infopanel.add(pack);
 
-            JScrollPane dscroll = new JScrollPane(desc, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane dscroll = new JScrollPane(desc, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             desc.setLineWrap(true);
             desc.setWrapStyleWord(true);
             desc.setBackground(name.getBackground());
@@ -420,14 +452,17 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             if ((tool.isRenderingHint(ScriptConstants.SCRIPT_RENDERING_HINT)) && (tool instanceof TaskGraph)) {
                 hint = tool.getRenderingHint(ScriptConstants.SCRIPT_RENDERING_HINT);
 
-                if (hint.isRenderingDetail(ScriptConstants.SCRIPT_PACKAGE))
+                if (hint.isRenderingDetail(ScriptConstants.SCRIPT_PACKAGE)) {
                     pack = (String) hint.getRenderingDetail(ScriptConstants.SCRIPT_PACKAGE);
+                }
 
-                if (runtask instanceof TaskGraph)
+                if (runtask instanceof TaskGraph) {
                     model.insertTool(tool, pack);
-                else {
-                    if ((!hint.isRenderingDetail(ScriptConstants.TASKGRAPHS_ONLY)) || (!new Boolean((String) hint.getRenderingDetail(ScriptConstants.TASKGRAPHS_ONLY)).booleanValue()))
+                } else {
+                    if ((!hint.isRenderingDetail(ScriptConstants.TASKGRAPHS_ONLY)) || (!new Boolean(
+                            (String) hint.getRenderingDetail(ScriptConstants.TASKGRAPHS_ONLY)).booleanValue())) {
                         model.insertTool(tool, pack);
+                    }
                 }
             }
         }
@@ -441,8 +476,10 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
                 name.setText(group.getToolName());
                 pack.setText(group.getToolPackage());
                 desc.setText(group.getPopUpDescription());
-                open.setSelected(hint.isRenderingDetail(ScriptConstants.OPEN_TASKGRAPH) && (new Boolean((String) hint.getRenderingDetail(ScriptConstants.OPEN_TASKGRAPH)).booleanValue()));
-                replace.setSelected(hint.isRenderingDetail(ScriptConstants.REPLACE_TASK) && (new Boolean((String) hint.getRenderingDetail(ScriptConstants.REPLACE_TASK)).booleanValue()));
+                open.setSelected(hint.isRenderingDetail(ScriptConstants.OPEN_TASKGRAPH) && (new Boolean(
+                        (String) hint.getRenderingDetail(ScriptConstants.OPEN_TASKGRAPH)).booleanValue()));
+                replace.setSelected(hint.isRenderingDetail(ScriptConstants.REPLACE_TASK) && (new Boolean(
+                        (String) hint.getRenderingDetail(ScriptConstants.REPLACE_TASK)).booleanValue()));
 
                 open.setEnabled(taskgraph.getDataOutputNodeCount() > 0);
                 replace.setEnabled(taskgraph.getDataOutputNodeCount() > 0);
@@ -463,17 +500,16 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
 
 
         /**
-         * This method is called when the panel is reset or cancelled. It should reset
-         * all the panels components to the values specified by the associated task,
-         * e.g. a component representing a parameter called "noise" should be set to
-         * the value returned by a getTool().getParameter("noise") call.
+         * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+         * values specified by the associated task, e.g. a component representing a parameter called "noise" should be
+         * set to the value returned by a getTool().getParameter("noise") call.
          */
         public void reset() {
         }
 
         /**
-         * This method is called when the panel is finished with. It should dispose
-         * of any components (e.g. windows) used by the panel.
+         * This method is called when the panel is finished with. It should dispose of any components (e.g. windows)
+         * used by the panel.
          */
         public void dispose() {
             tools.removeToolTableListener(this);
@@ -481,15 +517,27 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
 
 
         /**
-         * Called when the ok button is clicked on the parameter window. Calls
-         * applyClicked by default to commit any parameter changes.
+         * Called when the ok button is clicked on the parameter window. Calls applyClicked by default to commit any
+         * parameter changes.
          */
         public void okClicked() {
-            if (curselect != null)
+            if (curselect != null) {
                 runScript(runtask, (TaskGraph) curselect, tools, replace.isEnabled() && replace.isSelected(),
                         open.isEnabled() && open.isSelected(), view.isEnabled() && view.isSelected(), source);
+            }
         }
 
+
+        @Override
+        public void toolsAdded(java.util.List<Tool> tools) {
+            for (Tool tool : tools) {
+                handlePopulateTool(tool);
+            }
+        }
+
+        @Override
+        public void toolsRemoved(List<Tool> tools) {
+        }
 
         /**
          * Called when a new tool is added
@@ -530,12 +578,14 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
                 if (path != null) {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-                    if ((node != null) && node.isLeaf())
+                    if ((node != null) && node.isLeaf()) {
                         populateInfoPanel((TaskGraph) node.getUserObject());
-                    else
+                    } else {
                         populateInfoPanel(null);
-                } else
+                    }
+                } else {
                     populateInfoPanel(null);
+                }
             }
         }
 
@@ -563,8 +613,9 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             for (int count = 0; count < packs.length; count++) {
                 child = getChild(parent, packs[count]);
 
-                if (child == null)
+                if (child == null) {
                     child = insertChild(parent, packs[count]);
+                }
 
                 parent = child;
             }
@@ -573,9 +624,11 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
         }
 
         private MutableTreeNode getChild(TreeNode parent, String pack) {
-            for (int count = 0; count < parent.getChildCount(); count++)
-                if (parent.getChildAt(count).toString().equals(pack))
+            for (int count = 0; count < parent.getChildCount(); count++) {
+                if (parent.getChildAt(count).toString().equals(pack)) {
                     return (MutableTreeNode) parent.getChildAt(count);
+                }
+            }
 
             return null;
         }
@@ -584,14 +637,16 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(pack);
             boolean added = false;
 
-            for (int count = 0; (count < parent.getChildCount()) && (!added); count++)
+            for (int count = 0; (count < parent.getChildCount()) && (!added); count++) {
                 if (parent.getChildAt(count).toString().compareToIgnoreCase(pack) > 0) {
                     insertNodeInto(node, parent, count);
                     added = true;
                 }
+            }
 
-            if (!added)
+            if (!added) {
                 insertNodeInto(node, parent, parent.getChildCount());
+            }
 
             return node;
         }
@@ -604,14 +659,16 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
             for (int count = 0; (count < parent.getChildCount()) && (!added); count++) {
                 temp = (DefaultMutableTreeNode) parent.getChildAt(count);
 
-                if ((temp.getUserObject() instanceof Tool) && (temp.toString().compareToIgnoreCase(tool.toString()) > 0)) {
+                if ((temp.getUserObject() instanceof Tool) && (temp.toString().compareToIgnoreCase(tool.toString())
+                        > 0)) {
                     insertNodeInto(node, parent, count);
                     added = true;
                 }
             }
 
-            if (!added)
+            if (!added) {
                 insertNodeInto(node, parent, parent.getChildCount());
+            }
 
             return node;
         }

@@ -58,6 +58,9 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.action.taskgraph.ZoomAction;
@@ -67,16 +70,11 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
 /**
  * Action class to handle all "select all" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CompileAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -120,8 +118,9 @@ public class CompileAction extends AbstractAction implements ActionDisplayOption
                 public void run() {
                     for (int i = 0; i < selectedTools.length; i++) {
                         Tool selectedTool = selectedTools[i];
-                        if ((selectedTool != null) && (!(selectedTool instanceof TaskGraph)))
+                        if ((selectedTool != null) && (!(selectedTool instanceof TaskGraph))) {
                             compiler.compileTargetTool(selectedTool);
+                        }
 
                     }
                 }

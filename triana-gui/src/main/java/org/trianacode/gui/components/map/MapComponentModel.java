@@ -59,47 +59,42 @@
 
 package org.trianacode.gui.components.map;
 
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
 import org.trianacode.gui.components.triana.OpenGroupComponentModel;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.TrianaClient;
 
-import javax.swing.*;
-
 /**
  * The component model used to for may layouts
  *
- * @author      Ian Wang
- * @created     20th September 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class MapComponentModel implements OpenGroupComponentModel {
 
     /**
-     * @return the popup menu for the open group (if null is returned
-     *         then the default popup menu is used, return a empty popup menu for no
-     *         popup)
+     * @return the popup menu for the open group (if null is returned then the default popup menu is used, return a
+     *         empty popup menu for no popup)
      */
     public JPopupMenu getOpenGroupPopup(TaskGraph taskgraph) {
         return null;
     }
 
     /**
-     * @return the taskgraph panel used to represent the specified taskgraph
-     *         (if null is returned then the default component is used)
+     * @return the taskgraph panel used to represent the specified taskgraph (if null is returned then the default
+     *         component is used)
      */
     public TaskGraphPanel getOpenGroupComponent(TaskGraph taskgraph, TrianaClient client) {
         return new MapPanel((TaskGraph) taskgraph, client);
     }
 
     /**
-     * @return the action that is invoked when a group is activated (e.g. the
-     *         workspace is double-clicked). If null is returned the default workspace
-     *         action is used.
+     * @return the action that is invoked when a group is activated (e.g. the workspace is double-clicked). If null is
+     *         returned the default workspace action is used.
      */
     public Action getOpenGroupAction(TaskGraph taskgraph) {
         return null;
@@ -107,9 +102,8 @@ public class MapComponentModel implements OpenGroupComponentModel {
 
 
     /**
-     * @return the popup menu when multiple tasks are selected in the workspace
-     *         (if null is returned then the default popup menu is used, return a empty
-     *         popup menu for no popup)
+     * @return the popup menu when multiple tasks are selected in the workspace (if null is returned then the default
+     *         popup menu is used, return a empty popup menu for no popup)
      */
     public JPopupMenu getMultipleSelectedPopup(Task[] tasks) {
         return null;

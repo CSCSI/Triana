@@ -59,18 +59,15 @@
 
 package org.trianacode.taskgraph.event;
 
-import org.trianacode.taskgraph.TaskGraph;
-
 import java.util.EventObject;
+
+import org.trianacode.taskgraph.TaskGraph;
 
 /**
  * The event generated when the control task is connected/disconnected/unstable
  *
- * @author      Ian Wang
- * @created
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class ControlTaskStateEvent extends EventObject {
@@ -88,8 +85,8 @@ public class ControlTaskStateEvent extends EventObject {
     /**
      * Constructs a task graph cable event
      *
-     * @param id the id of this event (either CONTROL_TASK_CONNECTED,
-     * CONTROL_TASK_DISCONNECTED or CONTROL_TASK_UNSTABLE)
+     * @param id    the id of this event (either CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED or
+     *              CONTROL_TASK_UNSTABLE)
      * @param state the state of the control task
      */
     public ControlTaskStateEvent(int id, TaskGraph taskgraph, int state) {
@@ -102,8 +99,8 @@ public class ControlTaskStateEvent extends EventObject {
 
 
     /**
-     * @return id the id of this event (either CONTROL_TASK_CONNECTED,
-     * CONTROL_TASK_DISCONNECTED or CONTROL_TASK_UNSTABLE)
+     * @return id the id of this event (either CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED or
+     *         CONTROL_TASK_UNSTABLE)
      */
     public int getID() {
         return id;
@@ -117,10 +114,8 @@ public class ControlTaskStateEvent extends EventObject {
     }
 
     /**
-     * @return the state of the control task (either
-     * TaskGraph.CONTROL_TASK_CONNECTED,
-     * TaskGraph.CONTROL_TASK_DICONNECTED or
-     * TaskGraph.CONTROL_TASK_UNSTABLE)
+     * @return the state of the control task (either TaskGraph.CONTROL_TASK_CONNECTED,
+     *         TaskGraph.CONTROL_TASK_DICONNECTED or TaskGraph.CONTROL_TASK_UNSTABLE)
      */
     public int getControlTaskState() {
         return state;

@@ -75,6 +75,7 @@ public class WebGUICreator {
     }
 
     // Text Label Method
+
     public String textlabel(String currentline) {
         //guilines += "This is the written label's message: $title label Label hello\n";
 
@@ -87,7 +88,7 @@ public class WebGUICreator {
             int index = textlabel.indexOf("$");
             title = textlabel.substring(0, (index - 1));
             int index2 = textlabel.indexOf("Label");
-            defaulttext = textlabel.substring(index2+5);
+            defaulttext = textlabel.substring(index2 + 5);
         }
 
         output = title + defaulttext;
@@ -95,6 +96,7 @@ public class WebGUICreator {
     }
 
     // File Browser Method
+
     public String filechooser(String currentline) {
         // guilines += "Please choose a file $title browserparamname File null *.*\n";
         //<input type="file" name="datafile" size="40">
@@ -111,15 +113,15 @@ public class WebGUICreator {
             int index = filechoosertext.indexOf("$");
             title = filechoosertext.substring(0, (index - 1));
             int index2 = filechoosertext.indexOf("File");
-            stringbuffer = filechoosertext.substring(index2+4);
+            stringbuffer = filechoosertext.substring(index2 + 4);
         }
 
         String[] words = stringbuffer.split(" ");
         //This code is to find the name of the gui element
         String[] allwords = filechoosertext.split(" ");
-        for (int i=0; i<allwords.length;i++){
-            if(allwords[i].startsWith("$")){
-                name = allwords[i+1];
+        for (int i = 0; i < allwords.length; i++) {
+            if (allwords[i].startsWith("$")) {
+                name = allwords[i + 1];
             }
         }
 
@@ -128,6 +130,7 @@ public class WebGUICreator {
     }
 
     // Text Box Method
+
     public String textfield(String currentline) {
 
         //Text Field Example! $title whatever TextField This is the default text\n
@@ -149,18 +152,19 @@ public class WebGUICreator {
 
         // Split all the words up then find the one after the one with the dollar sign in it - that's the 'name'
         String[] allwords = textfieldbox.split(" ");
-        for (int i=0; i<allwords.length;i++){
-            if(allwords[i].startsWith("$")){
-                name = allwords[i+1];
+        for (int i = 0; i < allwords.length; i++) {
+            if (allwords[i].startsWith("$")) {
+                name = allwords[i + 1];
             }
         }
-        
+
         //String[] stri = textfieldbox.split(" ");
         output = title + " <input type = \"text\" name = " + name + "\"" + "value=\"" + defaulttext + "\"/>";
         return output;
     }
 
     // CheckBox Method
+
     public String checkbox(String currentline) {
 
         String checkboxline = currentline;
@@ -168,31 +172,31 @@ public class WebGUICreator {
         String output;
         String checked = "";
         String value = "";
-        String name= "";
+        String name = "";
 
         for (int i = 0; i < checkboxline.length(); i++) {
             int index = checkboxline.indexOf("$");
             title = checkboxline.substring(0, (index - 1));
             String lastWord = checkboxline.substring(checkboxline.lastIndexOf(' ') + 1);
 
-            if (lastWord == "true"){
+            if (lastWord == "true") {
                 checked = "checked=\"yes\"";
             }
 
             // Find last word...
             String[] words = checkboxline.split(" ");
-            for (int j=0; j<words.length;j++){
+            for (int j = 0; j < words.length; j++) {
                 int index2 = checkboxline.indexOf("$");
-                if (j == index2){
-                    value = words[j+1];
+                if (j == index2) {
+                    value = words[j + 1];
                 }
             }
         }
 
         String[] allwords = checkboxline.split(" ");
-        for (int i=0; i<allwords.length;i++){
-            if(allwords[i].startsWith("$")){
-                name = allwords[i+1];
+        for (int i = 0; i < allwords.length; i++) {
+            if (allwords[i].startsWith("$")) {
+                name = allwords[i + 1];
             }
         }
 
@@ -201,6 +205,7 @@ public class WebGUICreator {
     }
 
     // Drop Down Menu Method
+
     public String choice(String input) {
 
         //LFO Type $title LFOType Choice [sinusoidal] [triangular]\n";
@@ -217,23 +222,23 @@ public class WebGUICreator {
             int index = choicebox.indexOf("$");
             title = choicebox.substring(0, (index - 1));
             int index2 = choicebox.indexOf("Choice");
-            stringbuffer = choicebox.substring(index2+7);
+            stringbuffer = choicebox.substring(index2 + 7);
         }
 
         String[] words = stringbuffer.split(" ");
         //This code is to find the name of the element
         String[] allwords = choicebox.split(" ");
-        for (int i=0; i<allwords.length;i++){
-            if(allwords[i].startsWith("$")){
-                name = allwords[i+1];
+        for (int i = 0; i < allwords.length; i++) {
+            if (allwords[i].startsWith("$")) {
+                name = allwords[i + 1];
             }
         }
 
         // For each word in the 'choices' array
-        for (int j=0; j<words.length;j++){
+        for (int j = 0; j < words.length; j++) {
             words[j] = words[j].replaceAll("\\[", "");
             words[j] = words[j].replaceAll("]", "");
-                outputtemp += "<option value = \"" + j + "\">" +  words[j] + "</option>\n";
+            outputtemp += "<option value = \"" + j + "\">" + words[j] + "</option>\n";
         }
 
         outputtemp += "</select>";
@@ -267,23 +272,23 @@ public class WebGUICreator {
         String[] allwords = scrollertest.split(" ");
 
         //Go through all words
-        for (int i=0; i<allwords .length;i++){
-            if(allwords[i].equals("IntScroller")){
+        for (int i = 0; i < allwords.length; i++) {
+            if (allwords[i].equals("IntScroller")) {
                 // Do nothing and increments are integer values anyway?
                 step = "1";
             }
-            if(allwords[i].equals("Scroller")){
+            if (allwords[i].equals("Scroller")) {
                 step = "0.01";
             }
-            if(i == (allwords.length-1)){
-                defaultvalue = allwords[i-1];
-                max = allwords[i-2];
-                min = allwords[i-3];
+            if (i == (allwords.length - 1)) {
+                defaultvalue = allwords[i - 1];
+                max = allwords[i - 2];
+                min = allwords[i - 3];
             }
-                       
+
             //This code is to find the name of the gui element
-            if(allwords[i].startsWith("$")){
-                name = allwords[i+1];
+            if (allwords[i].startsWith("$")) {
+                name = allwords[i + 1];
             }
         }
 
@@ -292,8 +297,9 @@ public class WebGUICreator {
 //        System.out.println("max value: " +  max);
 //        System.out.println("step/increment value: " + step);
 
-        output = title + " <input type=\"range\" name=\"" + name + "\" min=\"" + min + "\" max=\"" + max + "\" value=\"" + defaultvalue + "\" step=\"" + step +
-                         "\" onchange=\"showValue(this.value)\"/>\n";
+        output = title + " <input type=\"range\" name=\"" + name + "\" min=\"" + min + "\" max=\"" + max + "\" value=\""
+                + defaultvalue + "\" step=\"" + step +
+                "\" onchange=\"showValue(this.value)\"/>\n";
 
         output += "<span id=\"range\">" + defaultvalue + "</span>\n";
         output += "<script type=\"text/javascript\">\n";

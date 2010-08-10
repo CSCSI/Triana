@@ -1,22 +1,20 @@
 package org.trianacode.discovery.toolinfo;
 
+import java.io.Serializable;
 import java.net.URL;
 
 /**
  * Basic information required for displaying tools in the tooltree
- * 
- * User: Ian Taylor
- * Date: Jul 30, 2010
- * Time: 11:43:13 AM
- * To change this template use File | Settings | File Templates.
+ * <p/>
+ * User: Ian Taylor Date: Jul 30, 2010 Time: 11:43:13 AM To change this template use File | Settings | File Templates.
  */
-public class ToolMetadata {
+public class ToolMetadata implements Serializable {
     private String toolName;
 
     private String displayName;
 
     // url for the unit.
-    
+
     private URL url;
 
     // Triana unit class that will wrap this unit - if null then it is assumed

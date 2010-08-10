@@ -63,7 +63,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -78,7 +77,6 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.taskgraph.util.Toolboxes;
 import org.trianacode.util.Env;
 
 /**
@@ -218,11 +216,6 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                         break;
                     } else {
                         tools.addToolBox(new Toolbox(current));
-                        try {
-                            Toolboxes.saveToolboxes(tools);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
                         toolBoxItems.add(current);
                     }
                 }
@@ -239,11 +232,6 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                 }
             } else {
                 toolBoxItems.remove(selected);
-                try {
-                    Toolboxes.saveToolboxes(tools);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
             }
 
         }

@@ -59,28 +59,25 @@
 package org.trianacode.gui.extensions;
 
 
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-
 import java.io.File;
 import java.io.IOException;
 
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+
 
 /**
- * Interface used to provide dynamic discovery of taskgraph/workflow export filters. These
- * filters are added to the export dialog at run time.
+ * Interface used to provide dynamic discovery of taskgraph/workflow export filters. These filters are added to the
+ * export dialog at run time.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Apr 21, 2004: 5:29:17 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  * @see FileImportExportDecorator
  */
 public interface TaskGraphExporterInterface {
 
     /**
-     * Converts the taskgraph to the appropriate format and writes it to the user choosen
-     * file.
+     * Converts the taskgraph to the appropriate format and writes it to the user choosen file.
      *
      * @param taskgraph    the taskgraph to export
      * @param file

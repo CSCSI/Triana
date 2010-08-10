@@ -1,10 +1,7 @@
 package org.trianacode.discovery;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.List;
 
 import org.thinginitself.http.HttpPeer;
@@ -13,15 +10,14 @@ import org.thinginitself.http.Resource;
 import org.thinginitself.http.Response;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableObject;
-import org.thinginitself.streamable.StreamableString;
 import org.trianacode.discovery.protocols.tdp.TDPRequest;
 import org.trianacode.discovery.protocols.tdp.TDPResponse;
 import org.trianacode.discovery.protocols.tdp.TDPServer;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.LocalTrawler;
 import org.trianacode.discovery.protocols.thirdparty.ServiceTypesAndProtocols;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
+import org.trianacode.taskgraph.tool.ToolResolver;
 import mil.navy.nrl.discovery.WebBootstrap;
-import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
 import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
 import mil.navy.nrl.discovery.types.ServiceTypes;
 import mil.navy.nrl.discovery.web.template.WebDefines;
@@ -34,26 +30,19 @@ import sun.misc.Timer;
  * Settings | File Templates.
  */
 public class DiscoverTools implements Timeable {
-    static WebBootstrap bonjourServer;
-    ServiceTypesAndProtocols tdpProtocols;
-    DiscoveredTools discoveredServices;
+    private static WebBootstrap bonjourServer;
+    private ServiceTypesAndProtocols tdpProtocols;
+    private DiscoveredTools discoveredServices;
 
-    Timer timer;
 
-    HttpPeer httpEngine;
+    private Timer timer;
+    private HttpPeer httpEngine;
 
-    public DiscoverTools(HttpPeer httpEngine) {
-        tdpProtocols = new ServiceTypesAndProtocols();
-
+    public DiscoverTools(HttpPeer httpEngine, ToolResolver resolver) {
+        this.tdpProtocols = new ServiceTypesAndProtocols();
         this.httpEngine = httpEngine;
-        startServices();
 
-        //  scan every 10 seconds....
-
-       // timer = new Timer(this, 10000);
-       // timer.cont();
-
-        tick(null);
+        startServices(resolver);
 
         ServiceTypes st = new ServiceTypes();
 
@@ -64,16 +53,21 @@ public class DiscoverTools implements Timeable {
         discoveredServices = new DiscoveredTools(this);
 
         try {
-            bonjourServer = new WebBootstrap((DiscoveredServicesInterface) discoveredServices, httpEngine,
+            bonjourServer = new WebBootstrap(discoveredServices, httpEngine,
                     "TrianaServer", "triana", "Triana Bonjour Service!",
                     "Published Services", webDefines, st);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        //  scan every 10 seconds....
+        //timer = new Timer(this, 10000);
+        //timer.cont();
+
+        //tick(timer);
     }
 
-    public void startServices() {
-        new LocalTrawler(httpEngine);
+    public void startServices(ToolResolver resolver) {
+        new LocalTrawler(httpEngine, resolver);
     }
 
     public void tick(sun.misc.Timer timer) {
@@ -127,21 +121,6 @@ public class DiscoverTools implements Timeable {
         return httpEngine.post(c);
 
     }
-
- /**   private Response sendRequestByHand(RequestContext c, TDPRequest request) throws IOException {
-        c.setResource(new Resource(new StreamableString(objectToString(request))));
-        return httpEngine.post(c);
-    }
-
-    public static String objectToString(Serializable object) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream ou = new ObjectOutputStream(out);
-        ou.writeObject(object);
-        ou.flush();
-        String output = out.toString();
-        out.close();
-        return output;
-    }  */
 
     public static WebBootstrap getBonjourServer() {
         return bonjourServer;

@@ -59,15 +59,16 @@
 
 package org.trianacode.gui.panels;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Andrew
- * Date: 22-May-2004
- * Time: 08:31:00
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: Andrew Date: 22-May-2004 Time: 08:31:00 To change this template use File | Settings |
+ * File Templates.
  */
 public class DigitalCounter extends JPanel {
 
@@ -134,8 +135,9 @@ public class DigitalCounter extends JPanel {
 
     private void checkCounter(int count) {
         count = count % (max + 1);
-        if (count == alarm)
+        if (count == alarm) {
             playAlarm();
+        }
     }
 
 

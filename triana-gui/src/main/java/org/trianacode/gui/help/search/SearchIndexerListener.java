@@ -59,18 +59,16 @@
 package org.trianacode.gui.help.search;
 
 /**
- * A class should implement this interface if it wants to follow the progress
- * of the search indexing routing.  This would be implemented by a progress
- * window for example.
+ * A class should implement this interface if it wants to follow the progress of the search indexing routing.  This
+ * would be implemented by a progress window for example.
  *
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public interface SearchIndexerListener {
 
     /**
-     * This method is called frequently by the search indexer as it
-     * progresses with it's indexing.
+     * This method is called frequently by the search indexer as it progresses with it's indexing.
+     *
      * @param event
      * @see SearchIndexerEvent
      */

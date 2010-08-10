@@ -63,15 +63,8 @@ import org.trianacode.taskgraph.Node;
 /**
  * An input/output NodeCable associated with a Task which can be Runnable.
  *
- * @author      Ian Taylor
- * @created     29th April 2002
-<<<<<<< RunnableNode.java
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.8.22.1
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public interface RunnableNodeInterface extends Node {
 

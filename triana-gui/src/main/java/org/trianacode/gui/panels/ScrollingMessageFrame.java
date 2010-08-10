@@ -59,26 +59,29 @@
 
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.Display;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import org.trianacode.gui.Display;
+import org.trianacode.util.Env;
 
 /**
  * Class Description Here...
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Jun 16, 2005: 4:36:13 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * Put your notes here...
  */
 public class ScrollingMessageFrame {
 

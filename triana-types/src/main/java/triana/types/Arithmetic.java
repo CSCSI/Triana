@@ -60,41 +60,30 @@ package triana.types;
 
 
 /**
- * Arithmetic is an Interface that should be implemented by any
- * Triana data types that need to define standard arithmetic:
- * adding, subtracting, multiplying, and dividing
- * the current object by another. The Arithmetic interface also provides
- * a compatibility test: <i>isCompatible</i> ensures that an
- * object to be combined with the current object has an acceptable type
- * and contents, as decided by the programmer for the type that implements
- * the interface. The interface also provides the test <i>equals</i>
- * which tests for strict equality of the argument and current objects.
- * Programmers should normally implement the interface in such a way that
- * arithmetic is provided at least between objects of the same class and with
- * objects of the class Const.
+ * Arithmetic is an Interface that should be implemented by any Triana data types that need to define standard
+ * arithmetic: adding, subtracting, multiplying, and dividing the current object by another. The Arithmetic interface
+ * also provides a compatibility test: <i>isCompatible</i> ensures that an object to be combined with the current object
+ * has an acceptable type and contents, as decided by the programmer for the type that implements the interface. The
+ * interface also provides the test <i>equals</i> which tests for strict equality of the argument and current objects.
+ * Programmers should normally implement the interface in such a way that arithmetic is provided at least between
+ * objects of the same class and with objects of the class Const.
  *
+ * @author Ian Taylor
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  * @see TrianaType
  * @see GraphType
  * @see Const
- *
- * @author      Ian Taylor
- * @author      Bernard Schutz
- * @created     20 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface Arithmetic {
 
 
     /**
-     * Tests the argument object to determine if
-     * it makes sense to perform arithmetic operations between
-     * it and the current object.  The definition of compatibility
-     * is up to the programmer who implements the interface, but it should
-     * test not only that the object is of a suitable type but also that
-     * its data are compatible: arrays of the same size, etc. It can be
-     * used in the arithmetic methods to provide a graceful exit if the
-     * two objects cannot sensibly be combined.
+     * Tests the argument object to determine if it makes sense to perform arithmetic operations between it and the
+     * current object.  The definition of compatibility is up to the programmer who implements the interface, but it
+     * should test not only that the object is of a suitable type but also that its data are compatible: arrays of the
+     * same size, etc. It can be used in the arithmetic methods to provide a graceful exit if the two objects cannot
+     * sensibly be combined.
      *
      * @param obj The data object to be compared with the current one
      * @return boolean True if the object can be combined with the current one
@@ -103,8 +92,7 @@ public interface Arithmetic {
 
 
     /**
-     * Tests if the argument object is equal to the
-     * current object. The definition of "equal" is up to the programmer
+     * Tests if the argument object is equal to the current object. The definition of "equal" is up to the programmer
      * who implements the interface.
      *
      * @param obj The data object to be compared with the current one
@@ -113,58 +101,46 @@ public interface Arithmetic {
     public boolean equals(Object obj);
 
     /**
-     * Adds the argument object to the current object.
-     * Users should invoke method <i>isCompatible</i> to test whether this
-     * operation makes sense.
+     * Adds the argument object to the current object. Users should invoke method <i>isCompatible</i> to test whether
+     * this operation makes sense.
      *
      * @param obj The new data object to be added to the current one
-     * @return the object representing result of the addition. The object
-     * should be the same type as the original current.
-     *
-     * @throws ClassCastException if addition with the specified object is
-     * not valid
+     * @return the object representing result of the addition. The object should be the same type as the original
+     *         current.
+     * @throws ClassCastException if addition with the specified object is not valid
      */
     public Arithmetic add(Object obj) throws ClassCastException;
 
     /**
-     * Subtracts the argument object from the current object.
-     * Users should invoke method <i>isCompatible</i> to test whether this
-     * operation makes sense.
+     * Subtracts the argument object from the current object. Users should invoke method <i>isCompatible</i> to test
+     * whether this operation makes sense.
      *
      * @param obj The new data object to be subtracted from the current one
-     * @return the object representing result of the subtraction. The object
-     * should be the same type as the original current.
-     *
-     * @throws ClassCastException if subtraction with the specified object is
-     * not valid
+     * @return the object representing result of the subtraction. The object should be the same type as the original
+     *         current.
+     * @throws ClassCastException if subtraction with the specified object is not valid
      */
     public Arithmetic subtract(Object obj) throws ClassCastException;
 
     /**
-     * Multiplies the current object by the argument object.
-     * It should invoke method <i>isCompatible</i> to test whether this
-     * operation makes sense.
+     * Multiplies the current object by the argument object. It should invoke method <i>isCompatible</i> to test whether
+     * this operation makes sense.
      *
      * @param obj The new data object to be multiplied into the current one
-     * @return the object representing result of the multiplication. The object
-     * should be the same type as the original current.
-     *
-     * @throws ClassCastException if multiplication with the specified object is
-     * not valid
+     * @return the object representing result of the multiplication. The object should be the same type as the original
+     *         current.
+     * @throws ClassCastException if multiplication with the specified object is not valid
      */
     public Arithmetic multiply(Object obj) throws ClassCastException;
 
     /**
-     * Divides the current object by the argument object.
-     * It should invoke method <i>isCompatible</i> to test whether this
-     * operation makes sense.
+     * Divides the current object by the argument object. It should invoke method <i>isCompatible</i> to test whether
+     * this operation makes sense.
      *
      * @param obj The new data object to be divided into the current one
-     * @return the object representing result of the division. The object
-     * should be the same type as the original current.
-     *
-     * @throws ClassCastException if division with the specified object is
-     * not valid
+     * @return the object representing result of the division. The object should be the same type as the original
+     *         current.
+     * @throws ClassCastException if division with the specified object is not valid
      */
     public Arithmetic divide(Object obj) throws ClassCastException;
 

@@ -58,6 +58,11 @@
  */
 package org.trianacode.gui.hci;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+
 import org.trianacode.gui.panels.CompilePanel;
 import org.trianacode.gui.panels.ScrollingMessageFrame;
 import org.trianacode.gui.windows.ErrorDialog;
@@ -72,19 +77,11 @@ import org.trianacode.util.CompileUtil;
 import org.trianacode.util.CompilerException;
 import org.trianacode.util.Env;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-
 /**
- * The class responsible for co-ordinating the compiling of tools and the
- * generation of tool XML
+ * The class responsible for co-ordinating the compiling of tools and the generation of tool XML
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2nd October 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CompileHandler implements ParameterWindowListener {
 
@@ -149,7 +146,8 @@ public class CompileHandler implements ParameterWindowListener {
     private void init() {
         compiler = new CompileUtil(true);
         compiler.setCompilerLocation(Env.getCompilerCommand());
-        compiler.setCompilerClasspath(Env.getClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
+        compiler.setCompilerClasspath(
+                Env.getClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
         compiler.setCompilerArguments(Env.getJavacArgs());
 
         errorFrame = new ScrollingMessageFrame("Automated Compile - Error Messages", false);
@@ -159,24 +157,27 @@ public class CompileHandler implements ParameterWindowListener {
 
     public void compileTargetTool(Tool tool) {
         if ((tool != null) && (tool.getProxy() instanceof JavaProxy)) {
-            if (targetTool == null)
+            if (targetTool == null) {
                 targetTool = tool;
+            }
             synchronized (targetTool) {
                 targetTool = tool;
                 JavaProxy proxy = (JavaProxy) tool.getProxy();
                 unitName = proxy.getUnitName();
                 toolName = tool.getToolName();
 
-                if (unitName.indexOf('.') > 0)
+                if (unitName.indexOf('.') > 0) {
                     unitName = unitName.substring(unitName.lastIndexOf('.') + 1);
+                }
 
-                if (toolName.indexOf('.') > 0)
+                if (toolName.indexOf('.') > 0) {
                     toolName = toolName.substring(toolName.lastIndexOf('.') + 1);
+                }
 
                 unitPackage = proxy.getUnitPackage().replace('.', File.separatorChar);
                 toolBox = tool.getToolBox();
                 toolPackage = tool.getToolPackage();
-                toolFile = tool.getDefinitionPath();
+                toolFile = tool.getDefinitionPath().toString();
                 sourceDir = computeSrcFileLocation(toolBox, unitPackage);
                 if (sourceDir != null) {
                     sourceFilePath = sourceDir + File.separatorChar + unitName + ".java";
@@ -192,8 +193,9 @@ public class CompileHandler implements ParameterWindowListener {
                     panel.setToolFile(toolFile);
                 }
 
-                if (automatedCompile)
+                if (automatedCompile) {
                     compile();
+                }
             }
         }
     }
@@ -293,7 +295,8 @@ public class CompileHandler implements ParameterWindowListener {
         if (paramwin.isAccepted()) {
             if (panel.isCompileSource()) {
                 if (!(new File(panel.getSourceFilePath()).exists())) {
-                    new ErrorDialog(Env.getString("compileError"), Env.getString("compileError2") + ":\n " + panel.getSourceFilePath());
+                    new ErrorDialog(Env.getString("compileError"),
+                            Env.getString("compileError2") + ":\n " + panel.getSourceFilePath());
                     paramwin.setVisible(true);
                     return;
                 }
@@ -320,10 +323,13 @@ public class CompileHandler implements ParameterWindowListener {
                 if (!automatedCompile) {
                     compiler = new CompileUtil(sourceFilePath, true);
                     compiler.setCompilerLocation(panel.getCompilerCommand());
-                    compiler.setCompilerClasspath(panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
+                    compiler.setCompilerClasspath(
+                            panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader
+                                    .getLoader().getClassPath());
                     compiler.setCompilerArguments(panel.getCompilerArguments());
-                } else
+                } else {
                     compiler.setJavaFile(sourceFilePath);
+                }
                 compiler.setDestDir(destFilePath);
                 compiler.setSourcepath(sourceDir);
                 compiler.compile();
@@ -355,8 +361,9 @@ public class CompileHandler implements ParameterWindowListener {
                 errorFrame.setVisible(true);
 
                 errorFrame.println(except.getMessage());
-            } else
+            } else {
                 showParameterWindow();
+            }
         }
 
     }
@@ -387,7 +394,9 @@ public class CompileHandler implements ParameterWindowListener {
                 compiler = new CompileUtil(sourcepath, true);
                 compiler.setCompilerLocation(panel.getCompilerCommand());
                 //TODO
-                compiler.setCompilerClasspath(panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
+                compiler.setCompilerClasspath(
+                        panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader
+                                .getLoader().getClassPath());
                 compiler.setCompilerArguments(panel.getCompilerArguments());
             }
             compiler.setDestDir(destFilePath);

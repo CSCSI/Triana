@@ -96,36 +96,36 @@ public abstract class Gsm_Def {
     public static final short gsm_INVA[] =
             {13107, 13107, 13107, 13107, 19223, 17476, 31454, 29708};
 
-/*   Table 4.3a  Decision level of the LTP gain quantizer
- */
+    /*   Table 4.3a  Decision level of the LTP gain quantizer
+    */
     /*  bc                0         1         2          3                  */
     public static final short gsm_DLB[] =
             {6554, 16384, 26214, 32767};
 
 
-/*   Table 4.3b   Quantization levels of the LTP gain quantizer
- */
+    /*   Table 4.3b   Quantization levels of the LTP gain quantizer
+    */
     /* bc                 0          1        2          3                  */
     public static final short gsm_QLB[] =
             {3277, 11469, 21299, 32767};
 
 
-/*   Table 4.4   Coefficients of the weighting filter
- */
+    /*   Table 4.4   Coefficients of the weighting filter
+    */
     /* i                0      1   2    3   4      5      6     7   8   9    10  */
     public static final short gsm_H[] =
             {-134, -374, 0, 2054, 5741, 8192, 5741, 2054, 0, -374, -134};
 
 
-/*   Table 4.5   Normalized inverse mantissa used to compute xM/xmax
- */
+    /*   Table 4.5   Normalized inverse mantissa used to compute xM/xmax
+    */
     /* i                  0      1      2      3      4      5     6        7  */
     public static final short gsm_NRFAC[] =
             {29128, 26215, 23832, 21846, 20165, 18725, 17476, 16384};
 
 
-/*   Table 4.6   Normalized direct mantissa used to compute xM/xmax
- */
+    /*   Table 4.6   Normalized direct mantissa used to compute xM/xmax
+    */
     /* i                  0      1       2      3      4      5      6      7   */
     public static final short gsm_FAC[] =
             {18431, 20479, 22527, 24575, 26623, 28671, 30719, 32767};

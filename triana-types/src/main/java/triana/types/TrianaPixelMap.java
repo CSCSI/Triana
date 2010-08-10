@@ -58,18 +58,15 @@
  */
 package triana.types;
 
+import java.awt.Image;
+
+import javax.swing.JPanel;
 import triana.types.image.PixelMap;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- *
- * @author      Melanie Rhianna Lewis
- * @author      Bernard Schutz
- * @created     28 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Melanie Rhianna Lewis
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class TrianaPixelMap extends TrianaType {
 
@@ -81,10 +78,8 @@ public class TrianaPixelMap extends TrianaType {
     private String mapName = "TrianaPixelMap";
 
     /**
-     * Obsolete parameter kept for compatibility with older version
-     * of this class. It is obsolete because the main data is now
-     * stored in dataContainer, not as a public object.
-     * Constructors and data setting methods keep this pointer
+     * Obsolete parameter kept for compatibility with older version of this class. It is obsolete because the main data
+     * is now stored in dataContainer, not as a public object. Constructors and data setting methods keep this pointer
      * up to date with changes in the object held in dataContainer.
      */
     public PixelMap pixelMap;
@@ -136,11 +131,9 @@ public class TrianaPixelMap extends TrianaType {
     }
 
     /**
-     * This function is used by the Op class to check if the data
-     * contained within the particular Triana Type is valid or not.
-     * This check is dependant on the type of data the Triana type is
-     * representing so it must be implemented within
-     * each individual type.
+     * This function is used by the Op class to check if the data contained within the particular Triana Type is valid
+     * or not. This check is dependant on the type of data the Triana type is representing so it must be implemented
+     * within each individual type.
      */
     public boolean isValid() {
         // don't care for now!
@@ -148,40 +141,19 @@ public class TrianaPixelMap extends TrianaType {
     }
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         TrianaPixelMap t = null;
@@ -200,8 +172,8 @@ public class TrianaPixelMap extends TrianaType {
     }
 
     /**
-     * Implement the abstract <i>copyData</i> method of TrianaType. This copies
-     * an image from the given object to the present one.
+     * Implement the abstract <i>copyData</i> method of TrianaType. This copies an image from the given object to the
+     * present one.
      *
      * @param source The TrianaImage whose image is being copied
      */
@@ -262,6 +234,7 @@ public class TrianaPixelMap extends TrianaType {
      *       super.updateObsoletePointers;
      * </PRE>
      */
+
     protected void updateObsoletePointers() {
         pixelMap = (PixelMap) getFromContainer(mapName);
         super.updateObsoletePointers();

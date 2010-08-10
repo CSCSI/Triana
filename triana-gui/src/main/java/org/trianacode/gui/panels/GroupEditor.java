@@ -58,28 +58,44 @@
  */
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.windows.ParameterWindow;
-import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.windows.ParameterWindow;
+import org.trianacode.gui.windows.WindowButtonConstants;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.util.Env;
 
 /**
  * Editor panel to change nodes and parameter nodes for a group
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 14-Jun-02
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class GroupEditor extends ParameterPanel implements ActionListener {
 
@@ -186,19 +202,30 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
         if (input) {
             nodes = getInputNodes();
 
-            for (int count = 0; count < nodes.length; count++)
-                if (nodes[count].isParameterNode())
-                    ((DefaultListModel) list.getModel()).addElement(taskgraph.getTask(nodes[count]).getToolName() + " [param" + nodes[count].getNodeIndex() + "-" + ((ParameterNode) nodes[count]).getParameterName() + "]");
-                else
-                    ((DefaultListModel) list.getModel()).addElement(taskgraph.getTask(nodes[count]).getToolName() + " [in" + nodes[count].getNodeIndex() + "]");
+            for (int count = 0; count < nodes.length; count++) {
+                if (nodes[count].isParameterNode()) {
+                    ((DefaultListModel) list.getModel()).addElement(
+                            taskgraph.getTask(nodes[count]).getToolName() + " [param" + nodes[count].getNodeIndex()
+                                    + "-" + ((ParameterNode) nodes[count]).getParameterName() + "]");
+                } else {
+                    ((DefaultListModel) list.getModel()).addElement(
+                            taskgraph.getTask(nodes[count]).getToolName() + " [in" + nodes[count].getNodeIndex() + "]");
+                }
+            }
         } else {
             nodes = getOutputNodes();
 
-            for (int count = 0; count < nodes.length; count++)
-                if (nodes[count].isParameterNode())
-                    ((DefaultListModel) list.getModel()).addElement(taskgraph.getTask(nodes[count]).getToolName() + " [param" + nodes[count].getNodeIndex() + "-" + ((ParameterNode) nodes[count]).getParameterName() + "]");
-                else
-                    ((DefaultListModel) list.getModel()).addElement(taskgraph.getTask(nodes[count]).getToolName() + " [out" + nodes[count].getNodeIndex() + "]");
+            for (int count = 0; count < nodes.length; count++) {
+                if (nodes[count].isParameterNode()) {
+                    ((DefaultListModel) list.getModel()).addElement(
+                            taskgraph.getTask(nodes[count]).getToolName() + " [param" + nodes[count].getNodeIndex()
+                                    + "-" + ((ParameterNode) nodes[count]).getParameterName() + "]");
+                } else {
+                    ((DefaultListModel) list.getModel()).addElement(
+                            taskgraph.getTask(nodes[count]).getToolName() + " [out" + nodes[count].getNodeIndex()
+                                    + "]");
+                }
+            }
         }
     }
 
@@ -209,11 +236,15 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
         if (taskgraph.isControlTaskConnected()) {
             Task looptask = taskgraph.getControlTask();
 
-            for (int count = 0; count < nodes.length; count++)
-                nodes[count] = looptask.getDataOutputNode(count + getTask().getDataOutputNodeCount()).getCable().getReceivingNode();
-        } else
-            for (int count = 0; count < nodes.length; count++)
+            for (int count = 0; count < nodes.length; count++) {
+                nodes[count] = looptask.getDataOutputNode(count + getTask().getDataOutputNodeCount()).getCable()
+                        .getReceivingNode();
+            }
+        } else {
+            for (int count = 0; count < nodes.length; count++) {
                 nodes[count] = nodes[count].getParentNode();
+            }
+        }
 
         return nodes;
     }
@@ -224,11 +255,15 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
         if (taskgraph.isControlTaskConnected()) {
             Task looptask = taskgraph.getControlTask();
 
-            for (int count = 0; count < nodes.length; count++)
-                nodes[count] = looptask.getDataInputNode(count + getTask().getDataInputNodeCount()).getCable().getSendingNode();
-        } else
-            for (int count = 0; count < nodes.length; count++)
+            for (int count = 0; count < nodes.length; count++) {
+                nodes[count] = looptask.getDataInputNode(count + getTask().getDataInputNodeCount()).getCable()
+                        .getSendingNode();
+            }
+        } else {
+            for (int count = 0; count < nodes.length; count++) {
                 nodes[count] = nodes[count].getParentNode();
+            }
+        }
 
         return nodes;
     }
@@ -240,8 +275,9 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
 
         Task task = taskgraph.getControlTask();
 
-        if (task != null)
+        if (task != null) {
             controlfield.setText(task.getQualifiedToolName());
+        }
 
         JPanel control = new JPanel(new BorderLayout());
         control.add(panel, BorderLayout.NORTH);
@@ -295,19 +331,21 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
      * Applies changes to the control task
      */
     private void applyControlChanges() throws TaskException {
-        if (controlfield.getText().equals(""))
+        if (controlfield.getText().equals("")) {
             taskgraph.removeControlTask();
-        else {
+        } else {
             Task task = taskgraph.getControlTask();
 
             if ((task == null) || (!task.getQualifiedToolName().equals(controlfield.getText()))) {
                 Tool tool = tools.getTool(controlfield.getText());
 
-                if (tool != null)
+                if (tool != null) {
                     taskgraph.createControlTask(tool, false);
-                else
-                    JOptionPane.showMessageDialog(this, "Invalid Control Task: " + controlfield.getText(), "Group Editor Error", JOptionPane.ERROR_MESSAGE,
+                } else {
+                    JOptionPane.showMessageDialog(this, "Invalid Control Task: " + controlfield.getText(),
+                            "Group Editor Error", JOptionPane.ERROR_MESSAGE,
                             GUIEnv.getTrianaIcon());
+                }
             }
 
             controlfield.setText(taskgraph.getControlTask().getQualifiedToolName());
@@ -338,25 +376,29 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
                 if (!entry.equals(EMPTY_LIST_STRING)) {
                     task = taskgraph.getTask(getTaskName(entry));
 
-                    if (isParameterNode(entry))
+                    if (isParameterNode(entry)) {
                         parentnode = task.getParameterInputNode(getNodeIndex(entry));
-                    else
+                    } else {
                         parentnode = task.getDataInputNode(getNodeIndex(entry));
+                    }
 
                     if ((parentnode.getChildNode() != null) && (parentnode.getChildNode().getTask() == group)) {
-                        if (parentnode.getChildNode() != groupin[count])
+                        if (parentnode.getChildNode() != groupin[count]) {
                             group.swapGroupNodeParents(groupin[count], parentnode.getChildNode());
-                    } else if (count >= group.getDataInputNodeCount())
+                        }
+                    } else if (count >= group.getDataInputNodeCount()) {
                         group.addDataInputNode(parentnode);
-                    else
+                    } else {
                         group.setGroupNodeParent(groupin[count], parentnode);
+                    }
 
                     count++;
                 }
             }
 
-            while (count < groupin.length)
+            while (count < groupin.length) {
                 group.removeDataInputNode(groupin[count++]);
+            }
 
             enumeration = ((DefaultListModel) dataout.getModel()).elements();
             count = 0;
@@ -367,25 +409,29 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
                 if (!entry.equals(EMPTY_LIST_STRING)) {
                     task = taskgraph.getTask(getTaskName(entry));
 
-                    if (isParameterNode(entry))
+                    if (isParameterNode(entry)) {
                         parentnode = task.getParameterOutputNode(getNodeIndex(entry));
-                    else
+                    } else {
                         parentnode = task.getDataOutputNode(getNodeIndex(entry));
+                    }
 
                     if ((parentnode.getChildNode() != null) && (parentnode.getChildNode().getTask() == group)) {
-                        if (parentnode.getChildNode() != groupout[count])
+                        if (parentnode.getChildNode() != groupout[count]) {
                             group.swapGroupNodeParents(groupout[count], parentnode.getChildNode());
-                    } else if (count >= group.getDataOutputNodeCount())
+                        }
+                    } else if (count >= group.getDataOutputNodeCount()) {
                         group.addDataOutputNode(parentnode);
-                    else
+                    } else {
                         group.setGroupNodeParent(groupout[count], parentnode);
+                    }
 
                     count++;
                 }
             }
 
-            while (count < groupout.length)
+            while (count < groupout.length) {
                 group.removeDataOutputNode(groupout[count++]);
+            }
         } catch (NodeException except) {
             except.printStackTrace();
         }
@@ -397,12 +443,13 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
     }
 
     private int getNodeIndex(String entry) {
-        if (entry.lastIndexOf("[in") > -1)
+        if (entry.lastIndexOf("[in") > -1) {
             return Integer.parseInt(entry.substring(entry.lastIndexOf("[in") + 3, entry.lastIndexOf(']')));
-        else if (entry.lastIndexOf("[out") > -1)
+        } else if (entry.lastIndexOf("[out") > -1) {
             return Integer.parseInt(entry.substring(entry.lastIndexOf("[out") + 4, entry.lastIndexOf(']')));
-        else
+        } else {
             return Integer.parseInt(entry.substring(entry.lastIndexOf("[param") + 6, entry.lastIndexOf('-')));
+        }
     }
 
     private boolean isParameterNode(String entry) {
@@ -413,19 +460,22 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         JList select;
 
-        if (tabs.getSelectedIndex() == 0)
+        if (tabs.getSelectedIndex() == 0) {
             select = datain;
-        else
+        } else {
             select = dataout;
+        }
 
-        if (event.getActionCommand() == Env.getString("add"))
+        if (event.getActionCommand() == Env.getString("add")) {
             addNode(select, (tabs.getSelectedIndex() % 2) == 0);
-        else if (event.getActionCommand() == Env.getString("remove")) {
-            if (select.getSelectedIndex() > -1)
+        } else if (event.getActionCommand() == Env.getString("remove")) {
+            if (select.getSelectedIndex() > -1) {
                 ((DefaultListModel) select.getModel()).removeElement(select.getSelectedValue());
+            }
 
-            if (select.getModel().getSize() == 0)
+            if (select.getModel().getSize() == 0) {
                 ((DefaultListModel) select.getModel()).addElement(EMPTY_LIST_STRING);
+            }
         } else if ((event.getActionCommand() == Env.getString("moveup")) && (select.getSelectedIndex() > 0)) {
             String entry = (String) select.getSelectedValue();
             int index = select.getSelectedIndex();
@@ -455,7 +505,8 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
         panel.setLayout(new BorderLayout());
 
         JList nodelist = new JList(new DefaultListModel());
-        JScrollPane scroll = new JScrollPane(nodelist, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroll = new JScrollPane(nodelist, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         Task[] tasks = taskgraph.getTasks(false);
         Node[] nodes;
@@ -471,39 +522,49 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
                 nodes = tasks[count].getDataOutputNodes();
             }
 
-            for (int nodecount = 0; nodecount < nodes.length; nodecount++)
+            for (int nodecount = 0; nodecount < nodes.length; nodecount++) {
                 if (!nodes[nodecount].isConnected()) {
-                    entry = taskgraph.getTask(nodes[nodecount]).getToolName() + " [" + tag + nodes[nodecount].getNodeIndex() + "]";
+                    entry = taskgraph.getTask(nodes[nodecount]).getToolName() + " [" + tag
+                            + nodes[nodecount].getNodeIndex() + "]";
 
-                    if (!((DefaultListModel) list.getModel()).contains(entry))
+                    if (!((DefaultListModel) list.getModel()).contains(entry)) {
                         ((DefaultListModel) nodelist.getModel()).addElement(entry);
+                    }
                 }
+            }
         }
 
         for (int count = 0; count < tasks.length; count++) {
-            if (input)
+            if (input) {
                 nodes = tasks[count].getParameterInputNodes();
-            else
+            } else {
                 nodes = tasks[count].getParameterOutputNodes();
+            }
 
-            for (int nodecount = 0; nodecount < nodes.length; nodecount++)
+            for (int nodecount = 0; nodecount < nodes.length; nodecount++) {
                 if (!nodes[nodecount].isConnected()) {
-                    entry = taskgraph.getTask(nodes[nodecount]).getToolName() + " [param" + nodes[nodecount].getNodeIndex() + "-" + ((ParameterNode) nodes[nodecount]).getParameterName() + "]";
+                    entry = taskgraph.getTask(nodes[nodecount]).getToolName() + " [param"
+                            + nodes[nodecount].getNodeIndex() + "-"
+                            + ((ParameterNode) nodes[nodecount]).getParameterName() + "]";
 
-                    if (!((DefaultListModel) list.getModel()).contains(entry))
+                    if (!((DefaultListModel) list.getModel()).contains(entry)) {
                         ((DefaultListModel) nodelist.getModel()).addElement(entry);
+                    }
                 }
+            }
         }
 
 
-        if (nodelist.getModel().getSize() == 0)
+        if (nodelist.getModel().getSize() == 0) {
             ((DefaultListModel) nodelist.getModel()).addElement(EMPTY_LIST_STRING);
+        }
 
         panel.add(scroll, BorderLayout.CENTER);
 
         Container parent = getParent();
-        while ((parent != null) && (!(parent instanceof Frame)))
+        while ((parent != null) && (!(parent instanceof Frame))) {
             parent = parent.getParent();
+        }
 
         if (parent != null) {
             ParameterWindow window = new ParameterWindow((Frame) parent, WindowButtonConstants.OK_CANCEL_BUTTONS, true);
@@ -515,16 +576,19 @@ public class GroupEditor extends ParameterPanel implements ActionListener {
 
             Object[] select = nodelist.getSelectedValues();
 
-            for (int count = 0; count < select.length; count++)
+            for (int count = 0; count < select.length; count++) {
                 if ((window.isAccepted()) && (!select[count].equals(EMPTY_LIST_STRING))) {
-                    if (((DefaultListModel) list.getModel()).contains(EMPTY_LIST_STRING))
+                    if (((DefaultListModel) list.getModel()).contains(EMPTY_LIST_STRING)) {
                         ((DefaultListModel) list.getModel()).removeElement(EMPTY_LIST_STRING);
+                    }
 
                     ((DefaultListModel) list.getModel()).addElement(select[count]);
 
-                    if (list.getModel().getSize() == 0)
+                    if (list.getModel().getSize() == 0) {
                         ((DefaultListModel) list.getModel()).addElement(EMPTY_LIST_STRING);
+                    }
                 }
+            }
         }
     }
 

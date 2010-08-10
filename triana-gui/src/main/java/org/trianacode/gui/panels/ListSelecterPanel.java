@@ -58,23 +58,25 @@
  */
 package org.trianacode.gui.panels;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 /**
- * UI Panel that provides a mechanism for displaying lists and allowing the user to
- * select multiple items. There are two list panels, one that contains the entire set of
- * items and the other that contains the selected items. The user selects items and then
- * hits a button to move them from one list to the other.
+ * UI Panel that provides a mechanism for displaying lists and allowing the user to select multiple items. There are two
+ * list panels, one that contains the entire set of items and the other that contains the selected items. The user
+ * selects items and then hits a button to move them from one list to the other.
  *
- * @author      Matthew Shields
- * @created     Dec 5, 2002; 11:50:20 AM
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
  */
 public class ListSelecterPanel extends JPanel implements ActionListener {
 
@@ -136,8 +138,9 @@ public class ListSelecterPanel extends JPanel implements ActionListener {
      */
     public void setListData(Object[] items) {
         allItems.setListData(items);
-        if (sorted)
+        if (sorted) {
             sortLHS();
+        }
     }
 
     /**
@@ -155,20 +158,18 @@ public class ListSelecterPanel extends JPanel implements ActionListener {
     }
 
     /**
-     * Returns an array of the items in the included right hand set. If
-     * no items are the included set and default to selected is specified
-     * then the selected items in the excluded left hand set are returned
-     * instead.
+     * Returns an array of the items in the included right hand set. If no items are the included set and default to
+     * selected is specified then the selected items in the excluded left hand set are returned instead.
      *
-     * @param defaultselected if true and no items are in the included list
-     * then the selected items in the excluded set are returned
-     *
+     * @param defaultselected if true and no items are in the included list then the selected items in the excluded set
+     *                        are returned
      */
     public Object[] getSelectedItems(boolean defaultselected) {
         Object[] result = getSelectedItems();
 
-        if ((result.length == 0) && defaultselected)
+        if ((result.length == 0) && defaultselected) {
             result = allItems.getSelectedValues();
+        }
 
         if ((result.length == 1) && (result[0].equals(NONE_STRING))) {
             result = new String[0];
@@ -182,8 +183,9 @@ public class ListSelecterPanel extends JPanel implements ActionListener {
      */
     public Object[] getExcludedItems() {
         Object[] result = new Object[allItems.getModel().getSize()];
-        for (int i = 0; i < allItems.getModel().getSize(); i++)
+        for (int i = 0; i < allItems.getModel().getSize(); i++) {
             result[i] = allItems.getModel().getElementAt(i);
+        }
 
         if ((result.length == 1) && (result[0].equals(NONE_STRING))) {
             result = new String[0];
@@ -222,8 +224,7 @@ public class ListSelecterPanel extends JPanel implements ActionListener {
             selected = allItems.getSelectedValues();
             includedItems.setListData(addItems(selected, getSelectedItems()));
             allItems.setListData(removeItems(getExcludedItems(), selected));
-        }
-        else if (e.getSource() == exclude) {
+        } else if (e.getSource() == exclude) {
             selected = includedItems.getSelectedValues();
             allItems.setListData(addItems(selected, getExcludedItems()));
             includedItems.setListData(removeItems(getSelectedItems(), selected));
@@ -233,11 +234,13 @@ public class ListSelecterPanel extends JPanel implements ActionListener {
             sort();
         }
 
-        if (allItems.getModel().getSize() == 0)
+        if (allItems.getModel().getSize() == 0) {
             allItems.setListData(new String[]{NONE_STRING});
+        }
 
-        if (includedItems.getModel().getSize() == 0)
+        if (includedItems.getModel().getSize() == 0) {
             includedItems.setListData(new String[]{NONE_STRING});
+        }
     }
 
     /**

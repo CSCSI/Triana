@@ -61,10 +61,8 @@ package org.trianacode.taskgraph;
 /**
  * Type safe execution state class
  *
- * @author      Matthew Shields
- * @created     May 23, 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
  */
 public final class ExecutionState {
 
@@ -94,19 +92,25 @@ public final class ExecutionState {
     }
 
     /**
-     * @return  a string representation of the object.
+     * @return a string representation of the object.
      */
     public String toString() {
         return state;
     }
 
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ExecutionState)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ExecutionState)) {
+            return false;
+        }
 
         final ExecutionState executionState = (ExecutionState) o;
 
-        if (state != null ? !state.equals(executionState.state) : executionState.state != null) return false;
+        if (state != null ? !state.equals(executionState.state) : executionState.state != null) {
+            return false;
+        }
 
         return true;
     }

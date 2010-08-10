@@ -58,6 +58,12 @@
  */
 package org.trianacode.gui.main.imp;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.AbstractButton;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.TrianaLayoutConstants;
@@ -66,17 +72,11 @@ import org.trianacode.taskgraph.ParameterNode;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * <p>TrianaNode is a simple Rectangle Area which represents either an input or
- * output node on a SubTrianaTool.
+ * <p>TrianaNode is a simple Rectangle Area which represents either an input or output node on a SubTrianaTool.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 2 April 1997
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TrianaNode extends AbstractButton implements NodeComponent {
 
@@ -96,8 +96,7 @@ public class TrianaNode extends AbstractButton implements NodeComponent {
     private boolean connectable;
 
     /**
-     * A flag indicating whether this node is attached to a task with a copy
-     * output policy
+     * A flag indicating whether this node is attached to a task with a copy output policy
      */
     private boolean copyoutput;
 
@@ -143,11 +142,13 @@ public class TrianaNode extends AbstractButton implements NodeComponent {
      * @return true if the node belongs to a task with a copy output policy
      */
     private boolean checkCopyOutput() {
-        if ((node.getTask() == null) || (node.isInputNode()))
+        if ((node.getTask() == null) || (node.isInputNode())) {
             return false;
+        }
 
         Task task = node.getTask();
-        return ((task.isParameterName(Tool.OUTPUT_POLICY)) && (task.getParameter(Tool.OUTPUT_POLICY).equals(Tool.COPY_OUTPUT)));
+        return ((task.isParameterName(Tool.OUTPUT_POLICY)) && (task.getParameter(Tool.OUTPUT_POLICY).equals(
+                Tool.COPY_OUTPUT)));
     }
 
 
@@ -180,8 +181,7 @@ public class TrianaNode extends AbstractButton implements NodeComponent {
     }
 
     /**
-     * @return true if the node represented by this component can be connected
-     *         to/connected from
+     * @return true if the node represented by this component can be connected to/connected from
      */
     public boolean isConnectable() {
         return connectable;
@@ -263,11 +263,9 @@ public class TrianaNode extends AbstractButton implements NodeComponent {
     /**
      * Validates this container and all of its subcomponents.
      * <p/>
-     * The <code>validate</code> method is used to cause a container
-     * to lay out its subcomponents again. It should be invoked when
-     * this container's subcomponents are modified (added to or
-     * removed from the container, or layout-related information
-     * changed) after the container has been displayed.
+     * The <code>validate</code> method is used to cause a container to lay out its subcomponents again. It should be
+     * invoked when this container's subcomponents are modified (added to or removed from the container, or
+     * layout-related information changed) after the container has been displayed.
      *
      * @see #add(java.awt.Component)
      * @see java.awt.Component#invalidate
@@ -293,10 +291,12 @@ public class TrianaNode extends AbstractButton implements NodeComponent {
 
             Dimension size = getSize();
 
-            if (copyoutput)
-                graphs.fillPolygon(new int[]{size.width, size.width, 0, 0}, new int[]{0, size.height, (size.height + 1) / 2, size.height / 2}, 4);
-            else
+            if (copyoutput) {
+                graphs.fillPolygon(new int[]{size.width, size.width, 0, 0},
+                        new int[]{0, size.height, (size.height + 1) / 2, size.height / 2}, 4);
+            } else {
                 graphs.fillRect(0, 0, size.width, size.height);
+            }
 
             if (isParameterNode()) {
                 graphs.setColor(getParameterColor());

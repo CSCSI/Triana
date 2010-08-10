@@ -59,15 +59,15 @@
 package org.trianacode.gui.windows;
 
 
-import org.trianacode.gui.hci.GUIEnv;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
 import java.io.Serializable;
 
+import javax.swing.JOptionPane;
+import org.trianacode.gui.hci.GUIEnv;
+
 /**
- * Just calls the JOptionPane with the appropriate values for the particular
- * input you want to get from the user. You use it like this :-
+ * Just calls the JOptionPane with the appropriate values for the particular input you want to get from the user. You
+ * use it like this :-
  * <p/>
  * <pre>     double inp = Input.aNumber("Enter the value for beta");
  * String s = Input.aString("Enter your name");   </pre>
@@ -75,8 +75,6 @@ import java.io.Serializable;
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 16 Jan 1997
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Input implements Serializable {
 

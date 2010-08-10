@@ -58,6 +58,9 @@
  */
 package org.trianacode.gui.hci;
 
+import java.awt.GridLayout;
+
+import javax.swing.JWindow;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.Task;
@@ -69,16 +72,11 @@ import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * The window which is dragged when a tool is moved
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 11th April 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class DragWindow extends JWindow {
 
@@ -105,10 +103,11 @@ public class DragWindow extends JWindow {
             Tool dummy = TaskGraphUtils.createPlaceHolderTool(tool);
             Task task;
 
-            if (dummy instanceof TaskGraph)
+            if (dummy instanceof TaskGraph) {
                 task = ((TaskGraph) dummy);
-            else
+            } else {
                 task = new TaskImp(dummy, new TaskFactoryImp(), false);
+            }
 
             comp = TaskGraphViewManager.getTaskComponent(task);
             getContentPane().add(comp.getComponent());

@@ -59,77 +59,65 @@
 package triana.types;
 
 
-import triana.types.util.Str;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import triana.types.util.Str;
+
 /**
- * Document is a type which stores the contents
- * of a Document in a String (or just encapsulates any string) with an optional
- * file name. There are parameters for marking special lines and
- * special groups of characters, for search-and-replace units to work with.
- * In order to keep the line- and group-markers pointing to the same text
- * after the contents have been modified, use the methods <i>cutString</i>,
- * <i>insertString</i>, and <i>replaceString</i>. To replace the entire
- * document and wipe out markers, use <i>setText()</i>.
+ * Document is a type which stores the contents of a Document in a String (or just encapsulates any string) with an
+ * optional file name. There are parameters for marking special lines and special groups of characters, for
+ * search-and-replace units to work with. In order to keep the line- and group-markers pointing to the same text after
+ * the contents have been modified, use the methods <i>cutString</i>, <i>insertString</i>, and <i>replaceString</i>. To
+ * replace the entire document and wipe out markers, use <i>setText()</i>.
+ * <p/>
+ * The markers for groups of characters are held in a FIFO stack, each element of which is an ArrayList of pairs of
+ * integers, marking regions of the document. Each member of the stack contains regions that are refinements of
+ * (<i>i.e.</i> contained within) the regions delineated in the previous element. The pointer <i>charGroups</i> points
+ * to the most refined level, the pointer <i>domain</i> points to the next most refined level. Methos allow editing
+ * units to select regions, refine them, edit them, retreat to the previous level of selection, etc.
  *
- * The markers for groups of characters are held in a FIFO stack, each element
- * of which is an ArrayList of pairs of integers, marking regions of the
- * document. Each member of the stack contains regions that are refinements
- * of (<i>i.e.</i> contained within) the regions delineated in the previous
- * element. The pointer <i>charGroups</i> points to the most refined
- * level, the pointer <i>domain</i> points to the next most refined level.
- * Methos allow editing units to select regions, refine them, edit them,
- * retreat to the previous level of selection, etc.
- *
- * @author      Ian Taylor
- * @author      Bernard Schutz
- * @created     10 October 2001
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class Document extends TrianaType implements AsciiComm {
 
     /**
-     * Contains the optional file name (FileName is a TrianaType
-     * data type) under which this Document is stored.
+     * Contains the optional file name (FileName is a TrianaType data type) under which this Document is stored.
      */
     private FileName fname = null;
 
-    /** Holds a key to the Hashtable in TrianaType which will hold the Document.
+    /**
+     * Holds a key to the Hashtable in TrianaType which will hold the Document.
      */
     private String doc = "Document";
 
     /**
-     * Array of integers holding the line numbers of lines that have
-     * been marked. Allows search, replace, and display units to refer
-     * to specific lines.
+     * Array of integers holding the line numbers of lines that have been marked. Allows search, replace, and display
+     * units to refer to specific lines.
      */
     private int[] lineNos = new int[1];
 
     /**
-     * Stack of ArrayLists of pairs (int[2]'s) of integers holding the character ranges
-     * that have been marked. The elements of this list should be ArrayLists.
-     * Each ArrayList will contain int[2]'s. Each int[2] holds the indices
-     * of the starting and ending characters of a single group of characters.
-     * Allows search, replace, and display units to refer
-     * to specific groups of characters.
+     * Stack of ArrayLists of pairs (int[2]'s) of integers holding the character ranges that have been marked. The
+     * elements of this list should be ArrayLists. Each ArrayList will contain int[2]'s. Each int[2] holds the indices
+     * of the starting and ending characters of a single group of characters. Allows search, replace, and display units
+     * to refer to specific groups of characters.
      */
     private ArrayList charGroupStack = new ArrayList(1);
 
     /**
-     * Pointer to the most recent entry in the stack <i>charGroupStack</i>,
-     * which is regarded as the current list of selected character ranges.
+     * Pointer to the most recent entry in the stack <i>charGroupStack</i>, which is regarded as the current list of
+     * selected character ranges.
      */
     private ArrayList charGroups;
 
     /**
-     * Pointer to the second-most recent entry in the stack <i>charGroupStack</i>,
-     * which is regarded as the domain from within which the regions defined in
-     * <i>charGroups</i> were selected.
+     * Pointer to the second-most recent entry in the stack <i>charGroupStack</i>, which is regarded as the domain from
+     * within which the regions defined in <i>charGroups</i> were selected.
      */
     private ArrayList domain;
 
@@ -163,11 +151,10 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Creates a new Document with the contents set to the specified String and
-     * with a String representing the full path and name of the file
-     * which the Document was taken from.
+     * Creates a new Document with the contents set to the specified String and with a String representing the full path
+     * and name of the file which the Document was taken from.
      *
-     * @param contents the String containing the contents of the Document.
+     * @param contents    the String containing the contents of the Document.
      * @param fileAndPath the String containing the full pathname of the file where the Document came from.
      */
     public Document(String contents, String fileAndPath) {
@@ -176,12 +163,11 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Creates a new Document with the contents set to the specified String and
-     * with a String representing the full path and name of the file
-     * which the Document was taken from.
+     * Creates a new Document with the contents set to the specified String and with a String representing the full path
+     * and name of the file which the Document was taken from.
      *
      * @param contents the String containing the contents of the Document.
-     * @param file the FileName object containing the file where the Document came from.
+     * @param file     the FileName object containing the file where the Document came from.
      */
     public Document(String contents, FileName file) {
         setText(contents);
@@ -189,12 +175,11 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Creates a new Document with the contents set to the specified String,
-     * with the given name of the file from which the Document was
-     * taken, and with the given directory for the Document.
+     * Creates a new Document with the contents set to the specified String, with the given name of the file from which
+     * the Document was taken, and with the given directory for the Document.
      *
-     * @param contents The contents of the Document.
-     * @param file The name of the file where the Document came from.
+     * @param contents  The contents of the Document.
+     * @param file      The name of the file where the Document came from.
      * @param directory The name of the directory where the Document came from.
      */
     public Document(String contents, String file, String directory) {
@@ -208,14 +193,15 @@ public class Document extends TrianaType implements AsciiComm {
     public String getText() {
         Object res = getFromContainer(doc);
 
-        if (res == null)
+        if (res == null) {
             return "";
+        }
         return (String) res;
     }
 
     /**
-     * Gets the whole stack of ArrayLists that denote character groups and their
-     * refinements. Used for copying but not much else. There is no method to set this.
+     * Gets the whole stack of ArrayLists that denote character groups and their refinements. Used for copying but not
+     * much else. There is no method to set this.
      *
      * @return ArrayList The stack of character group ArrayLists
      */
@@ -224,14 +210,11 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Sets the given String to be the contents of the object and eliminates
-     * any character group delimiters because they are unlikely to be
-     * relevant to new text. If simple modifications of the text are
-     * desired, preserving groups, use the methods <i>cutString</i>,
-     * <i>insertString</i>, <i>replaceString</i>, and <i>add</i>. Initially only one
-     * character group is defined, spanning the whole document. The
-     * pointer domain is set to null since there is only one element on
-     * the stack.
+     * Sets the given String to be the contents of the object and eliminates any character group delimiters because they
+     * are unlikely to be relevant to new text. If simple modifications of the text are desired, preserving groups, use
+     * the methods <i>cutString</i>, <i>insertString</i>, <i>replaceString</i>, and <i>add</i>. Initially only one
+     * character group is defined, spanning the whole document. The pointer domain is set to null since there is only
+     * one element on the stack.
      *
      * @param newContents A string of the new contents
      */
@@ -243,23 +226,42 @@ public class Document extends TrianaType implements AsciiComm {
             charGroups.add(wholeDoc);
         }
         charGroupStack.add(charGroups);
-        if (debug) System.out.println("Document.setText: added new level, total levels = " + String.valueOf(charGroupStack.size()) + "\nDocument.setText: here are the populations of the character group levels: ");
-        if (debug) for ( int k = 0; k < charGroupStack.size(); k++ ) System.out.print(String.valueOf( ((ArrayList)charGroupStack.get(k)).size() ) + ", " );
-        if (debug) System.out.print("\n");
-        if (debug) System.out.println("Document.setText: added new level, total levels = " + String.valueOf(charGroupStack.size()) + "\nDocument.setText: here are the populations of the character group levels: ");
-        if (debug) for ( int k = 0; k < charGroupStack.size(); k++ ) System.out.print(String.valueOf( ((ArrayList)charGroupStack.get(k)).size() ) + ", " );
-        if (debug) System.out.print("\n");
+        if (debug) {
+            System.out.println(
+                    "Document.setText: added new level, total levels = " + String.valueOf(charGroupStack.size())
+                            + "\nDocument.setText: here are the populations of the character group levels: ");
+        }
+        if (debug) {
+            for (int k = 0; k < charGroupStack.size(); k++) {
+                System.out.print(String.valueOf(((ArrayList) charGroupStack.get(k)).size()) + ", ");
+            }
+        }
+        if (debug) {
+            System.out.print("\n");
+        }
+        if (debug) {
+            System.out.println(
+                    "Document.setText: added new level, total levels = " + String.valueOf(charGroupStack.size())
+                            + "\nDocument.setText: here are the populations of the character group levels: ");
+        }
+        if (debug) {
+            for (int k = 0; k < charGroupStack.size(); k++) {
+                System.out.print(String.valueOf(((ArrayList) charGroupStack.get(k)).size()) + ", ");
+            }
+        }
+        if (debug) {
+            System.out.print("\n");
+        }
         domain = null;
         updateObsoletePointers();
     }
 
     /**
-     * Returns the substring denoted by the given character
-     * positions, inclusive. This does not modify the document
-     * in any way.
+     * Returns the substring denoted by the given character positions, inclusive. This does not modify the document in
+     * any way.
      *
      * @param start The location of the first character to be returned
-     * @param end The location of the last character to be returned
+     * @param end   The location of the last character to be returned
      */
     public String getString(int start, int end) {
         return getText().substring(start, end + 1);
@@ -267,60 +269,107 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Removes and returns the character String between the two given
-     * index positions, including the two positions. Returns null if
-     * either index is out of bounds. Readjusts all character group
-     * locations and interesting line numbers after the given string,
-     * so that they point to the same text as before. Any groups with
-     * delimiters inside the region to be cut are eliminated.
+     * Removes and returns the character String between the two given index positions, including the two positions.
+     * Returns null if either index is out of bounds. Readjusts all character group locations and interesting line
+     * numbers after the given string, so that they point to the same text as before. Any groups with delimiters inside
+     * the region to be cut are eliminated.
      *
      * @param start First character of string to be cut
-     * @param end Last character of the string to be cut
+     * @param end   Last character of the string to be cut
      * @return The string that has been cut
      */
     public String cutString(int start, int end) {
-        if(debug) System.out.println("Document: cutting String in range (" + String.valueOf(start) + "," + String.valueOf(end) + ")");
+        if (debug) {
+            System.out.println(
+                    "Document: cutting String in range (" + String.valueOf(start) + "," + String.valueOf(end) + ")");
+        }
         StringBuffer oldContents = new StringBuffer(getText());
         String cut = oldContents.substring(start, end + 1);
         int cutlength = end - start + 1;
         insertIntoContainer(doc, oldContents.delete(start, end + 1).toString());
         int[] delims = {0, getText().length() - 1};
         ((ArrayList) charGroupStack.get(charGroupStack.size() - 1)).set(0, delims);
-        if (debug) System.out.println("Document.cutString: charGroupStack size = " + String.valueOf(charGroupStack.size() ) + ", root element ArrayList has size = " + String.valueOf( ((ArrayList)charGroupStack.get( charGroupStack.size() -1 )).size() ) );
+        if (debug) {
+            System.out.println("Document.cutString: charGroupStack size = " + String.valueOf(charGroupStack.size())
+                    + ", root element ArrayList has size = " + String
+                    .valueOf(((ArrayList) charGroupStack.get(charGroupStack.size() - 1)).size()));
+        }
         updateObsoletePointers();
-        if (!existCharGroups()) return cut;
-        if (debug) System.out.println("Document.cutString has character groups.");
+        if (!existCharGroups()) {
+            return cut;
+        }
+        if (debug) {
+            System.out.println("Document.cutString has character groups.");
+        }
         int nextGroup, startInGroup, endInGroup, nextOpening, nextClosing, lastGroupToRemove;
-        for (int k = 0; k < charGroupStack.size() - 1; k++) { // iterate through all charGroups in stack except for basis one
-            charGroups = (ArrayList) charGroupStack.get(k); // pretend that each stack element in turn is the "current" one
-            if(debug) System.out.println("Document.cutString: current stack element is k = " + String.valueOf( k ) + ", contains the following groups:" );
-            if(debug) System.out.println( listCharGroups(k) );
+        for (int k = 0; k < charGroupStack.size() - 1;
+             k++) { // iterate through all charGroups in stack except for basis one
+            charGroups = (ArrayList) charGroupStack
+                    .get(k); // pretend that each stack element in turn is the "current" one
+            if (debug) {
+                System.out.println("Document.cutString: current stack element is k = " + String.valueOf(k)
+                        + ", contains the following groups:");
+            }
+            if (debug) {
+                System.out.println(listCharGroups(k));
+            }
             startInGroup = containedInCharGroup(start);
             endInGroup = containedInCharGroup(end);
-            if(debug) System.out.println("Document.cutString: string to be cut runs from " + String.valueOf( start ) + " to " + String.valueOf( end ) + ", and returns the following contained-in-group values -- for start, " + String.valueOf( startInGroup ) + ", and for end, " + String.valueOf( endInGroup ) );
+            if (debug) {
+                System.out.println("Document.cutString: string to be cut runs from " + String.valueOf(start) + " to "
+                        + String.valueOf(end) + ", and returns the following contained-in-group values -- for start, "
+                        + String.valueOf(startInGroup) + ", and for end, " + String.valueOf(endInGroup));
+            }
             if ((startInGroup == endInGroup) && (startInGroup != -1)) { // cut is within a group
                 delims = (int[]) charGroups.get(startInGroup);
-                if(debug) System.out.println("Document.cutString: delims of group containing cut: ( " + String.valueOf( delims[0] ) + ", " + String.valueOf( delims[1] ) + ")" );
-                if(debug) System.out.println("Document.cutString: before removal, current stack element is k = " + String.valueOf( k ) + ", delims[1] = " + String.valueOf( delims[1] ) + " and list contains the following groups:" );
-                if(debug) System.out.println( listCharGroups(k) );
+                if (debug) {
+                    System.out.println(
+                            "Document.cutString: delims of group containing cut: ( " + String.valueOf(delims[0]) + ", "
+                                    + String.valueOf(delims[1]) + ")");
+                }
+                if (debug) {
+                    System.out.println(
+                            "Document.cutString: before removal, current stack element is k = " + String.valueOf(k)
+                                    + ", delims[1] = " + String.valueOf(delims[1])
+                                    + " and list contains the following groups:");
+                }
+                if (debug) {
+                    System.out.println(listCharGroups(k));
+                }
                 removeCharGroup(startInGroup);
-                if(debug) System.out.println("Document.cutString: after removal, current stack element is k = " + String.valueOf( k ) + ", delims[1] = " + String.valueOf( delims[1] ) + " and list contains the following groups:" );
-                if(debug) System.out.println( listCharGroups(k) );
+                if (debug) {
+                    System.out.println(
+                            "Document.cutString: after removal, current stack element is k = " + String.valueOf(k)
+                                    + ", delims[1] = " + String.valueOf(delims[1])
+                                    + " and list contains the following groups:");
+                }
+                if (debug) {
+                    System.out.println(listCharGroups(k));
+                }
                 if (cutlength > delims[1] - delims[0]) { // group was entirely removed
                     nextGroup = startInGroup;
-                }
-                else { // some part of group remains, restore it to list
+                } else { // some part of group remains, restore it to list
                     delims[1] -= cutlength;
-                    if(debug) System.out.println("Document.cutString: now the group's delims are ( " + String.valueOf( delims[0] ) + ", " + String.valueOf( delims[1] ) + "), and size of charGroups is " + String.valueOf( charGroups.size() ) );
-                    if (startInGroup < charGroups.size())
+                    if (debug) {
+                        System.out.println(
+                                "Document.cutString: now the group's delims are ( " + String.valueOf(delims[0]) + ", "
+                                        + String.valueOf(delims[1]) + "), and size of charGroups is " + String
+                                        .valueOf(charGroups.size()));
+                    }
+                    if (startInGroup < charGroups.size()) {
                         charGroups.add(startInGroup, delims);
-                    else
+                    } else {
                         charGroups.add(delims);
+                    }
                     nextGroup = startInGroup + 1;
-                    if(debug) System.out.println("Document.cutString: after placing new delims into charGroups we have size = " + String.valueOf( charGroups.size() ) + " and nextGroup = " + String.valueOf( nextGroup ) );
+                    if (debug) {
+                        System.out.println(
+                                "Document.cutString: after placing new delims into charGroups we have size = "
+                                        + String.valueOf(charGroups.size()) + " and nextGroup = " + String
+                                        .valueOf(nextGroup));
+                    }
                 }
-            }
-            else {
+            } else {
                 nextOpening = nextCharGroup(start);  // the first group starting after cut begins
                 nextClosing = nextCharGroup(end); // the first group starting after cut ends
                 lastGroupToRemove = (nextClosing == -1) ? charGroups.size() - 1 : nextClosing - 1;
@@ -328,34 +377,38 @@ public class Document extends TrianaType implements AsciiComm {
                     if (endInGroup == -1) { // cut ends outside of a group
                         if (nextOpening == nextClosing) { // no group in cut
                             nextGroup = nextOpening;
-                        }
-                        else { // group(s) contained entirely within cut
+                        } else { // group(s) contained entirely within cut
                             removeCharGroups(nextOpening, lastGroupToRemove);
                             nextGroup = nextOpening; // remember that removeCharGroups() shifts groups down
                         }
-                    }
-                    else { // cut starts outside of group, ends within a group
+                    } else { // cut starts outside of group, ends within a group
                         removeCharGroups(nextOpening, endInGroup);
                         nextGroup = nextOpening; // remember that removeCharGroups() shifts groups down
                     }
-                }
-                else { // cut starts within a group
+                } else { // cut starts within a group
                     if (endInGroup == -1) { // cut starts within a group, ends outside a group
                         removeCharGroups(startInGroup, lastGroupToRemove);
                         nextGroup = startInGroup; // remember that removeCharGroups() shifts groups down
-                    }
-                    else { // cut starts within a group, ends within a different group
+                    } else { // cut starts within a group, ends within a different group
                         removeCharGroups(startInGroup, lastGroupToRemove);
                         nextGroup = startInGroup; // remember that removeCharGroups() shifts groups down
                     }
                 }
             }
             if ((nextGroup >= 0) && (nextGroup < charGroups.size())) {
-                if(debug) System.out.println("Document.cutString: calling shiftCharGroups with arguments " + String.valueOf( start - end - 1) + " and " + String.valueOf( nextGroup ) );
+                if (debug) {
+                    System.out.println("Document.cutString: calling shiftCharGroups with arguments "
+                            + String.valueOf(start - end - 1) + " and " + String.valueOf(nextGroup));
+                }
                 shiftCharGroups(start - end - 1, nextGroup);
             }
-            if(debug) System.out.println("Document.cutString: after cut, current stack element k = " + String.valueOf( k ) + ", contains the following groups:" );
-            if(debug) System.out.println( listCharGroups(k) );
+            if (debug) {
+                System.out.println("Document.cutString: after cut, current stack element k = " + String.valueOf(k)
+                        + ", contains the following groups:");
+            }
+            if (debug) {
+                System.out.println(listCharGroups(k));
+            }
         }
         charGroups = (ArrayList) charGroupStack.get(0); // reset pointer to current charGroup ArrayList
         if (isLineNumber()) {
@@ -367,27 +420,29 @@ public class Document extends TrianaType implements AsciiComm {
                 int lastInteresting = lineNos.length - 1;
                 if (endInteresting == -1) {
                     deleteLineNumbers(nextInteresting, lastInteresting); // delete all lines above beginning of cut
-                }
-                else if (endInteresting > nextInteresting) {
+                } else if (endInteresting > nextInteresting) {
                     deleteLineNumbers(nextInteresting, endInteresting - 1); // delete intervening lines
                 }
-                shiftLineNumbers(-linesCut, nextInteresting); // remember that deleteLineNumbers() shifts lines down the list
+                shiftLineNumbers(-linesCut,
+                        nextInteresting); // remember that deleteLineNumbers() shifts lines down the list
             }
         }
         return cut;
     }
 
     /**
-     * Inserts the given character String, starting at the given character
-     * index position.  Readjusts all character group
-     * locations and interesting line numbers after the character position,
-     * so that they point to the same text as before.
+     * Inserts the given character String, starting at the given character index position.  Readjusts all character
+     * group locations and interesting line numbers after the character position, so that they point to the same text as
+     * before.
      *
      * @param insertion The character String to be inserted
-     * @param location Character index of the location of the insertion
+     * @param location  Character index of the location of the insertion
      */
     public void insertString(String insertion, int location) {
-        if(debug) System.out.println("Document.insertString: inserting String of length " + String.valueOf(insertion.length()) + " at location " + String.valueOf(location) );
+        if (debug) {
+            System.out.println("Document.insertString: inserting String of length " + String.valueOf(insertion.length())
+                    + " at location " + String.valueOf(location));
+        }
         if (location == getText().length()) {
             add(insertion);
             return;
@@ -398,17 +453,25 @@ public class Document extends TrianaType implements AsciiComm {
         int[] delims = {0, getText().length() - 1};
         ((ArrayList) charGroupStack.get(charGroupStack.size() - 1)).set(0, delims);
         updateObsoletePointers();
-        if (!existCharGroups()) return;
+        if (!existCharGroups()) {
+            return;
+        }
         int startInGroup, nextGroup;
-        for (int k = 0; k < charGroupStack.size() - 1; k++) { // iterate through all charGroups in stack except for basis one
-            charGroups = (ArrayList) charGroupStack.get(k); // pretend that each stack element in turn is the "current" one
+        for (int k = 0; k < charGroupStack.size() - 1;
+             k++) { // iterate through all charGroups in stack except for basis one
+            charGroups = (ArrayList) charGroupStack
+                    .get(k); // pretend that each stack element in turn is the "current" one
             startInGroup = containedInCharGroup(location);
             if (startInGroup != -1) { // insertion is within an existing group
                 ((int[]) charGroups.get(startInGroup))[1] += insertLength;
             }
             nextGroup = nextCharGroup(location);
-            if ((nextGroup == startInGroup) && (nextGroup != -1)) nextGroup++;
-            if (nextGroup != -1) shiftCharGroups(insertLength, nextGroup);
+            if ((nextGroup == startInGroup) && (nextGroup != -1)) {
+                nextGroup++;
+            }
+            if (nextGroup != -1) {
+                shiftCharGroups(insertLength, nextGroup);
+            }
         }
         charGroups = (ArrayList) charGroupStack.get(0); // reset pointer to current charGroup ArrayList
         if (isLineNumber()) {
@@ -434,18 +497,25 @@ public class Document extends TrianaType implements AsciiComm {
         updateObsoletePointers();
         ArrayList list;
         for (int k = 0; k < charGroupStack.size(); k++) { // iterate through all charGroups in stack including basis one
-            if (debug) System.out.println("Document.add: value of k = " + String.valueOf(k) );
+            if (debug) {
+                System.out.println("Document.add: value of k = " + String.valueOf(k));
+            }
             list = (ArrayList) charGroupStack.get(k);
-            if (debug) System.out.println("Document.add: is list null?" + String.valueOf( (list == null) ) );
-            if (debug) System.out.println("Document.add: size of list = " + String.valueOf( list.size() ) );
+            if (debug) {
+                System.out.println("Document.add: is list null?" + String.valueOf((list == null)));
+            }
+            if (debug) {
+                System.out.println("Document.add: size of list = " + String.valueOf(list.size()));
+            }
             int[] last = (int[]) list.get(list.size() - 1);
-            if (last[1] == oldLength - 1) last[1] += insertLength; // change delim if it marks the last character of the old text
+            if (last[1] == oldLength - 1) {
+                last[1] += insertLength;
+            } // change delim if it marks the last character of the old text
         }
     }
 
     /**
-     * Appends the given text to the Document and appends a further line break
-     * afterwards.
+     * Appends the given text to the Document and appends a further line break afterwards.
      *
      * @param text the String to be appended
      */
@@ -454,38 +524,38 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Replaces the characters between the two given positions, inclusive,
-     * by the given String and returns the String that was replaced.
-     * Readjusts all character group
-     * locations after the replacement, so that they point to the same
-     * text as before. Any groups with delimiters inside the region to
-     * be replaced are eliminated. Does this by calling the <i>cutString</i>
-     * and <i>insertString</i> methods.
+     * Replaces the characters between the two given positions, inclusive, by the given String and returns the String
+     * that was replaced. Readjusts all character group locations after the replacement, so that they point to the same
+     * text as before. Any groups with delimiters inside the region to be replaced are eliminated. Does this by calling
+     * the <i>cutString</i> and <i>insertString</i> methods.
      *
-     * @param start First character to be replaced
-     * @param end Last character to be replaced
+     * @param start       First character to be replaced
+     * @param end         Last character to be replaced
      * @param replacement The string that is to be inserted in place of the cut string
      * @return The portion of the document that was replaced
      */
     public String replaceString(int start, int end, String replacement) {
-        if(debug) System.out.println("Document: replacing String in range (" + String.valueOf(start) + "," + String.valueOf(end) + ")");
+        if (debug) {
+            System.out.println(
+                    "Document: replacing String in range (" + String.valueOf(start) + "," + String.valueOf(end) + ")");
+        }
         String cut = cutString(start, end);
         insertString(replacement, start);
         return cut;
     }
 
     /**
-     * Returns a string representation of the complete path
-     * and file name. Note that this method returns NULL if there is
-     * no filename associated with this Document.
+     * Returns a string representation of the complete path and file name. Note that this method returns NULL if there
+     * is no filename associated with this Document.
      *
      * @return String full path to file containing the Document
      */
     public String getFile() {
-        if (fname != null)
+        if (fname != null) {
             return fname.getFile();
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -495,10 +565,11 @@ public class Document extends TrianaType implements AsciiComm {
     public boolean isTextHTML() {
         String text = getText();
 
-        if ((text.indexOf("<html>") != -1) || (text.indexOf("<HTML>") != -1))
+        if ((text.indexOf("<html>") != -1) || (text.indexOf("<HTML>") != -1)) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -509,38 +580,36 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Returns a String representation of the filename not including any path
-     * information. Note that this method returns NULL if there is
-     * no filename associated with this Document.
+     * Returns a String representation of the filename not including any path information. Note that this method returns
+     * NULL if there is no filename associated with this Document.
      *
      * @return String filename (without path) of file containing Document
      */
     public String getFileNoPath() {
-        if (fname != null)
+        if (fname != null) {
             return fname.getFileNoPath();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * Returns a reference to the path for this file without its filename.
-     * Note that this method returns NULL if there is
-     * no filename associated with this Document.
+     * Returns a reference to the path for this file without its filename. Note that this method returns NULL if there
+     * is no filename associated with this Document.
      *
      * @return String the path (without filename) of the file containing this Document
      */
     public String getPath() {
-        if (fname != null)
+        if (fname != null) {
             return fname.getPath();
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * Sets an int[] array containing interesting line numbers within the file
-     * which units can use
-     * to display the file at the appropriate place(s). For example,
-     * this function is called by the Grep unit.
+     * Sets an int[] array containing interesting line numbers within the file which units can use to display the file
+     * at the appropriate place(s). For example, this function is called by the Grep unit.
      *
      * @param ln the set of line numbers of interest
      */
@@ -549,9 +618,8 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Gets the int[] array of line numbers currently held for this Document.
-     * This is the array created by <i>setLineNumbers</i>, not a list of all the line
-     * numbers.
+     * Gets the int[] array of line numbers currently held for this Document. This is the array created by
+     * <i>setLineNumbers</i>, not a list of all the line numbers.
      *
      * @return int[] the line number array
      */
@@ -570,35 +638,39 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Gets the <i>n</i>th interesting line number held for this document. If
-     * there are not this many line numbers, returns -1.
+     * Gets the <i>n</i>th interesting line number held for this document. If there are not this many line numbers,
+     * returns -1.
      *
      * @param n The index into the line-number array
      * @return int The desired line number
      */
     public int getLineNumber(int n) {
         int l = -1;
-        if (n < lineNos.length) l = lineNos[n];
+        if (n < lineNos.length) {
+            l = lineNos[n];
+        }
         return l;
     }
 
     /**
-     * Adds an interesting line number to the line number array in
-     * the right order.
+     * Adds an interesting line number to the line number array in the right order.
      *
      * @param n The line number to be added
      */
     public void addLineNumber(int n) {
         int l = nextLineNo(n);
-        if (lineNos[l] == n) return;
+        if (lineNos[l] == n) {
+            return;
+        }
         int oldLength = lineNos.length;
         int[] newNos = new int[oldLength + 1];
         if (l == -1) {
             System.arraycopy(lineNos, 0, newNos, 0, oldLength);
             newNos[oldLength + 1] = n;
-        }
-        else {
-            if (l > 0) System.arraycopy(lineNos, 0, newNos, 0, l);
+        } else {
+            if (l > 0) {
+                System.arraycopy(lineNos, 0, newNos, 0, l);
+            }
             newNos[l] = n;
             System.arraycopy(lineNos, l, newNos, l + 1, oldLength - l);
         }
@@ -614,11 +686,11 @@ public class Document extends TrianaType implements AsciiComm {
         int oldLength = lineNos.length;
         int newLength = oldLength - 1;
         int[] newNos = new int[newLength];
-        if (l == 0)
+        if (l == 0) {
             System.arraycopy(lineNos, 1, newNos, 0, newLength);
-        else if (l == newLength)
+        } else if (l == newLength) {
             System.arraycopy(lineNos, 0, newNos, 0, newLength);
-        else {
+        } else {
             System.arraycopy(lineNos, 0, newNos, 0, l);
             System.arraycopy(lineNos, l + 1, newNos, l, newLength - l);
         }
@@ -628,7 +700,7 @@ public class Document extends TrianaType implements AsciiComm {
      * Deletes the line number range defined by the given index locations.
      *
      * @param start The index number of the first line to be deleted
-     * @param end The index number of the last line to be deleted
+     * @param end   The index number of the last line to be deleted
      */
     public void deleteLineNumbers(int start, int end) {
         if (start == end) {
@@ -644,11 +716,11 @@ public class Document extends TrianaType implements AsciiComm {
         }
         int newLength = oldLength - linesOut;
         int[] newNos = new int[newLength];
-        if (start == 0)
+        if (start == 0) {
             System.arraycopy(lineNos, end + 1, newNos, 0, newLength);
-        else if (end == oldLength - 1)
+        } else if (end == oldLength - 1) {
             System.arraycopy(lineNos, 0, newNos, 0, newLength);
-        else {
+        } else {
             System.arraycopy(lineNos, 0, newNos, 0, start + 1);
             System.arraycopy(lineNos, end + 1, newNos, start + 1, newLength - start - 1);
         }
@@ -663,7 +735,9 @@ public class Document extends TrianaType implements AsciiComm {
     public int countLines(String s) {
         int count = 0;
         int pos = -1;
-        while ((pos = s.indexOf(eol, pos + 1)) != -1) count++;
+        while ((pos = s.indexOf(eol, pos + 1)) != -1) {
+            count++;
+        }
         return count;
     }
 
@@ -675,14 +749,16 @@ public class Document extends TrianaType implements AsciiComm {
     public String listLineNumbers() {
         StringBuffer list = new StringBuffer(2 * lineNos.length);
         if (isLineNumber()) {
-            for (int l = 0; l < lineNos.length; l++) list.append(lineNos[l]).append(eol);
+            for (int l = 0; l < lineNos.length; l++) {
+                list.append(lineNos[l]).append(eol);
+            }
         }
         return list.toString();
     }
 
     /**
-     * Returns a String containing the interesting line numbers and their lines,
-     * separated by a line-separator (carriage-return).
+     * Returns a String containing the interesting line numbers and their lines, separated by a line-separator
+     * (carriage-return).
      *
      * @return String The list of interesting line numbers
      */
@@ -694,14 +770,18 @@ public class Document extends TrianaType implements AsciiComm {
             int loc1 = 0;
             int loc2 = 0;
             String t = getText();
-            if (!t.endsWith(eol)) t += eol;
+            if (!t.endsWith(eol)) {
+                t += eol;
+            }
             for (int l = 0; l < lineNos.length; l++) {
                 while (lastLine <= lineNos[l]) {
                     loc2 = t.indexOf(eol, loc2);
                     lastLine++;
                 }
                 loc1 = t.lastIndexOf(eol, loc2 - 1);
-                if (loc1 == -1) loc1 = 0;
+                if (loc1 == -1) {
+                    loc1 = 0;
+                }
                 loc2 += eolLength;
                 list.append(lineNos[l]).append(": ").append(t.substring(loc1, loc2));
             }
@@ -711,21 +791,21 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Adds a given constant <i>shift</i> to the interesting line numbers for
-     * this Document above the given index. This allows one to ensure that the
-     * same lines are marked after lines are added to or removed from the text.
+     * Adds a given constant <i>shift</i> to the interesting line numbers for this Document above the given index. This
+     * allows one to ensure that the same lines are marked after lines are added to or removed from the text.
      *
      * @param shift The amount by which the line numbers are moved
      * @param index The first line number to be moved.
      */
     public void shiftLineNumbers(int shift, int index) {
-        for (int l = index; l < lineNos.length; l++) lineNos[l] += shift;
+        for (int l = index; l < lineNos.length; l++) {
+            lineNos[l] += shift;
+        }
     }
 
     /**
-     * Returns the index of the next interesting line number held in the array
-     * <i>lineNos</i> that is larger than the given line number,
-     * or -1 if there is no interesting line number larger.
+     * Returns the index of the next interesting line number held in the array <i>lineNos</i> that is larger than the
+     * given line number, or -1 if there is no interesting line number larger.
      *
      * @param n The line number where the search starts
      * @return The index of the first interesting line number above <i>n</i>
@@ -734,15 +814,17 @@ public class Document extends TrianaType implements AsciiComm {
         int l = 0;
         while (lineNos[l] < n) {
             l++;
-            if (l == lineNos.length) return -1;
+            if (l == lineNos.length) {
+                return -1;
+            }
         }
         return l;
     }
 
 
     /**
-     * Gets the current ArrayList of the current character groups for this Document.
-     * This is the ArrayList created by <i>setCharGroups</i>.
+     * Gets the current ArrayList of the current character groups for this Document. This is the ArrayList created by
+     * <i>setCharGroups</i>.
      *
      * @return ArrayList the set of integer arrays holding character ranges
      */
@@ -752,44 +834,49 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Gets the integer array for the character group denoted by the given
-     * index. Returns null if the index is out of bounds.
+     * Gets the integer array for the character group denoted by the given index. Returns null if the index is out of
+     * bounds.
      *
      * @param index the index of the character group being sought
      */
     public int[] getCharGroup(int index) {
-        if ((index < 0) || (index >= charGroups.size())) return null;
+        if ((index < 0) || (index >= charGroups.size())) {
+            return null;
+        }
         return (int[]) charGroups.get(index);
     }
 
     /**
-     * Returns an ArrayList of the delimiters of the character groups that
-     * are entirely contained within the given index values. Groups that
-     * start outside and finish inside or start inside and finish outside are
-     * not included.
+     * Returns an ArrayList of the delimiters of the character groups that are entirely contained within the given index
+     * values. Groups that start outside and finish inside or start inside and finish outside are not included.
      *
      * @param start The index of the first character in the search interval
-     * @param end The index of the final character in the search interval
-     * @return Contains int[2] pairs of delimiters of the character groups in the search interval, null if there are none
+     * @param end   The index of the final character in the search interval
+     * @return Contains int[2] pairs of delimiters of the character groups in the search interval, null if there are
+     *         none
      */
     public ArrayList getCharGroups(int start, int end) {
 
         int n = nextCharGroup(start);
-        if (n == -1) return null;
+        if (n == -1) {
+            return null;
+        }
         ArrayList setOfGroups = new ArrayList(2);
-        while ((n < charGroups.size()) && (getCharGroup(n)[1] <= end)) setOfGroups.add(getCharGroup(n++));
-        if (setOfGroups.size() == 0) return null;
+        while ((n < charGroups.size()) && (getCharGroup(n)[1] <= end)) {
+            setOfGroups.add(getCharGroup(n++));
+        }
+        if (setOfGroups.size() == 0) {
+            return null;
+        }
         return setOfGroups;
     }
 
 
     /**
-     * Gets an ArrayList of int[2]'s containing the indices of the first and
-     * last characters in all parts of the document text that
-     * are not contained in the current charGroups but are contained in the
-     * current domain. This allows units to search the domain to create further
-     * new charGroups at the same level as the current one. If the domain is
-     * totally subdivided into groups, then the method returns null.
+     * Gets an ArrayList of int[2]'s containing the indices of the first and last characters in all parts of the
+     * document text that are not contained in the current charGroups but are contained in the current domain. This
+     * allows units to search the domain to create further new charGroups at the same level as the current one. If the
+     * domain is totally subdivided into groups, then the method returns null.
      *
      * @return ArrayList Contains int[2] pairs marking text in current domain not in current charGroups, or null
      */
@@ -797,10 +884,11 @@ public class Document extends TrianaType implements AsciiComm {
 
         int[] comp = new int[2];
         int newListSize;
-        if (domain == null)
+        if (domain == null) {
             newListSize = 100;
-        else
+        } else {
             newListSize = 2 * domain.size();
+        }
         ArrayList complement = new ArrayList(newListSize);
         if (!existCharGroups()) {
             comp[0] = 0;
@@ -815,7 +903,11 @@ public class Document extends TrianaType implements AsciiComm {
         int[] delimiters;
         int j, k, m;
 
-        if (debug) if ( domain == null ) System.out.println("Document.getCharGroupsComplement: domain pointer is null");
+        if (debug) {
+            if (domain == null) {
+                System.out.println("Document.getCharGroupsComplement: domain pointer is null");
+            }
+        }
 
         for (j = 0; j < domain.size(); j++) {
             dom = (int[]) domain.get(j);
@@ -824,9 +916,8 @@ public class Document extends TrianaType implements AsciiComm {
                 delimiters = new int[2];
                 delimiters[0] = dom[0];
                 delimiters[1] = dom[1];
-                complement.add( delimiters );
-            }
-            else {
+                complement.add(delimiters);
+            } else {
                 /* First fill an array with all delimiters of the domain
                  * and its contained groups in sequence
                  */
@@ -849,16 +940,15 @@ public class Document extends TrianaType implements AsciiComm {
                 if (delimiters[0] == delimiters[1]) { // if domain opener equals first group element, no gap
                     delimiters[0] = -1;
                     delimiters[1] = -1;
-                }
-                else
-                    delimiters[1] -= 1; // first gap starts with domain opener, closes before first element of group
+                } else {
+                    delimiters[1] -= 1;
+                } // first gap starts with domain opener, closes before first element of group
                 k = 2;
                 while (k < m - 2) { // if middle pairs differ by one, no gap
                     if (delimiters[k] + 1 == delimiters[k + 1]) {
                         delimiters[k] = -1;
                         delimiters[k + 1] = -1;
-                    }
-                    else { // for middle pairs, gap starts after last element of one group and ends before first element of the next
+                    } else { // for middle pairs, gap starts after last element of one group and ends before first element of the next
                         delimiters[k] += 1;
                         delimiters[k + 1] -= 1;
                     }
@@ -867,18 +957,25 @@ public class Document extends TrianaType implements AsciiComm {
                 if (delimiters[m - 1] == delimiters[m]) { // if domain closer equals last group element, no gap
                     delimiters[m - 1] = -1;
                     delimiters[m] = -1;
-                }
-                else
-                    delimiters[m - 1] += 1; // last gap starts after the last group and ends on the domain closer
+                } else {
+                    delimiters[m - 1] += 1;
+                } // last gap starts after the last group and ends on the domain closer
                 /* Now scan the delimiter array, skipping over -1's, place
                  * successive pairs into int[2] arrays, and store them into complement.
                  */
                 k = 0;
-                if(debug) System.out.println("Document: delimiters array has length " + String.valueOf( delimiters.length ) + " and the top value is m = " + String.valueOf( m ) );
+                if (debug) {
+                    System.out.println("Document: delimiters array has length " + String.valueOf(delimiters.length)
+                            + " and the top value is m = " + String.valueOf(m));
+                }
                 while (k < m) {
-                    if(debug) System.out.println("Document: complement loop for k = " + String.valueOf( k ) );
+                    if (debug) {
+                        System.out.println("Document: complement loop for k = " + String.valueOf(k));
+                    }
                     try {
-                        while (delimiters[k] == -1) k++;
+                        while (delimiters[k] == -1) {
+                            k++;
+                        }
                     }
                     catch (ArrayIndexOutOfBoundsException ex) {
                         break;
@@ -887,44 +984,61 @@ public class Document extends TrianaType implements AsciiComm {
                         comp = new int[2];
                         comp[0] = delimiters[k++];
                     }
-                    while (delimiters[k] == -1) k++;
+                    while (delimiters[k] == -1) {
+                        k++;
+                    }
                     comp[1] = delimiters[k++];
                     complement.add(comp);
                 }
             }
         }
 
-        if (complement.size() == 0) return null;
+        if (complement.size() == 0) {
+            return null;
+        }
         return complement;
     }
 
 
     /**
-     * Sets a new ArrayList into the stack of ArrayLists containing interesting character
-     * groups and makes this new one the current one, making the previous one the domain.
+     * Sets a new ArrayList into the stack of ArrayLists containing interesting character groups and makes this new one
+     * the current one, making the previous one the domain.
      *
      * @param cg the set of integer arrays holding character ranges
      */
     public void addCharGroupsLayer(ArrayList cg) {
         charGroupStack.add(0, cg);
         charGroups = cg;
-        if (charGroupStack.size() > 1)
+        if (charGroupStack.size() > 1) {
             domain = (ArrayList) charGroupStack.get(1);
-        else
+        } else {
             domain = null;
-        if(debug) System.out.println("Document.addCharGroupsLayer: added new level, total levels = " + String.valueOf(charGroupStack.size()) + "\nDocument.addCharGroupsLayer: here are the populations of the character group levels: ");
-        if (debug) for ( int k = 0; k < charGroupStack.size(); k++ ) System.out.print(String.valueOf( ((ArrayList)charGroupStack.get(k)).size() ) + ", " );
-        if(debug) System.out.print("\n");
+        }
         if (debug) {
-            if ( domain == null ) System.out.println("Document.addCharGroupsLayer: domain pointer is null");
-            else System.out.println("Document.addCharGroupsLayer: domain pointer set to level 1");
+            System.out.println("Document.addCharGroupsLayer: added new level, total levels = "
+                    + String.valueOf(charGroupStack.size())
+                    + "\nDocument.addCharGroupsLayer: here are the populations of the character group levels: ");
+        }
+        if (debug) {
+            for (int k = 0; k < charGroupStack.size(); k++) {
+                System.out.print(String.valueOf(((ArrayList) charGroupStack.get(k)).size()) + ", ");
+            }
+        }
+        if (debug) {
+            System.out.print("\n");
+        }
+        if (debug) {
+            if (domain == null) {
+                System.out.println("Document.addCharGroupsLayer: domain pointer is null");
+            } else {
+                System.out.println("Document.addCharGroupsLayer: domain pointer set to level 1");
+            }
         }
     }
 
     /**
-     * Replaces the current ArrayList of interesting character
-     * groups with this new one. If there is not layer apart from the
-     * base layer, then this adds a new one.
+     * Replaces the current ArrayList of interesting character groups with this new one. If there is not layer apart
+     * from the base layer, then this adds a new one.
      *
      * @param cg the set of integer arrays holding character ranges
      */
@@ -932,21 +1046,36 @@ public class Document extends TrianaType implements AsciiComm {
         if (charGroupStack.size() > 1) {
             charGroupStack.set(0, cg);
             charGroups = cg;
-            if(debug) System.out.println("Document.setCharGroups: replaced current character Group. Ttotal levels = " + String.valueOf(charGroupStack.size()) + "\nDocument.setCharGroups: here are the populations of the character group levels: ");
-            if (debug) for ( int k = 0; k < charGroupStack.size(); k++ ) System.out.print(String.valueOf( ((ArrayList)charGroupStack.get(k)).size() ) + ", " );
-            if(debug) System.out.print("\n");
-        }
-        else {
-            if(debug) System.out.println("Document.setCharGroups: called addCharGroupsLayer");
+            if (debug) {
+                System.out.println("Document.setCharGroups: replaced current character Group. Ttotal levels = "
+                        + String.valueOf(charGroupStack.size())
+                        + "\nDocument.setCharGroups: here are the populations of the character group levels: ");
+            }
+            if (debug) {
+                for (int k = 0; k < charGroupStack.size(); k++) {
+                    System.out.print(String.valueOf(((ArrayList) charGroupStack.get(k)).size()) + ", ");
+                }
+            }
+            if (debug) {
+                System.out.print("\n");
+            }
+        } else {
+            if (debug) {
+                System.out.println("Document.setCharGroups: called addCharGroupsLayer");
+            }
             addCharGroupsLayer(cg);
         }
-        if (debug) if ( domain == null ) System.out.println("Document.setCharGroups: domain pointer is null");
+        if (debug) {
+            if (domain == null) {
+                System.out.println("Document.setCharGroups: domain pointer is null");
+            }
+        }
     }
 
 
     /**
-     * Tests whether there are non-trivial character group lists, not just the lowest
-     * one, which includes all characters.
+     * Tests whether there are non-trivial character group lists, not just the lowest one, which includes all
+     * characters.
      *
      * @return boolean <i>True</i> if there is more than one layer of character group lists
      */
@@ -956,21 +1085,20 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Sets a new character group into the ArrayList charGroups.
-     * The group is delineated by the given start and end character positions.
-     * It is placed in the ArrayList in the correct place to be in sequence with
-     * other character groups as they appear in the text.
-     * If the range overlaps with one or more existing groups, the old groups
-     * are eliminated. This only affects character group pointers; it does not
-     * change the document text string at all.
+     * Sets a new character group into the ArrayList charGroups. The group is delineated by the given start and end
+     * character positions. It is placed in the ArrayList in the correct place to be in sequence with other character
+     * groups as they appear in the text. If the range overlaps with one or more existing groups, the old groups are
+     * eliminated. This only affects character group pointers; it does not change the document text string at all.
      *
      * @param start the integer beginning the range for this group
-     * @param end the integer ending the range for this group
+     * @param end   the integer ending the range for this group
      */
     public void setCharGroup(int start, int end) {
 
         if (charGroupStack.size() == 1) {
-            if(debug) System.out.println("Document.setCharGroup: called addCharGroupsLayer");
+            if (debug) {
+                System.out.println("Document.setCharGroup: called addCharGroupsLayer");
+            }
             addCharGroupsLayer(new ArrayList(1));
         }
         int[] delim = {start, end};
@@ -983,49 +1111,49 @@ public class Document extends TrianaType implements AsciiComm {
         int endInGroup = containedInCharGroup(end, startInGroup);
         if ((startInGroup == endInGroup) && (startInGroup != -1)) { // new group is within a group
             charGroups.set(startInGroup, delim);
-        }
-        else {
+        } else {
             int nextOpening = nextCharGroup(start);
             int nextClosing = nextCharGroup(end);
             int lastGroupToRemove = (nextClosing == -1) ? charGroups.size() - 1 : nextClosing - 1;
             if (startInGroup == -1) { // new group starts outside of a group
                 if (endInGroup == -1) { // new group ends outside of a group
                     if (nextOpening == nextClosing) { // no group inside new group
-                        if (nextOpening == -1)
+                        if (nextOpening == -1) {
                             charGroups.add(delim);
-                        else
-                            charGroups.add(nextOpening, delim); // remember that removeCharGroups() shifts groups down
-                    }
-                    else { // group(s) contained entirely within the new group
+                        } else {
+                            charGroups.add(nextOpening, delim);
+                        } // remember that removeCharGroups() shifts groups down
+                    } else { // group(s) contained entirely within the new group
                         removeCharGroups(nextOpening, lastGroupToRemove);
-                        if (nextOpening == -1)
+                        if (nextOpening == -1) {
                             charGroups.add(delim);
-                        else
-                            charGroups.add(nextOpening, delim); // remember that removeCharGroups() shifts groups down
+                        } else {
+                            charGroups.add(nextOpening, delim);
+                        } // remember that removeCharGroups() shifts groups down
                     }
-                }
-                else { // new group starts outside of a group, ends within a group
+                } else { // new group starts outside of a group, ends within a group
                     removeCharGroups(nextOpening, endInGroup);
-                    if (nextOpening == -1)
+                    if (nextOpening == -1) {
                         charGroups.add(delim);
-                    else
-                        charGroups.add(nextOpening, delim); // remember that removeCharGroups() shifts groups down
+                    } else {
+                        charGroups.add(nextOpening, delim);
+                    } // remember that removeCharGroups() shifts groups down
                 }
-            }
-            else { // new group starts within a group
+            } else { // new group starts within a group
                 if (endInGroup == -1) { // new group starts within a group, ends outside a group
                     removeCharGroups(startInGroup, lastGroupToRemove);
-                    if (startInGroup == -1)
+                    if (startInGroup == -1) {
                         charGroups.add(delim);
-                    else
-                        charGroups.add(startInGroup, delim); // remember that removeCharGroups() shifts groups down
-                }
-                else { // new group starts within a group, ends within a different group
+                    } else {
+                        charGroups.add(startInGroup, delim);
+                    } // remember that removeCharGroups() shifts groups down
+                } else { // new group starts within a group, ends within a different group
                     removeCharGroups(startInGroup, lastGroupToRemove);
-                    if (startInGroup == -1)
+                    if (startInGroup == -1) {
                         charGroups.add(delim);
-                    else
-                        charGroups.add(startInGroup, delim); // remember that removeCharGroups() shifts groups down
+                    } else {
+                        charGroups.add(startInGroup, delim);
+                    } // remember that removeCharGroups() shifts groups down
                 }
             }
         }
@@ -1033,64 +1161,80 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Deletes the entry for the character group denoted by the given
-     * index.
-     * This only affects character group pointers; it does not
-     * change the document text string at all.
+     * Deletes the entry for the character group denoted by the given index. This only affects character group pointers;
+     * it does not change the document text string at all.
      *
      * @param index the index of the character group being deleted
      */
     public void removeCharGroup(int index) {
-        if ((index >= 0) && (index < charGroups.size())) charGroups.remove(index);
+        if ((index >= 0) && (index < charGroups.size())) {
+            charGroups.remove(index);
+        }
     }
 
     /**
-     * Deletes the int[2] arrays for all the character groups with
-     * index values between the two given values, inclusive.
-     * This only affects character group pointers; it does not
-     * change the document text string at all.
+     * Deletes the int[2] arrays for all the character groups with index values between the two given values, inclusive.
+     * This only affects character group pointers; it does not change the document text string at all.
      *
-     * @param start the index of the first character group being deleted
+     * @param start  the index of the first character group being deleted
      * @param finish the index of the final character group being deleted
      */
     public void removeCharGroups(int start, int finish) {
         int lastGroup = charGroups.size() - 1;
-        if (lastGroup == -1) return;
-        if (finish > lastGroup) finish = lastGroup;
-        if (start < 0) return;
+        if (lastGroup == -1) {
+            return;
+        }
+        if (finish > lastGroup) {
+            finish = lastGroup;
+        }
+        if (start < 0) {
+            return;
+        }
         // method remove shifts elements to the left, so its argument is not incremented
-        for (int g = start; g <= finish; g++) charGroups.remove(start);
+        for (int g = start; g <= finish; g++) {
+            charGroups.remove(start);
+        }
     }
 
     /**
-     * Removes the current ArrayList of character groups, sets the next one in the
-     * stack equal to the current one, resets the domain pointer to the next one beyond that.
-     * Will not remove the last character group, which spans the whole document; in this
-     * case the method returns null.
+     * Removes the current ArrayList of character groups, sets the next one in the stack equal to the current one,
+     * resets the domain pointer to the next one beyond that. Will not remove the last character group, which spans the
+     * whole document; in this case the method returns null.
      *
      * @return ArrayList The removed ArrayList
      */
     public ArrayList deleteCharGroups() {
-        if (charGroupStack.size() == 1) return null;
+        if (charGroupStack.size() == 1) {
+            return null;
+        }
         ArrayList removed = (ArrayList) charGroupStack.remove(0);
-        if(debug) System.out.println("Document.deleteCharGroups: deleted current level, total levels now = " + String.valueOf(charGroupStack.size()) + "\nDocument.deleteCharGroups: here are the populations of the character group levels: ");
-        if (debug) for ( int k = 0; k < charGroupStack.size(); k++ ) System.out.print(String.valueOf( ((ArrayList)charGroupStack.get(k)).size() ) + ", " );
-        if(debug) System.out.print("\n");
+        if (debug) {
+            System.out.println("Document.deleteCharGroups: deleted current level, total levels now = "
+                    + String.valueOf(charGroupStack.size())
+                    + "\nDocument.deleteCharGroups: here are the populations of the character group levels: ");
+        }
+        if (debug) {
+            for (int k = 0; k < charGroupStack.size(); k++) {
+                System.out.print(String.valueOf(((ArrayList) charGroupStack.get(k)).size()) + ", ");
+            }
+        }
+        if (debug) {
+            System.out.print("\n");
+        }
         charGroups = (ArrayList) charGroupStack.get(0);
-        if (charGroupStack.size() > 1)
+        if (charGroupStack.size() > 1) {
             domain = (ArrayList) charGroupStack.get(1);
-        else
+        } else {
             domain = null;
+        }
         return removed;
     }
 
     /**
-     * Returns the pointer to the domain, which is the set of character groups
-     * just above the current set in the list. The model assumes that the current
-     * set are obtained by refinement of the ones pointed to by <i>domain</i>. Thus,
-     * an editing unit creating selections at the current level will search only
-     * within selections in the domain. There is no method to set this pointer.
-     * That happens automatically when the stack of character group sets changes.
+     * Returns the pointer to the domain, which is the set of character groups just above the current set in the list.
+     * The model assumes that the current set are obtained by refinement of the ones pointed to by <i>domain</i>. Thus,
+     * an editing unit creating selections at the current level will search only within selections in the domain. There
+     * is no method to set this pointer. That happens automatically when the stack of character group sets changes.
      *
      * @return ArrayList The list referenced by the domain pointer
      */
@@ -1100,18 +1244,18 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Adds the given constant <i>shift</i> to the locations of both delimiters
-     * of all the character groups above and including
-     * the given character group.  This allows resetting of the locations of
-     * the character groups after the document has changed length.
-     * This only affects character group pointers; it does not
-     * change the document text string at all.
+     * Adds the given constant <i>shift</i> to the locations of both delimiters of all the character groups above and
+     * including the given character group.  This allows resetting of the locations of the character groups after the
+     * document has changed length. This only affects character group pointers; it does not change the document text
+     * string at all.
      *
-     * @param shift The amount to increment delimiters of character groups
+     * @param shift      The amount to increment delimiters of character groups
      * @param firstGroup The index of the first group to be shifted
      */
     public void shiftCharGroups(int shift, int firstGroup) {
-        if (firstGroup < 0) return;
+        if (firstGroup < 0) {
+            return;
+        }
         int[] delims;
         int size = charGroups.size();
         int g = firstGroup;
@@ -1125,11 +1269,11 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Returns the index of the character group containing the given character
-     * position, starting the search of character groups from the given group.
-     * If the given character is not contained in a group in the search, returns -1.
+     * Returns the index of the character group containing the given character position, starting the search of
+     * character groups from the given group. If the given character is not contained in a group in the search, returns
+     * -1.
      *
-     * @param character The index in the document of the character being tested
+     * @param character  The index in the document of the character being tested
      * @param firstGroup The index of the character group at which the search starts
      * @return The index of the character group containing the character, or -1 if there is none
      */
@@ -1140,16 +1284,20 @@ public class Document extends TrianaType implements AsciiComm {
             int g = startGroup;
             while (character > ((int[]) charGroups.get(g))[1]) {
                 g++;
-                if (g == size) return -1;
+                if (g == size) {
+                    return -1;
+                }
             }
-            if (character >= ((int[]) charGroups.get(g))[0]) return g;
+            if (character >= ((int[]) charGroups.get(g))[0]) {
+                return g;
+            }
         }
         return -1;
     }
 
     /**
-     * Returns the index of the character group containing the given character
-     * position. If the given character is not contained in a group in the search, returns -1.
+     * Returns the index of the character group containing the given character position. If the given character is not
+     * contained in a group in the search, returns -1.
      *
      * @param character The index in the document of the character being tested
      * @return The index of the character group containing the character, or -1 if there is none
@@ -1160,12 +1308,11 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Returns the index of the first character group that starts at or after the
-     * given character position, starting the search of character groups from the given group.
-     * If no character group is found in the search, returns -1. If the given character
-     * is in a character group, the index of the next group is returned.
+     * Returns the index of the first character group that starts at or after the given character position, starting the
+     * search of character groups from the given group. If no character group is found in the search, returns -1. If the
+     * given character is in a character group, the index of the next group is returned.
      *
-     * @param character The index in the document of the character being tested
+     * @param character  The index in the document of the character being tested
      * @param firstGroup The index of the character group at which the search starts
      * @return The index of the first character group starting after the character, or -1 if there is none
      */
@@ -1176,7 +1323,9 @@ public class Document extends TrianaType implements AsciiComm {
             int g = startGroup;
             while (character > ((int[]) charGroups.get(g))[0]) {
                 g++;
-                if (g == size) return -1;
+                if (g == size) {
+                    return -1;
+                }
             }
             return g;
         }
@@ -1184,10 +1333,9 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Returns the index of the first character group that starts at or after the
-     * given character position.
-     * If no character group is found in the search, returns -1. If the given character
-     * is in a character group, the index of the next group is returned.
+     * Returns the index of the first character group that starts at or after the given character position. If no
+     * character group is found in the search, returns -1. If the given character is in a character group, the index of
+     * the next group is returned.
      *
      * @param character The index in the document of the character being tested
      * @return The index of the first character group starting after the character, or -1 if there is none
@@ -1197,27 +1345,27 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Returns the index of the first character group that ends at or before the
-     * given character position, starting the search of character groups backwards
-     * from the given group.
+     * Returns the index of the first character group that ends at or before the given character position, starting the
+     * search of character groups backwards from the given group.
+     * <p/>
+     * If no character group is found in the search, returns -1. If the given character is at the end of a character
+     * group, the index of that group is returned. If the given character is in a character group but is not the last
+     * character of the group, the index of the next group before it is returned.
      *
-     * If no character group is found in the search, returns -1. If the given character
-     * is at the end of a character group, the index of that group is returned. If the
-     * given character is in a character group but is not the last character of the group,
-     * the index of the next group before it is returned.
-     *
-     * @param character The index in the document of the character being tested
+     * @param character  The index in the document of the character being tested
      * @param firstGroup The index of the character group at which the search starts
      * @return int The index of the first character group ending at or before the character, or -1 if there is none
      */
-    public int prevCharGroup( int character, int firstGroup ) {
+    public int prevCharGroup(int character, int firstGroup) {
         int size = charGroups.size();
-        int startGroup = ( firstGroup < 0 ) ? 0 : firstGroup;
-        if ( size > startGroup ) {
+        int startGroup = (firstGroup < 0) ? 0 : firstGroup;
+        if (size > startGroup) {
             int g = startGroup;
-            while ( character < ((int[])charGroups.get( g ))[1] ) {
+            while (character < ((int[]) charGroups.get(g))[1]) {
                 g--;
-                if ( g == -1 ) return -1;
+                if (g == -1) {
+                    return -1;
+                }
             }
             return g;
         }
@@ -1225,27 +1373,23 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Returns the index of the first character group that ends at or before the
-     * given character position.
-     *
-     * If no character group is found in the search, returns -1. If the given character
-     * is at the end of a character group, the index of that group is returned. If the
-     * given character is in a character group but is not the last character of the group,
-     * the index of the next group before it is returned.
+     * Returns the index of the first character group that ends at or before the given character position.
+     * <p/>
+     * If no character group is found in the search, returns -1. If the given character is at the end of a character
+     * group, the index of that group is returned. If the given character is in a character group but is not the last
+     * character of the group, the index of the next group before it is returned.
      *
      * @param character The index in the document of the character being tested
      * @return int The index of the first character group ending at or before the character, or -1 if there is none
      */
-    public int prevCharGroup( int character ) {
-        return prevCharGroup( character, charGroups.size() - 1 );
+    public int prevCharGroup(int character) {
+        return prevCharGroup(character, charGroups.size() - 1);
     }
 
 
-
     /**
-     * Returns the index of the character group in the domain ArrayList which
-     * contains the character group of the current charGroups ArrayList corresponding
-     * to the given index.
+     * Returns the index of the character group in the domain ArrayList which contains the character group of the
+     * current charGroups ArrayList corresponding to the given index.
      *
      * @param cg The index of the character group in the current list
      * @return The index of the character group in the domain list that contains the given group
@@ -1258,31 +1402,36 @@ public class Document extends TrianaType implements AsciiComm {
             int g = startGroup;
             while (character > ((int[]) domain.get(g))[1]) {
                 g++;
-                if (g == size) return -1;
+                if (g == size) {
+                    return -1;
+                }
             }
-            if (character >= ((int[]) domain.get(g))[0]) return g;
+            if (character >= ((int[]) domain.get(g))[0]) {
+                return g;
+            }
         }
         return -1;
     }
 
 
     /**
-     * Returns the substring defined by the character group of the given index.
-     * This does not modify the string or the character group locations.
+     * Returns the substring defined by the character group of the given index. This does not modify the string or the
+     * character group locations.
      *
      * @param group Index of the group to be returned
      * @return String The substring defined by the group
      */
     public String getGroupString(int group) {
         int[] delims = getCharGroup(group);
-        if (delims == null) return null;
+        if (delims == null) {
+            return null;
+        }
         return getString(delims[0], delims[1]);
     }
 
     /**
-     * Returns a String containing the character group delimiters
-     * for the element of the character group stack denoted by the
-     * given index. The pairs are written all on one line.
+     * Returns a String containing the character group delimiters for the element of the character group stack denoted
+     * by the given index. The pairs are written all on one line.
      *
      * @param k The level in the character group stack to be written
      * @return The character group delimiters
@@ -1300,9 +1449,8 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Returns a String containing the character group delimiters
-     * for the element of the character group stack at the current
-     * level. The pairs are written all on one line.
+     * Returns a String containing the character group delimiters for the element of the character group stack at the
+     * current level. The pairs are written all on one line.
      *
      * @return String The character group delimiters
      */
@@ -1312,9 +1460,8 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Returns a String containing the character group delimiters
-     * and their associated group Strings at the level given by
-     * the integer argument. The groups are separated by blank lines.
+     * Returns a String containing the character group delimiters and their associated group Strings at the level given
+     * by the integer argument. The groups are separated by blank lines.
      *
      * @param k The level in the character group stack to be written
      * @return The character group Strings and delimiters
@@ -1334,30 +1481,28 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Returns a String containing the character group
-     * Strings at the level given by
-     * the integer argument. The groups are separated by blank lines.
+     * Returns a String containing the character group Strings at the level given by the integer argument. The groups
+     * are separated by blank lines.
      *
      * @param k The level in the character group stack to be written
      * @return The character group Strings
      */
-    public String listGroupStringsNoDelims( int k ) {
-        ArrayList cg = (ArrayList)charGroupStack.get( k );
+    public String listGroupStringsNoDelims(int k) {
+        ArrayList cg = (ArrayList) charGroupStack.get(k);
         int n = cg.size();
-        StringBuffer list = new StringBuffer( 100 * n );
+        StringBuffer list = new StringBuffer(100 * n);
         int[] delims;
         String t = getText();
-        for ( int g = 0; g < n; g++ ) {
-            delims = (int[])cg.get( g );
-            list.append( t.substring( delims[0], delims[1] + 1 ) ).append(eol).append(eol);
+        for (int g = 0; g < n; g++) {
+            delims = (int[]) cg.get(g);
+            list.append(t.substring(delims[0], delims[1] + 1)).append(eol).append(eol);
         }
         return list.toString();
     }
 
     /**
-     * Returns a String containing the character group delimiters
-     * and their associated group Strings at the current level. The
-     * groups are separated by blank lines.
+     * Returns a String containing the character group delimiters and their associated group Strings at the current
+     * level. The groups are separated by blank lines.
      *
      * @return String The character group delimiters
      */
@@ -1366,79 +1511,94 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Removes and returns the character string denoted by the given
-     * character group index. Readjusts all subsequent character group
-     * locations after the cut so that they point to the same
-     * text as before the removal.
+     * Removes and returns the character string denoted by the given character group index. Readjusts all subsequent
+     * character group locations after the cut so that they point to the same text as before the removal.
      *
      * @param index Index of the character group to be cut
      * @return the string that has been cut
      */
     public String cutGroupString(int index) {
         int[] delim = (int[]) charGroups.get(index);
-        if (delim == null) return null;
+        if (delim == null) {
+            return null;
+        }
         return cutString(delim[0], delim[1]);
     }
 
     /**
-     * Inserts the given character String at the given character
-     * index position and marks it as a character group.  Readjusts all character group
-     * locations after the character position, so that they point to the same
-     * text as before the insertion. If the insertion occurs within a
-     * character group, that group is eliminated and the insertion is
-     * made into a new character group. If insertion into an existing
-     * group is desired, use instead the method <i>insertString</i>.
+     * Inserts the given character String at the given character index position and marks it as a character group.
+     * Readjusts all character group locations after the character position, so that they point to the same text as
+     * before the insertion. If the insertion occurs within a character group, that group is eliminated and the
+     * insertion is made into a new character group. If insertion into an existing group is desired, use instead the
+     * method <i>insertString</i>.
      *
      * @param insertion The character String to be inserted
-     * @param location Character index of the location of the insertion
+     * @param location  Character index of the location of the insertion
      */
     public void insertStringAsCharGroup(String insertion, int location) {
         int ownGroup = containedInCharGroup(location);
-        if (ownGroup != -1) removeCharGroup(ownGroup);
+        if (ownGroup != -1) {
+            removeCharGroup(ownGroup);
+        }
         insertString(insertion, location);
         setCharGroup(location, location + insertion.length() - 1);
     }
 
     /**
-     * Replaces the character group with the given index
-     * by the given String and returns the String that was removed.
-     * Readjusts all character group locations after the replacement,
-     * so that they point to the same text as before. The character
-     * group with the given index is readjusted in size to delimit the
-     * new replacement substring.
+     * Replaces the character group with the given index by the given String and returns the String that was removed.
+     * Readjusts all character group locations after the replacement, so that they point to the same text as before. The
+     * character group with the given index is readjusted in size to delimit the new replacement substring.
      *
-     * @param index Index of the character group to be replaced
+     * @param index       Index of the character group to be replaced
      * @param replacement The string that is to be inserted in place of the cut string
      * @return The portion of the document that was replaced
      */
     public String replaceGroupString(int index, String replacement) {
-        if ((replacement == null) || (replacement.length() == 0)) return cutGroupString(index);
-        if(debug) System.out.println("Document.replaceGroupString: replacing group with index " + String.valueOf(index) + " and delims (" + String.valueOf( getCharGroup(index)[0]) + "'" + String.valueOf( getCharGroup(index)[1]) + ")" );
-        if(debug) System.out.println("Document.replaceGroupString: before replacement, list contains the following groups at current level:" );
-        if(debug) System.out.println( listCharGroups(0) );
+        if ((replacement == null) || (replacement.length() == 0)) {
+            return cutGroupString(index);
+        }
+        if (debug) {
+            System.out.println(
+                    "Document.replaceGroupString: replacing group with index " + String.valueOf(index) + " and delims ("
+                            + String.valueOf(getCharGroup(index)[0]) + "'" + String.valueOf(getCharGroup(index)[1])
+                            + ")");
+        }
+        if (debug) {
+            System.out.println(
+                    "Document.replaceGroupString: before replacement, list contains the following groups at current level:");
+        }
+        if (debug) {
+            System.out.println(listCharGroups(0));
+        }
         int[] delims = (int[]) charGroups.get(index);
         String cut = replaceString(delims[0], delims[1], replacement);
         setCharGroup(delims[0], delims[0] + replacement.length() - 1);
-        if(debug) System.out.println("Document.replaceGroupString: after replacement, list contains the following groups at current level:" );
-        if(debug) System.out.println( listCharGroups(0) );
+        if (debug) {
+            System.out.println(
+                    "Document.replaceGroupString: after replacement, list contains the following groups at current level:");
+        }
+        if (debug) {
+            System.out.println(listCharGroups(0));
+        }
         return cut;
     }
 
 
     /**
-     * Returns the filetype <i>i.e.</i> LOCAL (<i>i.e.</i> disk file) or HTTP, (on the
-     * internet). See FileName for definitions of HTTP and LOCAL.
+     * Returns the filetype <i>i.e.</i> LOCAL (<i>i.e.</i> disk file) or HTTP, (on the internet). See FileName for
+     * definitions of HTTP and LOCAL.
+     * <p/>
+     * If there is no file name attached to this Document then this returns the FileName.INVALID flag.
      *
-     * If there is no file name attached to this Document then this returns
-     * the FileName.INVALID flag.
      * @return int the filetype
      * @see triana.types.FileName
      */
     public int getFileType() {
-        if (fname != null)
+        if (fname != null) {
             return fname.getFileType();
-        else
+        } else {
             return FileName.INVALID;
+        }
     }
 
     /**
@@ -1451,19 +1611,20 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Sets the directory and file name from an input string containing
-     * the full path to the file.
+     * Sets the directory and file name from an input string containing the full path to the file.
      *
      * @param pn The full path to the given file
      */
     public void setFile(String pn) {
-        if ((pn == null) || (pn.startsWith("null")))
+        if ((pn == null) || (pn.startsWith("null"))) {
             return;
+        }
 
-        if (fname == null)
+        if (fname == null) {
             fname = new FileName(pn);
-        else
+        } else {
             fname.setFile(pn);
+        }
     }
 
 
@@ -1475,8 +1636,8 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Finds the first occurence of the given String in the Document. It
-     * returns the position of the string or -1 if it is not present.
+     * Finds the first occurence of the given String in the Document. It returns the position of the string or -1 if it
+     * is not present.
      *
      * @param text The text to search for
      * @return the first position of the given string within the Document
@@ -1486,11 +1647,10 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Finds the first occurence of the given String after the given
-     * character position in the Document. It returns the position of the
-     * string or -1 if it is not present.
+     * Finds the first occurence of the given String after the given character position in the Document. It returns the
+     * position of the string or -1 if it is not present.
      *
-     * @param text The text to search for
+     * @param text  The text to search for
      * @param start Index of first character of the search
      * @return the first position of the given string after start within the Document
      */
@@ -1499,11 +1659,10 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Finds the first occurence of the given String within the given
-     * character group in the Document. It returns the position of the
-     * string or -1 if it is not present in the group.
+     * Finds the first occurence of the given String within the given character group in the Document. It returns the
+     * position of the string or -1 if it is not present in the group.
      *
-     * @param text The text to search for
+     * @param text  The text to search for
      * @param group Index of character group of the search
      * @return the first position of the given string after start within the Document
      */
@@ -1516,13 +1675,11 @@ public class Document extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Finds the first occurence of the given String within the given
-     * character group after the given location in the Document.
-     * It returns the position of the string or -1 if it is not present
-     * in the group after the given location. If the index start is not
-     * within the group, the method returns -2.
+     * Finds the first occurence of the given String within the given character group after the given location in the
+     * Document. It returns the position of the string or -1 if it is not present in the group after the given location.
+     * If the index start is not within the group, the method returns -2.
      *
-     * @param text The text to search for
+     * @param text  The text to search for
      * @param group Index of character group of the search
      * @param start Index of the first character of the search
      * @return the first position of the given string after start within the Document
@@ -1531,7 +1688,9 @@ public class Document extends TrianaType implements AsciiComm {
         int[] groupDelim = getCharGroup(group);
         int beginning = groupDelim[0];
         int end = groupDelim[1] + 1;
-        if ((start < beginning) || (start >= end)) return -2;
+        if ((start < beginning) || (start >= end)) {
+            return -2;
+        }
         start -= beginning;
         int location = getText().substring(beginning, end).indexOf(text, start);
         return (location == -1) ? -1 : location + beginning;
@@ -1539,72 +1698,75 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Removes the first occurence of the given String from the Document. It
-     * returns the position of the string or -1 if it is not present.
+     * Removes the first occurence of the given String from the Document. It returns the position of the string or -1 if
+     * it is not present.
      *
      * @param text The text to search for
      * @return the first position of the given string within the Document
      */
     public int remove(String text) {
         int pos = findNext(text);
-        if (pos == -1) return pos;
+        if (pos == -1) {
+            return pos;
+        }
         cutString(pos, pos + text.length() - 1);
         return pos;
     }
 
     /**
-     * Removes the first occurence of the given String after the given
-     * character location in the Document. It
-     * returns the position of the string or -1 if it is not present.
+     * Removes the first occurence of the given String after the given character location in the Document. It returns
+     * the position of the string or -1 if it is not present.
      *
      * @param text The text to search for
      * @return the first position of the given string within the Document
      */
     public int remove(String text, int start) {
         int pos = findNext(text, start);
-        if (pos == -1) return pos;
+        if (pos == -1) {
+            return pos;
+        }
         cutString(pos, pos + text.length() - 1);
         return pos;
     }
 
     /**
-     * Finds the first occurence of the given String <i>text</i> in the
-     * Document and replaces it with the given String <i>newText</i>.
-     * Returns -1 if the Document does not contain text.
+     * Finds the first occurence of the given String <i>text</i> in the Document and replaces it with the given String
+     * <i>newText</i>. Returns -1 if the Document does not contain text.
      *
-     * @param text The text to search for
+     * @param text    The text to search for
      * @param newText The text to insert in place of text
      * @return the first position of the text within the Document
      */
     public int replaceNext(String text, String newText) {
         int pos = findNext(text);
-        if (pos == -1) return pos;
+        if (pos == -1) {
+            return pos;
+        }
         replaceString(pos, pos + text.length() - 1, newText);
         return pos;
     }
 
     /**
-     * Finds the first occurence of the given String <i>text</i>
-     * after the given character location in the
-     * Document and replaces it with the given String <i>newText</i>.
-     * Returns -1 if the Document does not contain text.
+     * Finds the first occurence of the given String <i>text</i> after the given character location in the Document and
+     * replaces it with the given String <i>newText</i>. Returns -1 if the Document does not contain text.
      *
-     * @param text The text to search for
+     * @param text    The text to search for
      * @param newText The text to insert in place of text
      * @return the first position of the text within the Document
      */
     public int replaceNext(String text, String newText, int start) {
         int pos = findNext(text, start);
-        if (pos == -1) return pos;
+        if (pos == -1) {
+            return pos;
+        }
         replaceString(pos, pos + text.length() - 1, newText);
         return pos;
     }
 
     /**
-     * Replaces all occurences of the given String <i>text</i> with the
-     * given String <i>newText</i>.
+     * Replaces all occurences of the given String <i>text</i> with the given String <i>newText</i>.
      *
-     * @param text The text to search for
+     * @param text    The text to search for
      * @param newText The text to insert in place of text
      * @return int The number of replacements that were made
      */
@@ -1620,64 +1782,45 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Returns <i>true</i> if the specified object doc
-     * is the same type and has the same contents as this object,
-     * including the path name and file name. Does not test character group
-     * pointers or line number lists.
+     * Returns <i>true</i> if the specified object doc is the same type and has the same contents as this object,
+     * including the path name and file name. Does not test character group pointers or line number lists.
      *
      * @return Boolean <i>true</i> if the argument is a Document with the same contents as this Document
      */
     public boolean equals(Object doc) {
-        if (!(doc instanceof Document))
+        if (!(doc instanceof Document)) {
             return false;
+        }
 
         Document d = (Document) doc;
 
-        if (!getText().equals(d.getText()))
+        if (!getText().equals(d.getText())) {
             return false;
+        }
 
-        if (fname != null)
-            if (!fname.equals(d.getFile()))
+        if (fname != null) {
+            if (!fname.equals(d.getFile())) {
                 return false;
+            }
+        }
 
         return true;
     }
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         Document d = null;
@@ -1711,22 +1854,26 @@ public class Document extends TrianaType implements AsciiComm {
      * @param source The Document object being copied
      */
     public void copyParameters(TrianaType source) {
-        super.copyParameters( source );
-        if (((Document) source).getFileRef() != null)
-            setFile((FileName)(((Document) source).getFileRef().copyMe()));
+        super.copyParameters(source);
+        if (((Document) source).getFileRef() != null) {
+            setFile((FileName) (((Document) source).getFileRef().copyMe()));
+        }
         if (((Document) source).isLineNumber()) {
             int[] lines = ((Document) source).getLineNumbers();
             int[] newlines = new int[lines.length];
-            for (int i = 0; i < lines.length; ++i)
+            for (int i = 0; i < lines.length; ++i) {
                 newlines[i] = lines[i];
+            }
             setLineNumbers(newlines);
         }
         ArrayList stack = ((Document) source).getCharGroupStack();
-        if (stack.size() > 1) { // if only one element in stack, it is the base group set up when the text was set in CopyData()
+        if (stack.size()
+                > 1) { // if only one element in stack, it is the base group set up when the text was set in CopyData()
             ArrayList groups, newgroups;
             int[] delims, newdelims;
             int k, g;
-            for (k = stack.size() - 2; k >= 0; k--) { // go backwards through stack to use addCharGroupsLayer to construct new stack
+            for (k = stack.size() - 2; k >= 0;
+                 k--) { // go backwards through stack to use addCharGroupsLayer to construct new stack
                 groups = (ArrayList) stack.get(k);
                 newgroups = new ArrayList(groups.size());
                 for (g = 0; g < groups.size(); ++g) {
@@ -1743,21 +1890,14 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Used when Triana types want to be able to
-     * send ASCII data to other programs using strings.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<<PRE>
-     *      super.outputToStream(dos)
-     * </PRE>to get output from superior classes, and then new parameters defined
-     * for the current subclass must be output. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to send ASCII data to other programs using strings.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<<PRE>
+     * super.outputToStream(dos) </PRE>to get output from superior classes, and then new parameters defined for the
+     * current subclass must be output. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dos The data output stream
      */
@@ -1767,9 +1907,9 @@ public class Document extends TrianaType implements AsciiComm {
             dos.println("Line numbers marked:");
             dos.println(lineNos.length);
             dos.println(listLineNumbers());
-        }
-        else
+        } else {
             dos.println("No line numbers marked.");
+        }
         dos.println(charGroupStack.size());
         for (int k = 0; k < charGroupStack.size(); k++) {
             ArrayList cg = (ArrayList) charGroupStack.get(k);
@@ -1783,21 +1923,14 @@ public class Document extends TrianaType implements AsciiComm {
 
 
     /**
-     * Used when Triana types want to be able to
-     * receive ASCII data from the output of other programs.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<PRE>
-     *      super.inputFromStream(dis)
-     * </PRE>to get input from superior classes, and then new parameters defined
-     * for the current subclass must be input. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to receive ASCII data from the output of other programs.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<PRE>
+     * super.inputFromStream(dis) </PRE>to get input from superior classes, and then new parameters defined for the
+     * current subclass must be input. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dis The data input stream
      */
@@ -1808,8 +1941,9 @@ public class Document extends TrianaType implements AsciiComm {
         if (dis.readLine().equals("Line numbers marked:")) {
             int lines = Str.strToInt(dis.readLine());
             int[] lineNums = new int[lines];
-            for (int i = 0; i < lineNums.length; ++i)
+            for (int i = 0; i < lineNums.length; ++i) {
                 lineNums[i] = Str.strToInt(dis.readLine());
+            }
             setLineNumbers(lineNums);
         }
         int stackLength = Str.strToInt(dis.readLine());
@@ -1836,25 +1970,19 @@ public class Document extends TrianaType implements AsciiComm {
         }
         int chars = Str.strToInt(dis.readLine());
         StringBuffer doc = new StringBuffer(chars);
-        while ((line = dis.readLine()) != null) doc.append(line).append(eol);
+        while ((line = dis.readLine()) != null) {
+            doc.append(line).append(eol);
+        }
         setText(doc.toString());
     }
 
     /**
-     * Used to make the new
-     * types derived from TrianaType backward-compatible with
-     * older types. It must be called by any method that
-     * modifies data in <i>dataContainer</i> or in any other variable
-     * that replaces a storage location used previously by any
-     * type. It must be implemented (over-ridden) in any type
-     * that re-defines storage or access methods to any
-     * variable. The implementation should assign the
-     * new variables to the obsolete ones, and ensure that
-     * obsolete access methods retrieve data from the new
-     * locations. Any over-riding method should finish
-     * with the line<PRE>
-     *       super.updateObsoletePointers;
-     * </PRE>
+     * Used to make the new types derived from TrianaType backward-compatible with older types. It must be called by any
+     * method that modifies data in <i>dataContainer</i> or in any other variable that replaces a storage location used
+     * previously by any type. It must be implemented (over-ridden) in any type that re-defines storage or access
+     * methods to any variable. The implementation should assign the new variables to the obsolete ones, and ensure that
+     * obsolete access methods retrieve data from the new locations. Any over-riding method should finish with the
+     * line<PRE> super.updateObsoletePointers; </PRE>
      */
     protected void updateObsoletePointers() {
         super.updateObsoletePointers();

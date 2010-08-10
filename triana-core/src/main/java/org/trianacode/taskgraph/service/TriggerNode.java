@@ -65,10 +65,8 @@ import org.trianacode.taskgraph.imp.ParameterNodeImp;
 /**
  * A NodeCable which has run-time parameters.
  *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 
 public class TriggerNode extends ParameterNodeImp implements RunnableNodeInterface {

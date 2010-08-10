@@ -59,19 +59,21 @@
 package org.trianacode.gui.toolmaker.guibuilder;
 
 
-import org.trianacode.util.Env;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import org.trianacode.util.Env;
 
 /**
  * The panel for defining a gui builder scroller/intscroller component
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ScrollerPanel extends JPanel implements ComponentPanelInterface {
 
@@ -148,21 +150,23 @@ public class ScrollerPanel extends JPanel implements ComponentPanelInterface {
      */
     public String getGUIBuilderStr(String param) {
         try {
-            if (mode == SCROLLER)
+            if (mode == SCROLLER) {
                 Double.parseDouble(defval);
-            else
+            } else {
                 Integer.parseInt(defval);
+            }
         }
         catch (NumberFormatException except) {
             defval = String.valueOf(DEFAULT_VALUE);
         }
 
-        if (mode == SCROLLER)
+        if (mode == SCROLLER) {
             return title.getText() + " $title " + param + " Scroller " + min.getText() +
                     " " + max.getText() + " " + defval + " " + String.valueOf(resize.isSelected());
-        else
+        } else {
             return title.getText() + " $title " + param + " IntScroller " + min.getText() +
                     " " + max.getText() + " " + defval + " " + String.valueOf(resize.isSelected());
+        }
     }
 
     /**
@@ -173,14 +177,17 @@ public class ScrollerPanel extends JPanel implements ComponentPanelInterface {
 
         title.setText(strs[0]);
 
-        if (strs.length > 3)
+        if (strs.length > 3) {
             min.setText(strs[3]);
+        }
 
-        if (strs.length > 4)
+        if (strs.length > 4) {
             max.setText(strs[4]);
+        }
 
-        if (strs.length > 6)
+        if (strs.length > 6) {
             resize.setSelected(new Boolean(strs[6]).booleanValue());
+        }
     }
 
 
@@ -199,21 +206,24 @@ public class ScrollerPanel extends JPanel implements ComponentPanelInterface {
      * notifies the panel of the default parameter value
      */
     public void notifyDefaultValue(String value) {
-        if (value == null)
+        if (value == null) {
             defval = "0";
-        else
+        } else {
             defval = value;
+        }
 
         try {
             double val = new Double(defval).doubleValue();
             double minval = new Double(min.getText()).doubleValue();
             double maxval = new Double(max.getText()).doubleValue();
 
-            if (val < minval)
+            if (val < minval) {
                 min.setText(value);
+            }
 
-            if (val > maxval)
+            if (val > maxval) {
                 max.setText(value);
+            }
         }
         catch (NumberFormatException except) {
         }

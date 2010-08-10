@@ -63,8 +63,6 @@ package org.trianacode.gui.toolmaker;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created Today's date
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface ParamsPanelInterface {
 

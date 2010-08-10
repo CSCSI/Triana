@@ -68,9 +68,8 @@ import java.awt.event.ComponentListener;
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class provides common Component and Action Listeners for
- * other objects in the system.
+ * <p/>
+ * This class provides common Component and Action Listeners for other objects in the system.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  11-Aug-2001
@@ -97,8 +96,8 @@ public class DesktopListener implements ComponentListener, ActionListener {
     ///
 
     /**
-     * updates the preferred size of the desktop when either an internal frame
-     * or the scrollable desktop pane itself is resized
+     * updates the preferred size of the desktop when either an internal frame or the scrollable desktop pane itself is
+     * resized
      *
      * @param e the ComponentEvent
      */
@@ -107,8 +106,8 @@ public class DesktopListener implements ComponentListener, ActionListener {
     }
 
     /**
-     * revalidates the desktop to ensure the viewport has the proper
-     * height/width settings when a new component is shown upon the desktop
+     * revalidates the desktop to ensure the viewport has the proper height/width settings when a new component is shown
+     * upon the desktop
      *
      * @param e the ComponentEvent
      */
@@ -139,10 +138,8 @@ public class DesktopListener implements ComponentListener, ActionListener {
     ///
 
     /**
-     * common actionPerformed method that responds to both button
-     * and menu events.
-     * If no action command provided in the ActionEvent, selects
-     * the frame associated with the current button / menu item (if any).
+     * common actionPerformed method that responds to both button and menu events. If no action command provided in the
+     * ActionEvent, selects the frame associated with the current button / menu item (if any).
      *
      * @param e the ActionEvent
      */
@@ -152,27 +149,20 @@ public class DesktopListener implements ComponentListener, ActionListener {
 
         if (actionCmd.equals("Tile")) {
             desktopMediator.tileInternalFrames();
-        }
-        else if (actionCmd.equals("Cascade")) {
+        } else if (actionCmd.equals("Cascade")) {
             desktopMediator.cascadeInternalFrames();
-        }
-        else if (actionCmd.equals("Close")) {
+        } else if (actionCmd.equals("Close")) {
             desktopMediator.closeSelectedFrame();
-        }
-
-        else if (actionCmd.equals("TileRadio")) {
+        } else if (actionCmd.equals("TileRadio")) {
             desktopMediator.setAutoTile(true);
-        }
-        else if (actionCmd.equals("CascadeRadio")) {
+        } else if (actionCmd.equals("CascadeRadio")) {
             desktopMediator.setAutoTile(false);
-        }
-
-        else {      // no action command?
+        } else {      // no action command?
             // then select the associated frame (if any)
 
             BaseInternalFrame associatedFrame =
                     ((FrameAccessorInterface) e.getSource()).
-                    getAssociatedFrame();
+                            getAssociatedFrame();
 
             if (associatedFrame != null) {
                 associatedFrame.selectFrameAndAssociatedButtons();

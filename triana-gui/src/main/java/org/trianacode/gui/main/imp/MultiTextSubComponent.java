@@ -16,19 +16,18 @@
 
 package org.trianacode.gui.main.imp;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.JPanel;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TrianaLayoutConstants;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 10, 2009: 7:06:30 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class MultiTextSubComponent extends JPanel {

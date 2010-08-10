@@ -58,22 +58,20 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
 /**
  * Action class to handle all "clear" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ClearAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -95,10 +93,11 @@ public class ClearAction extends AbstractAction implements ActionDisplayOptions 
         TaskGraph taskgraph = selectionHandler.getSelectedTaskgraph();
 
         if (taskgraph != null) {
-            Task[] tasks= taskgraph.getTasks(false);
+            Task[] tasks = taskgraph.getTasks(false);
 
-            for (int count = 0; count < tasks.length; count++)
+            for (int count = 0; count < tasks.length; count++) {
                 taskgraph.removeTask(tasks[count]);
+            }
         }
     }
 

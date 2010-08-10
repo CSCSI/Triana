@@ -59,7 +59,15 @@
 
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.imp.CableImp;
 import org.trianacode.taskgraph.imp.NodeImp;
 import org.trianacode.taskgraph.imp.ParameterNodeImp;
@@ -67,21 +75,18 @@ import org.trianacode.taskgraph.tool.Tool;
 
 
 /**
- * A taskgraph factory for creating transient tasks. Transient tasks are tasks
- * which are in the process of being distributed and there should not be
- * executed.
+ * A taskgraph factory for creating transient tasks. Transient tasks are tasks which are in the process of being
+ * distributed and there should not be executed.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 13th May 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public class NonRunnableTaskFactory implements TaskFactory {
 
     public final static String NON_RUNNABLE_FACTORY_NAME = "Non-Runnable";
-    public final static String NON_RUNNABLE_FACTORY_DESCRIPTION = "Non-runnable tasks that generate an error if execution attempted";
+    public final static String NON_RUNNABLE_FACTORY_DESCRIPTION
+            = "Non-runnable tasks that generate an error if execution attempted";
 
     private String factoryname = NON_RUNNABLE_FACTORY_NAME;
     private String description = NON_RUNNABLE_FACTORY_DESCRIPTION;
@@ -112,8 +117,7 @@ public class NonRunnableTaskFactory implements TaskFactory {
 
 
     /**
-     * @return a new task of type tool, optionally preserving the original
-     *         instance id in the new task.
+     * @return a new task of type tool, optionally preserving the original instance id in the new task.
      */
     public Task createTask(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskException {
         Task task = new NonRunnableTask(tool, this, preserveinst);
@@ -130,8 +134,7 @@ public class NonRunnableTaskFactory implements TaskFactory {
     }
 
     /**
-     * @return a new parameter node inputting/outputting the specified parameter
-     *         and connected to the specified task
+     * @return a new parameter node inputting/outputting the specified parameter and connected to the specified task
      */
     public ParameterNode createParameterNode(String paramname, Task task, boolean input) throws NodeException {
         return new ParameterNodeImp(paramname, task, input);

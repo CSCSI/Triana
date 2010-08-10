@@ -62,14 +62,11 @@ import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 
 /**
- * An class providing information to a clip-in about its current location
- * in the network, such as the task it is attached to, which node it arrived on
- * and the other clip-ins present.
+ * An class providing information to a clip-in about its current location in the network, such as the task it is
+ * attached to, which node it arrived on and the other clip-ins present.
  *
- * @author      Ian Wang
- * @created     5th February 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class AttachInfo {
 
@@ -93,16 +90,15 @@ public class AttachInfo {
     }
 
     /**
-     * @return the node that the clip-in is either arriving/departing from, null
-     * if the clip-in is being explicitly added/removed
+     * @return the node that the clip-in is either arriving/departing from, null if the clip-in is being explicitly
+     *         added/removed
      */
     public Node getNode() {
         return node;
     }
 
     /**
-     * @return the clip-in bucket containing the clip-ins currently attached to
-     * the task
+     * @return the clip-in bucket containing the clip-ins currently attached to the task
      */
     public ClipInBucket getClipInBucket() {
         return bucket;

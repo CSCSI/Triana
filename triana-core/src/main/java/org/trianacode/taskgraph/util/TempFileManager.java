@@ -22,14 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * Class for handling temp files. This ensures that the user's temp directory gets cleaned of any WHIP
- * related files. Use this as you would the File method createTempFile(prefix, suffix);
+ * Class for handling temp files. This ensures that the user's temp directory gets cleaned of any WHIP related files.
+ * Use this as you would the File method createTempFile(prefix, suffix);
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 11, 2007: 3:53:30 PM
- * @date $Date:$ modified by $Author:$
- * @todo Put your notes here...
  */
 public class TempFileManager {
 
@@ -96,8 +93,8 @@ public class TempFileManager {
     }
 
     /**
-     * deletes files recursively. can optionally delete the parent file as well. So, if the parent file
-     * is not a directory, and incParent is false, then nothing will be deleted.
+     * deletes files recursively. can optionally delete the parent file as well. So, if the parent file is not a
+     * directory, and incParent is false, then nothing will be deleted.
      *
      * @param parent    file to delete. If this is a directory then any children are deleted.
      * @param incParent boolean that determines if the parent file is also deleted.

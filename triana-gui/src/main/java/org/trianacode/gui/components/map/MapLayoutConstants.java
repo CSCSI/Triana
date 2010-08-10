@@ -59,25 +59,21 @@
 
 package org.trianacode.gui.components.map;
 
-import org.trianacode.gui.Display;
+import java.awt.Dimension;
 
-import java.awt.*;
+import org.trianacode.gui.Display;
 
 /**
  * Constants used by the map components.
  *
- * @author      Ian Wang
- * @created     20th September 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface MapLayoutConstants {
 
     /**
-     * A map unit is the preferred height of a location on the map layout and is
-     * used as the base for other dimensions
+     * A map unit is the preferred height of a location on the map layout and is used as the base for other dimensions
      */
     public static double MAP_UNIT = Display.screenY / 75;
 

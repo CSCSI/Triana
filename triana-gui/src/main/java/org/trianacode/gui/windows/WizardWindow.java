@@ -59,26 +59,28 @@
 package org.trianacode.gui.windows;
 
 
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.util.Env;
+
 /**
- * A window for creating wizards. This window displays a series of panels that can be navigated through using next
- * and previous buttons.
+ * A window for creating wizards. This window displays a series of panels that can be navigated through using next and
+ * previous buttons.
  *
- * @author      Ian Wang
- * @created     8th August
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class WizardWindow extends JDialog implements ActionListener, WizardInterface {
 
@@ -120,7 +122,7 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
 
         setTitle(title);
         setLocation((getToolkit().getScreenSize().width / 2) - (getSize().width / 2),
-                    (getToolkit().getScreenSize().height / 2) - (getSize().height / 2));
+                (getToolkit().getScreenSize().height / 2) - (getSize().height / 2));
     }
 
     /**
@@ -131,9 +133,11 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
 
         this.panels = panels;
 
-        for (int count = 0; count < panels.length; count++)
-            if (panels[count] instanceof WizardPanel)
+        for (int count = 0; count < panels.length; count++) {
+            if (panels[count] instanceof WizardPanel) {
                 ((WizardPanel) panels[count]).setWizardInterface(this);
+            }
+        }
 
         setPanelIndex(0);
         notifyButtonStateChange();
@@ -175,8 +179,9 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
      * Adds a wizard listener to this wizaed
      */
     public void addWizardListener(WizardListener listener) {
-        if (!listeners.contains(listener))
+        if (!listeners.contains(listener)) {
             listeners.add(listener);
+        }
     }
 
     /**
@@ -198,14 +203,17 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
      * Sets the panels displayed by this wizard
      */
     public void setPanels(JPanel[] panels) {
-        if ((panels.length > curpanel) && (panels[curpanel] instanceof WizardPanel))
+        if ((panels.length > curpanel) && (panels[curpanel] instanceof WizardPanel)) {
             ((WizardPanel) panels[curpanel]).panelHidden();
+        }
 
         this.panels = panels;
 
-        for (int count = 0; count < panels.length; count++)
-            if (panels[count] instanceof WizardPanel)
+        for (int count = 0; count < panels.length; count++) {
+            if (panels[count] instanceof WizardPanel) {
                 ((WizardPanel) panels[count]).setWizardInterface(this);
+            }
+        }
 
         setPanelIndex(Math.min(panels.length, curpanel));
         notifyButtonStateChange();
@@ -224,8 +232,9 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
      */
     public void setPanelIndex(int index) {
         if ((index >= 0) && (index <= panels.length)) {
-            if ((index != curpanel) && (panels[curpanel] instanceof WizardPanel))
+            if ((index != curpanel) && (panels[curpanel] instanceof WizardPanel)) {
                 ((WizardPanel) panels[curpanel]).panelHidden();
+            }
 
             Dimension oldsize = mainpanel.getSize();
             mainpanel.removeAll();
@@ -235,17 +244,19 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
 
             pack();
             setLocation(getLocation().x + (oldsize.width - mainpanel.getSize().width) / 2,
-                        getLocation().y + (oldsize.height - mainpanel.getSize().height) / 2);
+                    getLocation().y + (oldsize.height - mainpanel.getSize().height) / 2);
 
             back.setEnabled(index > 0);
             next.setEnabled(index < panels.length - 1);
 
-            if (panels[index] instanceof WizardPanel)
+            if (panels[index] instanceof WizardPanel) {
                 ((WizardPanel) panels[index]).panelDisplayed();
+            }
 
             Iterator iter = listeners.iterator();
-            while (iter.hasNext())
+            while (iter.hasNext()) {
                 ((WizardListener) iter.next()).panelSelected(this, index);
+            }
         }
     }
 
@@ -256,16 +267,20 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
     public void notifyButtonStateChange() {
         boolean finishstate = true;
 
-        for (int count = 0; (count < panels.length) && (finishstate); count++)
-            if ((panels[count] instanceof WizardPanel) && (!((WizardPanel) panels[count]).isFinishEnabled()))
+        for (int count = 0; (count < panels.length) && (finishstate); count++) {
+            if ((panels[count] instanceof WizardPanel) && (!((WizardPanel) panels[count]).isFinishEnabled())) {
                 finishstate = false;
+            }
+        }
 
         finish.setEnabled(finishstate);
 
         boolean nextstate = getPanelIndex() < (panels.length - 1);
 
-        if ((panels[getPanelIndex()] instanceof WizardPanel) && (!((WizardPanel) panels[getPanelIndex()]).isNextEnabled()))
+        if ((panels[getPanelIndex()] instanceof WizardPanel) && (!((WizardPanel) panels[getPanelIndex()])
+                .isNextEnabled())) {
             nextstate = false;
+        }
 
         next.setEnabled(nextstate);
     }
@@ -275,25 +290,28 @@ public class WizardWindow extends JDialog implements ActionListener, WizardInter
      * Cycles through the panels
      */
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == back)
+        if (event.getSource() == back) {
             setPanelIndex(curpanel - 1);
-        else if (event.getSource() == next)
+        } else if (event.getSource() == next) {
             setPanelIndex(curpanel + 1);
+        }
 
         if (event.getSource() == cancel) {
             setVisible(false);
 
             Iterator iter = listeners.iterator();
-            while (iter.hasNext())
+            while (iter.hasNext()) {
                 ((WizardListener) iter.next()).cancelSelected(this);
+            }
         }
 
         if (event.getSource() == finish) {
             setVisible(false);
 
             Iterator iter = listeners.iterator();
-            while (iter.hasNext())
+            while (iter.hasNext()) {
                 ((WizardListener) iter.next()).finishSelected(this);
+            }
         }
     }
 

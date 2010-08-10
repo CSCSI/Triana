@@ -64,8 +64,6 @@ import org.trianacode.taskgraph.imp.NodeImp;
 
 /**
  * A NodeCable which has run-time parameters.
- *
- *
  */
 
 public class RunnableNode extends NodeImp implements RunnableNodeInterface {

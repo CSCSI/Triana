@@ -59,17 +59,20 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JMenu;
+import javax.swing.JRadioButtonMenuItem;
+
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class constructs the "Window" menu items for use by
- * {@link com.tomtessier.scrollabledesktop.DesktopMenu DesktopMenu}.
+ * <p/>
+ * This class constructs the "Window" menu items for use by {@link com.tomtessier.scrollabledesktop.DesktopMenu
+ * DesktopMenu}.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  11-Aug-2001
@@ -84,9 +87,9 @@ public class ConstructWindowMenu implements ActionListener {
     /**
      * creates the ConstructWindowMenu object.
      *
-     * @param sourceMenu the source menu to apply the menu items
+     * @param sourceMenu      the source menu to apply the menu items
      * @param desktopMediator a reference to the DesktopMediator
-     * @param tileMode the current tile mode (tile or cascade)
+     * @param tileMode        the current tile mode (tile or cascade)
      */
     public ConstructWindowMenu(JMenu sourceMenu,
                                DesktopMediator desktopMediator,
@@ -99,7 +102,7 @@ public class ConstructWindowMenu implements ActionListener {
      * constructs the actual menu items.
      *
      * @param sourceMenu the source menu to apply the menu items
-     * @param tileMode the current tile mode
+     * @param tileMode   the current tile mode
      */
     private void constructMenuItems(JMenu sourceMenu, boolean tileMode) {
 
@@ -112,13 +115,13 @@ public class ConstructWindowMenu implements ActionListener {
         ButtonGroup autoMenuGroup = new ButtonGroup();
         JRadioButtonMenuItem radioItem =
                 new BaseRadioButtonMenuItem(this,
-                                            "Tile", KeyEvent.VK_T, -1, tileMode);
+                        "Tile", KeyEvent.VK_T, -1, tileMode);
         autoMenu.add(radioItem);
         autoMenuGroup.add(radioItem);
 
         radioItem =
                 new BaseRadioButtonMenuItem(this,
-                                            "Cascade", KeyEvent.VK_C, -1, !tileMode);
+                        "Cascade", KeyEvent.VK_C, -1, !tileMode);
         autoMenu.add(radioItem);
         autoMenuGroup.add(radioItem);
 
@@ -126,7 +129,7 @@ public class ConstructWindowMenu implements ActionListener {
         sourceMenu.addSeparator();
 
         sourceMenu.add(new BaseMenuItem(this,
-                                        "Close", KeyEvent.VK_S, KeyEvent.VK_Z));
+                "Close", KeyEvent.VK_S, KeyEvent.VK_Z));
         sourceMenu.addSeparator();
 
     }

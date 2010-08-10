@@ -60,17 +60,13 @@ package org.trianacode.taskgraph.service;
 
 
 /**
- * A IOCable is an interface which Cables can implement to send and recieve data
- * between the tasks that this cable connects. This can be done locally
- * by using a LocalCable (extends GAPCable) or remotely by using RemoteCable
- * (also extends GAPCable)
+ * A IOCable is an interface which Cables can implement to send and recieve data between the tasks that this cable
+ * connects. This can be done locally by using a LocalCable (extends GAPCable) or remotely by using RemoteCable (also
+ * extends GAPCable)
  *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @see LocalCable
- *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface IOCable extends InputCable, OutputCable {
 

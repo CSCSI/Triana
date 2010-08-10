@@ -62,48 +62,34 @@ package triana.types.util;
 import java.util.Iterator;
 
 /**
- * StringSplitter is a utility to divide strings into substrings (called
- * tokens) by recognizing separators (called delimiters).  It provides
- * an Iterator called tokenizer that is a generalization of
- * StringTokenizer.  Whereas StringTokenizer allows only single-character
- * delimiters, StringSplitter allows any string to be defined as a
- * delimiter, and it adds pre-defined delimiter sets called: whitespace,
- * newline, word, paragraph, character, operator.  There can be
- * any of a number of different delimiters.  Unlike StringTokenizer,
- * the splitting is done when the object is instantiated, so that the
- * delimiters are fixed once and for all; it is not possible to change
- * delimiter sets for different parts of the string.
- *
- * Constructors are provided to allow delimiters to be specified as
- * an array of strings, as a StringVector, as a single string (whose
- * characters are assumed to be delimiters, as in StringTokenizer), or
- * as a keyword for some pre-defined delimiter sets: whitespace (the
- * default here and in StringTokenizer), newline, word (uses any
- * punctuation mark or whitespace as a delimiter), paragraph (splits
- * on blank lines or newlines followed by a tab or space),
- * character (no delimiters: each character is a token), and
- * operator (splits on arithmetic operators).
- *
- * A boolean argument allows the user to choose whether to include
- * the delimiters as tokens.  The default is false: no delimiters.
- *
- * Various extensions for returning the tokens in a convenient form
- * are provided.  Although the Iterator is provided for compatibility
- * with StringTokenizer, tokens can be more flexibly accessed by using
- * other methods that work by the index of the token, since StringSplitter
- * is an extension of the ArrayList class. Therefore all the methods of the
+ * StringSplitter is a utility to divide strings into substrings (called tokens) by recognizing separators (called
+ * delimiters).  It provides an Iterator called tokenizer that is a generalization of StringTokenizer.  Whereas
+ * StringTokenizer allows only single-character delimiters, StringSplitter allows any string to be defined as a
+ * delimiter, and it adds pre-defined delimiter sets called: whitespace, newline, word, paragraph, character, operator.
+ * There can be any of a number of different delimiters.  Unlike StringTokenizer, the splitting is done when the object
+ * is instantiated, so that the delimiters are fixed once and for all; it is not possible to change delimiter sets for
+ * different parts of the string.
+ * <p/>
+ * Constructors are provided to allow delimiters to be specified as an array of strings, as a StringVector, as a single
+ * string (whose characters are assumed to be delimiters, as in StringTokenizer), or as a keyword for some pre-defined
+ * delimiter sets: whitespace (the default here and in StringTokenizer), newline, word (uses any punctuation mark or
+ * whitespace as a delimiter), paragraph (splits on blank lines or newlines followed by a tab or space), character (no
+ * delimiters: each character is a token), and operator (splits on arithmetic operators).
+ * <p/>
+ * A boolean argument allows the user to choose whether to include the delimiters as tokens.  The default is false: no
+ * delimiters.
+ * <p/>
+ * Various extensions for returning the tokens in a convenient form are provided.  Although the Iterator is provided for
+ * compatibility with StringTokenizer, tokens can be more flexibly accessed by using other methods that work by the
+ * index of the token, since StringSplitter is an extension of the ArrayList class. Therefore all the methods of the
  * ArrayList class are available in StringSplitter.
+ * <p/>
+ * A test is also provided to see if the input string begins with a delimiter or not; this is useful if delimiter
+ * strings are returned as tokens, since one may want to know if the odd-numbered tokens or the even ones are
+ * delimiters.  Another test is provided to see if the input string ends in a delimiter.
  *
- * A test is also provided to see if the input string begins with a
- * delimiter or not; this is useful if delimiter strings are returned
- * as tokens, since one may want to know if the odd-numbered tokens or the
- * even ones are delimiters.  Another test is provided to see if the
- * input string ends in a delimiter.
- *
- * @author      B F Schutz
- * @created     12 July 1998
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author B F Schutz
+ * @version $Revision: 4048 $
  */
 public class StringSplitter extends StringVector {
 
@@ -112,22 +98,20 @@ public class StringSplitter extends StringVector {
     boolean tokensReturned = false;
 
     /**
-     * Constructs an empty StringSpitter with fixed storage
-     * capacity and capacityIncrement.
+     * Constructs an empty StringSpitter with fixed storage capacity and capacityIncrement.
      */
     public StringSplitter() {
         super(100);
     }
 
     /**
-     * Constructs a StringSplitter by tokenizing the String argument
-     * on any of the delimiter strings in the String Array argument.
+     * Constructs a StringSplitter by tokenizing the String argument on any of the delimiter strings in the String Array
+     * argument.
+     * <p/>
+     * If the boolean argument is true, delimiter sequences will also be returned as tokens.
      *
-     * If the boolean argument is true, delimiter
-     * sequences will also be returned as tokens.
-     *
-     * @param str the string to be split into tokens on whitespace
-     * @param delims the array of strings that act as delimiters between tokens
+     * @param str          the string to be split into tokens on whitespace
+     * @param delims       the array of strings that act as delimiters between tokens
      * @param returnTokens a boolean to decide if delimiters are included as tokens
      */
     public StringSplitter(String str, String[] delims, boolean returnTokens) {
@@ -137,7 +121,9 @@ public class StringSplitter extends StringVector {
 
     void splitString(String str, String[] delims, boolean returnTokens) {
 
-        if (str.length() == 0) return;
+        if (str.length() == 0) {
+            return;
+        }
 
         int newDelimStart = 0;
         int lastDelimEnd = -1;
@@ -152,8 +138,12 @@ public class StringSplitter extends StringVector {
 
         for (k = 0; k < numberOfDelims; k++) {
             delimLength[k] = delims[k].length();
-            if (str.indexOf(delims[k]) == 0) startDelim = true;
-            if (str.endsWith(delims[k])) endDelim = true;
+            if (str.indexOf(delims[k]) == 0) {
+                startDelim = true;
+            }
+            if (str.endsWith(delims[k])) {
+                endDelim = true;
+            }
         }
         //      for (k=0; k< numberOfDelims; k++) System.out.println(delims[k]);
 
@@ -162,14 +152,15 @@ public class StringSplitter extends StringVector {
             newDelimStart = str.indexOf(delims[0], lastDelimEnd + 1);
             for (k = 1; k < numberOfDelims; k++) {
                 tryNewDelim = str.indexOf(delims[k], lastDelimEnd + 1);
-                if ((tryNewDelim > -1) && ((newDelimStart == -1) || (tryNewDelim <= newDelimStart))) newDelimStart = tryNewDelim;
+                if ((tryNewDelim > -1) && ((newDelimStart == -1) || (tryNewDelim <= newDelimStart))) {
+                    newDelimStart = tryNewDelim;
+                }
             }
             if (newDelimStart == -1) {
                 this.add(str.substring(lastDelimEnd + 1));
                 //	  System.out.println("1: "+str.substring( lastDelimEnd + 1));
                 lookForMoreString = false;
-            }
-            else {
+            } else {
                 this.add(str.substring(lastDelimEnd + 1, newDelimStart));
                 //	  System.out.println("2: "+str.substring( lastDelimEnd + 1, newDelimStart));
             }
@@ -179,12 +170,13 @@ public class StringSplitter extends StringVector {
                 newTokenStart = newDelimStart;
                 while (lookForMoreDelims) {
                     lookForMoreDelims = false;
-                    for (k = 0; k < numberOfDelims; k++)
+                    for (k = 0; k < numberOfDelims; k++) {
                         if (str.startsWith(delims[k], newTokenStart)) {
                             newTokenStart += delimLength[k];
                             lookForMoreDelims = true;
                             break;
                         }
+                    }
                 }
 
                 lastDelimEnd = newTokenStart - 1;
@@ -198,28 +190,20 @@ public class StringSplitter extends StringVector {
 
 
     /**
-     * Constructs a StringSplitter by tokenizing the first String argument
-     * in a manner given by the second String argument.  If the second
-     * argument is one of a number of special strings, then specific
-     * delimiters are assumed: "whitespace" means split on any whitespace
-     * character; "paragraph" means look for "\n\n" (paragraphs separated
-     * by a blank line), "\n\t" (paragraphs denoted by a tab indentation)
-     * or "\n " (paragraphs denoted by a newline and at least one space
-     * before text begins); "word" means use whitespace and punctuation
-     * marks as delimiters (the punctuation marks used are the single
-     * characters .,;:?!"`()[]{}<> and the two-character combinations
-     * "--"  and "' ", so hyphenated or apostrophe'd words are not split);
-     * "character" means each character is a separate token; and
-     * "operator" means split on arithmetic symbols "+", "-", "*",
-     * and "/".  If the second argument is not recognized,
-     * then it is assumed to be a string of delimiter characters,
-     * and splitting is performed on any of its characters.
+     * Constructs a StringSplitter by tokenizing the first String argument in a manner given by the second String
+     * argument.  If the second argument is one of a number of special strings, then specific delimiters are assumed:
+     * "whitespace" means split on any whitespace character; "paragraph" means look for "\n\n" (paragraphs separated by
+     * a blank line), "\n\t" (paragraphs denoted by a tab indentation) or "\n " (paragraphs denoted by a newline and at
+     * least one space before text begins); "word" means use whitespace and punctuation marks as delimiters (the
+     * punctuation marks used are the single characters .,;:?!"`()[]{}<> and the two-character combinations "--"  and "'
+     * ", so hyphenated or apostrophe'd words are not split); "character" means each character is a separate token; and
+     * "operator" means split on arithmetic symbols "+", "-", "*", and "/".  If the second argument is not recognized,
+     * then it is assumed to be a string of delimiter characters, and splitting is performed on any of its characters.
+     * <p/>
+     * The boolean argument determines whether sequences of delimiters are returned as tokens too.
      *
-     * The boolean argument determines whether
-     * sequences of delimiters are returned as tokens too.
-     *
-     * @param str the string to be split into tokens on whitespace
-     * @param instruction the String that gives the rule for splitting
+     * @param str          the string to be split into tokens on whitespace
+     * @param instruction  the String that gives the rule for splitting
      * @param returnTokens a boolean to decide if delimiters are included as tokens
      */
     public StringSplitter(String str, String instruction, boolean returnTokens) {
@@ -257,14 +241,12 @@ public class StringSplitter extends StringVector {
             delims[23] = "\\";
             delims[24] = "/";
             splitString(str, delims, returnTokens);
-        }
-        else if (instruction.equalsIgnoreCase("newline")) {
+        } else if (instruction.equalsIgnoreCase("newline")) {
             String[] delims = new String[2];
             delims[0] = "\n\r";
             delims[1] = "\n";
             splitString(str, delims, returnTokens);
-        }
-        else if (instruction.equalsIgnoreCase("paragraph")) {
+        } else if (instruction.equalsIgnoreCase("paragraph")) {
             String[] delims = new String[10];
             delims[0] = "\n\n";
             delims[1] = "\n\t";
@@ -277,43 +259,42 @@ public class StringSplitter extends StringVector {
             delims[8] = "\n  ";
             delims[9] = "\n ";
             splitString(str, delims, returnTokens);
-        }
-        else if (instruction.equalsIgnoreCase("operator")) {
+        } else if (instruction.equalsIgnoreCase("operator")) {
             String[] delims = new String[4];
             delims[0] = "+";
             delims[1] = "-";
             delims[2] = "*";
             delims[3] = "/";
             splitString(str, delims, returnTokens);
-        }
-        else if (instruction.equalsIgnoreCase("whitespace")) {
+        } else if (instruction.equalsIgnoreCase("whitespace")) {
             String[] delims = new String[4];
             delims[0] = "\n";
             delims[1] = "\t";
             delims[2] = "\r";
             delims[3] = " ";
             splitString(str, delims, returnTokens);
-        }
-        else if (instruction.equals("character")) {
+        } else if (instruction.equals("character")) {
             int inputLength = str.length();
             char[] inputChars = str.toCharArray();
-            for (int j = 0; j < inputLength; j++) this.add(String.valueOf(inputChars[j]));
-        }
-        else {
+            for (int j = 0; j < inputLength; j++) {
+                this.add(String.valueOf(inputChars[j]));
+            }
+        } else {
             int numberOfDelims = instruction.length();
             String[] delims = new String[numberOfDelims];
-            for (int k = 0; k < numberOfDelims; k++) delims[k] = instruction.substring(k, k + 1);
+            for (int k = 0; k < numberOfDelims; k++) {
+                delims[k] = instruction.substring(k, k + 1);
+            }
             splitString(str, delims, returnTokens);
         }
     }
 
 
     /**
-     * Constructs a StringSplitter by tokenizing the specified input string
-     * on white space.  This is the default if the second string-type argument
-     * is omitted.  Include the option to return delimiter strings as tokens.
+     * Constructs a StringSplitter by tokenizing the specified input string on white space.  This is the default if the
+     * second string-type argument is omitted.  Include the option to return delimiter strings as tokens.
      *
-     * @param str the string to be split into tokens on whitespace
+     * @param str          the string to be split into tokens on whitespace
      * @param returnTokens a boolean to decide if delimiters are included as tokens
      */
     public StringSplitter(String str, boolean returnTokens) {
@@ -321,10 +302,9 @@ public class StringSplitter extends StringVector {
     }
 
     /**
-     * Constructs a StringSplitter by tokenizing the specified input string
-     * on white space.  This is the default if the second string-type argument
-     * is omitted.  Since the boolean argument is also absent, assume no
-     * delimiters are returned.
+     * Constructs a StringSplitter by tokenizing the specified input string on white space.  This is the default if the
+     * second string-type argument is omitted.  Since the boolean argument is also absent, assume no delimiters are
+     * returned.
      *
      * @param str the string to be split into tokens on whitespace
      */
@@ -333,11 +313,10 @@ public class StringSplitter extends StringVector {
     }
 
     /**
-     * Constructs a StringSplitter by tokenizing the String first argument
-     * on the delimiters given by the String array second argument.
-     * Since the boolean argument is omitted, assume no delimiters are returned.
+     * Constructs a StringSplitter by tokenizing the String first argument on the delimiters given by the String array
+     * second argument. Since the boolean argument is omitted, assume no delimiters are returned.
      *
-     * @param str the string to be split into tokens on whitespace
+     * @param str    the string to be split into tokens on whitespace
      * @param delims the array of strings that act as delimiters between tokens
      */
     public StringSplitter(String str, String[] delims) {
@@ -345,11 +324,10 @@ public class StringSplitter extends StringVector {
     }
 
     /**
-     * Constructs a StringSplitter by tokenizing the first String argument
-     * according to the instructions given by the second String argument.
-     * Since the boolean argument is omitted, assume no delimiters are returned.
+     * Constructs a StringSplitter by tokenizing the first String argument according to the instructions given by the
+     * second String argument. Since the boolean argument is omitted, assume no delimiters are returned.
      *
-     * @param str the String to be split into tokens on whitespace
+     * @param str         the String to be split into tokens on whitespace
      * @param instruction the String that gives the rule for splitting
      */
     public StringSplitter(String str, String instruction) {
@@ -357,14 +335,13 @@ public class StringSplitter extends StringVector {
     }
 
     /**
-     * Constructs a StringSplitter by tokenizing the String first argument
-     * on the delimiters given by the StringVector second argument.
+     * Constructs a StringSplitter by tokenizing the String first argument on the delimiters given by the StringVector
+     * second argument.
+     * <p/>
+     * The boolean argument determines whether sequences of delimiters are returned as tokens too.
      *
-     * The boolean argument determines whether
-     * sequences of delimiters are returned as tokens too.
-     *
-     * @param str the string to be split into tokens on whitespace
-     * @param delimVector the array of strings that act as delimiters between tokens
+     * @param str          the string to be split into tokens on whitespace
+     * @param delimVector  the array of strings that act as delimiters between tokens
      * @param returnTokens a boolean to decide if delimiters are included as tokens
      */
     public StringSplitter(String str, StringVector delimVector, boolean returnTokens) {
@@ -381,12 +358,10 @@ public class StringSplitter extends StringVector {
 
 
     /**
-     * Constructs a StringSplitter by tokenizing the String first argument
-     * on the delimiters given by the StringVector second argument.
-     * Since the boolean argument is absent, the default of not returning
-     * delimiters is assumed.
+     * Constructs a StringSplitter by tokenizing the String first argument on the delimiters given by the StringVector
+     * second argument. Since the boolean argument is absent, the default of not returning delimiters is assumed.
      *
-     * @param str the string to be split into tokens on whitespace
+     * @param str         the string to be split into tokens on whitespace
      * @param delimVector the array of strings that act as delimiters between tokens
      */
     public StringSplitter(String str, StringVector delimVector) {
@@ -416,62 +391,65 @@ public class StringSplitter extends StringVector {
     }
 
     /**
-     * @return true if the input string begins with a delimiter.
-     * (Returns answer independently of whether delimiters will
-     * be returned as tokens.)
+     * @return true if the input string begins with a delimiter. (Returns answer independently of whether delimiters
+     *         will be returned as tokens.)
      */
     public final boolean beginsWithDelimiter() {
         return startDelim;
     }
 
     /**
-     * @return true if the input string ends with a delimiter.
-     * (Returns answer independently of whether delimiters will
-     * be returned as tokens.)
+     * @return true if the input string ends with a delimiter. (Returns answer independently of whether delimiters will
+     *         be returned as tokens.)
      */
     public final boolean endsWithDelimiter() {
         return endDelim;
     }
 
     /**
-     * @return the first non-delimiter token (first token if delimiters
-     * are not made into tokens).
+     * @return the first non-delimiter token (first token if delimiters are not made into tokens).
      */
     public final String firstNonDelimiterElement() {
-        if (startDelim) return at(1);
+        if (startDelim) {
+            return at(1);
+        }
         return first();
     }
 
     /**
-     * @return the last non-delimiter token (last token if delimiters
-     * are not made into tokens).
+     * @return the last non-delimiter token (last token if delimiters are not made into tokens).
      */
     public final String lastNonDelimiterElement() {
-        if ((containsTokens()) && (endDelim)) return at(countTokens() - 2);
+        if ((containsTokens()) && (endDelim)) {
+            return at(countTokens() - 2);
+        }
         return (String) last();
     }
 
     /**
-     * @return the first non-delimiter token (first token if delimiters
-     * are not made into tokens).  Identical to firstNonDelimiterElement().
+     * @return the first non-delimiter token (first token if delimiters are not made into tokens).  Identical to
+     *         firstNonDelimiterElement().
      */
     public final String firstNonDelimiterToken() {
-        if (startDelim) return at(1);
+        if (startDelim) {
+            return at(1);
+        }
         return first();
     }
 
     /**
-     * @return the last non-delimiter token (last token if delimiters
-     * are not made into tokens).  Identical to lastNonDelimiterElement().
+     * @return the last non-delimiter token (last token if delimiters are not made into tokens).  Identical to
+     *         lastNonDelimiterElement().
      */
     public final String lastNonDelimiterToken() {
-        if ((containsTokens()) && (endDelim)) return at(countTokens() - 2);
+        if ((containsTokens()) && (endDelim)) {
+            return at(countTokens() - 2);
+        }
         return (String) last();
     }
 
     /**
-     * @return a String array representation of the tokens.
-     * /todo this causes a classcast exception
+     * @return a String array representation of the tokens. /todo this causes a classcast exception
      */
     public final String[] toStringArray() {
         Object[] temp = new Object[size()];

@@ -60,31 +60,20 @@ package triana.types;
 
 
 /**
- * Parameter is a type which encapsulates a String which stores the contents
- * of a Parameter so that it can be exported from or imported into a OldUnit.
- * Parameters can be of various type <i>e.g.</i> a string, a double value, an
- * integer, or a color.  All parameters are stored as a String representation
- * internally and converted back and forth on input and output.
- * </p><p>
- * To extend this type to represent
- * new kinds of parameters, the programmer simply needs to convert
- * between the parameter type and
- * a String and to provide relevant methods for doing this.
- *</p><p>
- * Parameter inherits directly from TrianaType. Do not confuse the Class
- * Parameter with the term "parameter" used in TrianaType data types
- * or in Triana units. In data types the term refers to data associated
- * with types that is not stored in the <i>dataContainer</i> Hashtable. In
- * Units the term refers to data controlling the operation of the OldUnit
- * that the user can set using the user interface (parameter window) of
- * the OldUnit. The Class is used to transfer OldUnit parameters
- * (not data-type parameters) from one OldUnit to another.
+ * Parameter is a type which encapsulates a String which stores the contents of a Parameter so that it can be exported
+ * from or imported into a OldUnit. Parameters can be of various type <i>e.g.</i> a string, a double value, an integer,
+ * or a color.  All parameters are stored as a String representation internally and converted back and forth on input
+ * and output. </p><p> To extend this type to represent new kinds of parameters, the programmer simply needs to convert
+ * between the parameter type and a String and to provide relevant methods for doing this. </p><p> Parameter inherits
+ * directly from TrianaType. Do not confuse the Class Parameter with the term "parameter" used in TrianaType data types
+ * or in Triana units. In data types the term refers to data associated with types that is not stored in the
+ * <i>dataContainer</i> Hashtable. In Units the term refers to data controlling the operation of the OldUnit that the
+ * user can set using the user interface (parameter window) of the OldUnit. The Class is used to transfer OldUnit
+ * parameters (not data-type parameters) from one OldUnit to another.
  *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @see TrianaType
- * @author      Ian Taylor
- * @created     28 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Parameter extends TrianaType {
 
@@ -179,66 +168,47 @@ public class Parameter extends TrianaType {
      * @param newParam The new contents
      */
     protected void setParameter(Object newParam) {
-        if (newParam != null)
+        if (newParam != null) {
             insertIntoContainer(parameter, newParam);
-        else
+        } else {
             deleteFromContainer(parameter);
+        }
     }
 
     /**
-     * Returns <i>true</i> if the given Object is of Parameter
-     * type and has the same contents as this object.
+     * Returns <i>true</i> if the given Object is of Parameter type and has the same contents as this object.
      *
      * @param parameter The object being compared to this one
      * @return boolean <i>True</i> if given object has same contents as this one
      */
     public boolean equals(Object parameter) {
-        if (!(parameter instanceof Parameter))
+        if (!(parameter instanceof Parameter)) {
             return false;
+        }
 
         Parameter d = (Parameter) parameter;
 
-        if (!getParameter().equals(d.getParameter()))
+        if (!getParameter().equals(d.getParameter())) {
             return false;
+        }
 
         return true;
     }
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         Parameter d = null;
@@ -278,7 +248,6 @@ public class Parameter extends TrianaType {
     public String toString() {
         return getParameter().toString();
     }
-
 
 
 }

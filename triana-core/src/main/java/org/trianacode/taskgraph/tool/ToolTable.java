@@ -58,24 +58,19 @@
  */
 package org.trianacode.taskgraph.tool;
 
+import java.net.URL;
+
 
 /**
  * An interface to the currently loaded tools.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface ToolTable {
 
     // The standard tool box types
     public static final String USER_TOOLBOX = "user";
-
-    /**
-     * Called to initialise the tool table
-     */
-    public void init();
 
 
     /**
@@ -86,26 +81,23 @@ public interface ToolTable {
     public String[] getToolBoxPaths();
 
     /**
-     * @return the tool box path of the specified type (null if no tool box specified for that
-     *         type)
+     * @return the tool box path of the specified type (null if no tool box specified for that type)
      */
     public Toolbox getToolBox(String type);
 
     /**
-     * @return the type for the specified tool box path (null if no type specified for the tool box
-     *         path)
+     * @return the type for the specified tool box path (null if no type specified for the tool box path)
      */
     public String getToolBoxType(String toolbox);
 
     /**
-     * get the list of tools that share the same definition path.
-     * This could be the case if a tool is in a jar file for example, which contains
-     * other tools.
+     * get the list of tools that share the same definition path. This could be the case if a tool is in a jar file for
+     * example, which contains other tools.
      *
      * @param definitionPath
      * @return
      */
-    public Tool[] getTools(String definitionPath);
+    public Tool[] getTools(URL definitionPath);
 
 
     /**
@@ -121,8 +113,8 @@ public interface ToolTable {
 
 
     /**
-     * @return the tool with the specified name (if there are multiple tools with the same name then
-     *         the first found is returned)
+     * @return the tool with the specified name (if there are multiple tools with the same name then the first found is
+     *         returned)
      */
     public Tool getTool(String toolName);
 
@@ -146,8 +138,8 @@ public interface ToolTable {
 
 
     /**
-     * Inserts a copy of the tool into the specified package. Combined with deleteTool
-     * this can be used to cut + paste tools.
+     * Inserts a copy of the tool into the specified package. Combined with deleteTool this can be used to cut + paste
+     * tools.
      *
      * @param tool    the tool being pasted
      * @param pack    the package of the pasted tool
@@ -170,33 +162,25 @@ public interface ToolTable {
 
 
     /**
-     * Notifies the tool table to update the tool loaded from the specified location, such as when a
-     * tool is created. The location should be in a form understanded by the tool table (e.g. XML
-     * file location, tool server network address), and is ignored if not understood.
+     * Notifies the tool table to update the tool loaded from the specified location, such as when a tool is created.
+     * The location should be in a form understanded by the tool table (e.g. XML file location, tool server network
+     * address), and is ignored if not understood.
      *
      * @param location the location of the file
      * @param toolbox  the toolbox the location is in (specify null if unknown)
      */
-    public void refreshLocation(String location, String toolbox);
+    public void refreshLocation(URL location, String toolbox);
 
 
     /**
      * Adds a listener to be notified when new tools are added/removed
      */
-    public void addToolTableListener(ToolTableListener listener);
+    public void addToolTableListener(ToolListener listener);
 
     /**
      * Removes a listener from being notified when new tools are added/removed
      */
-    public void removeToolTableListener(ToolTableListener listener);
-
-
-    /**
-     * Returns the list of current toolbox types
-     *
-     * @return an array of the current tool box type values
-     */
-    public String[] getToolBoxTypes();
+    public void removeToolTableListener(ToolListener listener);
 
     /**
      * Generate a new file location to store a pasted tool
@@ -208,19 +192,5 @@ public interface ToolTable {
      */
     public String getPasteFileLocation(String toolname, String pack, String toolbox);
 
-    /**
-     * Utility method to load all the tools found in the named tool box, ignoring the default toolboxes. It empties all
-     * caches so should not be used inconjunction with other load tool mechanisms.
-     *
-     * @param toolbox the tool box to load from.
-     */
-    void blockingLoadToolsFromToolBox(Toolbox toolbox);
-
-    /**
-     * Utility method to load all the tools in the known tool boxes, blocking until finished. This method avoids using
-     * any the threaded reload tools methods so should not be used to load tools from toolboxes that may change
-     * over time.
-     */
-    void blockingLoadTools();
 
 }

@@ -59,6 +59,16 @@
 
 package org.trianacode.gui.main.imp;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.LayoutManager;
+import java.util.Hashtable;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.ToolTipManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
@@ -68,31 +78,18 @@ import org.trianacode.taskgraph.constants.StripeToolConstants;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Hashtable;
-
 /**
  * The graphical representation of a tool.
  *
- * @author Ian Wang
- *         <<<<<<< TrianaTool.java
- * @version $Revision: 4048 $
- *          >>>>>>> 1.5.2.1
- * @created 7th August 2003
- * <<<<<<< TrianaTool.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * =======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * >>>>>>> 1.5.2.1
+ * @author Ian Wang <<<<<<< TrianaTool.java
+ * @version $Revision: 4048 $ >>>>>>> 1.5.2.1
  */
 
 public abstract class TrianaTool extends JPanel implements TrianaColorConstants {
 
 
     /**
-     * the width of the graphical component in terms of the number of letters
-     * displayed by default
+     * the width of the graphical component in terms of the number of letters displayed by default
      */
     public static int DEFAULT_NAME_LENGTH = 10;
 
@@ -127,8 +124,7 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
     private boolean selected = false;
 
     /**
-     * an error message that is set when the tool enters an error state (null
-     * indicates no error)
+     * an error message that is set when the tool enters an error state (null indicates no error)
      */
     private String errorstate = null;
 
@@ -186,10 +182,11 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
     protected void setNodeComponent(Node node, NodeComponent comp) {
         nodes.put(node, comp);
 
-        if (node.isInputNode())
+        if (node.isInputNode()) {
             add(comp.getComponent(), TrianaToolLayout.INPUT_NODE);
-        else
+        } else {
             add(comp.getComponent(), TrianaToolLayout.OUTPUT_NODE);
+        }
     }
 
     /**
@@ -198,18 +195,20 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
     protected void removeNodeComponent(Node node) {
         Component comp = (Component) nodes.remove(node);
 
-        if (comp != null)
+        if (comp != null) {
             remove(comp);
+        }
     }
 
     /**
      * @return the input node component at the specified index
      */
     public NodeComponent getNodeComponent(Node node) {
-        if (nodes.containsKey(node))
+        if (nodes.containsKey(node)) {
             return (NodeComponent) nodes.get(node);
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -230,7 +229,8 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
 
             repaint();
 
-            JOptionPane.showMessageDialog(this, errorstate, getToolName() + " " + Env.getString("Error"), JOptionPane.ERROR_MESSAGE,
+            JOptionPane.showMessageDialog(this, errorstate, getToolName() + " " + Env.getString("Error"),
+                    JOptionPane.ERROR_MESSAGE,
                     GUIEnv.getTrianaIcon());
         }
     }
@@ -259,8 +259,7 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
 
 
     /**
-     * Notifies that the size of the tool should be changed when the tool is
-     * repainted
+     * Notifies that the size of the tool should be changed when the tool is repainted
      */
     public void invalidateSize() {
         invalidate();
@@ -273,35 +272,33 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
 
 
     /**
-     * @return the unselected color for this tool (mainTrianaNormal by default). Should be overridden to change
-     *         to tool color.
+     * @return the unselected color for this tool (mainTrianaNormal by default). Should be overridden to change to tool
+     *         color.
      */
     public Color getToolColor() {
         return ColorManager.getColor(TOOL_ELEMENT, tool);
     }
 
     /**
-     * @return the color of the stripe on the tool, or the standard tool color
-     *         if no stipes
+     * @return the color of the stripe on the tool, or the standard tool color if no stipes
      */
     public Color getStripeColor() {
-        if (tool.isRenderingHint(StripeToolConstants.STRIPE_TOOL_RENDERING_HINT))
+        if (tool.isRenderingHint(StripeToolConstants.STRIPE_TOOL_RENDERING_HINT)) {
             return ColorManager.getColor(STRIPE_ELEMENT, tool);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
-     * @return the color of the stripe on the tool, or the standard tool color
-     *         if no stipes
+     * @return the color of the stripe on the tool, or the standard tool color if no stipes
      */
     public int getStripeWidth() {
         return THICK_STRIPE_WIDTH;
     }
 
     /**
-     * @return the color of the stripe on the tool, or the standard tool color
-     *         if no stipes
+     * @return the color of the stripe on the tool, or the standard tool color if no stipes
      */
     public int getStripeOffset() {
         return THICK_STRIPE_OFFSET;
@@ -325,9 +322,8 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
 
 
     /**
-     * Paints the Triana Tool by rendering its name in the middle of the
-     * icon. Note that the size of the icon is not determined until this
-     * class is extended to produce a ToolImp, ToolBox or a TrianaTool.
+     * Paints the Triana Tool by rendering its name in the middle of the icon. Note that the size of the icon is not
+     * determined until this class is extended to produce a ToolImp, ToolBox or a TrianaTool.
      */
     public void paintComponent(Graphics graphs) {
         drawRectangle(graphs, getToolColor());
@@ -343,15 +339,15 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
     }
 
     /**
-     * Paints stripes on the main tool rectangle of a certain color, width and
-     * slant (offset)
+     * Paints stripes on the main tool rectangle of a certain color, width and slant (offset)
      */
     protected void drawStripes(Graphics graphs, Color col, int width, int offset) {
         if ((width > 0) && (offset != 0) && (col != null) && (!col.equals(getToolColor()))) {
-            if (isSelected())
+            if (isSelected()) {
                 graphs.setColor(col.darker());
-            else
+            } else {
                 graphs.setColor(col);
+            }
 
             Dimension size = getSize();
             int across = Math.min(0, -Math.abs(TrianaTool.STRIPE_ANGLE_OFFSET));
@@ -359,7 +355,8 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
             int[] xpoints;
 
             while ((across < size.width) || (across + TrianaTool.STRIPE_ANGLE_OFFSET < size.width)) {
-                xpoints = new int[]{across, across + width, across + TrianaTool.STRIPE_ANGLE_OFFSET + width, across + TrianaTool.STRIPE_ANGLE_OFFSET};
+                xpoints = new int[]{across, across + width, across + TrianaTool.STRIPE_ANGLE_OFFSET + width,
+                        across + TrianaTool.STRIPE_ANGLE_OFFSET};
 
                 graphs.fillPolygon(xpoints, ypoints, 4);
 

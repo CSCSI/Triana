@@ -58,17 +58,19 @@
  */
 package org.trianacode.gui.panels;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.util.ArrayList;
 
 /**
- * A layout manager for laying-out components in a form. It works like a Grid
- * layout with 2 columns except the height of each row is independent.
+ * A layout manager for laying-out components in a form. It works like a Grid layout with 2 columns except the height of
+ * each row is independent.
  *
- * @author      Ian Wang
- * @created     7th May 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class FormLayout implements LayoutManager {
 
@@ -93,8 +95,7 @@ public class FormLayout implements LayoutManager {
     }
 
     /**
-     * Constructs a form layout with the specified horizontal/vertical spacing
-     * between rows/columns
+     * Constructs a form layout with the specified horizontal/vertical spacing between rows/columns
      */
     public FormLayout(int rowgap, int columngap) {
         this.rowgap = rowgap;
@@ -112,8 +113,9 @@ public class FormLayout implements LayoutManager {
 
 
     public void addLayoutComponent(String s, Component component) {
-        if (FULL_SPAN.equals(s) && (!span.contains(component)))
+        if (FULL_SPAN.equals(s) && (!span.contains(component))) {
             span.add(component);
+        }
     }
 
     public void removeLayoutComponent(Component component) {
@@ -140,8 +142,9 @@ public class FormLayout implements LayoutManager {
             minsize = comp.getMinimumSize();
 
             if (span.contains(comp)) {
-                if (tempheight > 0)
+                if (tempheight > 0) {
                     height += tempheight + rowgap;
+                }
 
                 fullwidth = minsize.width;
                 height += minsize.height + rowgap;
@@ -149,14 +152,17 @@ public class FormLayout implements LayoutManager {
                 tempheight = 0;
                 newcol = true;
             } else {
-                if (minsize.height > tempheight)
+                if (minsize.height > tempheight) {
                     tempheight = minsize.height;
+                }
 
-                if ((!newcol) && (minsize.width > width1))
+                if ((!newcol) && (minsize.width > width1)) {
                     width1 = minsize.width;
+                }
 
-                if ((newcol) && (minsize.width > width2))
+                if ((newcol) && (minsize.width > width2)) {
                     width2 = minsize.width;
+                }
 
                 if (newcol) {
                     height += tempheight + rowgap;
@@ -165,12 +171,14 @@ public class FormLayout implements LayoutManager {
             }
         }
 
-        if (tempheight > 0)
+        if (tempheight > 0) {
             height += tempheight + rowgap;
+        }
 
         Insets insets = container.getInsets();
 
-        return new Dimension(Math.max(fullwidth, width1 + width2) + colgap + insets.left + insets.right, Math.max(height - rowgap, 0) + insets.top + insets.bottom);
+        return new Dimension(Math.max(fullwidth, width1 + width2) + colgap + insets.left + insets.right,
+                Math.max(height - rowgap, 0) + insets.top + insets.bottom);
     }
 
     public Dimension preferredLayoutSize(Container container) {
@@ -192,8 +200,9 @@ public class FormLayout implements LayoutManager {
             prefsize = comp.getPreferredSize();
 
             if (span.contains(comp)) {
-                if (tempheight > 0)
+                if (tempheight > 0) {
                     height += tempheight + rowgap;
+                }
 
                 fullwidth = prefsize.width;
                 height += prefsize.height + rowgap;
@@ -201,14 +210,17 @@ public class FormLayout implements LayoutManager {
                 tempheight = 0;
                 newcol = true;
             } else {
-                if (prefsize.height > tempheight)
+                if (prefsize.height > tempheight) {
                     tempheight = prefsize.height;
+                }
 
-                if ((!newcol) && (prefsize.width > width1))
+                if ((!newcol) && (prefsize.width > width1)) {
                     width1 = prefsize.width;
+                }
 
-                if ((newcol) && (prefsize.width > width2))
+                if ((newcol) && (prefsize.width > width2)) {
                     width2 = prefsize.width;
+                }
 
                 if (newcol) {
                     height += tempheight + rowgap;
@@ -217,12 +229,14 @@ public class FormLayout implements LayoutManager {
             }
         }
 
-        if (tempheight > 0)
+        if (tempheight > 0) {
             height += tempheight + rowgap;
+        }
 
         Insets insets = container.getInsets();
 
-        return new Dimension(Math.max(fullwidth, width1 + width2) + colgap + insets.left + insets.right, Math.max(height - rowgap, 0) + insets.top + insets.bottom);
+        return new Dimension(Math.max(fullwidth, width1 + width2) + colgap + insets.left + insets.right,
+                Math.max(height - rowgap, 0) + insets.top + insets.bottom);
     }
 
 
@@ -238,18 +252,20 @@ public class FormLayout implements LayoutManager {
         int height;
 
         for (int count = 0; count < comps.length; count = count + 2) {
-            if (span.contains(comps[count]))
+            if (span.contains(comps[count])) {
                 count = count - 1;
-            else {
+            } else {
                 size1 = comps[count].getPreferredSize();
 
-                if ((count + 1 < comps.length) && (!span.contains(comps[count + 1])))
+                if ((count + 1 < comps.length) && (!span.contains(comps[count + 1]))) {
                     size2 = comps[count + 1].getPreferredSize();
-                else
+                } else {
                     size2 = new Dimension(0, 0);
+                }
 
-                if (size1.width > width1)
+                if (size1.width > width1) {
                     width1 = size1.width;
+                }
             }
         }
 
@@ -266,20 +282,23 @@ public class FormLayout implements LayoutManager {
             } else {
                 size1 = comps[count].getPreferredSize();
 
-                if ((count + 1 < comps.length) && (!span.contains(comps[count + 1])))
+                if ((count + 1 < comps.length) && (!span.contains(comps[count + 1]))) {
                     size2 = comps[count + 1].getPreferredSize();
-                else
+                } else {
                     size2 = new Dimension(0, 0);
+                }
 
                 height = Math.max(size1.height, size2.height);
 
                 comps[count].setBounds(insets.left, y, width1, height);
 
-                if ((count + 1 < comps.length) && (!span.contains(comps[count + 1])))
+                if ((count + 1 < comps.length) && (!span.contains(comps[count + 1]))) {
                     comps[count + 1].setBounds(insets.left + colgap + width1, y, width2, height);
+                }
 
-                if ((count + 1 < comps.length) && (span.contains(comps[count + 1])))
+                if ((count + 1 < comps.length) && (span.contains(comps[count + 1]))) {
                     count = count - 1;
+                }
             }
 
             y += height + rowgap;

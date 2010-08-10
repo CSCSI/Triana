@@ -23,8 +23,6 @@ import java.util.Map;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 6, 2009: 8:06:33 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public interface Proxy {

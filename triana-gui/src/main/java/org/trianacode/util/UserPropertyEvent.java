@@ -23,8 +23,6 @@ import java.util.EventObject;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 24, 2009: 9:24:00 PM
- * @date $Date:$ modified by $Author:$
  */
 
 

@@ -59,29 +59,27 @@
 package org.trianacode.gui.hci;
 
 
-import org.trianacode.taskgraph.util.FileUtils;
-
-import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import org.trianacode.taskgraph.util.FileUtils;
+
 /**
- * A utility class that handles setting mnemonics for menu items so that we don't get
- * duplicated items.
+ * A utility class that handles setting mnemonics for menu items so that we don't get duplicated items.
  *
- * @author  Matthew Shields
- * @created May 12, 2003: 5:36:18 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class MenuMnemonics {
 
     private static MenuMnemonics ourInstance;
     /**
-     * keeps a track of all the mnemonics used for each menu so
-     * we can automatically pick a unused sensible value
+     * keeps a track of all the mnemonics used for each menu so we can automatically pick a unused sensible value
      */
     private Hashtable menuMnemonics = new Hashtable();
 
@@ -97,9 +95,8 @@ public class MenuMnemonics {
     }
 
     /**
-     * Convenience method for creating a menu.  This function creates the
-     * menu and sets the Mnemonic for the menu to the first letter of the
-     * name for the menu
+     * Convenience method for creating a menu.  This function creates the menu and sets the Mnemonic for the menu to the
+     * first letter of the name for the menu
      */
     public JMenu createMenu(String name) {
         JMenu m = new JMenu(name);
@@ -125,12 +122,9 @@ public class MenuMnemonics {
 
 
     /**
-     * Convenience method for creating a menu item.  This function creates the
-     * menu and sets the Mnemonic (see below) for the menu . It then adds the
-     * menu item to the specified menu
-     * and sets the recevier of the actions from this menu item to the specified
-     * target.
-     *
+     * Convenience method for creating a menu item.  This function creates the menu and sets the Mnemonic (see below)
+     * for the menu . It then adds the menu item to the specified menu and sets the recevier of the actions from this
+     * menu item to the specified target.
      */
     public JMenuItem createMenuItem(String name, JMenu menu, ActionListener target) {
         JMenuItem m = new JMenuItem(name);
@@ -141,12 +135,9 @@ public class MenuMnemonics {
     }
 
     /**
-     * Convenience method for creating a check box menu item.  This function creates the
-     * menu and sets the Mnemonic (see below) for the menu . It then adds the
-     * menu item to the specified menu
-     * and sets the recevier of the actions from this menu item to the specified
-     * target.
-     *
+     * Convenience method for creating a check box menu item.  This function creates the menu and sets the Mnemonic (see
+     * below) for the menu . It then adds the menu item to the specified menu and sets the recevier of the actions from
+     * this menu item to the specified target.
      */
     public JCheckBoxMenuItem createCheckBoxMenuItem(String name, JMenu menu, ItemListener target) {
         JCheckBoxMenuItem m = new JCheckBoxMenuItem(name);
@@ -171,6 +162,7 @@ public class MenuMnemonics {
      * into several languages and Triana automatically reconfigures itself
      * sensibly to cater for the language it is given.
      */
+
     public void assignAMnemonic(JMenuItem m, JMenu menu, String name) {
         char mnem = getNextMnemonic(menu, name);
         m.setMnemonic(mnem);
@@ -178,7 +170,7 @@ public class MenuMnemonics {
 
     /**
      * @param parentMenu the parent JMenu
-     * @param name the name of the menu item
+     * @param name       the name of the menu item
      * @return the next mnemonic for a menuitem
      */
     public char getNextMnemonic(JMenu parentMenu, String name) {
@@ -197,8 +189,9 @@ public class MenuMnemonics {
 
         boolean foundACapital = false;
 
-        for (int j = 0; j < sv.size(); ++j)
+        for (int j = 0; j < sv.size(); ++j) {
             caps += sv.get(j).charAt(0);
+        }
 
         int i = 0;
         while (i < caps.length()) {

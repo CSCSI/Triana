@@ -63,15 +63,12 @@ import triana.types.image.PixelMap;
 
 
 /**
- * ImageMap contains a PixelMap image and a Key table that describes how a matrix
- * of numbers was converted into the image color values. See class PixelMap
- * for details of the Triana color scale for these maps. ImageMap also contains
+ * ImageMap contains a PixelMap image and a Key table that describes how a matrix of numbers was converted into the
+ * image color values. See class PixelMap for details of the Triana color scale for these maps. ImageMap also contains
  * various parameters that govern how values from a matrix are mapped into colors.
  *
- * @author      Bernard Schutz
- * @created     30 December 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class ImageMap extends TrianaPixelMap {
 
@@ -122,15 +119,16 @@ public class ImageMap extends TrianaPixelMap {
     /**
      * Constuctor using a matrix and parameters that govern the map.
      *
-     * @param matrix The input data matrix
-     * @param toRed The data value mapped to the lowest color (0)
-     * @param toGreen The data value mapped to the middle color (127)
-     * @param toBlue The data value mapped to the highest color (255)
-     * @param loWhite <i>true</i> if values below <i>toRed</i> are white, <i>false</i> if black
-     * @param hiWhite <i>true</i> if values above <i>toBlue</i> are white, <i>false</i> if black
+     * @param matrix      The input data matrix
+     * @param toRed       The data value mapped to the lowest color (0)
+     * @param toGreen     The data value mapped to the middle color (127)
+     * @param toBlue      The data value mapped to the highest color (255)
+     * @param loWhite     <i>true</i> if values below <i>toRed</i> are white, <i>false</i> if black
+     * @param hiWhite     <i>true</i> if values above <i>toBlue</i> are white, <i>false</i> if black
      * @param logarithmic <i>true</i> if the scaling to color values is logarithmic, <i>false</i> if linear
      */
-    public ImageMap(double[][] matrix, double toRed, double toGreen, double toBlue, boolean loWhite, boolean hiWhite, boolean logarithmic) {
+    public ImageMap(double[][] matrix, double toRed, double toGreen, double toBlue, boolean loWhite, boolean hiWhite,
+                    boolean logarithmic) {
         // create empty ImageMap
         super();
         // check validity of logarithmic mapping option
@@ -139,7 +137,8 @@ public class ImageMap extends TrianaPixelMap {
         logScale = logarithmic;
         if ((toRed < 0) && logarithmic) {
             logScale = false;
-            System.out.println("Tried to create ImageMap with logarithmic scaling, but lowest data value (for red) was negative. Use linear scaling.");
+            System.out.println(
+                    "Tried to create ImageMap with logarithmic scaling, but lowest data value (for red) was negative. Use linear scaling.");
         }
         // set up boundary values between low and high parts of the map, and the slopes in this region
         double rs, gs, bs;
@@ -147,8 +146,7 @@ public class ImageMap extends TrianaPixelMap {
             rs = Math.log(toRed);
             gs = Math.log(toGreen);
             bs = Math.log(toBlue);
-        }
-        else {
+        } else {
             rs = toRed;
             gs = toGreen;
             bs = toBlue;
@@ -163,22 +161,24 @@ public class ImageMap extends TrianaPixelMap {
         int highColor = (highWhite) ? 256 : -1;
         double x, xs;
         int c, j, k;
-        for (j = 0; j < rows; j++)
+        for (j = 0; j < rows; j++) {
             for (k = 0; k < cols; k++) {
                 x = matrix[j][k];
-                if (x < toRed)
+                if (x < toRed) {
                     c = lowColor;
-                else if (x > toBlue)
+                } else if (x > toBlue) {
                     c = highColor;
-                else {
+                } else {
                     xs = (logScale) ? Math.log(x) : x;
-                    if (x < toGreen)
+                    if (x < toGreen) {
                         c = (int) Math.round(lowSlope * (xs - rs));
-                    else
+                    } else {
                         c = 127 + (int) Math.round(highSlope * (xs - gs));
+                    }
                 }
                 colors[j][k] = c;
             }
+        }
         // create the image from the color values and put it into the container
         setPixelMap(new PixelMap(colors, PixelMap.TRIANA_COLOR_MAP));
         // create the key table
@@ -196,8 +196,7 @@ public class ImageMap extends TrianaPixelMap {
                 dataValue *= highColorFactor;
                 keyTable[j] = dataValue;
             }
-        }
-        else {
+        } else {
             double lowColorStep = 1. / lowSlope;
             double dataValue = toRed;
             for (j = 0; j < 128; j++) {
@@ -216,19 +215,19 @@ public class ImageMap extends TrianaPixelMap {
     }
 
     /**
-     * Constuctor using a MatrixType and parameters that govern the map.
-     * This should be the normal way to do create an ImageMap in Triana.
-     * Only the real part of the data held in the MatrixType parent is used.
+     * Constuctor using a MatrixType and parameters that govern the map. This should be the normal way to do create an
+     * ImageMap in Triana. Only the real part of the data held in the MatrixType parent is used.
      *
-     * @param parent The input MatrixType whose data is used
-     * @param toRed The data value mapped to the lowest color (0)
-     * @param toGreen The data value mapped to the middle color (127)
-     * @param toBlue The data value mapped to the highest color (255)
-     * @param loWhite <i>true</i> if values below <i>toRed</i> are white, <i>false</i> if black
-     * @param hiWhite <i>true</i> if values above <i>toBlue</i> are white, <i>false</i> if black
+     * @param parent      The input MatrixType whose data is used
+     * @param toRed       The data value mapped to the lowest color (0)
+     * @param toGreen     The data value mapped to the middle color (127)
+     * @param toBlue      The data value mapped to the highest color (255)
+     * @param loWhite     <i>true</i> if values below <i>toRed</i> are white, <i>false</i> if black
+     * @param hiWhite     <i>true</i> if values above <i>toBlue</i> are white, <i>false</i> if black
      * @param logarithmic <i>true</i> if the scaling to color values is logarithmic, <i>false</i> if linear
      */
-    public ImageMap(MatrixType parent, double toRed, double toGreen, double toBlue, boolean loWhite, boolean hiWhite, boolean logarithmic) {
+    public ImageMap(MatrixType parent, double toRed, double toGreen, double toBlue, boolean loWhite, boolean hiWhite,
+                    boolean logarithmic) {
         this(parent.getDataReal(), toRed, toGreen, toBlue, loWhite, hiWhite, logarithmic);
         matrixTypeParent = parent;
     }
@@ -284,8 +283,7 @@ public class ImageMap extends TrianaPixelMap {
     }
 
     /**
-     * Return a reference to the MatrixType parent so that its graphing
-     * information can be used.
+     * Return a reference to the MatrixType parent so that its graphing information can be used.
      *
      * @return MatrixType The parent object that provided the data
      */
@@ -307,74 +305,63 @@ public class ImageMap extends TrianaPixelMap {
      */
 
     /**
-     * Returns the Triana Color Map color value associated with a given data value.
-     * To convert this to rgb values, use the class methods of class PixelMap, such
-     * as PixelMap.rgbOf(). The Triana Color Map is defined in PixelMap.
+     * Returns the Triana Color Map color value associated with a given data value. To convert this to rgb values, use
+     * the class methods of class PixelMap, such as PixelMap.rgbOf(). The Triana Color Map is defined in PixelMap.
      *
      * @param data The data value
      * @return The Triana Color Map color value associated with the given data value
      */
     public int colorOf(double data) {
         double[] keyTable = getColorKeyTable();
-        if (keyTable[0] > data) return -1;
-        if (keyTable[0] == data) return 0;
-        if (keyTable[255] < data) return 256;
+        if (keyTable[0] > data) {
+            return -1;
+        }
+        if (keyTable[0] == data) {
+            return 0;
+        }
+        if (keyTable[255] < data) {
+            return 256;
+        }
         int j = 0;
-        while (keyTable[j] < data) j++;
+        while (keyTable[j] < data) {
+            j++;
+        }
         return j - (int) Math.round((keyTable[j] - data) / (keyTable[j] - keyTable[j - 1]));
     }
 
     /**
-     * Returns the data value associated with a particular color value.
-     * To obtain the color value from an rgb int, use the class methods of class
-     * PixelMap, such as PixelMap.colorOf(). The Triana Color Map is defined in PixelMap.
+     * Returns the data value associated with a particular color value. To obtain the color value from an rgb int, use
+     * the class methods of class PixelMap, such as PixelMap.colorOf(). The Triana Color Map is defined in PixelMap.
      *
-     * @param color  The Triana Color Map color value
+     * @param color The Triana Color Map color value
      * @return The data value associated with the given color value
      */
     public double dataFrom(int color) {
         double[] keyTable = getColorKeyTable();
-        if (color < 0) return keyTable[0];
-        if (color > 255) return keyTable[255];
+        if (color < 0) {
+            return keyTable[0];
+        }
+        if (color > 255) {
+            return keyTable[255];
+        }
         return keyTable[color];
     }
 
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         ImageMap t = null;
@@ -393,8 +380,8 @@ public class ImageMap extends TrianaPixelMap {
     }
 
     /**
-     * Implement the abstract <i>copyData</i> method of TrianaType. This copies
-     * an image from the given object to the present one.
+     * Implement the abstract <i>copyData</i> method of TrianaType. This copies an image from the given object to the
+     * present one.
      *
      * @param source The TrianaImage whose image is being copied
      */

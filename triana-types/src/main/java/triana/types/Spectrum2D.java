@@ -58,40 +58,31 @@
  */
 package triana.types;
 
-import triana.types.util.Triplet;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import triana.types.util.Triplet;
+
 /**
- * Spectrum2D is the class derived from MatrixType to represent
- * a two-dimensional array whose elements contain the two-dimensional
- * Fourier transform of a two-dimensional data set. Spectrum2D implements
- * the Spectral Interface and the Triana spectral data model, as described
- * in the documentation for ComplexSpectrum, with the exception that it
- * does not allow data to be narrow-band or one-sided; these would make the storage
- * in two dimensions excessively complicated.  Spectrum2D allows data to be
- * real or complex, so it combines the 2D analogues of Spectrum and ComplexSpectrum.
- * </p><p>
- * Spectrum2D assumes the variables are uniformly sampled in
- * both directions. It introduces new parameter arrays <i>resolution</i>,
- * <i>twoSided</i> (set to <i>true</i>, <i>highestFrequency</i>,
- *  <i>narrow</i> (set to <i>false</i>), and <i>nFull</i>.
- * These parameters have the same meaning as
- * in ComplexSpectrum, but are 2-dimensional arrays for the 2 spectral dims.
- * </p><p>
+ * Spectrum2D is the class derived from MatrixType to represent a two-dimensional array whose elements contain the
+ * two-dimensional Fourier transform of a two-dimensional data set. Spectrum2D implements the Spectral Interface and the
+ * Triana spectral data model, as described in the documentation for ComplexSpectrum, with the exception that it does
+ * not allow data to be narrow-band or one-sided; these would make the storage in two dimensions excessively
+ * complicated.  Spectrum2D allows data to be real or complex, so it combines the 2D analogues of Spectrum and
+ * ComplexSpectrum. </p><p> Spectrum2D assumes the variables are uniformly sampled in both directions. It introduces new
+ * parameter arrays <i>resolution</i>, <i>twoSided</i> (set to <i>true</i>, <i>highestFrequency</i>, <i>narrow</i> (set
+ * to <i>false</i>), and <i>nFull</i>. These parameters have the same meaning as in ComplexSpectrum, but are
+ * 2-dimensional arrays for the 2 spectral dims. </p><p>
+ *
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  * @see MatrixType
  * @see TrianaType
  * @see GraphType
  * @see Spectrum
  * @see ComplexSpectrum
  * @see Spectral
- *
- * @author      Bernard Schutz
- * @created     30 December 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
 
@@ -110,25 +101,22 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     private double[] highestFrequency = new double[2];
 
     /**
-     * The flags for a two-sided spectrum. These are always <i>true</i> in
-     * this implementation, although in principle one could be false without
-     * loss of information. A future revision of this type should allow this.
+     * The flags for a two-sided spectrum. These are always <i>true</i> in this implementation, although in principle
+     * one could be false without loss of information. A future revision of this type should allow this.
      */
     private boolean[] twoSided = {true, true};
 
     /**
-     * Flags that are always <i>false</i>, because narrow-band spectra are not
-     * allowed by this implementation in 2D.
+     * Flags that are always <i>false</i>, because narrow-band spectra are not allowed by this implementation in 2D.
      */
     private boolean[] narrow = {false, false};
 
     /**
-     * Integers giving the number of data points in the full two-sided
-     * spectrum from which the present frequency spectrum is derived. These numbers are
-     * the lengths of the data sets in each dimension from which the original spectrum
-     * could have been obtained by Fourier transformation. In the present implementation,
-     * which does not allow narrow-banded or one-sided representations, <i>nFull</i> must
-     * equal the dimension of the data set in each direction.
+     * Integers giving the number of data points in the full two-sided spectrum from which the present frequency
+     * spectrum is derived. These numbers are the lengths of the data sets in each dimension from which the original
+     * spectrum could have been obtained by Fourier transformation. In the present implementation, which does not allow
+     * narrow-banded or one-sided representations, <i>nFull</i> must equal the dimension of the data set in each
+     * direction.
      */
     private int[] nFull = new int[2];
 
@@ -141,39 +129,38 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Creates a new Spectrum2D with arguments giving whether the data
-     * are to be complex. Arrays give the sidedness, the data length, the
-     * number of points in the original broad-band spectrum, and the frequency
-     * resolution for each dimension. The constructor allocates memory for
-     * the data but expects the data to be defined later.
+     * Creates a new Spectrum2D with arguments giving whether the data are to be complex. Arrays give the sidedness, the
+     * data length, the number of points in the original broad-band spectrum, and the frequency resolution for each
+     * dimension. The constructor allocates memory for the data but expects the data to be defined later.
      *
      * @param complex True if the data is to be complex
      * @param lengths Number of frequency points in the current data set
-     * @param df Frequency resolution in each dimension
+     * @param df      Frequency resolution in each dimension
      */
     public Spectrum2D(boolean complex, int[] lengths, double[] df) {
         this();
         nFull = lengths;
         for (int j = 0; j < 2; j++) {
-            if (nFull[j] % 2 == 0)
+            if (nFull[j] % 2 == 0) {
                 highestFrequency[j] = df[j] * nFull[j] / 2;
-            else
+            } else {
                 highestFrequency[j] = df[j] * (nFull[j] + 1) / 2;
+            }
             setFrequencyResolution(df[j], j);
         }
         setXorY(new Triplet(lengths[0]), 0);
         setXorY(new Triplet(lengths[1]), 1);
-        if (complex)
+        if (complex) {
             setData(new double[lengths[0]][lengths[1]], new double[lengths[0]][lengths[1]]);
-        else
+        } else {
             setData(new double[lengths[0]][lengths[1]]);
+        }
     }
 
 
     /**
-     * Creates a new Spectrum2D with argument arrays giving the 2D data matrix,
-     * or two matrices if the data is complex, and
-     * the frequency resolution in each dimension.
+     * Creates a new Spectrum2D with argument arrays giving the 2D data matrix, or two matrices if the data is complex,
+     * and the frequency resolution in each dimension.
      *
      * @param zr the real part of the data
      * @param zi the imaginary part of the data, null if absent
@@ -184,29 +171,29 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
         nFull[0] = zr.length;
         nFull[1] = zr[0].length;
         for (int j = 0; j < 2; j++) {
-            if (nFull[j] % 2 == 0)
+            if (nFull[j] % 2 == 0) {
                 highestFrequency[j] = df[j] * nFull[j] / 2;
-            else
+            } else {
                 highestFrequency[j] = df[j] * (nFull[j] + 1) / 2;
+            }
             setFrequencyResolution(df[j], j);
         }
         setXorY(new Triplet(nFull[0]), 0);
         setXorY(new Triplet(nFull[1]), 1);
-        if (zi != null)
+        if (zi != null) {
             setData(zr, zi);
-        else
+        } else {
             setData(zr);
+        }
     }
 
 
-
     /*
-     * Methods that are required by the Spectral interface.
-     */
+    * Methods that are required by the Spectral interface.
+    */
 
     /**
-     * Returns the frequency resolution
-     * of the data for the given dimension (independent variable).
+     * Returns the frequency resolution of the data for the given dimension (independent variable).
      *
      * @param dim The index of the independent variable being queried
      * @return The frequency resolution
@@ -216,18 +203,18 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Sets the frequency resolution of the data for the given dimension to the
-     * given value.
+     * Sets the frequency resolution of the data for the given dimension to the given value.
      *
      * @param dim The index of the independent variable being queried
-     * @param df The frequency resolution
+     * @param df  The frequency resolution
      */
     public void setFrequencyResolution(double df, int dim) {
         resolution[dim] = df;
-        if (nFull[dim] % 2 == 0)
+        if (nFull[dim] % 2 == 0) {
             highestFrequency[dim] = df * nFull[dim] / 2;
-        else
+        } else {
             highestFrequency[dim] = df * (nFull[dim] + 1) / 2;
+        }
     }
 
 
@@ -249,10 +236,9 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Returns the number of points in the data set in the frequency dimension
-     * whose transform could have led to the present data, or equivalently
-     * the number of points in the two-sided full-bandwidth spectrum
-     * from which the present spectrum could have been derived.
+     * Returns the number of points in the data set in the frequency dimension whose transform could have led to the
+     * present data, or equivalently the number of points in the two-sided full-bandwidth spectrum from which the
+     * present spectrum could have been derived.
      *
      * @param dim The index of the independent variable being queried
      * @return The number of points in the original data set
@@ -262,13 +248,11 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Sets to the given first argument <i>nOrig</i> the number of points in
-     * the data set in the dimension given by the second argument <i>dim</i>
-     * whose transform could have led to the present data, or equivalently
-     * the number of points in the two-sided full-bandwidth spectrum
-     * from which the present spectrum could have been derived.
+     * Sets to the given first argument <i>nOrig</i> the number of points in the data set in the dimension given by the
+     * second argument <i>dim</i> whose transform could have led to the present data, or equivalently the number of
+     * points in the two-sided full-bandwidth spectrum from which the present spectrum could have been derived.
      *
-     * @param dim The index of the independent variable being queried
+     * @param dim   The index of the independent variable being queried
      * @param nOrig The new number of points in the original data set
      */
     public void setOriginalN(int nOrig, int dim) {
@@ -288,19 +272,16 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     /**
      * Does nothing.
      *
-     * @param n True if the data held are narrow-band
+     * @param n   True if the data held are narrow-band
      * @param dim The index of the independent variable being set
      */
     public void setNarrow(boolean n, int dim) {
     }
 
     /**
-     * Returns the (non-negative) value
-     * of the lowest frequency in the frequency band held in the object,
-     * for the given dimension <i>dim</i>.  In this version, all data
-     * start at zero frequency; no narrow-banding is allowed.
-     * This form of the method is required by the Spectral
-     * interface.
+     * Returns the (non-negative) value of the lowest frequency in the frequency band held in the object, for the given
+     * dimension <i>dim</i>.  In this version, all data start at zero frequency; no narrow-banding is allowed. This form
+     * of the method is required by the Spectral interface.
      *
      * @param dim The index of the independent variable being queried
      * @return The lowest frequency represented in the given direction
@@ -310,9 +291,8 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Returns the (non-negative) value
-     * of the highest frequency in the frequency band held in the object,
-     * for the given dimension <i>dim</i>.
+     * Returns the (non-negative) value of the highest frequency in the frequency band held in the object, for the given
+     * dimension <i>dim</i>.
      *
      * @param dim The index of the independent variable being queried
      * @return The highest frequency represented in the given direction
@@ -322,28 +302,25 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Sets or resets the (non-negative) value
-     * of the highest frequency in the frequency band held in the object
-     * for the given direction <i>dim</i> to the value of the given
-     * argument <i>hf</i>.  Since narrow-banding is not allowed, this
-     * can only be reset if the frequency resolution is changed. This
-     * method makes that change.
+     * Sets or resets the (non-negative) value of the highest frequency in the frequency band held in the object for the
+     * given direction <i>dim</i> to the value of the given argument <i>hf</i>.  Since narrow-banding is not allowed,
+     * this can only be reset if the frequency resolution is changed. This method makes that change.
      *
      * @param dim The index of the independent variable being queried
-     * @param hf The new highest frequency represented in the given direction
+     * @param hf  The new highest frequency represented in the given direction
      */
     public void setUpperFrequencyBound(double hf, int dim) {
         highestFrequency[dim] = hf;
-        if (nFull[dim] % 2 == 0)
+        if (nFull[dim] % 2 == 0) {
             resolution[dim] = hf / nFull[dim] * 2;
-        else
+        } else {
             resolution[dim] = hf / (nFull[dim] + 1) * 2;
+        }
     }
 
     /**
-     * Returns the frequency values of the independent data points for
-     * the given dimension, in the order of lowest frequency to highest,
-     * regardless of how the data are stored internally.
+     * Returns the frequency values of the independent data points for the given dimension, in the order of lowest
+     * frequency to highest, regardless of how the data are stored internally.
      *
      * @param dim The dimension of the independent variable
      * @return double[] Array of ordered frequency values
@@ -365,12 +342,10 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Returns the real parts of the values of the spectrum (data points) in a
-     * two-dimensional array, ordered so that in both dimensions
-     * the values correspond to frequencies running from the lowest
-     * to the highest, regardless of the internal data model. These
-     * points then correspond to the values returned by
-     * <i>getFrequencyArray</i> for each dimension.
+     * Returns the real parts of the values of the spectrum (data points) in a two-dimensional array, ordered so that in
+     * both dimensions the values correspond to frequencies running from the lowest to the highest, regardless of the
+     * internal data model. These points then correspond to the values returned by <i>getFrequencyArray</i> for each
+     * dimension.
      *
      * @return Object Multidimensional arrray of ordered spectral values
      */
@@ -381,40 +356,45 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
         if (nFull[0] % 2 == 0) {
             ix = nFull[0] / 2;
             i0 = ix;
-        }
-        else {
+        } else {
             ix = (nFull[0] - 1) / 2;
             i0 = ix + 1;
         }
         if (nFull[1] % 2 == 0) {
             jx = nFull[0] / 2;
             j0 = jx;
-        }
-        else {
+        } else {
             jx = (nFull[1] - 1) / 2;
             j0 = jx + 1;
         }
-        for (k = 0, i=i0; k < ix; k++, i++)
-	    for (l = 0, j=j0 ; l < jx; l++, j++)
-		orderedSpectrum[k][l] = data[i][j];
-        for (k = ix, i=0; k < nFull[0]; k++, i++)
-	    for (l = 0, j=j0; l < jx; l++, j++)
-		orderedSpectrum[k][l] = data[i][j];
-        for (k = 0, i=i0; k < ix; k++, i++)
-	    for (l = jx, j=0; l < nFull[1]; l++, j++)
-		orderedSpectrum[k][l] = data[i][j];
-        for (k = ix, i=0; k < nFull[0]; k++, i++)
-	    for (l = jx, j=0; l < nFull[0]; l++, j++) orderedSpectrum[k][l] = data[i][j];
+        for (k = 0, i = i0; k < ix; k++, i++) {
+            for (l = 0, j = j0; l < jx; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
+        for (k = ix, i = 0; k < nFull[0]; k++, i++) {
+            for (l = 0, j = j0; l < jx; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
+        for (k = 0, i = i0; k < ix; k++, i++) {
+            for (l = jx, j = 0; l < nFull[1]; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
+        for (k = ix, i = 0; k < nFull[0]; k++, i++) {
+            for (l = jx, j = 0; l < nFull[0]; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
         return orderedSpectrum;
     }
 
     /**
-     * Returns the imaginary parts of the values of the spectrum (data points) in a
-     * multidimensional array, ordered so that in each dimension
-     * the values correspond to frequencies running from the lowest
-     * to the highest, regardless of the internal data model. These
-     * points then correspond to the values returned by
-     * <i>getFrequencyArray</i> for each dimension.
+     * Returns the imaginary parts of the values of the spectrum (data points) in a multidimensional array, ordered so
+     * that in each dimension the values correspond to frequencies running from the lowest to the highest, regardless of
+     * the internal data model. These points then correspond to the values returned by <i>getFrequencyArray</i> for each
+     * dimension.
      *
      * @return Object Multidimensional arrray of ordered spectral values
      */
@@ -425,31 +405,37 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
         if (nFull[0] % 2 == 0) {
             ix = nFull[0] / 2;
             i0 = ix;
-        }
-        else {
+        } else {
             ix = (nFull[0] - 1) / 2;
             i0 = ix + 1;
         }
         if (nFull[1] % 2 == 0) {
             jx = nFull[0] / 2;
             j0 = jx;
-        }
-        else {
+        } else {
             jx = (nFull[1] - 1) / 2;
             j0 = jx + 1;
         }
-        for (k = 0, i=i0; k < ix; k++, i++)
-	    for (l = 0, j=j0; l < jx; l++, j++)
-		orderedSpectrum[k][l] = data[i][j];
-        for (k = ix, i=0; k < nFull[0]; k++, i++)
-	    for (l = 0, j=j0; l < jx; l++, j++)
-		orderedSpectrum[k][l] = data[i][j];
-        for (k = 0, i=i0; k < ix; k++, i++)
-	    for (l = jx, j=0; l < nFull[1]; l++, j++)
-		orderedSpectrum[k][l] = data[i][j];
-        for (k = ix, i=0; k < nFull[0]; k++, i++)
-	    for (l = jx, j=0; l < nFull[0]; l++, j++)
-		orderedSpectrum[k][l] = data[i][j];
+        for (k = 0, i = i0; k < ix; k++, i++) {
+            for (l = 0, j = j0; l < jx; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
+        for (k = ix, i = 0; k < nFull[0]; k++, i++) {
+            for (l = 0, j = j0; l < jx; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
+        for (k = 0, i = i0; k < ix; k++, i++) {
+            for (l = jx, j = 0; l < nFull[1]; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
+        for (k = ix, i = 0; k < nFull[0]; k++, i++) {
+            for (l = jx, j = 0; l < nFull[0]; l++, j++) {
+                orderedSpectrum[k][l] = data[i][j];
+            }
+        }
         return orderedSpectrum;
     }
 
@@ -478,68 +464,50 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Returns the real part of the dependent variable ordered so
-     * that the frequency values all run monotonically upwards.
+     * Returns the real part of the dependent variable ordered so that the frequency values all run monotonically
+     * upwards.
      *
      * @return Object An array containing the rearranged data values
      */
     public Object getGraphArrayReal(int dv) {
-        if (dv == 0) return getOrderedSpectrumReal();
+        if (dv == 0) {
+            return getOrderedSpectrumReal();
+        }
         return null;
     }
 
     /**
-     * Returns the imaginary part of the dependent variable ordered so
-     * that the frequency values all run monotonically upwards.
+     * Returns the imaginary part of the dependent variable ordered so that the frequency values all run monotonically
+     * upwards.
      *
      * @return Object An array containing the rearranged data values
      */
     public Object getGraphArrayImag(int dv) {
-        if (dv == 0) return getOrderedSpectrumImag();
+        if (dv == 0) {
+            return getOrderedSpectrumImag();
+        }
         return null;
     }
 
 
-
     /*
-     * Implement methods that need to be overridden from superior classes.
-     */
+    * Implement methods that need to be overridden from superior classes.
+    */
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         Spectrum2D s = null;
@@ -558,19 +526,13 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Copies modifiable parameters from the argument object
-     * to the current object. The copying is by value, not by
-     * reference. Parameters are defined as data not held in
-     * <i>dataContainer</i>. They are modifiable if they have
-     * <i>set...</i> methods. Parameters that cannot be modified, but
-     * which are set by constructors, should be placed correctly
-     * into the copied object when it is constructed.
-     * </p><p>
-     * This must be overridden by any subclass that defines new parameters.
-     * The overriding method should invoke its super method. It should use
-     * the <i>set...</i> and <i>get...</i> methods for the parameters in question.
-     * This method is protected so that it cannot be called except by
-     * objects that inherit from this one. It is called by <i>copyMe</i>.
+     * Copies modifiable parameters from the argument object to the current object. The copying is by value, not by
+     * reference. Parameters are defined as data not held in <i>dataContainer</i>. They are modifiable if they have
+     * <i>set...</i> methods. Parameters that cannot be modified, but which are set by constructors, should be placed
+     * correctly into the copied object when it is constructed. </p><p> This must be overridden by any subclass that
+     * defines new parameters. The overriding method should invoke its super method. It should use the <i>set...</i> and
+     * <i>get...</i> methods for the parameters in question. This method is protected so that it cannot be called except
+     * by objects that inherit from this one. It is called by <i>copyMe</i>.
      *
      * @param source Data object that contains the data to be copied.
      */
@@ -585,21 +547,14 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
 
 
     /**
-     * Used when Triana types want to be able to
-     * send ASCII data to other programs using strings.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<<PRE>
-     *      super.outputToStream(dos)
-     * </PRE>to get output from superior classes, and then new parameters defined
-     * for the current subclass must be output. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to send ASCII data to other programs using strings.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<<PRE>
+     * super.outputToStream(dos) </PRE>to get output from superior classes, and then new parameters defined for the
+     * current subclass must be output. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dos The data output stream
      */
@@ -613,21 +568,14 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Used when Triana types want to be able to
-     * receive ASCII data from the output of other programs.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<PRE>
-     *      super.inputFromStream(dis)
-     * </PRE>to get input from superior classes, and then new parameters defined
-     * for the current subclass must be input. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to receive ASCII data from the output of other programs.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<PRE>
+     * super.inputFromStream(dis) </PRE>to get input from superior classes, and then new parameters defined for the
+     * current subclass must be input. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dis The data input stream
      */
@@ -641,58 +589,51 @@ public class Spectrum2D extends MatrixType implements AsciiComm, Spectral {
     }
 
     /**
-     * Tests the argument object to determine if
-     * it makes sense to perform arithmetic operations between
-     * it and the current object.
-     * </p><p>
-     * In Spectrum2D, this method tests for compatibility with superior
-     * classes, to see that the input object is a Spectrum2D, and to see
-     * if the relevant parameters are equal. It does not enforce equality
-     * of <i>acquisitionTime</i> because it may be desirable to compare
-     * two data sets acquired at different times.
-     * </p><p>
-     * Classes derived from this should over-ride this method with further
-     * tests as appropriate. The over-riding method should normally have the
-     * first lines <PRE>
-     *      boolean test = super.isCompatible( obj );
-     * </PRE>followed by other tests. If other types
-     * not subclassed from GraphType or Const should be allowed to be
-     * compatible then other tests must be implemented.
+     * Tests the argument object to determine if it makes sense to perform arithmetic operations between it and the
+     * current object. </p><p> In Spectrum2D, this method tests for compatibility with superior classes, to see that the
+     * input object is a Spectrum2D, and to see if the relevant parameters are equal. It does not enforce equality of
+     * <i>acquisitionTime</i> because it may be desirable to compare two data sets acquired at different times. </p><p>
+     * Classes derived from this should over-ride this method with further tests as appropriate. The over-riding method
+     * should normally have the first lines <PRE> boolean test = super.isCompatible( obj ); </PRE>followed by other
+     * tests. If other types not subclassed from GraphType or Const should be allowed to be compatible then other tests
+     * must be implemented.
      *
      * @param obj The data object to be compared with the current one
      * @return <I>True</I> if the object can be combined with the current one
      */
     public boolean isCompatible(TrianaType obj) {
         boolean test = super.isCompatible(obj);
-        if ((test) && (obj instanceof Spectrum2D))
+        if ((test) && (obj instanceof Spectrum2D)) {
             for (int dim = 0; dim < 2; dim++) {
-                if (getFrequencyResolution(dim) != ((Spectrum2D) obj).getFrequencyResolution(dim)) return false;
-                if (getUpperFrequencyBound(dim) != ((Spectrum2D) obj).getUpperFrequencyBound(dim)) return false;
+                if (getFrequencyResolution(dim) != ((Spectrum2D) obj).getFrequencyResolution(dim)) {
+                    return false;
+                }
+                if (getUpperFrequencyBound(dim) != ((Spectrum2D) obj).getUpperFrequencyBound(dim)) {
+                    return false;
+                }
             }
+        }
         return test;
     }
 
     /**
-     * Determines whether the argument TrianaType is equal to
-     * the current Spectrum2D. They are equal if the argument is
-     * a Spectrum2D with the same size, parameters, and data.
-     * </p><p>
-     * This method must be over-ridden in derived types. In a derived
-     * type called xxx the method should begin<PRE>
-     *	     if ( !( obj instanceof xxx ) ) return false;
-     *       if ( !isCompatible( obj ) ) return false;
-     * </PRE>followed by tests that are specific to type xxx (testing its
-     * own parameters) and then as a last line<PRE>
-     * 	     return super.equals( obj );
-     * </PRE>This line invokes the other equals methods up the chain to
-     * GraphType. Each superior object tests its own parameters.
-     * </p><p>
+     * Determines whether the argument TrianaType is equal to the current Spectrum2D. They are equal if the argument is
+     * a Spectrum2D with the same size, parameters, and data. </p><p> This method must be over-ridden in derived types.
+     * In a derived type called xxx the method should begin<PRE> if ( !( obj instanceof xxx ) ) return false; if (
+     * !isCompatible( obj ) ) return false; </PRE>followed by tests that are specific to type xxx (testing its own
+     * parameters) and then as a last line<PRE> return super.equals( obj ); </PRE>This line invokes the other equals
+     * methods up the chain to GraphType. Each superior object tests its own parameters. </p><p>
+     *
      * @param obj The object being tested
      * @return <i>true</i> if they are equal or <i>false</i> otherwise
      */
     public boolean equals(TrianaType obj) {
-        if (!(obj instanceof Spectrum2D)) return false;
-        if (!isCompatible(obj)) return false;
+        if (!(obj instanceof Spectrum2D)) {
+            return false;
+        }
+        if (!isCompatible(obj)) {
+            return false;
+        }
         return super.equals(obj);
     }
 

@@ -59,34 +59,29 @@
 package triana.types.util;
 
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.Vector;
 import java.util.zip.ZipFile;
 
 /**
- * Str is a class which contains static functions which perform a
- * number of useful repetitive function in java. e.g. when converting from
- * a String to a float, you just simply type in :- </p><p>
- * <center>
- * myfloat = Str.strToFloat(str); <br>
- * instead of<br>
- * myfloat = Float.valueOf(str).floatValue();
- * </center></p>
- * <p> The latter, I find really annoying! The routines here therefore colate
- * a number of frequently performed procedures and provide shortcuts
- * to their operation. </p>
+ * Str is a class which contains static functions which perform a number of useful repetitive function in java. e.g.
+ * when converting from a String to a float, you just simply type in :- </p><p> <center> myfloat = Str.strToFloat(str);
+ * <br> instead of<br> myfloat = Float.valueOf(str).floatValue(); </center></p> <p> The latter, I find really annoying!
+ * The routines here therefore colate a number of frequently performed procedures and provide shortcuts to their
+ * operation. </p>
+ * <p/>
+ * Also, there are routines for counting the line numbers and finding and replacing etc.
  *
- * Also, there are routines for counting the line numbers and
- * finding and replacing etc.
- *
- *
- * @author      Ian Taylor
- * @author      Bernard Schutz
- * @created     11 June 2001
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public final class Str {
     private static double lastDouble = 0.0;
@@ -104,8 +99,12 @@ public final class Str {
      * Copies a String, not by reference
      */
     public static String copy(String s) {
-        if (s == null) return null;
-        if (s == "") return "";
+        if (s == null) {
+            return null;
+        }
+        if (s == "") {
+            return "";
+        }
         StringBuffer sb = new StringBuffer(s);
         String s1 = new String(sb);
         return s1;
@@ -117,10 +116,11 @@ public final class Str {
      */
     public static float strToFloat(String str) throws
             NumberFormatException, NullPointerException {
-        if (!str.trim().equals(""))
+        if (!str.trim().equals("")) {
             return (lastFloat = Float.valueOf(str).floatValue());
-        else
+        } else {
             return lastFloat;
+        }
     }
 
     /**
@@ -128,10 +128,11 @@ public final class Str {
      */
     public static double strToDouble(String str) throws
             NumberFormatException, NullPointerException {
-        if (!str.trim().equals(""))
+        if (!str.trim().equals("")) {
             return (lastDouble = Double.valueOf(str).doubleValue());
-        else
+        } else {
             return lastDouble;
+        }
     }
 
     /**
@@ -139,10 +140,11 @@ public final class Str {
      */
     public static int strToInt(String str) throws
             NumberFormatException, NullPointerException {
-        if (!str.trim().equals(""))
+        if (!str.trim().equals("")) {
             return (lastInt = Integer.valueOf(str).intValue());
-        else
+        } else {
             return lastInt;
+        }
     }
 
     /**
@@ -150,10 +152,11 @@ public final class Str {
      */
     public static short strToShort(String str) throws
             NumberFormatException, NullPointerException {
-        if (!str.trim().equals(""))
+        if (!str.trim().equals("")) {
             return (lastShort = Short.valueOf(str).shortValue());
-        else
+        } else {
             return lastShort;
+        }
     }
 
     /**
@@ -161,10 +164,11 @@ public final class Str {
      */
     public static long strToLong(String str) throws
             NumberFormatException, NullPointerException {
-        if (!str.trim().equals(""))
+        if (!str.trim().equals("")) {
             return (lastLong = Long.valueOf(str).longValue());
-        else
+        } else {
             return lastLong;
+        }
     }
 
     /**
@@ -172,10 +176,11 @@ public final class Str {
      */
     public static byte strToByte(String str) throws
             NumberFormatException, NullPointerException {
-        if (!str.trim().equals(""))
+        if (!str.trim().equals("")) {
             return (lastByte = Byte.valueOf(str).byteValue());
-        else
+        } else {
             return lastByte;
+        }
     }
 
     /**
@@ -183,18 +188,19 @@ public final class Str {
      */
     public static boolean strToBoolean(String str) throws
             NumberFormatException, NullPointerException {
-        if (str.trim().equals(""))
+        if (str.trim().equals("")) {
             return lastBoolean;
-        if (str.trim().equals("true"))
+        }
+        if (str.trim().equals("true")) {
             lastBoolean = true;
-        else
+        } else {
             lastBoolean = false;
+        }
         return lastBoolean;
     }
 
     /**
-     * @return a "19 Mar 1997" type format of the date. Gets rid of
-     * the time etc.
+     * @return a "19 Mar 1997" type format of the date. Gets rid of the time etc.
      */
     public final static String niceDate(Date d) {
         StringVector items = new StringVector(10);  // 10 should be OK
@@ -212,9 +218,8 @@ public final class Str {
     }
 
     /**
-     * @return a "19 Mar 1997" type format of the date. Gets rid of
-     * the time etc. Give new Date() as argument if the current time
-     * and date is needed.
+     * @return a "19 Mar 1997" type format of the date. Gets rid of the time etc. Give new Date() as argument if the
+     *         current time and date is needed.
      */
     public final static String niceDateAndTime(Date d) {
         StringVector items = new StringVector(10);  // 10 should be OK
@@ -233,24 +238,23 @@ public final class Str {
     }
 
     /**
-     * Finds the next occurence of the given string <i>text</i> from the
-     * string <i>theString</i> and replaces it with the <i>newText</i>.
-     * This should be used with caution: it uses a counter to keep
-     * track of how many occurences there have been,  but this counter
-     * will be advanced by any call to this method, even one that searches
-     * a different String. It is safer to use the version with the position
-     * argument and keep track of the position in the calling program.
+     * Finds the next occurence of the given string <i>text</i> from the string <i>theString</i> and replaces it with
+     * the <i>newText</i>. This should be used with caution: it uses a counter to keep track of how many occurences
+     * there have been,  but this counter will be advanced by any call to this method, even one that searches a
+     * different String. It is safer to use the version with the position argument and keep track of the position in the
+     * calling program.
      *
      * @param theString the String to scan
-     * @param text the text to find within theString
-     * @param newText the String to replace <i>text</i> with
+     * @param text      the text to find within theString
+     * @param newText   the String to replace <i>text</i> with
      * @return the String after replacement
      */
     public static String replaceNext(String theString, String text,
                                      String newText) {
         pos = theString.indexOf(text, pos);
-        if ((pos == -1) || (pos > theString.length()))
+        if ((pos == -1) || (pos > theString.length())) {
             return null;
+        }
 
         theString = theString.substring(0, pos) +
                 theString.substring(pos + text.length());
@@ -261,21 +265,24 @@ public final class Str {
     }
 
     /**
-     * Starting at the given position, this method
-     * finds the next occurence of the given string <i>text</i> from the
+     * Starting at the given position, this method finds the next occurence of the given string <i>text</i> from the
      * string <i>theString</i> and replaces it with the <i>newText</i>.
      *
      * @param theString the String to scan
-     * @param pos the starting index within the given string
-     * @param text the text to find within theString
-     * @param newText the String to replace <i>text</i> with
+     * @param pos       the starting index within the given string
+     * @param text      the text to find within theString
+     * @param newText   the String to replace <i>text</i> with
      * @return the String after replacement
      */
     public static String replaceNext(String theString, int pos, String text,
                                      String newText) {
-        if (pos > theString.length() || (pos < 0)) return null;
+        if (pos > theString.length() || (pos < 0)) {
+            return null;
+        }
         pos = theString.indexOf(text, pos);
-        if (pos == -1) return null;
+        if (pos == -1) {
+            return null;
+        }
 
         StringBuffer sb = new StringBuffer(theString);
         sb.replace(pos, pos + text.length(), newText);
@@ -283,43 +290,44 @@ public final class Str {
     }
 
     /**
-     * Inserts a String into a given String at a given position.
-     * The insertion is made so that the first character of the inserted
-     * String will be at the given position in the returned String.
-     * If the given position is not within the initial String (negative or
-     * too large) then the original String is return without modification.
+     * Inserts a String into a given String at a given position. The insertion is made so that the first character of
+     * the inserted String will be at the given position in the returned String. If the given position is not within the
+     * initial String (negative or too large) then the original String is return without modification.
      *
      * @param theString The String to be modified
-     * @param pos The index at which the insertion is to be made
-     * @param text The insertion String
+     * @param pos       The index at which the insertion is to be made
+     * @param text      The insertion String
      * @return The modified String
      */
     public static String insertString(String theString, int pos, String text) {
-        if ((pos < 0) || (pos >= theString.length())) return theString;
+        if ((pos < 0) || (pos >= theString.length())) {
+            return theString;
+        }
         return (new StringBuffer(theString)).insert(pos, text).toString();
     }
 
     /**
-     * Removes a substring from the given String and returns a String
-     * consisting of the remaining parts concatenated.
+     * Removes a substring from the given String and returns a String consisting of the remaining parts concatenated.
      *
      * @param theString The String to be modified
-     * @param from The index of the first character to be removed
-     * @param to The index of the first character that remains after the removed String
+     * @param from      The index of the first character to be removed
+     * @param to        The index of the first character that remains after the removed String
      * @return The modified String
      */
     public String removeSubstring(String theString, int from, int to) {
-        if ((to < from) || (from < 0) || (to > theString.length())) return theString;
+        if ((to < from) || (from < 0) || (to > theString.length())) {
+            return theString;
+        }
         return (new StringBuffer(theString)).delete(from, to).toString();
     }
 
 
     /**
-     * Replace all occurances of <i>text</i>  with <i>newText</i> from
-     * <i>theString</i>.
+     * Replace all occurances of <i>text</i>  with <i>newText</i> from <i>theString</i>.
+     *
      * @param theString the string to scan
-     * @param text the text to find within theString
-     * @param newText the string to replace <i>text</i> with
+     * @param text      the text to find within theString
+     * @param newText   the string to replace <i>text</i> with
      * @return the new String after all the relevant text has been replaced
      */
     public static String replaceAll(String theString, String text,
@@ -334,17 +342,17 @@ public final class Str {
             buf = buf.replace(loc, loc + oldLength, newText);
             //System.out.println("Str.replaceAll() has buf = \n" + buf.toString() +  "    after the replacement.");
             loc += newLength;
-            if (loc >= buf.length()) break;
+            if (loc >= buf.length()) {
+                break;
+            }
         }
 
         return buf.toString();
     }
 
     /**
-     * From the specified position in the String this function
-     * returns the number of characters <b>excluding line feeds
-     * </b> for this position. JTextAreas don't seem to use line
-     * feeds for example.
+     * From the specified position in the String this function returns the number of characters <b>excluding line feeds
+     * </b> for this position. JTextAreas don't seem to use line feeds for example.
      */
     public static int noLineChars(String str, int pos) {
         int curr = 0;
@@ -360,11 +368,13 @@ public final class Str {
         while ((curr < pos) && (curr != -1)) {
             old = curr;
             curr = str.indexOf(lineSep, old);
-            if (!str.substring(old, curr).trim().equals(""))
+            if (!str.substring(old, curr).trim().equals("")) {
                 count += sepLen;
+            }
             if (!str.substring(curr - retLen,
-                               curr + sepLen).equals(carrRet + lineSep))
+                    curr + sepLen).equals(carrRet + lineSep)) {
                 count += retLen;
+            }
             curr += sepLen;
         }
 
@@ -387,8 +397,7 @@ public final class Str {
     }
 
     /**
-     * This function splits the text into a vector of lines
-     * contained within that text i.e. splits the text on the
+     * This function splits the text into a vector of lines contained within that text i.e. splits the text on the
      * newline character.
      */
     public static StringVector splitText(String text) {
@@ -396,30 +405,25 @@ public final class Str {
     }
 
     /**
-     * Prints a vector one element after another with a new line
-     * between each element.
+     * Prints a vector one element after another with a new line between each element.
      */
     public static void printVector(Vector v, PrintWriter pw) {
         for (int i = 0; i < v.size(); ++i) {
             if (v.elementAt(i) instanceof URL) {
                 URL url = (URL) v.elementAt(i);
                 pw.println(url.getProtocol() + "://" + url.getHost() +
-                           url.getFile() + " ");
-            }
-            else if (v.elementAt(i) instanceof ZipFile)
+                        url.getFile() + " ");
+            } else if (v.elementAt(i) instanceof ZipFile) {
                 pw.println(((ZipFile) v.elementAt(i)).getName() + " ");
-            else
+            } else {
                 pw.println(v.elementAt(i).toString() + " ");
+            }
         }
     }
 
     /**
-     * For printing out the types and associated colours to the user
-     * configuration file. Can be also used to print out any hashtable
-     * objects in a :- </p>
-     * <center> colorname actualcolor<line feed>
-     * </center>
-     * <p> format
+     * For printing out the types and associated colours to the user configuration file. Can be also used to print out
+     * any hashtable objects in a :- </p> <center> colorname actualcolor<line feed> </center> <p> format
      */
     public static void printHashtable(Hashtable v, PrintWriter pw) {
         int max = v.size() - 1;
@@ -437,20 +441,16 @@ public final class Str {
                 s2 = String.valueOf(c.getRed()) + " " +
                         String.valueOf(c.getGreen()) + " " +
                         String.valueOf(c.getBlue());
-            }
-            else
+            } else {
                 s2 = el.toString();
+            }
             pw.print(s1 + " " + s2 + "\n");
         }
     }
 
     /**
-     * For printing out the types and associated colours to the user
-     * configuration file. Can be also used to print out any hashtable
-     * objects in a :- </p>
-     * <center> colorname actualcolor<line feed>
-     * </center>
-     * <p> format
+     * For printing out the types and associated colours to the user configuration file. Can be also used to print out
+     * any hashtable objects in a :- </p> <center> colorname actualcolor<line feed> </center> <p> format
      */
     public static void printTreeMap(TreeMap v, PrintWriter pw) {
         String s1, s2;
@@ -466,9 +466,9 @@ public final class Str {
                 s2 = String.valueOf(c.getRed()) + " " +
                         String.valueOf(c.getGreen()) + " " +
                         String.valueOf(c.getBlue());
-            }
-            else
+            } else {
                 s2 = el.toString();
+            }
             pw.print(s1 + " " + s2 + "\n");
         }
     }

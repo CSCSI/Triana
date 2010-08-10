@@ -22,6 +22,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.logging.Logger;
 
+import org.trianacode.taskgraph.util.UrlUtils;
+
 /**
  * Class Description Here...
  *
@@ -34,7 +36,6 @@ public class ToolClassLoader extends URLClassLoader {
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolClassLoader");
 
     private static ToolClassLoader loader = new ToolClassLoader();
-    private static String[] ignores = {".svn", "CVS"};
 
 
     public ToolClassLoader(ClassLoader classLoader) {
@@ -54,42 +55,64 @@ public class ToolClassLoader extends URLClassLoader {
         this(ClassLoader.getSystemClassLoader());
     }
 
-    public void addToolBox(String toolbox) {
-        File box = new File(toolbox);
-        if (!box.exists() || box.length() == 0 || box.getName().startsWith(".")) {
-            return;
-        }
-        if (box.isDirectory()) {
-            //addPath(box.getAbsolutePath());
-            File[] files = box.listFiles();
-            if (files == null) {
-                return;
-            }
-            for (File file : files) {
-                String name = file.getName();
-                if (name.startsWith(".")) {
-                    continue;
-                }
-                if (file.isDirectory()) {
 
-                    if (name.equals("classes")) {
-                        addPath(file.getAbsolutePath());
-                    } else if (name.equals("src")) {
-                        continue;
-                    } else {
-                        addToolBox(file.getAbsolutePath());
+    public void addToolBox(URL toolbox) {
+        if (UrlUtils.isFile(toolbox)) {
+            try {
+                File box = new File(toolbox.toURI());
+                if (!box.exists() || box.length() == 0 || box.getName().startsWith(".")) {
+                    return;
+                }
+                if (box.isDirectory()) {
+                    //addPath(box.getAbsolutePath());
+                    File[] files = box.listFiles();
+                    if (files == null) {
+                        return;
+                    }
+                    for (File file : files) {
+                        String name = file.getName();
+                        if (name.startsWith(".")) {
+                            continue;
+                        }
+                        if (file.isDirectory()) {
+
+                            if (name.equals("classes")) {
+                                addPath(file.getAbsolutePath());
+                            } else if (name.equals("src")) {
+                                continue;
+                            } else if (name.equals("CVS")) {
+                                continue;
+                            } else {
+                                addToolBox(file.toURI().toURL());
+                            }
+                        } else {
+                            if (name.endsWith(".jar")) {
+                                addPath(file.getAbsolutePath());
+                            }
+                        }
                     }
                 } else {
-                    if (name.endsWith(".jar")) {
-                        addPath(file.getAbsolutePath());
+                    if (box.getName().endsWith(".jar")) {
+                        addPath(box.getAbsolutePath());
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
-            if (box.getName().endsWith(".jar")) {
-                addPath(box.getAbsolutePath());
+            URL[] all = getURLs();
+            boolean add = true;
+            for (URL url : all) {
+                if (url.equals(toolbox)) {
+                    add = false;
+                    break;
+                }
+            }
+            if (add) {
+                addURL(toolbox);
             }
         }
+
         log.fine("ToolClassLoader.addToolBox CLASSPATH:" + getClassPath());
     }
 

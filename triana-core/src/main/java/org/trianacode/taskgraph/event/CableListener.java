@@ -62,10 +62,8 @@ package org.trianacode.taskgraph.event;
 /**
  * An interface implemented by classes that want to receive cable events.
  *
- * @author      Ian Wang
- * @created     17th May 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public interface CableListener {
 
@@ -75,8 +73,7 @@ public interface CableListener {
     public void cableDisconnected(CableEvent event);
 
     /**
-     * Called when the cable is reconnected to a different sending/receiving
-     * node
+     * Called when the cable is reconnected to a different sending/receiving node
      */
     public void cableReconnected(CableEvent event);
 

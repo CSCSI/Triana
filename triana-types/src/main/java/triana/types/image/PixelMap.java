@@ -58,37 +58,26 @@
  */
 package triana.types.image;
 
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.ImageProducer;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.io.Serializable;
 
 /**
- * PixelMap is a class which represents the pixels
- * within an image.</p><p>
- * A pixel map may be created from an image, as a blank map, as a
- * copy of an existing pixel map, or from input related to a particular
- * color image encoding.  Allowed encodings are defined in this class,
- * and are used for, eg, choosing the particular colors used in a color
- * map representation of numerical data. The class contains methods which
- * allow setting the value of a pixel, retrieving its value and flood
- * filling areas of pixels.</p><p>
- * Images are stored in an integer array. Each element (pixel) of the array
- * stores RGB information in different groups of bits: the lowest
- * 8 bits contains blue, the next highest 8 bits holds green, and
- * the next highest 8 bits red. The highest 8 bits of each int are
- * ignored.</p><p>
- * The Triana Color Map model is a one-dimensional list of 256 colors
- * running from red (lowest) to blue (highest). They run through the
- * visible spectrum using rgb colors that are fully saturated and of
- * medium brightness. The color model is designated by the static
- * integer TRIANA_COLOR_MAP and is defined by the static array of rgb
- * values called <i>trianaColorMapTable</i>.</p>
+ * PixelMap is a class which represents the pixels within an image.</p><p> A pixel map may be created from an image, as
+ * a blank map, as a copy of an existing pixel map, or from input related to a particular color image encoding.  Allowed
+ * encodings are defined in this class, and are used for, eg, choosing the particular colors used in a color map
+ * representation of numerical data. The class contains methods which allow setting the value of a pixel, retrieving its
+ * value and flood filling areas of pixels.</p><p> Images are stored in an integer array. Each element (pixel) of the
+ * array stores RGB information in different groups of bits: the lowest 8 bits contains blue, the next highest 8 bits
+ * holds green, and the next highest 8 bits red. The highest 8 bits of each int are ignored.</p><p> The Triana Color Map
+ * model is a one-dimensional list of 256 colors running from red (lowest) to blue (highest). They run through the
+ * visible spectrum using rgb colors that are fully saturated and of medium brightness. The color model is designated by
+ * the static integer TRIANA_COLOR_MAP and is defined by the static array of rgb values called
+ * <i>trianaColorMapTable</i>.</p>
  *
- * @created     30 December 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class PixelMap implements Serializable {
 
@@ -119,6 +108,7 @@ public class PixelMap implements Serializable {
     /*
      * Static initializer to set up the Triana Color Map table.
      */
+
     static {
         int j, red, green, blue, rgb, rgb0;
         //
@@ -175,13 +165,12 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Creates a PixelMap object of the given dimensions
-     * with the option of clearing the pixel map to all black pixels.
+     * Creates a PixelMap object of the given dimensions with the option of clearing the pixel map to all black pixels.
      * If it is not cleared, the initial map will be transparent black.
      *
-     * @param width The width of the map
+     * @param width  The width of the map
      * @param height The height of the map
-     * @param clear <i>true</i> if the map is to be cleared to black.
+     * @param clear  <i>true</i> if the map is to be cleared to black.
      */
 
     public PixelMap(int width, int height, boolean clear) {
@@ -198,10 +187,9 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Creates a PixelMap object of the given dimensions
-     * and clears the pixel map to all black pixels.
+     * Creates a PixelMap object of the given dimensions and clears the pixel map to all black pixels.
      *
-     * @param width The width of the map
+     * @param width  The width of the map
      * @param height The height of the map
      */
 
@@ -210,9 +198,8 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Creates a PixelMap object of the same dimensions as the given image
-     * and tries to include the pixel information of the image.  If unsuccessful
-     * the pixel map contains black pixels.
+     * Creates a PixelMap object of the same dimensions as the given image and tries to include the pixel information of
+     * the image.  If unsuccessful the pixel map contains black pixels.
      *
      * @param image The given image to be made into the pixel map
      */
@@ -221,7 +208,7 @@ public class PixelMap implements Serializable {
         this(image.getWidth(null), image.getHeight(null), false);
 
         PixelGrabber pg = new PixelGrabber(image.getSource(), 0, 0,
-                                           width, height, pixels, 0, width);
+                width, height, pixels, 0, width);
 
         try {
             pg.grabPixels();
@@ -232,8 +219,7 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Creates a PixelMap object which is a copy of the PixelMap object
-     * supplied.
+     * Creates a PixelMap object which is a copy of the PixelMap object supplied.
      *
      * @param pixelmap The given PixelMap objet.
      */
@@ -243,27 +229,29 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Creates a PixelMap object from an input matrix of color values
-     * according to the given color map model, as defined in this class.
+     * Creates a PixelMap object from an input matrix of color values according to the given color map model, as defined
+     * in this class.
      *
      * @param colorMatrix A matrix containing the color values of the model
-     * @param model An integer that designates which model is being used
+     * @param model       An integer that designates which model is being used
      */
     public PixelMap(int[][] colorMatrix, int model) {
         this(colorMatrix[0].length, colorMatrix.length, false);
         if (model == TRIANA_COLOR_MAP) {
             int j, k, c, rgb;
-            for (j = 0; j < height; j++)
+            for (j = 0; j < height; j++) {
                 for (k = 0; k < width; k++) {
                     c = colorMatrix[j][k];
-                    if (c < 0)
+                    if (c < 0) {
                         rgb = 0xff000000;
-                    else if (c > 255)
+                    } else if (c > 255) {
                         rgb = 0xffffffff;
-                    else
+                    } else {
                         rgb = trianaColorMapTable[c];
+                    }
                     pixels[k + j * width] = rgb;
                 }
+            }
         }
     }
 
@@ -343,7 +331,9 @@ public class PixelMap implements Serializable {
     }
 
     public int getPixel(int x, int y) {
-        if ((x < 0) || (x >= width) || (y < 0) || (y > height)) return -1;
+        if ((x < 0) || (x >= width) || (y < 0) || (y > height)) {
+            return -1;
+        }
 
         return pixels[x + y * width];
     }
@@ -362,30 +352,36 @@ public class PixelMap implements Serializable {
      */
     public int rgbOfTrianaColorMapColor(int c) {
         int rgb;
-        if (c < 0)
+        if (c < 0) {
             rgb = 0xff000000;
-        else if (c > 255)
+        } else if (c > 255) {
             rgb = 0xffffffff;
-        else
+        } else {
             rgb = trianaColorMapTable[c];
+        }
         return rgb;
     }
 
     /**
-     * Returns the Triana Color Map color value associated with a given rgb
-     * pixel value. If the rgb value is not associated with any color value
-     * then this returns -2. If the rgb value is black, the method returns
-     * -1. If the color is white, the method returns 256.
+     * Returns the Triana Color Map color value associated with a given rgb pixel value. If the rgb value is not
+     * associated with any color value then this returns -2. If the rgb value is black, the method returns -1. If the
+     * color is white, the method returns 256.
      *
      * @param p The rgb value of the given pixel
      * @return int The Triana Color Map color value
      */
     public int trianaColorMapColorOf(int p) {
-        if (p == 0xffffffff) return 256;
-        if (p == 0xff000000) return -1;
+        if (p == 0xffffffff) {
+            return 256;
+        }
+        if (p == 0xff000000) {
+            return -1;
+        }
         int k = 0;
         try {
-            while (trianaColorMapTable[k] != p) k++;
+            while (trianaColorMapTable[k] != p) {
+                k++;
+            }
             return k;
         }
         catch (ArrayIndexOutOfBoundsException ex) {
@@ -394,10 +390,8 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Flood fills an area of <I>oldpixel</I> values with <I>pixel</I>
-     * values starting at coordinate <I>(x, y)</I>.<P>
-     * If uses a scanline method to reduce recursion and increase
-     * speed and efficiency.
+     * Flood fills an area of <I>oldpixel</I> values with <I>pixel</I> values starting at coordinate <I>(x, y)</I>.<P>
+     * If uses a scanline method to reduce recursion and increase speed and efficiency.
      */
 
     public void fillColour(int x, int y, int pixel, int oldpixel) {
@@ -407,12 +401,10 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * The fillScanLineColour method is a private function which fills a row of
-     * pixels to the first non old pixel colour in either direction.  It then
-     * scans the rows above and below and if a black pixel is found then
-     * the area is filled.  This means that the function only recurses
-     * once per scan line and so the maximum possible recursion is the
-     * height of the image.
+     * The fillScanLineColour method is a private function which fills a row of pixels to the first non old pixel colour
+     * in either direction.  It then scans the rows above and below and if a black pixel is found then the area is
+     * filled.  This means that the function only recurses once per scan line and so the maximum possible recursion is
+     * the height of the image.
      */
 
     void fillScanLineColour(int xstart, int ystart, int pixel, int oldpixel) {
@@ -423,7 +415,9 @@ public class PixelMap implements Serializable {
         // fill the pixel and to the left
 
         while (x >= 0) {
-            if ((pixels[line + x] & 0xffffff) != oldpixel) break;
+            if ((pixels[line + x] & 0xffffff) != oldpixel) {
+                break;
+            }
             pixels[line + x] = pixel | (pixels[line + x] & 0xff000000);
             x--;
         }
@@ -437,7 +431,9 @@ public class PixelMap implements Serializable {
         // fill to the right of the pixel
 
         while (x < width) {
-            if ((pixels[line + x] & 0xffffff) != oldpixel) break;
+            if ((pixels[line + x] & 0xffffff) != oldpixel) {
+                break;
+            }
             pixels[line + x] = pixel | (pixels[line + x] & 0xff000000);
             x++;
         }
@@ -471,7 +467,9 @@ public class PixelMap implements Serializable {
 
         // System.err.println("y=" + y);
 
-        if (y >= height) return;
+        if (y >= height) {
+            return;
+        }
 
         // if we find a pixel in the old colour then fill recursively
 
@@ -503,12 +501,10 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * The fillScanLineErase method is a private function which fills a row of
-     * pixels non black pixels to black in either direction.  It then
-     * scans the rows above and below and if a black pixel is found then
-     * the area is filled.  This means that the function only recurses
-     * once per scan line and so the maximum possible recursion is the
-     * height of the image.
+     * The fillScanLineErase method is a private function which fills a row of pixels non black pixels to black in
+     * either direction.  It then scans the rows above and below and if a black pixel is found then the area is filled.
+     * This means that the function only recurses once per scan line and so the maximum possible recursion is the height
+     * of the image.
      */
 
     void fillScanLineErase(int xstart, int ystart) {
@@ -519,7 +515,9 @@ public class PixelMap implements Serializable {
         // fill the pixel and to the left
 
         while (x >= 0) {
-            if ((pixels[line + x] & 0xffffff) == 0) break;
+            if ((pixels[line + x] & 0xffffff) == 0) {
+                break;
+            }
             pixels[line + x] = pixels[line + x] & 0xff000000;
             x--;
         }
@@ -533,7 +531,9 @@ public class PixelMap implements Serializable {
         // fill to the right of the pixel
 
         while (x < width) {
-            if ((pixels[line + x] & 0xffffff) == 0) break;
+            if ((pixels[line + x] & 0xffffff) == 0) {
+                break;
+            }
             pixels[line + x] = pixels[line + x] & 0xff000000;
             x++;
         }
@@ -567,7 +567,9 @@ public class PixelMap implements Serializable {
 
         // System.err.println("y=" + y);
 
-        if (y >= height) return;
+        if (y >= height) {
+            return;
+        }
 
         // if we find a pixel in the old colour then fill recursively
 
@@ -581,8 +583,7 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Returns a Histogram object containing the histogram for the
-     * values in the red channel of the image.
+     * Returns a Histogram object containing the histogram for the values in the red channel of the image.
      */
 
     public ImageHistogram getRedHistogram() {
@@ -597,8 +598,7 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Returns a Histogram object containing the histogram for the
-     * values in the green channel of the image.
+     * Returns a Histogram object containing the histogram for the values in the green channel of the image.
      */
 
     public ImageHistogram getGreenHistogram() {
@@ -613,8 +613,7 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Returns a Histogram object containing the histogram of the
-     * values in the blue channel of the image.
+     * Returns a Histogram object containing the histogram of the values in the blue channel of the image.
      */
 
     public ImageHistogram getBlueHistogram() {
@@ -629,8 +628,7 @@ public class PixelMap implements Serializable {
     }
 
     /**
-     * Returns a Histogram object containing the histogram of the
-     * intensities of the pixels in the image.
+     * Returns a Histogram object containing the histogram of the intensities of the pixels in the image.
      */
 
     public ImageHistogram getIntensityHistogram() {

@@ -58,6 +58,12 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -68,18 +74,11 @@ import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
 /**
  * Action class to handle all "Ungroup" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class UnGroupAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -102,10 +101,12 @@ public class UnGroupAction extends AbstractAction implements ActionDisplayOption
     public void actionPerformed(ActionEvent e) {
         Tool[] tools = selhandler.getSelectedTools();
 
-        if (tools.length > 0)  {
-            for (int count = 0; count < tools.length; count++)
-                if (tools[count] instanceof TaskGraph)
+        if (tools.length > 0) {
+            for (int count = 0; count < tools.length; count++) {
+                if (tools[count] instanceof TaskGraph) {
                     unGroup(((TaskGraph) tools[count]));
+                }
+            }
         }
     }
 
@@ -121,8 +122,9 @@ public class UnGroupAction extends AbstractAction implements ActionDisplayOption
                 GUIEnv.removeTaskGraphContainer(cont);
             }
 
-            if (taskgraph.getParent() != null)
+            if (taskgraph.getParent() != null) {
                 taskgraph.getParent().unGroupTask(taskgraph.getToolName());
+            }
         } catch (TaskGraphException except) {
             new ErrorDialog(Env.getString("taskError"), except.getMessage());
         }

@@ -59,18 +59,14 @@
 package triana.types.clipins;
 
 /**
- * A index clip-in specifies the position of an object in a index, and
- * optionally either the total number of objects in that index and when
- * this is the last item in the index.
+ * A index clip-in specifies the position of an object in a index, and optionally either the total number of objects in
+ * that index and when this is the last item in the index.
+ * <p/>
+ * As with arrays in Java, the indexes of a sequence clipins start a 0 and finish at (length - 1). If the length is not
+ * specified then it is set to -1.
  *
- * As with arrays in Java, the indexes of a sequence clipins start a 0 and
- * finish at (length - 1). If the length is not specified then it is set to -1.
- *
- * @author      Ian Wang
- * @created     7th July 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * @todo
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class SequenceClipIn extends Object {
@@ -95,8 +91,7 @@ public class SequenceClipIn extends Object {
     }
 
     /**
-     * Constructs a SequenceClipIn with the specified index number and a
-     * maximum index number.
+     * Constructs a SequenceClipIn with the specified index number and a maximum index number.
      */
     public SequenceClipIn(String groupid, int index, int length) {
         this.groupid = groupid;
@@ -106,8 +101,7 @@ public class SequenceClipIn extends Object {
     }
 
     /**
-     * Constructs a SequenceClipIn with the specified index number and a
-     * flag indicating this is the last in the index.
+     * Constructs a SequenceClipIn with the specified index number and a flag indicating this is the last in the index.
      */
     public SequenceClipIn(String groupid, int index, boolean last) {
         this.groupid = groupid;
@@ -116,8 +110,7 @@ public class SequenceClipIn extends Object {
     }
 
     /**
-     * @return the unique group id identifying which sequence this clip-in
-     * belongs to
+     * @return the unique group id identifying which sequence this clip-in belongs to
      */
     public String getGroupID() {
         return groupid;

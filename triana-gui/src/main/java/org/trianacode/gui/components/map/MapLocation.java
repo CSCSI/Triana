@@ -59,22 +59,22 @@
 
 package org.trianacode.gui.components.map;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.AbstractButton;
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * The component used to represent a location on the map.
  *
- * @author      Ian Wang
- * @created     21st September 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class MapLocation extends AbstractButton implements TaskComponent {

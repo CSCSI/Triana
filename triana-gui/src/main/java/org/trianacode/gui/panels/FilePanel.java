@@ -58,25 +58,28 @@
  */
 package org.trianacode.gui.panels;
 
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+import org.trianacode.util.Env;
+
 /**
  * A parameter panel for specifying input files
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th August
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class FilePanel extends ParameterPanel implements ActionListener, FocusListener {
 
@@ -104,12 +107,13 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
 
 
     public String getFilter() {
-        if (filter != null)
+        if (filter != null) {
             return filter;
-        else if ((getTask() != null) && (getTask().isParameterName(FILE_FILTER)))
+        } else if ((getTask() != null) && (getTask().isParameterName(FILE_FILTER))) {
             return (String) getTask().getParameter(FILE_FILTER);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -120,12 +124,13 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
     }
 
     public String getFilenameText() {
-        if (filenametxt != null)
+        if (filenametxt != null) {
             return filenametxt;
-        else if ((getTask() != null) && (getTask().isParameterName(FILE_NAME_TEXT)))
+        } else if ((getTask() != null) && (getTask().isParameterName(FILE_NAME_TEXT))) {
             return (String) getTask().getParameter(FILE_NAME_TEXT);
-        else
+        } else {
             return "Filename";
+        }
     }
 
     /**
@@ -136,12 +141,13 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
     }
 
     public String getPathText() {
-        if (pathtxt != null)
+        if (pathtxt != null) {
             return pathtxt;
-        else if ((getTask() != null) && (getTask().isParameterName(PATH_TEXT)))
+        } else if ((getTask() != null) && (getTask().isParameterName(PATH_TEXT))) {
             return (String) getTask().getParameter(PATH_TEXT);
-        else
+        } else {
             return "Path";
+        }
     }
 
     /**
@@ -155,10 +161,11 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
      * Sets the name of the parameter that the filename is stored in
      */
     public String getFilenameParam() {
-        if (filenameparam != null)
+        if (filenameparam != null) {
             return filenameparam;
-        else
+        } else {
             return FILE_NAME;
+        }
     }
 
     public void setFilenameParam(String filenameparam) {
@@ -177,10 +184,11 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
      * @return the preferred set of buttons for this panel
      */
     public byte getPreferredButtons() {
-        if (prefbuttons == -1)
+        if (prefbuttons == -1) {
             return super.getPreferredButtons();
-        else
+        } else {
             return prefbuttons;
+        }
     }
 
     /**
@@ -192,14 +200,15 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel does not want the
-     * user to be able to change the auto commit state
+     * This method returns true by default. It should be overridden if the panel does not want the user to be able to
+     * change the auto commit state
      */
     public boolean isAutoCommitVisible() {
-        if (!autocommitset)
+        if (!autocommitset) {
             return super.isAutoCommitVisible();
-        else
+        } else {
             return autocommitvis;
+        }
     }
 
 
@@ -242,18 +251,19 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
      * Resets the user interface to the parameter values stored in the task
      */
     public void reset() {
-        if (!getTask().isParameterName(getFilenameParam()))
+        if (!getTask().isParameterName(getFilenameParam())) {
             getTask().setParameter(getFilenameParam(), Env.userHome());
+        }
 
         File current = new File((String) getTask().getParameter(getFilenameParam()));
 
         if (current.isDirectory()) {
             file.setText("");
             path.setText(current.getAbsolutePath());
-        }
-        else {
+        } else {
             file.setText(current.getName());
-            path.setText(current.getAbsolutePath().substring(0, current.getAbsolutePath().lastIndexOf(Env.separator())));
+            path.setText(
+                    current.getAbsolutePath().substring(0, current.getAbsolutePath().lastIndexOf(Env.separator())));
         }
     }
 
@@ -272,8 +282,7 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
     }
 
     /**
-     * Called when the apply button is clicked on the parameter window. Commits any parameter
-     * changes.
+     * Called when the apply button is clicked on the parameter window. Commits any parameter changes.
      */
     public void applyClicked() {
         setParameter(getFilenameParam(), path.getText() + Env.separator() + file.getText());
@@ -291,13 +300,16 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
             File currentfile = new File(file.getText());
             TFileChooser chooser = new TFileChooser();
 
-            if (!currentdir.getPath().equals(""))
+            if (!currentdir.getPath().equals("")) {
                 chooser.setCurrentDirectory(currentdir);
-            if (!currentfile.getPath().equals(""))
+            }
+            if (!currentfile.getPath().equals("")) {
                 chooser.setSelectedFile(currentfile);
+            }
 
-            if (getFilter() != null)
+            if (getFilter() != null) {
                 chooser.setFileFilter(new Filter());
+            }
 
             int choice = chooser.showDialog(this, "O.K.");
 
@@ -307,10 +319,10 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
                 if (select.isDirectory()) {
                     file.setText("");
                     path.setText(select.getAbsolutePath());
-                }
-                else {
+                } else {
                     file.setText(select.getName());
-                    path.setText(select.getAbsolutePath().substring(0, select.getAbsolutePath().lastIndexOf(Env.separator())));
+                    path.setText(select.getAbsolutePath().substring(0,
+                            select.getAbsolutePath().lastIndexOf(Env.separator())));
                 }
 
                 file.setCaretPosition(0);
@@ -333,11 +345,13 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
     private class Filter extends FileFilter {
 
         public boolean accept(File file) {
-            if (getFilter() == null)
+            if (getFilter() == null) {
                 return true;
+            }
 
-            if (file.isDirectory())
+            if (file.isDirectory()) {
                 return true;
+            }
 
             String filterstr = getFilter();
             String filter;
@@ -345,8 +359,9 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
             while (filterstr.indexOf(' ') != -1) {
                 filter = filterstr.substring(0, filterstr.indexOf(' '));
 
-                if (isAccept(file, filter))
+                if (isAccept(file, filter)) {
                     return true;
+                }
 
                 filterstr = filterstr.substring(filterstr.indexOf(' ') + 1);
             }
@@ -355,25 +370,28 @@ public class FilePanel extends ParameterPanel implements ActionListener, FocusLi
         }
 
         private boolean isAccept(File file, String filter) {
-            if (filter.lastIndexOf('.') == -1)
+            if (filter.lastIndexOf('.') == -1) {
                 return true;
+            }
 
             filter = filter.substring(filter.lastIndexOf('.'));
 
-            if (filter.equals("*"))
+            if (filter.equals("*")) {
                 return true;
-            else if (file.getName().endsWith(filter))
+            } else if (file.getName().endsWith(filter)) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         }
 
 
         public String getDescription() {
-            if (getFilter() != null)
+            if (getFilter() != null) {
                 return getFilter();
-            else
+            } else {
                 return "*.*";
+            }
         }
     }
 

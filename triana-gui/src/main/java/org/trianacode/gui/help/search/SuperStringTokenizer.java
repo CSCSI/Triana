@@ -61,8 +61,7 @@ package org.trianacode.gui.help.search;
 import java.util.Vector;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class SuperStringTokenizer {
     protected Vector delims;
@@ -84,10 +83,14 @@ public class SuperStringTokenizer {
 
     protected boolean subArrayEquals(char[] bigArray, int offset,
                                      char[] smallArray) {
-        if (bigArray.length < (smallArray.length + offset)) return false;
+        if (bigArray.length < (smallArray.length + offset)) {
+            return false;
+        }
 
         for (int i = smallArray.length - 1; i >= 0; i--) {
-            if (bigArray[i + offset] != smallArray[i]) return false;
+            if (bigArray[i + offset] != smallArray[i]) {
+                return false;
+            }
         }
 
         return true;
@@ -114,7 +117,9 @@ public class SuperStringTokenizer {
 
         for (; ;) {
             // Check we are within bounds
-            if (ptr >= charArray.length) break;
+            if (ptr >= charArray.length) {
+                break;
+            }
 
             // Work through the delimiters
             for (int i = 0; i < delimArray.length; i++) {
@@ -157,7 +162,9 @@ public class SuperStringTokenizer {
         }
 
         for (int i = 0; i < delimArray.length; i++) {
-            if (subArrayEquals(array, 0, (char[]) delimArray[i])) return true;
+            if (subArrayEquals(array, 0, (char[]) delimArray[i])) {
+                return true;
+            }
         }
 
         return false;

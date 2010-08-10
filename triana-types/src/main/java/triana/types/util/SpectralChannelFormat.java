@@ -63,8 +63,8 @@ import triana.types.audio.AudioChannelFormat;
 
 /**
  * SpectralChannelFormat is a format for representing frequency-domain data or data that have been put through a Fourier
- * transform. It contains methods to set and read relevant additional information, such as the frequency range of the
- * data.
+ * transform. It contains methods to set and createTool relevant additional information, such as the frequency range of
+ * the data.
  * <p/>
  * <p>It implements the ChannelFormat interface
  *

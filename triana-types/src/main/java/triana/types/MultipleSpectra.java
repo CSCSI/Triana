@@ -62,19 +62,14 @@ import triana.types.util.ChannelFormat;
 import triana.types.util.SpectralChannelFormat;
 
 /**
- * MultipleSpectra stores many channels of frequency data.Each channel can
- * have its own particular format of the data e.g. sampling frequency,
- * number of points, whether the data is one or two sided, whether it is
- * narrow etc
+ * MultipleSpectra stores many channels of frequency data.Each channel can have its own particular format of the data
+ * e.g. sampling frequency, number of points, whether the data is one or two sided, whether it is narrow etc
  *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @see ChannelFormat
  * @see SpectralChannelFormat
  * @see MultipleChannel
- *
- * @author      Ian Taylor
- * @created     27th December 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class MultipleSpectra extends MultipleChannel implements AsciiComm {
 
@@ -93,10 +88,9 @@ public class MultipleSpectra extends MultipleChannel implements AsciiComm {
     }
 
     /**
-     * Added by I. Taylor, August 2001 : This function sets the default labeling
-     * scheme used for all GraphTypes. Default values are 'X' for the X-axis and
-     * 'Y' for the Y axis.  The various subclasses can override this function
-     * with their specific axis-labelling conventions.
+     * Added by I. Taylor, August 2001 : This function sets the default labeling scheme used for all GraphTypes. Default
+     * values are 'X' for the X-axis and 'Y' for the Y axis.  The various subclasses can override this function with
+     * their specific axis-labelling conventions.
      */
     public void setDefaultAxisLabelling() {
         String labelx = "Frequency (Hz)";
@@ -113,8 +107,8 @@ public class MultipleSpectra extends MultipleChannel implements AsciiComm {
     }
 
     /**
-     * This function creates a ChannelFormat object from the given String
-     * using the toString and setFromString() functions with a ChannelFormat
+     * This function creates a ChannelFormat object from the given String using the toString and setFromString()
+     * functions with a ChannelFormat
      */
     public ChannelFormat createChannelFormatFrom(String line) {
         SpectralChannelFormat au = new SpectralChannelFormat();
@@ -123,53 +117,41 @@ public class MultipleSpectra extends MultipleChannel implements AsciiComm {
     }
 
     /**
-     * Tests the argument object to determine if
-     * it makes sense to perform arithmetic operations between
-     * it and the current object.
-     * </p><p>
-     * In Mutiple Audio, this method first tests for compatibility with superior
-     * classes, and then (if the input object is a Mutiple Audio) tests that
-     * the input has the same channel count.
-     * </p><p>
-     * Classes derived from this should over-ride this method with further
-     * tests as appropriate. The over-riding method should normally have the
-     * first lines <PRE>
-     *      boolean test = super.isCompatible( obj );
-     * </PRE>followed by other tests. If other types
-     * not subclassed from GraphType or Const should be allowed to be
-     * compatible then other tests must be implemented.
+     * Tests the argument object to determine if it makes sense to perform arithmetic operations between it and the
+     * current object. </p><p> In Mutiple Audio, this method first tests for compatibility with superior classes, and
+     * then (if the input object is a Mutiple Audio) tests that the input has the same channel count. </p><p> Classes
+     * derived from this should over-ride this method with further tests as appropriate. The over-riding method should
+     * normally have the first lines <PRE> boolean test = super.isCompatible( obj ); </PRE>followed by other tests. If
+     * other types not subclassed from GraphType or Const should be allowed to be compatible then other tests must be
+     * implemented.
      *
      * @param obj The data object to be compared with the current one
      * @return <I>True</I> if the object can be combined with the current one
      */
     public boolean isCompatible(TrianaType obj) {
         boolean test = super.isCompatible(obj);
-        if ((test) && (obj instanceof MultipleSpectra))
+        if ((test) && (obj instanceof MultipleSpectra)) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
-     * Determines whether the argument TrianaType is equal to
-     * the current MultipleSpectra. They are equal if the argument is
-     * a MultipleSpectra with the same size, parameters, and data.
-     * </p><p>
-     * This method must be over-ridden in derived types. In a derived
-     * type called xxx the method should begin<PRE>
-     *	     if ( !( obj instanceof xxx ) ) return false;
-     *       if ( !isCompatible( obj ) ) return false;
-     * </PRE>followed by tests that are specific to type xxx (testing its
-     * own parameters) and then as a last line<PRE>
-     * 	     return super.equals( obj );
-     * </PRE>This line invokes the other equals methods up the chain to
-     * GraphType. Each superior object tests its own parameters.
-     * </p><p>
+     * Determines whether the argument TrianaType is equal to the current MultipleSpectra. They are equal if the
+     * argument is a MultipleSpectra with the same size, parameters, and data. </p><p> This method must be over-ridden
+     * in derived types. In a derived type called xxx the method should begin<PRE> if ( !( obj instanceof xxx ) ) return
+     * false; if ( !isCompatible( obj ) ) return false; </PRE>followed by tests that are specific to type xxx (testing
+     * its own parameters) and then as a last line<PRE> return super.equals( obj ); </PRE>This line invokes the other
+     * equals methods up the chain to GraphType. Each superior object tests its own parameters. </p><p>
+     *
      * @param obj The object being tested
      * @return <i>true</i> if they are equal or <i>false</i> otherwise
      */
     public boolean equals(TrianaType obj) {
-        if (!(obj instanceof MultipleSpectra)) return false;
+        if (!(obj instanceof MultipleSpectra)) {
+            return false;
+        }
         return super.equals(obj);
     }
 }

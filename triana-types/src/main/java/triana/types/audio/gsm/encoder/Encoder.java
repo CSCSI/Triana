@@ -161,7 +161,7 @@ public class Encoder extends Thread {
             throws Exception {
         DataInputStream input = new DataInputStream((InputStream) in);
 
-        /* Just read these bits from the stream and do nothing with them */
+        /* Just createTool these bits from the stream and do nothing with them */
         int magic = input.readInt();      /* magic number SND_MAGIC ((int)0x2e736e64),
 																			 		 * which equals ".snd".)
 				 		 															 */
@@ -200,7 +200,7 @@ public class Encoder extends Thread {
         File arg1 = new File(input_file);
         if (!arg1.exists() || !arg1.isFile() || !arg1.canRead()) {
             throw new IOException("File : " +
-                    input_file + "\ndoes not exist or cannot be read.");
+                    input_file + "\ndoes not exist or cannot be createTool.");
         }
 
         FileInputStream from = null;

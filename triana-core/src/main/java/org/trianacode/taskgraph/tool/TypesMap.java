@@ -18,6 +18,7 @@ package org.trianacode.taskgraph.tool;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +40,6 @@ import org.trianacode.taskgraph.tool.creators.type.ClassParser;
 public class TypesMap {
 
     private static Map<String, ClassHierarchy> allByName = new ConcurrentHashMap<String, ClassHierarchy>();
-    private static Map<String, ClassHierarchy> allByPath = new ConcurrentHashMap<String, ClassHierarchy>();
 
     private static Map<String, Map<String, ClassHierarchy>> allByType
             = new ConcurrentHashMap<String, Map<String, ClassHierarchy>>();
@@ -47,8 +47,8 @@ public class TypesMap {
     private static ClassParser parser = new ClassParser();
     private static Map<String, String> deadEnds = new ConcurrentHashMap<String, String>();
 
-    public static void load(File file) throws IOException {
-        Map<String, ClassHierarchy> hiers = parser.readFile(file);
+    public static void load(URL url) throws IOException {
+        Map<String, ClassHierarchy> hiers = parser.readURL(url);
         for (String s : hiers.keySet()) {
             ClassHierarchy ch = hiers.get(s);
             if (ch.isAnnotated()) {
@@ -58,9 +58,6 @@ public class TypesMap {
             } else {
                 if (allByName.get(s) == null) {
                     allByName.put(s, ch);
-                }
-                if (allByPath.get(s) == null) {
-                    allByPath.put(ch.getFile(), ch);
                 }
             }
         }
@@ -76,20 +73,7 @@ public class TypesMap {
      * @return
      */
     public static ClassHierarchy isType(String path, String type) {
-        /*ClassHierarchy ret = allByPath.get(path);
-        if(ret == null) {
-            return null;
-        }
-        if(ret.getName().equals(type)) {
-            return ret;
-        }
-        String superClass = ret.getSuperClass();
-        if(superClass != null) {
-            if(findSuperType(superClass)) {
-                return ret;
-            }
-        }
-        return null;*/
+
         Map<String, ClassHierarchy> mapped = allByType.get(type);
         if (mapped != null && mapped.get(path) != null) {
             return mapped.get(path);
@@ -134,37 +118,6 @@ public class TypesMap {
         return annotated.get(path);
     }
 
-    private static boolean findSuperType(String type) {
-
-        ClassHierarchy ch = allByName.get(type);
-        if (ch == null) {
-            return false;
-        }
-
-        if (!ch.isPublic()) {
-            return false;
-        }
-
-        String[] intfs = ch.getInterfaces();
-        for (String intf : intfs) {
-            if (intf.equals(type)) {
-                return true;
-            }
-        }
-
-        String superClass = ch.getSuperClass();
-        if (superClass != null) {
-            if (superClass.equals(type)) {
-                return true;
-            }
-
-            return findSuperType(superClass);
-        }
-        //deadEnds.put(hier, type);
-        return false;
-
-    }
-
 
     private static ClassHierarchy isType(Map<String, ClassHierarchy> hiers, String hier, String type,
                                          boolean mustBeConcrete) {
@@ -206,7 +159,6 @@ public class TypesMap {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            //return isType(hiers, superClass, type, false);
         }
         deadEnds.put(hier, type);
         return null;

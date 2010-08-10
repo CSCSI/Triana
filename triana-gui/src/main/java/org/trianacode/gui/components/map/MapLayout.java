@@ -60,21 +60,22 @@
 package org.trianacode.gui.components.map;
 
 
-import org.trianacode.taskgraph.TDimension;
-import org.trianacode.taskgraph.TaskLayoutDetails;
-
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Point;
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import org.trianacode.taskgraph.TDimension;
+import org.trianacode.taskgraph.TaskLayoutDetails;
 
 /**
  * The layout manager responsible for positioning components on the map.
  *
- * @author      Ian Wang
- * @created     20th September 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class MapLayout implements LayoutManager, TaskLayoutDetails {
@@ -124,7 +125,6 @@ public class MapLayout implements LayoutManager, TaskLayoutDetails {
     }
 
 
-
     /**
      * Sets the map size used by this layout manager
      */
@@ -151,10 +151,11 @@ public class MapLayout implements LayoutManager, TaskLayoutDetails {
      * @return the point (0<=x<=1, 0<=y<=1) on the map for the specified location
      */
     public Point getMapPoint(String location) {
-        if (loctable.containsKey(location))
+        if (loctable.containsKey(location)) {
             return (Point) loctable.get(location);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -185,15 +186,14 @@ public class MapLayout implements LayoutManager, TaskLayoutDetails {
      */
     public TDimension getTaskDimensions() {
         Dimension defsize = MapLayoutConstants.DEFAULT_TOOL_SIZE;
-        return new TDimension((int) (defsize.width * compfactor * cscale), (int) (defsize.height * compfactor * cscale));
+        return new TDimension((int) (defsize.width * compfactor * cscale),
+                (int) (defsize.height * compfactor * cscale));
     }
 
 
     /**
-     * If the layout manager uses a per-component string,
-     * adds the component <code>comp</code> to the layout,
-     * associating it
-     * with the string specified by <code>name</code>.
+     * If the layout manager uses a per-component string, adds the component <code>comp</code> to the layout,
+     * associating it with the string specified by <code>name</code>.
      *
      * @param name the string to be associated with the component
      * @param comp the component to be added
@@ -213,8 +213,7 @@ public class MapLayout implements LayoutManager, TaskLayoutDetails {
 
 
     /**
-     * Calculates the minimum size dimensions for the specified
-     * container, given the components it contains.
+     * Calculates the minimum size dimensions for the specified container, given the components it contains.
      *
      * @param parent the component to be laid out
      * @see #preferredLayoutSize
@@ -224,8 +223,7 @@ public class MapLayout implements LayoutManager, TaskLayoutDetails {
     }
 
     /**
-     * Calculates the preferred size dimensions for the specified
-     * container, given the components it contains.
+     * Calculates the preferred size dimensions for the specified container, given the components it contains.
      *
      * @param parent the container to be laid out
      * @see #minimumLayoutSize
@@ -252,15 +250,16 @@ public class MapLayout implements LayoutManager, TaskLayoutDetails {
 
         while (enumeration.hasMoreElements()) {
             comp = (Component) enumeration.nextElement();
-            comp.setSize(new Dimension((int)compsize.getWidth(), (int)compsize.getHeight()));
+            comp.setSize(new Dimension((int) compsize.getWidth(), (int) compsize.getHeight()));
 
             pos = getLocation((String) comptable.get(comp));
 
             if (pos != null) {
                 comp.setLocation((int) ((parentsize.width * (pos.getX() / mapsize.width) - (compsize.getWidth() / 2))),
                         (int) ((parentsize.height * (pos.getY() / mapsize.height) - (compsize.getHeight() / 2))));
-            } else
-                comp.setLocation((int)compsize.getWidth() * noloc++, 0);
+            } else {
+                comp.setLocation((int) compsize.getWidth() * noloc++, 0);
+            }
         }
     }
 
@@ -273,7 +272,7 @@ public class MapLayout implements LayoutManager, TaskLayoutDetails {
         Point loc = null;
         int matchlen = 0;
 
-        while(enumeration.hasMoreElements()) {
+        while (enumeration.hasMoreElements()) {
             key = (String) enumeration.nextElement();
 
             if ((key.length() > matchlen) && (location.startsWith(key))) {

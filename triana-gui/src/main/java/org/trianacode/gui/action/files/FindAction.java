@@ -58,6 +58,13 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.hci.GUIEnv;
@@ -66,19 +73,11 @@ import org.trianacode.gui.help.search.HTMLSearchResults;
 import org.trianacode.gui.windows.TrianaWindow;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.io.File;
-
 /**
  * Action class to handle all "find" actions.
  *
- * @author  Matthew Shields
- * @created May 2, 2003: 3:49:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class FindAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -91,7 +90,7 @@ public class FindAction extends AbstractAction implements ActionDisplayOptions {
         putValue(SMALL_ICON, GUIEnv.getIcon("find.png"));
         putValue(NAME, Env.getString("Find"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F,
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     }
 
     /**
@@ -105,8 +104,7 @@ public class FindAction extends AbstractAction implements ActionDisplayOptions {
         TrianaWindow mainapp;
         if (selhandler.getSelectionHandler() instanceof TrianaWindow) {
             mainapp = (TrianaWindow) selhandler.getSelectionHandler();
-        }
-        else {
+        } else {
             mainapp = GUIEnv.getApplicationFrame();
         }
 
@@ -119,14 +117,13 @@ public class FindAction extends AbstractAction implements ActionDisplayOptions {
                     File.separator + "indexes" + File.separator + indexFileName;
             if (indexFileName.equals("help.idx")) {
                 mainapp.findWordDialog = new FindWordDialog(mainapp,
-                                                            HTMLSearchResults.loadHTMLSearchResults(new
-                                                                    File(fn)), FindWordDialog.MAIN);
+                        HTMLSearchResults.loadHTMLSearchResults(new
+                                File(fn)), FindWordDialog.MAIN);
                 mainapp.findWordDialog.setTitle("Triana Main Help Finder");
-            }
-            else {
+            } else {
                 mainapp.findWordDialog = new FindWordDialog(mainapp,
-                                                            HTMLSearchResults.loadHTMLSearchResults(new
-                                                                    File(fn)), FindWordDialog.TOOLS);
+                        HTMLSearchResults.loadHTMLSearchResults(new
+                                File(fn)), FindWordDialog.TOOLS);
                 mainapp.findWordDialog.setTitle("Triana ToolImp Help Finder");
             }
 

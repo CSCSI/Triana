@@ -58,26 +58,26 @@
  */
 package org.trianacode.gui.hci.tools;
 
+import java.awt.Component;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import java.awt.*;
-
 /**
- * Custom cell renderer for the tree. It sets the tool tips for nodes and folders
- * on the tree.
+ * Custom cell renderer for the tree. It sets the tool tips for nodes and folders on the tree.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created 23rd April 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TrianaTreeRenderer extends DefaultTreeCellRenderer {
 
-    public Icon TOOL_ICON = GUIEnv.getIcon("leaf.png");;
+    public Icon TOOL_ICON = GUIEnv.getIcon("leaf.png");
+    ;
 
     public Icon CLOSED_PACKAGE_ICON = closedIcon;
     public Icon OPEN_PACKAGE_ICON = openIcon;
@@ -96,19 +96,22 @@ public class TrianaTreeRenderer extends DefaultTreeCellRenderer {
                 Icon icon = TaskGraphViewManager.getTreeIcon(tool);
                 setToolTipText(TaskGraphViewManager.getTreeToolTip(tool, GUIEnv.showExtendedDescriptions()));
 
-                if (icon != null)
+                if (icon != null) {
                     setIcon(icon);
-                else
+                } else {
                     setIcon(TOOL_ICON);
-            } else
+                }
+            } else {
                 setIcon(TOOL_ICON);
+            }
         } else {
             setToolTipText(null);
 
-            if (expanded)
+            if (expanded) {
                 setIcon(OPEN_PACKAGE_ICON);
-            else
+            } else {
                 setIcon(CLOSED_PACKAGE_ICON);
+            }
         }
 
         return this;
@@ -118,10 +121,11 @@ public class TrianaTreeRenderer extends DefaultTreeCellRenderer {
      * @return true if the node value is a tree node with a Tool is a user object
      */
     private static boolean isTool(Object value) {
-        if (value instanceof DefaultMutableTreeNode)
+        if (value instanceof DefaultMutableTreeNode) {
             return ((DefaultMutableTreeNode) value).getUserObject() instanceof Tool;
-        else
+        } else {
             return false;
+        }
     }
 
 }

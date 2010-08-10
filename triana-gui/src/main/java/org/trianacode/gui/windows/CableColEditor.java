@@ -58,34 +58,36 @@
  */
 package org.trianacode.gui.windows;
 
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.util.Env;
+
 
 /**
+ * This window the user to customise the cable colour for each Type. There can be only one CableColEditor
  *
- * This window the user to customise the cable colour for each Type. There
- * can be only one CableColEditor
- *
- * @author      Ian Taylor
- * @created     7 Oct 1999
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class CableColEditor extends TrianaWindow implements ItemListener {
     /**
-     * A TreeMap storing all of the types along with their currently
-     * selected colour for the cable.
+     * A TreeMap storing all of the types along with their currently selected colour for the cable.
      */
     public static TreeMap typeColours = new TreeMap();
 
@@ -128,8 +130,7 @@ public class CableColEditor extends TrianaWindow implements ItemListener {
     static Vector<String> allTypes;
 
     /**
-     * Inistialises and creates a new CableColEditor to edit the colours
-     * of the various TrianaTypes.
+     * Inistialises and creates a new CableColEditor to edit the colours of the various TrianaTypes.
      */
     public CableColEditor() {
         super("Type GAPCable Colour Editor");
@@ -152,8 +153,9 @@ public class CableColEditor extends TrianaWindow implements ItemListener {
         types = new JComboBox();
         types.addItemListener(this);
 
-        for (int i = 0; i < allTypes.size(); ++i)
+        for (int i = 0; i < allTypes.size(); ++i) {
             types.addItem(allTypes.get(i));
+        }
 
         layoutWindow();
     }
@@ -167,10 +169,11 @@ public class CableColEditor extends TrianaWindow implements ItemListener {
         copyTreeMap(realTypeColors, typeColours);
         allTypes = Env.getAllTrianaTypes();
 
-        if (allTypes.size() > 0)
+        if (allTypes.size() > 0) {
             currentColour = (Color) typeColours.get(allTypes.get(0));
-        else
+        } else {
             currentColour = Color.black;
+        }
         colorViewer.setBackground(currentColour);
         colorChoice.setColor(currentColour);
     }
@@ -191,10 +194,11 @@ public class CableColEditor extends TrianaWindow implements ItemListener {
      */
     public static Color getCableColour(String type) {
         Object col = typeColours.get(type.substring(type.lastIndexOf(".") + 1));
-        if (col instanceof Color)
+        if (col instanceof Color) {
             return (Color) col;
-        else
+        } else {
             return Color.black;
+        }
     }
 
     /**
@@ -236,11 +240,14 @@ public class CableColEditor extends TrianaWindow implements ItemListener {
      * Invoked when an action occurs.
      */
     public void itemStateChanged(ItemEvent e) {
-        if (e.getSource() != types)
+        if (e.getSource() != types) {
             return;
+        }
         String type = (String) types.getSelectedItem();
         currentColour = (Color) typeColours.get(type);
-        if (currentColour == null) return;
+        if (currentColour == null) {
+            return;
+        }
         colorViewer.setBackground(currentColour);
         colorViewer.repaint();
         colorChoice.setColor(currentColour);

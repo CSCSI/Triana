@@ -59,6 +59,23 @@
 package org.trianacode.gui.windows;
 
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.help.AboutDialog;
@@ -68,23 +85,13 @@ import org.trianacode.gui.help.search.FindWordListener;
 import org.trianacode.gui.help.search.HTMLSearchResults;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-
 /**
- * Triana Window creates a basic Triana Window with common functionalities and
- * appearance of all Triana Windows.  Triana window subclasses a frame and
- * implements a Window and an ActionListener within this class to handle
- * window closed events and some default menu operations.
+ * Triana Window creates a basic Triana Window with common functionalities and appearance of all Triana Windows.  Triana
+ * window subclasses a frame and implements a Window and an ActionListener within this class to handle window closed
+ * events and some default menu operations.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created Jan 2000
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public abstract class TrianaWindow extends JFrame
         implements ActionListener, ItemListener, FindWordListener {
@@ -123,14 +130,10 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * This class provide a basic window with a Window menu containing a
-     * close option (which hides the window) and a Help menu which calls the
-     * function called help.  Help does nothing at this stage and should
-     * be subclassed to provide help.
-     * <h2>Note</h2>
-     * TrianaWindow does not show (i.e. setVisible(true)) the window.
-     * This should be done by the windows inherited from this
-     * The window is by default set to be a window in another application.
+     * This class provide a basic window with a Window menu containing a close option (which hides the window) and a
+     * Help menu which calls the function called help.  Help does nothing at this stage and should be subclassed to
+     * provide help. <h2>Note</h2> TrianaWindow does not show (i.e. setVisible(true)) the window. This should be done by
+     * the windows inherited from this The window is by default set to be a window in another application.
      */
     public TrianaWindow(String name) {
         this();
@@ -138,8 +141,7 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * Calls TrianaWindow(String) to initialise the menu's and then resize's
-     * to a specific width and height.
+     * Calls TrianaWindow(String) to initialise the menu's and then resize's to a specific width and height.
      *
      * @param width  the desired width of the window
      * @param height the desired height of the window
@@ -153,8 +155,7 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * Returns an image to use as the icon when TrianaWindow is
-     * iconified.
+     * Returns an image to use as the icon when TrianaWindow is iconified.
      *
      * @return image to use.
      */
@@ -168,7 +169,9 @@ public abstract class TrianaWindow extends JFrame
      */
     public void close() {
         try {
-            if (getContentPane() == null) return;
+            if (getContentPane() == null) {
+                return;
+            }
         }
         catch (Exception e) {
             return;
@@ -196,12 +199,9 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * Called when the user wants to close the window. If the window
-     * is in another application then the window is just made
-     * invisible, but if it is a stand alone application then a
-     * really Quit ? window is given to ask the user if he/she
-     * really wants to quit or not.
-     * TODO refactor this out, it's not needed for all TrianaWindow subclasses
+     * Called when the user wants to close the window. If the window is in another application then the window is just
+     * made invisible, but if it is a stand alone application then a really Quit ? window is given to ask the user if
+     * he/she really wants to quit or not. TODO refactor this out, it's not needed for all TrianaWindow subclasses
      */
     public void cleanUp() {
         //No-op for now
@@ -272,10 +272,8 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * Looks in the Resource Bundle (<i>messages</i>) for the
-     * text for the key <i>key</i>.  If it is found then
-     * the text is returned.  If not then the function returns
-     * a blank string and gives an error message
+     * Looks in the Resource Bundle (<i>messages</i>) for the text for the key <i>key</i>.  If it is found then the text
+     * is returned.  If not then the function returns a blank string and gives an error message
      */
     public String getString(String key) {
         try {
@@ -288,18 +286,16 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * Repaints the window by default. Override this function to
-     * put your window specific refreshing.
+     * Repaints the window by default. Override this function to put your window specific refreshing.
      */
     public void refreshMe() {
         repaint();
     }
 
     /**
-     * This overrides the basic setLocation method within component to
-     * clip the window so that it always fits on the screen. If the
-     * user enters values which would make some part of the window fall
-     * off the end of the screen then the values are alterred accordingly.
+     * This overrides the basic setLocation method within component to clip the window so that it always fits on the
+     * screen. If the user enters values which would make some part of the window fall off the end of the screen then
+     * the values are alterred accordingly.
      */
     public void setLocation(int x, int y) {
         Point p = Display.clipFrameToScreen(this, x, y);
@@ -307,10 +303,8 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * Purely abstract at this stage.  It's up to the specific windows
-     * themselves to return the name of their specific helpFile. If you
-     * don't wan't to define help then return "none" otherwise return the
-     * help file.
+     * Purely abstract at this stage.  It's up to the specific windows themselves to return the name of their specific
+     * helpFile. If you don't wan't to define help then return "none" otherwise return the help file.
      */
     public abstract String getHelpFile();
 
@@ -322,8 +316,7 @@ public abstract class TrianaWindow extends JFrame
     }
 
     /**
-     * Displays the given help file in a browser.
-     * later.
+     * Displays the given help file in a browser. later.
      */
     public void showHelpFor(String helpfile) {
         helpfile += ".html";

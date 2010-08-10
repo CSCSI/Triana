@@ -21,8 +21,6 @@ package org.trianacode.gui.service;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 1:29:04 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface WorkflowVerifierConstants {
 

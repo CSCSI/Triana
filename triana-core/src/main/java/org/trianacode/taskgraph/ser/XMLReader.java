@@ -103,14 +103,15 @@ public class XMLReader implements XMLConstants {
 
 
     /**
-     * Close the stream.  Once a stream has been closed, further read(), ready(), mark(), or reset() invocations will
-     * throw an IOException. Closing a previously-closed stream, however, has no effect.
+     * Close the stream.  Once a stream has been closed, further createTool(), ready(), mark(), or reset() invocations
+     * will throw an IOException. Closing a previously-closed stream, however, has no effect.
      *
      * @throws IOException If an I/O error occurs
      */
     public void close() throws IOException {
         try {
             in.close();
+            handler = null;
         } catch (IOException e) {
             throw e;
         }

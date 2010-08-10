@@ -59,17 +59,15 @@
 
 package org.trianacode.gui.action;
 
-import javax.swing.*;
 import java.util.Hashtable;
+
+import javax.swing.Action;
 
 /**
  * A static lookup table for action instances.
  *
- * @author      Ian Wang
- * @created     22nd June 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class ActionTable implements Actions {
@@ -88,10 +86,11 @@ public class ActionTable implements Actions {
      * Retreives the specified action from the action table.
      */
     public static Action getAction(String key) {
-        if (!actions.containsKey(key))
+        if (!actions.containsKey(key)) {
             throw (new RuntimeException("No action for key=" + key + " stored in the ActionTable"));
-        else
+        } else {
             return (Action) actions.get(key);
+        }
     }
 
 }

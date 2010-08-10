@@ -58,45 +58,30 @@
  */
 package triana.types;
 
+import java.lang.reflect.Array;
+
 import triana.types.util.FlatArray;
 import triana.types.util.Triplet;
 
-import java.lang.reflect.Array;
-
 /**
- * VectorType is the basic class derived from GraphType to represent
- * one-dimensional array data of type double. It does
- * not define extra parameters, so it is a "raw" data type. It can hold
- * real or complex one-dimensional data sets.
- * </p><p>
- * VectorType sets <i>independentVariables</i> = 1 and <i>dependentVariables</i> = 1
- * so it represents the values of a scalar function
- * of one independent variable. If that variable is sampled uniformly,
- * then the object holds only the sampled data and a Triplet indicating
- * how the sampling is done. If the independent variable is sampled
- * irregularly, then the object holds the sampling values as well.
- * Users can use method <i>isIndependentTriplet</i> (or method <i>isUniform</i>)
- * to see which case holds.
- * </p><p>
- * VectorType defines new methods that allow padding or interpolation
- * of the data with zeros. These are useful in many signal-analysis
- * applications that will use types derived from VectorType.
- * </p><p>
- * VectorType replaces the old Triana type RawData. For compatibility with
- * that class there are some obsolete functions and parameters added
- * here. In later releases these should be removed.
+ * VectorType is the basic class derived from GraphType to represent one-dimensional array data of type double. It does
+ * not define extra parameters, so it is a "raw" data type. It can hold real or complex one-dimensional data sets.
+ * </p><p> VectorType sets <i>independentVariables</i> = 1 and <i>dependentVariables</i> = 1 so it represents the values
+ * of a scalar function of one independent variable. If that variable is sampled uniformly, then the object holds only
+ * the sampled data and a Triplet indicating how the sampling is done. If the independent variable is sampled
+ * irregularly, then the object holds the sampling values as well. Users can use method <i>isIndependentTriplet</i> (or
+ * method <i>isUniform</i>) to see which case holds. </p><p> VectorType defines new methods that allow padding or
+ * interpolation of the data with zeros. These are useful in many signal-analysis applications that will use types
+ * derived from VectorType. </p><p> VectorType replaces the old Triana type RawData. For compatibility with that class
+ * there are some obsolete functions and parameters added here. In later releases these should be removed. <p/> </p><p>
  *
- * </p><p>
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  * @see TrianaType
  * @see GraphType
  * @see Arithmetic
  * @see MatrixType
  * @see triana.types.util.Triplet
- *
- * @author      Bernard Schutz
- * @created     22 October 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class VectorType extends GraphType implements AsciiComm {
 
@@ -108,41 +93,29 @@ public class VectorType extends GraphType implements AsciiComm {
      */
 
     /**
-     * (Parameter that is kept for consistency with previous versions,
-     * but which is obsolete. It must be kept to the right values by
-     * the <i>updateObsoletePointers</i> method and/or constructors and
-     * <i>set...</i> methods.)
-     * </p><p>
+     * (Parameter that is kept for consistency with previous versions, but which is obsolete. It must be kept to the
+     * right values by the <i>updateObsoletePointers</i> method and/or constructors and <i>set...</i> methods.) </p><p>
      * The <i>x</i>-axis label. Now obsolete, replaced by <i>GraphType.labels</i>.
      */
     public String xlabel;
 
     /**
-     * (Parameter that is kept for consistency with previous versions,
-     * but which is obsolete. It must be kept to the right values by
-     * the <i>updateObsoletePointers</i> method and/or constructors and
-     * <i>set...</i> methods.)
-     * </p><p>
+     * (Parameter that is kept for consistency with previous versions, but which is obsolete. It must be kept to the
+     * right values by the <i>updateObsoletePointers</i> method and/or constructors and <i>set...</i> methods.) </p><p>
      * The <i>y</i>-axis label.  Now obsolete, replaced by <i>GraphType.labels</i>.
      */
     public String ylabel;
 
     /**
-     * (Parameter that is kept for consistency with previous versions,
-     * but which is obsolete. It must be kept to the right values by
-     * the <i>updateObsoletePointers</i> method and/or constructors and
-     * <i>set...</i> methods.)
-     * </p><p>
+     * (Parameter that is kept for consistency with previous versions, but which is obsolete. It must be kept to the
+     * right values by the <i>updateObsoletePointers</i> method and/or constructors and <i>set...</i> methods.) </p><p>
      * The <i>x</i> data.  Now obsolete, replaced by <i>TrianaType.dataContainer</i>.
      */
     public double[] x;
 
     /**
-     * (Parameter that is kept for consistency with previous versions,
-     * but which is obsolete. It must be kept to the right values by
-     * the <i>updateObsoletePointers</i> method and/or constructors and
-     * <i>set...</i> methods.)
-     * </p><p>
+     * (Parameter that is kept for consistency with previous versions, but which is obsolete. It must be kept to the
+     * right values by the <i>updateObsoletePointers</i> method and/or constructors and <i>set...</i> methods.) </p><p>
      * The <i>y</i> data.  Now obsolete, replaced by <i>TrianaType.dataContainer</i>.
      */
     public double[] y;
@@ -156,10 +129,9 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Creates a new real VectorType with a uniformly sampled independent
-     * variable by using the argument array of doubles as
-     * the data and assuming that the independent variable is simply the index
-     * of the data array, ie it runs from 0 to length - 1 in steps of 1.
+     * Creates a new real VectorType with a uniformly sampled independent variable by using the argument array of
+     * doubles as the data and assuming that the independent variable is simply the index of the data array, ie it runs
+     * from 0 to length - 1 in steps of 1.
      *
      * @param y Dependent data array
      */
@@ -171,9 +143,8 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Creates a new real VectorType using the first argument array of doubles
-     * as the sampling values of the independent variable and the second
-     * argument array of doubles as the real data.
+     * Creates a new real VectorType using the first argument array of doubles as the sampling values of the independent
+     * variable and the second argument array of doubles as the real data.
      *
      * @param x Independent data array
      * @param y Dependent data array
@@ -185,18 +156,13 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Creates a new real VectorType with a uniformly sampled independent
-     * variable by using the first argument as the as the Triplet that
-     * determines how the independent variable is uniformly sampled and
-     * the second argument as the real data.
-     * </p><p>
-     * One can invoke this method by constructing the Triplet argument
-     * in the reference statement to this Constructor, eg by using
-     * an argument of the form <PRE>
-     *      new Triplet(length, start, step)
-     * </PRE>
+     * Creates a new real VectorType with a uniformly sampled independent variable by using the first argument as the as
+     * the Triplet that determines how the independent variable is uniformly sampled and the second argument as the real
+     * data. </p><p> One can invoke this method by constructing the Triplet argument in the reference statement to this
+     * Constructor, eg by using an argument of the form <PRE> new Triplet(length, start, step) </PRE>
+     *
      * @param xTr the generator of the independent variable
-     * @param y the data of the dependent variable
+     * @param y   the data of the dependent variable
      * @see triana.types.util.Triplet
      */
     public VectorType(Triplet xTr, double[] y) {
@@ -206,20 +172,15 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Creates a new complex-valued VectorType with a real uniformly-sampled
-     * independent variable by using the first (Triplet) argument to
-     * determine how the independent variable is uniformly sampled, the
-     * second argument (double[]) as the real part of the data,
-     * and the third argument (double[]) as the imaginary part.
-     * </p><p>
-     * One can invoke this method by constructing the Triplet argument
-     * in the reference statement to this Constructor, eg by using
-     * an argument of the form <PRE>
-     *      new Triplet(length, start, step)
-     * </PRE>
+     * Creates a new complex-valued VectorType with a real uniformly-sampled independent variable by using the first
+     * (Triplet) argument to determine how the independent variable is uniformly sampled, the second argument (double[])
+     * as the real part of the data, and the third argument (double[]) as the imaginary part. </p><p> One can invoke
+     * this method by constructing the Triplet argument in the reference statement to this Constructor, eg by using an
+     * argument of the form <PRE> new Triplet(length, start, step) </PRE>
+     *
      * @param xTr the generator of the independent variable
-     * @param yr the data of the real part of the dependent variable
-     * @param yi the data of the imaginary part of the dependent variable
+     * @param yr  the data of the real part of the dependent variable
+     * @param yi  the data of the imaginary part of the dependent variable
      * @see triana.types.util.Triplet
      */
     public VectorType(Triplet xTr, double[] yr, double[] yi) {
@@ -230,11 +191,9 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Creates a new complex-valued VectorType with a complex
-     * independent variable by using the first two argument arrays of doubles
-     * as the real part and imaginary part of the indpendent variable,
-     * and the second two argument arrays of doubles as the real part
-     * and imaginary part of the dependent variable.
+     * Creates a new complex-valued VectorType with a complex independent variable by using the first two argument
+     * arrays of doubles as the real part and imaginary part of the indpendent variable, and the second two argument
+     * arrays of doubles as the real part and imaginary part of the dependent variable.
      *
      * @param xr the real part of the data of the independent variable
      * @param xi the imaginary part of the data of the independent variable
@@ -255,8 +214,8 @@ public class VectorType extends GraphType implements AsciiComm {
      */
 
     /**
-     * Tests to see if the independent variable is uniformly
-     * sampled. It calls the <i>isUniform</i> method of GraphType for index 0.
+     * Tests to see if the independent variable is uniformly sampled. It calls the <i>isUniform</i> method of GraphType
+     * for index 0.
      *
      * @return boolean <i>True</i> if the independent variable is sampled uniformly
      */
@@ -265,8 +224,8 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Tests to see if the independent variable is represented
-     * by a Triplet. It calls the <i>isTriplet</i> method of GraphType for index 0.
+     * Tests to see if the independent variable is represented by a Triplet. It calls the <i>isTriplet</i> method of
+     * GraphType for index 0.
      *
      * @return boolean <i>True</i> if the independent variable is given as a Triplet
      * @see triana.types.util.Triplet
@@ -281,7 +240,9 @@ public class VectorType extends GraphType implements AsciiComm {
      * @return int Length of the data set
      */
     public int size() {
-        if (getDataArrayReal(0) == null) return 0;
+        if (getDataArrayReal(0) == null) {
+            return 0;
+        }
         return Array.getLength(getDataArrayReal(0));
     }
 
@@ -295,10 +256,9 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Returns the real part of the data array for the given dependent
-     * variable. This is just an alias for <i>getDataArrayReal(0)</i> that
-     * allows users not to worry about the index, since in VectorType
-     * there is only one dependent data set.
+     * Returns the real part of the data array for the given dependent variable. This is just an alias for
+     * <i>getDataArrayReal(0)</i> that allows users not to worry about the index, since in VectorType there is only one
+     * dependent data set.
      *
      * @return double[] The (real part of the ) data array
      */
@@ -307,16 +267,11 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Returns the real part of the array that will be graphed
-     * for the given dependent variable. This is just an alias for
-     * <i>getGraphArrayReal(0)</i> that
-     * allows users not to worry about the index, since in VectorType
-     * there is only one dependent data set. This method should be not be
-     * over-ridden by
-     * derived classes, even if the independent data
-     * are stored in an unconventional manner, for example non-monotonic.
-     * Instead, the method <i>getGraphArrayReal</i> of GraphType
-     * should be overridden.
+     * Returns the real part of the array that will be graphed for the given dependent variable. This is just an alias
+     * for <i>getGraphArrayReal(0)</i> that allows users not to worry about the index, since in VectorType there is only
+     * one dependent data set. This method should be not be over-ridden by derived classes, even if the independent data
+     * are stored in an unconventional manner, for example non-monotonic. Instead, the method <i>getGraphArrayReal</i>
+     * of GraphType should be overridden.
      *
      * @return double[] The (real part of the) graph array
      * @see GraphType
@@ -326,11 +281,9 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Returns the imaginary part of the data
-     * array for the dependent variable. This is just an alias for
-     * <i>getDataArrayImag(0)</i> that
-     * allows users not to worry about the index, since in VectorType
-     * there is only one dependent data set.
+     * Returns the imaginary part of the data array for the dependent variable. This is just an alias for
+     * <i>getDataArrayImag(0)</i> that allows users not to worry about the index, since in VectorType there is only one
+     * dependent data set.
      *
      * @return double[]  The imaginary part of the data array
      */
@@ -339,16 +292,11 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Returns the imaginary part of the array that will be graphed
-     * for the given dependent variable. This is just an alias for
-     * <i>getGraphArrayImag(0)</i> that
-     * allows users not to worry about the index, since in VectorType
-     * there is only one dependent data set. This method should be not be
-     * over-ridden by
-     * derived classes, even if the independent data
-     * are stored in an unconventional manner, for example non-monotonic.
-     * Instead, the method <i>getGraphArrayImag</i> of GraphType
-     * should be overridden.
+     * Returns the imaginary part of the array that will be graphed for the given dependent variable. This is just an
+     * alias for <i>getGraphArrayImag(0)</i> that allows users not to worry about the index, since in VectorType there
+     * is only one dependent data set. This method should be not be over-ridden by derived classes, even if the
+     * independent data are stored in an unconventional manner, for example non-monotonic. Instead, the method
+     * <i>getGraphArrayImag</i> of GraphType should be overridden.
      *
      * @return double[] The imaginary part of graph array
      * @see GraphType
@@ -358,8 +306,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * A synonym for <i>getDataReal</i> for use when data is known
-     * to be only real.
+     * A synonym for <i>getDataReal</i> for use when data is known to be only real.
      *
      * @return double[]  The real data array
      */
@@ -368,9 +315,8 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * A synonym for <i>getGraphReal</i> for use when the data
-     * is known to be real. This method should not be over-ridden in
-     * derived classes.
+     * A synonym for <i>getGraphReal</i> for use when the data is known to be real. This method should not be
+     * over-ridden in derived classes.
      *
      * @return double[]  The real graph array
      */
@@ -379,8 +325,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the argument double[] array as the (real part
-     * of) the dependent variable.
+     * Sets the argument double[] array as the (real part of) the dependent variable.
      *
      * @param data The new data
      */
@@ -389,8 +334,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * An alias for <i>setDataReal</i>, useful in derived classes
-     * where the data is assumed to be real all the time.
+     * An alias for <i>setDataReal</i>, useful in derived classes where the data is assumed to be real all the time.
      *
      * @param data The new data
      */
@@ -399,8 +343,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the argument double[] array as the imaginary
-     * part of the dependent variable.
+     * Sets the argument double[] array as the imaginary part of the dependent variable.
      *
      * @param data The new data
      */
@@ -409,9 +352,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the two argument double[] arrays
-     * as the real and imaginary parts of the dependent
-     * variable.
+     * Sets the two argument double[] arrays as the real and imaginary parts of the dependent variable.
      *
      * @param dataReal The real part of the new data
      * @param dataImag The imaginary part of the new data
@@ -422,33 +363,41 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the data array(s) to zero if they have been allocated. Does
-     * nothing if they have not been allocated.
+     * Sets the data array(s) to zero if they have been allocated. Does nothing if they have not been allocated.
      */
     public void initialiseData() {
         int j;
         double[] d = getDataReal();
-        if (d != null) for (j = 0; j < d.length; j++) d[j] = 0.0;
+        if (d != null) {
+            for (j = 0; j < d.length; j++) {
+                d[j] = 0.0;
+            }
+        }
         d = getDataImag();
-        if (d != null) for (j = 0; j < d.length; j++) d[j] = 0.0;
+        if (d != null) {
+            for (j = 0; j < d.length; j++) {
+                d[j] = 0.0;
+            }
+        }
     }
 
 
     /**
-     * Allocates the real part of the data to a double array of the given
-     * length and then sets its elements to zero.
+     * Allocates the real part of the data to a double array of the given length and then sets its elements to zero.
      *
      * @param len The length of the data array being created
      */
     public void initialiseDataReal(int len) {
         double[] d = new double[len];
-        for (int j = 0; j < len; j++) d[j] = 0.0;
+        for (int j = 0; j < len; j++) {
+            d[j] = 0.0;
+        }
         setData(d);
     }
 
     /**
-     * Allocates the real and imaginary parts of the data to double arrays
-     * of the given length and then sets their elements to zero.
+     * Allocates the real and imaginary parts of the data to double arrays of the given length and then sets their
+     * elements to zero.
      *
      * @param len The length of the data arrays being created
      */
@@ -463,42 +412,41 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Returns the Triplet giving the independent data. If
-     * the data is not uniformly sampled then it returns <i>null</i>.
+     * Returns the Triplet giving the independent data. If the data is not uniformly sampled then it returns
+     * <i>null</i>.
      *
      * @return Triplet The independent variable as a Triplet, or <i>null</i> if not uniformly sampled
      * @see triana.types.util.Triplet
      */
     public Triplet getXTriplet() {
         if (isUniform()) {
-            if (isTriplet(0))
+            if (isTriplet(0)) {
                 return getIndependentTriplet(0);
-            else
+            } else {
                 return new Triplet(getIndependentArrayReal(0));
+            }
         }
         return null;
     }
 
     /**
-     * Returns the real part of the data array for the
-     * independent variable.  If it is uniformly sampled, any Triplet is
+     * Returns the real part of the data array for the independent variable.  If it is uniformly sampled, any Triplet is
      * converted to an array.
      *
      * @return double[]  The real part of independent variable
      * @see triana.types.util.Triplet
      */
     public double[] getXReal() {
-        if (isTriplet(0)) return getIndependentTriplet(0).convertToArray();
+        if (isTriplet(0)) {
+            return getIndependentTriplet(0).convertToArray();
+        }
         return getIndependentArrayReal(0);
     }
 
     /**
-     * Returns an array containing the real part of the data scale for the
-     * independent variable.  This should be not be over-ridden by
-     * derived classes, even if the independent data
-     * are stored in an unconventional manner, for example non-monotonic.
-     * Instead, the method <i>getIndependentScaleReal</i> of GraphType
-     * should be overridden.
+     * Returns an array containing the real part of the data scale for the independent variable.  This should be not be
+     * over-ridden by derived classes, even if the independent data are stored in an unconventional manner, for example
+     * non-monotonic. Instead, the method <i>getIndependentScaleReal</i> of GraphType should be overridden.
      *
      * @return double[]  The real part of independent variable's scale
      * @see GraphType
@@ -508,23 +456,21 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Returns the imaginary part of the data
-     * array for the independent variable.
+     * Returns the imaginary part of the data array for the independent variable.
      *
      * @return double[]  The imaginary part of the independent variable
      */
     public double[] getXImag() {
-        if (isTriplet(0)) return null;
+        if (isTriplet(0)) {
+            return null;
+        }
         return getIndependentArrayImag(0);
     }
 
     /**
-     * Returns an array containing the imaginary part of the data scale for the
-     * independent variable.  This should be not be over-ridden by
-     * derived classes, even if the independent data
-     * are stored in an unconventional manner, for example non-monotonic.
-     * Instead, the method <i>getIndependentScaleImag</i> of GraphType
-     * should be overridden.
+     * Returns an array containing the imaginary part of the data scale for the independent variable.  This should be
+     * not be over-ridden by derived classes, even if the independent data are stored in an unconventional manner, for
+     * example non-monotonic. Instead, the method <i>getIndependentScaleImag</i> of GraphType should be overridden.
      *
      * @return double[]  The imaginary part of independent variable's scale
      * @see GraphType
@@ -534,8 +480,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * A synonym for <i>getXReal</i> for use when the data are known
-     * to be real.
+     * A synonym for <i>getXReal</i> for use when the data are known to be real.
      *
      * @return double[]  The (real part of the) independent variable
      */
@@ -544,8 +489,8 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * A synonym for <i>getScaleReal</i> for use when the data are known
-     * to be real. Do not override this method in derived classes.
+     * A synonym for <i>getScaleReal</i> for use when the data are known to be real. Do not override this method in
+     * derived classes.
      *
      * @return double[]  The (real part of the) independent variable's scale
      */
@@ -554,8 +499,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the argument Triplet as the independent
-     * variable.
+     * Sets the argument Triplet as the independent variable.
      *
      * @param tr The new data
      * @see triana.types.util.Triplet
@@ -565,8 +509,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the argument double[] as the
-     * independent variable.
+     * Sets the argument double[] as the independent variable.
      *
      * @param data The new data for the independent variable
      */
@@ -575,8 +518,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the argument double[] as the (real part of the)
-     * independent variable. Synonym for <i>SetX</i>.
+     * Sets the argument double[] as the (real part of the) independent variable. Synonym for <i>SetX</i>.
      *
      * @param data The new data for the real part of the independent variable
      */
@@ -585,8 +527,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the argument double[] as the imaginary part of the
-     * independent variable.
+     * Sets the argument double[] as the imaginary part of the independent variable.
      *
      * @param data The new data for the imaginary part of the independent variable
      */
@@ -595,9 +536,7 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Sets the two argument double[] arrays
-     * as the real and imaginary parts of the independent
-     * variable.
+     * Sets the two argument double[] arrays as the real and imaginary parts of the independent variable.
      *
      * @param xReal The real part of the independent variable
      * @param xImag The imaginary part of the independent variable
@@ -612,32 +551,28 @@ public class VectorType extends GraphType implements AsciiComm {
      */
 
     /**
-     * Extends the data set (both real and imaginary parts)
-     * to a longer set by padding with zeros. The given integer
-     * argument gives the new length after padding, and the
-     * boolean argument determines whether the padding is at
-     * the front or the back.
-     * </p><p>
-     * If the new length is shorter than the old, nothing is done.
-     *  </p><p>
-     * Derived types should override this if necessary to provide
-     * for the correct handling of parameters and other special
-     * features.
+     * Extends the data set (both real and imaginary parts) to a longer set by padding with zeros. The given integer
+     * argument gives the new length after padding, and the boolean argument determines whether the padding is at the
+     * front or the back. </p><p> If the new length is shorter than the old, nothing is done. </p><p> Derived types
+     * should override this if necessary to provide for the correct handling of parameters and other special features.
      *
      * @param newLength The new length of the data set
-     * @param front True if padding is at the front, false for padding at the back
+     * @param front     True if padding is at the front, false for padding at the back
      */
     public void extendWithZeros(int newLength, boolean front) {
         int oldsize = size();
         int j;
-        if (newLength <= oldsize) return;
+        if (newLength <= oldsize) {
+            return;
+        }
         //System.out.println("extending with zeros to new length = " + String.valueOf( newLength ) );
         double[] newReal = new double[newLength];
         FlatArray.initializeArray(newReal);
-        if (front)
+        if (front) {
             System.arraycopy(getDataReal(), 0, newReal, newLength - oldsize, oldsize);
-        else
+        } else {
             System.arraycopy(getDataReal(), 0, newReal, 0, oldsize);
+        }
         setDataReal(newReal);
 
         setDimensionLengths(newLength, 0);
@@ -645,10 +580,11 @@ public class VectorType extends GraphType implements AsciiComm {
         if (isDependentComplex(0)) {
             double[] newImag = new double[newLength];
             FlatArray.initializeArray(newImag);
-            if (front)
+            if (front) {
                 System.arraycopy(getDataImag(), 0, newImag, newLength - oldsize, oldsize);
-            else
+            } else {
                 System.arraycopy(getDataImag(), 0, newImag, 0, oldsize);
+            }
             setDataImag(newImag);
         }
 
@@ -657,20 +593,22 @@ public class VectorType extends GraphType implements AsciiComm {
                 setIndependentTriplet(Triplet.convertToTriplet(getXArray()), 0);
             }
             getIndependentTriplet(0).setLength(newLength);
-        }
-        else {
+        } else {
             double[] x = getXArray();
             double[] newX = new double[newLength];
             double dx;
             if (front) {
                 System.arraycopy(x, 0, newX, newLength - oldsize, oldsize);
                 dx = x[1] - x[0];
-                for (j = newLength - oldsize; j > 0; j--) newX[j - 1] = newX[j] - dx;
-            }
-            else {
+                for (j = newLength - oldsize; j > 0; j--) {
+                    newX[j - 1] = newX[j] - dx;
+                }
+            } else {
                 System.arraycopy(x, 0, newX, 0, oldsize);
                 dx = x[x.length - 1] - x[x.length - 2];
-                for (j = oldsize; j < newLength; j++) newX[j] = newX[j - 1] + dx;
+                for (j = oldsize; j < newLength; j++) {
+                    newX[j] = newX[j - 1] + dx;
+                }
             }
             setX(newX);
 
@@ -681,12 +619,15 @@ public class VectorType extends GraphType implements AsciiComm {
                 if (front) {
                     System.arraycopy(x1, 0, newX1, newLength - oldsize, oldsize);
                     dx1 = x1[1] - x1[0];
-                    for (j = newLength - oldsize; j > 0; j--) newX1[j - 1] = newX1[j] - dx1;
-                }
-                else {
+                    for (j = newLength - oldsize; j > 0; j--) {
+                        newX1[j - 1] = newX1[j] - dx1;
+                    }
+                } else {
                     System.arraycopy(x1, 0, newX1, 0, oldsize);
                     dx1 = x1[x1.length - 1] - x1[x1.length - 2];
-                    for (j = oldsize; j < newLength; j++) newX1[j] = newX1[j - 1] + dx1;
+                    for (j = oldsize; j < newLength; j++) {
+                        newX1[j] = newX1[j - 1] + dx1;
+                    }
                 }
                 setXImag(newX1);
             }
@@ -696,27 +637,21 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
     /**
-     * Inserts zeros in between existing elements of the data
-     * set. The integer argument <i>factor</i> gives the number of zeros per
-     * existing data point that must be inserted. The boolean argument
-     * <i>before</i> regulates whether the zeros should be inserted before
-     * each element (if <i>true</i>) or after (<i>false</i>).
-     * The new values of the independent
-     * variable are interpolated between those of the old ones,
-     * using uniform interpolation even if the data are sampled
-     * irregularly.
-     * </p><p>
-     * If the argument <i>factor</i> is zero or negative, nothing is done.
-     *  </p><p>
-     * Derived types should override this if necessary to provide
-     * for the correct handling of parameters and other special
-     * features.
+     * Inserts zeros in between existing elements of the data set. The integer argument <i>factor</i> gives the number
+     * of zeros per existing data point that must be inserted. The boolean argument <i>before</i> regulates whether the
+     * zeros should be inserted before each element (if <i>true</i>) or after (<i>false</i>). The new values of the
+     * independent variable are interpolated between those of the old ones, using uniform interpolation even if the data
+     * are sampled irregularly. </p><p> If the argument <i>factor</i> is zero or negative, nothing is done. </p><p>
+     * Derived types should override this if necessary to provide for the correct handling of parameters and other
+     * special features.
      *
      * @param factor The number of zeros per data point to be inserted
      * @param before <i>True</i> if the zeros go before each point, <i>false</i> if after
      */
     public void interpolateZeros(int factor, boolean before) {
-        if (factor <= 0) return;
+        if (factor <= 0) {
+            return;
+        }
 
         int jump = factor + 1;
         int size = getDataReal().length;
@@ -727,7 +662,9 @@ public class VectorType extends GraphType implements AsciiComm {
         double[] oldReal = getDataReal();
         FlatArray.initializeArray(newReal);
         start = (before) ? factor : 0;
-        for (j = 0, k = start; j < size; j++, k += jump) newReal[k] = oldReal[j];
+        for (j = 0, k = start; j < size; j++, k += jump) {
+            newReal[k] = oldReal[j];
+        }
         setDataReal(newReal);
         setDimensionLengths(newLength, 0);
 
@@ -736,7 +673,9 @@ public class VectorType extends GraphType implements AsciiComm {
             double[] oldImag = getDataImag();
             FlatArray.initializeArray(newImag);
             start = (before) ? factor : 0;
-            for (j = 0, k = start; j < size; j++, k += jump) newImag[k] = oldImag[j];
+            for (j = 0, k = start; j < size; j++, k += jump) {
+                newImag[k] = oldImag[j];
+            }
             setDataImag(newImag);
         }
 
@@ -746,9 +685,11 @@ public class VectorType extends GraphType implements AsciiComm {
             }
             getIndependentTriplet(0).setLength(newLength);
             getIndependentTriplet(0).setStep(getIndependentTriplet(0).getStep() / (factor + 1));
-            if (before) getIndependentTriplet(0).setStart(getIndependentTriplet(0).getStart() - factor * getIndependentTriplet(0).getStep());
-        }
-        else {
+            if (before) {
+                getIndependentTriplet(0)
+                        .setStart(getIndependentTriplet(0).getStart() - factor * getIndependentTriplet(0).getStep());
+            }
+        } else {
             double[] x = getXArray();
             double[] newX = new double[newLength];
             double dx;
@@ -768,8 +709,7 @@ public class VectorType extends GraphType implements AsciiComm {
                     }
                     newX[k++] = x[j];
                 }
-            }
-            else {
+            } else {
                 k = 0;
                 newX[0] = x[0];
                 for (j = 1; j < x.length; j++) {
@@ -808,8 +748,7 @@ public class VectorType extends GraphType implements AsciiComm {
                         }
                         newX1[k++] = x1[j];
                     }
-                }
-                else {
+                } else {
                     k = 0;
                     newX1[0] = x1[0];
                     for (j = 1; j < x.length; j++) {
@@ -832,58 +771,40 @@ public class VectorType extends GraphType implements AsciiComm {
     }
 
 
-
-
     /*
-     * Implement methods that need to be overridden from superior classes.
-     */
+    * Implement methods that need to be overridden from superior classes.
+    */
 
     /**
      * Tests to make sure this Object obeys the VectorType data model.
      *
-     * @return boolean <i>True</i> if it obeys the GraphType model and if the values of <i>independentVariables</i> and <i>dependentVariables</i> are right.
+     * @return boolean <i>True</i> if it obeys the GraphType model and if the values of <i>independentVariables</i> and
+     *         <i>dependentVariables</i> are right.
      */
     public boolean testDataModel() {
-        if (!super.testDataModel()) return false;
-        if ((getIndependentVariables() != 1) || (getDependentVariables() != 1)) return false;
+        if (!super.testDataModel()) {
+            return false;
+        }
+        if ((getIndependentVariables() != 1) || (getDependentVariables() != 1)) {
+            return false;
+        }
         return true;
     }
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         VectorType v = null;
@@ -903,31 +824,23 @@ public class VectorType extends GraphType implements AsciiComm {
 
 
     /**
-     * Tests the argument object to determine if
-     * it makes sense to perform arithmetic operations between
-     * it and the current object.
-     * </p><p>
-     * In VectorType, this method tests first for compatibility with
-     * superior classes and then tests whether the input is a VectorType data
-     * object with the same value of <i>isUniform</i> as the current one. It does
-     * <b>not</b> require that the independent data values should be the
-     * same, since one might want to add together subsequent data sets,
-     * <i>e.g.</i> when one performs averages.
-     * </p><p>
-     * Classes derived from this should over-ride this method with further
-     * tests as appropriate. The over-riding method should normally have the
-     * first lines <PRE>
-     *      boolean test = super.isCompatible( obj );
-     * </PRE>followed by other tests. If other types
-     * not subclassed from GraphType or Const should be allowed to be
-     * compatible then other tests must be implemented.
+     * Tests the argument object to determine if it makes sense to perform arithmetic operations between it and the
+     * current object. </p><p> In VectorType, this method tests first for compatibility with superior classes and then
+     * tests whether the input is a VectorType data object with the same value of <i>isUniform</i> as the current one.
+     * It does <b>not</b> require that the independent data values should be the same, since one might want to add
+     * together subsequent data sets, <i>e.g.</i> when one performs averages. </p><p> Classes derived from this should
+     * over-ride this method with further tests as appropriate. The over-riding method should normally have the first
+     * lines <PRE> boolean test = super.isCompatible( obj ); </PRE>followed by other tests. If other types not
+     * subclassed from GraphType or Const should be allowed to be compatible then other tests must be implemented.
      *
      * @param obj The data object to be compared with the current one
      * @return <I>True</I> if the object can be combined with the current one
      */
     public boolean isCompatible(TrianaType obj) {
         boolean test = super.isCompatible(obj);
-        if ((test) && (obj instanceof VectorType)) test = (isUniform() == ((VectorType) obj).isUniform());
+        if ((test) && (obj instanceof VectorType)) {
+            test = (isUniform() == ((VectorType) obj).isUniform());
+        }
         return test;
     }
 
@@ -947,6 +860,7 @@ public class VectorType extends GraphType implements AsciiComm {
      *       super.updateObsoletePointers;
      * </PRE>
      */
+
     protected void updateObsoletePointers() {
 //        if( isTriplet( 0 ) ) x = null;
         // getIndependentTriplet( 0 ).convertToArray(); // IT MEM FIX !!! storing full x array

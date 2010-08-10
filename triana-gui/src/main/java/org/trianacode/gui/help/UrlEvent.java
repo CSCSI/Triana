@@ -61,12 +61,10 @@ package org.trianacode.gui.help;
 import java.util.EventObject;
 
 /**
- * Sent when a user changes an html page either by using the forward/back
- * buttons/menu items or clicks on a link.
+ * Sent when a user changes an html page either by using the forward/back buttons/menu items or clicks on a link.
  *
- * @author      Melanie Rhianna Lewis
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Melanie Rhianna Lewis
+ * @version $Revision: 4048 $
  */
 public class UrlEvent extends EventObject {
     public UrlEvent(Object source) {

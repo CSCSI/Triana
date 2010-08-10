@@ -3,9 +3,9 @@ package org.trianacode.taskgraph.interceptor.execution;
 import java.io.File;
 import java.io.FileReader;
 
+import org.trianacode.EngineInit;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.ser.XMLReader;
-import org.trianacode.EngineInit;
 
 /**
  * @author Andrew Harrison

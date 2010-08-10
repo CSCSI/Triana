@@ -58,6 +58,8 @@
  */
 package org.trianacode.taskgraph.imp;
 
+import java.util.ArrayList;
+
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.Node;
@@ -65,16 +67,11 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.event.CableEvent;
 import org.trianacode.taskgraph.event.CableListener;
 
-import java.util.ArrayList;
-
 /**
- * A cable linking two Tasks in a TaskGraphImp. The Tasks are linked through their
- * input/output Nodes.
+ * A cable linking two Tasks in a TaskGraphImp. The Tasks are linked through their input/output Nodes.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 24rd April
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CableImp implements Cable {
 
@@ -108,8 +105,9 @@ public class CableImp implements Cable {
      * Connect two nodes with this cable.
      */
     public void connect(Node sendnode, Node recnode) throws CableException {
-        if ((sendnode == null) || (recnode == null))
+        if ((sendnode == null) || (recnode == null)) {
             throw (new CableException("Cannot connect to null node"));
+        }
 
         this.sendnode = sendnode;
         this.recnode = recnode;
@@ -123,17 +121,20 @@ public class CableImp implements Cable {
      * Reconnects the sender to this cable
      */
     public void reconnect(Node node) throws CableException {
-        if (node == null)
+        if (node == null) {
             throw (new CableException("Cannot reconnect to null node"));
+        }
 
         if (node.isOutputNode()) {
-            if (sendnode != null)
+            if (sendnode != null) {
                 sendnode.disconnect();
+            }
 
             sendnode = node;
         } else {
-            if (recnode != null)
+            if (recnode != null) {
                 recnode.disconnect();
+            }
 
             recnode = node;
         }
@@ -144,8 +145,7 @@ public class CableImp implements Cable {
     }
 
     /**
-     * Disconnect this cable from its nodes. Note that a disconnected cable
-     * cannot be reconnected.
+     * Disconnect this cable from its nodes. Note that a disconnected cable cannot be reconnected.
      */
     public void disconnect() throws CableException {
         if (isConnected()) {
@@ -163,8 +163,9 @@ public class CableImp implements Cable {
     public void addCableListener(final CableListener listener) {
         TaskGraphEventDispatch.invokeLater(new Runnable() {
             public void run() {
-                if (!listeners.contains(listener))
+                if (!listeners.contains(listener)) {
                     listeners.add(listener);
+                }
             }
         });
     }
@@ -202,10 +203,11 @@ public class CableImp implements Cable {
      * @return the task which sends data (via a node) along this cable
      */
     public Task getSendingTask() {
-        if (sendnode != null)
+        if (sendnode != null) {
             return sendnode.getTask();
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -220,24 +222,23 @@ public class CableImp implements Cable {
      * @return the task which receives data (via a node) along this cable
      */
     public Task getReceivingTask() {
-        if (recnode != null)
+        if (recnode != null) {
             return recnode.getTask();
-        else
+        } else {
             return null;
+        }
     }
 
 
     /**
-     * @return true if the specified node sends data to or receives data from
-     *         this cable
+     * @return true if the specified node sends data to or receives data from this cable
      */
     public boolean contains(Node node) {
         return (sendnode == node.getBottomLevelNode()) || (recnode == node.getBottomLevelNode());
     }
 
     /**
-     * @return true if the specified task sends data to or receives data from
-     *         this cable
+     * @return true if the specified task sends data to or receives data from this cable
      */
     public boolean connects(Task task) {
         Node node = sendnode;
@@ -260,8 +261,7 @@ public class CableImp implements Cable {
 
 
     /**
-     * Notifies all the cable listeners that a the cable has been reconnected
-     * to different nodes;
+     * Notifies all the cable listeners that a the cable has been reconnected to different nodes;
      */
     private void notifyCableReconnected() {
         final Cable cable = this;
@@ -271,8 +271,9 @@ public class CableImp implements Cable {
                 CableListener[] copy = (CableListener[]) listeners.toArray(new CableListener[listeners.size()]);
                 CableEvent event = new CableEvent(cable);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].cableReconnected(event);
+                }
 
             }
         });
@@ -289,17 +290,19 @@ public class CableImp implements Cable {
                 CableListener[] copy = (CableListener[]) listeners.toArray(new CableListener[listeners.size()]);
                 CableEvent event = new CableEvent(cable);
 
-                for (int count = 0; count < copy.length; count++)
+                for (int count = 0; count < copy.length; count++) {
                     copy[count].cableDisconnected(event);
+                }
             }
         });
     }
 
 
     public String toString() {
-        if (isConnected())
+        if (isConnected()) {
             return getSendingNode() + "-->" + getReceivingNode();
-        else
+        } else {
             return getSendingNode() + "-x-" + getReceivingNode();
+        }
     }
 }

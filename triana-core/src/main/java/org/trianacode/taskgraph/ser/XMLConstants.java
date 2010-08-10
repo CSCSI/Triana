@@ -21,8 +21,6 @@ package org.trianacode.taskgraph.ser;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 7, 2009: 4:12:18 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface XMLConstants {
 

@@ -58,18 +58,36 @@
  */
 package org.trianacode.gui.help.search;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class FindWordDialog extends JDialog {
 
@@ -140,9 +158,8 @@ public class FindWordDialog extends JDialog {
                 if (e.getClickCount() == 2) {
                     HTMLDocumentInfo info = infoArray[documentList.getSelectedIndex()];
                     despatchFindWordEvent((String) wordList.getSelectedValue(),
-                                          info.getTitle(), info.getFile());
-                }
-                else if (mode == TOOLS) {
+                            info.getTitle(), info.getFile());
+                } else if (mode == TOOLS) {
                     HTMLDocumentInfo info = infoArray[documentList.getSelectedIndex()];
                     String file = info.getFile().getAbsolutePath();
                     String toolbox = file.substring(0, file.lastIndexOf(File.separator) - 1);
@@ -198,7 +215,7 @@ public class FindWordDialog extends JDialog {
         Dimension frameSize = getSize();
 
         setLocation((screenSize.width - frameSize.width) / 2,
-                    (screenSize.height - frameSize.height) / 2);
+                (screenSize.height - frameSize.height) / 2);
     }
 
     public void addFindWordListener(FindWordListener listener) {
@@ -272,7 +289,7 @@ public class FindWordDialog extends JDialog {
         public void actionPerformed(ActionEvent e) {
             HTMLDocumentInfo info = infoArray[documentList.getSelectedIndex()];
             despatchFindWordEvent((String) wordList.getSelectedValue(),
-                                  info.getTitle(), info.getFile());
+                    info.getTitle(), info.getFile());
         }
     }
 

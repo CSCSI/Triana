@@ -1,5 +1,7 @@
 package org.trianacode.taskgraph.interceptor.execution;
 
+import java.net.URL;
+
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.NodeException;
@@ -299,7 +301,7 @@ public class PoisonTask implements Task {
     }
 
     @Override
-    public String getDefinitionPath() {
+    public URL getDefinitionPath() {
         return null;
     }
 
@@ -481,7 +483,7 @@ public class PoisonTask implements Task {
     }
 
     @Override
-    public void setDefinitionPath(String filepath) {
+    public void setDefinitionPath(URL filepath) {
     }
 
     @Override

@@ -62,12 +62,11 @@ import java.io.File;
 import java.io.Serializable;
 
 /**
- * This class encapsulates information about an HTML document.
- * Currently this is only it's title and it's location.
+ * This class encapsulates information about an HTML document. Currently this is only it's title and it's location.
+ *
+ * @version $Revision: 4048 $
  * @see HTMLSearchIndexer
  * @see HTMLSearchResults
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class HTMLDocumentInfo implements Serializable {
     private String title;
@@ -98,11 +97,13 @@ public class HTMLDocumentInfo implements Serializable {
     }
 
     public boolean equals(HTMLDocumentInfo info) {
-        if (info == null) return false;
+        if (info == null) {
+            return false;
+        }
 
         return
                 title.equals(info.getTitle()) &&
-                file.toString().equals(info.getFile().toString());
+                        file.toString().equals(info.getFile().toString());
     }
 
     public String toString() {

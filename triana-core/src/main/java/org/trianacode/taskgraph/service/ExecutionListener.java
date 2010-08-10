@@ -60,14 +60,10 @@
 package org.trianacode.taskgraph.service;
 
 /**
- * A listener that is notified when the execution state of a runnable instance
- * changes
+ * A listener that is notified when the execution state of a runnable instance changes
  *
- * @author      Ian Wang
- * @created     13th August 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface ExecutionListener {
@@ -79,8 +75,8 @@ public interface ExecutionListener {
 
 
     /**
-     * Notified when an execution is requested (either by the user or due to all
-     * essential input data having been received)
+     * Notified when an execution is requested (either by the user or due to all essential input data having been
+     * received)
      */
     public void executionRequested(ExecutionEvent event);
 

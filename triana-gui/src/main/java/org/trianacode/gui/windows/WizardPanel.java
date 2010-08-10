@@ -59,15 +59,11 @@
 package org.trianacode.gui.windows;
 
 /**
- * An optional interface implemented by panels in a wizard. By implementing
- * this interface they receive notification when they are displayed or
- * hidden, and also disable the finish button;
+ * An optional interface implemented by panels in a wizard. By implementing this interface they receive notification
+ * when they are displayed or hidden, and also disable the finish button;
  *
- *
- * @author      Ian Wang
- * @created     Today's date
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public interface WizardPanel {
 
@@ -83,18 +79,16 @@ public interface WizardPanel {
 
 
     /**
-     * @return a flag inidcating whether this panel is in a finishable
-     * state (i.e. whether a meaningful result would be generated if finish
-     * was pressed). Note that notifyButtonStateChanged() should be called
-     * on the wizard interface when the return state changes.
+     * @return a flag inidcating whether this panel is in a finishable state (i.e. whether a meaningful result would be
+     *         generated if finish was pressed). Note that notifyButtonStateChanged() should be called on the wizard
+     *         interface when the return state changes.
      */
     public boolean isFinishEnabled();
 
     /**
-     * @return a flag inidcating whether this panel is next enabled
-     * state (i.e. whether a meaningful result would be generated if next
-     * was pressed). Note that notifyButtonStateChanged() should be called
-     * on the wizard interface when the return state changes.
+     * @return a flag inidcating whether this panel is next enabled state (i.e. whether a meaningful result would be
+     *         generated if next was pressed). Note that notifyButtonStateChanged() should be called on the wizard
+     *         interface when the return state changes.
      */
     public boolean isNextEnabled();
 

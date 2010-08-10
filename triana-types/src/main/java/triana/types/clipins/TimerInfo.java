@@ -65,11 +65,8 @@ import org.trianacode.taskgraph.tool.Tool;
 /**
  * Timing info on a task.
  *
- * @author      Ian Wang
- * @created     11th August 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * @todo
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TimerInfo {

@@ -61,7 +61,7 @@
 
     <target name="build">
         <javac srcdir="." destdir="/Users/scmmss/physics/triana/classes"
-            deprecation="on" optimize="on" verbose="off">
+               deprecation="on" optimize="on" verbose="off">
         </javac>
     </target>
 

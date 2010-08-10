@@ -60,20 +60,16 @@
 package org.trianacode.gui.main;
 
 
+import java.awt.Component;
+
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 
-import java.awt.*;
-
 /**
- * An interface implemented by all components that represent tasks within a
- * taskgraph
+ * An interface implemented by all components that represent tasks within a taskgraph
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 21st June 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public interface TaskComponent {

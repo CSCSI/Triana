@@ -64,9 +64,6 @@ package org.trianacode.taskgraph.service;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 7th March 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public class DataCable extends LocalCable {

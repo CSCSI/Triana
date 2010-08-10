@@ -64,10 +64,8 @@ import org.trianacode.taskgraph.Task;
 /**
  * The event generated before a task is disposed.
  *
- * @author      Ian Wang
- * @created     3rd June 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TaskDisposedEvent {

@@ -58,6 +58,19 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Hashtable;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphOrganize;
@@ -69,32 +82,20 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.service.*;
+import org.trianacode.taskgraph.service.ClipableTaskInterface;
+import org.trianacode.taskgraph.service.ExecutionEvent;
+import org.trianacode.taskgraph.service.ExecutionListener;
+import org.trianacode.taskgraph.service.ExecutionStateEvent;
+import org.trianacode.taskgraph.service.RunnableInstance;
+import org.trianacode.taskgraph.service.RunnableTask;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Hashtable;
 
 /**
  * Action class for "save History" actions
  *
- * @author Matthew Shields
- *         2@created May 12, 2003: 4:47:25 PM
- *         <<<<<<< SaveHistoryListener.java
+ * @author Matthew Shields 2@created May 12, 2003: 4:47:25 PM <<<<<<< SaveHistoryListener.java
  * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * =======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * >>>>>>> 1.2.2.1
  */
 public class SaveHistoryListener implements ActionListener, ExecutionListener {
 
@@ -111,27 +112,29 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
      */
     public void actionPerformed(ActionEvent e) {
         if (handler.isSingleSelectedTool() && (handler.getSelectedTool() instanceof Task)) {
-            if (e.getActionCommand().equals(Env.getString("saveHistory")))
+            if (e.getActionCommand().equals(Env.getString("saveHistory"))) {
                 saveHistory((Task) handler.getSelectedTool());
-            else if (e.getActionCommand().equals(Env.getString("autoSaveHistory")))
+            } else if (e.getActionCommand().equals(Env.getString("autoSaveHistory"))) {
                 autoSaveHistory((Task) handler.getSelectedTool(), ((JRadioButtonMenuItem) e.getSource()).isSelected());
+            }
         }
     }
 
 
     /**
-     * Pulls up a file panel that allows the user to choose the file that the
-     * history is saved in
+     * Pulls up a file panel that allows the user to choose the file that the history is saved in
      */
     private void saveHistory(Task task) {
         if (!(task instanceof ClipableTaskInterface)) {
-            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: Clipins not implemented for " + task.getToolName(),
+            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                    "Save Histroy Error: Clipins not implemented for " + task.getToolName(),
                     "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return;
         }
 
         if (!((ClipableTaskInterface) task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
-            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: No History Information Availible",
+            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                    "Save Histroy Error: No History Information Availible",
                     "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return;
         }
@@ -140,15 +143,17 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
         chooser.setDialogTitle(task.getToolName() + ": " + Env.getString("saveHistory"));
         chooser.setFileFilter(new XMLFileFilter());
 
-        if (chooser.showSaveDialog(GUIEnv.getApplicationFrame()) == JFileChooser.APPROVE_OPTION)
+        if (chooser.showSaveDialog(GUIEnv.getApplicationFrame()) == JFileChooser.APPROVE_OPTION) {
             saveHistory((ClipableTaskInterface) task, chooser.getSelectedFile());
+        }
     }
 
     /**
      * Save the history in the specified file
      */
     private void saveHistory(ClipableTaskInterface task, File file) {
-        HistoryClipIn clipin = (HistoryClipIn) ((ClipableTaskInterface) task).getClipIn(HistoryClipIn.HISTORY_CLIPIN_NAME);
+        HistoryClipIn clipin = (HistoryClipIn) ((ClipableTaskInterface) task)
+                .getClipIn(HistoryClipIn.HISTORY_CLIPIN_NAME);
         TaskGraph history = clipin.getHistory();
 
         TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.TREE_ORGANIZE, history);
@@ -167,14 +172,15 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
     }
 
     /**
-     * Allows the user to select a file/sequence of files that the history
-     * for the task is automatically saved in each time the task is run.
+     * Allows the user to select a file/sequence of files that the history for the task is automatically saved in each
+     * time the task is run.
      */
     private void autoSaveHistory(Task task, boolean selected) {
         Frame frame = GUIEnv.getApplicationFrame();
 
         if (!(task instanceof RunnableTask)) {
-            JOptionPane.showMessageDialog(frame, "Save History Error: " + task.getToolName() + " not a runnable instance (contact Triana developers)",
+            JOptionPane.showMessageDialog(frame, "Save History Error: " + task.getToolName()
+                    + " not a runnable instance (contact Triana developers)",
                     "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             return;
         }
@@ -190,16 +196,18 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
             SaveHistoryPanel panel;
             SaveHistoryInfo info;
 
-            if (infotable.containsKey(task))
+            if (infotable.containsKey(task)) {
                 info = (SaveHistoryInfo) infotable.get(task);
-            else
+            } else {
                 info = new SaveHistoryInfo("", false);
+            }
 
             panel = new SaveHistoryPanel(info.getFileName(), info.isAppendSequenceNumber());
             panel.init();
 
             window.setTitle("Auto Save History: " + task.getToolName());
-            window.setLocation(frame.getLocationOnScreen().x + (frame.getSize().width / 2), frame.getLocationOnScreen().y + (frame.getSize().height / 2));
+            window.setLocation(frame.getLocationOnScreen().x + (frame.getSize().width / 2),
+                    frame.getLocationOnScreen().y + (frame.getSize().height / 2));
             window.setParameterPanel(panel);
             window.show();
 
@@ -214,8 +222,7 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
     }
 
     /**
-     * @return a file with the correct filename (including sequence number if
-     *         required)
+     * @return a file with the correct filename (including sequence number if required)
      */
     private File getFile(Task task, SaveHistoryInfo info) {
         if (info.isAppendSequenceNumber()) {
@@ -228,8 +235,9 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
             }
 
             return new File(body + info.getSequenceNumber() + end);
-        } else
+        } else {
             return new File(info.getFileName());
+        }
     }
 
 

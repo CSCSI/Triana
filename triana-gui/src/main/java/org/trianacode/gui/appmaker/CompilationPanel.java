@@ -58,6 +58,22 @@
  */
 package org.trianacode.gui.appmaker;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ClassPathPanel;
 import org.trianacode.gui.panels.TFileChooser;
@@ -67,23 +83,11 @@ import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
-
 /**
- * The panel for specifying the taskgraph that is executed from the
- * command line.
+ * The panel for specifying the taskgraph that is executed from the command line.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2nd November 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class CompilationPanel extends JPanel
@@ -100,8 +104,7 @@ public class CompilationPanel extends JPanel
     private ParameterWindow classpathwin;
 
     /**
-     * the main tool table (used by the class path panel to retrieve the
-     * tool box paths)
+     * the main tool table (used by the class path panel to retrieve the tool box paths)
      */
     private ToolTable tools;
 
@@ -209,18 +212,20 @@ public class CompilationPanel extends JPanel
         classpathwin.addParameterWindowListener(this);
         classpathwin.setTitle(Env.getString("classpath") + "...");
         panel.setClasspath(classpathfield.getText());
-        classpathwin.setLocation((classpathwin.getToolkit().getScreenSize().width / 2) - (classpathwin.getSize().width / 2),
-                (classpathwin.getToolkit().getScreenSize().height / 2) - (classpathwin.getSize().height / 2));
+        classpathwin
+                .setLocation((classpathwin.getToolkit().getScreenSize().width / 2) - (classpathwin.getSize().width / 2),
+                        (classpathwin.getToolkit().getScreenSize().height / 2) - (classpathwin.getSize().height / 2));
 
         classpathwin.setVisible(true);
     }
 
 
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == javacbrowse)
+        if (event.getSource() == javacbrowse) {
             handleBrowseCompiler();
-        else if (event.getSource() == classpathbrowse)
+        } else if (event.getSource() == classpathbrowse) {
             handleBrowseClasspath();
+        }
     }
 
     public void parameterWindowHidden(ParameterWindow window) {
@@ -230,8 +235,9 @@ public class CompilationPanel extends JPanel
                 String classpathStr = classPathPanel.getClasspath();
                 classpathfield.setText(classpathStr);
 
-                if (classPathPanel.isRetainCPCheck())
+                if (classPathPanel.isRetainCPCheck()) {
                     Env.setClasspath(classpathStr);
+                }
             }
 
             classpathwin.dispose();
@@ -239,9 +245,8 @@ public class CompilationPanel extends JPanel
     }
 
     /**
-     * Invoked when an item has been selected or deselected by the user.
-     * The code written for this method performs the operations
-     * that need to occur when an item is selected (or deselected).
+     * Invoked when an item has been selected or deselected by the user. The code written for this method performs the
+     * operations that need to occur when an item is selected (or deselected).
      */
     public void itemStateChanged(ItemEvent event) {
         if (event.getSource() == enable) {

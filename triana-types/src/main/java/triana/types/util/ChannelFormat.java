@@ -60,17 +60,11 @@ package triana.types.util;
 
 
 /**
+ * The ChannelFormat is an interface base class for representing one channel of a multi-channel data set. It store the
+ * parameters which a channl might have. This is an abstratc class which other <ol> <li> sample rate : the sample rate,
+ * specified as an int <li> channel name : the name of this channel </ol>
  *
- * The ChannelFormat is an interface base class for representing one channel
- * of a multi-channel data set. It store the parameters which a channl might
- * have. This is an abstratc class which other
- * <ol>
- *    <li> sample rate : the sample rate, specified as an int
- *    <li> channel name : the name of this channel
- * </ol>
- *
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public interface ChannelFormat {
     /**
@@ -89,8 +83,7 @@ public interface ChannelFormat {
     public String toString();
 
     /**
-     * Initialises this ChannelFormat object from the given string previously
-     * created by the toString function.
+     * Initialises this ChannelFormat object from the given string previously created by the toString function.
      */
     public void setFromString(String str);
 }

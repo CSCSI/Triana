@@ -58,30 +58,28 @@
  */
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.windows.WindowButtonConstants;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.trianacode.gui.windows.WindowButtonConstants;
+
 
 /**
+ * This panel allows a scaler or a number to be input. It is used in many parameter editing wqindows within Triana and
+ * consists of a Slider, and three textfields, one to display the value of the slider and the other two to display the
+ * minimum and maximum values of the slider.
  *
- * This panel allows a scaler or a number to be input. It is used
- * in many parameter editing wqindows within Triana and consists
- * of a Slider, and three textfields, one to display the value
- * of the slider and the other two to display the minimum and
- * maximum values of the slider.
- *
- * @author      Ian Taylor
- * @created     1 Dec 1999
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class ScrollerPanel extends UnitPanel implements ChangeListener,
         ActionListener, FocusListener {
@@ -98,8 +96,7 @@ public class ScrollerPanel extends UnitPanel implements ChangeListener,
 
 
     /**
-     * Represents value of the scroller as a double-precision floating-point
-     * number.
+     * Represents value of the scroller as a double-precision floating-point number.
      */
 
     private double sliderValue;
@@ -271,13 +268,14 @@ public class ScrollerPanel extends UnitPanel implements ChangeListener,
         if (DECIMAL_PLACES > 0) {
             String remain = String.valueOf(slidertempval % pow);
 
-            while (remain.length() < DECIMAL_PLACES)
+            while (remain.length() < DECIMAL_PLACES) {
                 remain = "0" + remain;
+            }
 
             display.setText(minus + String.valueOf(slidertempval / pow) + '.' + remain);
-        }
-        else
+        } else {
             display.setText(minus + String.valueOf(slidertempval / pow));
+        }
     }
 
 
@@ -364,8 +362,9 @@ public class ScrollerPanel extends UnitPanel implements ChangeListener,
     public void reset() {
         super.reset();
 
-        if ((getTask() != null) && (getTask().isParameterName(paramName)))
+        if ((getTask() != null) && (getTask().isParameterName(paramName))) {
             setValue(Double.parseDouble((String) getTask().getParameter(paramName)));
+        }
 
         updateWidgets();
     }

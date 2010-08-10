@@ -59,13 +59,21 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
+ * <p/>
  * This class provides the scrollpane that contains the virtual desktop.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
@@ -110,17 +118,15 @@ public class DesktopScrollPane extends JScrollPane {
     /**
      * creates a BaseInternalFrame and adds it to the virtual desktop
      *
-     * @param dListener a reference to the DesktopListener
-     * @param title the title displayed in the title bar of the internal frame
-     * @param icon the icon displayed in the title bar of the internal frame
+     * @param dListener     a reference to the DesktopListener
+     * @param title         the title displayed in the title bar of the internal frame
+     * @param icon          the icon displayed in the title bar of the internal frame
      * @param frameContents the contents of the internal frame
-     * @param isClosable <code>boolean</code> indicating whether internal frame
-     *          is closable
-     * @param x x coordinates of internal frame within the scrollable desktop.
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
-     * @param y y coordinates of internal frame within the scrollable desktop
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
-     *
+     * @param isClosable    <code>boolean</code> indicating whether internal frame is closable
+     * @param x             x coordinates of internal frame within the scrollable desktop. <code>-1</code> indicates the
+     *                      virtual desktop is to determine the position
+     * @param y             y coordinates of internal frame within the scrollable desktop <code>-1</code> indicates the
+     *                      virtual desktop is to determine the position
      * @return the BaseInternalFrame that was created
      */
     public BaseInternalFrame add(DesktopListener dListener,
@@ -142,11 +148,11 @@ public class DesktopScrollPane extends JScrollPane {
      * adds an internal frame to the virtual desktop
      *
      * @param dListener a reference to the DesktopListener
-     * @param f the internal frame to add
-     * @param x x coordinates of internal frame within the scrollable desktop.
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
-     * @param y y coordinates of internal frame within the scrollable desktop
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
+     * @param f         the internal frame to add
+     * @param x         x coordinates of internal frame within the scrollable desktop. <code>-1</code> indicates the
+     *                  virtual desktop is to determine the position
+     * @param y         y coordinates of internal frame within the scrollable desktop <code>-1</code> indicates the
+     *                  virtual desktop is to determine the position
      */
     public void add(DesktopListener dListener, JInternalFrame f,
                     int x, int y) {
@@ -159,18 +165,17 @@ public class DesktopScrollPane extends JScrollPane {
      * initializes the frame for display and adds it to the desktop
      *
      * @param f the internal frame to add
-     * @param x x coordinates of internal frame within the scrollable desktop.
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
-     * @param y y coordinates of internal frame within the scrollable desktop
-     *    <code>-1</code> indicates the virtual desktop is to determine the position
+     * @param x x coordinates of internal frame within the scrollable desktop. <code>-1</code> indicates the virtual
+     *          desktop is to determine the position
+     * @param y y coordinates of internal frame within the scrollable desktop <code>-1</code> indicates the virtual
+     *          desktop is to determine the position
      */
     private void initAndAddFrame(JInternalFrame f, int x, int y) {
 
         // override the position of this window?
         if (x != -1 && y != -1) {
             f.setLocation(x, y);
-        }
-        else {
+        } else {
             if (!getAutoTile()) {
                 f.setLocation(cascadeInternalFrame(f));
             }
@@ -200,8 +205,7 @@ public class DesktopScrollPane extends JScrollPane {
     }
 
     /**
-     * returns the internal frame currently selected upon the
-     * virtual desktop
+     * returns the internal frame currently selected upon the virtual desktop
      *
      * @return a reference to the active JInternalFrame
      */
@@ -210,8 +214,7 @@ public class DesktopScrollPane extends JScrollPane {
     }
 
     /**
-     * closes the internal frame currently selected upon the
-     * virtual desktop
+     * closes the internal frame currently selected upon the virtual desktop
      */
     public void closeSelectedFrame() {
         JInternalFrame f = getSelectedFrame();
@@ -243,9 +246,8 @@ public class DesktopScrollPane extends JScrollPane {
     }
 
     /**
-     *  flags the specified internal frame as "contents changed." Used to
-     * notify the user when the contents of an inactive internal frame
-     * have changed.
+     * flags the specified internal frame as "contents changed." Used to notify the user when the contents of an
+     * inactive internal frame have changed.
      *
      * @param f the internal frame to flag as "contents changed"
      */
@@ -309,9 +311,8 @@ public class DesktopScrollPane extends JScrollPane {
     /**
      * propogates setAutoTile to FramePositioning
      *
-     * @param autoTile <code>boolean</code> representing autoTile mode.
-     *      If <code>true</code>, then all new frames are tiled automatically.
-     *      If <code>false</code>, then all new frames are cascaded automatically.
+     * @param autoTile <code>boolean</code> representing autoTile mode. If <code>true</code>, then all new frames are
+     *                 tiled automatically. If <code>false</code>, then all new frames are cascaded automatically.
      */
     public void setAutoTile(boolean autoTile) {
         positioning.setAutoTile(autoTile);
@@ -330,7 +331,6 @@ public class DesktopScrollPane extends JScrollPane {
      * propogates cascadeInternalFrame to FramePositioning
      *
      * @param f the internal frame to cascade
-     *
      * @return a Point object representing the position of the internal frame
      */
     public Point cascadeInternalFrame(JInternalFrame f) {
@@ -353,8 +353,7 @@ public class DesktopScrollPane extends JScrollPane {
 
 
     /**
-     * centers the viewport of the virtual desktop around the
-     *   provided internal frame
+     * centers the viewport of the virtual desktop around the provided internal frame
      *
      * @param f the internal frame to center the viewport about
      */
@@ -369,14 +368,12 @@ public class DesktopScrollPane extends JScrollPane {
 
         if ((xCoords + viewP.width) > desktopSize.width) {
             xCoords = desktopSize.width - viewP.width;
-        }
-        else if (xCoords < 0) {
+        } else if (xCoords < 0) {
             xCoords = 0;
         }
         if ((yCoords + viewP.height) > desktopSize.height) {
             yCoords = desktopSize.height - viewP.height;
-        }
-        else if (yCoords < 0) {
+        } else if (yCoords < 0) {
             yCoords = 0;
         }
 
@@ -386,10 +383,8 @@ public class DesktopScrollPane extends JScrollPane {
 
 
     /**
-     * resizes the virtual desktop based upon the locations of its
-     * internal frames. This updates the desktop scrollbars in real-time.
-     * Executes as an "invoked later" thread for a slight perceived
-     * performance boost.
+     * resizes the virtual desktop based upon the locations of its internal frames. This updates the desktop scrollbars
+     * in real-time. Executes as an "invoked later" thread for a slight perceived performance boost.
      */
     public void resizeDesktop() {
 
@@ -465,8 +460,7 @@ public class DesktopScrollPane extends JScrollPane {
     /**
      * propogates removeAssociatedComponents to DesktopMediator
      *
-     * @param f the internal frame whose associated components are
-     *   to be removed
+     * @param f the internal frame whose associated components are to be removed
      */
     public void removeAssociatedComponents(BaseInternalFrame f) {
         desktopMediator.removeAssociatedComponents(f);

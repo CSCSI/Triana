@@ -65,11 +65,8 @@ import org.trianacode.taskgraph.Task;
 /**
  * An implementation of the parameter node interface, that extends NodeImp
  *
- * @author      Ian Wang
- * @created     2nd July 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class ParameterNodeImp extends NodeImp implements ParameterNode {
@@ -80,8 +77,7 @@ public class ParameterNodeImp extends NodeImp implements ParameterNode {
     private String paramname;
 
     /**
-     * A flag indicating whether this parameter node requires data for the task
-     * to execute.
+     * A flag indicating whether this parameter node requires data for the task to execute.
      */
     private boolean trigger = false;
 
@@ -97,23 +93,24 @@ public class ParameterNodeImp extends NodeImp implements ParameterNode {
     }
 
 
-
     /**
      * @return the name of the parameter that this node is inputting/outputting
      */
     public String getParameterName() {
-        if (isTopLevelNode())
+        if (isTopLevelNode()) {
             return paramname;
-        else
+        } else {
             return ((ParameterNode) getTopLevelNode()).getParameterName();
+        }
     }
 
     /**
      * Sets the parameter that this node is inputting/outputting
      */
     public void setParameterName(String name) {
-        if (!isTopLevelNode())
+        if (!isTopLevelNode()) {
             throw (new RuntimeException("Cannot set parameter name on group node (top-level nodes only)"));
+        }
 
         paramname = name;
         notifyParameterNameSet();
@@ -143,8 +140,8 @@ public class ParameterNodeImp extends NodeImp implements ParameterNode {
     }
 
     /**
-     * Sets this parameter node as a trigger node, If true then the node is
-     * essential for the task to run, otherwise it is optional.
+     * Sets this parameter node as a trigger node, If true then the node is essential for the task to run, otherwise it
+     * is optional.
      */
     public void setTriggerNode(boolean state) {
         trigger = state;
@@ -158,8 +155,8 @@ public class ParameterNodeImp extends NodeImp implements ParameterNode {
     }
 
     /**
-     * Sets this parameter node as a error node, If true then the node is
-     * essential for the task to run, otherwise it is optional.
+     * Sets this parameter node as a error node, If true then the node is essential for the task to run, otherwise it is
+     * optional.
      */
     public void setErrorNode(boolean state) {
         error = state;
@@ -167,24 +164,23 @@ public class ParameterNodeImp extends NodeImp implements ParameterNode {
 
 
     /**
-     * @return true if data is essential at this node for the task to run.
-     * Note that data nodes are essential by default.
+     * @return true if data is essential at this node for the task to run. Note that data nodes are essential by
+     *         default.
      */
     public boolean isEssential() {
         return trigger;
     }
 
     /**
-     * @return true if data is essential at this node only if the node is
-     * connected
+     * @return true if data is essential at this node only if the node is connected
      */
     public boolean isEssentialIfConnected() {
         return false;
     }
 
     /**
-     * @return true if data is not required at this node for the task to run.
-     * Note that parameter nodes are optional by default.
+     * @return true if data is not required at this node for the task to run. Note that parameter nodes are optional by
+     *         default.
      */
     public boolean isOptional() {
         return !trigger;

@@ -65,6 +65,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -90,6 +91,7 @@ import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.util.UrlUtils;
 import org.trianacode.util.Env;
 
 /**
@@ -131,7 +133,7 @@ public class TaskGraphFileHandler implements SelectionManager {
             writer.writeComponent(task);
 
             if (tools != null) {
-                tools.refreshLocation(new File(file).getAbsolutePath(), null);
+                tools.refreshLocation(new File(file).toURI().toURL(), null);
             }
 
             if (updateRecent) {
@@ -217,7 +219,7 @@ public class TaskGraphFileHandler implements SelectionManager {
 
             if (tool instanceof TaskGraph) {
                 progressBar = new TrianaProgressBar("loading: " + file.getName(), false);
-                tool.setDefinitionPath(file.getPath());
+                tool.setDefinitionPath(file.toURI().toURL());
                 TaskGraph initgraph = null;
                 if (runnable) {
                     GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
@@ -383,7 +385,7 @@ public class TaskGraphFileHandler implements SelectionManager {
                                             BufferedWriter fileWriter = new BufferedWriter(new FileWriter(f));
                                             writer = new XMLWriter(fileWriter);
                                             writer.writeComponent(tool);
-                                            tooltable.refreshLocation(toolfile, handler.getToolBox());
+                                            tooltable.refreshLocation(UrlUtils.toURL(toolfile), handler.getToolBox());
                                         }
                                     }
                                     catch (IOException e) {
@@ -446,7 +448,7 @@ public class TaskGraphFileHandler implements SelectionManager {
                 return;
             }
         }
-        String definitionPath = group.getDefinitionPath();
+        URL definitionPath = group.getDefinitionPath();
 
         boolean showdialog = saveas || (definitionPath == null) || (definitionPath.equals("") || !group
                 .getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML));
@@ -459,9 +461,9 @@ public class TaskGraphFileHandler implements SelectionManager {
                 String toolbox = group.getToolBox();
                 File dir = new File(toolbox, group.getToolPackage().replace(".", File.separator));
                 dir.mkdirs();
-                definitionPath = dir.getAbsolutePath() + File.separator + group.getToolName() + ".xml";
+                definitionPath = UrlUtils.toURL(dir.getAbsolutePath() + File.separator + group.getToolName() + ".xml");
                 group.setDefinitionPath(definitionPath);
-                if (TrianaDialog.isOKtoWriteIfExists(definitionPath)) {
+                if (TrianaDialog.isOKtoWriteIfExists(definitionPath.getPath())) {
                     writeFile = true;
                 } else {
                     writeFile = false;
@@ -470,7 +472,7 @@ public class TaskGraphFileHandler implements SelectionManager {
         }
 
         if (writeFile) {
-            backGroundSaveTaskGraph(taskgraph, definitionPath, tools, true);
+            backGroundSaveTaskGraph(taskgraph, definitionPath.getPath(), tools, true);
         }
     }
 

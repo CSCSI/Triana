@@ -58,21 +58,19 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.JRadioButtonMenuItem;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
 /**
  * Action class for "run continuously" actions
  *
- * @author Matthew Shields
- *         2@created May 12, 2003: 4:47:25 PM
+ * @author Matthew Shields 2@created May 12, 2003: 4:47:25 PM
  * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class RunContinuouslyMenuItem extends JRadioButtonMenuItem implements ItemListener {
 
@@ -89,13 +87,13 @@ public class RunContinuouslyMenuItem extends JRadioButtonMenuItem implements Ite
 
 
     /**
-     * Invoked when an item has been selected or deselected by the user.
-     * The code written for this method performs the operations
-     * that need to occur when an item is selected (or deselected).
+     * Invoked when an item has been selected or deselected by the user. The code written for this method performs the
+     * operations that need to occur when an item is selected (or deselected).
      */
     public void itemStateChanged(ItemEvent e) {
-        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task))
+        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task)) {
             ((Task) selhandler.getSelectedTool()).setRunContinuously(isSelected());
+        }
     }
 
 }

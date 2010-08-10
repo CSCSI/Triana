@@ -62,12 +62,13 @@ package org.trianacode.gui.hci.tools;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.ToolTableUtils;
 import org.trianacode.taskgraph.tool.Toolbox;
 
@@ -79,7 +80,7 @@ import org.trianacode.taskgraph.tool.Toolbox;
  * @version $Revision: 4048 $
  */
 
-public class BrokenToolMonitor extends Thread implements ToolTableListener {
+public class BrokenToolMonitor extends Thread implements ToolListener {
 
     /**
      * a hashtable of flags indicating whether a tool is broken, keyed by tool
@@ -193,6 +194,17 @@ public class BrokenToolMonitor extends Thread implements ToolTableListener {
         }
     }
 
+
+    @Override
+    public void toolsAdded(List<Tool> tools) {
+    }
+
+    @Override
+    public void toolsRemoved(List<Tool> tools) {
+        for (Tool tool : tools) {
+            brokentable.remove(tool);
+        }
+    }
 
     /**
      * Called when a new tool is added

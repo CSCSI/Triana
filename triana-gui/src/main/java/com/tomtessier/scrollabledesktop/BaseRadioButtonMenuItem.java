@@ -59,19 +59,19 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.KeyStroke;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class creates a base radio button menu item. ActionListener, mnemonic,
- * keyboard shortcut, and title are set via the constructor.
- * <BR><BR>
- * A {@link com.tomtessier.scrollabledesktop.BaseInternalFrame BaseInternalFrame}
- * object may optionally be associated with an instance of this class.
+ * <p/>
+ * This class creates a base radio button menu item. ActionListener, mnemonic, keyboard shortcut, and title are set via
+ * the constructor. <BR><BR> A {@link com.tomtessier.scrollabledesktop.BaseInternalFrame BaseInternalFrame} object may
+ * optionally be associated with an instance of this class.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  11-Aug-2001
@@ -84,16 +84,14 @@ public class BaseRadioButtonMenuItem extends JRadioButtonMenuItem
 
 
     /**
-     * creates the BaseRadioButtonMenuItem with an associated frame. Used for
-     * radio menu items that are associated with an internal frame.
+     * creates the BaseRadioButtonMenuItem with an associated frame. Used for radio menu items that are associated with
+     * an internal frame.
      *
-     * @param listener the action listener to assign
-     * @param itemTitle the title of the item
-     * @param mnemonic the mnemonic used to access the menu
-     * @param shortcut the keyboard shortcut used to access the menu.
-     *      -1 indicates no shortcut.
-     * @param selected <code>boolean</code> that indicates whether
-     *      the menu item is selected or not
+     * @param listener        the action listener to assign
+     * @param itemTitle       the title of the item
+     * @param mnemonic        the mnemonic used to access the menu
+     * @param shortcut        the keyboard shortcut used to access the menu. -1 indicates no shortcut.
+     * @param selected        <code>boolean</code> that indicates whether the menu item is selected or not
      * @param associatedFrame the BaseInternalFrame associated with the menu item
      */
     public BaseRadioButtonMenuItem(ActionListener listener,
@@ -109,16 +107,13 @@ public class BaseRadioButtonMenuItem extends JRadioButtonMenuItem
     }
 
     /**
-     * creates the BaseRadioButtonMenuItem without an associated frame. Used
-     * for generic radio button menu items.
+     * creates the BaseRadioButtonMenuItem without an associated frame. Used for generic radio button menu items.
      *
-     * @param listener the action listener to assign
+     * @param listener  the action listener to assign
      * @param itemTitle the title of the item
-     * @param mnemonic the mnemonic used to access the menu
-     * @param shortcut the keyboard shortcut used to access the menu.
-     *      -1 indicates no shortcut.
-     * @param selected <code>boolean</code> that indicates whether
-     *      the menu item is selected or not
+     * @param mnemonic  the mnemonic used to access the menu
+     * @param shortcut  the keyboard shortcut used to access the menu. -1 indicates no shortcut.
+     * @param selected  <code>boolean</code> that indicates whether the menu item is selected or not
      */
     public BaseRadioButtonMenuItem(ActionListener listener,
                                    String itemTitle,
@@ -144,17 +139,16 @@ public class BaseRadioButtonMenuItem extends JRadioButtonMenuItem
 
 
     /**
-     *  sets the associated frame
+     * sets the associated frame
      *
-     * @param associatedFrame the BaseInternalFrame object to associate with
-     * the menu item
+     * @param associatedFrame the BaseInternalFrame object to associate with the menu item
      */
     public void setAssociatedFrame(BaseInternalFrame associatedFrame) {
         this.associatedFrame = associatedFrame;
     }
 
     /**
-     *  returns the associated frame
+     * returns the associated frame
      *
      * @return the BaseInternalFrame object associated with this menu item
      */

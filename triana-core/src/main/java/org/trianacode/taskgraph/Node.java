@@ -63,10 +63,8 @@ import org.trianacode.taskgraph.event.NodeListener;
 /**
  * An interface for accessing the NodeCable associated with a Task.
  *
- * @author      Ian Wang
- * @created     26th April
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public interface Node {
 
@@ -88,20 +86,17 @@ public interface Node {
 
 
     /**
-     * @return the index of this node within its associated task (or -1 if
-     * disposed/not attached to a task)
+     * @return the index of this node within its associated task (or -1 if disposed/not attached to a task)
      */
     public int getNodeIndex();
 
     /**
      * This is a convience method to return the absolute positioning of a node.
+     * <p/>
+     * The absolute index of a data node is the same as its standard index. The absolute index of a parameter node is
+     * its standard index + the total number of data input/output nodes.
      *
-     * The absolute index of a data node is the same as its standard index.
-     * The absolute index of a parameter node is its standard index + the total
-     * number of data input/output nodes.
-     *
-     * @return the absolute index of this node within its associated task (or
-     * -1 if disposed/not attached to a task)
+     * @return the absolute index of this node within its associated task (or -1 if disposed/not attached to a task)
      */
     public int getAbsoluteNodeIndex();
 
@@ -156,39 +151,33 @@ public interface Node {
 
 
     /**
-     * @return true if this is a top level group node (i.e. it is attached
-     * directly to an actual (non-group) task)
+     * @return true if this is a top level group node (i.e. it is attached directly to an actual (non-group) task)
      */
     public boolean isTopLevelNode();
 
     /**
-     * @return the top level parent node in the parent/child group node
-     * hierarchy
+     * @return the top level parent node in the parent/child group node hierarchy
      */
     public Node getTopLevelNode();
 
     /**
-     * @return the top level parent task in the parent/child group task
-     * hierarchy
+     * @return the top level parent task in the parent/child group task hierarchy
      */
     public Task getTopLevelTask();
 
 
     /**
-     * @return true if this is a bottom level group node (i.e. it is attached
-     * directly to a actual cable)
+     * @return true if this is a bottom level group node (i.e. it is attached directly to a actual cable)
      */
     public boolean isBottomLevelNode();
 
     /**
-     * @return the bottom level parent node in the parent/child group node
-     * hierarchy
+     * @return the bottom level parent node in the parent/child group node hierarchy
      */
     public Node getBottomLevelNode();
 
     /**
-     * @return the bottom level parent task in the parent/child group task
-     * hierarchy
+     * @return the bottom level parent task in the parent/child group task hierarchy
      */
     public Task getBottomLevelTask();
 

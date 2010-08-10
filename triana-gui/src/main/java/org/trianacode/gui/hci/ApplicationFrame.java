@@ -191,7 +191,7 @@ import org.trianacode.taskgraph.service.LocalDeployAssistant;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableImp;
+import org.trianacode.taskgraph.tool.ToolTableImpl;
 import org.trianacode.util.Env;
 
 
@@ -299,7 +299,7 @@ public class ApplicationFrame extends TrianaWindow
             logger.info("Initialising");
             SplashScreen splash = new SplashScreen();
             splash.showSplashScreen(5);
-            tools = new ToolTableImp();
+            tools = new ToolTableImpl(EngineInit.getToolResolver());
             EngineInit.init(tools, Extension.class);
             splash.setSplashProgress(Env.getString("toolsInitLabel"));
             initTools();
@@ -309,7 +309,7 @@ public class ApplicationFrame extends TrianaWindow
             initExtensions();
 
             splash.setSplashProgress(Env.getString("prefsLabel"));
-            Env.initConfig(tools, true);
+            Env.initConfig(true);
 
             splash.setSplashProgress(Env.getString("uiLabel"));
             initLayout();
@@ -560,9 +560,6 @@ public class ApplicationFrame extends TrianaWindow
      */
     public void initTools() {
         logger.fine("Init");
-
-
-        tools.init();
 
         toolmonitor = new BrokenToolMonitor(tools);
         toolmonitor.start();

@@ -59,34 +59,28 @@
 
 package org.trianacode.gui.main.imp;
 
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.ShowToolPanel;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.event.ControlTaskStateEvent;
+import org.trianacode.taskgraph.event.NodeEvent;
+import org.trianacode.taskgraph.event.NodeListener;
+import org.trianacode.taskgraph.event.TaskGraphCableEvent;
+import org.trianacode.taskgraph.event.TaskGraphListener;
+import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-
 /**
- * A class to monitor the for show tool for a node and update the main triana
- * when applicable.
+ * A class to monitor the for show tool for a node and update the main triana when applicable.
  *
- * @author Ian Wang
-<<<<<<< ForShowMonitor.java
- * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.5.2.1
- * @created 21st April 2004
-<<<<<<< ForShowMonitor.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.5.2.1
+ * @author Ian Wang <<<<<<< ForShowMonitor.java
+ * @version $Revision: 4048 $ >>>>>>> 1.5.2.1
  */
 
 public class ForShowMonitor
@@ -133,8 +127,9 @@ public class ForShowMonitor
             if (node.getParentNode() != null) {
                 level = getLevelNode(node);
 
-                if (level != null)
+                if (level != null) {
                     updategui = initForShowTool(level);
+                }
             }
 
             if (updategui) {
@@ -160,15 +155,21 @@ public class ForShowMonitor
         if (taskcomp != null) {
             nodecomp = taskcomp.getNodeComponent(level);
 
-            if (nodecomp == null)
+            if (nodecomp == null) {
                 return false;
+            }
 
             showtool = new ForShowTool(level, node);
 
-            if (node.isInputNode())
-                showcable = CableFactory.createDrawCable(showtool.getNodeComponent().getComponent(), nodecomp.getComponent(), panel.getContainer());
-            else
-                showcable = CableFactory.createDrawCable(nodecomp.getComponent(), showtool.getNodeComponent().getComponent(), panel.getContainer());
+            if (node.isInputNode()) {
+                showcable = CableFactory
+                        .createDrawCable(showtool.getNodeComponent().getComponent(), nodecomp.getComponent(),
+                                panel.getContainer());
+            } else {
+                showcable = CableFactory
+                        .createDrawCable(nodecomp.getComponent(), showtool.getNodeComponent().getComponent(),
+                                panel.getContainer());
+            }
 
             panel.addShowTool(showtool, showcable);
             updategui = true;
@@ -183,8 +184,9 @@ public class ForShowMonitor
     private boolean disposeForShowTool() {
         boolean updategui = false;
 
-        if (level != null)
+        if (level != null) {
             level.removeNodeListener(this);
+        }
 
         if (showtool != null) {
             showtool.dispose();
@@ -201,8 +203,7 @@ public class ForShowMonitor
 
 
     /**
-     * @return what would have been the parent node of the specified group node
-     *         if there was no control task
+     * @return what would have been the parent node of the specified group node if there was no control task
      */
     private Node getLevelNode(Node node) {
         Node parent = node.getParentNode();
@@ -212,10 +213,15 @@ public class ForShowMonitor
 
             if ((parent != null) && (taskgraph.getControlTask() == parent.getTask())) {
                 try {
-                    if (parent.isInputNode())
-                        parent = parent.getTask().getDataOutputNode(taskgraph.getDataOutputNodeCount() + parent.getNodeIndex()).getCable().getReceivingNode();
-                    else
-                        parent = parent.getTask().getDataInputNode(taskgraph.getDataInputNodeCount() + parent.getNodeIndex()).getCable().getSendingNode();
+                    if (parent.isInputNode()) {
+                        parent = parent.getTask()
+                                .getDataOutputNode(taskgraph.getDataOutputNodeCount() + parent.getNodeIndex())
+                                .getCable().getReceivingNode();
+                    } else {
+                        parent = parent.getTask()
+                                .getDataInputNode(taskgraph.getDataInputNodeCount() + parent.getNodeIndex()).getCable()
+                                .getSendingNode();
+                    }
                 } catch (IndexOutOfBoundsException except) {
                     return null;
                 }
@@ -249,8 +255,9 @@ public class ForShowMonitor
      * Called when one of a group node's child changes
      */
     public void nodeChildChanged(NodeEvent event) {
-        if (event.getNode() == level)
+        if (event.getNode() == level) {
             initForShowTool();
+        }
     }
 
     /**
@@ -279,9 +286,8 @@ public class ForShowMonitor
     }
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method
-     * is called when tasks are removed from a taskgraph due to being grouped
-     * (they are place in the groups taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are place in the groups taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
     }
@@ -312,8 +318,9 @@ public class ForShowMonitor
         if (event.getChild() instanceof TaskComponent) {
             Tool tool = ((TaskComponent) event.getChild()).getTaskInterface();
 
-            if (tool == leveltool)
+            if (tool == leveltool) {
                 initForShowTool();
+            }
         }
     }
 
@@ -324,8 +331,9 @@ public class ForShowMonitor
         if (event.getChild() instanceof TaskComponent) {
             Tool tool = ((TaskComponent) event.getChild()).getTaskInterface();
 
-            if (tool == leveltool)
+            if (tool == leveltool) {
                 initForShowTool();
+            }
         }
     }
 

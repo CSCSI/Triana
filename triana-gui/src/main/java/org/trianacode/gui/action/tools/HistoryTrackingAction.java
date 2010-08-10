@@ -59,6 +59,28 @@
 
 package org.trianacode.gui.action.tools;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -77,24 +99,11 @@ import org.trianacode.taskgraph.service.HistoryTrackerAutoSave;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 /**
  * The action for showing the node editor
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 21st June 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class HistoryTrackingAction extends AbstractAction implements ActionDisplayOptions {
@@ -114,8 +123,9 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task))
+        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task)) {
             showHistoryTrackingDialog((Task) selhandler.getSelectedTool(), e.getSource());
+        }
     }
 
 
@@ -125,7 +135,8 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
      * @param source the source object asking for the node editor to be shown
      */
     protected void showHistoryTrackingDialog(Task task, Object source) {
-        ParameterWindow historyWindow = new ParameterWindow(GUIEnv.getApplicationFrame(), WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS, true);
+        ParameterWindow historyWindow = new ParameterWindow(GUIEnv.getApplicationFrame(),
+                WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS, true);
         historyWindow.setTitle(Env.getString("HistoryTracking") + ": " + task.getToolName());
 
         HistoryTrackingPanel historypanel = new HistoryTrackingPanel();
@@ -144,7 +155,8 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
         if (historyWindow.isAccepted()) {
             task.setParameter(HistoryTrackerAutoSave.AUTO_SAVE, String.valueOf(historypanel.isAutoSave()));
             task.setParameter(HistoryTrackerAutoSave.AUTO_SAVE_FILENAME, historypanel.getFileName());
-            task.setParameter(HistoryTrackerAutoSave.AUTO_SAVE_APPEND, String.valueOf(historypanel.isAppendSequenceNumber()));
+            task.setParameter(HistoryTrackerAutoSave.AUTO_SAVE_APPEND,
+                    String.valueOf(historypanel.isAppendSequenceNumber()));
         }
 
 
@@ -171,16 +183,16 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
         }
 
         /**
-         * This method returns false by default. It should be overridden if the panel wants parameter
-         * changes to be commited automatically
+         * This method returns false by default. It should be overridden if the panel wants parameter changes to be
+         * commited automatically
          */
         public boolean isAutoCommitByDefault() {
             return false;
         }
 
         /**
-         * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by default. It should be
-         * overridden if the panel has different preferred set of buttons.
+         * This method returns WindowButtonConstants.OK_CANCEL_APPLY_BUTTONS by default. It should be overridden if the
+         * panel has different preferred set of buttons.
          *
          * @return the panels preferred button combination (as defined in Windows Constants).
          */
@@ -190,8 +202,7 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
 
 
         /**
-         * This method is called when the task is set for this panel. It is overridden to create the
-         * panel layout.
+         * This method is called when the task is set for this panel. It is overridden to create the panel layout.
          */
         public void init() {
             setLayout(new BorderLayout(3, 3));
@@ -229,18 +240,17 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
         }
 
         /**
-         * This method is called when the panel is reset or cancelled. It should reset all the panels
-         * components to the values specified by the associated task, e.g. a component representing a
-         * parameter called "noise" should be set to the value returned by a
-         * getTool().getParameter("noise") call.
+         * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+         * values specified by the associated task, e.g. a component representing a parameter called "noise" should be
+         * set to the value returned by a getTool().getParameter("noise") call.
          */
         public void reset() {
 
         }
 
         /**
-         * This method is called when the panel is finished with. It should dispose of any components
-         * (e.g. windows) used by the panel.
+         * This method is called when the panel is finished with. It should dispose of any components (e.g. windows)
+         * used by the panel.
          */
         public void dispose() {
 
@@ -270,18 +280,19 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
 
 
         /**
-         * Pulls up a file panel that allows the user to choose the file that the
-         * history is saved in
+         * Pulls up a file panel that allows the user to choose the file that the history is saved in
          */
         private void saveHistory(Task task) {
             if (!(task instanceof ClipableTaskInterface)) {
-                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: Clipins not implemented for " + task.getToolName(),
+                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                        "Save Histroy Error: Clipins not implemented for " + task.getToolName(),
                         "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                 return;
             }
 
             if (!((ClipableTaskInterface) task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
-                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: No history information availible, try re-running with history tracking",
+                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                        "Save Histroy Error: No history information availible, try re-running with history tracking",
                         "Save Error", JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
                 return;
             }
@@ -290,8 +301,9 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
             chooser.setDialogTitle(task.getToolName() + ": " + Env.getString("saveHistory"));
             chooser.setFileFilter(new XMLFileFilter());
 
-            if (chooser.showSaveDialog(GUIEnv.getApplicationFrame()) == JFileChooser.APPROVE_OPTION)
+            if (chooser.showSaveDialog(GUIEnv.getApplicationFrame()) == JFileChooser.APPROVE_OPTION) {
                 saveHistory((ClipableTaskInterface) task, chooser.getSelectedFile());
+            }
         }
 
         /**
@@ -311,8 +323,10 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
                 writer.writeComponent(history);
                 writer.close();
             } catch (IOException except) {
-                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: " + except.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE,
-                        GUIEnv.getTrianaIcon());
+                JOptionPane
+                        .showMessageDialog(GUIEnv.getApplicationFrame(), "Save Histroy Error: " + except.getMessage(),
+                                "Save Error", JOptionPane.ERROR_MESSAGE,
+                                GUIEnv.getTrianaIcon());
             }
         }
 
@@ -333,16 +347,16 @@ public class HistoryTrackingAction extends AbstractAction implements ActionDispl
          * Invoked when an action occurs.
          */
         public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == savebutton)
+            if (event.getSource() == savebutton) {
                 saveHistory(getTask());
-            else if (event.getSource() == filebrowse)
+            } else if (event.getSource() == filebrowse) {
                 fileBrowse();
+            }
         }
 
         /**
-         * Invoked when an item has been selected or deselected by the user.
-         * The code written for this method performs the operations
-         * that need to occur when an item is selected (or deselected).
+         * Invoked when an item has been selected or deselected by the user. The code written for this method performs
+         * the operations that need to occur when an item is selected (or deselected).
          */
         public void itemStateChanged(ItemEvent event) {
             if (event.getSource() == autosave) {

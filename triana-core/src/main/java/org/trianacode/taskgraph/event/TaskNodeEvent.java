@@ -58,19 +58,17 @@
  */
 package org.trianacode.taskgraph.event;
 
+import java.util.EventObject;
+
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.ParameterNode;
 import org.trianacode.taskgraph.Task;
 
-import java.util.EventObject;
-
 /**
  * The event generated when a node is added or removed from a task
  *
- * @author      Ian Wang
- * @created     8th May 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TaskNodeEvent extends EventObject {
@@ -89,7 +87,7 @@ public class TaskNodeEvent extends EventObject {
     /**
      * Constructs a task node event
      *
-     * @param id the id of the event (either NODE_ADDED or NODE_REMOVED)
+     * @param id   the id of the event (either NODE_ADDED or NODE_REMOVED)
      * @param task the source of the task property event
      * @param node the node being added/removed
      */
@@ -102,7 +100,6 @@ public class TaskNodeEvent extends EventObject {
         this.index = index;
         this.absindex = absindex;
     }
-
 
 
     /**
@@ -120,8 +117,7 @@ public class TaskNodeEvent extends EventObject {
     }
 
     /**
-     * @return the node referenced by this event (could be null if no longer
-     * valid)
+     * @return the node referenced by this event (could be null if no longer valid)
      */
     public Node getNode() {
         return node;
@@ -129,16 +125,16 @@ public class TaskNodeEvent extends EventObject {
 
 
     /**
-     * @return the index of the node being added/removed. In the case of removal,
-     * this is the index when the node was removed.
+     * @return the index of the node being added/removed. In the case of removal, this is the index when the node was
+     *         removed.
      */
     public int getNodeIndex() {
         return index;
     }
 
     /**
-     * @return the absolute index of the node being added/removedIn the case of
-     * removal, this is the index when the node was removed.
+     * @return the absolute index of the node being added/removedIn the case of removal, this is the index when the node
+     *         was removed.
      */
     public int getAbsoluteNodeIndex() {
         return absindex;
@@ -176,10 +172,11 @@ public class TaskNodeEvent extends EventObject {
      * @return the parameter name for this node (null if data node)
      */
     public String getParameterName() {
-        if (node instanceof ParameterNode)
+        if (node instanceof ParameterNode) {
             return ((ParameterNode) node).getParameterName();
-        else
+        } else {
             return null;
+        }
     }
 
 }

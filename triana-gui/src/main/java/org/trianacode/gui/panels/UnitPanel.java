@@ -58,33 +58,30 @@
  */
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.windows.WindowButtonConstants;
-
-import java.awt.*;
+import java.awt.Color;
 import java.beans.Customizer;
 
+import org.trianacode.gui.windows.WindowButtonConstants;
+
 /**
- * UI for Units
- factor out and redesign UI at later point
+ * UI for Units factor out and redesign UI at later point
  *
- * @author      Your Name Here...
- * @created     Todays Date Here...
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Your Name Here...
+ * @version $Revision: 4048 $
  */
 public class UnitPanel extends ParameterPanel implements Customizer {
 
     /**
      * @return true so that parameter changes are not committed automatically
      */
-    public boolean isAutoCommitByDefault () {
+    public boolean isAutoCommitByDefault() {
         return true;
     }
 
     /**
      * Overrides super method to return WindowConstans.OK_BUTTON, as required by legacy panels.
      */
-    public byte getPreferredButtons () {
+    public byte getPreferredButtons() {
         return WindowButtonConstants.OK_BUTTON;
     }
 
@@ -92,22 +89,22 @@ public class UnitPanel extends ParameterPanel implements Customizer {
     /**
      * This method is called when the task is set for this panel. It can be overridden to create the panel layout.
      */
-    public void init () {
-        setObject (null);
+    public void init() {
+        setObject(null);
     }
 
 
     /**
      * This method should be overridden to reset all components to the values apecified in task.
      */
-    public void reset () {
+    public void reset() {
     }
 
     /**
      * Called when the panel is finished with. This method should be overridden to dispose of all of the panels
      * components.
      */
-    public void dispose () {
+    public void dispose() {
 
     }
 
@@ -133,166 +130,155 @@ public class UnitPanel extends ParameterPanel implements Customizer {
     }
 
     /**
-     * Sets the parameter in the unit identified by <i>parName</i>
-     * to the given <i>value</i>.
+     * Sets the parameter in the unit identified by <i>parName</i> to the given <i>value</i>.
      */
     public void setParameter(String parName, String value) {
         super.setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, double)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, double)}
      */
     public void setParameter(String parName, double value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, boolean)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, boolean)}
      */
     public void setParameter(String parName, boolean value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, float)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, float)}
      */
     public void setParameter(String parName, float value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, int)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, int)}
      */
     public void setParameter(String parName, int value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, short)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, short)}
      */
     public void setParameter(String parName, short value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, long)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, long)}
      */
     public void setParameter(String parName, long value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, byte)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, byte)}
      */
     public void setParameter(String parName, byte value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
-     * @deprecated  As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, java.awt.Color)}
+     * Calls the setParameter function with the given parameter converted to a string
+     *
+     * @deprecated As of Triana 2.0, replaced by {@link #updateParameter(java.lang.String, java.awt.Color)}
      */
     public void setParameter(String parName, Color value) {
         setParameter(parName, String.valueOf(value));
     }
 
     /**
-     * Sets the parameter in the unit identified by <i>parName</i>
-     * to the given <i>value</i>.  This function basically calls the
-     * setParameter function within the unit and notifies parameter
-     * listeners that there has been a change.
+     * Sets the parameter in the unit identified by <i>parName</i> to the given <i>value</i>.  This function basically
+     * calls the setParameter function within the unit and notifies parameter listeners that there has been a change.
      */
     public void updateParameter(String parName, String value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, double value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, boolean value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, float value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, int value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, short value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, long value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, byte value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**
-     * Calls the setParameter function with the given parameter converted
-     * to a string
+     * Calls the setParameter function with the given parameter converted to a string
      */
     public void updateParameter(String parName, Color value) {
 //        oclUnit.updateParameter(parName, value);
-        setParameter (parName, value);
+        setParameter(parName, value);
     }
 
     /**

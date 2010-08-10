@@ -59,48 +59,29 @@
 package triana.types;
 
 /**
- * Spectral is an interface that can be implemented by any
- * Triana data types that include data that represent
- * frequency-domain data or that have been put through a
- * Fourier transform. It contains methods to set and
- * read relevant additional information, such as the
- * frequency range of the data.
- * </p><p>
- * Spectral is consistent with the Triana model for
- * storing spectal information, which is fully described in
- * the documentation for the ComplexSpectrum and Spectrum types.
- * In particular, it assumes that the object stores the
- * value of the highest frequency contained in the data set
- * (used for narrow-band data) but not the lowest; therefore
- * there is a method for setting the highest frequency but
- * not one for setting the lowest.
- * </p><p>
- * Spectral assumes one aspect of the GraphType data
- * model, which is that data are organized as functions
- * of a set of independent variables, and many of the
- * methods of Spectrum take the integer index of the
- * appropriate independent variable (dimension) as
- * an argument. This allows milti-dimensional
- * spectral data to have different properties associated
- * with different dimensions.
+ * Spectral is an interface that can be implemented by any Triana data types that include data that represent
+ * frequency-domain data or that have been put through a Fourier transform. It contains methods to set and createTool
+ * relevant additional information, such as the frequency range of the data. </p><p> Spectral is consistent with the
+ * Triana model for storing spectal information, which is fully described in the documentation for the ComplexSpectrum
+ * and Spectrum types. In particular, it assumes that the object stores the value of the highest frequency contained in
+ * the data set (used for narrow-band data) but not the lowest; therefore there is a method for setting the highest
+ * frequency but not one for setting the lowest. </p><p> Spectral assumes one aspect of the GraphType data model, which
+ * is that data are organized as functions of a set of independent variables, and many of the methods of Spectrum take
+ * the integer index of the appropriate independent variable (dimension) as an argument. This allows milti-dimensional
+ * spectral data to have different properties associated with different dimensions.
  *
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  * @see Spectrum
  * @see ComplexSpectrum
  * @see GraphType
- *
- * @author      Bernard Schutz
- * @created     30 December 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface Spectral {
 
 
     /**
-     * Returns the frequency resolution
-     * of the data associated with the independent variable indexed
-     * by the given value of <i>dim</i>, <i>i.e.</i>
-     * the step in frequency from one data point to the next.
+     * Returns the frequency resolution of the data associated with the independent variable indexed by the given value
+     * of <i>dim</i>, <i>i.e.</i> the step in frequency from one data point to the next.
      *
      * @param dim The index of the independent variable being queried
      * @return double The frequency resolution
@@ -108,42 +89,37 @@ public interface Spectral {
     public double getFrequencyResolution(int dim);
 
     /**
-     * Sets the frequency resolution of the data
-     * associated with the independent variable indexed by the given value of <i>dim</i>.
+     * Sets the frequency resolution of the data associated with the independent variable indexed by the given value of
+     * <i>dim</i>.
      *
      * @param dim The index of the independent variable being queried
-     * @param f The frequency resolution
+     * @param f   The frequency resolution
      */
     public void setFrequencyResolution(double f, int dim);
 
 
     /**
-     * Returns <i>true</i> if the data are stored as a two-sided
-     * transform, <i>i.e.</i> containing both the positive and negative frequency
-     * data. If <i>false</i>, the data are one-sided, containing only positive
-     * frequencies. If the data set is multi-dimensional, then one-sided
-     * means that only positive frequencies for the first independent
-     * variable, <i>dim</i> = 0, are stored. Thus, there is no <i>dim</i> parameter for
-     * this method.
+     * Returns <i>true</i> if the data are stored as a two-sided transform, <i>i.e.</i> containing both the positive and
+     * negative frequency data. If <i>false</i>, the data are one-sided, containing only positive frequencies. If the
+     * data set is multi-dimensional, then one-sided means that only positive frequencies for the first independent
+     * variable, <i>dim</i> = 0, are stored. Thus, there is no <i>dim</i> parameter for this method.
      *
      * @return boolean True if data are two-sided in frequency space
      */
     public boolean isTwoSided();
 
     /**
-     * Sets the two-sided flag to the value of the argument.
-     * As for method <i>isTwoSided</i>, there is no parameter <i>dim</i>.
+     * Sets the two-sided flag to the value of the argument. As for method <i>isTwoSided</i>, there is no parameter
+     * <i>dim</i>.
      *
      * @param s True if the data will be two-sided
      */
     public void setTwoSided(boolean s);
 
     /**
-     * Returns the number of points in the data set
-     * whose transform could have led to the present data, or equivalently
-     * the number of points in the two-sided full-bandwidth spectrum
-     * from which the present spectrum could have been derived. This
-     * depends on which independent variable one is examining (<i>dim</i>).
+     * Returns the number of points in the data set whose transform could have led to the present data, or equivalently
+     * the number of points in the two-sided full-bandwidth spectrum from which the present spectrum could have been
+     * derived. This depends on which independent variable one is examining (<i>dim</i>).
      *
      * @param dim The index of the independent variable being queried
      * @return The number of points in the original data set
@@ -151,20 +127,18 @@ public interface Spectral {
     public int getOriginalN(int dim);
 
     /**
-     * Sets to the given argument the number of points in the data set
-     * whose transform could have led to the present data, or equivalently
-     * the number of points in the two-sided full-bandwidth spectrum
-     * from which the present spectrum could have been derived. For
-     * multidimensional sets this represents the length in the given dimension.
+     * Sets to the given argument the number of points in the data set whose transform could have led to the present
+     * data, or equivalently the number of points in the two-sided full-bandwidth spectrum from which the present
+     * spectrum could have been derived. For multidimensional sets this represents the length in the given dimension.
      *
      * @param nOrig The new number of points in the original data set
-     * @param dim The index of the independent variable dimension
+     * @param dim   The index of the independent variable dimension
      */
     public void setOriginalN(int nOrig, int dim);
 
     /**
-     * Returns <i>true</i> if the data represent a narrow bandwidth
-     * derived from a full-band spectrum in the given dimension <i>dim</i>..
+     * Returns <i>true</i> if the data represent a narrow bandwidth derived from a full-band spectrum in the given
+     * dimension <i>dim</i>..
      *
      * @param dim The index of the independent variable being queried
      * @return True if data are narrow-band
@@ -172,18 +146,16 @@ public interface Spectral {
     public boolean isNarrow(int dim);
 
     /**
-     * Sets the narrow-band flag for the given dimension <i>dim</i>
-     * to the value of the argument.
+     * Sets the narrow-band flag for the given dimension <i>dim</i> to the value of the argument.
      *
-     * @param n True if the data held are narrow-band
+     * @param n   True if the data held are narrow-band
      * @param dim The index of the independent variable being set
      */
     public void setNarrow(boolean n, int dim);
 
     /**
-     * Returns the (non-negative) value
-     * of the lowest frequency in the frequency band held in the object,
-     * for the given dimension <i>dim</i>.
+     * Returns the (non-negative) value of the lowest frequency in the frequency band held in the object, for the given
+     * dimension <i>dim</i>.
      *
      * @param dim The index of the independent variable being queried
      * @return The lowest frequency represented in the given direction
@@ -191,9 +163,8 @@ public interface Spectral {
     public double getLowerFrequencyBound(int dim);
 
     /**
-     * Returns the (non-negative) value
-     * of the highest frequency in the frequency band held in the object,
-     * for the given dimension <i>dim</i>.
+     * Returns the (non-negative) value of the highest frequency in the frequency band held in the object, for the given
+     * dimension <i>dim</i>.
      *
      * @param dim The index of the independent variable being queried
      * @return The highest frequency represented in the given direction
@@ -201,22 +172,18 @@ public interface Spectral {
     public double getUpperFrequencyBound(int dim);
 
     /**
-     * Sets the (non-negative) value
-     * of the highest frequency in the frequency band held in the object
-     * for the given direction <i>dim</i> to the given value <i>hf</i>.
-     * This should also set the
-     * <i>isNarrow</i> flag if the given value is not the highest value
-     * of the original-length spectrum.
+     * Sets the (non-negative) value of the highest frequency in the frequency band held in the object for the given
+     * direction <i>dim</i> to the given value <i>hf</i>. This should also set the <i>isNarrow</i> flag if the given
+     * value is not the highest value of the original-length spectrum.
      *
      * @param dim The index of the independent variable being queried
-     * @param hf The new highest frequency represented in the given direction
+     * @param hf  The new highest frequency represented in the given direction
      */
     public void setUpperFrequencyBound(double hf, int dim);
 
     /**
-     * Returns the frequency values of the independent data points for
-     * the given dimension, in the order of lowest frequency to highest,
-     * regardless of how the data are stored internally.
+     * Returns the frequency values of the independent data points for the given dimension, in the order of lowest
+     * frequency to highest, regardless of how the data are stored internally.
      *
      * @param dim The dimension of the independent variable
      * @return double[] Array of ordered frequency values
@@ -224,24 +191,20 @@ public interface Spectral {
     public double[] getFrequencyArray(int dim);
 
     /**
-     * Returns the real parts of the values of the spectrum (data points) in a
-     * multidimensional array, ordered so that in each dimension
-     * the values correspond to frequencies running from the lowest
-     * to the highest, regardless of the internal data model. These
-     * points then correspond to the values returned by
-     * <i>getFrequencyArray</i> for each dimension.
+     * Returns the real parts of the values of the spectrum (data points) in a multidimensional array, ordered so that
+     * in each dimension the values correspond to frequencies running from the lowest to the highest, regardless of the
+     * internal data model. These points then correspond to the values returned by <i>getFrequencyArray</i> for each
+     * dimension.
      *
      * @return Object Multidimensional arrray of ordered spectral values
      */
     public Object getOrderedSpectrumReal();
 
     /**
-     * Returns the imaginary parts of the values of the spectrum (data points) in a
-     * multidimensional array, ordered so that in each dimension
-     * the values correspond to frequencies running from the lowest
-     * to the highest, regardless of the internal data model. These
-     * points then correspond to the values returned by
-     * <i>getFrequencyArray</i> for each dimension.
+     * Returns the imaginary parts of the values of the spectrum (data points) in a multidimensional array, ordered so
+     * that in each dimension the values correspond to frequencies running from the lowest to the highest, regardless of
+     * the internal data model. These points then correspond to the values returned by <i>getFrequencyArray</i> for each
+     * dimension.
      *
      * @return Object Multidimensional arrray of ordered spectral values
      */

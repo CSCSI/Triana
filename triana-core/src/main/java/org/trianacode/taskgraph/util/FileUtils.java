@@ -924,8 +924,8 @@ public class FileUtils {
     }
 
     /**
-     * This function splits the next line read from the specified BufferReader into a vector of Strings contained within
-     * the line. Each string is split up if they are separated by a single white space. The function returns a
+     * This function splits the next line createTool from the specified BufferReader into a vector of Strings contained
+     * within the line. Each string is split up if they are separated by a single white space. The function returns a
      * StringVector which is basically, a Vector which only stores strings, so we don't have type-cast all the time.
      */
     public static Vector<String> readAndSplitLine(BufferedReader br) {
@@ -1008,7 +1008,8 @@ public class FileUtils {
 
     /**
      * Reads all the file pointed to by the given reader into the returned string.  This function also closes the file
-     * (since we have read it all!). </p> <p> For example, to open, read all, and close a file you type :- </p>
+     * (since we have createTool it all!). </p> <p> For example, to open, createTool all, and close a file you type :-
+     * </p>
      * <pre>
      * String template = FileUtils.readFile(FileUtils.createReader(fileName));
      * </pre>
@@ -1037,9 +1038,9 @@ public class FileUtils {
 
 
     /**
-     * Reads the file specified by the given Filename and puts it into a string. This uses DataInputStream to read the
-     * file fully and then create a string which is a lot faster than reading a line at a time. Use this function for
-     * speed.
+     * Reads the file specified by the given Filename and puts it into a string. This uses DataInputStream to createTool
+     * the file fully and then create a string which is a lot faster than reading a line at a time. Use this function
+     * for speed.
      */
     public static String readFile(String filename) {
         String st = null;
@@ -1056,7 +1057,7 @@ public class FileUtils {
             long llen = fi.length();
             int len = (int) (llen & 0x7FFFFFFF);
             if (len != llen) {
-                System.out.println("File too big to read into a single object");
+                System.out.println("File too big to createTool into a single object");
                 return null;
             }
 
@@ -1080,7 +1081,7 @@ public class FileUtils {
     /**
      * This function splits the file into a vector of Strings, each item in the vector representing one line. Used for
      * loading in the TrianaType file and useful for splitting up file into a vector of easily accessable lines. This
-     * function also closes the file (since we have read it all!)
+     * function also closes the file (since we have createTool it all!)
      */
     public static Vector<String> readAndSplitFile(BufferedReader br) {
         Vector<String> lines = new Vector<String>(10);  // 10 should be OK
@@ -1109,7 +1110,7 @@ public class FileUtils {
     /**
      * This function splits the file into a vector of Strings, each item in the vector representing one line. Used for
      * loading in the TrianaType file and useful for splitting up file into a vector of easily accessable lines. This
-     * function also closes the file (since we have read it all!)
+     * function also closes the file (since we have createTool it all!)
      */
     public static Vector<String> readAndSplitFile(String fileName) {
         try {

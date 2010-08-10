@@ -61,9 +61,8 @@ package org.trianacode.gui.help;
 /**
  * Triana help is written as a stand alone application.
  *
- * @author      Melanie Rhianna Lewis
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Melanie Rhianna Lewis
+ * @version $Revision: 4048 $
  */
 public class TrianaHelp {
     static TrianaHelpFrame frame;
@@ -78,8 +77,7 @@ public class TrianaHelp {
         // URL otherwise assume it is a local file.
         if (arg.length > 0) {
             frame = new TrianaHelpFrame(arg[0]);
-        }
-        else {
+        } else {
             frame = new TrianaHelpFrame();
         }
 
@@ -90,8 +88,7 @@ public class TrianaHelp {
 }
 
 /**
- * A class which responds to the CloseFrameEvent from TrianaHelpFrame and
- * destroys the frame and exits the application.
+ * A class which responds to the CloseFrameEvent from TrianaHelpFrame and destroys the frame and exits the application.
  */
 class CloseListener implements CloseFrameListener {
     public void frameClosing(CloseFrameEvent e) {

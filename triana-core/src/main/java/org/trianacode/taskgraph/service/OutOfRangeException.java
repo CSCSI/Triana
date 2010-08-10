@@ -61,23 +61,22 @@ package org.trianacode.taskgraph.service;
 /**
  * Thrown when a unit requests a node which doesn't exist.
  *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class OutOfRangeException extends RuntimeException {
     /**
-     * Constructs an OutOfRangeException with no detail message.
-     * A detail message is a String that describes this particular exception.
+     * Constructs an OutOfRangeException with no detail message. A detail message is a String that describes this
+     * particular exception.
      */
     public OutOfRangeException() {
         super();
     }
 
     /**
-     * Constructs an OutOfRangeException with the specified detail message.
-     * A detail message is a String that describes this particular exception.
+     * Constructs an OutOfRangeException with the specified detail message. A detail message is a String that describes
+     * this particular exception.
+     *
      * @param s the String that contains a detailed message
      */
     public OutOfRangeException(String s) {

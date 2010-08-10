@@ -58,6 +58,10 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JOptionPane;
 import org.trianacode.gui.appmaker.CommandLineWizard;
 import org.trianacode.gui.hci.CompileHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -66,18 +70,11 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 /**
- * Class that handles events and actions for the Tools menu, including New Tool, Compile
- * and Edit Tool Box Paths.
+ * Class that handles events and actions for the Tools menu, including New Tool, Compile and Edit Tool Box Paths.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 13, 2003: 4:45:14 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolsMenuHandler implements ActionListener {
 
@@ -92,16 +89,17 @@ public class ToolsMenuHandler implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         String label = e.getActionCommand();
-        if (label.equals(Env.getString("newUnit")))
+        if (label.equals(Env.getString("newUnit"))) {
             newTool();
-        else if (label.equals(Env.getString("compileGenerate")))
+        } else if (label.equals(Env.getString("compileGenerate"))) {
             compile();
-        else if (label.equals(Env.getString("compileAll")))
+        } else if (label.equals(Env.getString("compileAll"))) {
             rebuildAllTools();
-        else if (label.equals(Env.getString("editToolBoxPaths")))
+        } else if (label.equals(Env.getString("editToolBoxPaths"))) {
             editToolBoxPaths();
-        else if (label.equals(Env.getString("generateCommandLineApp")))
+        } else if (label.equals(Env.getString("generateCommandLineApp"))) {
             generateCommandLine();
+        }
     }
 
     private void rebuildAllTools() {
@@ -129,7 +127,8 @@ public class ToolsMenuHandler implements ActionListener {
     public void compile() {
         final Tool[] ts = GUIEnv.getApplicationFrame().getSelectedTools();
         if (ts == null || ts.length == 0) {
-            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Please Select a Tool from the workspace", "Select", JOptionPane.INFORMATION_MESSAGE,
+            JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Please Select a Tool from the workspace",
+                    "Select", JOptionPane.INFORMATION_MESSAGE,
                     GUIEnv.getTrianaIcon());
         } else {
             final CompileHandler compiler = new CompileHandler(true);
@@ -137,8 +136,9 @@ public class ToolsMenuHandler implements ActionListener {
                 public void run() {
                     for (int i = 0; i < ts.length; i++) {
                         Tool selectedTool = ts[i];
-                        if ((selectedTool != null) && (!(selectedTool instanceof TaskGraph)))
+                        if ((selectedTool != null) && (!(selectedTool instanceof TaskGraph))) {
                             compiler.compileTargetTool(selectedTool);
+                        }
                     }
                 }
             };
@@ -153,8 +153,7 @@ public class ToolsMenuHandler implements ActionListener {
     }
 
     /**
-     * Generate a command line application using the command line app
-     * wizard
+     * Generate a command line application using the command line app wizard
      */
     private void generateCommandLine() {
         new CommandLineWizard(tools, GUIEnv.getApplicationFrame());

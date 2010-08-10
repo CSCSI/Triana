@@ -58,6 +58,12 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.taskgraph.Node;
@@ -65,18 +71,11 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
 /**
  * Action for deccrementing input nodes.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class DecOutNodeAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -99,10 +98,11 @@ public class DecOutNodeAction extends AbstractAction implements ActionDisplayOpt
     public void actionPerformed(ActionEvent e) {
         Tool tool = null;
 
-        if (e.getSource() instanceof Tool)
+        if (e.getSource() instanceof Tool) {
             tool = (Tool) e.getSource();
-        else if (selhandler.isSingleSelectedTool())
+        } else if (selhandler.isSingleSelectedTool()) {
             tool = selhandler.getSelectedTool();
+        }
 
         if ((tool != null) && (tool instanceof Task)) {
             Task task = (Task) tool;

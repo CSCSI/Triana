@@ -24,8 +24,6 @@ import java.util.ArrayList;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 4:42:45 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class TypeUtils {
@@ -48,9 +46,8 @@ public class TypeUtils {
     }
 
     /**
-     * This function attempts to return the class representation for the
-     * the given name of the Triana type. If prepends triana.types to start
-     * of the name and looks for the class representation.
+     * This function attempts to return the class representation for the the given name of the Triana type. If prepends
+     * triana.types to start of the name and looks for the class representation.
      */
     public static Class classForTrianaType(String name) {
         if (name.equals(Tool.UNKNOWN_DATA_TYPE) || name.equals(Tool.ANY_DATA_TYPE)) {
@@ -63,19 +60,19 @@ public class TypeUtils {
 
         boolean array = false;
 
-        if (name.equals(DOUBLE_ARRAY))
+        if (name.equals(DOUBLE_ARRAY)) {
             return new double[0].getClass();
-        else if (name.equals(FLOAT_ARRAY))
+        } else if (name.equals(FLOAT_ARRAY)) {
             return new float[0].getClass();
-        else if (name.equals(LONG_ARRAY))
+        } else if (name.equals(LONG_ARRAY)) {
             return new long[0].getClass();
-        else if (name.equals(INT_ARRAY))
+        } else if (name.equals(INT_ARRAY)) {
             return new int[0].getClass();
-        else if (name.equals(SHORT_ARRAY))
+        } else if (name.equals(SHORT_ARRAY)) {
             return new short[0].getClass();
-        else if (name.equals(BYTE_ARRAY))
+        } else if (name.equals(BYTE_ARRAY)) {
             return new byte[0].getClass();
-        else if (name.endsWith("[]")) {
+        } else if (name.endsWith("[]")) {
             array = true;
             name = name.substring(0, name.indexOf("[]"));
         }
@@ -92,10 +89,11 @@ public class TypeUtils {
             }
         }
 
-        if (array)
+        if (array) {
             return Array.newInstance(javaType, 0).getClass();
-        else
+        } else {
             return javaType;
+        }
     }
 
     /**
@@ -105,8 +103,9 @@ public class TypeUtils {
         ArrayList typeClasses = new ArrayList();
         for (int i = 0; i < types.length; i++) {
             Class type = TypeUtils.classForTrianaType(types[i]);
-            if (type != null)
+            if (type != null) {
                 typeClasses.add(type);
+            }
         }
         return (Class[]) typeClasses.toArray(new Class[typeClasses.size()]);
     }

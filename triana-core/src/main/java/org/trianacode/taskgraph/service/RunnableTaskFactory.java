@@ -58,16 +58,23 @@
  */
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
 import org.trianacode.taskgraph.tool.Tool;
 
 
 /**
- * Implementation of the TaskgraphFactoryInterface, creates a RunnableTask and associated OldUnit
- * and tool classes
- *
- *
+ * Implementation of the TaskgraphFactoryInterface, creates a RunnableTask and associated OldUnit and tool classes
  */
 public class RunnableTaskFactory implements TaskFactory {
 
@@ -119,11 +126,12 @@ public class RunnableTaskFactory implements TaskFactory {
             }
         }
         catch (TaskGraphException except) {
-            throw(new TaskException(except.getMessage(), except));
+            throw (new TaskException(except.getMessage(), except));
         }
     }
 
-    protected RunnableInstance initRunnableInstance(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskGraphException {
+    protected RunnableInstance initRunnableInstance(Tool tool, TaskGraph parent, boolean preserveinst)
+            throws TaskGraphException {
         RunnableTask task = new RunnableTask(tool, this, preserveinst);
 
         task.setParent(parent);
@@ -141,8 +149,7 @@ public class RunnableTaskFactory implements TaskFactory {
             RunnableNode rn = new RunnableNode((RunnableInstance) task, input);
             System.out.println("RunnableTaskFactory.createNode created runnable node");
             return rn;
-        }
-        else if (task instanceof TaskGraph) {
+        } else if (task instanceof TaskGraph) {
             RunnableNode rn = new RunnableNode((TaskGraph) task, input);
             System.out.println("RunnableTaskFactory.createNode created new RunnableNode");
             return rn;
@@ -152,16 +159,16 @@ public class RunnableTaskFactory implements TaskFactory {
     }
 
     /**
-     * @return a new parameter node inputting/outputting the specified parameter and connected to
-     *         the specified task
+     * @return a new parameter node inputting/outputting the specified parameter and connected to the specified task
      */
     public ParameterNode createParameterNode(String paramname, Task task, boolean input) {
-        if (task instanceof RunnableInstance)
+        if (task instanceof RunnableInstance) {
             return new RunnableParameterNode(paramname, (RunnableInstance) task, input);
-        else if (task instanceof TaskGraph)
+        } else if (task instanceof TaskGraph) {
             return new RunnableParameterNode(paramname, (TaskGraph) task, input);
-        else
+        } else {
             throw new RuntimeException("Inconsistent taskgraph; cannot attach a runnable node to a non-runnable task");
+        }
     }
 
 
@@ -179,7 +186,9 @@ public class RunnableTaskFactory implements TaskFactory {
 
             return cable;
         }
-        throw (new IncompatibleProxyException("RunnableTaskhFactory Error: Cannot connect proxy types (" + sendnode.getTopLevelTask().getProxy().getType() + "->" + recnode.getTopLevelTask().getProxy().getType() + ")"));
+        throw (new IncompatibleProxyException("RunnableTaskhFactory Error: Cannot connect proxy types ("
+                + sendnode.getTopLevelTask().getProxy().getType() + "->"
+                + recnode.getTopLevelTask().getProxy().getType() + ")"));
     }
 
 }

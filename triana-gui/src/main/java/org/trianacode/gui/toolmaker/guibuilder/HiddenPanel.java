@@ -58,15 +58,13 @@
  */
 package org.trianacode.gui.toolmaker.guibuilder;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 /**
  * The panel for defining a gui builder text field component
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class HiddenPanel extends JPanel implements ComponentPanelInterface {
 

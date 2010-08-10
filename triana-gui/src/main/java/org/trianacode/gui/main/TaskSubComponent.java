@@ -60,17 +60,13 @@
 package org.trianacode.gui.main;
 
 /**
- * An interface that should be implemented by subcomponents of a task component
- * that wish to act as if they were part of the main task components. If this
- * is implemented then any mouse events will be handled as if they were enacted
- * on the main task component. If this interface is not implemented then the
- * subcomponent will be expected to handle its own events.
+ * An interface that should be implemented by subcomponents of a task component that wish to act as if they were part of
+ * the main task components. If this is implemented then any mouse events will be handled as if they were enacted on the
+ * main task component. If this interface is not implemented then the subcomponent will be expected to handle its own
+ * events.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12 July 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public interface TaskSubComponent {

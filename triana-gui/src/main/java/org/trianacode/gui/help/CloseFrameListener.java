@@ -61,13 +61,12 @@ package org.trianacode.gui.help;
 import java.util.EventListener;
 
 /**
- * A custom event listener interface.  The event is generated when the close
- * frame widget is used or close has been chosen from the file menu of a frame.
- * @see CloseFrameEvent
+ * A custom event listener interface.  The event is generated when the close frame widget is used or close has been
+ * chosen from the file menu of a frame.
  *
  * @author Melanie Rhianna Lewis
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
+ * @see CloseFrameEvent
  */
 public interface CloseFrameListener extends EventListener {
 

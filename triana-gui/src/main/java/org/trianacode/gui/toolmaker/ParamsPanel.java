@@ -58,23 +58,36 @@
  */
 package org.trianacode.gui.toolmaker;
 
-import org.trianacode.gui.panels.FormLayout;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Hashtable;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.panels.FormLayout;
+import org.trianacode.util.Env;
 
 /**
  * The tool wizard panel for editing the parameters of a tool
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 8th August
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelInterface {
 
@@ -146,7 +159,8 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
         JPanel buttoncont = new JPanel(new BorderLayout());
         buttoncont.add(buttonpanel, BorderLayout.SOUTH);
 
-        JScrollPane scroll = new JScrollPane(params, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroll = new JScrollPane(params, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         params.setPrototypeCellValue("123456789012345678901234567890");
         params.setVisibleRowCount(8);
         ((DefaultListModel) params.getModel()).addElement(NONE);
@@ -186,14 +200,16 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
      * @return an array of the input types choosen
      */
     public String[] getParameterNames() {
-        if (((DefaultListModel) params.getModel()).contains(NONE))
+        if (((DefaultListModel) params.getModel()).contains(NONE)) {
             return new String[0];
+        }
 
         Object[] in = ((DefaultListModel) params.getModel()).toArray();
         String[] copy = new String[in.length];
 
-        for (int count = 0; count < in.length; count++)
+        for (int count = 0; count < in.length; count++) {
             copy[count] = getParamName((String) in[count]);
+        }
 
         return copy;
     }
@@ -205,12 +221,13 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
         DefaultListModel model = ((DefaultListModel) params.getModel());
         int count = 0;
 
-        while ((count < model.getSize()) && !getParamName((String) model.elementAt(count)).equals(paramname))
+        while ((count < model.getSize()) && !getParamName((String) model.elementAt(count)).equals(paramname)) {
             count++;
+        }
 
-        if (count >= model.getSize())
+        if (count >= model.getSize()) {
             return null;
-        else {
+        } else {
             String str = ((String) model.elementAt(count));
             return str.substring(1, str.indexOf(')'));
         }
@@ -220,10 +237,11 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
      * @return the parameter type for a parameter
      */
     public String getParameterType(String paramname) {
-        if (typetable.containsKey(paramname))
+        if (typetable.containsKey(paramname)) {
             return (String) typetable.get(paramname);
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -234,18 +252,20 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
         DefaultListModel model = ((DefaultListModel) params.getModel());
         int count = 0;
 
-        while ((count < model.getSize()) && !getParamName((String) model.elementAt(count)).equals(paramname))
+        while ((count < model.getSize()) && !getParamName((String) model.elementAt(count)).equals(paramname)) {
             count++;
+        }
 
-        if (count >= model.getSize())
+        if (count >= model.getSize()) {
             return null;
-        else {
+        } else {
             String str = ((String) model.elementAt(count));
 
-            if (str.indexOf('=') == -1)
+            if (str.indexOf('=') == -1) {
                 return null;
-            else
+            } else {
                 return str.substring(str.indexOf('=') + 2);
+            }
         }
     }
 
@@ -256,8 +276,9 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
         DefaultListModel model = ((DefaultListModel) params.getModel());
         int count = 0;
 
-        while ((count < model.getSize()) && !getParamName((String) model.elementAt(count)).equals(paramname))
+        while ((count < model.getSize()) && !getParamName((String) model.elementAt(count)).equals(paramname)) {
             count++;
+        }
 
         if (count < model.getSize()) {
             String datatype = getDataType(paramname);
@@ -272,22 +293,24 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
      * @return the param name for the specified list entry
      */
     private String getParamName(String listentry) {
-        if (listentry.indexOf('=') != -1)
+        if (listentry.indexOf('=') != -1) {
             return listentry.substring(listentry.indexOf(' ') + 1, listentry.indexOf('=') - 1);
-        else
+        } else {
             return listentry.substring(listentry.indexOf(' ') + 1);
+        }
     }
 
     /**
      * @return the parameter update policy
      */
     public int getUpdatePolicy() {
-        if (update.getSelectedItem().equals(Env.getString("updateAtProcess")))
+        if (update.getSelectedItem().equals(Env.getString("updateAtProcess"))) {
             return UPDATE_AT_START_OF_PROCESS;
-        else if (update.getSelectedItem().equals(Env.getString("updateImmediately")))
+        } else if (update.getSelectedItem().equals(Env.getString("updateImmediately"))) {
             return UPDATE_IMMEDIATELY;
-        else
+        } else {
             return DO_NOT_UPDATE;
+        }
     }
 
 
@@ -295,15 +318,17 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
         if (event.getSource() == add) {
             Component parent = this.getParent();
 
-            while (!(parent instanceof Window))
+            while (!(parent instanceof Window)) {
                 parent = parent.getParent();
+            }
 
             ParamDialog dialog;
 
-            if (parent instanceof Frame)
+            if (parent instanceof Frame) {
                 dialog = new ParamDialog(datatypes, paramtypes, (Frame) parent);
-            else
+            } else {
                 dialog = new ParamDialog(datatypes, paramtypes, (Dialog) parent);
+            }
 
             dialog.setLocation(parent.getLocation().x + (parent.getSize().width / 2) - (dialog.getSize().width / 2),
                     parent.getLocation().y + (parent.getSize().height / 2) - (dialog.getSize().height / 2));
@@ -319,20 +344,23 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
         if (event.getSource() == remove) {
             Object[] remove = params.getSelectedValues();
 
-            for (int count = 0; count < remove.length; count++)
+            for (int count = 0; count < remove.length; count++) {
                 ((DefaultListModel) params.getModel()).removeElement(remove[count]);
+            }
 
-            if ((params.getModel()).getSize() == 0)
+            if ((params.getModel()).getSize() == 0) {
                 ((DefaultListModel) params.getModel()).addElement(NONE);
+            }
         }
     }
 
 
     private static String getListEntry(String paramname, String type, String defval) {
-        if (defval.equals(""))
+        if (defval.equals("")) {
             return "(" + type + ") " + paramname.trim();
-        else
+        } else {
             return "(" + type + ") " + paramname.trim() + " = " + defval.trim();
+        }
     }
 
 
@@ -421,8 +449,9 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
         }
 
         private void populate(JComboBox combo, String[] items) {
-            for (int count = 0; count < items.length; count++)
+            for (int count = 0; count < items.length; count++) {
                 ((DefaultComboBoxModel) combo.getModel()).addElement(items[count]);
+            }
         }
 
 
@@ -437,40 +466,45 @@ public class ParamsPanel extends JPanel implements ActionListener, ParamsPanelIn
          * @return the list entry for this parameter
          */
         public String getListEntry() {
-            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1))
+            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1)) {
                 return null;
-            else
-                return ParamsPanel.getListEntry(paramname.getText(), (String) datatypes.getSelectedItem(), defaultval.getText());
+            } else {
+                return ParamsPanel
+                        .getListEntry(paramname.getText(), (String) datatypes.getSelectedItem(), defaultval.getText());
+            }
         }
 
         /**
          * @return the name of this parameter
          */
         public String getParameterName() {
-            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1))
+            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1)) {
                 return null;
-            else
+            } else {
                 return paramname.getText();
+            }
         }
 
         /**
          * @return the type for this parameter
          */
         public String getDataType() {
-            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1))
+            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1)) {
                 return null;
-            else
+            } else {
                 return (String) datatypes.getSelectedItem();
+            }
         }
 
         /**
          * @return the parameter type for this parameter
          */
         public String getParameterType() {
-            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1))
+            if (paramname.getText().equals("") || (datatypes.getSelectedIndex() == -1)) {
                 return null;
-            else
+            } else {
                 return (String) paramtypes.getSelectedItem();
+            }
         }
 
 

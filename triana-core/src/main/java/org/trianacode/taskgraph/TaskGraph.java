@@ -66,8 +66,6 @@ import org.trianacode.taskgraph.tool.Tool;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 29th April
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface TaskGraph extends Task {
 
@@ -76,10 +74,8 @@ public interface TaskGraph extends Task {
     public static final int CONTROL_TASK_UNSTABLE = 2;
 
     /**
-     * Constructs a new task for looping over the group, optionally preserving
-     * the original instance id in the new task. This method does not connect
-     * the control task, which should be done using
-     * TaskGraphUtils.connectControlTask()
+     * Constructs a new task for looping over the group, optionally preserving the original instance id in the new task.
+     * This method does not connect the control task, which should be done using TaskGraphUtils.connectControlTask()
      */
     public Task createControlTask(Tool tool, boolean preserveinst) throws TaskException;
 
@@ -109,14 +105,13 @@ public interface TaskGraph extends Task {
     public boolean isControlTaskUnstable();
 
     /**
-     * @return the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED
-     *         or CONTROL_TASK_UNSTABLE)
+     * @return the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED or
+     *         CONTROL_TASK_UNSTABLE)
      */
     public int getControlTaskState();
 
     /**
-     * Sets the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED
-     * or CONTROL_TASK_UNSTABLE)
+     * Sets the state of the control task (CONTROL_TASK_CONNECTED, CONTROL_TASK_DISCONNECTED or CONTROL_TASK_UNSTABLE)
      */
     public void setControlTaskState(int state);
 
@@ -140,8 +135,8 @@ public interface TaskGraph extends Task {
     public Task createTask(Tool tool) throws TaskException;
 
     /**
-     * Create a new task in this taskgraph, optionally preserving the
-     * instance id from the original task in the new task.
+     * Create a new task in this taskgraph, optionally preserving the instance id from the original task in the new
+     * task.
      *
      * @return an interface to the new task
      */
@@ -154,8 +149,7 @@ public interface TaskGraph extends Task {
 
 
     /**
-     * @return an array of all the tasks contained with this taskgraph,
-     *         optionally including the control task
+     * @return an array of all the tasks contained with this taskgraph, optionally including the control task
      */
     public Task[] getTasks(boolean includecontrol);
 
@@ -197,9 +191,8 @@ public interface TaskGraph extends Task {
 
 
     /**
-     * Groups the specified tasks, returning the taskgraph created. A default mapping
-     * between group nodes and task nodes is created. This can be changed later through setDataInputNode etc. in
-     * TaskGraph.
+     * Groups the specified tasks, returning the taskgraph created. A default mapping between group nodes and task nodes
+     * is created. This can be changed later through setDataInputNode etc. in TaskGraph.
      */
     public TaskGraph groupTasks(String[] tasknames, String groupname) throws TaskGraphException;
 
@@ -245,8 +238,7 @@ public interface TaskGraph extends Task {
     public Node getGroupNodeParent(Node groupnode);
 
     /**
-     * Swaps the parents of two group nodes (without disconnecting either).
-     * Useful for reordering input/output nodes.
+     * Swaps the parents of two group nodes (without disconnecting either). Useful for reordering input/output nodes.
      */
     public void swapGroupNodeParents(Node groupnode1, Node groupnode2);
 
@@ -256,14 +248,12 @@ public interface TaskGraph extends Task {
 
 
     /**
-     * removes tasks and notifies listeners when the taskgraph is ungrouped,
-     * but does not dispose of the tasks
+     * removes tasks and notifies listeners when the taskgraph is ungrouped, but does not dispose of the tasks
      */
     public void ungroup();
 
     /**
-     * cleans up any operations associated with this taskgraph and the tasks
-     * within it
+     * cleans up any operations associated with this taskgraph and the tasks within it
      */
     public void dispose();
 

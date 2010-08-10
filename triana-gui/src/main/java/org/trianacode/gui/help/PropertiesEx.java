@@ -58,17 +58,21 @@
  */
 package org.trianacode.gui.help;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class PropertiesEx extends Properties {
 
     /**
      * Loads properties from a file.
+     *
      * @param file The file to load
      * @see #loadPropertiesFile(String)
      * @see #loadPropertiesFile(String, String)
@@ -84,6 +88,7 @@ public class PropertiesEx extends Properties {
 
     /**
      * Loads properties from a file.
+     *
      * @param file The full path and name of the file to load
      * @see #loadPropertiesFile(File)
      * @see #loadPropertiesFile(String, String)
@@ -97,6 +102,7 @@ public class PropertiesEx extends Properties {
 
     /**
      * Loads properties from a file.
+     *
      * @param path The path of the file to load
      * @param file The name of the file to load
      * @see #loadPropertiesFile(File)
@@ -110,7 +116,8 @@ public class PropertiesEx extends Properties {
 
     /**
      * Saves properties to a file.
-     * @param file The file to save
+     *
+     * @param file   The file to save
      * @param header A text comment which is used as a header in the file
      * @see #savePropertiesFile(String, String)
      * @see java.util.Properties#save
@@ -124,7 +131,8 @@ public class PropertiesEx extends Properties {
 
     /**
      * Saves properties to a file.
-     * @param file The full path and name of the file to save
+     *
+     * @param file   The full path and name of the file to save
      * @param header A text comment which is used as a header in the file
      * @see #savePropertiesFile(File, String)
      * @see java.util.Properties#save
@@ -135,9 +143,10 @@ public class PropertiesEx extends Properties {
     }
 
     /**
-     * Sets the value of a property in the property list.  <B>Note</B> this
-     * method is defined in Java 2 but not in Java 1.1 hence its definition here.
-     * @param name Name of the property
+     * Sets the value of a property in the property list.  <B>Note</B> this method is defined in Java 2 but not in Java
+     * 1.1 hence its definition here.
+     *
+     * @param name  Name of the property
      * @param value Value of the property
      * @see #getProperty
      * @see java.util.Hashtable#put

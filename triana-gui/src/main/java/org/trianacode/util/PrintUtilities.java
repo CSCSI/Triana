@@ -16,22 +16,24 @@
 
 package org.trianacode.util;
 
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.swing.RepaintManager;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 5:11:26 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class PrintUtilities implements Printable {
@@ -63,12 +65,13 @@ public class PrintUtilities implements Printable {
         PrinterJob printJob = PrinterJob.getPrinterJob();
         printJob.setPrintable(this);
 
-        if (printJob.printDialog(aset))
+        if (printJob.printDialog(aset)) {
             try {
                 printJob.print();
             } catch (PrinterException pe) {
                 System.out.println("Error printing: " + pe);
             }
+        }
     }
 
     public int print(Graphics graphics, PageFormat format, int pageIndex) {
@@ -97,8 +100,9 @@ public class PrintUtilities implements Printable {
 
             componentToBePrinted.paint(graphics2D);
 
-            if (white)
+            if (white) {
                 componentToBePrinted.setBackground(back);
+            }
 
             enableDoubleBuffering(componentToBePrinted);
             return (PAGE_EXISTS);

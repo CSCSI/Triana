@@ -21,8 +21,6 @@ package org.trianacode.taskgraph.ser;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Dec 18, 2007: 7:42:00 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class Base64 {
@@ -41,10 +39,13 @@ public class Base64 {
     private static final byte[] S_DECODETABLE = new byte[128];
 
     static {
-        for (int i = 0; i < S_DECODETABLE.length; i++)
-            S_DECODETABLE[i] = Byte.MAX_VALUE;  // 127
+        for (int i = 0; i < S_DECODETABLE.length; i++) {
+            S_DECODETABLE[i] = Byte.MAX_VALUE;
+        }  // 127
         for (int i = 0; i < S_BASE64CHAR.length; i++) // 0 to 63
+        {
             S_DECODETABLE[S_BASE64CHAR[i]] = (byte) i;
+        }
     }
 
     public static byte[] decode(String data) {
@@ -63,8 +64,9 @@ public class Base64 {
                 }
             }
         }
-        if (obufcount == obuf.length)
+        if (obufcount == obuf.length) {
             return obuf;
+        }
         byte[] ret = new byte[obufcount];
         System.arraycopy(obuf, 0, ret, 0, obufcount);
         return ret;
@@ -72,8 +74,12 @@ public class Base64 {
 
     private static int decode0(char[] ibuf, byte[] obuf, int wp) {
         int outlen = 3;
-        if (ibuf[3] == S_BASE64PAD) outlen = 2;
-        if (ibuf[2] == S_BASE64PAD) outlen = 1;
+        if (ibuf[3] == S_BASE64PAD) {
+            outlen = 2;
+        }
+        if (ibuf[2] == S_BASE64PAD) {
+            outlen = 1;
+        }
         int b0 = S_DECODETABLE[ibuf[0]];
         int b1 = S_DECODETABLE[ibuf[1]];
         int b2 = S_DECODETABLE[ibuf[2]];
@@ -107,7 +113,9 @@ public class Base64 {
      * Returns base64 representation of specified byte array.
      */
     public static String encode(byte[] data, int off, int len) {
-        if (len <= 0) return "";
+        if (len <= 0) {
+            return "";
+        }
         char[] out = new char[len / 3 * 4 + 4];
         int rindex = off;
         int windex = 0;

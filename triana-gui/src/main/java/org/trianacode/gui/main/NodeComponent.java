@@ -60,19 +60,15 @@
 package org.trianacode.gui.main;
 
 
+import java.awt.Component;
+
 import org.trianacode.taskgraph.Node;
 
-import java.awt.*;
-
 /**
- * An interface implemented by all components that can be used to represent
- * nodes
+ * An interface implemented by all components that can be used to represent nodes
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public interface NodeComponent {
@@ -99,8 +95,7 @@ public interface NodeComponent {
     public boolean isInputNode();
 
     /**
-     * @return true if the node represented by this component can be connected
-     *         to/connected from
+     * @return true if the node represented by this component can be connected to/connected from
      */
     public boolean isConnectable();
 

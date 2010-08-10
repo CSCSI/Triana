@@ -59,16 +59,18 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+import javax.swing.JInternalFrame;
 
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class provides internal frame positioning methods for use by
- * {@link com.tomtessier.scrollabledesktop.DesktopScrollPane DesktopScrollPane}.
+ * <p/>
+ * This class provides internal frame positioning methods for use by {@link com.tomtessier.scrollabledesktop.DesktopScrollPane
+ * DesktopScrollPane}.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  11-Aug-2001
@@ -95,16 +97,14 @@ public class FramePositioning implements DesktopConstants {
     /**
      * turns autoTile on or off
      *
-     * @param autoTile <code>boolean</code> representing autoTile mode.
-     *      If <code>true</code>, then all new frames are tiled automatically.
-     *      If <code>false</code>, then all new frames are cascaded automatically.
+     * @param autoTile <code>boolean</code> representing autoTile mode. If <code>true</code>, then all new frames are
+     *                 tiled automatically. If <code>false</code>, then all new frames are cascaded automatically.
      */
     public void setAutoTile(boolean autoTile) {
         this.autoTile = autoTile;
         if (autoTile) {
             tileInternalFrames();
-        }
-        else {
+        } else {
             cascadeInternalFrames();
         }
     }
@@ -141,13 +141,10 @@ public class FramePositioning implements DesktopConstants {
     }
 
     /**
-     * cascades the given internal frame based upon the current number
-     *     of internal frames
+     * cascades the given internal frame based upon the current number of internal frames
      *
      * @param f the internal frame to cascade
-     *
-     * @return a Point object representing the location
-     *     assigned to the internal frame upon the virtual desktop
+     * @return a Point object representing the location assigned to the internal frame upon the virtual desktop
      */
     public Point cascadeInternalFrame(JInternalFrame f) {
         return cascadeInternalFrame(f, desktopScrollpane.getNumberOfFrames());
@@ -157,10 +154,7 @@ public class FramePositioning implements DesktopConstants {
      * cascades the given internal frame based upon supplied count
      *
      * @param f the internal frame to cascade
-     * @count the count to use in cascading the internal frame
-     *
-     * @return a Point object representing the location
-     *     assigned to the internal frame upon the virtual desktop
+     * @return a Point object representing the location assigned to the internal frame upon the virtual desktop
      */
     private Point cascadeInternalFrame(JInternalFrame f, int count) {
 
@@ -193,37 +187,16 @@ public class FramePositioning implements DesktopConstants {
 
 
     /**
-     * tiles internal frames upon the desktop.
-     * <BR><BR>
-     * Based upon the following tiling algorithm:
-     * <BR><BR>
-     * - take the sqroot of the total frames rounded down, that gives
-     *  the number of columns.
-     * <BR><BR>
-     * - divide the total frames by the # of columns to get the #
-     *  of rows in each column, and any remainder is distributed
-     *  amongst the remaining rows from right to left)
-     * <BR><BR>
-     * eg) <BR>
-     *     1 frame,  remainder 0, 1 row<BR>
-     *     2 frames, remainder 0, 2 rows<BR>
-     *     3 frames, remainder 0, 3 rows<BR>
-     *     4 frames, remainder 0, 2 rows x 2 columns <BR>
-     *     5 frames, remainder 1, 2 rows in column I, 3 rows in column II<BR>
-     *     10 frames, remainder 1, 3 rows in column I, 3 rows in column II,
-     *                 4 rows in column III <BR>
-     *     16 frames, 4 rows x 4 columns <BR>
-     * <BR><BR>
-     * Pseudocode:
-     * <BR><BR><code>
-     *     while (frames) { <BR>
-     *           numCols = (int)sqrt(totalFrames); <BR>
-     *           numRows = totalFrames / numCols; <BR>
-     *           remainder = totalFrames % numCols <BR>
-     *           if ((numCols-curCol) <= remainder) { <BR>
-     *                 numRows++; // add an extra row for this column <BR>
-     *           } <BR>
-     *     } </code><BR>
+     * tiles internal frames upon the desktop. <BR><BR> Based upon the following tiling algorithm: <BR><BR> - take the
+     * sqroot of the total frames rounded down, that gives the number of columns. <BR><BR> - divide the total frames by
+     * the # of columns to get the # of rows in each column, and any remainder is distributed amongst the remaining rows
+     * from right to left) <BR><BR> eg) <BR> 1 frame,  remainder 0, 1 row<BR> 2 frames, remainder 0, 2 rows<BR> 3
+     * frames, remainder 0, 3 rows<BR> 4 frames, remainder 0, 2 rows x 2 columns <BR> 5 frames, remainder 1, 2 rows in
+     * column I, 3 rows in column II<BR> 10 frames, remainder 1, 3 rows in column I, 3 rows in column II, 4 rows in
+     * column III <BR> 16 frames, 4 rows x 4 columns <BR> <BR><BR> Pseudocode: <BR><BR><code> while (frames) { <BR>
+     * numCols = (int)sqrt(totalFrames); <BR> numRows = totalFrames / numCols; <BR> remainder = totalFrames % numCols
+     * <BR> if ((numCols-curCol) <= remainder) { <BR> numRows++; // add an extra row for this column <BR> } <BR> }
+     * </code><BR>
      */
     public void tileInternalFrames() {
 
@@ -267,7 +240,7 @@ public class FramePositioning implements DesktopConstants {
                     }
 
                     frames[i].setBounds(curCol * frameWidth, curRow * frameHeight,
-                                        frameWidth, frameHeight);
+                            frameWidth, frameHeight);
 
                     i++;
                 }

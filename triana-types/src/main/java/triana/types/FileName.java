@@ -59,9 +59,6 @@
 package triana.types;
 
 
-import org.trianacode.taskgraph.util.FileUtils;
-import triana.types.util.Str;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -69,29 +66,21 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Vector;
 
+import org.trianacode.taskgraph.util.FileUtils;
+import triana.types.util.Str;
+
 /**
- * FileName is a type which encapsulates a file name whether it be
- * a local disk file or an internet file. It is represented by a
- * String and you can determine what type it is by calling the
- * getFileType() function. This returns LOCAL if its a disk file
- * or HTTP if it is a HTTP protocol file.
+ * FileName is a type which encapsulates a file name whether it be a local disk file or an internet file. It is
+ * represented by a String and you can determine what type it is by calling the getFileType() function. This returns
+ * LOCAL if its a disk file or HTTP if it is a HTTP protocol file.
+ * <p/>
+ * <p>The motivation behind this class is to deal simply with these two file types so that triana can import data from
+ * the internet as transparently as a local disk file.  These are the only real protocols we use.  I'm sure there are
+ * others but we've not included them here.
  *
- * <p>The motivation behind this class is to deal simply with these
- * two file types so that triana can import data from the internet
- * as transparently as a local disk file.  These are the only real
- * protocols we use.  I'm sure there are others but we've not
- * included them here.
- *
- * @author      Ian Taylor
- * @author      Bernard Schutz
- * @created     23rd May 2000
-<<<<<<< FileName.java
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.6.22.1
+ * @author Ian Taylor
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class FileName extends TrianaType implements AsciiComm {
 
@@ -111,8 +100,7 @@ public class FileName extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Creates a new FileName from a string containing the full path and
-     * name of the file.
+     * Creates a new FileName from a string containing the full path and name of the file.
      *
      * @param fn the full path and name of file.
      */
@@ -121,18 +109,18 @@ public class FileName extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Creates a new FileName from a string containing the specified
-     * path and name of the file.
+     * Creates a new FileName from a string containing the specified path and name of the file.
      *
      * @param path the full path.
-     * @param fn name of file.
+     * @param fn   name of file.
      */
     public FileName(String path, String fn) {
-        if (isHTTP(path))
+        if (isHTTP(path)) {
             setFile(path.endsWith("/") ? path + fn : path + "/" + fn);
-        else
+        } else {
             setFile(path.endsWith(File.separator) ? path + fn :
                     path + File.separator + fn);
+        }
     }
 
     /**
@@ -151,12 +139,13 @@ public class FileName extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Adds the filename to the list of filenames. Upon creation of a FileName
-     * there is one object in this list of this fileName object
+     * Adds the filename to the list of filenames. Upon creation of a FileName there is one object in this list of this
+     * fileName object
      */
     public void add(FileName fn) {
-        if (size() == 0)
+        if (size() == 0) {
             fileNameList.add(this);
+        }
         fileNameList.add(fn);
     }
 
@@ -164,18 +153,20 @@ public class FileName extends TrianaType implements AsciiComm {
      * @return true if this filename object stores a list of filenames
      */
     public boolean hasMultiple() {
-        if (size() == 0)
+        if (size() == 0) {
             return false;
-        else
+        } else {
             return true;
+        }
     }
 
     /**
      * Gets the ith filename in this list of filenames.
      */
     public FileName get(int i) {
-        if (size() == 0)
+        if (size() == 0) {
             return this;
+        }
         return (FileName) fileNameList.get(i);
     }
 
@@ -187,9 +178,8 @@ public class FileName extends TrianaType implements AsciiComm {
     }
 
     /**
-     * Sets the interesting line numbers within the file which units can use
-     * to display the file at the appropriate place. For example,
-     * this function is called by the Grep unit.
+     * Sets the interesting line numbers within the file which units can use to display the file at the appropriate
+     * place. For example, this function is called by the Grep unit.
      */
     public void setLineNumbers(int ln[]) {
         lineNos = ln;
@@ -203,27 +193,30 @@ public class FileName extends TrianaType implements AsciiComm {
     }
 
     public static boolean isHTTP(String file) {
-        if (file == null) return false;
-        if (file.indexOf("://") != -1) {
-            if (!file.startsWith("file"))
-                return true;
-            else
-                return false;
-        }
-        else
+        if (file == null) {
             return false;
+        }
+        if (file.indexOf("://") != -1) {
+            if (!file.startsWith("file")) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
-     * Sets the file to the given string and works out if its a HTTP
-     * address or not
+     * Sets the file to the given string and works out if its a HTTP address or not
      */
     public void setFile(String file) {
         fileName = file;
-        if (isHTTP(fileName))
+        if (isHTTP(fileName)) {
             fileType = HTTP;
-        else
+        } else {
             fileType = LOCAL;
+        }
     }
 
     /**
@@ -234,31 +227,30 @@ public class FileName extends TrianaType implements AsciiComm {
     }
 
     /**
-     * @return the document title of this file name.  If this file name is
-     * a html file then it returns the title of this file otherwise it
-     * returns the name of the file without the directory.
+     * @return the document title of this file name.  If this file name is a html file then it returns the title of this
+     *         file otherwise it returns the name of the file without the directory.
      */
     public String getDocumentTitle() {
         return getHTMLTitle(fileName);
     }
 
     /**
-     * @return the document title of this file name.  If this file name is
-     * a html file then it returns the title of this file otherwise it
-     * returns the name of the file without the directory.
+     * @return the document title of this file name.  If this file name is a html file then it returns the title of this
+     *         file otherwise it returns the name of the file without the directory.
      */
     public static String getHTMLTitle(String fn) {
         String contents = FileUtils.readFile(fn);
         String lc = contents.toLowerCase();
 
-        if ((lc.indexOf("<title>") != -1) && (lc.indexOf("</title>") != -1))
+        if ((lc.indexOf("<title>") != -1) && (lc.indexOf("</title>") != -1)) {
             return contents.substring(lc.indexOf("<title>") + 7,
-                                      lc.indexOf("</title>")).trim();
-        else {
-            if (isHTTP(fn))
+                    lc.indexOf("</title>")).trim();
+        } else {
+            if (isHTTP(fn)) {
                 return fn.substring(fn.lastIndexOf("/") + 1);
-            else
+            } else {
                 return fn.substring(fn.lastIndexOf(File.separator) + 1);
+            }
         }
     }
 
@@ -266,44 +258,45 @@ public class FileName extends TrianaType implements AsciiComm {
      * Returns a reference to this FileName not including any path information
      */
     public String getFileNoPath() {
-        if (fileType == HTTP)
+        if (fileType == HTTP) {
             return fileName.substring(fileName.lastIndexOf("/") + 1);
-        else
+        } else {
             return fileName.substring(fileName.lastIndexOf(File.separator) + 1);
+        }
     }
 
     /**
      * Returns a reference to the path of this file name
      */
     public String getPath() {
-        if (fileType == HTTP)
+        if (fileType == HTTP) {
             return fileName.substring(0, fileName.lastIndexOf("/"));
-        else
+        } else {
             return fileName.substring(0, fileName.lastIndexOf(File.separator));
+        }
     }
 
     /**
-     * @return the filetype i.e. LOCAL (i.e. disk file) or HTTP, (on the
-     * internet).
+     * @return the filetype i.e. LOCAL (i.e. disk file) or HTTP, (on the internet).
      */
     public int getFileType() {
         return fileType;
     }
 
     /**
-     * This function returns <i>true</i> if the specified object <i>fn</i>
-     * is the same type and has the same contents as this object
+     * This function returns <i>true</i> if the specified object <i>fn</i> is the same type and has the same contents as
+     * this object
      */
     public boolean equals(Object fn) {
-        if (!(fn instanceof FileName))
+        if (!(fn instanceof FileName)) {
             return false;
+        }
 
         return ((FileName) fn).getFile().equals(this.getFile());
     }
 
     /**
-     * @return a copy of a FileName. This <b>must</b> be implemented for
-     * every TrianaType.
+     * @return a copy of a FileName. This <b>must</b> be implemented for every TrianaType.
      * @see TrianaType#copyMe
      */
     public TrianaType copyMe() {
@@ -340,29 +333,22 @@ public class FileName extends TrianaType implements AsciiComm {
         if ((((FileName) source).lineNos != null) && (((FileName) source).lineNos.length != 0)) {
             int[] lines = ((FileName) source).lineNos;
             int[] newlines = new int[lines.length];
-            for (int i = 0; i < lines.length; ++i)
+            for (int i = 0; i < lines.length; ++i) {
                 newlines[i] = lines[i];
+            }
             setLineNumbers(newlines);
         }
     }
 
     /**
-     * This function is used when Triana types want to be able to send their
-     * data via an output stream to other programs using strings.  This
-     * can be used to implement socket and to run other executables,
-     * written in C etc. With ASCII you don'y have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than the binary version since you have to format
-     * the input and output within the another program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<PRE>
-     *      super.outputToStream(dos)
-     * </PRE>to get output from superior classes, and then new parameters defined
-     * for the current subclass must be output. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
-     * </p><p>
+     * This function is used when Triana types want to be able to send their data via an output stream to other programs
+     * using strings.  This can be used to implement socket and to run other executables, written in C etc. With ASCII
+     * you don'y have to worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than
+     * the binary version since you have to format the input and output within the another program. </p><p> This method
+     * must be overridden in every subclass that defines new data or parameters. The overriding method should first
+     * call<PRE> super.outputToStream(dos) </PRE>to get output from superior classes, and then new parameters defined
+     * for the current subclass must be output. Moreover, subclasses that first dimension their data arrays must
+     * explicitly transfer these data arrays. </p><p>
      *
      * @param dos The data output stream
      */
@@ -370,28 +356,21 @@ public class FileName extends TrianaType implements AsciiComm {
         dos.println(fileName);
         if (lineNos != null) {
             dos.println(lineNos.length);
-            for (int i = 0; i < lineNos.length; ++i)
+            for (int i = 0; i < lineNos.length; ++i) {
                 dos.println(lineNos[i]);
+            }
         }
     }
 
     /**
-     * This function is used when Triana types want to be able to receive
-     * ASCII data from the output of other programs.  This is used to
-     * implement socket and to run other executables, written in C etc.
-     * With ASCII you don'y have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than the binary version since you have to format
-     * the input and output within the another program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<PRE>
-     *      super.inputFromStream(dis)
-     * </PRE>to get input from superior classes, and then new parameters defined
-     * for the current subclass must be input. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
-     * </p><p>
+     * This function is used when Triana types want to be able to receive ASCII data from the output of other programs.
+     * This is used to implement socket and to run other executables, written in C etc. With ASCII you don'y have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than the binary
+     * version since you have to format the input and output within the another program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<PRE>
+     * super.inputFromStream(dis) </PRE>to get input from superior classes, and then new parameters defined for the
+     * current subclass must be input. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays. </p><p>
      *
      * @param dis The data input stream
      */
@@ -401,8 +380,9 @@ public class FileName extends TrianaType implements AsciiComm {
         int lines = Str.strToInt(dis.readLine());
         if (lines != 0) {
             lineNos = new int[lines];
-            for (int i = 0; i < lineNos.length; ++i)
+            for (int i = 0; i < lineNos.length; ++i) {
                 lineNos[i] = Str.strToInt(dis.readLine());
+            }
         }
     }
 
@@ -421,6 +401,7 @@ public class FileName extends TrianaType implements AsciiComm {
      * with the line
      *       super.updateObsoletePointers;
      */
+
     protected void updateObsoletePointers() {
         super.updateObsoletePointers();
     }

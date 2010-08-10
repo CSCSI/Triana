@@ -19,16 +19,13 @@ package org.trianacode.taskgraph.interceptor;
 import org.trianacode.taskgraph.Node;
 
 /**
- * Interceptors are given a crack at looking at data
- * before sending from a node, and before receiving.
- * They get called at the cable level.
- *
+ * Interceptors are given a crack at looking at data before sending from a node, and before receiving. They get called
+ * at the cable level.
+ * <p/>
  * Interceptors are triggered based on parameters
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 29, 2009: 10:32:31 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface Interceptor {
 

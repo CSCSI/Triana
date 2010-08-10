@@ -60,11 +60,10 @@
 package org.trianacode.gui.extensions;
 
 
+import javax.swing.Action;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
-
-import javax.swing.*;
 
 /**
  * An interface implemented by all extension classes. An extension can supply a workspace action, which appears in the
@@ -73,8 +72,6 @@ import javax.swing.*;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 4th May 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public interface Extension {

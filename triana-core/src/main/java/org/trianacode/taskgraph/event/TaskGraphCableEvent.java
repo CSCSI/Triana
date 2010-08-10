@@ -58,19 +58,17 @@
  */
 package org.trianacode.taskgraph.event;
 
+import java.util.EventObject;
+
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.TaskGraph;
 
-import java.util.EventObject;
-
 /**
  * The event generated when a cable is connected/disconnected within a taskgraph
  *
- * @author      Ian Wang
- * @created     8th May 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TaskGraphCableEvent extends EventObject {
@@ -98,10 +96,10 @@ public class TaskGraphCableEvent extends EventObject {
     /**
      * Constructs a task graph cable event
      *
-     * @param id the id of this event (either CABLE_CONNECTED,
-     * CABLE_RECONNECTED_INPUT, CABLE_RECONNECTED_OUTPUT or CABLE_DISCONNECTED)
+     * @param id        the id of this event (either CABLE_CONNECTED, CABLE_RECONNECTED_INPUT, CABLE_RECONNECTED_OUTPUT
+     *                  or CABLE_DISCONNECTED)
      * @param taskgraph the source of the task graph event
-     * @param cable the cable being connected/disconnected
+     * @param cable     the cable being connected/disconnected
      */
     public TaskGraphCableEvent(int id, TaskGraph taskgraph, Cable cable, int groupevent) {
         super(taskgraph);
@@ -119,15 +117,16 @@ public class TaskGraphCableEvent extends EventObject {
     /**
      * Constructs a task graph cable event
      *
-     * @param id the id of this event (either CABLE_CONNECTED,
-     * CABLE_RECONNECTED_INPUT, CABLE_RECONNECTED_OUTPUT or CABLE_DISCONNECTED)
+     * @param id        the id of this event (either CABLE_CONNECTED, CABLE_RECONNECTED_INPUT, CABLE_RECONNECTED_OUTPUT
+     *                  or CABLE_DISCONNECTED)
      * @param taskgraph the source of the task graph event
-     * @param sendid the instance id of the sending task
-     * @param sendnode the absolute index of the sending node
-     * @param recid the instance id of the receiving task
-     * @param recnode the absolute index of the receiving node
+     * @param sendid    the instance id of the sending task
+     * @param sendnode  the absolute index of the sending node
+     * @param recid     the instance id of the receiving task
+     * @param recnode   the absolute index of the receiving node
      */
-    public TaskGraphCableEvent(int id, TaskGraph taskgraph, String sendid, int sendnode, String recid, int recnode, int groupevent) {
+    public TaskGraphCableEvent(int id, TaskGraph taskgraph, String sendid, int sendnode, String recid, int recnode,
+                               int groupevent) {
         super(taskgraph);
 
         this.id = id;
@@ -148,10 +147,11 @@ public class TaskGraphCableEvent extends EventObject {
             Node send = taskgraph.getTaskInstance(sendid).getOutputNode(sendnode);
             Node rec = taskgraph.getTaskInstance(recid).getInputNode(recnode);
 
-            if (send.getCable() == rec.getCable())
+            if (send.getCable() == rec.getCable()) {
                 return send.getCable();
-            else
+            } else {
                 return null;
+            }
         } catch (Exception except) {
             return null;
         }
@@ -159,17 +159,16 @@ public class TaskGraphCableEvent extends EventObject {
 
 
     /**
-     * @return the id of this event (either CABLE_CONNECTED,
-     * CABLE_RECONNECTED_INPUT, CABLE_RECONNECTED_OUTPUT or CABLE_DISCONNECTED)
+     * @return the id of this event (either CABLE_CONNECTED, CABLE_RECONNECTED_INPUT, CABLE_RECONNECTED_OUTPUT or
+     *         CABLE_DISCONNECTED)
      */
     public int getID() {
         return id;
     }
 
     /**
-     * @return true if this cable event is due to the cable being grouped
-     * (GROUP_EVENT) or ungrouped (UNGROUP_EVENT). Returns NON_GROUP_EVENT
-     * otherwise;
+     * @return true if this cable event is due to the cable being grouped (GROUP_EVENT) or ungrouped (UNGROUP_EVENT).
+     *         Returns NON_GROUP_EVENT otherwise;
      */
     public int getGroupEventID() {
         return groupevent;

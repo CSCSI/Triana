@@ -62,11 +62,8 @@ package org.trianacode.taskgraph;
 /**
  * The interface implemented by all parameter nodes
  *
- * @author      Ian Wang
- * @created     2nd July 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface ParameterNode extends Node {
@@ -94,8 +91,8 @@ public interface ParameterNode extends Node {
     public boolean isTriggerNode();
 
     /**
-     * Sets this parameter node as a trigger node, If true then the node is
-     * essential for the task to run, otherwise it is optional.
+     * Sets this parameter node as a trigger node, If true then the node is essential for the task to run, otherwise it
+     * is optional.
      */
     public void setTriggerNode(boolean state);
 
@@ -106,8 +103,8 @@ public interface ParameterNode extends Node {
     public boolean isErrorNode();
 
     /**
-     * Sets this parameter node as a error node, If true then the node is
-     * essential for the task to run, otherwise it is optional.
+     * Sets this parameter node as a error node, If true then the node is essential for the task to run, otherwise it is
+     * optional.
      */
     public void setErrorNode(boolean state);
 

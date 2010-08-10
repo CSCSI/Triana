@@ -58,13 +58,15 @@
  */
 package org.trianacode.gui.help;
 
-import org.trianacode.gui.hci.GUIEnv;
-
-import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Event;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -72,14 +74,25 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import org.trianacode.gui.hci.GUIEnv;
+
 
 /**
- * The main window for the Triana Help application.  This class contains the
- * entire GUI functionality of TrianaHelp.
+ * The main window for the Triana Help application.  This class contains the entire GUI functionality of TrianaHelp.
  *
  * @author Melanie Rhianna Lewis
  * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  * @see HtmlPane
  */
 public class TrianaHelpFrame extends JFrameEx {
@@ -184,9 +197,8 @@ public class TrianaHelpFrame extends JFrameEx {
     }
 
     /**
-     * Creates the menus and menu items.  It creates instances of the Action
-     * classes that contain the functionality of the menu items.  It also
-     * gives the menu items appropriate accelerators.
+     * Creates the menus and menu items.  It creates instances of the Action classes that contain the functionality of
+     * the menu items.  It also gives the menu items appropriate accelerators.
      *
      * @param menuBar The menuBar on which to create the menus.
      */
@@ -301,9 +313,8 @@ public class TrianaHelpFrame extends JFrameEx {
     }
 
     /**
-     * Creates the buttons on a toolbar.  It creates instances of the Action
-     * classes that contain the functionality of the tool bar buttons.  It also
-     * supplies the buttons with an appropriate tool tip message.
+     * Creates the buttons on a toolbar.  It creates instances of the Action classes that contain the functionality of
+     * the tool bar buttons.  It also supplies the buttons with an appropriate tool tip message.
      *
      * @param toolBar The toolBar on which to create the buttons.
      */
@@ -364,7 +375,9 @@ public class TrianaHelpFrame extends JFrameEx {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             for (; ;) {
-                if ((c = in.read()) < 0) break;
+                if ((c = in.read()) < 0) {
+                    break;
+                }
                 out.write(c);
             }
 
@@ -440,7 +453,8 @@ public class TrianaHelpFrame extends JFrameEx {
     private class FileOpenURLAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String string = (String) JOptionPane.showInputDialog(TrianaHelpFrame.this,
-                    "Enter URL to open", "Open URL...", JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), null, null);
+                    "Enter URL to open", "Open URL...", JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), null,
+                    null);
 
             if (string != null) {
                 string.trim();
@@ -501,7 +515,9 @@ public class TrianaHelpFrame extends JFrameEx {
         public void actionPerformed(ActionEvent e) {
             URL url = historyDialog.showDialog();
 
-            if (url != null) getHtmlPane().setPage(url);
+            if (url != null) {
+                getHtmlPane().setPage(url);
+            }
         }
     }
 
@@ -525,8 +541,8 @@ public class TrianaHelpFrame extends JFrameEx {
     }
 
     /**
-     * A class which listens for a CaretEvent and if a selection has
-     * been made it enables the copy menu item and button on the tool bar.
+     * A class which listens for a CaretEvent and if a selection has been made it enables the copy menu item and button
+     * on the tool bar.
      *
      * @see javax.swing.event.CaretEvent
      * @see javax.swing.event.CaretListener
@@ -544,9 +560,8 @@ public class TrianaHelpFrame extends JFrameEx {
     }
 
     /**
-     * A class which listens for a UrlEvent from the UrlHistory object
-     * owned by the HtmlPane.  A UrlEvent is a custom event sent by the
-     * UrlHistory class when it is changed in some way.
+     * A class which listens for a UrlEvent from the UrlHistory object owned by the HtmlPane.  A UrlEvent is a custom
+     * event sent by the UrlHistory class when it is changed in some way.
      *
      * @see UrlHistory
      * @see UrlEvent
@@ -572,8 +587,7 @@ public class TrianaHelpFrame extends JFrameEx {
     // -- Start of CloseFrame methods --
 
     /**
-     * A private class which responds to the close window widget being used by
-     * generating a CloseFrameEvent.
+     * A private class which responds to the close window widget being used by generating a CloseFrameEvent.
      *
      * @see CloseFrameEvent
      */
@@ -584,8 +598,8 @@ public class TrianaHelpFrame extends JFrameEx {
     }
 
     /**
-     * A private class which is an action which generates a CloseFrameEvent.
-     * This is usually used as an ActionListener for a button or menu item.
+     * A private class which is an action which generates a CloseFrameEvent. This is usually used as an ActionListener
+     * for a button or menu item.
      *
      * @see CloseFrameEvent
      */
@@ -608,8 +622,7 @@ public class TrianaHelpFrame extends JFrameEx {
     }
 
     /**
-     * Dispatches a CloseFrameEvent to the CloseFrameListeners registered with
-     * the Frame.
+     * Dispatches a CloseFrameEvent to the CloseFrameListeners registered with the Frame.
      *
      * @param event The CloseFrameEvent to dispatch
      * @see CloseFrameListener

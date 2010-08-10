@@ -58,6 +58,9 @@
  */
 package org.trianacode.gui.hci;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.trianacode.gui.main.TrianaLayoutConstants;
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.Node;
@@ -65,21 +68,14 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.TypeChecking;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 /**
  * Auto connect the nodes of a Task within a Main Triana
+ * <p/>
+ * <<<<<<< AutoConnect.java
  *
-<<<<<<< AutoConnect.java
+ * @author Ian Wang
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @author Ian Wang
- * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.1.4.1
  */
 public class AutoConnect {
 
@@ -124,8 +120,9 @@ public class AutoConnect {
             for (int count = 0; count < innodes.length; count++) {
                 inscore = getConnectionScore(outnode, innodes[count], taskgraph, false);
 
-                if (inscore > Double.NEGATIVE_INFINITY)
+                if (inscore > Double.NEGATIVE_INFINITY) {
                     ininfo.add(new ConnectionInfo(innodes[count], inscore));
+                }
             }
         }
 
@@ -136,8 +133,9 @@ public class AutoConnect {
             for (int count = 0; count < outnodes.length; count++) {
                 outscore = getConnectionScore(outnodes[count], innode, taskgraph, true);
 
-                if (outscore > Double.NEGATIVE_INFINITY)
+                if (outscore > Double.NEGATIVE_INFINITY) {
                     outinfo.add(new ConnectionInfo(outnodes[count], outscore));
+                }
             }
         }
 
@@ -159,16 +157,18 @@ public class AutoConnect {
             boolean input = false;
 
             if ((bestin != null) && (bestout != null)) {
-                if (bestin.score > bestout.score)
+                if (bestin.score > bestout.score) {
                     input = true;
-                else
+                } else {
                     input = false;
-            } else if (bestin != null)
+                }
+            } else if (bestin != null) {
                 input = true;
-            else if (bestout != null)
+            } else if (bestout != null) {
                 input = false;
-            else
+            } else {
                 tryconnect = false;
+            }
 
             double oldscore = Double.NEGATIVE_INFINITY;
             Node oldnode = null;
@@ -185,12 +185,14 @@ public class AutoConnect {
                             taskgraph.connect(outnode, bestin.node);
                             connection = true;
 
-                            if (oldnode != null)
+                            if (oldnode != null) {
                                 tryConnect(null, oldnode, taskgraph);
+                            }
                         } catch (CableException except) {
                         }
-                    } else
+                    } else {
                         ininfo.remove(bestin);
+                    }
                 } else {
                     if (bestout.node.isConnected()) {
                         oldnode = bestout.node.getCable().getReceivingNode();
@@ -202,12 +204,14 @@ public class AutoConnect {
                             taskgraph.connect(bestout.node, innode);
                             connection = true;
 
-                            if ((oldnode != null) && (oldnode.getTask() != null))
+                            if ((oldnode != null) && (oldnode.getTask() != null)) {
                                 tryConnect(oldnode, null, taskgraph);
+                            }
                         } catch (CableException except) {
                         }
-                    } else
+                    } else {
                         outinfo.remove(bestout);
+                    }
                 }
             }
         }
@@ -224,14 +228,16 @@ public class AutoConnect {
         Node nodes[];
         Node node = null;
 
-        if (input)
+        if (input) {
             nodes = task.getDataInputNodes();
-        else
+        } else {
             nodes = task.getDataOutputNodes();
+        }
 
         for (int count = 0; ((count < nodes.length) && (node == null)); count++) {
-            if (!nodes[count].isConnected())
+            if (!nodes[count].isConnected()) {
                 node = nodes[count];
+            }
         }
 
         return node;
@@ -246,40 +252,47 @@ public class AutoConnect {
         Node[] nodes;
 
         for (int tcount = 0; tcount < tasks.length; tcount++) {
-            if (input == true)
+            if (input == true) {
                 nodes = tasks[tcount].getDataInputNodes();
-            else
+            } else {
                 nodes = tasks[tcount].getDataOutputNodes();
+            }
 
-            for (int ncount = 0; ncount < nodes.length; ncount++)
+            for (int ncount = 0; ncount < nodes.length; ncount++) {
                 list.add(nodes[ncount]);
+            }
         }
 
         return (Node[]) list.toArray(new Node[list.size()]);
     }
 
     /**
-     * @return a score denoting the suitability of connection an input node to an
-     *         output node (higher = better)
+     * @return a score denoting the suitability of connection an input node to an output node (higher = better)
      */
     private double getConnectionScore(Node outnode, Node innode, TaskGraph taskgraph, boolean input) {
-        if (!TypeChecking.isCompatibility(outnode, innode))
+        if (!TypeChecking.isCompatibility(outnode, innode)) {
             return Double.NEGATIVE_INFINITY;
+        }
 
-        if (taskgraph.getTask(outnode) == taskgraph.getTask(innode))
+        if (taskgraph.getTask(outnode) == taskgraph.getTask(innode)) {
             return Double.NEGATIVE_INFINITY;
+        }
 
-        if (isLoop(outnode, innode, new ArrayList()))
+        if (isLoop(outnode, innode, new ArrayList())) {
             return Double.NEGATIVE_INFINITY;
+        }
 
-        if ((!outnode.isBottomLevelNode()) || (!innode.isBottomLevelNode()))
+        if ((!outnode.isBottomLevelNode()) || (!innode.isBottomLevelNode())) {
             return Double.NEGATIVE_INFINITY;
+        }
 
-        if (outnode.isConnected() && (outnode.getCable().getReceivingTask() == taskgraph.getControlTask()))
+        if (outnode.isConnected() && (outnode.getCable().getReceivingTask() == taskgraph.getControlTask())) {
             return Double.NEGATIVE_INFINITY;
+        }
 
-        if (innode.isConnected() && (innode.getCable().getSendingTask() == taskgraph.getControlTask()))
+        if (innode.isConnected() && (innode.getCable().getSendingTask() == taskgraph.getControlTask())) {
             return Double.NEGATIVE_INFINITY;
+        }
 
         double inx = x;
         double iny = y;
@@ -287,23 +300,28 @@ public class AutoConnect {
         double outy = y;
 
         try {
-            if (outnode.getTask().isParameterName(Task.GUI_X))
+            if (outnode.getTask().isParameterName(Task.GUI_X)) {
                 outx = Double.parseDouble((String) outnode.getTask().getParameter(Task.GUI_X)) + TOOL_WIDTH;
+            }
 
-            if (outnode.getTask().isParameterName(Task.GUI_Y))
+            if (outnode.getTask().isParameterName(Task.GUI_Y)) {
                 outy = Double.parseDouble((String) outnode.getTask().getParameter(Task.GUI_Y));
+            }
 
-            if (innode.getTask().isParameterName(Task.GUI_X))
+            if (innode.getTask().isParameterName(Task.GUI_X)) {
                 inx = Double.parseDouble((String) innode.getTask().getParameter(Task.GUI_X)) + TOOL_WIDTH;
+            }
 
-            if (innode.getTask().isParameterName(Task.GUI_Y))
+            if (innode.getTask().isParameterName(Task.GUI_Y)) {
                 iny = Double.parseDouble((String) innode.getTask().getParameter(Task.GUI_Y));
+            }
 
             double xval = Math.abs(outx - inx);
             double yval = Math.abs(outy - iny) * Y_SCALE;
 
-            if (inx < outx)
+            if (inx < outx) {
                 xval *= LEFT_SCALE;
+            }
 
             return -xval - (yval * Y_SCALE);
         } catch (Exception except) {
@@ -315,17 +333,19 @@ public class AutoConnect {
      * @return true if connecting outnode to innode will cause a loop
      */
     public boolean isLoop(Node outnode, Node innode, ArrayList list) {
-        if (innode.getTask() == outnode.getTask())
+        if (innode.getTask() == outnode.getTask()) {
             return true;
-        else {
+        } else {
             list.add(outnode.getTask());
 
             Node[] innodes = outnode.getTask().getDataInputNodes();
             boolean loop = false;
 
-            for (int count = 0; (count < innodes.length) && (!loop); count++)
-                if (innodes[count].isConnected() && (!list.contains(innodes[count].getCable().getSendingTask())))
+            for (int count = 0; (count < innodes.length) && (!loop); count++) {
+                if (innodes[count].isConnected() && (!list.contains(innodes[count].getCable().getSendingTask()))) {
                     loop = isLoop(innodes[count].getCable().getSendingNode(), innode, list);
+                }
+            }
 
             return loop;
         }
@@ -343,8 +363,9 @@ public class AutoConnect {
         while (iter.hasNext()) {
             info = (ConnectionInfo) iter.next();
 
-            if ((best == null) || (info.score > best.score))
+            if ((best == null) || (info.score > best.score)) {
                 best = info;
+            }
         }
 
         return best;

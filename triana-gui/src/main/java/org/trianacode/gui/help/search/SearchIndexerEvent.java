@@ -62,10 +62,9 @@ import java.io.File;
 import java.util.EventObject;
 
 /**
- * This event is thrown regularly by the search index routine as
- * it progresses.
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * This event is thrown regularly by the search index routine as it progresses.
+ *
+ * @version $Revision: 4048 $
  */
 public class SearchIndexerEvent extends EventObject {
 

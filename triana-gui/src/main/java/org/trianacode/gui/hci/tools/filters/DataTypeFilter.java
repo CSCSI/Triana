@@ -58,6 +58,20 @@
  */
 package org.trianacode.gui.hci.tools.filters;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.ToolFilter;
 import org.trianacode.taskgraph.TaskGraphUtils;
@@ -65,22 +79,11 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.TypeUtils;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Vector;
-
 /**
- * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes
- * Input.SignalProc
+ * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes Input.SignalProc
  *
- * @author      Ian Wang
- * @created     12th Feb 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class DataTypeFilter implements ToolFilter {
 
@@ -109,23 +112,26 @@ public class DataTypeFilter implements ToolFilter {
      * @return the root for the tool tree
      */
     public String getRoot() {
-        if (types == null)
+        if (types == null) {
             return DEFAULT_ROOT;
-        else {
+        } else {
             String rootstr = "";
 
             for (int count = 0; (count < 2) && (count < types.length); count++) {
-                if (count > 0)
+                if (count > 0) {
                     rootstr += ", ";
+                }
 
-                if (types[count].lastIndexOf(".") == -1)
+                if (types[count].lastIndexOf(".") == -1) {
                     rootstr += types[count];
-                else
+                } else {
                     rootstr += types[count].substring(types[count].lastIndexOf('.') + 1);
+                }
             }
 
-            if (types.length > 2)
+            if (types.length > 2) {
                 rootstr += ", ...";
+            }
 
             return rootstr;
         }
@@ -140,22 +146,24 @@ public class DataTypeFilter implements ToolFilter {
 
 
     /**
-     * @return the filtered package for the tool, null if the tool is to be
-     * ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * @return the filtered package for the tool, null if the tool is to be ignored. (e.g. a tool in SignalPro.Input
+     *         could become Input.SignalProc)
      */
     public String[] getFilteredPackage(Tool tool) {
-        if (types == null)
+        if (types == null) {
             return new String[]{tool.getToolPackage()};
+        }
 
         Class[] userClasses = TypeUtils.classForTrianaType(types);
         ArrayList packages = new ArrayList();
         Class[] toolTypes;
         String subpackage = "";
 
-        if (tool.getToolPackage().indexOf('.') > -1)
+        if (tool.getToolPackage().indexOf('.') > -1) {
             subpackage = "." + tool.getToolPackage().substring(0, tool.getToolPackage().indexOf('.'));
-        else if (!tool.getToolPackage().equals(""))
+        } else if (!tool.getToolPackage().equals("")) {
             subpackage = "." + tool.getToolPackage();
+        }
 
         toolTypes = TypeUtils.classForTrianaType(TaskGraphUtils.getAllDataInputTypes(tool));
         boolean assignin = false;
@@ -182,8 +190,7 @@ public class DataTypeFilter implements ToolFilter {
                     if (tooltype.isAssignableFrom(type)) {
                         packages.add(INPUT_ASSIGN_PACKAGE + subpackage);
                         assignin = true;
-                    }
-                    else if ((obj != null) && tooltype.isInstance(obj)) {
+                    } else if ((obj != null) && tooltype.isInstance(obj)) {
                         packages.add(INPUT_ASSIGN_PACKAGE + subpackage);
                         assignin = true;
                     }
@@ -216,8 +223,7 @@ public class DataTypeFilter implements ToolFilter {
                     if (tooltype.isAssignableFrom(type)) {
                         packages.add(OUTPUT_ASSIGN_PACKAGE + subpackage);
                         assignout = true;
-                    }
-                    else if ((obj != null) && tooltype.isInstance(obj)) {
+                    } else if ((obj != null) && tooltype.isInstance(obj)) {
                         packages.add(OUTPUT_ASSIGN_PACKAGE + subpackage);
                         assignout = true;
                     }
@@ -225,37 +231,38 @@ public class DataTypeFilter implements ToolFilter {
             }
         }
 
-        if (explicitout && explicitin)
+        if (explicitout && explicitin) {
             packages.add(IN_OUT_EXPLICIT_PACKAGE);
+        }
 
-        if (assignout && assignin)
+        if (assignout && assignin) {
             packages.add(IN_OUT_ASSIGN_PACKAGE + subpackage);
+        }
 
         return (String[]) packages.toArray(new String[packages.size()]);
     }
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * This method is called when the filter is choosen. The initialisation of the filter should be implemented here
      */
     public void init() {
         TypeSelecter selector = new TypeSelecter();
 
-        if (selector.isOKSelected())
+        if (selector.isOKSelected()) {
             types = selector.getSelectedTypes();
+        }
     }
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * This method is called when the filter is unchoosen. Any disposal related to the filter should be implemented
+     * here
      */
     public void dispose() {
     }
 
 
     /**
-     * Dialog class that allows the user to select triana types and whether they are input,
-     * output or both.
+     * Dialog class that allows the user to select triana types and whether they are input, output or both.
      */
     private static class TypeSelecter extends JDialog implements ActionListener {
 
@@ -271,7 +278,7 @@ public class DataTypeFilter implements ToolFilter {
             initGUI();
             this.setResizable(false);
             setLocation((getToolkit().getScreenSize().width / 2) - (getSize().width / 2),
-                        (getToolkit().getScreenSize().height / 2) - (getSize().height / 2));
+                    (getToolkit().getScreenSize().height / 2) - (getSize().height / 2));
             loadTrianaTypes();
 
             setVisible(true);

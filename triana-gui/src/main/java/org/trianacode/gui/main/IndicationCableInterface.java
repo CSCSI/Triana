@@ -59,17 +59,15 @@
 
 package org.trianacode.gui.main;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Point;
 
 /**
- * An interface implemented by taskgraph panels that can draw indication cables
- * showing when two nodes are being connected.
+ * An interface implemented by taskgraph panels that can draw indication cables showing when two nodes are being
+ * connected.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 22nd June 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 

@@ -62,24 +62,20 @@ import org.trianacode.taskgraph.Cable;
 
 
 /**
- * @author      Matthew Shields
- * @created     Jul 5, 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
  */
 public interface OutputCable extends Cable {
 
     /**
-     * Blocking call to send the data from the sending task
-     * to the receiving task.
+     * Blocking call to send the data from the sending task to the receiving task.
      *
      * @param data the data to be sent
      */
     public void send(Object data);
 
     /**
-     * Non-blocking call to send the data from the sending task
-     * to the receiving task.
+     * Non-blocking call to send the data from the sending task to the receiving task.
      *
      * @param data the data to be sent
      */

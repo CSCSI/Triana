@@ -61,29 +61,26 @@ package org.trianacode.taskgraph.service;
 import org.trianacode.taskgraph.Task;
 
 /**
- * The interface used by control tasks to run tasks within their group and
- * perform other control tasks.
+ * The interface used by control tasks to run tasks within their group and perform other control tasks.
  *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public interface ControlInterface {
 
     /**
      * Runs all the tasks within the group.
-     *
-     * If execution is paused then this method waits until execution is resumed,
-     * or throws a SchedulerException if execution is reset.
+     * <p/>
+     * If execution is paused then this method waits until execution is resumed, or throws a SchedulerException if
+     * execution is reset.
      */
     public void runGroup() throws SchedulerException;
 
     /**
      * Runs the specified task.
-     *
-     * If execution is paused then this method waits until execution is resumed,
-     * or throws a SchedulerException if execution is reset.
+     * <p/>
+     * If execution is paused then this method waits until execution is resumed, or throws a SchedulerException if
+     * execution is reset.
      */
     public void runTask(Task task) throws SchedulerException;
 

@@ -59,17 +59,16 @@
 
 package org.trianacode.gui.action;
 
-import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+
+import javax.swing.KeyStroke;
 
 /**
  * Formats a KeyStroke suitable for display on UI
  *
- * @author  Matthew Shields
- * @created Jun 24, 2003: 3:26:32 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class FormatKeyStroke {
     public static String keyStroke2String(KeyStroke key) {
@@ -158,7 +157,7 @@ public class FormatKeyStroke {
             case KeyEvent.VK_DOWN:
                 return "DOWN";
 
-                // numpad numeric keys handled below
+            // numpad numeric keys handled below
             case KeyEvent.VK_MULTIPLY:
                 return "MULTIPLY";
             case KeyEvent.VK_ADD:

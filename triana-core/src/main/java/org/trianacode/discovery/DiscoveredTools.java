@@ -1,40 +1,48 @@
 package org.trianacode.discovery;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.trianacode.discovery.toolinfo.ToolMetadata;
 import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
 import mil.navy.nrl.discovery.api.ServiceInfo;
 import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
-import mil.navy.nrl.discovery.json.*;
+import mil.navy.nrl.discovery.json.Attribute;
+import mil.navy.nrl.discovery.json.JsTree;
+import mil.navy.nrl.discovery.json.LeafNode;
+import mil.navy.nrl.discovery.json.LeafNodeObject;
+import mil.navy.nrl.discovery.json.Node;
 import mil.navy.nrl.discovery.tools.DNSServiceNames;
 import mil.navy.nrl.discovery.web.resources.ServiceResource;
-import org.trianacode.discovery.toolinfo.ToolMetadata;
-
-import java.util.*;
 
 /**
- * List of discovered tools from all supported bonjour protocols.  Tools are stored
- * as lists of tools according to their service type.
- *
- * User: scmijt
- * Date: Jul 30, 2010
- * Time: 11:44:32 AM
- * To change this template use File | Settings | File Templates.
+ * List of discovered tools from all supported bonjour protocols.  Tools are stored as lists of tools according to their
+ * service type.
+ * <p/>
+ * User: scmijt Date: Jul 30, 2010 Time: 11:44:32 AM To change this template use File | Settings | File Templates.
  */
 public class DiscoveredTools implements DiscoveredServicesInterface {
 
-    private Hashtable<ServiceInfoEndpoint,List> tools;
+    private Hashtable<ServiceInfoEndpoint, List> tools;
 
     private List<ServiceInfoEndpoint> protocols;
-    DiscoverTools discoverTools;
+    private DiscoverTools discoverTools;
 
     public DiscoveredTools(DiscoverTools discoverTools) {
-        this.discoverTools=discoverTools;
-        tools = new Hashtable<ServiceInfoEndpoint ,List>();
-        protocols=new ArrayList<ServiceInfoEndpoint>();
+        this.discoverTools = discoverTools;
+        tools = new Hashtable<ServiceInfoEndpoint, List>();
+        protocols = new ArrayList<ServiceInfoEndpoint>();
     }
 
     public void addService(ServiceInfoEndpoint serviceInfoEndpoint) {
-        if(!protocols.contains(serviceInfoEndpoint))
+        if (!protocols.contains(serviceInfoEndpoint)) {
             protocols.add(serviceInfoEndpoint);
+        }
     }
 
 
@@ -50,17 +58,18 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
         List listCopy = new ArrayList(protocols);
 
-        ServiceInfoEndpoint toDelete=null;
+        ServiceInfoEndpoint toDelete = null;
 
         if (listCopy != null) {
             for (final Iterator iterator = listCopy.iterator(); iterator.hasNext();) {
                 ServiceInfoEndpoint service = ((ServiceInfoEndpoint) iterator.next());
 
                 if (service.getServiceName().equals(serviceInfo.getServiceName())
-                        && (service.getQualifiedServiceType().equals(serviceInfo.getQualifiedServiceType())))
-                    toDelete=service;
+                        && (service.getQualifiedServiceType().equals(serviceInfo.getQualifiedServiceType()))) {
+                    toDelete = service;
+                }
             }
-            if (toDelete!=null) {
+            if (toDelete != null) {
                 protocols.remove(toDelete);
             }
         }
@@ -72,8 +81,7 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
         List list = null;
 
-        synchronized (tools)
-        {
+        synchronized (tools) {
             list = tools.get(serviceType);
             if (list == null) { // create a list for this service type
                 list = Collections.synchronizedList(new LinkedList<ServiceResource>());
@@ -81,11 +89,11 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
                 tools.put(serviceType, list);
             }
             System.out.println("Adding tool to list ");
-            if (!list.contains(tool))
-                list.add(tool); // add the service
+            if (!list.contains(tool)) {
+                list.add(tool);
+            } // add the service
         }
     }
-
 
 
     protected void removeTool(ToolMetadata toolMetadata, ServiceInfoEndpoint serviceType) {
@@ -98,16 +106,17 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
                 listCopy = new ArrayList(list);
             }
         }
-        ToolMetadata toDelete=null;
+        ToolMetadata toDelete = null;
         if (listCopy != null) {
             for (final Iterator iterator = listCopy.iterator(); iterator.hasNext();) {
                 ToolMetadata tool = ((ToolMetadata) iterator.next());
 
                 if (tool.getToolName().equals(toolMetadata.getToolName())
-                        && (tool.getUrl().equals(toolMetadata.getUrl())))
-                    toDelete=tool;
+                        && (tool.getUrl().equals(toolMetadata.getUrl()))) {
+                    toDelete = tool;
+                }
             }
-            if (toDelete!=null) {
+            if (toDelete != null) {
                 list.remove(toDelete);
             }
         }
@@ -115,6 +124,7 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
     /**
      * Gets HTML list of all the services, arranged in type order
+     *
      * @return
      */
 
@@ -125,8 +135,8 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
         System.out.println("Retrieving tool List .... with values " + tools.size());
 
-        while (keys.hasMoreElements()){
-            ServiceInfoEndpoint key = (ServiceInfoEndpoint)keys.nextElement();
+        while (keys.hasMoreElements()) {
+            ServiceInfoEndpoint key = (ServiceInfoEndpoint) keys.nextElement();
             System.out.println("Retrieving Key is: " + key);
 
             List serviceType = tools.get(key);
@@ -134,8 +144,8 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
             serverList.append("<b>" + key + "</b>");
             serverList.append("<ol>");
 
-            for (Object tool: serviceType) {
-                ToolMetadata t= (ToolMetadata)tool;
+            for (Object tool : serviceType) {
+                ToolMetadata t = (ToolMetadata) tool;
                 serverList.append(t.getDisplayName() +
                         " -  <a href=" + t.getUrl() +
                         "> View Service Details" + "</a><br>\n");
@@ -149,6 +159,7 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
     /**
      * Gets HTML list of all the services, arranged in type order
+     *
      * @return
      */
     public String getJsTreeList() {
@@ -158,8 +169,8 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
         String type;
         System.out.println("Retrieving tool List .... with values " + tools.size());
 
-        while (keys.hasMoreElements()){
-            ServiceInfoEndpoint key = (ServiceInfoEndpoint)keys.nextElement();
+        while (keys.hasMoreElements()) {
+            ServiceInfoEndpoint key = (ServiceInfoEndpoint) keys.nextElement();
 
             List serviceType = tools.get(key);
 
@@ -168,12 +179,12 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
             tree.add(serviceTypeTreeNode);
 
-            for (Object tool: serviceType) {
-                ToolMetadata tr= (ToolMetadata)tool;
+            for (Object tool : serviceType) {
+                ToolMetadata tr = (ToolMetadata) tool;
                 Attribute attr = new Attribute(key.getServiceAddress() + ":"
-                        + key.getPort() + "/" +  tr.getUrl());
+                        + key.getPort() + "/" + tr.getUrl());
 
-                Node lastNode = recurseToolTree(tr.getUrl().getPath(),serviceTypeTreeNode);
+                Node lastNode = recurseToolTree(tr.getUrl().getPath(), serviceTypeTreeNode);
 
                 LeafNode child = new LeafNode(tr.getDisplayName(), attr);
                 lastNode.getChildren().add(new LeafNodeObject(child));
@@ -188,13 +199,13 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
         int index = toolURL.indexOf("/");
 
-        if (index!=-1) {
-            String mylevel= toolURL.substring(0,index);
-            String rest= toolURL.substring(index+1); // rest of url
+        if (index != -1) {
+            String mylevel = toolURL.substring(0, index);
+            String rest = toolURL.substring(index + 1); // rest of url
 
             Node nextLevel = new Node(mylevel);
             thisLevel.getChildren().add(nextLevel);
-            recurseToolTree(rest,nextLevel);
+            recurseToolTree(rest, nextLevel);
         }
         return thisLevel;
     }

@@ -24,8 +24,6 @@ import org.trianacode.taskgraph.TaskGraph;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 1:31:19 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface WorkflowVerifier extends WorkflowVerifierConstants {
 
@@ -40,6 +38,7 @@ public interface WorkflowVerifier extends WorkflowVerifierConstants {
      *
      * @return AUTHORIZE, CANCEL, RESET or RESET_AND_RUN
      */
-    public int authorizeWorkflowAction(String action, TaskGraph taskgraph, ExecutionState state) throws WorkflowException;
+    public int authorizeWorkflowAction(String action, TaskGraph taskgraph, ExecutionState state)
+            throws WorkflowException;
 
 }

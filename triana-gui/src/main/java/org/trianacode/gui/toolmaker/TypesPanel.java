@@ -59,22 +59,33 @@
 package org.trianacode.gui.toolmaker;
 
 
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.util.Env;
 
 /**
  * The tool wizard panel for editing the input/output types of a tool
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 8th August
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TypesPanel extends JPanel implements ActionListener {
 
@@ -163,7 +174,8 @@ public class TypesPanel extends JPanel implements ActionListener {
         JPanel buttoncont = new JPanel(new BorderLayout());
         buttoncont.add(buttonpanel, BorderLayout.SOUTH);
 
-        JScrollPane scroll = new JScrollPane(intypes, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroll = new JScrollPane(intypes, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         intypes.setPrototypeCellValue("1234567890123456789012345");
         intypes.setVisibleRowCount(6);
         ((DefaultListModel) intypes.getModel()).addElement(NONE);
@@ -190,7 +202,8 @@ public class TypesPanel extends JPanel implements ActionListener {
         JPanel buttoncont = new JPanel(new BorderLayout());
         buttoncont.add(buttonpanel, BorderLayout.SOUTH);
 
-        JScrollPane scroll = new JScrollPane(outtypes, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroll = new JScrollPane(outtypes, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         outtypes.setPrototypeCellValue("1234567890123456789012345");
         outtypes.setVisibleRowCount(6);
         ((DefaultListModel) outtypes.getModel()).addElement(NONE);
@@ -233,8 +246,9 @@ public class TypesPanel extends JPanel implements ActionListener {
         if ((event.getSource() == addin) || (event.getSource() == addout)) {
             Component parent = this.getParent();
 
-            while (!(parent instanceof Window))
+            while (!(parent instanceof Window)) {
                 parent = parent.getParent();
+            }
 
             AddTypeDialog dialog;
             String title;
@@ -248,10 +262,11 @@ public class TypesPanel extends JPanel implements ActionListener {
                 input = false;
             }
 
-            if (parent instanceof Frame)
+            if (parent instanceof Frame) {
                 dialog = new AddTypeDialog((Frame) parent, title, input);
-            else
+            } else {
                 dialog = new AddTypeDialog((Dialog) parent, title, input);
+            }
 
             dialog.setLocation(parent.getLocation().x + (parent.getSize().width / 2) - (dialog.getSize().width / 2),
                     parent.getLocation().y + (parent.getSize().height / 2) - (dialog.getSize().height / 2));
@@ -261,10 +276,11 @@ public class TypesPanel extends JPanel implements ActionListener {
                 Type type = dialog.getType();
                 DefaultListModel addlist;
 
-                if (event.getSource() == addin)
+                if (event.getSource() == addin) {
                     addlist = (DefaultListModel) intypes.getModel();
-                else
+                } else {
                     addlist = (DefaultListModel) outtypes.getModel();
+                }
 
                 addlist.removeElement(NONE);
 
@@ -275,21 +291,25 @@ public class TypesPanel extends JPanel implements ActionListener {
         if (event.getSource() == removein) {
             Object[] remove = intypes.getSelectedValues();
 
-            for (int count = 0; count < remove.length; count++)
+            for (int count = 0; count < remove.length; count++) {
                 ((DefaultListModel) intypes.getModel()).removeElement(remove[count]);
+            }
 
-            if (intypes.getModel().getSize() == 0)
+            if (intypes.getModel().getSize() == 0) {
                 ((DefaultListModel) intypes.getModel()).addElement(NONE);
+            }
         }
 
         if (event.getSource() == removeout) {
             Object[] remove = outtypes.getSelectedValues();
 
-            for (int count = 0; count < remove.length; count++)
+            for (int count = 0; count < remove.length; count++) {
                 ((DefaultListModel) outtypes.getModel()).removeElement(remove[count]);
+            }
 
-            if (outtypes.getModel().getSize() == 0)
+            if (outtypes.getModel().getSize() == 0) {
                 ((DefaultListModel) outtypes.getModel()).addElement(NONE);
+            }
         }
     }
 
@@ -307,12 +327,14 @@ public class TypesPanel extends JPanel implements ActionListener {
             if (type.getIndex() < curtype.getIndex()) {
                 addlist.add(count, type);
                 added = true;
-            } else
+            } else {
                 count++;
+            }
         }
 
-        if (!added)
+        if (!added) {
             addlist.addElement(type);
+        }
     }
 
 
@@ -349,18 +371,20 @@ public class TypesPanel extends JPanel implements ActionListener {
      * @return the output policy
      */
     public int getOutputPolicy() {
-        if (outpolicy.getSelectedItem().equals(Env.getString("copyOutput")))
+        if (outpolicy.getSelectedItem().equals(Env.getString("copyOutput"))) {
             return COPY_OUTPUT;
-        else if (outpolicy.getSelectedItem().equals(Env.getString("cloneMultipleOutput")))
+        } else if (outpolicy.getSelectedItem().equals(Env.getString("cloneMultipleOutput"))) {
             return CLONE_MULTIPLE_OUTPUT;
-        else
+        } else {
             return CLONE_ALL_OUTPUT;
+        }
     }
 
 
     private String[][] getNodeTypes(JList typelist) {
-        if (((DefaultListModel) typelist.getModel()).contains(NONE))
+        if (((DefaultListModel) typelist.getModel()).contains(NONE)) {
             return new String[0][0];
+        }
 
         Object[] types = ((DefaultListModel) typelist.getModel()).toArray();
         ArrayList mainlist = new ArrayList();
@@ -369,22 +393,25 @@ public class TypesPanel extends JPanel implements ActionListener {
         int used = 0;
         int nodecount = 0;
 
-        for (int count = 0; count < types.length; count++)
+        for (int count = 0; count < types.length; count++) {
             if (((Type) types[count]).isAllNodes()) {
                 allnodes.add(((Type) types[count]).getType());
                 used++;
-            } else if (((Type) types[count]).isOtherNodes())
+            } else if (((Type) types[count]).isOtherNodes()) {
                 used++;
+            }
+        }
 
         while (used < types.length) {
             curnode = new ArrayList();
             curnode.addAll(allnodes);
 
-            for (int count = 0; count < types.length; count++)
+            for (int count = 0; count < types.length; count++) {
                 if (((Type) types[count]).getIndex() == nodecount) {
                     curnode.add(((Type) types[count]).getType());
                     used++;
                 }
+            }
 
             mainlist.add(curnode);
             nodecount++;
@@ -392,24 +419,29 @@ public class TypesPanel extends JPanel implements ActionListener {
 
         String[][] nodetypes = new String[mainlist.size()][];
 
-        for (int count = 0; count < mainlist.size(); count++)
-            nodetypes[count] = (String[]) ((ArrayList) mainlist.get(count)).toArray(new String[((ArrayList) mainlist.get(count)).size()]);
+        for (int count = 0; count < mainlist.size(); count++) {
+            nodetypes[count] = (String[]) ((ArrayList) mainlist.get(count))
+                    .toArray(new String[((ArrayList) mainlist.get(count)).size()]);
+        }
 
         return nodetypes;
     }
 
     private String[] getOtherTypes(JList typelist) {
-        if (((DefaultListModel) typelist.getModel()).contains(NONE))
+        if (((DefaultListModel) typelist.getModel()).contains(NONE)) {
             return new String[0];
+        }
 
         Object[] types = ((DefaultListModel) typelist.getModel()).toArray();
         ArrayList otherlist = new ArrayList();
 
-        for (int count = 0; count < types.length; count++)
-            if (((Type) types[count]).isAllNodes())
+        for (int count = 0; count < types.length; count++) {
+            if (((Type) types[count]).isAllNodes()) {
                 otherlist.add(((Type) types[count]).getType());
-            else if (((Type) types[count]).isOtherNodes())
+            } else if (((Type) types[count]).isOtherNodes()) {
                 otherlist.add(((Type) types[count]).getType());
+            }
+        }
 
         return (String[]) otherlist.toArray(new String[otherlist.size()]);
     }
@@ -446,12 +478,13 @@ public class TypesPanel extends JPanel implements ActionListener {
 
 
         public String toString() {
-            if (index == ALL_NODES)
+            if (index == ALL_NODES) {
                 return "[All] " + type;
-            else if (index == OTHER_NODES)
+            } else if (index == OTHER_NODES) {
                 return "[OTHER] " + type;
-            else
+            } else {
                 return "[" + index + "] " + type;
+            }
         }
     }
 
@@ -529,27 +562,31 @@ public class TypesPanel extends JPanel implements ActionListener {
             int max;
 
             if (input) {
-                if (unitpanel.getMaximumInputNodes() == Integer.MAX_VALUE)
+                if (unitpanel.getMaximumInputNodes() == Integer.MAX_VALUE) {
                     max = unitpanel.getDefaultInputNodes();
-                else
+                } else {
                     max = unitpanel.getMaximumInputNodes();
+                }
             } else {
-                if (unitpanel.getMaximumOutputNodes() == Integer.MAX_VALUE)
+                if (unitpanel.getMaximumOutputNodes() == Integer.MAX_VALUE) {
                     max = unitpanel.getDefaultOutputNodes();
-                else
+                } else {
                     max = unitpanel.getMaximumOutputNodes();
+                }
             }
 
-            for (int count = 0; count < max; count++)
+            for (int count = 0; count < max; count++) {
                 model.addElement(String.valueOf(count));
+            }
         }
 
         private void initTypeList() {
             DefaultComboBoxModel model = (DefaultComboBoxModel) typelist.getModel();
             typelist.setEditable(true);
 
-            for (int count = 0; count < types.length; count++)
+            for (int count = 0; count < types.length; count++) {
                 model.addElement(types[count]);
+            }
         }
 
 
@@ -562,12 +599,13 @@ public class TypesPanel extends JPanel implements ActionListener {
             String nodestr = (String) nodelist.getSelectedItem();
             int nodeindex;
 
-            if (nodestr.equals(ALL_NODES))
+            if (nodestr.equals(ALL_NODES)) {
                 nodeindex = Type.ALL_NODES;
-            else if (nodestr.equals(OTHER_NODES))
+            } else if (nodestr.equals(OTHER_NODES)) {
                 nodeindex = Type.OTHER_NODES;
-            else
+            } else {
                 nodeindex = Integer.parseInt(nodestr);
+            }
 
             return new Type(nodeindex, (String) typelist.getSelectedItem());
         }

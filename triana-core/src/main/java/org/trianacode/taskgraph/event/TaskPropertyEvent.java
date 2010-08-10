@@ -58,18 +58,15 @@
  */
 package org.trianacode.taskgraph.event;
 
-import org.trianacode.taskgraph.Task;
-
 import java.util.EventObject;
 
+import org.trianacode.taskgraph.Task;
+
 /**
- * The event generated when a property of a task is updates (e.g. its name or
- * whether it is run continuously)
+ * The event generated when a property of a task is updates (e.g. its name or whether it is run continuously)
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 8th May 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TaskPropertyEvent extends EventObject {
 

@@ -59,22 +59,21 @@
 
 package org.trianacode.gui.main.imp;
 
-import org.trianacode.gui.main.TrianaLayoutConstants;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import javax.swing.AbstractButton;
+import org.trianacode.gui.main.TrianaLayoutConstants;
 
 /**
  * A class that displays a little plus minus icon
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class PlusMinusIcon extends AbstractButton implements MouseListener {
@@ -119,38 +118,41 @@ public class PlusMinusIcon extends AbstractButton implements MouseListener {
         if (size.width % 2 == 0) {
             width = size.width - 1;
 
-            if (!input)
+            if (!input) {
                 left = 1;
+            }
         }
 
         if (size.height % 2 == 0) {
             height = size.height - 1;
 
-            if (plus)
+            if (plus) {
                 top = 1;
+            }
         }
 
         graphs.setColor(getForeground());
         graphs.drawLine(left, top + (height / 2), left + width, top + (height / 2));
 
-        if (plus)
+        if (plus) {
             graphs.drawLine(left + (width / 2), top, left + (width / 2), top + height);
+        }
 
         graphs.setColor(col);
     }
 
 
     /**
-     * Invoked when the mouse button has been clicked (pressed
-     * and released) on a component.
+     * Invoked when the mouse button has been clicked (pressed and released) on a component.
      */
     public void mouseClicked(MouseEvent event) {
         String command;
 
-        if (plus)
+        if (plus) {
             command = "+";
-        else
+        } else {
             command = "-";
+        }
 
         fireActionPerformed(new ActionEvent(this, event.getID(), command));
     }

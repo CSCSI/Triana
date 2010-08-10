@@ -60,14 +60,10 @@
 package org.trianacode.taskgraph.service;
 
 /**
- * An exception thrown when notifyError is called by the unit. This is used
- * to break out of the process method.
+ * An exception thrown when notifyError is called by the unit. This is used to break out of the process method.
  *
- * @author      Ian Wang
- * @created     15th July 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class NotifyErrorException extends RuntimeException {

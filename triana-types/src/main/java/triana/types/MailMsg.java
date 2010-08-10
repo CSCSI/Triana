@@ -58,10 +58,6 @@
  */
 package triana.types;
 
-import triana.types.util.Str;
-import triana.types.util.StringSplitter;
-import triana.types.util.StringVector;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -70,33 +66,24 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import triana.types.util.Str;
+import triana.types.util.StringSplitter;
+import triana.types.util.StringVector;
+
 /**
- * MailMsg is a subclass of Document which stores the contents of a single
- * email message. The message is stored with headers if it is incoming, and
- * with MIME attachments. The type provides methods for examining relevant
- * information, such as the date and sender of the message. Messages can
- * be locked when created, so that they are read-only. For non-locked
- * messages, there are messages for setting the date, sender, etc, and
- * for setting the text. There are also methods for interpreting the
- * date for a wide variety of possible input formats; for parsing
- * email names into email addresses and personal names; and for locating
- * and testing the integrity of MIME attachments.
+ * MailMsg is a subclass of Document which stores the contents of a single email message. The message is stored with
+ * headers if it is incoming, and with MIME attachments. The type provides methods for examining relevant information,
+ * such as the date and sender of the message. Messages can be locked when created, so that they are createTool-only.
+ * For non-locked messages, there are messages for setting the date, sender, etc, and for setting the text. There are
+ * also methods for interpreting the date for a wide variety of possible input formats; for parsing email names into
+ * email addresses and personal names; and for locating and testing the integrity of MIME attachments.
+ * <p/>
+ * The first version 1.x provides very limited inspection of header data. Only the date, from, to, cc, bcc, subject, and
+ * message-id fields are available as parameter data. There is no facility yet for inserting a MIME attachment or
+ * dealing with flags for whether messages have been createTool or replied to, their priority, threads etc.
  *
- * The first version 1.x provides very limited inspection of header data.
- * Only the date, from, to, cc, bcc, subject, and message-id fields are
- * available as parameter data. There is no facility yet for inserting a
- * MIME attachment or dealing with flags for whether messages have
- * been read or replied to, their priority, threads etc.
- *
- * @author      Bernard Schutz
- * @created     06 Jan 2002
-<<<<<<< MailMsg.java
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.8.4.1
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class MailMsg extends Document implements AsciiComm {
 
@@ -141,57 +128,51 @@ public class MailMsg extends Document implements AsciiComm {
     private String ID = "";
 
     /**
-     * Character index at which the message body starts, after the header
-     * is finished. If there is no body in the message, then this is -1.
+     * Character index at which the message body starts, after the header is finished. If there is no body in the
+     * message, then this is -1.
      */
     private int body = 0;
 
     /**
-     * Character index at which the MIME attachment starts, after the body
-     * text is finished. If there is no MIME attachment in the message, then this is -1.
+     * Character index at which the MIME attachment starts, after the body text is finished. If there is no MIME
+     * attachment in the message, then this is -1.
      */
     private int mime = -1;
 
     /**
-     * Boolean variable which is <i>true</i> if the data is read-only.
-     * If this is <i>true</i>, then methods that modify the data will not
-     * work.
+     * Boolean variable which is <i>true</i> if the data is createTool-only. If this is <i>true</i>, then methods that
+     * modify the data will not work.
      */
     private boolean readOnly = false;
 
     /**
-     * Mailbox folder (file) from which the mail message was read.
+     * Mailbox folder (file) from which the mail message was createTool.
      */
     private FileName fromFolder = null;
 
     /**
-     * Directory which is the root of the mail directories, so that if
-     * mail folders are written to a different root, the entire mail
-     * tree will be duplicated.
+     * Directory which is the root of the mail directories, so that if mail folders are written to a different root, the
+     * entire mail tree will be duplicated.
      */
     private FileName mailRoot = null;
 
     /**
-     * List of mailbox folders (files) into which the mail message should
-     * be stored. This enables multiple copies to be stored for sensible
-     * grouping of messages.
+     * List of mailbox folders (files) into which the mail message should be stored. This enables multiple copies to be
+     * stored for sensible grouping of messages.
      */
     private StringVector toFolders = new StringVector(3);
 
 
     /**
-     * Marks message for deletion. If <i>true</i>, units that write
-     * messages to files should ignore <i>toFolders</i> and write
-     * this to the deletion file. Similarly, units that perform
-     * filtering (create entries in <i>toFolders</i>) should ignore
-     * the message if it is marked for deletion.
+     * Marks message for deletion. If <i>true</i>, units that write messages to files should ignore <i>toFolders</i> and
+     * write this to the deletion file. Similarly, units that perform filtering (create entries in <i>toFolders</i>)
+     * should ignore the message if it is marked for deletion.
      */
     private boolean delete;
 
     /**
-     * Marks messages as damaged. If <i>true</i>, units that write
-     * messages to files may ignore <i>toFolders</i> and write
-     * this to a special file for inspection.
+     * Marks messages as damaged. If <i>true</i>, units that write messages to files may ignore <i>toFolders</i> and
+     * write this to a special file for inspection.
      */
     private boolean damaged;
 
@@ -201,8 +182,7 @@ public class MailMsg extends Document implements AsciiComm {
     private String eol = System.getProperty("line.separator");
 
     /**
-     * Needed for umlaut replacement as used in some email names that
-     * confuse searches for quotation marks.
+     * Needed for umlaut replacement as used in some email names that confuse searches for quotation marks.
      */
     private static String umlaut = (new StringBuffer(2)).append('\\').append('"').toString();
 
@@ -215,11 +195,9 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Constructs a MailMsg from an input mail message, complete with header
-     * and MIME attachments, and the name of the file from which it was
-     * read. It is locked to read-only: it cannot be
-     * modified. Various header data are read and set, but it is not
-     * inspected for consistency of its MIME attachments.
+     * Constructs a MailMsg from an input mail message, complete with header and MIME attachments, and the name of the
+     * file from which it was createTool. It is locked to createTool-only: it cannot be modified. Various header data
+     * are createTool and set, but it is not inspected for consistency of its MIME attachments.
      *
      * @param message The email message, with its header
      */
@@ -228,16 +206,15 @@ public class MailMsg extends Document implements AsciiComm {
         if ((message == null) || (message.length() == 0)) {
             setText("");
             setSubject("empty message");
-        }
-        else {
+        } else {
             setText(message);
             setFromFolder(file);
             setBodyLocation(findHeaderEnd(message));
-            if (body == -1)  {  //can't find separation between header and rest of message
+            if (body == -1) {  //can't find separation between header and rest of message
                 setSubject("message not in standard format");
-            }
-            else {
-                StringSplitter header = new StringSplitter(message.substring(0, body), "newline"); // the last element is an empty string ( the final blank line)
+            } else {
+                StringSplitter header = new StringSplitter(message.substring(0, body),
+                        "newline"); // the last element is an empty string ( the final blank line)
                 setSender(getHeaderField(header, "From: "));
                 setDate(getHeaderField(header, "Date: "));
                 setRecipient(getHeaderField(header, "To: "));
@@ -262,6 +239,7 @@ public class MailMsg extends Document implements AsciiComm {
      * for the string converted to lower case. If none of the searches
      * succeeds, then the method returns an empty string (not null).
      */
+
     private String getHeaderField(StringVector header, String field) {
         //System.out.println("Get header for " + field );
 
@@ -282,10 +260,14 @@ public class MailMsg extends Document implements AsciiComm {
                 break;
             }
         }
-        if (!found) return "";
+        if (!found) {
+            return "";
+        }
 
         int endLine = startLine + 1;
-        if (endLine == headLines) return data;
+        if (endLine == headLines) {
+            return data;
+        }
 
         while (Character.isWhitespace(header.at(endLine).charAt(0))) {
             endLine++;
@@ -295,7 +277,9 @@ public class MailMsg extends Document implements AsciiComm {
             }
         }
 
-        for (int k = startLine + 1; k < endLine; k++) data += header.at(k) + " ";
+        for (int k = startLine + 1; k < endLine; k++) {
+            data += header.at(k) + " ";
+        }
         return data;
 
     }
@@ -303,9 +287,12 @@ public class MailMsg extends Document implements AsciiComm {
     /*
      * Finds the end of the header at a double eol.
      */
+
     private int findHeaderEnd(String message) {
         int doubleEOL = message.indexOf(eol + eol);
-        if (doubleEOL == -1) return -1;
+        if (doubleEOL == -1) {
+            return -1;
+        }
         return doubleEOL + 2 * eol.length();
     }
 
@@ -314,11 +301,14 @@ public class MailMsg extends Document implements AsciiComm {
      *
      * Returns the date or null if the string cannot be parsed
      */
+
     public Date parseDate(SimpleDateFormat s) {
         String dateLine = getDate();
         int len = dateLine.length();
         ParsePosition pos;
-        if ((dateLine == null) || (dateLine.length() == 0)) return null;
+        if ((dateLine == null) || (dateLine.length() == 0)) {
+            return null;
+        }
         int parsePos = 0;
         Date msgDate = null;
         while ((msgDate == null) && parsePos < len) {
@@ -348,13 +338,14 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the sender of the message. This only works if the message
-     * is not read-only.
+     * Sets the sender of the message. This only works if the message is not createTool-only.
      *
      * @param newSender The sender to be set into the message
      */
     public void setSender(String newSender) {
-        if (!readOnly) sender = newSender;
+        if (!readOnly) {
+            sender = newSender;
+        }
     }
 
     /**
@@ -367,18 +358,19 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the date of the message. This only works if the message
-     * is not read-only.
+     * Sets the date of the message. This only works if the message is not createTool-only.
      *
      * @param newDate The date to be set into the message
      */
     public void setDate(String newDate) {
-        if (!readOnly) date = newDate;
+        if (!readOnly) {
+            date = newDate;
+        }
     }
 
     /**
-     * Returns the recipient(s) of the message as a String containing
-     * all recipients, just as given in the email message.
+     * Returns the recipient(s) of the message as a String containing all recipients, just as given in the email
+     * message.
      *
      * @return String The recipient(s) as contained in the message
      */
@@ -387,10 +379,9 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Returns the recipient addresses in a StringVector, one recipient per
-     * element. This method separates the recipients String into
-     * separate addresses by dividing it at commas that are not
-     * contained inside quotation marks or brackets.
+     * Returns the recipient addresses in a StringVector, one recipient per element. This method separates the
+     * recipients String into separate addresses by dividing it at commas that are not contained inside quotation marks
+     * or brackets.
      *
      * @return StringVector The individual addresses as a list
      */
@@ -400,18 +391,19 @@ public class MailMsg extends Document implements AsciiComm {
 
 
     /**
-     * Sets the recipient(s) of the message. This only works if the message
-     * is not read-only.
+     * Sets the recipient(s) of the message. This only works if the message is not createTool-only.
      *
      * @param newRecipient The recipient(s) to be set into the message
      */
     public void setRecipient(String newRecipient) {
-        if (!readOnly) recipient = newRecipient;
+        if (!readOnly) {
+            recipient = newRecipient;
+        }
     }
 
     /**
-     * Returns the carbon-copy recipient(s) of the message as a String
-     * containing all such recipients just as contained in the email message.
+     * Returns the carbon-copy recipient(s) of the message as a String containing all such recipients just as contained
+     * in the email message.
      *
      * @return String The carbon-copy recipient(s) as contained in the message
      */
@@ -420,11 +412,9 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Returns the carbon-copy recipient addressess
-     * in a StringVector, one recipient per
-     * element. This method separates the recipients String into
-     * separate addresses by dividing it at commas that are not
-     * contained inside quotation marks or brackets.
+     * Returns the carbon-copy recipient addressess in a StringVector, one recipient per element. This method separates
+     * the recipients String into separate addresses by dividing it at commas that are not contained inside quotation
+     * marks or brackets.
      *
      * @return StringVector The individual addresses as a list
      */
@@ -433,19 +423,19 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the carbon-copy recipient(s) of the message. This only works
-     * if the message is not read-only.
+     * Sets the carbon-copy recipient(s) of the message. This only works if the message is not createTool-only.
      *
      * @param newCopiesTo The carbon-copy recipient(s) to be set into the message
      */
     public void setCopiesTo(String newCopiesTo) {
-        if (!readOnly) copiesTo = newCopiesTo;
+        if (!readOnly) {
+            copiesTo = newCopiesTo;
+        }
     }
 
     /**
-     * Returns the blind (hidden) carbon-copy recipient(s) of the message
-     * as a String containing all such recipients, exactly as in the email
-     * message.
+     * Returns the blind (hidden) carbon-copy recipient(s) of the message as a String containing all such recipients,
+     * exactly as in the email message.
      *
      * @return String The blind carbon-copy recipient(s) as contained in the message
      */
@@ -454,11 +444,9 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Returns the blind (hidden) recipient addressess in a StringVector,
-     * one recipient per
-     * element. This method separates the recipients String into
-     * separate addresses by dividing it at commas that are not
-     * contained inside quotation marks or brackets.
+     * Returns the blind (hidden) recipient addressess in a StringVector, one recipient per element. This method
+     * separates the recipients String into separate addresses by dividing it at commas that are not contained inside
+     * quotation marks or brackets.
      *
      * @return StringVector The individual addresses as a list
      */
@@ -467,22 +455,22 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the blind (hidden) carbon-copy recipient(s) of the message.
-     * This only works if the message is not read-only.
+     * Sets the blind (hidden) carbon-copy recipient(s) of the message. This only works if the message is not
+     * createTool-only.
      *
      * @param newBlindCopiesTo The blind carbon-copy recipient(s) to be set into the message
      */
     public void setBlindCopiesTo(String newBlindCopiesTo) {
-        if (!readOnly) blindCopiesTo = newBlindCopiesTo;
+        if (!readOnly) {
+            blindCopiesTo = newBlindCopiesTo;
+        }
     }
 
     /**
-     * Attempts to separate the input String into addresses of
-     * email recipients. It assumes that the input list consists
-     * of such addresses separated by commas. The method ignores
-     * commas contained within quotation marks or brackets, which
-     * could be used as part of a recipient's name. It is not confused by
-     * umlauts of the form given in the global variable <i>umlaut</i>.
+     * Attempts to separate the input String into addresses of email recipients. It assumes that the input list consists
+     * of such addresses separated by commas. The method ignores commas contained within quotation marks or brackets,
+     * which could be used as part of a recipient's name. It is not confused by umlauts of the form given in the global
+     * variable <i>umlaut</i>.
      *
      * @param addresses The input newline- and comma-separated list of addresses
      * @return The individual addresses as a List
@@ -504,10 +492,11 @@ public class MailMsg extends Document implements AsciiComm {
                 quoteEnd += 8;
                 comma = temp.indexOf(",", comma);
             }
-            if (quoteEnd < temp.length() - 1)
+            if (quoteEnd < temp.length() - 1) {
                 quoteOpen = temp.indexOf('"', quoteEnd + 1);
-            else
+            } else {
                 quoteOpen = -1;
+            }
         }
         bracketOpen = temp.indexOf('(');
         while (bracketOpen != -1) {
@@ -523,7 +512,8 @@ public class MailMsg extends Document implements AsciiComm {
         //System.out.println("MailMsg.addressList(): after comma-in-quotes-and-brackets replacement plus eol removal in addresses String = " + eol + temp );
         StringVector addressVector = new StringSplitter(temp, ",");
         for (int j = 0; j < addressVector.size(); j++) {
-            addressVector.setElementAt(Str.replaceAll(Str.replaceAll(addressVector.at(j), "##UMLAUT##", umlaut), "##COMMA##", ","), j);
+            addressVector.setElementAt(
+                    Str.replaceAll(Str.replaceAll(addressVector.at(j), "##UMLAUT##", umlaut), "##COMMA##", ","), j);
         }
         return addressVector;
     }
@@ -538,13 +528,14 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the subject of the message. This only works if the message
-     * is not read-only.
+     * Sets the subject of the message. This only works if the message is not createTool-only.
      *
      * @param newSubject The subject to be set into the message
      */
     public void setSubject(String newSubject) {
-        if (!readOnly) subject = newSubject;
+        if (!readOnly) {
+            subject = newSubject;
+        }
     }
 
     /**
@@ -557,45 +548,44 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the ID of the message. This only works if the message
-     * is not read-only.
+     * Sets the ID of the message. This only works if the message is not createTool-only.
      *
      * @param newID The ID to be set into the message
      */
     public void setID(String newID) {
-        if (!readOnly) ID = newID;
+        if (!readOnly) {
+            ID = newID;
+        }
     }
 
     /**
-     * Sets the filename of the directory that is the root of the
-     * mail file system from which this message came.
+     * Sets the filename of the directory that is the root of the mail file system from which this message came.
      *
      * @param fn The FileName of the directory that is the mail system root
      * @return boolean True if the input name is a directory, false if not
      */
-    public boolean setMailRoot(FileName fn){
+    public boolean setMailRoot(FileName fn) {
         File input = new File(fn.getFile());
         if (input.isDirectory()) {
             mailRoot = fn;
             return true;
+        } else {
+            return false;
         }
-        else return false;
     }
 
     /**
-     * Returns the filename of the directory that is the root of
-     * the mail file system from which this message came.
+     * Returns the filename of the directory that is the root of the mail file system from which this message came.
      *
      * @return FileName of the directory of the root of the mail system
-     * */
+     */
 
     public FileName getMailRoot() {
         return mailRoot;
     }
 
     /**
-     * Sets the filename of the folder (mailbox) from which the
-     * message was read.
+     * Sets the filename of the folder (mailbox) from which the message was createTool.
      *
      * @param fn The file which contained the message when it was created
      */
@@ -604,8 +594,7 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Returns the filename of the folder (mailbox) from which the
-     * message was read.
+     * Returns the filename of the folder (mailbox) from which the message was createTool.
      *
      * @return FileName The file which contained the message when it was created
      */
@@ -614,8 +603,7 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the list of filenames of the folders (mailboxes) into which the
-     * message should be written.
+     * Sets the list of filenames of the folders (mailboxes) into which the message should be written.
      *
      * @param to The file into which the message should be written
      */
@@ -624,8 +612,8 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Adds to the list <i>toFolders</i> a foldername (just a String )
-     * of the folder (mailbox) into which the message should be written.
+     * Adds to the list <i>toFolders</i> a foldername (just a String ) of the folder (mailbox) into which the message
+     * should be written.
      *
      * @param fn The file into which the message should be written
      */
@@ -634,8 +622,8 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Adds to the list <i>toFolders</i> a StringVector of foldernames
-     * of the folders (mailboxes) into which the message should be written.
+     * Adds to the list <i>toFolders</i> a StringVector of foldernames of the folders (mailboxes) into which the message
+     * should be written.
      *
      * @param fns The file into which the message should be written
      */
@@ -644,8 +632,7 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Returns the list of filenames of the folders (mailboxes) into which the
-     * message should be written.
+     * Returns the list of filenames of the folders (mailboxes) into which the message should be written.
      *
      * @return LinkedList The list of files into which the message should be written
      */
@@ -654,8 +641,8 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Returns a copy-by-value of the list of filenames of the folders
-     * (mailboxes) into which the message should be written.
+     * Returns a copy-by-value of the list of filenames of the folders (mailboxes) into which the message should be
+     * written.
      *
      * @return LinkedList The list of files into which the message should be written
      */
@@ -701,8 +688,7 @@ public class MailMsg extends Document implements AsciiComm {
 
 
     /**
-     * Returns the character index location where the message body begins
-     * after the header.
+     * Returns the character index location where the message body begins after the header.
      *
      * @return int The start of the message
      */
@@ -711,18 +697,19 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the character index at which the message starts, after the header.
-     * This only works if the message is not read-only.
+     * Sets the character index at which the message starts, after the header. This only works if the message is not
+     * createTool-only.
      *
      * @param newBody The starting character of the message body
      */
     public void setBodyLocation(int newBody) {
-        if (!readOnly) body = newBody;
+        if (!readOnly) {
+            body = newBody;
+        }
     }
 
     /**
-     * Returns the character index location where the MIME attachment begins
-     * after the main body text.
+     * Returns the character index location where the MIME attachment begins after the main body text.
      *
      * @return int The start of the MIME attachment
      */
@@ -731,19 +718,21 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Sets the character index at which the MIME attachment starts, after the body text.
-     * This only works if the message is not read-only.
+     * Sets the character index at which the MIME attachment starts, after the body text. This only works if the message
+     * is not createTool-only.
      *
      * @param newMIME The starting character of the MIME attachment
      */
     public void setMIMELocation(int newMIME) {
-        if (!readOnly) mime = newMIME;
+        if (!readOnly) {
+            mime = newMIME;
+        }
     }
 
     /**
      * Returns the value of the lock parameter
      *
-     * @return boolean True if message is read-only
+     * @return boolean True if message is createTool-only
      */
     public boolean getLock() {
         return readOnly;
@@ -764,13 +753,14 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Returns the message body, without the header, including
-     * any MIME attachments.
+     * Returns the message body, without the header, including any MIME attachments.
      *
      * @return String The message body without the header but with attachments
      */
     public String getBody() {
-        if (body == -1) return "";
+        if (body == -1) {
+            return "";
+        }
         return getText().substring(body);
     }
 
@@ -780,8 +770,12 @@ public class MailMsg extends Document implements AsciiComm {
      * @return String The message body without the header or attachments
      */
     public String getBodyNoMIME() {
-        if (body == -1) return "";
-        if (mime == -1) return getBody();
+        if (body == -1) {
+            return "";
+        }
+        if (mime == -1) {
+            return getBody();
+        }
         return getText().substring(body, mime);
     }
 
@@ -791,13 +785,14 @@ public class MailMsg extends Document implements AsciiComm {
      * @return String The encoded MIME attachment
      */
     public String getMIME() {
-        if (mime == -1) return "";
+        if (mime == -1) {
+            return "";
+        }
         return getText().substring(mime);
     }
 
     /**
-     * Checks MIME attachments to see if the delimiters are
-     * consistent.
+     * Checks MIME attachments to see if the delimiters are consistent.
      *
      * @return boolean True if the MIME attachments seem consistent
      */
@@ -805,16 +800,19 @@ public class MailMsg extends Document implements AsciiComm {
         String msg = getText();
         String boundary;
         int contentsLoc = msg.indexOf("Content-Type: ");
-        if (contentsLoc == -1) return true;
+        if (contentsLoc == -1) {
+            return true;
+        }
         StringSplitter header = new StringSplitter(msg.substring(0, body), "newline");
         String contents = getHeaderField(header, "Content-Type: ");
         int bound = contents.indexOf("boundary=");
-        if (bound == -1) return true;
+        if (bound == -1) {
+            return true;
+        }
         if (contents.charAt(bound + 9) == '"') {
             contentsLoc += bound + 10;
             boundary = contents.substring(bound + 10, contents.length() - 1);
-        }
-        else {
+        } else {
             contentsLoc += bound + 9;
             boundary = contents.substring(bound + 9);
         }
@@ -830,6 +828,7 @@ public class MailMsg extends Document implements AsciiComm {
      * this returns -1.
      *
      */
+
     private int goodMSection(String msg, int startIndex, String boundary) {
         String newBoundary, contents;
         int bound, currentPosition, opening, ending, contentsLoc, endPosition;
@@ -845,14 +844,16 @@ public class MailMsg extends Document implements AsciiComm {
         if (ending == -1) {
             //System.out.println("goodMSection return C");
             return -1;
+        } else {
+            setMIMELocation(ending);
         }
-        else setMIMELocation(ending);
         endPosition = ending + boundary.length() + 4;
         nesting = true;
         while (nesting) {
             contentsLoc = msg.indexOf("Content-Type: ", currentPosition);
             if ((contentsLoc != -1) && (contentsLoc < ending)) {
-                contents = getHeaderField(new StringSplitter(msg.substring(currentPosition, body), "newline"), "Content-Type: ");
+                contents = getHeaderField(new StringSplitter(msg.substring(currentPosition, body), "newline"),
+                        "Content-Type: ");
                 bound = contents.indexOf("boundary=");
                 if (bound != -1) {
                     contentsLoc += bound + 10;
@@ -862,43 +863,22 @@ public class MailMsg extends Document implements AsciiComm {
                         //System.out.println("goodMSection return D");
                         return -1;
                     }
-                }
-                else
+                } else {
                     nesting = false;
-            }
-            else
+                }
+            } else {
                 nesting = false;
+            }
         }
         //System.out.println("goodMSection return E");
         return endPosition;
     }
 
     /**
-     * Parses a String containing a single recipient address into
-     * the email address (the part containing the @ symbol) and
-     * the name of the person, if it exists. These parts are placed in this
-     * order into the two elements of the StringVector that is returned. The
-     * input String can be an element of the StringVector returned
-     * by <i>getRecipientList()</i>, for example.
-     * </p><p>
-     * The method finds the email address by looking for the first
-     * @ character and finding the substring containing that
-     * character that begins either with whitespace or with "<",
-     * and that ends either with whitespace or with ">". If
-     * the input String does not contain an @ then the method
-     * returns with the first element set to the error message
-     * "Error: not an email name". Users should trap this error.
-     * </p><p>
-     * To find the personal name, the method next
-     * looks to see if there is text after the address
-     * contained in brackets, and if there is then it assigns
-     * this (trimmed of whitespace before and after) to the
-     * person's name. If there is nothing after the email
-     * address in brackets, then the method assumes that the
-     * personal name occurs before the email address. In either
-     * case it strips away quotation marks surrounding the name
-     * before returning. If no personal name can be found, then
-     * a String of zero length is returned in the second element.
+     * Parses a String containing a single recipient address into the email address (the part containing the @ symbol)
+     * and the name of the person, if it exists. These parts are placed in this order into the two elements of the
+     * StringVector that is returned. The input String can be an element of the StringVector returned by
+     * <i>getRecipientList()</i>, for example. </p><p> The method finds the email address by looking for the first
      *
      * @param fullAddress The input String containing the full address
      * @return Contains two Strings, the first being the address and the second the interpreted name
@@ -910,12 +890,11 @@ public class MailMsg extends Document implements AsciiComm {
         String personalName = "";
         try {
             int atLocation = currentName.indexOf("@");
-            if (atLocation == -1) {	//not an email name
+            if (atLocation == -1) {    //not an email name
                 emailAddress = "Error: not an email name";
                 personalName = "";
                 //System.out.println("MailMsg.parseAddress: checkpoint A");
-            }
-            else {
+            } else {
                 /*
                  * Check first for stuff in <..> -- this is quicker than
                  * if we have to scan for the string containing @
@@ -929,14 +908,15 @@ public class MailMsg extends Document implements AsciiComm {
                     closeEmail = currentName.indexOf(">", openEmail);
                     emailAddress = currentName.substring(openEmail + 1, closeEmail).trim();
                     currentName = currentName.substring(0, openEmail).trim();
-                }
-                else {                  // no <..> construction
+                } else {                  // no <..> construction
                     //System.out.println("MailMsg.parseAddress: checkpoint D");
                     openEmail = atLocation;
                     testChar = currentName.charAt(openEmail);
                     while (!Character.isWhitespace(testChar)) {
                         openEmail--;
-                        if (openEmail < 0) break;
+                        if (openEmail < 0) {
+                            break;
+                        }
                         testChar = currentName.charAt(openEmail);
                     }
                     openEmail++;
@@ -944,19 +924,21 @@ public class MailMsg extends Document implements AsciiComm {
                     testChar = currentName.charAt(closeEmail);
                     while ((testChar != ',') && !Character.isWhitespace(testChar)) {
                         closeEmail++;
-                        if (closeEmail >= currentName.length()) break;
+                        if (closeEmail >= currentName.length()) {
+                            break;
+                        }
                         testChar = currentName.charAt(closeEmail);
                     }
                     closeEmail--;
                     if (closeEmail == currentName.length() - 1) {
                         //System.out.println("MailMsg.parseAddress: checkpoint E");
                         emailAddress = currentName.substring(openEmail).trim();
-                        if (openEmail > 0)
+                        if (openEmail > 0) {
                             currentName = currentName.substring(0, openEmail - 1).trim();
-                        else
+                        } else {
                             currentName = "";
-                    }
-                    else {
+                        }
+                    } else {
                         //System.out.println("MailMsg.parseAddress: checkpoint F");
                         emailAddress = currentName.substring(openEmail, closeEmail + 1);
                         if (closeEmail < currentName.length() - 2) {
@@ -970,13 +952,15 @@ public class MailMsg extends Document implements AsciiComm {
                                 if (openBracket != -1) {
                                     //System.out.println("MailMsg.parseAddress: checkpoint I");
                                     closeBracket = currentName.indexOf(')');
-                                    if (closeBracket == -1) closeBracket = currentName.length();
+                                    if (closeBracket == -1) {
+                                        closeBracket = currentName.length();
+                                    }
                                     currentName = currentName.substring(openBracket + 1, closeBracket);
                                 }
                             }
-                        }
-                        else
+                        } else {
                             currentName = currentName.substring(0, openEmail).trim();
+                        }
                         //System.out.println("MailMsg.parseAddress: checkpoint J");
                     }
                 }
@@ -988,17 +972,19 @@ public class MailMsg extends Document implements AsciiComm {
                     if (openQuote >= 0) {
                         //System.out.println("MailMsg.parseAddress: checkpoint L");
                         closeQuote = currentName.indexOf('"', openQuote + 1);
-                        if (closeQuote == -1)
+                        if (closeQuote == -1) {
                             currentName = currentName.substring(openQuote + 1);
-                        else
+                        } else {
                             currentName = currentName.substring(openQuote + 1, closeQuote);
+                        }
                     }
                     openQuote = currentName.lastIndexOf("'");
                     while (openQuote >= 0) {
-                        if (openQuote == currentName.length() - 1)
+                        if (openQuote == currentName.length() - 1) {
                             currentName = currentName.substring(0, openQuote);
-                        else
+                        } else {
                             currentName = currentName.substring(0, openQuote) + currentName.substring(openQuote + 1);
+                        }
                         openQuote = currentName.lastIndexOf("'", openQuote - 1);
                     }
                     currentName = Str.replaceAll(currentName, "##UMLAUT##", umlaut);
@@ -1020,25 +1006,25 @@ public class MailMsg extends Document implements AsciiComm {
     }
 
     /**
-     * Creates a filename in a standard format from an input personal
-     * name. The personal name can have many standard forms. The
-     * filename will be in the form LastnameFirstinitials with no spaces,
-     * and where "Lastname" includes name parts like "von" or "de",
-     * while "Firstinitials" is made from all given names separated from the
-     * part of the input name containing the elements of "Lastname".
-     * (Initials are included without punctuation.)
-     *
-     * This can be used to construct a filename automatically for
-     * email addresses from a given sender. The input personal name
-     * could be taken from the output of <i>parseAddress</i>.
+     * Creates a filename in a standard format from an input personal name. The personal name can have many standard
+     * forms. The filename will be in the form LastnameFirstinitials with no spaces, and where "Lastname" includes name
+     * parts like "von" or "de", while "Firstinitials" is made from all given names separated from the part of the input
+     * name containing the elements of "Lastname". (Initials are included without punctuation.)
+     * <p/>
+     * This can be used to construct a filename automatically for email addresses from a given sender. The input
+     * personal name could be taken from the output of <i>parseAddress</i>.
      *
      * @param nameIn Input personal name
      * @return filename Output file name in standard form
      */
     public static String filenameFromName(String nameIn) {
         String name = nameIn.trim();
-        if (name.length() == 0) return "";
-        if (!Character.isLetter(name.charAt(0))) return "";
+        if (name.length() == 0) {
+            return "";
+        }
+        if (!Character.isLetter(name.charAt(0))) {
+            return "";
+        }
         StringSplitter nameParts = new StringSplitter(name);
         int parts = nameParts.size();
         int j;
@@ -1047,9 +1033,18 @@ public class MailMsg extends Document implements AsciiComm {
         String lastName = "";
         for (j = parts - 1; j >= 0; j--) {
             testPart = nameParts.at(j);
-            if ((testPart.equalsIgnoreCase("dr")) || (testPart.equalsIgnoreCase("dr.")) || (testPart.equalsIgnoreCase("prof")) || (testPart.equalsIgnoreCase("prof.")) || (testPart.equalsIgnoreCase("phd")) || (testPart.equalsIgnoreCase("ph.d.")) || (testPart.equalsIgnoreCase("ma")) || (testPart.equalsIgnoreCase("m.a.")) || (testPart.equalsIgnoreCase("md")) || (testPart.equalsIgnoreCase("m.d.")) || (testPart.equalsIgnoreCase("mr")) || (testPart.equalsIgnoreCase("mr.")) || (testPart.equalsIgnoreCase("mrs")) || (testPart.equalsIgnoreCase("mrs.")) || (testPart.equalsIgnoreCase("frau")) || (testPart.equalsIgnoreCase("fr")) || (testPart.equalsIgnoreCase("fr.")) || (testPart.equalsIgnoreCase("herr")) || (testPart.equalsIgnoreCase("hr")) || (testPart.equalsIgnoreCase("hr.")))
+            if ((testPart.equalsIgnoreCase("dr")) || (testPart.equalsIgnoreCase("dr."))
+                    || (testPart.equalsIgnoreCase("prof")) || (testPart.equalsIgnoreCase("prof."))
+                    || (testPart.equalsIgnoreCase("phd")) || (testPart.equalsIgnoreCase("ph.d."))
+                    || (testPart.equalsIgnoreCase("ma")) || (testPart.equalsIgnoreCase("m.a."))
+                    || (testPart.equalsIgnoreCase("md")) || (testPart.equalsIgnoreCase("m.d."))
+                    || (testPart.equalsIgnoreCase("mr")) || (testPart.equalsIgnoreCase("mr."))
+                    || (testPart.equalsIgnoreCase("mrs")) || (testPart.equalsIgnoreCase("mrs."))
+                    || (testPart.equalsIgnoreCase("frau")) || (testPart.equalsIgnoreCase("fr"))
+                    || (testPart.equalsIgnoreCase("fr.")) || (testPart.equalsIgnoreCase("herr"))
+                    || (testPart.equalsIgnoreCase("hr")) || (testPart.equalsIgnoreCase("hr."))) {
                 nameParts.removeElementAt(j);
-            else {
+            } else {
                 if (testPart.endsWith(".")) {
                     testPart = testPart.substring(0, testPart.length() - 1);
                     nameParts.setElementAt(testPart, j);
@@ -1057,8 +1052,12 @@ public class MailMsg extends Document implements AsciiComm {
             }
         }
         parts = nameParts.size();
-        if (parts == 0) return "";
-        if (parts == 1) return nameParts.at(0);
+        if (parts == 0) {
+            return "";
+        }
+        if (parts == 1) {
+            return nameParts.at(0);
+        }
         name = nameParts.toAString();
         int commaLoc = name.indexOf(',');
         if (commaLoc == 0) { // handle comma at beginning of string
@@ -1073,90 +1072,99 @@ public class MailMsg extends Document implements AsciiComm {
             int lastNamePart = parts - 1; // assume last name is last word
             for (j = parts - 1; j >= 0; j--) { // check for key to last name
                 testPart = nameParts.at(j);
-                if ((testPart.equalsIgnoreCase("von")) || (testPart.equalsIgnoreCase("van")) || (testPart.equalsIgnoreCase("der")) || (testPart.equalsIgnoreCase("den")) || (testPart.equalsIgnoreCase("de")) || (testPart.equalsIgnoreCase("dos")) || (testPart.equalsIgnoreCase("di")) || (testPart.equalsIgnoreCase("los")) || (testPart.equalsIgnoreCase("la")) || (testPart.equalsIgnoreCase("ap")))
+                if ((testPart.equalsIgnoreCase("von")) || (testPart.equalsIgnoreCase("van"))
+                        || (testPart.equalsIgnoreCase("der")) || (testPart.equalsIgnoreCase("den"))
+                        || (testPart.equalsIgnoreCase("de")) || (testPart.equalsIgnoreCase("dos"))
+                        || (testPart.equalsIgnoreCase("di")) || (testPart.equalsIgnoreCase("los"))
+                        || (testPart.equalsIgnoreCase("la")) || (testPart.equalsIgnoreCase("ap"))) {
                     lastNamePart = j;
+                }
             }
-            for (j = 0; j < lastNamePart; j++) firstInitials += nameParts.at(j).substring(0, 1).toUpperCase();
-            for (j = lastNamePart; j < parts; j++) lastName += nameParts.at(j);
-        }
-        else { // take first comma as break between lastname, firstname
+            for (j = 0; j < lastNamePart; j++) {
+                firstInitials += nameParts.at(j).substring(0, 1).toUpperCase();
+            }
+            for (j = lastNamePart; j < parts; j++) {
+                lastName += nameParts.at(j);
+            }
+        } else { // take first comma as break between lastname, firstname
             nameParts = new StringSplitter(name.substring(0, commaLoc).trim());
-            for (j = 0; j < nameParts.size(); j++) lastName += nameParts.at(j);
+            for (j = 0; j < nameParts.size(); j++) {
+                lastName += nameParts.at(j);
+            }
 
             nameParts = new StringSplitter(name.substring(commaLoc + 1).trim());
-            for (j = 0; j < nameParts.size(); j++) firstInitials += nameParts.at(j).substring(0, 1).toUpperCase();
+            for (j = 0; j < nameParts.size(); j++) {
+                firstInitials += nameParts.at(j).substring(0, 1).toUpperCase();
+            }
         }
         return lastName + firstInitials;
     }
 
 
     /**
-     * Returns <i>true</i> if the specified object doc
-     * is the same type and has the same contents as this object,
-     * including the path name and file name. This tests all
-     * the auxilliary data, such as subject, etc, but it does not
-     * test the deletion or damaged flags, nor does it
-     * test the source folder (<i>fromFolder</i>) or
-     * destination folders (<i>toFoilders</i>). This
-     * allows it to compare messages that may have come from different
-     * locations or are destined for different locations.
+     * Returns <i>true</i> if the specified object doc is the same type and has the same contents as this object,
+     * including the path name and file name. This tests all the auxilliary data, such as subject, etc, but it does not
+     * test the deletion or damaged flags, nor does it test the source folder (<i>fromFolder</i>) or destination folders
+     * (<i>toFoilders</i>). This allows it to compare messages that may have come from different locations or are
+     * destined for different locations.
      *
      * @return Boolean <i>true</i> if the argument is a Document with the same contents as this Document
      */
     public boolean equals(Object doc) {
 
-        if (!super.equals(doc)) return false;
+        if (!super.equals(doc)) {
+            return false;
+        }
 
-        if (!(doc instanceof MailMsg)) return false;
+        if (!(doc instanceof MailMsg)) {
+            return false;
+        }
 
-        if (!getDate().equals(((MailMsg) doc).getDate())) return false;
-        if (!getSender().equals(((MailMsg) doc).getSender())) return false;
-        if (!getRecipient().equals(((MailMsg) doc).getRecipient())) return false;
-        if (!getCopiesTo().equals(((MailMsg) doc).getCopiesTo())) return false;
-        if (!getBlindCopiesTo().equals(((MailMsg) doc).getBlindCopiesTo())) return false;
-        if (!getSubject().equals(((MailMsg) doc).getSubject())) return false;
-        if (!getID().equals(((MailMsg) doc).getID())) return false;
-        if (getBodyLocation() != ((MailMsg) doc).getBodyLocation()) return false;
-        if (getLock() != ((MailMsg) doc).getLock()) return false;
+        if (!getDate().equals(((MailMsg) doc).getDate())) {
+            return false;
+        }
+        if (!getSender().equals(((MailMsg) doc).getSender())) {
+            return false;
+        }
+        if (!getRecipient().equals(((MailMsg) doc).getRecipient())) {
+            return false;
+        }
+        if (!getCopiesTo().equals(((MailMsg) doc).getCopiesTo())) {
+            return false;
+        }
+        if (!getBlindCopiesTo().equals(((MailMsg) doc).getBlindCopiesTo())) {
+            return false;
+        }
+        if (!getSubject().equals(((MailMsg) doc).getSubject())) {
+            return false;
+        }
+        if (!getID().equals(((MailMsg) doc).getID())) {
+            return false;
+        }
+        if (getBodyLocation() != ((MailMsg) doc).getBodyLocation()) {
+            return false;
+        }
+        if (getLock() != ((MailMsg) doc).getLock()) {
+            return false;
+        }
 
         return true;
     }
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         MailMsg d = null;
@@ -1204,21 +1212,14 @@ public class MailMsg extends Document implements AsciiComm {
 
 
     /**
-     * Used when Triana types want to be able to
-     * send ASCII data to other programs using strings.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<PRE>
-     *      super.outputToStream(dos)
-     * </PRE>to get output from superior classes, and then new parameters defined
-     * for the current subclass must be output. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to send ASCII data to other programs using strings.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<PRE>
+     * super.outputToStream(dos) </PRE>to get output from superior classes, and then new parameters defined for the
+     * current subclass must be output. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dos The data output stream
      */
@@ -1240,21 +1241,14 @@ public class MailMsg extends Document implements AsciiComm {
 
 
     /**
-     * Used when Triana types want to be able to
-     * receive ASCII data from the output of other programs.  This is used to
-     * implement socket and to run other executables, written in C or
-     * other languages. With ASCII you don't have to worry about
-     * ENDIAN'ness as the conversions are all done via text. This is
-     * obviously slower than binary communication since you have to format
-     * the input and output within the other program.
-     * </p><p>
-     * This method must be overridden in every subclass that defines new
-     * data or parameters. The overriding method should first call<PRE>
-     *      super.inputFromStream(dis)
-     * </PRE>to get input from superior classes, and then new parameters defined
-     * for the current subclass must be input. Moreover, subclasses
-     * that first dimension their data arrays must explicitly transfer
-     * these data arrays.
+     * Used when Triana types want to be able to receive ASCII data from the output of other programs.  This is used to
+     * implement socket and to run other executables, written in C or other languages. With ASCII you don't have to
+     * worry about ENDIAN'ness as the conversions are all done via text. This is obviously slower than binary
+     * communication since you have to format the input and output within the other program. </p><p> This method must be
+     * overridden in every subclass that defines new data or parameters. The overriding method should first call<PRE>
+     * super.inputFromStream(dis) </PRE>to get input from superior classes, and then new parameters defined for the
+     * current subclass must be input. Moreover, subclasses that first dimension their data arrays must explicitly
+     * transfer these data arrays.
      *
      * @param dis The data input stream
      */
@@ -1266,61 +1260,70 @@ public class MailMsg extends Document implements AsciiComm {
         String field;
         line = dis.readLine();
         field = line.substring(12);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setDate("");
-        else
+        } else {
             setDate(field);
+        }
         line = dis.readLine();
         field = line.substring(12);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setSender("");
-        else
+        } else {
             setSender(field);
+        }
         line = dis.readLine();
         field = line.substring(10);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setRecipient("");
-        else
+        } else {
             setRecipient(field);
+        }
         line = dis.readLine();
         field = line.substring(10);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setCopiesTo("");
-        else
+        } else {
             setCopiesTo(field);
+        }
         line = dis.readLine();
         field = line.substring(11);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setBlindCopiesTo("");
-        else
+        } else {
             setBlindCopiesTo(field);
+        }
         line = dis.readLine();
         field = line.substring(15);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setSubject("");
-        else
+        } else {
             setSubject(field);
+        }
         line = dis.readLine();
         field = line.substring(18);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setID("");
-        else
+        } else {
             setID(field);
+        }
         setBodyLocation(findHeaderEnd(getText()));
         line = dis.readLine();
         readOnly = Str.strToBoolean(line.substring(22));
         line = dis.readLine();
         field = line.substring(19);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setFromFolder(null);
-        else
+        } else {
             setFromFolder(new FileName(field));
+        }
         line = dis.readLine();
         field = line.substring(18);
-        if (field.equals("null"))
+        if (field.equals("null")) {
             setToFolders(new StringVector(3));
-        else
+        } else {
             setToFolders(Str.splitTextBySpace(field));
+        }
         line = dis.readLine();
         delete = Str.strToBoolean(line.substring(21));
         line = dis.readLine();

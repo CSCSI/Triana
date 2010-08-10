@@ -63,10 +63,8 @@ import org.trianacode.taskgraph.tool.Tool;
 /**
  * A taskgraph factory is responsible for creating all the tasks, nodes and cables within a taskgraph.
  *
- * @author      Ian Wang
- * @created     24rd April
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public interface TaskFactory {
 
@@ -88,8 +86,7 @@ public interface TaskFactory {
 
 
     /**
-     * @return a new task of type tool, optionally preserving the original
-     * instance id in the new task.
+     * @return a new task of type tool, optionally preserving the original instance id in the new task.
      */
     public Task createTask(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskException;
 
@@ -99,8 +96,7 @@ public interface TaskFactory {
     public Node createNode(Task task, boolean input) throws NodeException;
 
     /**
-     * @return a new parameter node inputting/outputting the specified parameter
-     * and connected to the specified task
+     * @return a new parameter node inputting/outputting the specified parameter and connected to the specified task
      */
     public ParameterNode createParameterNode(String paramname, Task task, boolean input) throws NodeException;
 

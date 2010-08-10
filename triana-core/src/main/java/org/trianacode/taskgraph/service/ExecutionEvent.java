@@ -61,14 +61,10 @@ package org.trianacode.taskgraph.service;
 
 
 /**
- * The event that is generated when a task receives an execution request or
- * starts/finishes an execution cycle.
+ * The event that is generated when a task receives an execution request or starts/finishes an execution cycle.
  *
- * @author      Ian Wang
- * @created     13th August 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class ExecutionEvent {

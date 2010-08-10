@@ -59,30 +59,24 @@
 package triana.types;
 
 /**
- * Signal is an interface that can be implemented by any
- * Triana data types that include data that has been
- * acquired from a time-based data stream. It provides methods
- * for setting and returning the sampling frequency and other
- * appropriate information.
+ * Signal is an interface that can be implemented by any Triana data types that include data that has been acquired from
+ * a time-based data stream. It provides methods for setting and returning the sampling frequency and other appropriate
+ * information.
  *
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  * @see GraphType
  * @see Arithmetic
  * @see Spectrum
  * @see ComplexSpectrum
  * @see ComplexSampleSet
  * @see Document
- *
- * @author      Bernard Schutz
- * @created     28 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface Signal {
 
     /**
-     * Returns the sampling frequency of the data. If
-     * the data are irregularly sampled it should return 0.
-     * The sampling frequency in measured in samples per second (Hz).
+     * Returns the sampling frequency of the data. If the data are irregularly sampled it should return 0. The sampling
+     * frequency in measured in samples per second (Hz).
      *
      * @return double The sampling frequency in Hz
      */
@@ -96,26 +90,20 @@ public interface Signal {
     public void setSamplingRate(double r);
 
     /**
-     * Returns the acquisition time as a double
-     * giving the number of seconds since the reference time, which
-     * should be the same reference time as for the method <i>setAcquisitionTime</i>.
-     * The time is interpreted as the moment of acquisition of the first sample in the data
-     * set.
+     * Returns the acquisition time as a double giving the number of seconds since the reference time, which should be
+     * the same reference time as for the method <i>setAcquisitionTime</i>. The time is interpreted as the moment of
+     * acquisition of the first sample in the data set.
      *
      * @return double The time of acquisition in seconds since the reference time
      */
     public double getAcquisitionTime();
 
     /**
-     * Sets the acquisition time to the given value, in seconds.
-     * This time should be added to the <i>description</i> StringVector in a
-     * way that allows it to be distinguished from the date set by
-     * Triana when a data object is first created. The acquisition
-     * time is generally earlier than the time when the data enters
-     * a Triana analysis system. The argument <i>t</i> should be the
-     * number of seconds since the reference zero of time, which is a
-     * choice made by the programmer. The time should refer to the
-     * moment of acquisition of the first sample of the data set.
+     * Sets the acquisition time to the given value, in seconds. This time should be added to the <i>description</i>
+     * StringVector in a way that allows it to be distinguished from the date set by Triana when a data object is first
+     * created. The acquisition time is generally earlier than the time when the data enters a Triana analysis system.
+     * The argument <i>t</i> should be the number of seconds since the reference zero of time, which is a choice made by
+     * the programmer. The time should refer to the moment of acquisition of the first sample of the data set.
      *
      * @param t The time of acquisition in seconds since the reference time
      */

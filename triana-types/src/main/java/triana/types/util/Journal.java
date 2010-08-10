@@ -59,41 +59,27 @@
 package triana.types.util;
 
 
-
 import java.util.LinkedList;
 
 /**
- * Journal is a class that accumulates the history of processing
- * on a TrianaType data object. It has a tree-like structure containing the
- * information about the present data set, and how it was
- * created, plus references to Journals of data sets that were
- * used as input in the creation of the present set. Units
- * add information to the Journal when they create the data
- * set and add references to other Journals when they output
- * the set.
- * </p><p>
- * Journal is implemented as a LinkedList. Its first element is
- * a StringVector, and when used with a TrianaType data object
- * this is the StringVector description of the object. The
- * elements after the first are themselves Journals that
- * represent the histories of input data sets.
- * </p><p>
- * Methods are provided for extending the lists, for
- * writing the whole tree to a String for output,
- * and for re-constructing a Journal from a StringVector input.
+ * Journal is a class that accumulates the history of processing on a TrianaType data object. It has a tree-like
+ * structure containing the information about the present data set, and how it was created, plus references to Journals
+ * of data sets that were used as input in the creation of the present set. Units add information to the Journal when
+ * they create the data set and add references to other Journals when they output the set. </p><p> Journal is
+ * implemented as a LinkedList. Its first element is a StringVector, and when used with a TrianaType data object this is
+ * the StringVector description of the object. The elements after the first are themselves Journals that represent the
+ * histories of input data sets. </p><p> Methods are provided for extending the lists, for writing the whole tree to a
+ * String for output, and for re-constructing a Journal from a StringVector input.
  *
+ * @author B F Schutz
+ * @version $Revision: 4048 $
  * @see triana.types.TrianaType
- * @author      B F Schutz
- * @created     20 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Journal extends LinkedList {
 
 
     /**
-     * Constructs an empty Journal with fixed storage
-     * capacity and capacityIncrement.
+     * Constructs an empty Journal with fixed storage capacity and capacityIncrement.
      */
     public Journal() {
         super();
@@ -123,54 +109,62 @@ public class Journal extends LinkedList {
      */
     public Journal copyMe() {
         Journal copy = new Journal(((StringVector) this.getFirst()).copy());
-        if (this.size() > 1)
-            for (int i = 1; i < this.size(); i++)
+        if (this.size() > 1) {
+            for (int i = 1; i < this.size(); i++) {
                 copy.addJournal(((Journal) this.get(i)).copyMe());
+            }
+        }
         return copy;
     }
 
 
     /**
-     * Returns a String consisting of the contents of the first element
-     * of the present Journal and of the first elements of all the Journals
-     * in the list, converted to Strings. The String is structured so that
-     * the Journals of previous data sets are preceded with a tabbing
-     * String (which can be any String, not just <i>\t</i>) to set them apart
-     * from the first, or highest-level, Journal. Each level of the tree
-     * further from the present Journal gets an extra tabbing String prepended.
+     * Returns a String consisting of the contents of the first element of the present Journal and of the first elements
+     * of all the Journals in the list, converted to Strings. The String is structured so that the Journals of previous
+     * data sets are preceded with a tabbing String (which can be any String, not just <i>\t</i>) to set them apart from
+     * the first, or highest-level, Journal. Each level of the tree further from the present Journal gets an extra
+     * tabbing String prepended.
      *
      * @param tabbing the String that is to be prepended
-     * @param level the number of times that tabbing is prepended
+     * @param level   the number of times that tabbing is prepended
      * @return String the report
      */
     public String report(String tabbing, int level) {
         //System.out.println("Entering report with tabbing = " + tabbing + ", level = " + String.valueOf(level) + ", size = " + String.valueOf( size() ) );
         String s = "";
         String prepend = "";
-        for (int j = 0; j < level; j++) prepend += tabbing;
+        for (int j = 0; j < level; j++) {
+            prepend += tabbing;
+        }
         StringVector description = (StringVector) getFirst();
-        if (description == null) return prepend + "<i><i><i>\n";
-        for (int i = 0; i < description.size(); ++i) s += prepend + (String) description.get(i) + "\n";
-        if (size() <= 1) return s + prepend + "<i><i><i>\n";
+        if (description == null) {
+            return prepend + "<i><i><i>\n";
+        }
+        for (int i = 0; i < description.size(); ++i) {
+            s += prepend + (String) description.get(i) + "\n";
+        }
+        if (size() <= 1) {
+            return s + prepend + "<i><i><i>\n";
+        }
         s += prepend + "Created from the following inputs: \n";
         for (int k = 1; k < size(); k++) {
             s += prepend + "Input " + String.valueOf(k - 1) + ":\n";
-            if (get(k) instanceof Journal)
+            if (get(k) instanceof Journal) {
                 s += ((Journal) get(k)).report(tabbing, level + 1);
-            else
+            } else {
                 s += prepend + tabbing + "No input data.\n" + prepend + tabbing + "<i><i><i>\n";
+            }
         }
         s += prepend + "<i><i><i>\n";
         return s;
     }
 
     /**
-     * Reads an input StringVector and creates a Journal. This is the
-     * inverse of the previous method: a string written by method <i>report</i>
-     * and converted to a StringVector by breaking it on lines
-     * will be converted by this method back to the original Journal.
+     * Reads an input StringVector and creates a Journal. This is the inverse of the previous method: a string written
+     * by method <i>report</i> and converted to a StringVector by breaking it on lines will be converted by this method
+     * back to the original Journal.
      *
-     * @param report A report created by method <i>report</i> and converted to a StringVector
+     * @param report  A report created by method <i>report</i> and converted to a StringVector
      * @param tabbing the indentation character(s) in the input report
      * @return Journal the reconstructed Journal.
      * @see StringVector
@@ -185,12 +179,20 @@ public class Journal extends LinkedList {
 
 
         int tabpos = 0;
-        if (report.first().endsWith("<i><i><i>")) return null;
-        while (report.first().startsWith(tabbing, tabpos)) tabpos += tabLength;
-        if (tabpos > 0) prepend = report.first().substring(0, tabpos);
+        if (report.first().endsWith("<i><i><i>")) {
+            return null;
+        }
+        while (report.first().startsWith(tabbing, tabpos)) {
+            tabpos += tabLength;
+        }
+        if (tabpos > 0) {
+            prepend = report.first().substring(0, tabpos);
+        }
 
         int lastLine = 0;
-        while (!report.at(lastLine).equals(prepend + "<i><i><i>")) lastLine++; //last line of report
+        while (!report.at(lastLine).equals(prepend + "<i><i><i>")) {
+            lastLine++;
+        } //last line of report
         //System.out.println(String.valueOf(ID) + ": LstLine = " + String.valueOf( lastLine ) );
 
         boolean moreInputs = false;
@@ -201,16 +203,21 @@ public class Journal extends LinkedList {
                 break;
             }
         }
-        if (moreInputs)
+        if (moreInputs) {
             line = j; // first line afer description
-        else
+        } else {
             line = lastLine;
+        }
         //System.out.println(String.valueOf(ID) + ": First line after description = " + String.valueOf( line ) + ", with moreInputs = " + String.valueOf( moreInputs ) );
 
-        for (j = 0; j < line; j++) description.add(report.at(j).substring(prepend.length()));
+        for (j = 0; j < line; j++) {
+            description.add(report.at(j).substring(prepend.length()));
+        }
         Journal journal = new Journal(description);
         //System.out.println(String.valueOf(ID) + ": Point 2 with line = " + String.valueOf(line) + " and lastLine = " + String.valueOf(lastLine) );
-        if (report.at(line).endsWith("<i><i><i>")) return journal;
+        if (report.at(line).endsWith("<i><i><i>")) {
+            return journal;
+        }
 
         j = line + 1; // skip "Created from ... " line
         while ((j < lastLine)) {
@@ -218,13 +225,11 @@ public class Journal extends LinkedList {
             //System.out.println(String.valueOf(ID) + ": Point 3 with j = " + String.valueOf( j ) );
             if (report.at(j).endsWith("<i><i><i>")) {
                 ;
-            }
-            else if (report.at(j).endsWith("No input data.")) {
+            } else if (report.at(j).endsWith("No input data.")) {
                 j += 2; // skip "<i><i><i>" and "Created from ... " line
                 journal.add(null);
                 //System.out.println(String.valueOf(ID) + ": Added null journal.");
-            }
-            else {
+            } else {
                 description = new StringVector(10);
                 //System.out.println(String.valueOf(ID) + ": Preparing new StringVector.");
                 while (!report.at(j).equals(prepend + tabbing + "<i><i><i>")) {

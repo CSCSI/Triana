@@ -59,19 +59,15 @@
 
 package org.trianacode.gui.main;
 
+import java.awt.Component;
+
 import org.trianacode.gui.main.imp.DrawCable;
 
-import java.awt.*;
-
 /**
- * An extension to the TaskGraphPanel interface for panels which display
- * show tools for group nodes.
+ * An extension to the TaskGraphPanel interface for panels which display show tools for group nodes.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 22nd June 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 

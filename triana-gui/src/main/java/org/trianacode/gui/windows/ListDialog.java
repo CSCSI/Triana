@@ -58,21 +58,27 @@
  */
 package org.trianacode.gui.windows;
 
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.util.Env;
 
 /**
  * A dialog for selecting an item from a list
  *
- * @author      Ian Wang
- * @created     9th August
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class ListDialog extends JDialog implements ActionListener {
 
@@ -111,7 +117,7 @@ public class ListDialog extends JDialog implements ActionListener {
     /**
      * Constructs a modal list dialog offering the specified item choices
      *
-     * @param title the dialog title
+     * @param title    the dialog title
      * @param multiple allow multiple selections
      */
     public ListDialog(String[] items, Frame parent, String title, boolean multiple) {
@@ -122,7 +128,7 @@ public class ListDialog extends JDialog implements ActionListener {
     /**
      * Constructs a modal list dialog offering the specified item choices
      *
-     * @param title the dialog title
+     * @param title    the dialog title
      * @param multiple allow multiple selections
      */
     public ListDialog(String[] items, Dialog parent, String title, boolean multiple) {
@@ -137,12 +143,14 @@ public class ListDialog extends JDialog implements ActionListener {
     private void initialise(String[] items, boolean multiple) {
         getContentPane().setLayout(new BorderLayout());
 
-        JScrollPane scroll = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scroll = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         list.setPrototypeCellValue("01234567890012345");
         list.setVisibleRowCount(8);
 
-        if (!multiple)
+        if (!multiple) {
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        }
 
         list.setListData(items);
 
@@ -176,14 +184,15 @@ public class ListDialog extends JDialog implements ActionListener {
      * @return an array of the selected items, or null if the cancel button was clicked
      */
     public String[] getSelectedItems() {
-        if (!approve)
+        if (!approve) {
             return null;
-        else {
+        } else {
             Object[] select = list.getSelectedValues();
             String[] ret = new String[select.length];
 
-            for (int count = 0; count < select.length; count++)
+            for (int count = 0; count < select.length; count++) {
                 ret[count] = (String) select[count];
+            }
 
             return ret;
         }

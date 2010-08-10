@@ -58,6 +58,9 @@
  */
 package org.trianacode.gui.action.tools;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.windows.ErrorDialog;
@@ -67,16 +70,11 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
 /**
  * Action for toggeling error nodes.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class ToggerErrorAction extends AbstractAction implements ActionDisplayOptions {
@@ -97,18 +95,19 @@ public class ToggerErrorAction extends AbstractAction implements ActionDisplayOp
     public void actionPerformed(ActionEvent e) {
         Tool tool = null;
 
-        if (e.getSource() instanceof Tool)
+        if (e.getSource() instanceof Tool) {
             tool = (Tool) e.getSource();
-        else if (selhandler.isSingleSelectedTool())
+        } else if (selhandler.isSingleSelectedTool()) {
             tool = selhandler.getSelectedTool();
+        }
 
         if ((tool != null) && (tool instanceof Task)) {
             Task task = (Task) tool;
             ParameterNode errornode = getErrorNode(task);
 
-            if (errornode != null)
+            if (errornode != null) {
                 task.removeParameterOutputNode(errornode);
-            else {
+            } else {
                 try {
                     ParameterNode node = task.addParameterOutputNode(ParameterNode.ERROR_PARAM);
                     node.setErrorNode(true);
@@ -123,9 +122,11 @@ public class ToggerErrorAction extends AbstractAction implements ActionDisplayOp
         ParameterNode[] outnodes = task.getParameterOutputNodes();
         ParameterNode errornode = null;
 
-        for (int count = 0; count < outnodes.length; count++)
-            if (outnodes[count].isErrorNode())
+        for (int count = 0; count < outnodes.length; count++) {
+            if (outnodes[count].isErrorNode()) {
                 errornode = outnodes[count];
+            }
+        }
 
         return errornode;
     }

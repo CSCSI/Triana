@@ -63,29 +63,23 @@ import org.trianacode.taskgraph.event.TaskGraphListener;
 import org.trianacode.taskgraph.event.TaskListener;
 
 /**
- * A class responsible for maintaining the consitency of taskgraphs with regards
- * to the input/output nodes on their control tasks. For example, if a group
- * input node is deleted, then the corresponding loop out node on the control
+ * A class responsible for maintaining the consitency of taskgraphs with regards to the input/output nodes on their
+ * control tasks. For example, if a group input node is deleted, then the corresponding loop out node on the control
  * task is also deleted.
  *
- * @author      Ian Wang
- * @created     3rd June 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface TaskGraphChecker extends TaskGraphListener, TaskListener {
 
     /**
-     * Sets this taskgraph checker to monitor the specified taskgraph, and any
-     * sub-taskgraphs
+     * Sets this taskgraph checker to monitor the specified taskgraph, and any sub-taskgraphs
      */
     public void monitorTaskGraph(TaskGraph taskgraph);
 
     /**
-     * Removes this taskgraph checker from monitoring the specified taskgraph,
-     * and any sub-taskgraphs
+     * Removes this taskgraph checker from monitoring the specified taskgraph, and any sub-taskgraphs
      */
     public void unmonitorTaskGraph(TaskGraph taskgraph);
 

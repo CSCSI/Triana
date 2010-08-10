@@ -59,13 +59,10 @@
 package org.trianacode.taskgraph;
 
 /**
- * An exception thrown when an error occurs handling a node (e.g. cannot
- * connect to node)
+ * An exception thrown when an error occurs handling a node (e.g. cannot connect to node)
  *
- * @author      Ian Wang
- * @created     7th October
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class NodeException extends TaskException {
 

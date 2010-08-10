@@ -16,18 +16,16 @@
 
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.hci.GUIEnv;
+import java.awt.Component;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JOptionPane;
+import org.trianacode.gui.hci.GUIEnv;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 4, 2009: 12:39:31 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class OptionPane {
@@ -42,7 +40,9 @@ public class OptionPane {
     }
 
     public static boolean showOkCancel(String msg, String title, Component parent) {
-        int reply = JOptionPane.showConfirmDialog(parent, msg, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
+        int reply = JOptionPane
+                .showConfirmDialog(parent, msg, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                        GUIEnv.getTrianaIcon());
         if (reply == JOptionPane.OK_OPTION) {
             return true;
         }

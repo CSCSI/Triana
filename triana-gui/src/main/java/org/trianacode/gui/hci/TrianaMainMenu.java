@@ -58,6 +58,13 @@
  */
 package org.trianacode.gui.hci;
 
+import java.util.Vector;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
@@ -70,12 +77,9 @@ import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.util.Vector;
-
 /**
- * This is the main Triana menu that sits at the top of the main Application Frame. It almagamates
- * code from TrianaWindow, MainTrianaBaseWindow and ApplicationFrame.
+ * This is the main Triana menu that sits at the top of the main Application Frame. It almagamates code from
+ * TrianaWindow, MainTrianaBaseWindow and ApplicationFrame.
  */
 public class TrianaMainMenu extends JMenuBar implements Actions {
 
@@ -97,16 +101,14 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
     //private JMenu servicesMenu;
 
     /**
-     * The menu item for help.  You may need to access this if you want to change the ActionListener
-     * for the help menu option i.e. send the event somewhere else. By default the event is handled
-     * by this window itself.
+     * The menu item for help.  You may need to access this if you want to change the ActionListener for the help menu
+     * option i.e. send the event somewhere else. By default the event is handled by this window itself.
      */
     public JMenuItem help;
 
     /**
-     * The menu item for close.  You may need to access this if you want to change the
-     * ActionListener for the close menu option i.e. send the event somewhere else. By default the
-     * event is handled by this window itself
+     * The menu item for close.  You may need to access this if you want to change the ActionListener for the close menu
+     * option i.e. send the event somewhere else. By default the event is handled by this window itself
      */
     public JMenuItem close;
 
@@ -185,20 +187,24 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         MenuMnemonics.getInstance().createMenuItem(Env.getString("newUnit"), toolsMenu, toolsMenuHandler);
         MenuMnemonics.getInstance().createMenuItem(Env.getString("compileGenerate"), toolsMenu, toolsMenuHandler);
         MenuMnemonics.getInstance().createMenuItem(Env.getString("compileAll"), toolsMenu, toolsMenuHandler);
-        item = new JMenuItem(new ToolImportAction(applicationFrame.getTaskGraphFileHandler(), ActionDisplayOptions.DISPLAY_NAME, toolsMenu, tools));
+        item = new JMenuItem(
+                new ToolImportAction(applicationFrame.getTaskGraphFileHandler(), ActionDisplayOptions.DISPLAY_NAME,
+                        toolsMenu, tools));
         toolsMenu.add(item);
         toolsMenu.addSeparator();
         MenuMnemonics.getInstance().createMenuItem(Env.getString("editToolBoxPaths"), toolsMenu, toolsMenuHandler);
         toolsMenu.addSeparator();
-        MenuMnemonics.getInstance().createMenuItem(Env.getString("generateCommandLineApp"), toolsMenu, toolsMenuHandler);
+        MenuMnemonics.getInstance()
+                .createMenuItem(Env.getString("generateCommandLineApp"), toolsMenu, toolsMenuHandler);
 
         Action[] extentions = ExtensionManager.getWorkflowExtensions(Extension.TOOL_TYPE);
 
         if (extentions.length > 0) {
             JMenu extmenu = new JMenu("Extensions");
 
-            for (int count = 0; count < extentions.length; count++)
+            for (int count = 0; count < extentions.length; count++) {
                 extmenu.add(extentions[count]);
+            }
 
             toolsMenu.addSeparator();
             toolsMenu.add(extmenu);
@@ -230,7 +236,8 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
 
         optionsMenu = MenuMnemonics.getInstance().createMenu(Env.getString("Options"));
         OptionsMenuHandler optionsMenuHandler = new OptionsMenuHandler(applicationFrame.getTools());
-        item = MenuMnemonics.getInstance().createCheckBoxMenuItem(Env.getString("DebugWindow"), optionsMenu, optionsMenuHandler);
+        item = MenuMnemonics.getInstance()
+                .createCheckBoxMenuItem(Env.getString("DebugWindow"), optionsMenu, optionsMenuHandler);
         optionsMenuHandler.addMonitorDebugWindow(item);
         optionsMenu.addSeparator();
         MenuMnemonics.getInstance().createMenuItem(Env.getString("TrianaOptionTitle"), optionsMenu, optionsMenuHandler);
@@ -260,11 +267,9 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
 
 
     /**
-     * Called when a file is opened or saved, this method keeps a record of the most recently
-     * accessed taskgraph files.
+     * Called when a file is opened or saved, this method keeps a record of the most recently accessed taskgraph files.
      * <p/>
-     * TODO - question: do we need to explicitly remove listeners from the recent items we are
-     * deleting?
+     * TODO - question: do we need to explicitly remove listeners from the recent items we are deleting?
      */
     public void updateRecentMenu() {
         String[] recentItems = Env.getRecentFilePaths();
@@ -287,8 +292,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
     }
 
     /**
-     * Check the recent items list, if this item is not included add it to the end, losing the top
-     * item.
+     * Check the recent items list, if this item is not included add it to the end, losing the top item.
      *
      * @param item the recent file to add
      */

@@ -63,21 +63,15 @@ import org.trianacode.taskgraph.clipin.ClipIn;
 
 
 /**
- * MessageClipIn is an Object containing three Strings: a message, the name
- * of the sender of the message, and the name of the intended recipient of
- * the message. It is designed to allow units to pass information along a
- * processing network from one to another. The sender and recipient are
- * expected to be units, and the Strings should identify them. These can
- * be class names or other names known to units using this ClipIn. All
- * of the Strings can be altered by any Units that receive the ClipIn using
- * methods provided here. If the recipient field is left as the empty
- * String, then any receiving Unit may assume that the message is intended
- * for it.
+ * MessageClipIn is an Object containing three Strings: a message, the name of the sender of the message, and the name
+ * of the intended recipient of the message. It is designed to allow units to pass information along a processing
+ * network from one to another. The sender and recipient are expected to be units, and the Strings should identify them.
+ * These can be class names or other names known to units using this ClipIn. All of the Strings can be altered by any
+ * Units that receive the ClipIn using methods provided here. If the recipient field is left as the empty String, then
+ * any receiving Unit may assume that the message is intended for it.
  *
- * @author      Bernard Schutz
- * @created     31 December 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class MessageClipIn extends Object implements ClipIn {
     private String message = "";
@@ -107,7 +101,7 @@ public class MessageClipIn extends Object implements ClipIn {
      *
      * @param text The message being sent
      * @param from The sender of the message
-     * @param to The intended recipient of the message
+     * @param to   The intended recipient of the message
      */
     public MessageClipIn(String text, String from, String to) {
         sender = from;
@@ -120,10 +114,8 @@ public class MessageClipIn extends Object implements ClipIn {
      */
 
     /**
-     * This method is called before the clip-in enters a task's
-     * clip-in bucket. This occurs when either the data it is attached
-     * to is input by the task, or when the unit directly adds the
-     * clip-in to its bucket.
+     * This method is called before the clip-in enters a task's clip-in bucket. This occurs when either the data it is
+     * attached to is input by the task, or when the unit directly adds the clip-in to its bucket.
      *
      * @param info info about the task the clip-in is being attached to
      */
@@ -131,10 +123,8 @@ public class MessageClipIn extends Object implements ClipIn {
     }
 
     /**
-     * This method is called when the clip-in is removed from a
-     * task's clip-in bucket. This occurs when either the data it is
-     * attached to is output by the task, or when the unit directly
-     * remove the clip-in from its bucket.
+     * This method is called when the clip-in is removed from a task's clip-in bucket. This occurs when either the data
+     * it is attached to is output by the task, or when the unit directly remove the clip-in from its bucket.
      *
      * @param info info about the task the clip-in is being removed from
      */
@@ -143,9 +133,8 @@ public class MessageClipIn extends Object implements ClipIn {
     }
 
     /**
-     * Clones the ClipIn to an identical one. This is a copy by value,
-     * not by reference. This method must be implemented for each class
-     * in a way that depends on the contents of the ClipIn.
+     * Clones the ClipIn to an identical one. This is a copy by value, not by reference. This method must be implemented
+     * for each class in a way that depends on the contents of the ClipIn.
      *
      * @return a copy by value of the current ClipIn
      */

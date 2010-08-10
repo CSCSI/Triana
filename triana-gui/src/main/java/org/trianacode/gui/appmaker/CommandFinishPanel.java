@@ -59,23 +59,24 @@
 
 package org.trianacode.gui.appmaker;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Window;
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.windows.WizardInterface;
 import org.trianacode.gui.windows.WizardPanel;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-
 /**
- *
- *
- * @author      Ian Wang
- * @created     4th November 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class CommandFinishPanel extends JPanel implements WizardPanel {
@@ -162,8 +163,9 @@ public class CommandFinishPanel extends JPanel implements WizardPanel {
             label = new JLabel(Env.getString("overwritten"));
             label.setForeground(Color.red);
             labelpanel.add(label, BorderLayout.CENTER);
-        } else
+        } else {
             labelpanel.add(new JLabel(Env.getString("createFollowing")), BorderLayout.WEST);
+        }
 
         repack();
     }
@@ -195,8 +197,9 @@ public class CommandFinishPanel extends JPanel implements WizardPanel {
 
             dirname = outputdir.getAbsolutePath();
 
-            if (dirname.endsWith(File.separator))
+            if (dirname.endsWith(File.separator)) {
                 dirname = dirname.substring(0, dirname.lastIndexOf(File.separatorChar));
+            }
 
             dirname = dirname.substring(0, dirname.lastIndexOf(File.separatorChar) + 1);
             outputdir = new File(dirname);
@@ -205,14 +208,18 @@ public class CommandFinishPanel extends JPanel implements WizardPanel {
         File outfile = new File(comfilepanel.getJavaFileName());
         files.add(outfile);
 
-        if (comppanel.isCompile())
-            files.add(new File(outfile.getAbsolutePath().substring(0, outfile.getAbsolutePath().lastIndexOf(".")) + ".class"));
+        if (comppanel.isCompile()) {
+            files.add(new File(
+                    outfile.getAbsolutePath().substring(0, outfile.getAbsolutePath().lastIndexOf(".")) + ".class"));
+        }
 
-        if (comfilepanel.isGenerateBatchFile())
+        if (comfilepanel.isGenerateBatchFile()) {
             files.add(new File(comfilepanel.getBatchFileName()));
+        }
 
-        if (comfilepanel.isGenerateShellScript())
+        if (comfilepanel.isGenerateShellScript()) {
             files.add(new File(comfilepanel.getShellScriptName()));
+        }
 
         return (File[]) files.toArray(new File[files.size()]);
     }
@@ -224,8 +231,9 @@ public class CommandFinishPanel extends JPanel implements WizardPanel {
     private void repack() {
         Component comp = getParent();
 
-        while ((comp != null) && (!(comp instanceof Window)))
+        while ((comp != null) && (!(comp instanceof Window))) {
             comp = comp.getParent();
+        }
 
         ((Window) comp).pack();
     }

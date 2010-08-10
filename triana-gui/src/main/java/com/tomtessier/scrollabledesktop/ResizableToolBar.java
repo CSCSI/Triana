@@ -59,20 +59,24 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.Enumeration;
+
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * Generic self-contained resizable toolbar class. When a button addition exceeds
- * the width of the toolbar container, all buttons within the container are
- * automatically resized to compensate, down to the minimum button width defined
+ * <p/>
+ * Generic self-contained resizable toolbar class. When a button addition exceeds the width of the toolbar container,
+ * all buttons within the container are automatically resized to compensate, down to the minimum button width defined
  * upon creation of the ResizableToolbar instance.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
@@ -154,10 +158,8 @@ public class ResizableToolBar extends JToolBar
 
 
     /**
-     * resizes the buttons of the toolbar, depending upon the total number
-     * of components stored therein.
-     * Executes as an "invoked later" thread for a slight perceived
-     * performance boost.
+     * resizes the buttons of the toolbar, depending upon the total number of components stored therein. Executes as an
+     * "invoked later" thread for a slight perceived performance boost.
      */
     private void resizeButtons() {
 
@@ -177,8 +179,8 @@ public class ResizableToolBar extends JToolBar
                     b = (JToggleButton) e.nextElement();
                     int buttonWidth =
                             Math.round(currentButtonXLocation +
-                                       exactButtonWidth) -
-                            Math.round(currentButtonXLocation);
+                                    exactButtonWidth) -
+                                    Math.round(currentButtonXLocation);
                     assignWidth(b, buttonWidth);
 
                     currentButtonXLocation += exactButtonWidth;
@@ -192,10 +194,9 @@ public class ResizableToolBar extends JToolBar
 
 
     /**
-     * returns the current button width, defined as the width of the ResizableToolbar
-     *      divided by the number of buttons. The value returned ranges from
-     *      minButtonWidth to maxButtonWidth (two variables defined upon creation
-     *      of the ResizableToolbar instance).
+     * returns the current button width, defined as the width of the ResizableToolbar divided by the number of buttons.
+     * The value returned ranges from minButtonWidth to maxButtonWidth (two variables defined upon creation of the
+     * ResizableToolbar instance).
      *
      * @return the current button width as a float.
      */
@@ -218,8 +219,7 @@ public class ResizableToolBar extends JToolBar
 
         if (buttonWidth < minButtonWidth) {
             buttonWidth = minButtonWidth;
-        }
-        else if (buttonWidth > maxButtonWidth) {
+        } else if (buttonWidth > maxButtonWidth) {
             buttonWidth = maxButtonWidth;
         }
 
@@ -230,7 +230,7 @@ public class ResizableToolBar extends JToolBar
     /**
      * assigns a new width to the specified button
      *
-     * @param b the button whose width is to be adjusted
+     * @param b           the button whose width is to be adjusted
      * @param buttonWidth the new width
      */
     private void assignWidth(JToggleButton b, int buttonWidth) {
@@ -244,7 +244,6 @@ public class ResizableToolBar extends JToolBar
         b.setSize(newSize);
 
     }
-
 
 
     /////

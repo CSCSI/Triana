@@ -62,11 +62,8 @@ package org.trianacode.taskgraph.proxy.java;
 /**
  * Constants used by java units.
  *
- * @author      Ian Wang
- * @created     13th July 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * @todo
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface JavaConstants {

@@ -59,26 +59,31 @@
 
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.util.Env;
+
 /**
- * A simple panel for specifying a tool name (optional), package and tool box.
- * This can be used in various tool creation/paste into type panels.
+ * A simple panel for specifying a tool name (optional), package and tool box. This can be used in various tool
+ * creation/paste into type panels.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th October 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 
@@ -112,8 +117,7 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
     }
 
     /**
-     * Creates a tool panel with default package and tool box settings (tool
-     * name is not shown)
+     * Creates a tool panel with default package and tool box settings (tool name is not shown)
      */
     public ToolPanel(ToolTable tools, String pack, String toolbox) {
         this.tools = tools;
@@ -165,10 +169,11 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
         toolbox.addItemListener(this);
         String lastToolBox = (String) Env.getUserProperty(LAST_TOOLBOX);
 
-        if (lastToolBox != null)
+        if (lastToolBox != null) {
             toolbox.setSelectedItem(lastToolBox);
-        else if (tools.getToolBox(ToolTable.USER_TOOLBOX) != null)
+        } else if (tools.getToolBox(ToolTable.USER_TOOLBOX) != null) {
             toolbox.setSelectedItem(tools.getToolBox(ToolTable.USER_TOOLBOX));
+        }
 
         formpanel.add(new JLabel(Env.getString("toolbox")));
         formpanel.add(toolbox);
@@ -226,8 +231,9 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
                 }
 
                 packageName = packageName.replace(File.separatorChar, '.');
-                if (packageName.startsWith("."))
+                if (packageName.startsWith(".")) {
                     packageName = packageName.substring(1);
+                }
 
                 pack.setText(packageName);
             }
@@ -235,8 +241,7 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
     }
 
     /**
-     * Attempt to return the package name minus a unitPackage path, null if the unitPackage path
-     * doesn't exist
+     * Attempt to return the package name minus a unitPackage path, null if the unitPackage path doesn't exist
      *
      * @param fullPath the absolute path
      * @return The package name or null
@@ -254,9 +259,8 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
     }
 
     /**
-     * Invoked when an item has been selected or deselected by the user.
-     * The code written for this method performs the operations
-     * that need to occur when an item is selected (or deselected).
+     * Invoked when an item has been selected or deselected by the user. The code written for this method performs the
+     * operations that need to occur when an item is selected (or deselected).
      */
     public void itemStateChanged(ItemEvent e) {
         Object source = e.getSource();

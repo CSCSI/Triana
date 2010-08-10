@@ -60,20 +60,17 @@
 package org.trianacode.taskgraph.proxy.java;
 
 
+import java.util.Map;
+
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.ProxyInstantiator;
-
-import java.util.Map;
 
 /**
  * The proxy instantiator for java unit proxies.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 24th November 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * @todo
  */
 
 public class JavaProxyInstantiator implements ProxyInstantiator {

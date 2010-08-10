@@ -59,21 +59,31 @@
 
 package org.trianacode.gui.main.imp;
 
-import org.trianacode.gui.main.*;
-import org.trianacode.taskgraph.*;
-import org.trianacode.util.Env;
-
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Point;
 import java.util.ArrayList;
+
+import org.trianacode.gui.main.ForShowComponent;
+import org.trianacode.gui.main.TaskComponent;
+import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.main.TrianaLayoutConstants;
+import org.trianacode.gui.main.ZoomLayout;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.TDimension;
+import org.trianacode.taskgraph.TPoint;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskLayoutDetails;
+import org.trianacode.taskgraph.TaskLayoutUtils;
+import org.trianacode.util.Env;
 
 /**
  * The layout manager for positioning the triana tools on the workspace.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 1st April 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomLayout {
@@ -101,8 +111,7 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
      * Constructs a main triana layout with the specified border
      *
      * @param border       the border around the components
-     * @param forshowspace the space between the rightmost componenet and the
-     *                     right hand for show tools.
+     * @param forshowspace the space between the rightmost componenet and the right hand for show tools.
      */
     public MainTrianaLayout(int border, int forshowspace) {
         this.border = border;
@@ -111,12 +120,13 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
 
 
     public void addLayoutComponent(String str, Component comp) {
-        if (str.equals(TASK))
+        if (str.equals(TASK)) {
             tasks.add(comp);
-        else if (str.equals(LEFT_FORSHOW))
+        } else if (str.equals(LEFT_FORSHOW)) {
             leftforshows.add(comp);
-        else if (str.equals(RIGHT_FORSHOW))
+        } else if (str.equals(RIGHT_FORSHOW)) {
             rightforshows.add(comp);
+        }
     }
 
     public void removeLayoutComponent(Component comp) {
@@ -148,10 +158,11 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
      * @return the size of the left border of the workspace
      */
     public int getLeftBorder() {
-        if ((leftforshowwidth == -1) || (leftforshowwidth == 0))
+        if ((leftforshowwidth == -1) || (leftforshowwidth == 0)) {
             return (int) border;
-        else
+        } else {
             return (int) (border + leftforshowwidth + (forshowspace * zoom));
+        }
     }
 
     /**
@@ -166,7 +177,8 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
      * @return the dimensions of a standard triana task
      */
     public TDimension getTaskDimensions() {
-        TDimension defsize = new TDimension(TrianaLayoutConstants.DEFAULT_TOOL_SIZE.width, TrianaLayoutConstants.DEFAULT_TOOL_SIZE.height);
+        TDimension defsize = new TDimension(TrianaLayoutConstants.DEFAULT_TOOL_SIZE.width,
+                TrianaLayoutConstants.DEFAULT_TOOL_SIZE.height);
         return new TDimension((int) (defsize.getWidth() * zoom), (int) (defsize.getHeight() * zoom));
     }
 
@@ -189,16 +201,19 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
                 size = getSize(comps[count]);
                 loc = getLocation(comps[count]);
 
-                if (loc.x + size.width > maxx)
+                if (loc.x + size.width > maxx) {
                     maxx = loc.x + size.width;
+                }
 
-                if (loc.y + size.height > maxy)
+                if (loc.y + size.height > maxy) {
                     maxy = loc.y + size.height;
+                }
             }
 
             return new Dimension(maxx + border, maxy + border);
-        } else
+        } else {
             return container.getSize();
+        }
     }
 
 
@@ -218,12 +233,12 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
     /**
      * Checks to see whether the taskgraph is in a stable state.
      *
-     * @return true if the taskgraph is stable or the container is not a
-     *         taskgraph panel.
+     * @return true if the taskgraph is stable or the container is not a taskgraph panel.
      */
     private boolean isStable(Container container) {
-        if (!(container instanceof TaskGraphPanel))
+        if (!(container instanceof TaskGraphPanel)) {
             return true;
+        }
 
         return ((TaskGraphPanel) container).getTaskGraph().getControlTaskState() != TaskGraph.CONTROL_TASK_UNSTABLE;
     }
@@ -233,14 +248,15 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
      * @return the location of the specified component
      */
     private Point getLocation(Component comp) {
-        if (tasks.contains(comp))
+        if (tasks.contains(comp)) {
             return getTaskLocation((TaskComponent) comp);
-        else if (leftforshows.contains(comp))
+        } else if (leftforshows.contains(comp)) {
             return getForShowLocation((ForShowComponent) comp, true);
-        else if (rightforshows.contains(comp))
+        } else if (rightforshows.contains(comp)) {
             return getForShowLocation((ForShowComponent) comp, false);
-        else
+        } else {
             return new Point(0, 0);
+        }
     }
 
     /**
@@ -257,7 +273,7 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
      */
     private Point getTaskLocation(TaskComponent comp) {
         TPoint tp = TaskLayoutUtils.getPosition(comp.getTaskInterface(), this);
-        return new Point((int)tp.getX(), (int)tp.getY());
+        return new Point((int) tp.getX(), (int) tp.getY());
     }
 
     /**
@@ -265,12 +281,14 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
      */
     private Point getForShowLocation(ForShowComponent comp, boolean input) {
         Node node = comp.getGroupNode();
-        int ypos = (int) ((node.getAbsoluteNodeIndex() * (comp.getComponent().getPreferredSize().height + border)) * zoom);
+        int ypos = (int) ((node.getAbsoluteNodeIndex() * (comp.getComponent().getPreferredSize().height + border))
+                * zoom);
 
-        if (input)
+        if (input) {
             return new Point(border, border + ypos);
-        else
+        } else {
             return new Point(border + leftforshowwidth + (forshowspace * 2) + taskgraphwidth, border + ypos);
+        }
     }
 
 
@@ -293,8 +311,9 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
             if (node.isInputNode()) {
                 size = getSize(comps[count]);
 
-                if (size.width > width)
+                if (size.width > width) {
                     width = size.width;
+                }
             }
         }
 
@@ -313,8 +332,9 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
             taskwidth = ((double) getSize(comps[count]).width) / basewidth;
             loc = TaskLayoutUtils.getPosition(((TaskComponent) comps[count]).getTaskInterface());
 
-            if (loc.getX() + taskwidth > taskgraphwidth)
+            if (loc.getX() + taskwidth > taskgraphwidth) {
                 taskgraphwidth = loc.getX() + taskwidth;
+            }
         }
 
         return (int) (taskgraphwidth * basewidth);

@@ -64,10 +64,8 @@ import org.trianacode.taskgraph.imp.ParameterNodeImp;
 /**
  * An error node
  *
- * @author      Ian Wangy
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wangy
+ * @version $Revision: 4048 $
  */
 
 public class ErrorNode extends ParameterNodeImp implements RunnableNodeInterface {

@@ -24,8 +24,6 @@ import java.util.concurrent.Executors;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 6, 2009: 9:26:06 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ThreadPool {

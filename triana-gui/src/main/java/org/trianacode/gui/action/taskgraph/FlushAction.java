@@ -58,6 +58,10 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JMenu;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -67,16 +71,11 @@ import org.trianacode.taskgraph.service.ClientException;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
 /**
  * Action class to handle all "Flush" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class FlushAction extends AbstractAction implements ActionDisplayOptions {
 

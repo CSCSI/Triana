@@ -59,24 +59,36 @@
 package org.trianacode.gui.hci;
 
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
-import org.trianacode.gui.main.*;
+import org.trianacode.gui.main.NodeComponent;
+import org.trianacode.gui.main.SelectionBoxInterface;
+import org.trianacode.gui.main.TaskComponent;
+import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.main.TaskSubComponent;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskLayoutUtils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-
 /**
- * ToolMouseHandler handles all mouse events on task components and on the panel
- * taskgraph window.
+ * ToolMouseHandler handles all mouse events on task components and on the panel taskgraph window.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 1 Jan 2000
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolMouseHandler implements
         MouseListener, MouseMotionListener, ContainerListener {
@@ -120,8 +132,8 @@ public class ToolMouseHandler implements
 
 
     /**
-     * Called when a new component is added, recursively sets the tool/node
-     * mouse handler for that component and any subcomponents.
+     * Called when a new component is added, recursively sets the tool/node mouse handler for that component and any
+     * subcomponents.
      */
     private void monitorComponent(Component comp) {
         if (comp instanceof NodeComponent) {
@@ -136,14 +148,15 @@ public class ToolMouseHandler implements
             ((Container) comp).addContainerListener(this);
 
             Component[] comps = ((Container) comp).getComponents();
-            for (int count = 0; count < comps.length; count++)
+            for (int count = 0; count < comps.length; count++) {
                 monitorComponent(comps[count]);
+            }
         }
     }
 
     /**
-     * Called when a component is removed, recursively removes the tool/node
-     * mouse handler for that component and any subcomponents.
+     * Called when a component is removed, recursively removes the tool/node mouse handler for that component and any
+     * subcomponents.
      */
     private void unmonitorComponent(Component comp) {
         if (comp instanceof NodeComponent) {
@@ -158,8 +171,9 @@ public class ToolMouseHandler implements
             ((Container) comp).removeContainerListener(this);
 
             Component[] comps = ((Container) comp).getComponents();
-            for (int count = 0; count < comps.length; count++)
+            for (int count = 0; count < comps.length; count++) {
                 unmonitorComponent(comps[count]);
+            }
         }
     }
 
@@ -168,12 +182,13 @@ public class ToolMouseHandler implements
      * @return the source for the mouse event
      */
     private TaskComponent getTaskComponent(MouseEvent event) {
-        if (event.getSource() instanceof TaskComponent)
+        if (event.getSource() instanceof TaskComponent) {
             return (TaskComponent) event.getSource();
-        else if (event.getSource() instanceof TaskSubComponent)
+        } else if (event.getSource() instanceof TaskSubComponent) {
             return ((TaskSubComponent) event.getSource()).getMainTaskComponent();
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -183,8 +198,9 @@ public class ToolMouseHandler implements
     private void selectAll(boolean selected) {
         TaskComponent[] comps = panel.getTaskComponents();
 
-        for (int count = 0; count < comps.length; count++)
+        for (int count = 0; count < comps.length; count++) {
             comps[count].setSelected(selected);
+        }
     }
 
     /**
@@ -193,8 +209,9 @@ public class ToolMouseHandler implements
     private void selectOnly(TaskComponent comp) {
         TaskComponent[] comps = panel.getTaskComponents();
 
-        for (int count = 0; count < comps.length; count++)
+        for (int count = 0; count < comps.length; count++) {
             comps[count].setSelected(comps[count] == comp);
+        }
     }
 
     /**
@@ -204,17 +221,18 @@ public class ToolMouseHandler implements
         TaskComponent[] comps = panel.getTaskComponents();
         ArrayList selected = new ArrayList();
 
-        for (int count = 0; count < comps.length; count++)
-            if (comps[count].isSelected())
+        for (int count = 0; count < comps.length; count++) {
+            if (comps[count].isSelected()) {
                 selected.add(comps[count]);
+            }
+        }
 
         return (TaskComponent[]) selected.toArray(new TaskComponent[selected.size()]);
     }
 
 
     /**
-     * Moves the unit specified and any other that are selected
-     * to the new location, clipping if necessary.
+     * Moves the unit specified and any other that are selected to the new location, clipping if necessary.
      */
     public void moveSelected(TaskComponent comp, Point newPosition) {
         int xmove = newPosition.x - comp.getComponent().getLocation().x;
@@ -223,8 +241,9 @@ public class ToolMouseHandler implements
         TaskComponent[] tools = getSelected();
         Task[] tasks = new Task[tools.length];
 
-        for (int count = 0; count < tasks.length; count++)
+        for (int count = 0; count < tasks.length; count++) {
             tasks[count] = tools[count].getTaskInterface();
+        }
 
         TaskLayoutUtils.translate(tasks, xmove, ymove, panel.getLayoutDetails());
 
@@ -259,14 +278,14 @@ public class ToolMouseHandler implements
      * Clears the temporary selection box so it is no longer shown
      */
     public void clearSelectionBox() {
-        if (panel instanceof SelectionBoxInterface)
+        if (panel instanceof SelectionBoxInterface) {
             ((SelectionBoxInterface) panel).clearSelectionBox();
+        }
     }
 
 
     /**
-     * Invoked when the mouse button has been clicked (pressed
-     * and released) on a component.
+     * Invoked when the mouse button has been clicked (pressed and released) on a component.
      */
     public void mouseClicked(MouseEvent event) {
         TaskComponent task = getTaskComponent(event);
@@ -281,7 +300,8 @@ public class ToolMouseHandler implements
 
     private void handleDoubleClick(Task task, MouseEvent mevt) {
         Action action = TaskGraphViewManager.getTaskAction(task);
-        ActionEvent event = new ActionEvent(mevt.getSource(), ActionEvent.ACTION_PERFORMED, (String) action.getValue(Action.ACTION_COMMAND_KEY), mevt.getWhen(), mevt.getModifiers());
+        ActionEvent event = new ActionEvent(mevt.getSource(), ActionEvent.ACTION_PERFORMED,
+                (String) action.getValue(Action.ACTION_COMMAND_KEY), mevt.getWhen(), mevt.getModifiers());
 
         action.actionPerformed(event);
     }
@@ -304,24 +324,27 @@ public class ToolMouseHandler implements
     public void mousePressed(MouseEvent event) {
         TaskComponent task = getTaskComponent(event);
 
-        if (event.isPopupTrigger())
+        if (event.isPopupTrigger()) {
             doPopupMenu(event, task);
-        else if (task == null)
+        } else if (task == null) {
             onrelease = SELECT_NONE_ON_RELEASE;
-        else {
+        } else {
             if (event.isControlDown()) {
-                if (task.isSelected())
+                if (task.isSelected()) {
                     onrelease = DESELECT_ON_RELEASE;
-                else
+                } else {
                     onrelease = DO_NOTHING_ON_RELEASE;
+                }
             } else if (SwingUtilities.isRightMouseButton(event)) {
-                if (!task.isSelected())
+                if (!task.isSelected()) {
                     selectOnly(task);
+                }
 
                 onrelease = DO_NOTHING_ON_RELEASE;
             } else {
-                if (task.isSelected())
+                if (task.isSelected()) {
                     onrelease = SELECT_NONE_ON_RELEASE;
+                }
 
                 selectOnly(task);
             }
@@ -335,14 +358,15 @@ public class ToolMouseHandler implements
     private void doPopupMenu(MouseEvent event, TaskComponent task) {
         JPopupMenu menu = null;
 
-        if (task == null)
+        if (task == null) {
             menu = TaskGraphViewManager.getOpenGroupPopup(panel.getTaskGraph());
-        else if (task.isSelected() && (getSelected().length > 1)) {
+        } else if (task.isSelected() && (getSelected().length > 1)) {
             TaskComponent[] comps = getSelected();
             Task[] tasks = new Task[comps.length];
 
-            for (int count = 0; count < comps.length; count++)
+            for (int count = 0; count < comps.length; count++) {
                 tasks[count] = comps[count].getTaskInterface();
+            }
 
             menu = TaskGraphViewManager.getMultipleSelectionPopup(panel.getTaskGraph(), tasks);
         } else {
@@ -351,8 +375,9 @@ public class ToolMouseHandler implements
             menu = TaskGraphViewManager.getWorkspacePopup(task.getTaskInterface());
         }
 
-        if ((menu != null) && (event.getSource() instanceof Component))
+        if ((menu != null) && (event.getSource() instanceof Component)) {
             menu.show((Component) event.getSource(), event.getX(), event.getY());
+        }
     }
 
 
@@ -362,14 +387,15 @@ public class ToolMouseHandler implements
     public void mouseReleased(MouseEvent event) {
         TaskComponent task = getTaskComponent(event);
 
-        if (event.isPopupTrigger())
+        if (event.isPopupTrigger()) {
             doPopupMenu(event, task);
-        else if ((onrelease == DESELECT_ON_RELEASE) && (task != null))
+        } else if ((onrelease == DESELECT_ON_RELEASE) && (task != null)) {
             task.setSelected(false);
-        else if ((onrelease == SELECT_ONLY_ON_RELEASE) && (task != null))
+        } else if ((onrelease == SELECT_ONLY_ON_RELEASE) && (task != null)) {
             selectOnly(task);
-        else if (onrelease == SELECT_NONE_ON_RELEASE)
+        } else if (onrelease == SELECT_NONE_ON_RELEASE) {
             selectAll(false);
+        }
 
         clearSelectionBox();
 
@@ -378,28 +404,27 @@ public class ToolMouseHandler implements
     }
 
     /**
-     * Invoked when a mouse button is pressed on a component and then
-     * dragged.  <code>MOUSE_DRAGGED</code> events will continue to be
-     * delivered to the component where the drag originated until the
-     * mouse button is released (regardless of whether the mouse position
-     * is within the bounds of the component).
+     * Invoked when a mouse button is pressed on a component and then dragged.  <code>MOUSE_DRAGGED</code> events will
+     * continue to be delivered to the component where the drag originated until the mouse button is released
+     * (regardless of whether the mouse position is within the bounds of the component).
      * <p/>
-     * Due to platform-dependent Drag&Drop implementations,
-     * <code>MOUSE_DRAGGED</code> events may not be delivered during a native
-     * Drag&Drop operation.
+     * Due to platform-dependent Drag&Drop implementations, <code>MOUSE_DRAGGED</code> events may not be delivered
+     * during a native Drag&Drop operation.
      */
     public void mouseDragged(MouseEvent event) {
         TaskComponent task = getTaskComponent(event);
 
         if (dragpoint != null) {
-            if (task == null)
-                setSelectionBox(dragpoint.x, dragpoint.y, event.getPoint().x - dragpoint.x, event.getPoint().y - dragpoint.y);
-            else if (task != null) {
+            if (task == null) {
+                setSelectionBox(dragpoint.x, dragpoint.y, event.getPoint().x - dragpoint.x,
+                        event.getPoint().y - dragpoint.y);
+            } else if (task != null) {
                 Point dest = SwingUtilities.convertPoint(task.getComponent(), event.getPoint(), panel.getContainer());
                 dest.translate(-dragpoint.x, -dragpoint.y);
 
-                if (panel.getContainer().contains(dest))
+                if (panel.getContainer().contains(dest)) {
                     moveSelected(task, dest);
+                }
             }
         }
 
@@ -407,8 +432,7 @@ public class ToolMouseHandler implements
     }
 
     /**
-     * Invoked when the mouse cursor has been moved onto a component
-     * but no buttons have been pushed.
+     * Invoked when the mouse cursor has been moved onto a component but no buttons have been pushed.
      */
     public void mouseMoved(MouseEvent event) {
     }

@@ -58,23 +58,29 @@
  */
 package org.trianacode.gui.windows;
 
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.util.Env;
 
 /**
  * Start-up Splash screen
  *
  * @author Matthew Shields
  * @version $Revision: 4050 $
- * @created May 21, 2003: 3:56:44 PM
- * @date $Date: 2007-10-24 13:14:13 +0100 (Wed, 24 Oct 2007) $ modified by $Author: spxmss $
  */
 public class SplashScreen {
 

@@ -59,22 +59,29 @@
 
 package org.trianacode.taskgraph.imp;
 
+import java.util.Hashtable;
+
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.event.*;
-
-import java.util.Hashtable;
+import org.trianacode.taskgraph.event.ControlTaskStateEvent;
+import org.trianacode.taskgraph.event.NodeEvent;
+import org.trianacode.taskgraph.event.NodeListener;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskGraphCableEvent;
+import org.trianacode.taskgraph.event.TaskGraphListener;
+import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 
 /**
- * A class that is responsible for maintaining the integrity of a control
- * loop, with regards to the correct number of group/loop input and output nodes.
+ * A class that is responsible for maintaining the integrity of a control loop, with regards to the correct number of
+ * group/loop input and output nodes.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th August 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public class ControlLoopChecker implements TaskGraphListener, TaskListener, NodeListener {
@@ -96,12 +103,14 @@ public class ControlLoopChecker implements TaskGraphListener, TaskListener, Node
         updateNodes();
 
         Node[] nodes = control.getDataInputNodes();
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             nodes[count].addNodeListener(this);
+        }
 
         nodes = control.getDataOutputNodes();
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             nodes[count].addNodeListener(this);
+        }
 
     }
 
@@ -114,7 +123,7 @@ public class ControlLoopChecker implements TaskGraphListener, TaskListener, Node
         int groupin = control.getParent().getDataInputNodeCount();
         int groupout = control.getParent().getDataOutputNodeCount();
 
-        for (int count = 0; count < innodes.length; count++)
+        for (int count = 0; count < innodes.length; count++) {
             if (count < groupin) {
                 nodetable.put(innodes[count], outnodes[groupout + count]);
                 nodetable.put(outnodes[groupout + count], innodes[count]);
@@ -122,6 +131,7 @@ public class ControlLoopChecker implements TaskGraphListener, TaskListener, Node
                 nodetable.put(innodes[count], outnodes[count - groupin]);
                 nodetable.put(outnodes[count - groupin], innodes[count]);
             }
+        }
     }
 
 
@@ -132,18 +142,20 @@ public class ControlLoopChecker implements TaskGraphListener, TaskListener, Node
         if (event.getControlTaskState() == TaskGraph.CONTROL_TASK_CONNECTED) {
             updateNodes();
             stable = true;
-        } else if (event.getControlTaskState() == TaskGraph.CONTROL_TASK_UNSTABLE)
+        } else if (event.getControlTaskState() == TaskGraph.CONTROL_TASK_UNSTABLE) {
             stable = false;
-        else if (event.getControlTaskState() == TaskGraph.CONTROL_TASK_DISCONNECTED)
+        } else if (event.getControlTaskState() == TaskGraph.CONTROL_TASK_DISCONNECTED) {
             stable = true;
+        }
     }
 
     /**
      * Called when a data input node is added.
      */
     public void nodeAdded(TaskNodeEvent event) {
-        if (event.getTask() == control)
+        if (event.getTask() == control) {
             event.getNode().addNodeListener(this);
+        }
     }
 
     /**
@@ -206,9 +218,8 @@ public class ControlLoopChecker implements TaskGraphListener, TaskListener, Node
     }
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method
-     * is called when tasks are removed from a taskgraph due to being grouped
-     * (they are placed in the new groups taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are placed in the new groups taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
     }

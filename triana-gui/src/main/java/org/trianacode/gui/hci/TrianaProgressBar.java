@@ -59,16 +59,18 @@
 
 package org.trianacode.gui.hci;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 /**
  * Simple progress bar in a frame with a message.
  *
- * @author  Matthew Shields
- * @created Aug 7, 2003: 3:30:43 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TrianaProgressBar extends Thread {
 
@@ -101,20 +103,22 @@ public class TrianaProgressBar extends Thread {
         int y = (int) app.getLocation().getY() + app.getSize().height / 2;
         progressFrame.setLocation(x, y);
 
-        if (pauseCheck)
+        if (pauseCheck) {
             try {
                 Thread.sleep(PAUSE_TIME);
             }
             catch (InterruptedException e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
-        if (!stop)
+        }
+        if (!stop) {
             progressFrame.show();
+        }
 
         while (!stop) {
             try {
                 sleep(100);
-            } catch(InterruptedException except) {
+            } catch (InterruptedException except) {
             }
         }
 

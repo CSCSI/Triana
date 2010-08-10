@@ -59,16 +59,16 @@
 
 package org.trianacode.gui.panels;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.Calendar;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 /**
- * Created by IntelliJ IDEA.
- * User: Andrew
- * Date: 22-May-2004
- * Time: 08:31:00
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: Andrew Date: 22-May-2004 Time: 08:31:00 To change this template use File | Settings |
+ * File Templates.
  */
 public class DigitalClock extends JPanel {
 
@@ -118,7 +118,7 @@ public class DigitalClock extends JPanel {
     }
 
     private void setMins(int min) {
-        if(min < 10) {
+        if (min < 10) {
             digits[2].setDigit(0);
             digits[3].setDigit(min);
         } else {
@@ -131,7 +131,7 @@ public class DigitalClock extends JPanel {
     }
 
     private void setHours(int hour) {
-        if(hour < 10) {
+        if (hour < 10) {
             digits[0].setDigit(0);
             digits[1].setDigit(hour);
         } else {
@@ -151,7 +151,7 @@ public class DigitalClock extends JPanel {
     }
 
     public void setAlarm(int alarm) {
-        if(alarm > 2459 || alarm < 0) {
+        if (alarm > 2459 || alarm < 0) {
             alarm = 0;
         }
         this.alarm = alarm;
@@ -168,24 +168,24 @@ public class DigitalClock extends JPanel {
     }
 
     private void checkAlarm() {
-        if(alarm  == (digits[0].getDigit() * 1000) +
-                    (digits[1].getDigit() * 100) +
-                    (digits[2].getDigit() * 10) +
-                    digits[3].getDigit()) {
+        if (alarm == (digits[0].getDigit() * 1000) +
+                (digits[1].getDigit() * 100) +
+                (digits[2].getDigit() * 10) +
+                digits[3].getDigit()) {
             playAlarm();
         }
     }
 
     private void inc() {
         digits[3].setDigit((digits[3].getDigit() + 1) % 10);
-        if(digits[3].getDigit() == 0) {
+        if (digits[3].getDigit() == 0) {
             int min = digits[2].getDigit();
-            if(min < 5) {
+            if (min < 5) {
                 digits[2].setDigit(++min);
             } else {
                 digits[2].setDigit(0);
                 int hour = (digits[0].getDigit() * 10) + digits[1].getDigit();
-                if(hour < 24) {
+                if (hour < 24) {
                     hour++;
                 } else {
                     hour = 0;
@@ -202,9 +202,10 @@ public class DigitalClock extends JPanel {
                 while (true) {
                     try {
                         sleep(1000 - millis);
-                    } catch (InterruptedException except) {}
+                    } catch (InterruptedException except) {
+                    }
                     secs--;
-                    if(secs == 0) {
+                    if (secs == 0) {
                         secs = 60;
                         inc();
                         repaint();

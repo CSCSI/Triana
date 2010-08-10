@@ -58,17 +58,23 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.CableException;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**
- * A basic implementation of TaskFactory that creates TaskImps, NodeImps
- * and CableImps.
+ * A basic implementation of TaskFactory that creates TaskImps, NodeImps and CableImps.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 1, 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TaskFactoryImp implements TaskFactory {
 
@@ -124,8 +130,7 @@ public class TaskFactoryImp implements TaskFactory {
     }
 
     /**
-     * @return a new parameter node inputting/outputting the specified parameter
-     *         and connected to the specified task
+     * @return a new parameter node inputting/outputting the specified parameter and connected to the specified task
      */
     public ParameterNode createParameterNode(String paramname, Task task, boolean input) throws NodeException {
         return new ParameterNodeImp(paramname, task, input);

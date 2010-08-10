@@ -58,12 +58,13 @@
  */
 package org.trianacode.gui.windows;
 
-import javax.swing.*;
 import java.io.Serializable;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class QuestionWindow implements Serializable {
 
@@ -83,9 +84,8 @@ public class QuestionWindow implements Serializable {
     public static int reply = NO;
 
     /**
-     * This class creates a basic modal window with two buttons, labelled
-     * <i>yes</i> and know <i>no</i> and with a specified title.  It sets
-     * itself modal because thats what it will always be.
+     * This class creates a basic modal window with two buttons, labelled <i>yes</i> and know <i>no</i> and with a
+     * specified title.  It sets itself modal because thats what it will always be.
      */
     public QuestionWindow(JFrame parent, String text) {
         boolean disp = false;
@@ -96,10 +96,11 @@ public class QuestionWindow implements Serializable {
         }
 
         reply = JOptionPane.showConfirmDialog(parent, text,
-                                              "Triana", JOptionPane.YES_NO_OPTION);
+                "Triana", JOptionPane.YES_NO_OPTION);
 
-        if (disp)
+        if (disp) {
             parent.dispose();
+        }
     }
 
 }

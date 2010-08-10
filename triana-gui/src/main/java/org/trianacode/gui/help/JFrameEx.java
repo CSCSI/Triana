@@ -58,14 +58,16 @@
  */
 package org.trianacode.gui.help;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.Properties;
 
+import javax.swing.JFrame;
+
 /**
- * @author      Unknown
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Unknown
+ * @version $Revision: 4048 $
  */
 public class JFrameEx extends JFrame {
     protected Point cascadeLocation;
@@ -131,7 +133,7 @@ public class JFrameEx extends JFrame {
             dimension.setSize(
                     Integer.parseInt(properties.getProperty(name + ".Size.width").trim()),
                     Integer.parseInt(properties.getProperty(name +
-                                                            ".Size.height").trim()));
+                            ".Size.height").trim()));
         }
         catch (NumberFormatException ex1) {
         }
@@ -165,7 +167,7 @@ public class JFrameEx extends JFrame {
 
     public Rectangle getBounds(Properties properties, String name) {
         return new Rectangle(getLocation(properties, name),
-                             getSize(properties, name));
+                getSize(properties, name));
     }
 
     public void setCascadeLocation(Point cascadeSize) {
@@ -185,7 +187,7 @@ public class JFrameEx extends JFrame {
 
         try {
             setLocation(parentLocation.x + cascadeLocation.x,
-                        parentLocation.y + cascadeLocation.y);
+                    parentLocation.y + cascadeLocation.y);
         }
         catch (NullPointerException ex) {
             System.out.println(parentLocation);
@@ -197,7 +199,7 @@ public class JFrameEx extends JFrame {
 
         try {
             setLocation(parentLocation.x + cascadeLocation.x,
-                        parentLocation.y + cascadeLocation.y);
+                    parentLocation.y + cascadeLocation.y);
         }
         catch (NullPointerException ex) {
             System.out.println(parentLocation);

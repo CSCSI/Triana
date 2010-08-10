@@ -59,17 +59,20 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JMenu;
+import javax.swing.JRadioButtonMenuItem;
+
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
+ * <p/>
  * This class provides the optional "Window" menu for the scrollable desktop.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
@@ -99,8 +102,8 @@ public class DesktopMenu extends JMenu implements ActionListener {
      * creates the DesktopMenu object with the specified tileMode
      *
      * @param desktopMediator a reference to the DesktopMediator object
-     * @param tileMode the tile mode to use (<code>true</code> = tile
-     *      internal frames, <code>false</code> = cascade internal frames)
+     * @param tileMode        the tile mode to use (<code>true</code> = tile internal frames, <code>false</code> =
+     *                        cascade internal frames)
      */
     public DesktopMenu(DesktopMediator desktopMediator, boolean tileMode) {
 
@@ -122,9 +125,8 @@ public class DesktopMenu extends JMenu implements ActionListener {
 
 
     /**
-     * adds a
-     * {@link com.tomtessier.scrollabledesktop.BaseRadioButtonMenuItem
-     * BaseRadioButtonMenuItem} to the menu and associates it with an internal frame
+     * adds a {@link com.tomtessier.scrollabledesktop.BaseRadioButtonMenuItem BaseRadioButtonMenuItem} to the menu and
+     * associates it with an internal frame
      *
      * @param associatedFrame the internal frame to associate with the menu item
      */
@@ -140,8 +142,8 @@ public class DesktopMenu extends JMenu implements ActionListener {
 
         BaseRadioButtonMenuItem menuButton =
                 new BaseRadioButtonMenuItem(this,
-                                            displayedCount + " " + associatedFrame.getTitle(),
-                                            KeyEvent.VK_0 + currentMenuCount, -1, true, associatedFrame);
+                        displayedCount + " " + associatedFrame.getTitle(),
+                        KeyEvent.VK_0 + currentMenuCount, -1, true, associatedFrame);
 
         associatedFrame.setAssociatedMenuButton(menuButton);
 
@@ -191,7 +193,7 @@ public class DesktopMenu extends JMenu implements ActionListener {
             }
             b.setMnemonic(KeyEvent.VK_0 + currentMenuCount);
             b.setText(displayedCount +
-                      " " + b.getAssociatedFrame().getTitle());
+                    " " + b.getAssociatedFrame().getTitle());
             displayedCount++;
         }
 

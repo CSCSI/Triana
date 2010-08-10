@@ -64,10 +64,8 @@ import org.trianacode.taskgraph.tool.Tool;
 /**
  * A filter for input tools only
  *
- * @author      Ian Wang
- * @created     12th Feb 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class AllToolsFilter implements ToolFilter {
 
@@ -94,8 +92,8 @@ public class AllToolsFilter implements ToolFilter {
 
 
     /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     * ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * @return the filtered packages for the tool, empty array if the tool is ignored. (e.g. a tool in SignalPro.Input
+     *         could become Input.SignalProc)
      */
     public String[] getFilteredPackage(Tool tool) {
         return new String[]{""};
@@ -103,15 +101,14 @@ public class AllToolsFilter implements ToolFilter {
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * This method is called when the filter is choosen. The initialisation of the filter should be implemented here
      */
     public void init() {
     }
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * This method is called when the filter is unchoosen. Any disposal related to the filter should be implemented
+     * here
      */
     public void dispose() {
     }

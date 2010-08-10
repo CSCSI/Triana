@@ -61,16 +61,18 @@ package org.trianacode.taskgraph.service;
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskDisposedEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import org.trianacode.taskgraph.imp.ParameterNodeImp;
 
 /**
  * A NodeCable which has run-time parameters.
  *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 
 public class RunnableParameterNode extends ParameterNodeImp implements RunnableNodeInterface, TaskListener {
@@ -108,8 +110,9 @@ public class RunnableParameterNode extends ParameterNodeImp implements RunnableN
         if (isConnected()) {
             super.disconnect();
 
-            if (isParameterNode() && isOutputNode())
+            if (isParameterNode() && isOutputNode()) {
                 getTask().removeTaskListener(this);
+            }
         }
     }
 
@@ -132,10 +135,11 @@ public class RunnableParameterNode extends ParameterNodeImp implements RunnableN
      */
     public void parameterUpdated(Task task, String paramname) {
         if ((!(getTask() instanceof TaskGraph)) && paramname.equals(getParameterName())) {
-            if (task.getParameter(paramname) == null)
+            if (task.getParameter(paramname) == null) {
                 ((RunnableTask) getTask()).output(this, null, false);
-            else
+            } else {
                 ((RunnableTask) getTask()).output(this, task.getParameter(paramname), false);
+            }
         }
     }
 

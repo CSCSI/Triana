@@ -60,18 +60,15 @@
 package org.trianacode.gui.hci.color;
 
 
-import org.trianacode.taskgraph.Node;
+import java.awt.Color;
 
-import java.awt.*;
+import org.trianacode.taskgraph.Node;
 
 /**
  * An extended color model that handles colors for nodes.
  *
- * @author      Ian Wang
- * @created     18th July 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface NodeColorModel extends ColorModel {

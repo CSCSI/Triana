@@ -59,18 +59,16 @@
 package org.trianacode.taskgraph.service;
 
 
-import org.trianacode.taskgraph.clipin.ClipInBucket;
-
 import java.io.Serializable;
 
+import org.trianacode.taskgraph.clipin.ClipInBucket;
+
 /**
- * DataMessage objects are used to send data between two tasks. They contain
- * the data being sent and the clip-ins associated with that data.
+ * DataMessage objects are used to send data between two tasks. They contain the data being sent and the clip-ins
+ * associated with that data.
  *
- * @author      Ian Wang
- * @created     4th Feb 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class DataMessage implements Serializable {
 
@@ -80,7 +78,7 @@ public class DataMessage implements Serializable {
     /**
      * Construct a data message with the specified data and attached clip-ins
      *
-     * @param data the data being sent
+     * @param data    the data being sent
      * @param clipins a clip-in bucket containing all the clip-ins for the data
      */
     public DataMessage(Object data, ClipInBucket clipins) {

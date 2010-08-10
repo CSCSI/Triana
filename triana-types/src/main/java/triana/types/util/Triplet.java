@@ -61,20 +61,13 @@ package triana.types.util;
 import java.io.Serializable;
 
 /**
- * Triplet is an Object containing three numbers that can generate
- * a uniform sequence of numbers, which can be used to represent
- * an array index or an independent variable in, say, graphical
- * applications.
- * The elements of Triplet are numbers giving the integer
- * length of the sequence and the doubles start and step of the
- * sequence. Various methods are provided
- * for creating and reading Triplets and converting them to equivalent
- * arrays of numbers.
+ * Triplet is an Object containing three numbers that can generate a uniform sequence of numbers, which can be used to
+ * represent an array index or an independent variable in, say, graphical applications. The elements of Triplet are
+ * numbers giving the integer length of the sequence and the doubles start and step of the sequence. Various methods are
+ * provided for creating and reading Triplets and converting them to equivalent arrays of numbers.
  *
- * @author      Bernard Schutz
- * @created     28 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class Triplet extends Object implements Serializable {
     private int length;
@@ -82,15 +75,15 @@ public class Triplet extends Object implements Serializable {
     private double step;
 
     /**
-     * Constructs an empty Triplet.
-     * capacity and the specified capacityIncrement.
+     * Constructs an empty Triplet. capacity and the specified capacityIncrement.
      */
     public Triplet() {
     }
 
     /**
      * Constructs a Triplet with the specified <i>length</i>, <i>start</i>, and <i>step</i>.
-     * @param l The number of elements in the uniformly spaced set.
+     *
+     * @param l  The number of elements in the uniformly spaced set.
      * @param st The first value of the set.
      * @param sp The interval (uniform) between values in the set.
      */
@@ -101,8 +94,9 @@ public class Triplet extends Object implements Serializable {
     }
 
     /**
-     * Constructs a Triplet with the specified <i>length</i> and default values
-     * of <i>start</i> (0) and <i>step</i> (1).
+     * Constructs a Triplet with the specified <i>length</i> and default values of <i>start</i> (0) and <i>step</i>
+     * (1).
+     *
      * @param l The number of elements in the uniformly spaced set.
      */
     public Triplet(int l) {
@@ -112,9 +106,10 @@ public class Triplet extends Object implements Serializable {
     }
 
     /**
-     * Constructs a Triplet with the specified <i>length</i> and starting value,
-     * and with a default value of the <i>step</i> (1).
-     * @param l The number of elements in the uniformly spaced set.
+     * Constructs a Triplet with the specified <i>length</i> and starting value, and with a default value of the
+     * <i>step</i> (1).
+     *
+     * @param l  The number of elements in the uniformly spaced set.
      * @param st The first value of the set.
      */
     public Triplet(int l, double st) {
@@ -124,8 +119,7 @@ public class Triplet extends Object implements Serializable {
     }
 
     /**
-     * Constructs a Triplet from an array of doubles that should
-     * contain a uniformly spaced set of values. Users are
+     * Constructs a Triplet from an array of doubles that should contain a uniformly spaced set of values. Users are
      * responsible for testing the array using method <i>testUniform</i>, below.
      */
     public Triplet(double[] array) {
@@ -189,44 +183,52 @@ public class Triplet extends Object implements Serializable {
      */
     public double[] convertToArray() {
         double[] values = new double[length];
-	if (length > 0) {
-	    values[0] = start;
-	    if (length > 1) for (int k = 1; k < length; k++) values[k] = values[k - 1] + step;
-	}
+        if (length > 0) {
+            values[0] = start;
+            if (length > 1) {
+                for (int k = 1; k < length; k++) {
+                    values[k] = values[k - 1] + step;
+                }
+            }
+        }
         return values;
     }
 
     /**
-     * Class method that tests a one-dimensional array to see if it is uniform
-     * and can therefore be converted to a Triplet.
+     * Class method that tests a one-dimensional array to see if it is uniform and can therefore be converted to a
+     * Triplet.
      */
     public static boolean testUniform(double[] values) {
         int length = values.length;
-        if (length < 3) return true;
+        if (length < 3) {
+            return true;
+        }
         double step = values[1] - values[0];
         double newStep = step;
         for (int k = 2; k < length; k++) {
             newStep = values[k] - values[k - 1];
-            if (newStep != step) return false;
+            if (newStep != step) {
+                return false;
+            }
         }
         return true;
     }
 
     /**
-     * Class method that converts a uniformly spaced one-dimensional
-     * array of doubles to a Triplet. This does not test whether the
-     * array is uniform: use method <i>testUniform</i> to do that. It just uses
-     * the first values and length of the array to generate the Triplet.
+     * Class method that converts a uniformly spaced one-dimensional array of doubles to a Triplet. This does not test
+     * whether the array is uniform: use method <i>testUniform</i> to do that. It just uses the first values and length
+     * of the array to generate the Triplet.
      */
     public static Triplet convertToTriplet(double[] values) {
         int length = values.length;
-        if (length == 1) return new Triplet(1, values[0], 0);
+        if (length == 1) {
+            return new Triplet(1, values[0], 0);
+        }
         return new Triplet(length, values[0], values[1] - values[0]);
     }
 
     /**
-     * @return a string representation of this Triplet in the form :- <br>
-     * el0 el1 el2 \n </p>
+     * @return a string representation of this Triplet in the form :- <br> el0 el1 el2 \n </p>
      */
     public final String toAString() {
         String s = String.valueOf(length) + " " + String.valueOf(start) + " " + String.valueOf(step) + "\n";
@@ -234,8 +236,7 @@ public class Triplet extends Object implements Serializable {
     }
 
     /**
-     * @return a string representation of this Triplet in the form :- <br>
-     * el0 \n el1 \n el2 \n </p>
+     * @return a string representation of this Triplet in the form :- <br> el0 \n el1 \n el2 \n </p>
      */
     public final String toAColumn() {
         String s = String.valueOf(length) + "\n" + String.valueOf(start) + "\n" + String.valueOf(step) + "\n";

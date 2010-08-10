@@ -58,33 +58,32 @@
  */
 package triana.types;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
 import java.io.ObjectOutputStream;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 /**
- * TrianaImage is a TrianaType wrapper for the Java image type.  It contains
- * a reference to a Java Image object (called <i>image</i>) and implements things
- * which allow it to be a TrianaType. TrianaImage also subclasses JPanel so
- * that the image can be prepared before it is used. Images in Java
- * have to be put on a JComponent before you can find out their
- * actual size. To display a TrianaImage then you just add it to your
- * container and <i>pack</i> it in.
+ * TrianaImage is a TrianaType wrapper for the Java image type.  It contains a reference to a Java Image object (called
+ * <i>image</i>) and implements things which allow it to be a TrianaType. TrianaImage also subclasses JPanel so that the
+ * image can be prepared before it is used. Images in Java have to be put on a JComponent before you can find out their
+ * actual size. To display a TrianaImage then you just add it to your container and <i>pack</i> it in.
  *
- * @author      Ian Taylor
- * @author      Bernard Schutz
- * @created     28 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public class TrianaImage extends TrianaType {
 
     /**
-     * String parameter to act as the key for storing this image in
-     * <i>dataContainer</i>.
+     * String parameter to act as the key for storing this image in <i>dataContainer</i>.
      */
     String imageName = "TrianaImage";
 
@@ -139,40 +138,19 @@ public class TrianaImage extends TrianaType {
     }
 
     /**
-     * This is one of the most important methods of Triana data.
-     * types. It returns a copy of the type invoking it. This <b>must</b>
-     * be overridden for every derived data type derived. If not, the data
-     * cannot be copied to be given to other units. Copying must be done by
-     * value, not by reference.
-     * </p><p>
-     * To override, the programmer should not invoke the <i>super.copyMe</i> method.
-     * Instead, create an object of the current type and call methods
-     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly,
-     * then they will do the copying.  The code should read, for type YourType:
-     * <PRE>
-     *        YourType y = null;
-     *        try {
-     *            y = (YourType)getClass().newInstance();
-     *	          y.copyData( this );
-     *	          y.copyParameters( this );
-     *            y.setLegend( this.getLegend() );
-     *            }
-     *        catch (IllegalAccessException ee) {
-     *            System.out.println("Illegal Access: " + ee.getMessage());
-     *            }
-     *        catch (InstantiationException ee) {
-     *            System.out.println("Couldn't be instantiated: " + ee.getMessage());
-     *            }
-     *        return y;
-     * </PRE>
-     * </p><p>
-     * The copied object's data should be identical to the original. The
-     * method here modifies only one item: a String indicating that the
-     * object was created as a copy is added to the <i>description</i>
-     * StringVector.
+     * This is one of the most important methods of Triana data. types. It returns a copy of the type invoking it. This
+     * <b>must</b> be overridden for every derived data type derived. If not, the data cannot be copied to be given to
+     * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
+     * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
+     * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
-     * @return TrianaType Copy by value of the current Object except for an
-     updated <i>description</i>
+     * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */
     public TrianaType copyMe() {
         TrianaImage t = null;
@@ -191,10 +169,9 @@ public class TrianaImage extends TrianaType {
     }
 
     /**
-     * Implement the abstract <i>copyData</i> method of TrianaType. This copies
-     * an image from the given object to the present one. (There is no
-     * need to over-ride method <i>copyParameters</i> here, since there are no
-     * variable parameters in this class.)
+     * Implement the abstract <i>copyData</i> method of TrianaType. This copies an image from the given object to the
+     * present one. (There is no need to over-ride method <i>copyParameters</i> here, since there are no variable
+     * parameters in this class.)
      *
      * @param source The TrianaImage whose image is being copied
      */
@@ -206,8 +183,7 @@ public class TrianaImage extends TrianaType {
 
 
     /**
-     * Uses the default writer to output this object to the given Object
-     * output stream.
+     * Uses the default writer to output this object to the given Object output stream.
      *
      * @param out The stream to write to
      */
@@ -216,10 +192,9 @@ public class TrianaImage extends TrianaType {
     }
 
     /**
-     * Uses the default writer to input and create an object from the Object
-     * input stream.
+     * Uses the default writer to input and create an object from the Object input stream.
      *
-     * @param in The stream to read from
+     * @param in The stream to createTool from
      */
     public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         TrianaPixelMap trianaPixelMap = (TrianaPixelMap) in.readObject();
@@ -229,8 +204,7 @@ public class TrianaImage extends TrianaType {
 
 
 /**
- * A class that subclasses JPanel to provide an Image Observer
- * for the image, so we can check when its loaded in!
+ * A class that subclasses JPanel to provide an Image Observer for the image, so we can check when its loaded in!
  */
 class Im extends JPanel {
 

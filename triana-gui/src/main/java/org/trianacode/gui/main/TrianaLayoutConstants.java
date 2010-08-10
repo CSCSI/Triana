@@ -59,24 +59,23 @@
 
 package org.trianacode.gui.main;
 
-import org.trianacode.gui.Display;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 
-import java.awt.*;
+import org.trianacode.gui.Display;
 
 /**
  * Methods of accessing the preferred sizing of triana components
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public interface TrianaLayoutConstants {
 
     /**
-     * a Triana unit is the preferred height of a tool and is used as the base
-     * for other dimensions
+     * a Triana unit is the preferred height of a tool and is used as the base for other dimensions
      */
     public static double TRIANA_UNIT = Display.screenY / 20;
 
@@ -93,7 +92,8 @@ public interface TrianaLayoutConstants {
     /**
      * the default size of a plus minus icon
      */
-    public static Dimension DEFAULT_PLUS_MINUS_SIZE = new Dimension((int) (TRIANA_UNIT * 0.15), (int) (TRIANA_UNIT * 0.15));
+    public static Dimension DEFAULT_PLUS_MINUS_SIZE = new Dimension((int) (TRIANA_UNIT * 0.15),
+            (int) (TRIANA_UNIT * 0.15));
 
     /**
      * the default font size

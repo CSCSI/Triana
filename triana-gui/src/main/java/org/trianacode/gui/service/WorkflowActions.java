@@ -21,8 +21,6 @@ package org.trianacode.gui.service;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 1:28:33 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface WorkflowActions {
     public static String RUN_ACTION = "run";

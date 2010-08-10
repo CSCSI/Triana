@@ -59,6 +59,7 @@
 package org.trianacode.taskgraph.imp;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -186,7 +187,7 @@ public class ToolImp implements Tool {
     /**
      * The location of the file used to generate this tool
      */
-    private String filepath = "";
+    private URL url = null;
 
     /**
      * The location of the toolbox this tool was loaded from
@@ -871,15 +872,15 @@ public class ToolImp implements Tool {
     /**
      * @return the location directory that held the file this tool was generated from.
      */
-    public String getDefinitionPath() {
-        return filepath;
+    public URL getDefinitionPath() {
+        return url;
     }
 
     /**
      * Used by ToolTable to set the location of the file this tool was loaded from
      */
-    public void setDefinitionPath(String filepath) {
-        this.filepath = filepath;
+    public void setDefinitionPath(URL filepath) {
+        this.url = filepath;
     }
 
 

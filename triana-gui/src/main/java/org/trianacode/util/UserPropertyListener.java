@@ -21,16 +21,14 @@ package org.trianacode.util;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 24, 2009: 9:23:14 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface UserPropertyListener {
 
 
-        /**
-         * Notified when a user property changes
-         */
-        public void userPropertyChanged(UserPropertyEvent event);
+    /**
+     * Notified when a user property changes
+     */
+    public void userPropertyChanged(UserPropertyEvent event);
 
 
 }

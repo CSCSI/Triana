@@ -21,8 +21,6 @@ package org.trianacode.taskgraph.service;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 12:58:03 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ClientException extends Exception {

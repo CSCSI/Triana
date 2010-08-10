@@ -58,13 +58,17 @@
  */
 package org.trianacode.gui.help.search;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class SearchIndexer {
 
@@ -102,10 +106,8 @@ public class SearchIndexer {
     }
 
     /**
-     * Creates an index file from the source which can be used by
-     * the search function.  If source is a single file then it is used
-     * to generate an index.  If source is a directory then all the
-     * files are indexed.
+     * Creates an index file from the source which can be used by the search function.  If source is a single file then
+     * it is used to generate an index.  If source is a directory then all the files are indexed.
      */
     protected void indexFile(File file, FilenameFilter filter)
             throws IOException {
@@ -127,9 +129,9 @@ public class SearchIndexer {
             try {
                 if (filter != null) {
                     fileNames = file.list(filter);
-                }
-                else
+                } else {
                     fileNames = file.list();
+                }
             }
             catch (SecurityException ex) {
                 ex.printStackTrace();
@@ -179,17 +181,17 @@ public class SearchIndexer {
         ptr = 0;
 
         for (; ;) {
-            if (ptr >= charArray.length) break;
+            if (ptr >= charArray.length) {
+                break;
+            }
 
             if (Character.isLetterOrDigit(charArray[ptr])) {
                 sb.append(charArray[ptr]);
-            }
-            else {
+            } else {
                 if (sb.length() > 0) {
                     if (caseSensitive) {
                         results.add(sb.toString(), file);
-                    }
-                    else {
+                    } else {
                         results.add(sb.toString().toLowerCase(), file);
                     }
                     sb = new StringBuffer();
@@ -202,8 +204,7 @@ public class SearchIndexer {
         if (sb.length() > 0) {
             if (isCaseSensitive()) {
                 results.add(sb.toString(), file);
-            }
-            else {
+            } else {
                 results.add(sb.toString().toLowerCase(), file);
             }
         }

@@ -59,21 +59,18 @@
 
 package org.trianacode.taskgraph;
 
-import org.trianacode.taskgraph.imp.InstanceIDFactoryImp;
-import org.trianacode.taskgraph.tool.Tool;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import org.trianacode.taskgraph.imp.InstanceIDFactoryImp;
+import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * A static manager class that keeps track of the current instance ids.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2nd August 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public class InstanceIDManager {
@@ -113,8 +110,9 @@ public class InstanceIDManager {
      * Adds an instance id listener
      */
     public static void addInstanceIDListener(InstanceIDListener listener) {
-        if (!listeners.contains(listener))
+        if (!listeners.contains(listener)) {
             listeners.add(listener);
+        }
     }
 
     /**
@@ -136,10 +134,11 @@ public class InstanceIDManager {
      * @return the instance id for the specified tool (or null if not registered)
      */
     public static String getRegisteredID(Tool tool) {
-        if (ids.containsKey(tool))
+        if (ids.containsKey(tool)) {
             return (String) ids.get(tool);
-        else
+        } else {
             return null;
+        }
     }
 
 
@@ -150,28 +149,28 @@ public class InstanceIDManager {
         if (!ids.containsKey(tool)) {
             ids.put(tool, id);
             notifyIDRegistered(id, tool, getIDCount(id));
-        } else
+        } else {
             throw (new RuntimeException("Attempt to register multiple ids for a single tool"));
+        }
     }
 
     /**
-     * Registers an instance ID for the specified task. This is ID is either
-     * new or preserved from the original tool as specified by the preserveinst
-     * flag
+     * Registers an instance ID for the specified task. This is ID is either new or preserved from the original tool as
+     * specified by the preserveinst flag
      *
      * @param task         the task an instance id is being registered for
      * @param tool         the tool used to instantiate the task
-     * @param preserveinst a flag indicating whether the instance id is preserved
-     *                     from the original tool.
+     * @param preserveinst a flag indicating whether the instance id is preserved from the original tool.
      * @return the instance ID for the task
      */
     public static String registerID(Task task, Tool tool, boolean preserveinst) {
         String id;
 
-        if (preserveinst && (isRegisteredID(tool)))
+        if (preserveinst && (isRegisteredID(tool))) {
             id = getRegisteredID(tool);
-        else
+        } else {
             id = idfactory.generateID(task);
+        }
 
         InstanceIDManager.registerID(task, id);
         return id;
@@ -197,8 +196,9 @@ public class InstanceIDManager {
         int count = 0;
 
         while (enumeration.hasMoreElements()) {
-            if (id.equals(enumeration.nextElement()))
+            if (id.equals(enumeration.nextElement())) {
                 count++;
+            }
         }
 
         return count;
@@ -209,16 +209,18 @@ public class InstanceIDManager {
         InstanceIDEvent event = new InstanceIDEvent(tool, InstanceIDEvent.ID_REGISTERED, id, tool, idcount);
         InstanceIDListener[] copy = (InstanceIDListener[]) listeners.toArray(new InstanceIDListener[listeners.size()]);
 
-        for (int count = 0; count < copy.length; count++)
+        for (int count = 0; count < copy.length; count++) {
             copy[count].instanceIDRegistered(event);
+        }
     }
 
     private static void notifyIDUnregistered(String id, Tool tool, int idcount) {
         InstanceIDEvent event = new InstanceIDEvent(tool, InstanceIDEvent.ID_UNREGISTERED, id, tool, idcount);
         InstanceIDListener[] copy = (InstanceIDListener[]) listeners.toArray(new InstanceIDListener[listeners.size()]);
 
-        for (int count = 0; count < copy.length; count++)
+        for (int count = 0; count < copy.length; count++) {
             copy[count].instanceIDUnregistered(event);
+        }
     }
 
 }

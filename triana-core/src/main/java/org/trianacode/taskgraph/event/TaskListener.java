@@ -63,10 +63,8 @@ package org.trianacode.taskgraph.event;
 /**
  * An interface implemented by classes that want to receive task events.
  *
- * @author      Ian Wang
- * @created     Today's date
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface TaskListener {

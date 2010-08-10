@@ -62,13 +62,10 @@ import org.trianacode.taskgraph.tool.Tool;
 
 
 /**
- * An interface implemented by classes that map between tools and tool tree
- * locations
+ * An interface implemented by classes that map between tools and tool tree locations
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 12th Feb 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface ToolFilter {
 
@@ -85,21 +82,20 @@ public interface ToolFilter {
     public String getRoot();
 
     /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     *         ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * @return the filtered packages for the tool, empty array if the tool is ignored. (e.g. a tool in SignalPro.Input
+     *         could become Input.SignalProc)
      */
     public String[] getFilteredPackage(Tool tool);
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * This method is called when the filter is choosen. The initialisation of the filter should be implemented here
      */
     public void init();
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * This method is called when the filter is unchoosen. Any disposal related to the filter should be implemented
+     * here
      */
     public void dispose();
 

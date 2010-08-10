@@ -58,25 +58,22 @@
  */
 package org.trianacode.gui.windows;
 
+import java.io.File;
+import java.util.Vector;
+
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.help.TrianaHelpHandler;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Listing;
 import org.trianacode.util.Env;
 
-import java.io.File;
-import java.util.Vector;
-
 
 /**
- * This pulls up a Ved - a Triana Editor and puts the help information
- * in it. The user gives the filename of the helpfile and Ved displays
- * it.
+ * This pulls up a Ved - a Triana Editor and puts the help information in it. The user gives the filename of the
+ * helpfile and Ved displays it.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 14 April 1999
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Help {
 
@@ -115,8 +112,9 @@ public class Help {
                 } else {
                     s = l.convertToStrings();
 
-                    for (int k = 0; k < s.length; ++k)
+                    for (int k = 0; k < s.length; ++k) {
                         helpPaths.addElement(s[k]);
+                    }
                 }
             }
         }
@@ -127,8 +125,9 @@ public class Help {
     }
 
     public static void setTitle(String ti) {
-        if (editor == null)
+        if (editor == null) {
             return;
+        }
         title = ti;
     }
 
@@ -167,8 +166,9 @@ public class Help {
             return;
         } else {
             title = file.substring(file.indexOf(java.io.File.separator) + 1);
-            if (fn.indexOf("http://") == -1)
+            if (fn.indexOf("http://") == -1) {
                 fn = "file:///" + fn;
+            }
         }
 
         System.out.println("File to load = " + fn);
@@ -178,8 +178,9 @@ public class Help {
         if (viewer.equals(Env.getString("defaultEditor"))) {
             editor = new TrianaHelpHandler(null, fn, title);
             editor.actionPerformed(null);
-        } else
+        } else {
             GUIEnv.showEditorFor(viewer, fn);
+        }
     }
 
     public static void setContents(String text) {
@@ -190,30 +191,34 @@ public class Help {
         if (viewer.equals(Env.getString("defaultEditor"))) {
             editor = new TrianaHelpHandler(null, file, title);
             editor.actionPerformed(null);
-        } else
+        } else {
             GUIEnv.showEditorFor(viewer, file);
+        }
     }
 
 
     public static String getFullName(String file) {
         // try just file :-
-        if (FileUtils.fileExists(file))
+        if (FileUtils.fileExists(file)) {
             return file;
+        }
 
         String sep, name, nPath;
 
         for (int i = 0; i < helpPaths.size(); ++i) {
             Object nextPath = helpPaths.elementAt(i);
 
-            if (nextPath instanceof String)
+            if (nextPath instanceof String) {
                 sep = File.separator;
-            else
+            } else {
                 sep = "/";
+            }
 
             nPath = nextPath.toString();
 
-            if (!nPath.endsWith(sep))
+            if (!nPath.endsWith(sep)) {
                 nPath = nPath + sep;
+            }
 
             name = nPath + file;
             System.out.println("Trying file :- " + name);
@@ -227,13 +232,15 @@ public class Help {
         sep = File.separator;
         name = Env.userHome() + sep + "help" + sep + file;
         System.out.println("Tried file :- " + name);
-        if (FileUtils.fileExists(name))
+        if (FileUtils.fileExists(name)) {
             return name;
+        }
 
         QuestionWindow con = new QuestionWindow(null,
                 "File Not Found.  Goto Triana Web on-line-help Files ?");
-        if (con.reply == con.YES)
+        if (con.reply == con.YES) {
             return "http://www.astro.cf.ac.uk/Triana/help/index.html";
+        }
 
         return null;  // give up finally!
     }

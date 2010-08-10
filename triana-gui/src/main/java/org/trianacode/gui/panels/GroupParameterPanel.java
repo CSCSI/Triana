@@ -59,16 +59,14 @@
 
 package org.trianacode.gui.panels;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Wangy
- * Date: 18-Jun-2004
- * Time: 16:21:37
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: Wangy Date: 18-Jun-2004 Time: 16:21:37 To change this template use File | Settings |
+ * File Templates.
  */
 public class GroupParameterPanel extends ParameterPanel {
 
@@ -110,75 +108,75 @@ public class GroupParameterPanel extends ParameterPanel {
 
 
     /**
-     * Sets the component that determines whether parameter changes are committed
-     * automatically
+     * Sets the component that determines whether parameter changes are committed automatically
      */
     public void setWindowInterface(ParameterWindowInterface comp) {
         super.setWindowInterface(comp);
 
-        for (int count = 0; count < panels.length; count++)
+        for (int count = 0; count < panels.length; count++) {
             panels[count].setWindowInterface(comp);
+        }
     }
 
 
     /**
-     * This method is called when the task is set for this panel. It is overridden
-     * to create the panel layout.
+     * This method is called when the task is set for this panel. It is overridden to create the panel layout.
      */
     public void init() {
     }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset
-     * all the panels components to the values specified by the associated task,
-     * e.g. a component representing a parameter called "noise" should be set to
-     * the value returned by a getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public void reset() {
-        for (int count = 0; count < panels.length; count++)
+        for (int count = 0; count < panels.length; count++) {
             panels[count].reset();
+        }
     }
 
 
     /**
-     * This method is called when the panel is finished with. It should dispose
-     * of any components (e.g. windows) used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public void dispose() {
     }
 
 
     /**
-     * Called when the apply button is clicked on the parameter window. Commits
-     * any parameter changes.
+     * Called when the apply button is clicked on the parameter window. Commits any parameter changes.
      */
     public void applyClicked() {
         super.applyClicked();
 
-        for (int count = 0; count < panels.length; count++)
+        for (int count = 0; count < panels.length; count++) {
             panels[count].applyClicked();
+        }
     }
 
     /**
-     * Called when the cancel button is clicked on the parameter window.
-     * Parameter changes are not commited.
+     * Called when the cancel button is clicked on the parameter window. Parameter changes are not commited.
      */
     public void cancelClicked() {
         super.cancelClicked();
 
-        for (int count = 0; count < panels.length; count++)
+        for (int count = 0; count < panels.length; count++) {
             panels[count].cancelClicked();
+        }
     }
 
     /**
-     * Called when the ok button is clicked on the parameter window. Calls
-     * applyClicked by default to commit any parameter changes.
+     * Called when the ok button is clicked on the parameter window. Calls applyClicked by default to commit any
+     * parameter changes.
      */
     public void okClicked() {
         super.okClicked();
 
-        for (int count = 0; count < panels.length; count++)
+        for (int count = 0; count < panels.length; count++) {
             panels[count].applyClicked();
+        }
     }
 
 }

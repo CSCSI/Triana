@@ -272,12 +272,12 @@ public abstract class TrianaType implements Serializable, SequenceInterface {
      * other units. Copying must be done by value, not by reference. </p><p> To override, the programmer should not
      * invoke the <i>super.copyMe</i> method. Instead, create an object of the current type and call methods
      * <i>copyData</i> and <i>copyParameters</i>. If these have been written correctly, then they will do the copying.
-     * The code should read, for type YourType: <PRE> YourType y = null; try { y = (YourType)getClass().newInstance();
-     * y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend() ); } catch (IllegalAccessException
-     * ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch (InstantiationException ee) {
-     * System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y; </PRE> </p><p> The copied
-     * object's data should be identical to the original. The method here modifies only one item: a String indicating
-     * that the object was created as a copy is added to the <i>description</i> StringVector.
+     * The code should createTool, for type YourType: <PRE> YourType y = null; try { y =
+     * (YourType)getClass().newInstance(); y.copyData( this ); y.copyParameters( this ); y.setLegend( this.getLegend()
+     * ); } catch (IllegalAccessException ee) { System.out.println("Illegal Access: " + ee.getMessage()); } catch
+     * (InstantiationException ee) { System.out.println("Couldn't be instantiated: " + ee.getMessage()); } return y;
+     * </PRE> </p><p> The copied object's data should be identical to the original. The method here modifies only one
+     * item: a String indicating that the object was created as a copy is added to the <i>description</i> StringVector.
      *
      * @return TrianaType Copy by value of the current Object except for an updated <i>description</i>
      */

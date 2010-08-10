@@ -62,11 +62,8 @@ package org.trianacode.taskgraph;
 /**
  * An extension of CableException to indicate that there is a type mismatch
  *
- * @author      Ian Wang
- * @created     9th December 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class IncompatibleTypeException extends CableException {

@@ -66,8 +66,6 @@ import java.io.IOException;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 5th April 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 

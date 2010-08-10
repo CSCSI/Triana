@@ -23,8 +23,6 @@ import java.util.HashMap;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 5:48:10 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ObjectDeserializationManager {

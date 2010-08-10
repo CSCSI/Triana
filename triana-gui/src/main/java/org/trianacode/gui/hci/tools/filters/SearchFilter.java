@@ -63,13 +63,10 @@ import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**
- * A filter that matches  a search string to tool names, packages, input and
- * output types and pop-up descriptions.
+ * A filter that matches  a search string to tool names, packages, input and output types and pop-up descriptions.
  *
- * @author      Ian Wang
- * @created     12th Feb 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class SearchFilter implements ToolFilter {
 
@@ -84,10 +81,11 @@ public class SearchFilter implements ToolFilter {
      * @return the root for the tool tree
      */
     public String getRoot() {
-        if ((searchstr == null) || (searchstr.equals("")))
+        if ((searchstr == null) || (searchstr.equals(""))) {
             return DEFAULT_ROOT;
-        else
+        } else {
             return searchstr;
+        }
     }
 
     /**
@@ -106,19 +104,20 @@ public class SearchFilter implements ToolFilter {
 
 
     /**
-     * @return the filtered packages for the tool, empty array if the tool is
-     * ignored. (e.g. a tool in SignalPro.Input could become Input.SignalProc)
+     * @return the filtered packages for the tool, empty array if the tool is ignored. (e.g. a tool in SignalPro.Input
+     *         could become Input.SignalProc)
      */
     public String[] getFilteredPackage(Tool tool) {
-        if ((searchstr == null) || (searchstr.equals("")))
+        if ((searchstr == null) || (searchstr.equals(""))) {
             return new String[]{tool.getToolPackage()};
-        else {
+        } else {
             String tooldef = getToolDefAsString(tool);
 
-            if (tooldef.indexOf(searchstr) > -1)
+            if (tooldef.indexOf(searchstr) > -1) {
                 return new String[]{""};
-            else
+            } else {
                 return new String[]{};
+            }
         }
     }
 
@@ -151,15 +150,14 @@ public class SearchFilter implements ToolFilter {
 
 
     /**
-     * This method is called when the filter is choosen. The initialisation
-     * of the filter should be implemented here
+     * This method is called when the filter is choosen. The initialisation of the filter should be implemented here
      */
     public void init() {
     }
 
     /**
-     * This method is called when the filter is unchoosen. Any disposal related
-     * to the filter should be implemented here
+     * This method is called when the filter is unchoosen. Any disposal related to the filter should be implemented
+     * here
      */
     public void dispose() {
     }

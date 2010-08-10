@@ -58,21 +58,19 @@
  */
 package org.trianacode.gui.components.script;
 
+import java.awt.Color;
+
 import org.trianacode.gui.hci.color.ColorModel;
 import org.trianacode.gui.hci.color.ColorTable;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.awt.*;
-
 /**
  * The color model for web service tools
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th May 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ScriptColorModel implements ColorModel, TrianaColorConstants {
 
@@ -93,8 +91,7 @@ public class ScriptColorModel implements ColorModel, TrianaColorConstants {
     }
 
     /**
-     * @return the color names that this model uses. These are linked to actual colors by querying
-     *         the color table.
+     * @return the color names that this model uses. These are linked to actual colors by querying the color table.
      */
     public String[] getColorNames() {
         return new String[]{TOOL_COLOR, ERROR_TOOL_COLOR};
@@ -108,28 +105,30 @@ public class ScriptColorModel implements ColorModel, TrianaColorConstants {
     }
 
     /**
-     * @return the color for the specified graphical element when representing the specified tool.
-     *         If the element is unrecognized this method will return a default color.
+     * @return the color for the specified graphical element when representing the specified tool. If the element is
+     *         unrecognized this method will return a default color.
      */
     public Color getColor(String element, Tool tool) {
         if (element.equals(TOOL_ELEMENT)) {
-            if (tool.isParameterName(Task.ERROR_MESSAGE))
+            if (tool.isParameterName(Task.ERROR_MESSAGE)) {
                 return ColorTable.instance().getColor(this, ERROR_TOOL_COLOR);
-            else
+            } else {
                 return getColor(element);
-        }
-        else
+            }
+        } else {
             return getColor(element);
+        }
     }
 
     /**
      * @return the color for the specified graphical element not linked to a specific tool
      */
     public Color getColor(String element) {
-        if (element.equals(TOOL_ELEMENT))
+        if (element.equals(TOOL_ELEMENT)) {
             return ColorTable.instance().getColor(this, TOOL_COLOR);
-        else
+        } else {
             return Color.black;
+        }
     }
 
 

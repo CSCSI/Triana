@@ -66,8 +66,6 @@ import org.trianacode.taskgraph.TaskGraph;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 22nd March 2006
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class TaskGraphCreatedEvent {

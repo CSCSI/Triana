@@ -59,13 +59,15 @@
 
 package org.trianacode.gui.panels;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+import javax.swing.JPanel;
 
 /**
- * User: andrew
- * Date: 24-May-2004
- * Time: 21:06:06
+ * User: andrew Date: 24-May-2004 Time: 21:06:06
  */
 public class Colons extends JPanel {
 
@@ -89,7 +91,7 @@ public class Colons extends JPanel {
         g2.setColor(c);
     }
 
-    private void paintColon( int x, int y, int dim, Graphics g) {
+    private void paintColon(int x, int y, int dim, Graphics g) {
         g.fillOval(x, y, dim, dim);
     }
 
@@ -108,17 +110,17 @@ public class Colons extends JPanel {
             public void run() {
                 int count = 0;
                 Color bg = getBackground();
-                while(count < blinkcount) {
-                    if(getForeground().equals(fg)) {
+                while (count < blinkcount) {
+                    if (getForeground().equals(fg)) {
                         setForeground(bg);
-                    }
-                    else {
+                    } else {
                         setForeground(fg);
                     }
                     count++;
                     try {
                         sleep(blinkspeed);
-                    } catch(InterruptedException ie) {}
+                    } catch (InterruptedException ie) {
+                    }
                 }
             }
         };

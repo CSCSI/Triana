@@ -59,50 +59,44 @@
 
 package org.trianacode.gui.components.triana;
 
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.TrianaClient;
 
-import javax.swing.*;
-
 /**
  * The model for an open group
  *
- * @author      Ian Wang
- * @created     6th May 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface OpenGroupComponentModel {
 
     /**
-     * @return the popup menu for the open group (if null is returned
-     * then the default popup menu is used, return a empty popup menu for no
-     * popup)
+     * @return the popup menu for the open group (if null is returned then the default popup menu is used, return a
+     *         empty popup menu for no popup)
      */
     public JPopupMenu getOpenGroupPopup(TaskGraph taskgraph);
 
     /**
-     * @return the action that is invoked when a group is activated (e.g. the
-     * workspace is double-clicked). If null is returned the default workspace
-     * action is used.
+     * @return the action that is invoked when a group is activated (e.g. the workspace is double-clicked). If null is
+     *         returned the default workspace action is used.
      */
     public Action getOpenGroupAction(TaskGraph taskgraph);
 
     /**
-     * @return the taskgraph panel used to represent the specified taskgraph
-     * (if null is returned then the default component is used)
+     * @return the taskgraph panel used to represent the specified taskgraph (if null is returned then the default
+     *         component is used)
      */
     public TaskGraphPanel getOpenGroupComponent(TaskGraph taskgraph, TrianaClient client);
 
 
     /**
-     * @return the popup menu when multiple tasks are selected in the workspace
-     * (if null is returned then the default popup menu is used, return a empty
-     * popup menu for no popup)
+     * @return the popup menu when multiple tasks are selected in the workspace (if null is returned then the default
+     *         popup menu is used, return a empty popup menu for no popup)
      */
     public JPopupMenu getMultipleSelectedPopup(Task[] tasks);
 

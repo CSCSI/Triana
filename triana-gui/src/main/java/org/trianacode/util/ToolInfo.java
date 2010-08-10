@@ -16,17 +16,15 @@
 
 package org.trianacode.util;
 
-import org.trianacode.taskgraph.tool.Tool;
-
 import java.io.File;
+
+import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 5:16:02 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ToolInfo {

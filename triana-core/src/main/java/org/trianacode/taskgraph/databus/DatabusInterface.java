@@ -1,24 +1,20 @@
 package org.trianacode.taskgraph.databus;
 
+import java.io.Serializable;
+
 import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 
-import java.io.Serializable;
-import java.net.URL;
-
 /**
- * Interface for defining new databus component for storing and retrieving data that act as an
- * interface between sending and receing data in Triana.
- * 
- * User: scmijt
- * Date: Jul 23, 2010
- * Time: 3:15:00 PM
- * To change this template use File | Settings | File Templates.
+ * Interface for defining new databus component for storing and retrieving data that act as an interface between sending
+ * and receing data in Triana.
+ * <p/>
+ * User: scmijt Date: Jul 23, 2010 Time: 3:15:00 PM To change this template use File | Settings | File Templates.
  */
 public interface DatabusInterface {
 
     /**
      * Puts data into the databus
-     * 
+     *
      * @param packet
      * @param data
      */
@@ -26,6 +22,7 @@ public interface DatabusInterface {
 
     /**
      * Gets the data out of the store with the provided WorkflowDataPacket
+     *
      * @param packet
      * @return
      */
@@ -33,6 +30,7 @@ public interface DatabusInterface {
 
     /**
      * Removes the URL and the data from the store.
+     *
      * @param packet
      */
     public void remove(WorkflowDataPacket packet);
@@ -45,5 +43,5 @@ public interface DatabusInterface {
      */
     public WorkflowDataPacket addObject(Serializable data, boolean deleteAfterUse);
 
-    
+
 }

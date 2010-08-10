@@ -63,13 +63,10 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**
- * Tooltip generator class, responsible for the pretty printing of tool and task tip
- * information.
+ * Tooltip generator class, responsible for the pretty printing of tool and task tip information.
  *
  * @author Matthew Shields
  * @version $Revsion$
- * @created Apr 22, 2003: 3:11:11 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class ToolTipWriter {
 
@@ -130,8 +127,7 @@ public class ToolTipWriter {
     }
 
     /**
-     * Format a string containing information about this tool, suitable for the Tool Tree
-     * view.
+     * Format a string containing information about this tool, suitable for the Tool Tree view.
      */
     public static String getTreeTip(Tool tool, boolean extended) {
         StringBuffer tip = new StringBuffer("<html>");
@@ -162,7 +158,7 @@ public class ToolTipWriter {
             }
 
             tip.append("<br>Definition File : ");
-            tip.append(tool.getDefinitionPath());
+            tip.append(tool.getDefinitionPath().toString());
 
         }
         tip.append("</html>");
@@ -192,29 +188,34 @@ public class ToolTipWriter {
             tip.append("<tr><td>");
             types = tool.getDataInputTypes(count);
 
-            if ((types == null) && (count == 0))
+            if ((types == null) && (count == 0)) {
                 all = true;
+            }
 
-            if (types == null)
+            if (types == null) {
                 types = tool.getDataInputTypes();
+            }
 
             for (int tcount = 0; tcount < types.length; tcount++) {
-                if (tcount > 0)
+                if (tcount > 0) {
                     tip.append("<br>");
+                }
 
                 tip.append(types[tcount].substring(types[tcount].lastIndexOf('.') + 1));
             }
 
-            if (types.length == 0)
+            if (types.length == 0) {
                 tip.append("None ");
+            }
 
 
             tip.append("</td><td>");
 
-            if (all)
+            if (all) {
                 tip.append("-> [ALL]");
-            else
+            } else {
                 tip.append("-> [" + count + "]");
+            }
 
             tip.append("</td></tr>");
         }
@@ -232,23 +233,27 @@ public class ToolTipWriter {
             if ((types == null) && (count == 0)) {
                 tip.append("[ALL] -> ");
                 all = true;
-            } else
+            } else {
                 tip.append("[" + count + "] -> ");
+            }
 
             tip.append("</td><td>");
 
-            if (types == null)
+            if (types == null) {
                 types = tool.getDataOutputTypes();
+            }
 
             for (int tcount = 0; tcount < types.length; tcount++) {
-                if (tcount > 0)
+                if (tcount > 0) {
                     tip.append("<br>");
+                }
 
                 tip.append(types[tcount].substring(types[tcount].lastIndexOf('.') + 1));
             }
 
-            if (types.length == 0)
+            if (types.length == 0) {
                 tip.append("None ");
+            }
 
             tip.append("</td></tr>");
         }

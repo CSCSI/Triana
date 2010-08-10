@@ -60,21 +60,22 @@
 package org.trianacode.taskgraph.service;
 
 
-import org.trianacode.taskgraph.*;
+import java.util.ArrayList;
+
+import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.util.ArrayList;
-
 /**
- * An abstract runnable task. Responsible for providing common functionality to
- * runnable tasks, such as execution state listeners.
+ * An abstract runnable task. Responsible for providing common functionality to runnable tasks, such as execution state
+ * listeners.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 9th December 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
  */
 
 public abstract class AbstractRunnableTask extends TaskImp implements RunnableInstance {
@@ -92,7 +93,6 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
     /**
      * The current state of the underlying unit.
-     *
      */
     private ExecutionState execState = ExecutionState.NOT_INITIALIZED;
 
@@ -116,8 +116,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      * Adds a execution listener to this runnable instance
      */
     public void addExecutionListener(ExecutionListener listener) {
-        if (!execlisteners.contains(listener))
+        if (!execlisteners.contains(listener)) {
             execlisteners.add(listener);
+        }
     }
 
     /**
@@ -143,8 +144,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
             notifyExecutionStateChange(newstate, oldstate);
 
-            if (!execState.equals(ExecutionState.ERROR))
+            if (!execState.equals(ExecutionState.ERROR)) {
                 removeParameter(ERROR_MESSAGE);
+            }
         }
     }
 
@@ -167,8 +169,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         setParameter(EXECUTION_REQUEST_COUNT, String.valueOf(executionRequest));
 
         synchronized (ExecutionState.LOCK) {
-            if ((getExecutionState() != ExecutionState.RUNNING) && (getExecutionState() != ExecutionState.RESETING))
+            if ((getExecutionState() != ExecutionState.RUNNING) && (getExecutionState() != ExecutionState.RESETING)) {
                 setExecutionState(ExecutionState.SCHEDULED);
+            }
         }
 
         notifyExecutionRequest();
@@ -181,8 +184,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         waitPause();
 
         synchronized (ExecutionState.LOCK) {
-            if (getExecutionState() != ExecutionState.RESETING)
+            if (getExecutionState() != ExecutionState.RESETING) {
                 setExecutionState(ExecutionState.RUNNING);
+            }
         }
 
         notifyExecutionStarting();
@@ -200,10 +204,11 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
         synchronized (ExecutionState.LOCK) {
             if ((getExecutionState() != ExecutionState.RESETING) && (getExecutionState() != ExecutionState.ERROR)) {
-                if (getExecutionRequestCount() == getExecutionCount())
+                if (getExecutionRequestCount() == getExecutionCount()) {
                     setExecutionState(ExecutionState.COMPLETE);
-                else
+                } else {
                     setExecutionState(ExecutionState.SCHEDULED);
+                }
             }
         }
 
@@ -232,18 +237,16 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
 
     /**
-     * Indicates to the runnable instance that a wake-up signal has been received
-     * from the scheduler. It is up to a task to respond to this wake-up, or to
-     * ignore it if wake-ups have not been received from all the nodes a task
-     * requires to execute.
+     * Indicates to the runnable instance that a wake-up signal has been received from the scheduler. It is up to a task
+     * to respond to this wake-up, or to ignore it if wake-ups have not been received from all the nodes a task requires
+     * to execute.
      */
     public abstract void wakeUp();
 
     /**
-     * Indicates to the runnable instance that a wake-up signal has been received
-     * from the specified node (e.g. data is available on that node). A runnable
-     * instance should only run when it has received wake-ups from all the nodes
-     * it requires to execute.
+     * Indicates to the runnable instance that a wake-up signal has been received from the specified node (e.g. data is
+     * available on that node). A runnable instance should only run when it has received wake-ups from all the nodes it
+     * requires to execute.
      */
     public abstract void wakeUp(Node node);
 
@@ -253,8 +256,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      */
     public void pause() {
         synchronized (ExecutionState.LOCK) {
-            if (getExecutionState() == ExecutionState.RUNNING)
+            if (getExecutionState() == ExecutionState.RUNNING) {
                 setExecutionState(ExecutionState.PAUSED);
+            }
         }
     }
 
@@ -263,8 +267,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      */
     public void resume() {
         synchronized (ExecutionState.LOCK) {
-            if (getExecutionState() == ExecutionState.PAUSED)
+            if (getExecutionState() == ExecutionState.PAUSED) {
                 setExecutionState(ExecutionState.RUNNING);
+            }
         }
     }
 
@@ -276,14 +281,15 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         synchronized (ExecutionState.LOCK) {
             if ((getExecutionState() != ExecutionState.RESET) &&
                     (getExecutionState() != ExecutionState.NOT_EXECUTABLE) &&
-                    (getExecutionState() != ExecutionState.UNKNOWN))
+                    (getExecutionState() != ExecutionState.UNKNOWN)) {
                 setExecutionState(ExecutionState.RESETING);
+            }
         }
     }
 
     /**
-     * Tell the data monitor that this thread monitor has completed outputting
-     * the data i.e. the data has been received by the receiving process.
+     * Tell the data monitor that this thread monitor has completed outputting the data i.e. the data has been received
+     * by the receiving process.
      */
     public abstract void finished();
 
@@ -301,9 +307,8 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
 
     /**
-     * Stops the scheduler. This maybe needed if your unit produced some
-     * exception and you may want the algorithm to stop and ask the user
-     * to sort the problem out before resuming.
+     * Stops the scheduler. This maybe needed if your unit produced some exception and you may want the algorithm to
+     * stop and ask the user to sort the problem out before resuming.
      */
     public void notifyError(String message) throws NotifyErrorException {
         TaskGraphManager.getTrianaServer(getParent()).notifyError(this, message);
@@ -319,43 +324,53 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
 
     private void notifyExecutionRequest() {
-        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners.toArray(new ExecutionListener[execlisteners.size()]);
+        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
+                .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_REQUEST, this);
 
-        for (int count = 0; count < listeners.length; count++)
+        for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionRequested(event);
+        }
     }
 
     private void notifyExecutionStarting() {
-        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners.toArray(new ExecutionListener[execlisteners.size()]);
+        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
+                .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_STARTING, this);
 
-        for (int count = 0; count < listeners.length; count++)
+        for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionStarting(event);
+        }
     }
 
     private void notifyExecutionFinished() {
-        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners.toArray(new ExecutionListener[execlisteners.size()]);
+        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
+                .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_FINISHED, this);
 
-        for (int count = 0; count < listeners.length; count++)
+        for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionFinished(event);
+        }
     }
 
     private void notifyExecutionReset() {
-        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners.toArray(new ExecutionListener[execlisteners.size()]);
+        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
+                .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_RESET, this);
 
-        for (int count = 0; count < listeners.length; count++)
+        for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionReset(event);
+        }
     }
 
     private void notifyExecutionStateChange(ExecutionState newstate, ExecutionState oldstate) {
-        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners.toArray(new ExecutionListener[execlisteners.size()]);
+        ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
+                .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionStateEvent event = new ExecutionStateEvent(this, newstate, oldstate);
 
-        for (int count = 0; count < listeners.length; count++)
+        for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionStateChanged(event);
+        }
     }
 
 

@@ -63,55 +63,38 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * AsciiCommype (AsciiComm Type) outlines a set of functions which have to be
- * implemented for each Triana Type which wants to be able to
- * communicate with other programs via streams e.g. the Client and
- * Server classes use this to send data out of Triana via socket etc.
- * Also, each type which implements this interface can be used to output
- * and input their data by using the ATImport (Ascii Type importer)
- * and ATExport (Ascii Type exporter) modules.
- * </p><p>
- * All the functions here use ASCII (UniCode) transfer as opposed to
- * binary. This is useful when incompatabilities between various computer
- * platforms cause problems when using binary transfer (i.e. little and big endian).
- * </p><p>
- * Note that we ONLY now inplement ASCII transfer because Java has
- * incorporated the Serializable interface which does the same
- * as the old Binary transfer.  This will be implemented for
- * each type.
+ * AsciiCommype (AsciiComm Type) outlines a set of functions which have to be implemented for each Triana Type which
+ * wants to be able to communicate with other programs via streams e.g. the Client and Server classes use this to send
+ * data out of Triana via socket etc. Also, each type which implements this interface can be used to output and input
+ * their data by using the ATImport (Ascii Type importer) and ATExport (Ascii Type exporter) modules. </p><p> All the
+ * functions here use ASCII (UniCode) transfer as opposed to binary. This is useful when incompatabilities between
+ * various computer platforms cause problems when using binary transfer (i.e. little and big endian). </p><p> Note that
+ * we ONLY now inplement ASCII transfer because Java has incorporated the Serializable interface which does the same as
+ * the old Binary transfer.  This will be implemented for each type.
  *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @see TrianaType
  * @see GraphType
  * @see VectorType
  * @see Spectrum
  * @see Document
- *
- * @author      Ian Taylor
- * @created     20 August 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface AsciiComm {
 
     /**
-     * Used when Triana types want to be able to receive
-     * ASCII data from the output of other programs.  This is used to
-     * implement socket and to run other executables, written in C etc.
-     * With ASCII you don'y have to worry about
-     * ENDIANness as the conversions are all done via text. This is
-     * obviously slower than the binary version since you have to format
-     * the input and output within the another program.
+     * Used when Triana types want to be able to receive ASCII data from the output of other programs.  This is used to
+     * implement socket and to run other executables, written in C etc. With ASCII you don'y have to worry about
+     * ENDIANness as the conversions are all done via text. This is obviously slower than the binary version since you
+     * have to format the input and output within the another program.
      */
     public void inputFromStream(BufferedReader dis) throws IOException;
 
     /**
-     * Used when Triana types want to be able to send their
-     * data via an output stream to other programs using strings.  This
-     * can be used to implement socket and to run other executables,
-     * written in C etc. With ASCII you don't have to worry about
-     * ENDIANness as the conversions are all done via text. This is
-     * obviously slower than the binary version since you have to format
-     * the input and output within the another program.
+     * Used when Triana types want to be able to send their data via an output stream to other programs using strings.
+     * This can be used to implement socket and to run other executables, written in C etc. With ASCII you don't have to
+     * worry about ENDIANness as the conversions are all done via text. This is obviously slower than the binary version
+     * since you have to format the input and output within the another program.
      */
     public void outputToStream(PrintWriter dos) throws IOException;
 }

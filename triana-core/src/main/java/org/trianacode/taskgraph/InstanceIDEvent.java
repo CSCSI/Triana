@@ -59,19 +59,15 @@
 
 package org.trianacode.taskgraph;
 
-import org.trianacode.taskgraph.tool.Tool;
-
 import java.util.EventObject;
 
+import org.trianacode.taskgraph.tool.Tool;
+
 /**
- * The event generated when an instance id is registered/unregistered with a
- * tool.
+ * The event generated when an instance id is registered/unregistered with a tool.
  *
- * @author      Ian Wang
- * @created     2nd August 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class InstanceIDEvent extends EventObject {
@@ -85,11 +81,11 @@ public class InstanceIDEvent extends EventObject {
     private int idcount;
 
     /**
-     * @param source the source for this event
-     * @param eventid the event id (ID_REGISTERED/ID_UNREGISTERED)
+     * @param source     the source for this event
+     * @param eventid    the event id (ID_REGISTERED/ID_UNREGISTERED)
      * @param instanceid the instance id
-     * @param tool the tool that the id is (un)registered for.
-     * @param idcount the number of tasks existing with the instance id
+     * @param tool       the tool that the id is (un)registered for.
+     * @param idcount    the number of tasks existing with the instance id
      */
     public InstanceIDEvent(Object source, int eventid, String instanceid, Tool tool, int idcount) {
         super(source);

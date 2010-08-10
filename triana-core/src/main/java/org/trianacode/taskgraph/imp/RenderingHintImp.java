@@ -59,19 +59,15 @@
 
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.RenderingHint;
-
 import java.util.Hashtable;
 
+import org.trianacode.taskgraph.RenderingHint;
+
 /**
- * An implementation of the instance details interface with setters for the
- * details.
+ * An implementation of the instance details interface with setters for the details.
  *
- * @author      Ian Wang
- * @created     5th July 2005
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class RenderingHintImp implements RenderingHint {
@@ -95,9 +91,8 @@ public class RenderingHintImp implements RenderingHint {
     /**
      * Constructs a new rendering hint
      *
-     * @param hint the hint name
-     * @param proxydepend a flag indicating whether this hint is dependent on
-     * the current proxy
+     * @param hint        the hint name
+     * @param proxydepend a flag indicating whether this hint is dependent on the current proxy
      */
     public RenderingHintImp(String hint, boolean proxydepend) {
         this.hint = hint;
@@ -107,17 +102,17 @@ public class RenderingHintImp implements RenderingHint {
     /**
      * Constructs a new rendering hint from an existing hint
      *
-     * @param hint the existing hint
-     * @param proxydepend a flag indicating whether this hint is dependent on
-     * the current proxy
+     * @param hint        the existing hint
+     * @param proxydepend a flag indicating whether this hint is dependent on the current proxy
      */
     public RenderingHintImp(RenderingHint hint, boolean proxydepend) {
         this.hint = hint.getRenderingHint();
         this.proxydepend = proxydepend;
 
         String[] paramnames = hint.getParameterNames();
-        for (int count = 0; count < paramnames.length; count++)
+        for (int count = 0; count < paramnames.length; count++) {
             setRenderingDetail(paramnames[count], hint.getRenderingDetail(paramnames[count]));
+        }
     }
 
 
@@ -140,10 +135,11 @@ public class RenderingHintImp implements RenderingHint {
      * @return the rendering details for the specified parameter
      */
     public Object getRenderingDetail(String paramname) {
-        if (details.containsKey(paramname))
+        if (details.containsKey(paramname)) {
             return details.get(paramname);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -159,7 +155,6 @@ public class RenderingHintImp implements RenderingHint {
     public String[] getParameterNames() {
         return (String[]) details.keySet().toArray(new String[details.keySet().size()]);
     }
-
 
 
     /**

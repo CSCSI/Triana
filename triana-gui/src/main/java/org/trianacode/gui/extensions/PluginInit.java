@@ -60,14 +60,11 @@
 package org.trianacode.gui.extensions;
 
 /**
- * ProxyPluginInit interface is implemented by classes that wish to add
- * additional proxy handling capabilities to the ProxyFactory
+ * ProxyPluginInit interface is implemented by classes that wish to add additional proxy handling capabilities to the
+ * ProxyFactory
  *
- * @author      Ian Wang
- * @created     30th November 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * @todo
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface PluginInit {

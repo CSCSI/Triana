@@ -59,7 +59,7 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -67,7 +67,7 @@ import java.awt.event.ActionListener;
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
+ * <p/>
  * This class provides the resizable toolbar for the scrollable desktop.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
@@ -105,7 +105,6 @@ public class DesktopResizableToolBar extends ResizableToolBar
      * creates a BaseToggleButton and adds it to the toolbar
      *
      * @param title the title of the toggle button
-     *
      * @return the toggle button that was created
      */
     public BaseToggleButton add(String title) {

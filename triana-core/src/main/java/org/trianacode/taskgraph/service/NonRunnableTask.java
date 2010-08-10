@@ -68,15 +68,11 @@ import org.trianacode.taskgraph.tool.Tool;
 
 
 /**
- * A non-runnable task is one that can be included in a runnable taskgraph,
- * but will throw an exception if an attempt to run it is made. This task
- * therefore needs to be removed/replaced before the taskgraph is executed.
+ * A non-runnable task is one that can be included in a runnable taskgraph, but will throw an exception if an attempt to
+ * run it is made. This task therefore needs to be removed/replaced before the taskgraph is executed.
  *
- * @author      Ian Wang
- * @created     13th May 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class NonRunnableTask extends TaskImp implements RunnableInstance {
@@ -150,25 +146,24 @@ public class NonRunnableTask extends TaskImp implements RunnableInstance {
 
 
     /**
-     * Tells a runnable instance (e.g. runnable task) to wake-up if data has
-     * been received on all of its essential nodes.
+     * Tells a runnable instance (e.g. runnable task) to wake-up if data has been received on all of its essential
+     * nodes.
      */
     public void wakeUp() {
         throw (new RuntimeException("Attempt to run non-runnable task: " + getToolName()));
     }
 
     /**
-     * Tells the runnable instance (e.g. runnable task) to wake up if data has
-     * been received on all of its essential nodes. The parameter indicates the
-     * node that received data to cause this wake-up.
+     * Tells the runnable instance (e.g. runnable task) to wake up if data has been received on all of its essential
+     * nodes. The parameter indicates the node that received data to cause this wake-up.
      */
     public void wakeUp(Node node) {
         throw (new RuntimeException("Attempt to run non-runnable task: " + getToolName()));
     }
 
     /**
-     * Request a runnable instance to stop, this is not an interupt method,
-     * halting time of runnable instance is not guaranteed;
+     * Request a runnable instance to stop, this is not an interupt method, halting time of runnable instance is not
+     * guaranteed;
      */
     public void pause() {
     }
@@ -186,8 +181,8 @@ public class NonRunnableTask extends TaskImp implements RunnableInstance {
     }
 
     /**
-     * Tell the data monitor that this thread monitor has completed outputting
-     * the data i.e. the data has been received by the receiving process.
+     * Tell the data monitor that this thread monitor has completed outputting the data i.e. the data has been received
+     * by the receiving process.
      */
     public void finished() {
     }

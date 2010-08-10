@@ -62,11 +62,8 @@ package org.trianacode.taskgraph;
 /**
  * A container class for rendering hints for a tool (e.g. stripey)
  *
- * @author      Ian Wang
- * @created     24th November 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface RenderingHint {

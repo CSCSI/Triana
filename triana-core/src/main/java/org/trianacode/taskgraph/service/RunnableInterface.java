@@ -63,13 +63,10 @@ import org.trianacode.taskgraph.tool.ToolTable;
 
 
 /**
- * The interface used by Unit to access RunnableTask. RunnableTasks implement
- * the data handling capability of a Task.
+ * The interface used by Unit to access RunnableTask. RunnableTasks implement the data handling capability of a Task.
  *
- * @author      Ian Taylor
- * @created     29th April 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public interface RunnableInterface extends ClipableTaskInterface {
 
@@ -79,8 +76,7 @@ public interface RunnableInterface extends ClipableTaskInterface {
     public Task getTask();
 
     /**
-     * @return an control interface to the scheduler (returns null if the
-     * task is not a control task)
+     * @return an control interface to the scheduler (returns null if the task is not a control task)
      */
     public ControlInterface getControlInterface();
 
@@ -91,9 +87,8 @@ public interface RunnableInterface extends ClipableTaskInterface {
     public boolean isInput(int nodeNumber);
 
     /**
-     * Returns the data at input node <i>nodeNumber</i>. If data is not
-     * ready, NOT_READY triana type is returned. If there is no cable
-     * connected to the input node the NOT_CONNECTED triana type is returned.
+     * Returns the data at input node <i>nodeNumber</i>. If data is not ready, NOT_READY triana type is returned. If
+     * there is no cable connected to the input node the NOT_CONNECTED triana type is returned.
      *
      * @param nodeNumber the node you want to get the data from.
      * @return the data input at node nodeNumber
@@ -102,30 +97,26 @@ public interface RunnableInterface extends ClipableTaskInterface {
             throws OutOfRangeException, EmptyingException, NotCompatibleException;
 
     /**
-     * Outputs the data across all nodes. This passses the given data set
-     * to the first output node and then makes copies for any other output
-     * nodes.
+     * Outputs the data across all nodes. This passses the given data set to the first output node and then makes copies
+     * for any other output nodes.
      *
      * @param data the data to be sent
      */
     public void output(Object data);
 
     /**
-     * Outputs the data to the given node <i>outputNode</i>. If specified
-     * this method blocks until the data is successfully sent, otherwise,
-     * if non-blocking, isOutputSent() can be used to poll whether the
-     * data has been successfully sent. This method is used to set the
-     * data at each particular output node if this is necessary, otherwise
-     * use output(Object data) to copy the data across all nodes.
+     * Outputs the data to the given node <i>outputNode</i>. If specified this method blocks until the data is
+     * successfully sent, otherwise, if non-blocking, isOutputSent() can be used to poll whether the data has been
+     * successfully sent. This method is used to set the data at each particular output node if this is necessary,
+     * otherwise use output(Object data) to copy the data across all nodes.
      *
      * @param outputNode the output node you wish to set
-     * @param data the data to be sent
+     * @param data       the data to be sent
      */
     public void output(int outputNode, Object data, boolean blocking);
 
     /**
-     * @return true if the data sent with the send call has
-     * reached its destination
+     * @return true if the data sent with the send call has reached its destination
      */
     public boolean isOutputSent(int outputNode);
 

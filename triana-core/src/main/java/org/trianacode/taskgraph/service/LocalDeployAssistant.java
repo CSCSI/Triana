@@ -23,8 +23,6 @@ import org.trianacode.taskgraph.TaskGraph;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 1:04:09 PM
- * @date $Date:$ modified by $Author:$
  */
 public interface LocalDeployAssistant {
 

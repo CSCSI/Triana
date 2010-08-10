@@ -60,26 +60,21 @@
 package org.trianacode.gui.hci.color;
 
 
-import org.trianacode.taskgraph.tool.Tool;
+import java.awt.Color;
 
-import java.awt.*;
+import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * An interface used to link colors in the ColorTable with graphical elements.
  * <p/>
- * When a ColorModel is first created it should populate the ColorTable with
- * default colors for each of the color names it uses (note this should be done
- * using the initDefaultColor method in the ColorTable, not setColor).
+ * When a ColorModel is first created it should populate the ColorTable with default colors for each of the color names
+ * it uses (note this should be done using the initDefaultColor method in the ColorTable, not setColor).
  * <p/>
- * When the getColor method is called the ColorModel should retrieve the
- * color it associates with the specified graphical element from the ColorTable
- * via its color name.
+ * When the getColor method is called the ColorModel should retrieve the color it associates with the specified
+ * graphical element from the ColorTable via its color name.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th May 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public interface ColorModel {
@@ -90,8 +85,7 @@ public interface ColorModel {
     public String getModelName();
 
     /**
-     * @return the color names that this model uses. These are linked to actual
-     *         colors by querying the color table.
+     * @return the color names that this model uses. These are linked to actual colors by querying the color table.
      */
     public String[] getColorNames();
 
@@ -102,16 +96,14 @@ public interface ColorModel {
 
 
     /**
-     * @return the color for the specified graphical element when representing
-     *         the specified tool. If the element is unrecognized this method
-     *         will return a default color.
+     * @return the color for the specified graphical element when representing the specified tool. If the element is
+     *         unrecognized this method will return a default color.
      */
     public Color getColor(String element, Tool tool);
 
     /**
-     * @return the color for the specified graphical element not linked to a
-     *         specific tool. If the element is unrecognized this method will
-     *         return a default color.
+     * @return the color for the specified graphical element not linked to a specific tool. If the element is
+     *         unrecognized this method will return a default color.
      */
     public Color getColor(String element);
 

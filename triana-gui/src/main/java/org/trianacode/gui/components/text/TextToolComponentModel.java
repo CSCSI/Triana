@@ -59,6 +59,9 @@
 
 package org.trianacode.gui.components.text;
 
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JPopupMenu;
 import org.trianacode.gui.hci.tools.ToolComponentModel;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.RenderingHint;
@@ -66,48 +69,41 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.constants.TextToolConstants;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-
 /**
  * The component model for Triana scripts
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 5th July 2004
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public class TextToolComponentModel implements ToolComponentModel {
 
     /**
-     * @return the icon for the specified tool (if null is returned then the
-     *         default leaf icon is used)
+     * @return the icon for the specified tool (if null is returned then the default leaf icon is used)
      */
     public Icon getTreeIcon(Tool tool) {
         return null;
     }
 
     /**
-     * @return the popup menu the tool when in the tree (if null is returned
-     *         then the default popup menu is used, return a empty popup menu for no
-     *         popup)
+     * @return the popup menu the tool when in the tree (if null is returned then the default popup menu is used, return
+     *         a empty popup menu for no popup)
      */
     public JPopupMenu getTreePopup(Tool tool) {
         return null;
     }
 
     /**
-     * @return the tool tip for the tool when in the tree (if null is returned
-     *         then the default tool tip is used, return a empty string for no tip)
+     * @return the tool tip for the tool when in the tree (if null is returned then the default tool tip is used, return
+     *         a empty string for no tip)
      */
     public String getTreeToolTip(Tool tool, boolean extended) {
         return null;
     }
 
     /**
-     * @return the task component used to represent the specified task (if null
-     *         is returned then the default component is used)
+     * @return the task component used to represent the specified task (if null is returned then the default component
+     *         is used)
      */
     public TaskComponent getTaskComponent(Task task) {
         if (task.isRenderingHint(TextToolConstants.TEXT_TOOL_RENDERING_HINT)) {
@@ -115,47 +111,49 @@ public class TextToolComponentModel implements ToolComponentModel {
             int align = TextTaskComponent.LEFT;
 
             if (hint.isRenderingDetail(TextToolConstants.TEXT_ALIGN)) {
-                if (hint.getRenderingDetail(TextToolConstants.TEXT_ALIGN).equals(TextToolConstants.RIGHT))
+                if (hint.getRenderingDetail(TextToolConstants.TEXT_ALIGN).equals(TextToolConstants.RIGHT)) {
                     align = TextTaskComponent.RIGHT;
-                else if (hint.getRenderingDetail(TextToolConstants.TEXT_ALIGN).equals(TextToolConstants.CENTER))
+                } else if (hint.getRenderingDetail(TextToolConstants.TEXT_ALIGN).equals(TextToolConstants.CENTER)) {
                     align = TextTaskComponent.CENTER;
+                }
             }
 
-            if (hint.isRenderingDetail(TextToolConstants.TEXT_PARAMETER_NAME))
-                return new TextTaskComponent (task, (String) hint.getRenderingDetail(TextToolConstants.TEXT_PARAMETER_NAME), align);
+            if (hint.isRenderingDetail(TextToolConstants.TEXT_PARAMETER_NAME)) {
+                return new TextTaskComponent(task,
+                        (String) hint.getRenderingDetail(TextToolConstants.TEXT_PARAMETER_NAME), align);
+            }
         }
 
         return null;
     }
 
     /**
-     * @return the popup menu the tool when in the workspace (if null is returned
-     *         then the default popup menu is used, return a empty popup menu for no
-     *         popup)
+     * @return the popup menu the tool when in the workspace (if null is returned then the default popup menu is used,
+     *         return a empty popup menu for no popup)
      */
     public JPopupMenu getWorkspacePopup(Task task) {
         return null;
     }
 
     /**
-     * @return the tool tip for the tool when on the workspace (if null is returned
-     *         then the default tool tip is used, return a empty string for no tip)
+     * @return the tool tip for the tool when on the workspace (if null is returned then the default tool tip is used,
+     *         return a empty string for no tip)
      */
     public String getWorkspaceToolTip(Task task, boolean extended) {
         return null;
     }
 
     /**
-     * @return the action that is invoked when the task is activated (e.g.
-     *         double-clicked). If null is returned the default tool action is used.
+     * @return the action that is invoked when the task is activated (e.g. double-clicked). If null is returned the
+     *         default tool action is used.
      */
     public Action getTaskAction(Task task) {
         return null;
     }
 
     /**
-     * Return whether the icon is shown for the specified update action (e.g.
-     * INCREASE_INPUT_NODES_ACTION as defined in UpdateActionConstants)
+     * Return whether the icon is shown for the specified update action (e.g. INCREASE_INPUT_NODES_ACTION as defined in
+     * UpdateActionConstants)
      *
      * @return either DISPLAY_ICON, HIDE_ICON or UNKNOWN_ACTION
      */
@@ -164,8 +162,7 @@ public class TextToolComponentModel implements ToolComponentModel {
     }
 
     /**
-     * Called to determine the action that is invoked when an update action is
-     * choosen.
+     * Called to determine the action that is invoked when an update action is choosen.
      *
      * @param action the update action (e.g. ADD_INPUT_NODE_ACTION)
      * @return either the action or null if unknown.

@@ -58,17 +58,15 @@
  */
 package org.trianacode.taskgraph.event;
 
-import org.trianacode.taskgraph.Task;
-
 import java.util.EventObject;
+
+import org.trianacode.taskgraph.Task;
 
 /**
  * The event generated when a parameter is updated
  *
- * @author      Ian Wang
- * @created     8th May 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class ParameterUpdateEvent extends EventObject {
 
@@ -81,10 +79,10 @@ public class ParameterUpdateEvent extends EventObject {
     /**
      * Constructs a parameter updated event
      *
-     * @param task the source of the parameter update event
+     * @param task      the source of the parameter update event
      * @param paramname the name of the parameter being updated
-     * @param oldvalue the previous value of the parameter
-     * @param newvalue the new value of the parameter
+     * @param oldvalue  the previous value of the parameter
+     * @param newvalue  the new value of the parameter
      */
     public ParameterUpdateEvent(Task task, String paramname, String paramtype, Object oldvalue, Object newvalue) {
         super(task);

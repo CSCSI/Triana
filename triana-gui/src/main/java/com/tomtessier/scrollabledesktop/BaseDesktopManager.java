@@ -59,16 +59,18 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.beans.PropertyVetoException;
+
+import javax.swing.DefaultDesktopManager;
+import javax.swing.JInternalFrame;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
  * article</a> by Tom Tessier
- *
- * This class provides a custom desktop manager for
- * {@link com.tomtessier.scrollabledesktop.BaseDesktopPane BaseDesktopPane}.
+ * <p/>
+ * This class provides a custom desktop manager for {@link com.tomtessier.scrollabledesktop.BaseDesktopPane
+ * BaseDesktopPane}.
  *
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  9-Aug-2001
@@ -79,7 +81,7 @@ public class BaseDesktopManager extends DefaultDesktopManager {
     private BaseDesktopPane desktopPane;
 
     /**
-     *  creates the BaseDesktopManager
+     * creates the BaseDesktopManager
      *
      * @param desktopPane a reference to BaseDesktopPane
      */
@@ -88,8 +90,7 @@ public class BaseDesktopManager extends DefaultDesktopManager {
     }
 
     /**
-     * maximizes the internal frame to the viewport bounds rather
-     * than the desktop bounds
+     * maximizes the internal frame to the viewport bounds rather than the desktop bounds
      *
      * @param f the internal frame being maximized
      */
@@ -110,8 +111,7 @@ public class BaseDesktopManager extends DefaultDesktopManager {
     }
 
     /**
-     * insures that the associated toolbar and menu buttons of
-     * the internal frame are activated as well
+     * insures that the associated toolbar and menu buttons of the internal frame are activated as well
      *
      * @param f the internal frame being activated
      */
@@ -124,8 +124,7 @@ public class BaseDesktopManager extends DefaultDesktopManager {
 
 
     /**
-     * closes the internal frame and removes any associated button
-     * and menu components
+     * closes the internal frame and removes any associated button and menu components
      *
      * @param f the internal frame being closed
      */

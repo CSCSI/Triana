@@ -59,42 +59,40 @@
 package org.trianacode.gui.panels;
 
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 /**
- * This panel allows the user to input information via as many text fields
- * as you want. You simply specify the number of textfields you want and
- * pass the names for each of these JTextFields as a parameter when initialising
- * this class. For example, to create a window with 2 text fields
- * and two names you would use the following :-
- <pre>
-
- JTextFieldPanel panel;
-
- String[] names = new String[2];
-
- names[0] = "Enter Your Name";
- names[1] = "Enter Your Address";
-
- panel = new JTextFieldPanel();
- panel.setObject(this, 2, names);
-
- </pre>
+ * This panel allows the user to input information via as many text fields as you want. You simply specify the number of
+ * textfields you want and pass the names for each of these JTextFields as a parameter when initialising this class. For
+ * example, to create a window with 2 text fields and two names you would use the following :-
+ * <pre>
+ * <p/>
+ * JTextFieldPanel panel;
+ * <p/>
+ * String[] names = new String[2];
+ * <p/>
+ * names[0] = "Enter Your Name";
+ * names[1] = "Enter Your Address";
+ * <p/>
+ * panel = new JTextFieldPanel();
+ * panel.setObject(this, 2, names);
+ * <p/>
+ * </pre>
  *
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  * @see ParameterPanel
- *
- * @author      Ian Taylor
- * @created     1 December 1999
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TextFieldPanel extends UnitPanel implements ActionListener {
     /**
-
      * A reference to the vector which stores all of the Textfields
      */
     Vector textFields;
@@ -120,10 +118,11 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
 
         textFields = new Vector(txtfields);
 
-        if (names != null)
+        if (names != null) {
             textFieldNames = names;
-        else
+        } else {
             textFieldNames = new String[txtfields];
+        }
 
         for (int i = 0; i < txtfields; ++i) {
             t = new JTextField(minSize);
@@ -137,7 +136,6 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
      * Creates a new JTextFieldPanel for the particular task.
      *
      * @param txtfields number of JTextFields
-     *
      * @see ParameterPanel#ParameterPanel
      */
     public void setObject(Object object, int txtfields) {
@@ -148,8 +146,7 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
      * Creates a new JTextFieldPanel for the particular task.
      *
      * @param txtfields number of JTextFields
-     * @param names an array containing the names of each textfield
-     *
+     * @param names     an array containing the names of each textfield
      * @see ParameterPanel#ParameterPanel
      */
     public void setObject(Object object, int txtfields, String names[]) {
@@ -160,8 +157,9 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
      * The layout of the Text Field Window.
      */
     public void layoutPanel() {
-        if (oldTextFields == textFields.size())
+        if (oldTextFields == textFields.size()) {
             return;
+        }
 
         removeAll();
 
@@ -182,8 +180,9 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
 
     public int getTextFieldNumberFor(JTextField tf) {
         for (int i = 0; i < textFields.size(); ++i) {
-            if (tf == textFields.elementAt(i))
+            if (tf == textFields.elementAt(i)) {
                 return i;
+            }
         }
         return -1;
     }
@@ -231,8 +230,7 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
     }
 
     /**
-     * Sets the name of the num'th textfield.  You must do a
-     * layoutPanel to change the appearance.
+     * Sets the name of the num'th textfield.  You must do a layoutPanel to change the appearance.
      */
     public void setName(int num, String name) {
         textFieldNames[num] = name;
@@ -307,8 +305,9 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
 
 
     public void actionPerformed(ActionEvent evt) {
-        if (!(evt.getSource() instanceof JTextField))
+        if (!(evt.getSource() instanceof JTextField)) {
             return;
+        }
 
         JTextField jtf = (JTextField) evt.getSource();
 

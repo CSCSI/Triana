@@ -60,21 +60,18 @@
 package org.trianacode.gui.main;
 
 
+import java.awt.Container;
+
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskLayoutDetails;
 import org.trianacode.taskgraph.service.TrianaClient;
-
-import java.awt.*;
 
 /**
  * An interface implemented by all containers used to display open taskgraphs
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
  */
 
 public interface TaskGraphPanel {

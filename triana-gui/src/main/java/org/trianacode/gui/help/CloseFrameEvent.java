@@ -58,17 +58,16 @@
  */
 package org.trianacode.gui.help;
 
-import java.awt.*;
+import java.awt.Frame;
 import java.util.EventObject;
 
 /**
- * A custom event class.  This event is generated when the close frame
- * widget is used or close has been chosen from the file menu of a frame.
- * @see CloseFrameListener
+ * A custom event class.  This event is generated when the close frame widget is used or close has been chosen from the
+ * file menu of a frame.
  *
- * @author      Melanie Rhianna Lewis
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Melanie Rhianna Lewis
+ * @version $Revision: 4048 $
+ * @see CloseFrameListener
  */
 public class CloseFrameEvent extends EventObject {
 

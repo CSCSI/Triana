@@ -62,11 +62,8 @@ package org.trianacode.taskgraph;
 /**
  * A general error thrown when there is an error in the taskgraph
  *
- * @author      Ian Wang
- * @created     26th June 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class TaskGraphException extends Exception {

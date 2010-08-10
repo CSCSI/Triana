@@ -64,11 +64,8 @@ import org.trianacode.taskgraph.tool.Tool;
 /**
  * A factory for creating taskgraphs.
  *
- * @author      Ian Wang
- * @created     12 January 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- *
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public interface TaskGraphFactory {
@@ -93,33 +90,28 @@ public interface TaskGraphFactory {
     public void unregisterTaskGraphFactory(String proxytype, TaskFactory factory);
 
     /**
-     * @return an array of the proxy types that have taskgraph factorys
-     *         registered
+     * @return an array of the proxy types that have taskgraph factorys registered
      */
     public String[] getRegisteredProxyTypes();
 
     /**
-     * @return the registered taskgraph factory for the specified proxy
-     *         (null if none registered)
+     * @return the registered taskgraph factory for the specified proxy (null if none registered)
      */
     public TaskFactory[] getRegisteredTaskGraphFactories(String proxytype);
 
     /**
-     * @return true if there is a registered taskgraph factory for the specified
-     *         tool class
+     * @return true if there is a registered taskgraph factory for the specified tool class
      */
     public boolean isRegisteredTaskGraphFactory(String proxytype);
 
 
     /**
-     * @return a new task of type tool, optionally preserving the original
-     *         instance id in the new task.
+     * @return a new task of type tool, optionally preserving the original instance id in the new task.
      */
     public Task createTask(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskException;
 
     /**
-     * Creates an empty, parentless taskgraph inherting properties from the
-     * specified taskgraph
+     * Creates an empty, parentless taskgraph inherting properties from the specified taskgraph
      */
     public TaskGraph createTaskGraph(TaskGraph taskgraph, boolean preserveinst) throws TaskException;
 

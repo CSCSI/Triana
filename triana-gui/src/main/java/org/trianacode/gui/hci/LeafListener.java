@@ -58,6 +58,31 @@
  */
 package org.trianacode.gui.hci;
 
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
@@ -77,32 +102,16 @@ import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.util.UrlUtils;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
 
 
 /**
- * LeafListener handles mouse events from Triana Tools in the Tool Box Tree View. It handles the
- * drag and drop of toolTables from the tree to a desktop and the pop-up menu for the toolTables and
- * packages in the tree.
+ * LeafListener handles mouse events from Triana Tools in the Tool Box Tree View. It handles the drag and drop of
+ * toolTables from the tree to a desktop and the pop-up menu for the toolTables and packages in the tree.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class LeafListener implements MouseListener, MouseMotionListener, TreeSelectionListener,
         ClipboardActionInterface, ClipboardPasteInterface, ToolSelectionHandler, Actions {
@@ -148,8 +157,9 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      * Adds a listener to be notified when the tool selection changes
      */
     public void addToolSelectionListener(ToolSelectionListener listener) {
-        if (!sellisteners.contains(listener))
+        if (!sellisteners.contains(listener)) {
             sellisteners.add(listener);
+        }
     }
 
     /**
@@ -181,9 +191,11 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         ArrayList sellist = new ArrayList();
         TreePath[] paths = toolBoxTree.getSelectionPaths();
 
-        if (paths != null)
-            for (int count = 0; count < paths.length; count++)
+        if (paths != null) {
+            for (int count = 0; count < paths.length; count++) {
                 addNode((DefaultMutableTreeNode) paths[count].getLastPathComponent(), sellist);
+            }
+        }
 
         return (Tool[]) sellist.toArray(new Tool[sellist.size()]);
     }
@@ -197,15 +209,14 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
 
 
     /**
-     * Returns a array of containing the tools stored in the selected branches
-     * of the tree, this is done by recursively traversing the nodes
-     * children.
+     * Returns a array of containing the tools stored in the selected branches of the tree, this is done by recursively
+     * traversing the nodes children.
      * <p/>
-     * For a single tool an array containing a copy of that tool is returned;
-     * for a package it is all the tools in that package and sub packages.
+     * For a single tool an array containing a copy of that tool is returned; for a package it is all the tools in that
+     * package and sub packages.
      *
-     * @param repackage a flag indicating whether the tools are repackaged so
-     *                  their tool package reflects the correct paste subpackage.
+     * @param repackage a flag indicating whether the tools are repackaged so their tool package reflects the correct
+     *                  paste subpackage.
      */
     private Tool[] getSelectedTools(boolean repackage) {
         ArrayList tools = new ArrayList();
@@ -281,19 +292,20 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     }
 
     /**
-     * @return the tool or null if this event does not come from a leaf node containing a
-     *         Tool
+     * @return the tool or null if this event does not come from a leaf node containing a Tool
      */
     private Tool getTool(MouseEvent event) {
         DefaultMutableTreeNode node = getNode(event);
 
-        if (node == null)
+        if (node == null) {
             return null;
+        }
 
-        if (node.getUserObject() instanceof Tool)
+        if (node.getUserObject() instanceof Tool) {
             return (Tool) node.getUserObject();
-        else
+        } else {
             return null;
+        }
 
     }
 
@@ -311,22 +323,24 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     }
 
     /**
-     * Used by getTools to recursively build an array list of the tools
-     * stored in the specified nodes and their children
+     * Used by getTools to recursively build an array list of the tools stored in the specified nodes and their
+     * children
      */
     private void recurseTools(DefaultMutableTreeNode[] nodes, ArrayList list, boolean repackage) {
-        for (int count = 0; count < nodes.length; count++)
+        for (int count = 0; count < nodes.length; count++) {
             recurseTools(nodes[count], list, "", repackage);
+        }
     }
 
     /**
-     * Used by getTools to recursively build an array list of the tools
-     * stored in the specified nodes and their children
+     * Used by getTools to recursively build an array list of the tools stored in the specified nodes and their
+     * children
      */
     private void recurseTools(DefaultMutableTreeNode node, ArrayList list, String pack, boolean repackage) {
         if (node.getUserObject() instanceof String) {
-            if (!pack.equals(""))
+            if (!pack.equals("")) {
                 pack += ".";
+            }
 
             pack += (String) node.getUserObject();
         } else if (node.getUserObject() instanceof Tool) {
@@ -338,13 +352,16 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                     list.add(copy);
                 } catch (TaskException except) {
                 }
-            } else
+            } else {
                 list.add(node.getUserObject());
+            }
         }
 
-        if (!node.isLeaf())
-            for (int count = 0; count < node.getChildCount(); count++)
+        if (!node.isLeaf()) {
+            for (int count = 0; count < node.getChildCount(); count++) {
                 recurseTools((DefaultMutableTreeNode) node.getChildAt(count), list, pack, repackage);
+            }
+        }
     }
 
 
@@ -357,29 +374,31 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         ArrayList nodes = new ArrayList();
 
         if (paths != null) {
-            for (int count = 0; count < paths.length; count++)
-                if (paths[count].getLastPathComponent() instanceof DefaultMutableTreeNode)
+            for (int count = 0; count < paths.length; count++) {
+                if (paths[count].getLastPathComponent() instanceof DefaultMutableTreeNode) {
                     nodes.add(paths[count].getLastPathComponent());
+                }
+            }
         }
 
         return (DefaultMutableTreeNode[]) nodes.toArray(new DefaultMutableTreeNode[nodes.size()]);
     }
 
     /**
-     * If the user object at the tree node is a Tool this returns the package for that tool. If it
-     * is a package node then the node hierarchy is used to suggest a package.
-     * TODO - this bases the suggested package on the visible nodes in the tree, which may be mangled
-     * due to the filter being imposed on the tree
+     * If the user object at the tree node is a Tool this returns the package for that tool. If it is a package node
+     * then the node hierarchy is used to suggest a package. TODO - this bases the suggested package on the visible
+     * nodes in the tree, which may be mangled due to the filter being imposed on the tree
      */
     private String getPackage(DefaultMutableTreeNode node) {
-        if (node.getUserObject() instanceof Tool)
+        if (node.getUserObject() instanceof Tool) {
             return ((Tool) node.getUserObject()).getToolPackage();
-        else {
+        } else {
             String pack = "";
 
             while (!node.isRoot()) {
-                if (!pack.equals(""))
+                if (!pack.equals("")) {
                     pack = "." + pack;
+                }
 
                 pack = node.getUserObject().toString() + pack;
                 node = (DefaultMutableTreeNode) node.getParent();
@@ -390,16 +409,18 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     }
 
     /**
-     * This handles the double clicking of the toolTables and pop-up menu selection. Each tool has
-     * its own defined function for double clicking which is activated here.
+     * This handles the double clicking of the toolTables and pop-up menu selection. Each tool has its own defined
+     * function for double clicking which is activated here.
      */
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             long timeDiff = minTimeDiff;
-            if (lastClickEvent != null)
+            if (lastClickEvent != null) {
                 timeDiff = e.getWhen() - lastClickEvent.getWhen();
-            if ((e.getClickCount() == 2) || (timeDiff < minTimeDiff))
+            }
+            if ((e.getClickCount() == 2) || (timeDiff < minTimeDiff)) {
                 doubleClick(e);
+            }
             lastEvent = e;
             lastClickEvent = e;
         }
@@ -426,39 +447,44 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
 
         lastEvent = e;
         if (e.isPopupTrigger()) {
-            if (!toolBoxTree.isPathSelected(toolBoxTree.getPathForLocation(e.getX(), e.getY())))
+            if (!toolBoxTree.isPathSelected(toolBoxTree.getPathForLocation(e.getX(), e.getY()))) {
                 toolBoxTree.setSelectionPath(toolBoxTree.getPathForLocation(e.getX(), e.getY()));
+            }
 
-            if (toolBoxTree.getSelectionCount() > 1)
+            if (toolBoxTree.getSelectionCount() > 1) {
                 multipleMenu.show(e.getComponent(), e.getX(), e.getY());
-            else if (getNode(e).getUserObject() instanceof String)
+            } else if (getNode(e).getUserObject() instanceof String) {
                 packageMenu.show(e.getComponent(), e.getX(), e.getY());
-            else if (selectedTool != null)
+            } else if (selectedTool != null) {
                 TaskGraphViewManager.getTreePopup(selectedTool).show(e.getComponent(), e.getX(), e.getY());
+            }
         }
     }
 
     /**
-     * Invoked when a mouse button is pressed on a component and then dragged.  Mouse drag events
-     * will continue to be delivered to the component where the first originated until the mouse
-     * button is released (regardless of whether the mouse position is within the bounds of the
-     * component).
+     * Invoked when a mouse button is pressed on a component and then dragged.  Mouse drag events will continue to be
+     * delivered to the component where the first originated until the mouse button is released (regardless of whether
+     * the mouse position is within the bounds of the component).
      */
     public void mouseDragged(MouseEvent e) {
         boolean setStartDrag = false;
 
-        if (!SwingUtilities.isLeftMouseButton(e))
-            return;  // only can drag with the left mouse button
-
-        if (selectedTool == null)
+        if (!SwingUtilities.isLeftMouseButton(e)) {
             return;
+        }  // only can drag with the left mouse button
 
-        if ((lastEvent != null) && (lastEvent.getID() == MouseEvent.MOUSE_PRESSED))
+        if (selectedTool == null) {
+            return;
+        }
+
+        if ((lastEvent != null) && (lastEvent.getID() == MouseEvent.MOUSE_PRESSED)) {
             setStartDrag = true;
+        }
 
         if ((lastEvent != null) && (lastEvent.getID() == MouseEvent.MOUSE_MOVED) &&
-                (!Env.os().equals("windows")))
+                (!Env.os().equals("windows"))) {
             setStartDrag = true;
+        }
 
         // this should be impossible BUT windows 95 it seems it isn't!!
 
@@ -470,8 +496,9 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         if (setStartDrag) {
             startDrag = lastEvent;
             DragWindow.DRAG_WINDOW.setTool(selectedTool, toolTable);
-        } else if (startDrag == null)
+        } else if (startDrag == null) {
             return;
+        }
 
         lastEvent = e;
 
@@ -496,15 +523,17 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      */
     public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
-            if (!toolBoxTree.isPathSelected(toolBoxTree.getPathForLocation(e.getX(), e.getY())))
+            if (!toolBoxTree.isPathSelected(toolBoxTree.getPathForLocation(e.getX(), e.getY()))) {
                 toolBoxTree.setSelectionPath(toolBoxTree.getPathForLocation(e.getX(), e.getY()));
+            }
 
-            if (toolBoxTree.getSelectionCount() > 1)
+            if (toolBoxTree.getSelectionCount() > 1) {
                 multipleMenu.show(e.getComponent(), e.getX(), e.getY());
-            else if (getNode(e).getUserObject() instanceof String)
+            } else if (getNode(e).getUserObject() instanceof String) {
                 packageMenu.show(e.getComponent(), e.getX(), e.getY());
-            else if (selectedTool != null)
+            } else if (selectedTool != null) {
                 TaskGraphViewManager.getTreePopup(selectedTool).show(e.getComponent(), e.getX(), e.getY());
+            }
         } else if (startDrag != null) {
             DragWindow.DRAG_WINDOW.setVisible(false);
 
@@ -558,8 +587,9 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      * Invoked when the mouse enters a component.
      */
     public void mouseEntered(MouseEvent e) {
-        if (e == null)
+        if (e == null) {
             return;
+        }
         lastEvent = e;
     }
 
@@ -644,18 +674,16 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     }
 
     /**
-     * shows the user other affected tools when deleting.
-     * A null returned value means there were no other affected tools.
-     * true means the user was ok with losing the other tools.
-     * false means they were not.
+     * shows the user other affected tools when deleting. A null returned value means there were no other affected
+     * tools. true means the user was ok with losing the other tools. false means they were not.
      *
      * @param selectedTools
      * @return
      */
     private Boolean checkAffectedTools(Tool[] selectedTools) {
-        Map<String, Set<String>> allAffected = new HashMap<String, Set<String>>();
+        Map<URL, Set<String>> allAffected = new HashMap<URL, Set<String>>();
         for (Tool seltool : selectedTools) {
-            String def = seltool.getDefinitionPath();
+            URL def = seltool.getDefinitionPath();
             Tool[] affected = toolTable.getTools(def);
             if (affected.length > 0) {
                 Set<String> others = allAffected.get(def);
@@ -671,7 +699,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         if (allAffected.size() > 0) {
             StringBuilder sb = new StringBuilder("\nDeleting: ");
             int lines = 0;
-            for (String s : allAffected.keySet()) {
+            for (URL s : allAffected.keySet()) {
                 if (lines > 14) {
                     sb.append("...\n");
                     break;
@@ -756,21 +784,26 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      * Renames a tool or a package
      */
     private void handleRename(DefaultMutableTreeNode node) {
-        if (node.getUserObject() instanceof Tool)
+        if (node.getUserObject() instanceof Tool) {
             handleRenameTool((Tool) node.getUserObject());
-        else
+        } else {
             handleRenamePackage(node);
+        }
     }
 
     /**
      * Renames a tool
      */
     private void handleRenameTool(Tool tool) {
+        if (!UrlUtils.isFile(tool)) {
+            return;
+        }
         boolean copy = false;
         if (!tool.getDefinitionType().equals(Tool.DEFINITION_TRIANA_XML) || !toolTable.isModifiable(tool)) {
             int reply = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
                     tool.getToolName() + " is not defined in XML. Do want to create a copy to rename?",
-                    Env.getString("Rename"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
+                    Env.getString("Rename"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    GUIEnv.getTrianaIcon());
             if (reply != JOptionPane.OK_OPTION) {
                 return;
             } else {
@@ -794,12 +827,14 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                     tool = other;
                 }
                 tool.setToolName(name);
-                XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(tool.getDefinitionPath())));
+                XMLWriter writer = new XMLWriter(
+                        new BufferedWriter(new FileWriter(UrlUtils.getFile(tool.getDefinitionPath()))));
                 writer.writeComponent(tool);
                 writer.close();
                 toolTable.refreshLocation(tool.getDefinitionPath(), tool.getToolBox());
             } catch (IOException except) {
-                throw (new RuntimeException("Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));
+                throw (new RuntimeException(
+                        "Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));
             } catch (TaskException e) {
                 e.printStackTrace();
             }
@@ -809,18 +844,22 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
 
     private Tool copyTool(Tool tool, String newName) throws TaskException {
         ToolImp newTool = new ToolImp(tool);
-        String path = tool.getDefinitionPath();
-        File f = new File(path);
-        if (!f.exists() || f.length() == 0) {
-            OptionPane.showError("Could not get root file for tool definition", "Error", GUIEnv.getApplicationFrame());
-            return null;
-        } else {
-            f = new File(f.getParentFile(), newName + ".xml");
-            newTool.setToolName(newName);
-            newTool.setDefinitionPath(f.getAbsolutePath());
-            newTool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
+        URL path = tool.getDefinitionPath();
+        if (UrlUtils.isFile(tool)) {
+            File f = UrlUtils.getFile(path);
+            if (!f.exists() || f.length() == 0) {
+                OptionPane.showError("Could not get root file for tool definition", "Error",
+                        GUIEnv.getApplicationFrame());
+                return null;
+            } else {
+                f = new File(f.getParentFile(), newName + ".xml");
+                newTool.setToolName(newName);
+                newTool.setDefinitionPath(UrlUtils.fromFile(f));
+                newTool.setDefinitionType(Tool.DEFINITION_TRIANA_XML);
+            }
+            return newTool;
         }
-        return newTool;
+        return null;
     }
 
 
@@ -840,10 +879,12 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
      */
     public void valueChanged(TreeSelectionEvent event) {
         if (event.getSource() == toolBoxTree) {
-            if (event.getNewLeadSelectionPath() != null)
-                selectedTool = convertNodeToTool((DefaultMutableTreeNode) event.getNewLeadSelectionPath().getLastPathComponent());
-            else
+            if (event.getNewLeadSelectionPath() != null) {
+                selectedTool = convertNodeToTool(
+                        (DefaultMutableTreeNode) event.getNewLeadSelectionPath().getLastPathComponent());
+            } else {
                 selectedTool = null;
+            }
 
         }
     }
@@ -851,22 +892,25 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     private void addNode(DefaultMutableTreeNode node, ArrayList sellist) {
         Tool tool = convertNodeToTool(node);
 
-        if (tool != null)
+        if (tool != null) {
             sellist.add(tool);
-        else
+        } else {
             addPackage(node, sellist);
+        }
     }
 
     private void addPackage(DefaultMutableTreeNode node, ArrayList sellist) {
-        for (int count = 0; count < node.getChildCount(); count++)
+        for (int count = 0; count < node.getChildCount(); count++) {
             addNode((DefaultMutableTreeNode) node.getChildAt(count), sellist);
+        }
     }
 
     private Tool convertNodeToTool(DefaultMutableTreeNode node) {
-        if ((node != null) && (node.getUserObject() instanceof Tool))
+        if ((node != null) && (node.getUserObject() instanceof Tool)) {
             return (Tool) node.getUserObject();
-        else
+        } else {
             return null;
+        }
     }
 
 }

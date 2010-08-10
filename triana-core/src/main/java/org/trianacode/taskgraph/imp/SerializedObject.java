@@ -59,20 +59,16 @@
 
 package org.trianacode.taskgraph.imp;
 
-import org.trianacode.taskgraph.ser.ObjectDeserializer;
-
 import java.io.IOException;
 
+import org.trianacode.taskgraph.ser.ObjectDeserializer;
+
 /**
- * This class contains the serialized version of an object, and a reference
- * to a class that is capable of deserializing that object. This is used to
- * store serialized parameters within tools/tasks that are only deserialized
- * on access.
+ * This class contains the serialized version of an object, and a reference to a class that is capable of deserializing
+ * that object. This is used to store serialized parameters within tools/tasks that are only deserialized on access.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 5th April 2006
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class SerializedObject {

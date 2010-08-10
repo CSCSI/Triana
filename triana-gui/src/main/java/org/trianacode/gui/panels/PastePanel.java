@@ -58,21 +58,20 @@
  */
 package org.trianacode.gui.panels;
 
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.util.Env;
 
 /**
  * UI for pasing tasks that have been cut or copied from the scratch pad back to the tool box
  *
- * @author  Matthew Shields
- * @created Apr 11, 2003: 3:09:15 PM
+ * @author Matthew Shields
  * @version $Revsion:$
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class PastePanel extends ParameterPanel implements ItemListener {
 
@@ -97,16 +96,15 @@ public class PastePanel extends ParameterPanel implements ItemListener {
     }
 
     /**
-     * This method returns true by default. It should be overridden if the panel
-     * does not want the user to be able to change the auto commit state
+     * This method returns true by default. It should be overridden if the panel does not want the user to be able to
+     * change the auto commit state
      */
     public boolean isAutoCommitVisible() {
         return false;
     }
 
     /**
-     * This method is called when the task is set for this panel. It is overridden to
-     * create the panel layout.
+     * This method is called when the task is set for this panel. It is overridden to create the panel layout.
      */
     public void init() {
         setLayout(new BorderLayout());
@@ -120,10 +118,11 @@ public class PastePanel extends ParameterPanel implements ItemListener {
         Boolean createSetting = (Boolean) Env.getUserProperty(CREATE_MISSING_PASTE_DIR);
         boolean create;
 
-        if (createSetting != null)
+        if (createSetting != null) {
             create = createSetting.booleanValue();
-        else
+        } else {
             create = true;
+        }
 
         createMissingCheckBox = new JCheckBox(Env.getString("createMissingDirectories"), create);
         createMissingCheckBox.addItemListener(this);
@@ -133,17 +132,16 @@ public class PastePanel extends ParameterPanel implements ItemListener {
     }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset all the
-     * panels components to the values specified by the associated task, e.g. a component
-     * representing a parameter called "noise" should be set to the value returned by a
-     * getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public void reset() {
     }
 
     /**
-     * This method is called when the panel is finished with. It should dispose of any
-     * components (e.g. windows) used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public void dispose() {
     }
@@ -151,13 +149,13 @@ public class PastePanel extends ParameterPanel implements ItemListener {
     /*
      * @return the toolbox directory
      */
+
     public String getToolBox() {
         return toolpanel.getToolBox();
     }
 
     /**
-     * @return the package name as an array of package name strings in descending order of
-     * hierarchy
+     * @return the package name as an array of package name strings in descending order of hierarchy
      */
     public String[] getUnitPackageNames() {
         String pkg = toolpanel.getPackage();
@@ -174,9 +172,8 @@ public class PastePanel extends ParameterPanel implements ItemListener {
 
 
     /**
-     * Invoked when an item has been selected or deselected by the user.
-     * The code written for this method performs the operations
-     * that need to occur when an item is selected (or deselected).
+     * Invoked when an item has been selected or deselected by the user. The code written for this method performs the
+     * operations that need to occur when an item is selected (or deselected).
      */
     public void itemStateChanged(ItemEvent e) {
         Object source = e.getSource();

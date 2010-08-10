@@ -59,19 +59,17 @@
 package triana.types;
 
 /**
- * Getter and Setter interface for the sequence number. All TrianaTypes can be
- * part of an ordered sequence of data types.
+ * Getter and Setter interface for the sequence number. All TrianaTypes can be part of an ordered sequence of data
+ * types.
  *
- * @author      Matthew Shields
- * @created     Aug 21, 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
  */
 public interface SequenceInterface {
 
     /**
-     * @return the sequence number of this data type in the set. The default
-     * value of -1 infers that this data set is not part of a sequence.
+     * @return the sequence number of this data type in the set. The default value of -1 infers that this data set is
+     *         not part of a sequence.
      */
     int getSequenceNumber();
 

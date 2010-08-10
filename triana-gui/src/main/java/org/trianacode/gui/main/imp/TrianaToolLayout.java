@@ -59,29 +59,20 @@
 
 package org.trianacode.gui.main.imp;
 
-import org.trianacode.gui.main.NodeComponent;
-
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The layout for a triana tool. This places the input/output nodes and plus/
- * minus signs in their correct places.
- *
- * @author Ian Wang
-<<<<<<< TrianaToolLayout.java
- * @version $Revision: 4048 $
-=======
- * @version $Revision: 4048 $
->>>>>>> 1.2.4.1
- * @created
-<<<<<<< TrianaToolLayout.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-=======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
->>>>>>> 1.2.4.1
+import org.trianacode.gui.main.NodeComponent;
 
+/**
+ * The layout for a triana tool. This places the input/output nodes and plus/ minus signs in their correct places.
+ *
+ * @author Ian Wang <<<<<<< TrianaToolLayout.java
+ * @version $Revision: 4048 $ >>>>>>> 1.2.4.1
  */
 
 public class TrianaToolLayout implements LayoutManager {
@@ -109,14 +100,12 @@ public class TrianaToolLayout implements LayoutManager {
     public static double NODE_BORDER_FACTOR = 1.5;
 
     /**
-     * the default distance above/below the main component relative to the node
-     * space
+     * the default distance above/below the main component relative to the node space
      */
     public static double MAIN_TOP_BORDER_FACTOR = 2.0;
 
     /**
-     * the default distance above/below the main component relative to the node
-     * space
+     * the default distance above/below the main component relative to the node space
      */
     public static double MAIN_SIDE_BORDER_FACTOR = 2.0;
 
@@ -172,48 +161,50 @@ public class TrianaToolLayout implements LayoutManager {
 
 
     /**
-     * If the layout manager uses a per-component string,
-     * adds the component <code>comp</code> to the layout,
-     * associating it
-     * with the string specified by <code>name</code>.
+     * If the layout manager uses a per-component string, adds the component <code>comp</code> to the layout,
+     * associating it with the string specified by <code>name</code>.
      *
      * @param name the string to be associated with the component
      * @param comp the component to be added
      */
     public void addLayoutComponent(String name, Component comp) {
-        if (name == null)
+        if (name == null) {
             return;
+        }
 
         removeLayoutComponent(comp);
 
-        if (name.equals(MAIN))
+        if (name.equals(MAIN)) {
             main = comp;
-        else if (name.equals(TOP))
+        } else if (name.equals(TOP)) {
             topcomps.add(comp);
-        else if (name.startsWith(TOP))
+        } else if (name.startsWith(TOP)) {
             topcomps.add(Integer.parseInt(name.substring(3)), comp);
-        else if (name.equals(BOTTOM))
+        } else if (name.equals(BOTTOM)) {
             bottomcomps.add(comp);
-        else if (name.startsWith(BOTTOM))
+        } else if (name.startsWith(BOTTOM)) {
             bottomcomps.add(Integer.parseInt(name.substring(3)), comp);
-        else if (name.equals(INPUT_NODE)) {
-            if (!(comp instanceof NodeComponent))
+        } else if (name.equals(INPUT_NODE)) {
+            if (!(comp instanceof NodeComponent)) {
                 throw (new RuntimeException("Illegal add: Component not instance of NodeComponent"));
+            }
 
             inputnodes.add(comp);
         } else if (name.equals(OUTPUT_NODE)) {
-            if (!(comp instanceof NodeComponent))
+            if (!(comp instanceof NodeComponent)) {
                 throw (new RuntimeException("Illegal add: Component not instance of NodeComponent"));
+            }
 
             outputnodes.add(comp);
-        } else if (name.equals(ADD_INPUT))
+        } else if (name.equals(ADD_INPUT)) {
             addinput = comp;
-        else if (name.equals(ADD_OUTPUT))
+        } else if (name.equals(ADD_OUTPUT)) {
             addoutput = comp;
-        else if (name.equals(REMOVE_INPUT))
+        } else if (name.equals(REMOVE_INPUT)) {
             removeinput = comp;
-        else if (name.equals(REMOVE_OUTPUT))
+        } else if (name.equals(REMOVE_OUTPUT)) {
             removeoutput = comp;
+        }
     }
 
     /**
@@ -222,8 +213,9 @@ public class TrianaToolLayout implements LayoutManager {
      * @param comp the component to be removed
      */
     public void removeLayoutComponent(Component comp) {
-        if (comp == main)
+        if (comp == main) {
             main = null;
+        }
 
         topcomps.remove(comp);
         bottomcomps.remove(comp);
@@ -231,23 +223,26 @@ public class TrianaToolLayout implements LayoutManager {
         inputnodes.remove(comp);
         outputnodes.remove(comp);
 
-        if (comp == addinput)
+        if (comp == addinput) {
             addinput = null;
+        }
 
-        if (comp == addoutput)
+        if (comp == addoutput) {
             addoutput = null;
+        }
 
-        if (comp == removeinput)
+        if (comp == removeinput) {
             removeinput = null;
+        }
 
-        if (comp == removeoutput)
+        if (comp == removeoutput) {
             removeoutput = null;
+        }
     }
 
 
     /**
-     * Calculates the minimum size dimensions for the specified
-     * container, given the components it contains.
+     * Calculates the minimum size dimensions for the specified container, given the components it contains.
      *
      * @param parent the component to be laid out
      * @see #preferredLayoutSize
@@ -259,7 +254,8 @@ public class TrianaToolLayout implements LayoutManager {
         Dimension inputsize = getMinimumNodeDimensions(inputnodes);
         Dimension outputsize = getMinimumNodeDimensions(outputnodes);
 
-        int width = (int) Math.max(inputsize.width + mainsize.width + outputsize.width + (mainsideborder * 2), Math.max(topsize.width, bottomsize.width) + (ATTACHMENT_BORDER * 2));
+        int width = (int) Math.max(inputsize.width + mainsize.width + outputsize.width + (mainsideborder * 2),
+                Math.max(topsize.width, bottomsize.width) + (ATTACHMENT_BORDER * 2));
         int height = (int) Math.max(mainsize.height + (2 * maintopborder),
                 Math.max(inputsize.height + ((inputnodes.size() - 1) * nodespace) + (nodeborder * 2),
                         outputsize.height + ((outputnodes.size() - 1) * nodespace) + (nodeborder * 2))) +
@@ -272,10 +268,11 @@ public class TrianaToolLayout implements LayoutManager {
      * @return the minimum height to the main component
      */
     private Dimension getMinimumMainSize() {
-        if (main != null)
+        if (main != null) {
             return main.getMinimumSize();
-        else
+        } else {
             return new Dimension(0, 0);
+        }
     }
 
     /**
@@ -310,8 +307,9 @@ public class TrianaToolLayout implements LayoutManager {
 
             height += compsize.height;
 
-            if (compsize.width > width)
+            if (compsize.width > width) {
                 width = compsize.width;
+            }
         }
 
         return new Dimension(width, height);
@@ -319,8 +317,7 @@ public class TrianaToolLayout implements LayoutManager {
 
 
     /**
-     * Calculates the preferred size dimensions for the specified
-     * container, given the components it contains.
+     * Calculates the preferred size dimensions for the specified container, given the components it contains.
      *
      * @param parent the container to be laid out
      * @see #minimumLayoutSize
@@ -332,7 +329,8 @@ public class TrianaToolLayout implements LayoutManager {
         Dimension inputsize = getPreferredNodeDimensions(inputnodes);
         Dimension outputsize = getPreferredNodeDimensions(outputnodes);
 
-        int width = (int) Math.max(inputsize.width + mainsize.width + outputsize.width + (mainsideborder * 2), Math.max(topsize.width, bottomsize.width) + (ATTACHMENT_BORDER * 2));
+        int width = (int) Math.max(inputsize.width + mainsize.width + outputsize.width + (mainsideborder * 2),
+                Math.max(topsize.width, bottomsize.width) + (ATTACHMENT_BORDER * 2));
         int height = (int) Math.max(mainsize.height + (2 * maintopborder),
                 Math.max(inputsize.height + ((inputnodes.size() - 1) * nodespace) + (nodeborder * 2),
                         outputsize.height + ((outputnodes.size() - 1) * nodespace) + (nodeborder * 2))) +
@@ -345,10 +343,11 @@ public class TrianaToolLayout implements LayoutManager {
      * @return the minimum height to the main component
      */
     private Dimension getPreferredMainSize() {
-        if (main != null)
+        if (main != null) {
             return main.getPreferredSize();
-        else
+        } else {
             return new Dimension(0, 0);
+        }
     }
 
     /**
@@ -384,8 +383,9 @@ public class TrianaToolLayout implements LayoutManager {
 
             height += compsize.height;
 
-            if (compsize.width > width)
+            if (compsize.width > width) {
                 width = compsize.width;
+            }
         }
 
         return new Dimension(width, height);
@@ -440,8 +440,9 @@ public class TrianaToolLayout implements LayoutManager {
 
             nodetop += compsize.height + nodespace;
 
-            if (compsize.width > nodeleftborder)
+            if (compsize.width > nodeleftborder) {
                 nodeleftborder = compsize.width;
+            }
         }
 
         comps = (Component[]) outputnodes.toArray(new Component[outputnodes.size()]);
@@ -456,8 +457,9 @@ public class TrianaToolLayout implements LayoutManager {
 
             nodetop += compsize.height + nodespace;
 
-            if (compsize.width > noderightborder)
+            if (compsize.width > noderightborder) {
                 noderightborder = compsize.width;
+            }
         }
 
         int wceil = (int) Math.ceil(wfactor) * 2;
@@ -471,7 +473,8 @@ public class TrianaToolLayout implements LayoutManager {
 
         if (addoutput != null) {
             compsize = getSize(addoutput, wfactor, hfactor);
-            addoutput.setLocation(parentsize.width - noderightborder - wceil - compsize.width, bottomtop - hceil - compsize.height);
+            addoutput.setLocation(parentsize.width - noderightborder - wceil - compsize.width,
+                    bottomtop - hceil - compsize.height);
             addoutput.setSize(compsize);
         }
 
@@ -489,15 +492,15 @@ public class TrianaToolLayout implements LayoutManager {
 
         if (main != null) {
             compsize = getSize(main, wfactor, hfactor);
-            main.setLocation(((parentsize.width + nodeleftborder - noderightborder) / 2) - (compsize.width / 2), toptop + ((bottomtop - toptop) / 2) - (compsize.height / 2));
+            main.setLocation(((parentsize.width + nodeleftborder - noderightborder) / 2) - (compsize.width / 2),
+                    toptop + ((bottomtop - toptop) / 2) - (compsize.height / 2));
             main.setSize(compsize);
         }
     }
 
 
     /**
-     * @return the size for the specified componenta taking into account the
-     *         hfactor and the wfactor
+     * @return the size for the specified componenta taking into account the hfactor and the wfactor
      */
     private Dimension getSize(Component[] comps, double nodespace, double wfactor, double hfactor) {
         Dimension size;
@@ -508,8 +511,9 @@ public class TrianaToolLayout implements LayoutManager {
             size = comps[count].getPreferredSize();
             size = new Dimension((int) Math.ceil(size.width * wfactor), (int) Math.ceil(size.height * hfactor));
 
-            if (size.width > width)
+            if (size.width > width) {
                 width = size.width;
+            }
 
             height += size.height;
         }
@@ -518,8 +522,7 @@ public class TrianaToolLayout implements LayoutManager {
     }
 
     /**
-     * @return the size for the specified component taking into account the
-     *         hfactor and the wfactor
+     * @return the size for the specified component taking into account the hfactor and the wfactor
      */
     private Dimension getSize(Component comp, double wfactor, double hfactor) {
         Dimension size = comp.getPreferredSize();

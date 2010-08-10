@@ -62,10 +62,8 @@ package org.trianacode.taskgraph.event;
 /**
  * An interface implemented by classes that want to receive taskgraph events.
  *
- * @author      Ian Wang
- * @created     17th May 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public interface TaskGraphListener {
 
@@ -75,9 +73,8 @@ public interface TaskGraphListener {
     public void taskCreated(TaskGraphTaskEvent event);
 
     /**
-     * Called when a task is removed from a taskgraph. Note that this method
-     * is called when tasks are removed from a taskgraph due to being grouped
-     * (they are placed in the new groups taskgraph).
+     * Called when a task is removed from a taskgraph. Note that this method is called when tasks are removed from a
+     * taskgraph due to being grouped (they are placed in the new groups taskgraph).
      */
     public void taskRemoved(TaskGraphTaskEvent event);
 

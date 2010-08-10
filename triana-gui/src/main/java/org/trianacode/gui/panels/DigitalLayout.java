@@ -59,18 +59,21 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.LayoutManager2;
 import java.util.ArrayList;
 
 
 /**
- * this layout manager gets the size of the container parent and sets out digits
- * according to that, as opposed to getting the preferred size of the components
- * within the container. So you should set the preferred size of the container
- * if using this class, otherwise it defaults to digit size of width 20, height 40.
- * Allowed constraints are DIGIT and SEPARATOR. By default a separator is a quarter the
- * width of a digit. Use the constructor that takes a float to change this.
- * If no constraints are specified, then DIGIT is used.
+ * this layout manager gets the size of the container parent and sets out digits according to that, as opposed to
+ * getting the preferred size of the components within the container. So you should set the preferred size of the
+ * container if using this class, otherwise it defaults to digit size of width 20, height 40. Allowed constraints are
+ * DIGIT and SEPARATOR. By default a separator is a quarter the width of a digit. Use the constructor that takes a float
+ * to change this. If no constraints are specified, then DIGIT is used.
  */
 public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Serializable {
     int hgap;
@@ -97,17 +100,17 @@ public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Ser
     }
 
     /**
-     *
      * @param hgap
      * @param vgap
-     * @param separatorFraction a float specifying the fraction of the
-     * width of a digit that the separators should occupy. The default is .25
+     * @param separatorFraction a float specifying the fraction of the width of a digit that the separators should
+     *                          occupy. The default is .25
      */
     public DigitalLayout(int hgap, int vgap, float separatorFraction) {
         this.hgap = hgap;
         this.vgap = vgap;
         this.sepFraction = separatorFraction;
     }
+
     public int getHgap() {
         return hgap;
     }
@@ -125,11 +128,11 @@ public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Ser
     }
 
     public void addLayoutComponent(String name, Component comp) {
-        if(name != DIGIT || name != SEPARATOR) {
+        if (name != DIGIT || name != SEPARATOR) {
             throw new IllegalArgumentException("constraint must be either digit or separator");
         }
         comps.add(new Holder(comp, name));
-        if(name == DIGIT) {
+        if (name == DIGIT) {
             digitCount++;
         } else {
             sepCount++;
@@ -140,9 +143,8 @@ public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Ser
     }
 
 
-
     public Dimension preferredLayoutSize(Container parent) {
-        if(!triedParentPrefSize) {
+        if (!triedParentPrefSize) {
             triedParentPrefSize = true;
             Dimension dim = parent.getPreferredSize();
             return dim;
@@ -152,7 +154,7 @@ public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Ser
     }
 
     public Dimension minimumLayoutSize(Container parent) {
-        if(!triedParentMinSize) {
+        if (!triedParentMinSize) {
             triedParentMinSize = true;
             Dimension dim = parent.getMinimumSize();
             return dim;
@@ -164,7 +166,7 @@ public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Ser
     private Dimension defaultDimension(Container parent) {
         Insets insets = parent.getInsets();
         int digitsWidth = (defaultWidth + (hgap * 2)) * digitCount;
-        int sepsWidth = ((int)(defaultWidth * sepFraction) + (hgap * 2)) * digitCount;
+        int sepsWidth = ((int) (defaultWidth * sepFraction) + (hgap * 2)) * digitCount;
         int totalWidth = insets.left + insets.right + digitsWidth + sepsWidth;
         int totalHeight = insets.top + insets.bottom + defaultHeight + (vgap * 2);
         return new Dimension(totalWidth, totalHeight);
@@ -178,20 +180,20 @@ public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Ser
             int pwidth = d.width - insets.left - insets.right;
             int pheight = d.height - insets.top - insets.bottom;
 
-            if(digitCount == 0) {
+            if (digitCount == 0) {
                 throw new IllegalArgumentException("at least one digit must be added to DigitalLayout.");
             }
             int digitWidth = (pwidth - ((hgap * 2)) * (digitCount + sepCount)) / digitCount;
             int digitHeight = pheight - (vgap * 2);
             int sepWidth = 0;
-            for(int i = 0; i < sepCount; i++) {
-                sepWidth = (int)(digitWidth * sepFraction);
+            for (int i = 0; i < sepCount; i++) {
+                sepWidth = (int) (digitWidth * sepFraction);
                 digitWidth -= sepWidth / digitCount;
             }
             int currX = insets.left + hgap;
             int currY = insets.top + vgap;
-            for(int i = 0; i < comps.size(); i++) {
-                Holder entry = (Holder)comps.get(i);
+            for (int i = 0; i < comps.size(); i++) {
+                Holder entry = (Holder) comps.get(i);
                 Component comp = entry.getComp();
                 String tag = entry.getTag();
                 if (tag == SEPARATOR) {
@@ -206,9 +208,9 @@ public class DigitalLayout implements LayoutManager, LayoutManager2, java.io.Ser
     }
 
     public void addLayoutComponent(Component comp, Object constraints) {
-        if(constraints == DIGIT || constraints == SEPARATOR) {
-            comps.add(new Holder(comp, (String)constraints));
-            if(constraints == DIGIT) {
+        if (constraints == DIGIT || constraints == SEPARATOR) {
+            comps.add(new Holder(comp, (String) constraints));
+            if (constraints == DIGIT) {
                 digitCount++;
             } else {
                 sepCount++;

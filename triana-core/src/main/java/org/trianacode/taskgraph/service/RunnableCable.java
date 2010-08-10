@@ -70,22 +70,20 @@ import org.trianacode.taskgraph.interceptor.InterceptorChain;
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 21st February 2005
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
 public class RunnableCable extends DataCable {
 
     /**
-     * A local cable must be created by giving a reference to a RunnableInstance
-     * object so that when we use non-blocking sending of data we can notify
-     * the RunnableInstance object when each packet has finished
+     * A local cable must be created by giving a reference to a RunnableInstance object so that when we use non-blocking
+     * sending of data we can notify the RunnableInstance object when each packet has finished
      */
     public void connect(Node sendnode, Node recnode) throws CableException {
         boolean can = InterceptorChain.canConnect(sendnode, recnode);
         if (!can) {
-            if (!TypeChecking.isCompatibility(sendnode, recnode))
+            if (!TypeChecking.isCompatibility(sendnode, recnode)) {
                 throw (new IncompatibleTypeException("Incompatible types"));
+            }
         }
         super.connect(sendnode, recnode);
     }

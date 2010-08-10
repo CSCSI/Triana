@@ -58,19 +58,18 @@
  */
 package org.trianacode.gui.hci;
 
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * The Triana Unit toolbar, placed at the top of the Main application window.
- * This is implemented as a tear-off window.
+ * The Triana Unit toolbar, placed at the top of the Main application window. This is implemented as a tear-off window.
  *
- * @version $Revision: 4048 $
  * @author Ian Taylor
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class TrianaUnitToolBar extends AbstractToolBar implements Actions {
 
@@ -89,7 +88,7 @@ public class TrianaUnitToolBar extends AbstractToolBar implements Actions {
 
 
     /**
-     *  Description of the Field
+     * Description of the Field
      */
     JComboBox modeBox = null;
 

@@ -58,24 +58,34 @@
  */
 package org.trianacode.gui.help;
 
-import org.trianacode.gui.Display;
-import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import org.trianacode.gui.Display;
+import org.trianacode.taskgraph.util.FileUtils;
+import org.trianacode.util.Env;
+
 
 /**
  * What it says on the tin... About Dialog 'nuff said.
  *
- * @author      unknown probably Melanie
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author unknown probably Melanie
+ * @version $Revision: 4048 $
  */
 public class AboutDialog extends JDialog {
     protected JPanel image = null;
@@ -143,7 +153,7 @@ public class AboutDialog extends JDialog {
         Dimension frameSize = getSize();
 
         setLocation((screenSize.width - frameSize.width) / 2,
-                    (screenSize.height - frameSize.height) / 2);
+                (screenSize.height - frameSize.height) / 2);
     }
 
     private class ViewButtonAction implements ActionListener {
@@ -152,8 +162,7 @@ public class AboutDialog extends JDialog {
                 cardLayout.show(dataPane, "license");
                 viewButton.setText("About");
                 setTitle("Triana Software license");
-            }
-            else {
+            } else {
                 cardLayout.show(dataPane, "about");
                 viewButton.setText("View license");
                 setTitle("About Triana");

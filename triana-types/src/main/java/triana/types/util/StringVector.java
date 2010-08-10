@@ -60,23 +60,24 @@ package triana.types.util;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 /**
- * StringVector is a class that extends ArrayList in a convenient way
- * to  deal only with strings. It provides
- * has shortcut names for the methods $elementAt^ (=$at^), $firstElement^
- * (=$first^) and $lastElement^ (=$last^).
+ * StringVector is a class that extends ArrayList in a convenient way to  deal only with strings. It provides has
+ * shortcut names for the methods $elementAt^ (=$at^), $firstElement^ (=$first^) and $lastElement^ (=$last^).
  *
- * @author      Ian Taylor
- * @created     25 May 2000
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Taylor
+ * @version $Revision: 4048 $
  */
 public class StringVector extends ArrayList {
 
     /**
      * Constructs an empty StringVector with the specified storage capacity.
+     *
      * @param initialCapacity the initial storage capacity of the vector
      */
     public StringVector(int initialCapacity) {
@@ -84,8 +85,8 @@ public class StringVector extends ArrayList {
     }
 
     /**
-     * Constructs a StringVector from a String by splitting the String by
-     * new line and adding them one by one to the StringVector.
+     * Constructs a StringVector from a String by splitting the String by new line and adding them one by one to the
+     * StringVector.
      */
     public StringVector(String str) throws Exception {
         this(10);
@@ -106,9 +107,9 @@ public class StringVector extends ArrayList {
 
     /**
      * Returns the String element at the specified index.
+     *
      * @param index the index of the desired element
-     * @exception ArrayIndexOutOfBoundsException If an invalid
-     * index was given.
+     * @throws ArrayIndexOutOfBoundsException If an invalid index was given.
      */
     public final String at(int index) {
         Object o = super.get(index);
@@ -117,7 +118,8 @@ public class StringVector extends ArrayList {
 
     /**
      * Returns the first element of the sequence.
-     * @exception NoSuchElementException If the sequence is empty.
+     *
+     * @throws NoSuchElementException If the sequence is empty.
      */
     public final String first() {
         return (String) super.get(0);
@@ -125,72 +127,73 @@ public class StringVector extends ArrayList {
 
     /**
      * Returns the last element of the sequence.
-     * @exception NoSuchElementException If the sequence is empty.
+     *
+     * @throws NoSuchElementException If the sequence is empty.
      */
     public final Object last() {
         return (String) super.get(size() - 1);
     }
 
     /**
-     * @return a string representation of this vector in the form :- <br>
-     * el1 el2 el3 el4 ..... el(size-1) </p>
+     * @return a string representation of this vector in the form :- <br> el1 el2 el3 el4 ..... el(size-1) </p>
      */
     public final String toAString() {
         String s = "";
-        for (int i = 0; i < size(); ++i)
+        for (int i = 0; i < size(); ++i) {
             s = s + (String) get(i) + " ";
+        }
         s = s + "\n";
         return s;
     }
 
     /**
-     * @return a string representation of this vector in the form :- <br>
-     * el1 <br> el2 <br> el3 <br> el4 <br> ..... el(size-1)  </p>
+     * @return a string representation of this vector in the form :- <br> el1 <br> el2 <br> el3 <br> el4 <br> .....
+     *         el(size-1)  </p>
      */
     public final String toNewLineString() {
         String s = "";
-        for (int i = 0; i < size(); ++i)
+        for (int i = 0; i < size(); ++i) {
             s = s + (String) get(i) + "\n";
+        }
         return s;
     }
 
     /**
-     * @return a double array representation of this vector. Only
-     * useful when you know that the StringVector contains a
-     * a list of Strings which you know are all doubles. </p>
-     * el1 el2 el3 el4 ..... el(size-1) \n </p>
+     * @return a double array representation of this vector. Only useful when you know that the StringVector contains a
+     *         a list of Strings which you know are all doubles. </p> el1 el2 el3 el4 ..... el(size-1) \n </p>
      */
     public final double[] toDoubles() {
         double[] d = new double[size()];
 
-        for (int i = 0; i < size(); ++i)
+        for (int i = 0; i < size(); ++i) {
             d[i] = Str.strToDouble(((String) get(i)).trim());
+        }
 
         return d;
     }
 
     /**
-     * @return an int array representation of this vector. Only
-     * useful when you know that the StringVector contains a
-     * a list of Strings which you know are all integers. </p>
-     * el1 el2 el3 el4 ..... el(size-1) \n </p>
+     * @return an int array representation of this vector. Only useful when you know that the StringVector contains a a
+     *         list of Strings which you know are all integers. </p> el1 el2 el3 el4 ..... el(size-1) \n </p>
      */
     public final int[] toInts() {
         int[] d = new int[size()];
 
-        for (int i = 0; i < size(); ++i)
+        for (int i = 0; i < size(); ++i) {
             d[i] = Str.strToInt(((String) get(i)).trim());
+        }
 
         return d;
     }
 
     /**
-     * @return a StringVector that is a proper copy (not just a
-     * reference) of the current StringVector.
+     * @return a StringVector that is a proper copy (not just a reference) of the current StringVector.
      */
     public StringVector copy() {
         StringVector sv = new StringVector(this.size());
-        for (int j = 0; j < this.size(); j++) sv.add(Str.copy((String) this.get(j)));
+        for (int j = 0; j < this.size(); j++) {
+            sv.add(Str.copy((String) this.get(j)));
+        }
         return sv;
     }
 
@@ -214,14 +217,15 @@ public class StringVector extends ArrayList {
     }
 
     /**
-     * Adds the elements of the given StringVector to the end of the
-     * present one, by reference.
+     * Adds the elements of the given StringVector to the end of the present one, by reference.
      *
      * @param s The StringVector to be appended
      */
     public void append(StringVector s) {
         ensureCapacity(size() + s.size());
-        for (int i = 0; i < s.size(); i++) add(s.at(i));
+        for (int i = 0; i < s.size(); i++) {
+            add(s.at(i));
+        }
     }
 
 // For backward compatibility ONLY, try to update classes
@@ -243,16 +247,19 @@ public class StringVector extends ArrayList {
     }
 
     public int indexOf(Object el, int s) {
-        for (int i = s; s < size(); ++i)
-            if (at(i).indexOf((String) el) != -1)
+        for (int i = s; s < size(); ++i) {
+            if (at(i).indexOf((String) el) != -1) {
                 return i;
+            }
+        }
 
         return -1;
     }
 
     public void removeAllElements() {
-        if (size() == 0)
+        if (size() == 0) {
             return;
+        }
         removeRange(0, size() - 1);
     }
 }

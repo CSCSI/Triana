@@ -58,43 +58,39 @@
  */
 package org.trianacode.taskgraph;
 
-import org.trianacode.taskgraph.tool.Tool;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.trianacode.taskgraph.tool.Tool;
+
 /**
- * A set of utils for manipulating the location of tasks (as stored in their
- * GUI_XPOS and DEPRECATED_GUI_YPOS parameters). Note that the methods here assume
- * that visually all the tasks are zero width and height! The actual width and
- * heigth of tasks should be factored in by the graphical engine.
+ * A set of utils for manipulating the location of tasks (as stored in their GUI_XPOS and DEPRECATED_GUI_YPOS
+ * parameters). Note that the methods here assume that visually all the tasks are zero width and height! The actual
+ * width and heigth of tasks should be factored in by the graphical engine.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 6th Feb 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class TaskLayoutUtils {
 
     /**
-     * @return the position of the specfied task in the triana co-ordinate
-     *         system
+     * @return the position of the specfied task in the triana co-ordinate system
      */
     public static TPoint getPosition(Tool task) {
-        if (task.isParameterName(Task.GUI_X) && task.isParameterName(Task.GUI_Y))
+        if (task.isParameterName(Task.GUI_X) && task.isParameterName(Task.GUI_Y)) {
             return new TPoint(Double.parseDouble((String) task.getParameter(Task.GUI_X)),
                     Double.parseDouble((String) task.getParameter(Task.GUI_Y)));
-        else if (task.isParameterName(Task.DEPRECATED_GUI_XPOS) && task.isParameterName(Task.DEPRECATED_GUI_YPOS)) {
+        } else if (task.isParameterName(Task.DEPRECATED_GUI_XPOS) && task.isParameterName(Task.DEPRECATED_GUI_YPOS)) {
             updateDeprecatedPosition(task);
             return getPosition(task);
-        } else
+        } else {
             return new TPoint();
+        }
     }
 
 
     /**
-     * @return the position of the specfied task on the triana workspace using
-     *         the specified task layout details
+     * @return the position of the specfied task on the triana workspace using the specified task layout details
      */
     public static TPoint getPosition(Tool task, TaskLayoutDetails layout) {
         if (task.isParameterName(Task.GUI_X) && task.isParameterName(Task.GUI_Y)) {
@@ -107,8 +103,9 @@ public class TaskLayoutUtils {
         } else if (task.isParameterName(Task.DEPRECATED_GUI_XPOS) && task.isParameterName(Task.DEPRECATED_GUI_YPOS)) {
             updateDeprecatedPosition(task);
             return getPosition(task, layout);
-        } else
+        } else {
             return new TPoint();
+        }
     }
 
     private static void updateDeprecatedPosition(Tool task) {
@@ -119,9 +116,9 @@ public class TaskLayoutUtils {
         }
     }
 
-        /**
-        * Sets the position of the specified task using Triana's co-ordinate system.
-        */
+    /**
+     * Sets the position of the specified task using Triana's co-ordinate system.
+     */
     public static void setPosition(Task task, TPoint pos) {
         task.setParameterType(Task.GUI_X, Tool.GUI);
         task.setParameterType(Task.GUI_Y, Tool.GUI);
@@ -131,8 +128,7 @@ public class TaskLayoutUtils {
     }
 
     /**
-     * Sets the position of the specified task on the triana workspace using
-     * the specified task layout details.
+     * Sets the position of the specified task on the triana workspace using the specified task layout details.
      */
     public static void setPosition(Task task, TPoint pos, TaskLayoutDetails details) {
         TPoint point = new TPoint(((pos.getX() - details.getLeftBorder())) / details.getTaskDimensions().getWidth(),
@@ -153,8 +149,7 @@ public class TaskLayoutUtils {
     }
 
     /**
-     * Sets the position of the specified task on the triana workspace using
-     * the specified task layout details.
+     * Sets the position of the specified task on the triana workspace using the specified task layout details.
      */
     public static void setPosition(Tool tool, TPoint pos, TaskLayoutDetails details) {
         TPoint point = new TPoint(((pos.getX() - details.getLeftBorder())) / details.getTaskDimensions().getWidth(),
@@ -185,7 +180,7 @@ public class TaskLayoutUtils {
         }
     }
 
-        /**
+    /**
      * Translates the specified tasks by the specified x and y distances
      */
     public static void translate(Task[] tasks, int xdist, int ydist, TaskLayoutDetails details) {
@@ -201,8 +196,7 @@ public class TaskLayoutUtils {
 
 
     /**
-     * Translates the specified tasks so that the top lefthand corner is at
-     * the origin (x=0, y=0).
+     * Translates the specified tasks so that the top lefthand corner is at the origin (x=0, y=0).
      */
     public static void translateToOrigin(Task[] tasks) {
         TRectangle grouppos = getBoundingBox(tasks);
@@ -215,8 +209,7 @@ public class TaskLayoutUtils {
     }
 
     /**
-     * Translates the specified tasks so that the top lefthand corner is at
-     * the specified point
+     * Translates the specified tasks so that the top lefthand corner is at the specified point
      */
     public static void translateTo(Task[] tasks, TPoint point) {
         TRectangle grouppos = getBoundingBox(tasks);
@@ -224,7 +217,8 @@ public class TaskLayoutUtils {
 
         for (int count = 0; count < tasks.length; count++) {
             taskpos = getPosition(tasks[count]);
-            setPosition(tasks[count], new TPoint(taskpos.getX() - grouppos.getX() + point.getX(), taskpos.getY() - grouppos.getY() + point.getY()));
+            setPosition(tasks[count], new TPoint(taskpos.getX() - grouppos.getX() + point.getX(),
+                    taskpos.getY() - grouppos.getY() + point.getY()));
         }
     }
 
@@ -243,24 +237,29 @@ public class TaskLayoutUtils {
         for (int count = 0; count < tasks.length; count++) {
             pos = getPosition(tasks[count]);
 
-            if (pos.getX() < minx)
+            if (pos.getX() < minx) {
                 minx = pos.getX();
+            }
 
-            if (pos.getY() < miny)
+            if (pos.getY() < miny) {
                 miny = pos.getY();
+            }
 
-            if (pos.getX() > maxx)
+            if (pos.getX() > maxx) {
                 maxx = pos.getX();
+            }
 
-            if (pos.getY() > maxy)
+            if (pos.getY() > maxy) {
                 maxy = pos.getY();
+            }
         }
 
         if ((minx != Double.POSITIVE_INFINITY) && (miny != Double.POSITIVE_INFINITY) &&
-                (maxx != Double.NEGATIVE_INFINITY) && (maxy != Double.NEGATIVE_INFINITY))
+                (maxx != Double.NEGATIVE_INFINITY) && (maxy != Double.NEGATIVE_INFINITY)) {
             return new TRectangle(minx, miny, maxx - minx + 1, maxy - miny + 1);
-        else               
+        } else {
             return new TRectangle();
+        }
     }
 
     /**
@@ -273,15 +272,16 @@ public class TaskLayoutUtils {
     /**
      * Replaces a current task with a new tool.
      * <p/>
-     * Note that newtool is a task with no parent it is automatically disposed
-     * after the replacement task has been created.
+     * Note that newtool is a task with no parent it is automatically disposed after the replacement task has been
+     * created.
      *
      * @param curtask      the task being replaced
      * @param newtool      the tool used to replace the existing task
      * @param rename       true if the new task should take the same name as the existing task
      * @param preserveinst true if the new task should preseve the instance id of newtool
      */
-    public static Task replaceTask(Task curtask, Tool newtool, boolean rename, boolean preserveinst) throws TaskGraphException {
+    public static Task replaceTask(Task curtask, Tool newtool, boolean rename, boolean preserveinst)
+            throws TaskGraphException {
         Task t = TaskGraphUtils.replaceTask(curtask, newtool, rename, preserveinst);
         TPoint pos = getPosition(curtask);
         setPosition(newtool, pos);
@@ -302,8 +302,9 @@ public class TaskLayoutUtils {
                 except.printStackTrace();
                 taskgraph.removeControlTask();
             }
-        } else
+        } else {
             resolveGroupNodesNoControlTask(taskgraph);
+        }
     }
 
     /**
@@ -318,12 +319,15 @@ public class TaskLayoutUtils {
         for (int count = 0; count < tasks.length; count++) {
             nodes = tasks[count].getInputNodes();
 
-            for (int nodecount = 0; nodecount < nodes.length; nodecount++)
-                if ((!nodes[nodecount].isConnected()) && (nodes[nodecount].getChildNode() == null))
+            for (int nodecount = 0; nodecount < nodes.length; nodecount++) {
+                if ((!nodes[nodecount].isConnected()) && (nodes[nodecount].getChildNode() == null)) {
                     addToNodeList(nodelist, nodes[nodecount]);
+                }
+            }
 
-            for (Iterator iter = nodelist.iterator(); iter.hasNext();)
+            for (Iterator iter = nodelist.iterator(); iter.hasNext();) {
                 grouptask.addDataInputNode((Node) iter.next());
+            }
         }
 
         nodelist.clear();
@@ -331,18 +335,20 @@ public class TaskLayoutUtils {
         for (int count = 0; count < tasks.length; count++) {
             nodes = tasks[count].getOutputNodes();
 
-            for (int nodecount = 0; nodecount < nodes.length; nodecount++)
-                if ((!nodes[nodecount].isConnected()) && (nodes[nodecount].getChildNode() == null))
+            for (int nodecount = 0; nodecount < nodes.length; nodecount++) {
+                if ((!nodes[nodecount].isConnected()) && (nodes[nodecount].getChildNode() == null)) {
                     addToNodeList(nodelist, nodes[nodecount]);
+                }
+            }
 
-            for (Iterator iter = nodelist.iterator(); iter.hasNext();)
+            for (Iterator iter = nodelist.iterator(); iter.hasNext();) {
                 grouptask.addDataOutputNode((Node) iter.next());
+            }
         }
     }
 
     /**
-     * Adds the specified node to the nodelist maintaining the nodelist in
-     * ascenting yposition order
+     * Adds the specified node to the nodelist maintaining the nodelist in ascenting yposition order
      */
     private static void addToNodeList(ArrayList nodelist, Node newnode) {
         boolean insert = false;
@@ -357,15 +363,15 @@ public class TaskLayoutUtils {
             if (newpoint.getY() < curpoint.getY()) {
                 nodelist.add(count, newnode);
                 insert = true;
-            } else
-            if ((newpoint.getY() == curpoint.getY()) && (newnode.getAbsoluteNodeIndex() < curnode.getAbsoluteNodeIndex()))
-            {
+            } else if ((newpoint.getY() == curpoint.getY()) && (newnode.getAbsoluteNodeIndex() < curnode
+                    .getAbsoluteNodeIndex())) {
                 nodelist.add(count, newnode);
                 insert = true;
             }
         }
 
-        if (!insert)
+        if (!insert) {
             nodelist.add(newnode);
+        }
     }
 }

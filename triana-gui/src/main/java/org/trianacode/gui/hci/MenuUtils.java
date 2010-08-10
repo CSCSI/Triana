@@ -59,18 +59,19 @@
 
 package org.trianacode.gui.hci;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
 import java.util.ArrayList;
+
+import javax.swing.AbstractButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
 
 /**
  * A set of utilities for customizing menus and toolbars.
  *
- * @author      Ian Wang
- * @created     2nd July 2004
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
-
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class MenuUtils {
@@ -82,12 +83,14 @@ public class MenuUtils {
         Component[] comps = toolbar.getComponents();
 
         for (int count = 0; count < comps.length; count++) {
-            if (comps[count] instanceof AbstractButton)
-                if (style == ICON_ONLY)
+            if (comps[count] instanceof AbstractButton) {
+                if (style == ICON_ONLY) {
                     ((AbstractButton) comps[count]).setText(null);
-                else if (style == TEXT_ONLY)
+                } else if (style == TEXT_ONLY) {
                     ((AbstractButton) comps[count]).setIcon(null);
+                }
             }
+        }
     }
 
 
@@ -96,43 +99,48 @@ public class MenuUtils {
         ArrayList list = new ArrayList();
         char mne;
 
-        for (int count = 0; count < comps.length; count++)
+        for (int count = 0; count < comps.length; count++) {
             if (comps[count] instanceof JMenuItem) {
                 mne = getMnemonic(((JMenuItem) comps[count]).getText(), list);
                 ((JMenuItem) comps[count]).setMnemonic(mne);
             }
+        }
     }
 
     private static char getMnemonic(String label, ArrayList list) {
         int idx = 0;
 
-        while((idx > -1) && (list.contains(new Character(Character.toUpperCase(label.charAt(idx))))))
+        while ((idx > -1) && (list.contains(new Character(Character.toUpperCase(label.charAt(idx)))))) {
             idx = getUpperCaseIdx(idx + 1, label);
+        }
 
         if (idx > -1) {
             list.add(new Character(Character.toUpperCase(label.charAt(idx))));
             return label.charAt(idx);
-        }
-        else {
+        } else {
             idx = 0;
 
-            while((idx > -1) && (list.contains(new Character(Character.toUpperCase(label.charAt(idx))))))
+            while ((idx > -1) && (list.contains(new Character(Character.toUpperCase(label.charAt(idx)))))) {
                 idx = getLowerCaseIdx(idx + 1, label);
+            }
 
             if (idx > -1) {
                 list.add(new Character(Character.toUpperCase(label.charAt(idx))));
                 return label.charAt(idx);
-            } else
+            } else {
                 return '.';
+            }
         }
     }
 
     private static int getUpperCaseIdx(int index, String text) {
         int idx = -1;
 
-        for (int count = index; (count < text.length()) && (idx == -1); count++)
-            if (Character.isUpperCase(text.charAt(count)))
+        for (int count = index; (count < text.length()) && (idx == -1); count++) {
+            if (Character.isUpperCase(text.charAt(count))) {
                 idx = count;
+            }
+        }
 
         return idx;
     }
@@ -140,9 +148,11 @@ public class MenuUtils {
     private static int getLowerCaseIdx(int index, String text) {
         int idx = -1;
 
-        for (int count = index; (count < text.length()) && (idx == -1); count++)
-            if (Character.isLowerCase(text.charAt(count)))
+        for (int count = index; (count < text.length()) && (idx == -1); count++) {
+            if (Character.isLowerCase(text.charAt(count))) {
                 idx = count;
+            }
+        }
 
         return idx;
     }

@@ -60,19 +60,21 @@
 package org.trianacode.taskgraph.service;
 
 
-import org.trianacode.taskgraph.*;
+import java.util.ArrayList;
+
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.ParameterNode;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskFactory;
 import org.trianacode.taskgraph.clipin.ClipInBucket;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.util.ArrayList;
-
 /**
- * An abstract service task is responsible for handling the wake-ups and
- * output from a task. Sub classes for this class are only responsible for
- * implementing the invoke and flush methods.
+ * An abstract service task is responsible for handling the wake-ups and output from a task. Sub classes for this class
+ * are only responsible for implementing the invoke and flush methods.
  *
  * @author Ian Wang
- *
  */
 
 
@@ -111,12 +113,13 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
 
 
     /**
-     * Constructs an abstract service task for the specified tool. Optionally
-     * returns multi-valued results (default is one result copied to all nodes)
+     * Constructs an abstract service task for the specified tool. Optionally returns multi-valued results (default is
+     * one result copied to all nodes)
      *
      * @param multival true if return multi-valued results
      */
-    public AbstractServiceTask(boolean multival, Tool tool, TaskFactory factory, boolean preserveinst) throws TaskException {
+    public AbstractServiceTask(boolean multival, Tool tool, TaskFactory factory, boolean preserveinst)
+            throws TaskException {
         super(tool, factory, preserveinst);
         this.multival = multival;
     }
@@ -136,14 +139,14 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
     }
 
     /**
-     * @return true if input is required at every data input node, false if
-     * input only required at connected input nodes.
+     * @return true if input is required at every data input node, false if input only required at connected input
+     *         nodes.
      */
     protected abstract boolean isInputEssential();
 
     /**
-     * This method invokes the service with the specified input data. The
-     * return from this method is the output data from the task.
+     * This method invokes the service with the specified input data. The return from this method is the output data
+     * from the task.
      *
      * @param input  an array of the input data (indexed by node)
      * @param bucket clip-ins for this invoke
@@ -152,15 +155,13 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
     protected abstract Object[] invoke(Object[] input, ClipInBucket bucket) throws Exception;
 
     /**
-     * Method called before data is received, should be over-ridden with pre
-     * receive fucntionality
+     * Method called before data is received, should be over-ridden with pre receive fucntionality
      */
     protected void preReceive() {
     }
 
     /**
-     * Method called after data is sent, should be over-ridden with post
-     * send fucntionality.
+     * Method called after data is sent, should be over-ridden with post send fucntionality.
      */
     protected void postSend() {
     }
@@ -187,9 +188,8 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
     }
 
     /**
-     * @return true if multi-value output are expected. If multi-value outputs
-     *         are expected then each output value will be put on a seperate node, if
-     *         not then the single value will be copied to every output node.
+     * @return true if multi-value output are expected. If multi-value outputs are expected then each output value will
+     *         be put on a seperate node, if not then the single value will be copied to every output node.
      */
     public boolean isMultiValuedOutput() {
         return multival;
@@ -197,21 +197,22 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
 
 
     /**
-     * Tells the runnable instance (e.g. runnable task) to wake up if data has
-     * been received on all of its essential nodes. The parameter indicates the
-     * node that received data to cause this wake-up.
+     * Tells the runnable instance (e.g. runnable task) to wake up if data has been received on all of its essential
+     * nodes. The parameter indicates the node that received data to cause this wake-up.
      */
     public synchronized void wakeUp(Node node) {
-        if (node.isDataNode() || ((node instanceof ParameterNode) && node.isEssential()))
-            if (!wakeups.contains(node))
+        if (node.isDataNode() || ((node instanceof ParameterNode) && node.isEssential())) {
+            if (!wakeups.contains(node)) {
                 wakeups.add(node);
+            }
+        }
 
         wakeUp();
     }
 
     /**
-     * Tells a runnable instance (e.g. runnable task) to wake-up if data has
-     * been received on all of its essential nodes.
+     * Tells a runnable instance (e.g. runnable task) to wake-up if data has been received on all of its essential
+     * nodes.
      */
     public synchronized void wakeUp() {
         if (wakeups.size() == getRequiredInputNodeCount()) {
@@ -252,8 +253,9 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
 
                             // after aspect
 
-                            if ((retvals != null) && (retvals.length > 0))
+                            if ((retvals != null) && (retvals.length > 0)) {
                                 output(retvals, bucket);
+                            }
 
                             postSend();
 
@@ -282,19 +284,23 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
         ParameterNode[] outnodes = getParameterOutputNodes();
         Node errornode = null;
 
-        for(int count = 0; count < outnodes.length; count++)
-            if (outnodes[count].isErrorNode())
+        for (int count = 0; count < outnodes.length; count++) {
+            if (outnodes[count].isErrorNode()) {
                 errornode = outnodes[count];
+            }
+        }
 
         if (errornode != null) {
             if (errornode.isConnected() && (errornode.getCable() instanceof OutputCable)) {
-                if (clipins != null)
+                if (clipins != null) {
                     ((OutputCable) errornode.getCable()).send(new DataMessage(except, clipins.extract(errornode)));
-                else
+                } else {
                     ((OutputCable) errornode.getCable()).send(except);
+                }
             }
-        } else
+        } else {
             notifyError(except.getMessage());
+        }
     }
 
 
@@ -304,21 +310,25 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
     private int getRequiredInputNodeCount() {
         int count = 0;
 
-        if (isInputEssential())
-            count =  getDataInputNodeCount();
-        else {
+        if (isInputEssential()) {
+            count = getDataInputNodeCount();
+        } else {
             Node[] nodes = getDataInputNodes();
 
-            for (int ptr = 0; ptr < nodes.length; ptr++)
-                if (nodes[ptr].isConnected())
+            for (int ptr = 0; ptr < nodes.length; ptr++) {
+                if (nodes[ptr].isConnected()) {
                     count++;
+                }
+            }
         }
 
         ParameterNode[] paramnodes = getParameterInputNodes();
 
-        for (int ptr = 0; ptr < paramnodes.length; ptr++)
-            if (paramnodes[ptr].isEssential())
+        for (int ptr = 0; ptr < paramnodes.length; ptr++) {
+            if (paramnodes[ptr].isEssential()) {
                 count++;
+            }
+        }
 
         return count;
     }
@@ -332,8 +342,9 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
         for (int count = 0; count < getParameterInputNodeCount(); count++) {
             node = getParameterInputNode(count);
 
-            if ((node.isConnected()) && (node.getCable() instanceof InputCable))
+            if ((node.isConnected()) && (node.getCable() instanceof InputCable)) {
                 ((InputCable) node.getCable()).recv();
+            }
         }
     }
 
@@ -358,8 +369,9 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
                     }
 
                     data[count] = ((DataMessage) recdata).getData();
-                } else
+                } else {
                     data[count] = recdata;
+                }
             }
         }
 
@@ -373,10 +385,11 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
         waitSequence();
 
         try {
-            if (multival)
+            if (multival) {
                 outputMultiVal(data, clipins);
-            else if (data.length > 0)
+            } else if (data.length > 0) {
                 outputSingle(data[0], clipins);
+            }
         } catch (RuntimeException except) {
             nextSequence();
             throw (except);
@@ -405,8 +418,9 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
     private void nextSequence() {
         outthreads.remove(0);
 
-        if (!outthreads.isEmpty())
+        if (!outthreads.isEmpty()) {
             ((Thread) outthreads.get(0)).interrupt();
+        }
     }
 
 
@@ -415,10 +429,11 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
             Node node = getDataOutputNode(count);
 
             if (node.isConnected() && (node.getCable() instanceof OutputCable)) {
-                if (clipins != null)
+                if (clipins != null) {
                     ((OutputCable) node.getCable()).send(new DataMessage(data, clipins.extract(node)));
-                else
+                } else {
                     ((OutputCable) node.getCable()).send(data);
+                }
             }
         }
     }
@@ -428,17 +443,18 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
             Node node = getDataOutputNode(count);
 
             if (node.isConnected() && (node.getCable() instanceof OutputCable)) {
-                if (clipins != null)
+                if (clipins != null) {
                     ((OutputCable) node.getCable()).send(new DataMessage(data[count], clipins.extract(node)));
-                else
+                } else {
                     ((OutputCable) node.getCable()).send(data[count]);
+                }
             }
         }
     }
 
     /**
-     * Tell the data monitor that this thread monitor has completed outputting
-     * the data i.e. the data has been received by the receiving process.
+     * Tell the data monitor that this thread monitor has completed outputting the data i.e. the data has been received
+     * by the receiving process.
      */
     public void finished() {
     }

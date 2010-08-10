@@ -58,18 +58,16 @@
  */
 package org.trianacode.taskgraph.event;
 
+import java.util.EventObject;
+
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-
-import java.util.EventObject;
 
 /**
  * The event generated when a task is created/removed from a taskgraph
  *
- * @author      Ian Wang
- * @created     8th May 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public class TaskGraphTaskEvent extends EventObject {
 
@@ -108,9 +106,8 @@ public class TaskGraphTaskEvent extends EventObject {
     }
 
     /**
-     * @return true if this cable event is due to the cable being grouped
-     * (GROUP_EVENT) or ungrouped (UNGROUP_EVENT). Returns NON_GROUP_EVENT
-     * otherwise;
+     * @return true if this cable event is due to the cable being grouped (GROUP_EVENT) or ungrouped (UNGROUP_EVENT).
+     *         Returns NON_GROUP_EVENT otherwise;
      */
     public int getGroupEventID() {
         return groupevent;

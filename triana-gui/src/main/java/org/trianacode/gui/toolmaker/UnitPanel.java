@@ -58,35 +58,49 @@
  */
 package org.trianacode.gui.toolmaker;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.FormLayout;
 import org.trianacode.gui.windows.WizardInterface;
 import org.trianacode.gui.windows.WizardPanel;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * The tool wizard panel for editing the general properties of a tool, including the number of input/outpur nodes
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 8th August
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class UnitPanel extends JPanel
-        implements ItemListener, ActionListener, FocusListener, WizardPanel, ToolTableListener {
+        implements ItemListener, ActionListener, FocusListener, WizardPanel, ToolListener {
 
     public static int DEFAULT_INPUT_NODES = 1;
     public static int DEFAULT_OUTPUT_NODES = 1;
@@ -488,10 +502,11 @@ public class UnitPanel extends JPanel
      * @return the maximum input nodes
      */
     public int getMaximumInputNodes() {
-        if (maxin.getSelectedItem().equals(UNLIMITED))
+        if (maxin.getSelectedItem().equals(UNLIMITED)) {
             return Integer.MAX_VALUE;
-        else
+        } else {
             return Integer.parseInt((String) maxin.getSelectedItem());
+        }
     }
 
     /**
@@ -505,23 +520,25 @@ public class UnitPanel extends JPanel
      * @return the maximum output nodes
      */
     public int getMaximumOutputNodes() {
-        if (maxout.getSelectedItem().equals(UNLIMITED))
+        if (maxout.getSelectedItem().equals(UNLIMITED)) {
             return Integer.MAX_VALUE;
-        else
+        } else {
             return Integer.parseInt((String) maxout.getSelectedItem());
+        }
     }
 
 
     /**
-     * fills the specified combo box with numbers between min and max, adds
-     * and unlimited option if unlimited = true;
+     * fills the specified combo box with numbers between min and max, adds and unlimited option if unlimited = true;
      */
     private void populate(JComboBox combo, int min, int max, boolean unlimited) {
-        if (unlimited)
+        if (unlimited) {
             combo.addItem(UNLIMITED);
+        }
 
-        for (int count = min; count <= max; count++)
+        for (int count = min; count <= max; count++) {
             combo.addItem(String.valueOf(count));
+        }
     }
 
 
@@ -570,11 +587,13 @@ public class UnitPanel extends JPanel
 
         if (event.getSource() == innodes) {
             if (inresize.isSelected()) {
-                if (getDefaultInputNodes() > getMaximumInputNodes())
+                if (getDefaultInputNodes() > getMaximumInputNodes()) {
                     maxin.setSelectedItem(innodes.getSelectedItem());
+                }
 
-                if (getDefaultInputNodes() < getMinimumInputNodes())
+                if (getDefaultInputNodes() < getMinimumInputNodes()) {
                     minin.setSelectedItem(innodes.getSelectedItem());
+                }
             } else {
                 maxin.setSelectedItem(innodes.getSelectedItem());
                 minin.setSelectedItem(innodes.getSelectedItem());
@@ -583,28 +602,34 @@ public class UnitPanel extends JPanel
 
         if (event.getSource() == outnodes) {
             if (outresize.isSelected()) {
-                if (getDefaultOutputNodes() > getMaximumOutputNodes())
+                if (getDefaultOutputNodes() > getMaximumOutputNodes()) {
                     maxout.setSelectedItem(outnodes.getSelectedItem());
+                }
 
-                if (getDefaultOutputNodes() < getMinimumOutputNodes())
+                if (getDefaultOutputNodes() < getMinimumOutputNodes()) {
                     minout.setSelectedItem(outnodes.getSelectedItem());
+                }
             } else {
                 maxout.setSelectedItem(outnodes.getSelectedItem());
                 minout.setSelectedItem(outnodes.getSelectedItem());
             }
         }
 
-        if ((event.getSource() == minin) && (getMinimumInputNodes() > getDefaultInputNodes()))
+        if ((event.getSource() == minin) && (getMinimumInputNodes() > getDefaultInputNodes())) {
             minin.setSelectedItem(innodes.getSelectedItem());
+        }
 
-        if ((event.getSource() == maxin) && (getMaximumInputNodes() < getDefaultInputNodes()))
+        if ((event.getSource() == maxin) && (getMaximumInputNodes() < getDefaultInputNodes())) {
             maxin.setSelectedItem(innodes.getSelectedItem());
+        }
 
-        if ((event.getSource() == minout) && (getMinimumOutputNodes() > getDefaultOutputNodes()))
+        if ((event.getSource() == minout) && (getMinimumOutputNodes() > getDefaultOutputNodes())) {
             minout.setSelectedItem(outnodes.getSelectedItem());
+        }
 
-        if ((event.getSource() == maxout) && (getMaximumOutputNodes() < getDefaultOutputNodes()))
+        if ((event.getSource() == maxout) && (getMaximumOutputNodes() < getDefaultOutputNodes())) {
             maxout.setSelectedItem(outnodes.getSelectedItem());
+        }
 
         if (event.getSource() == toolboxpath) {
             Env.setLastWorkingToolbox((String) toolboxpath.getSelectedItem());
@@ -631,8 +656,9 @@ public class UnitPanel extends JPanel
                 }
 
                 srcPackageName = srcPackageName.replace(File.separatorChar, '.');
-                if (srcPackageName.startsWith("."))
+                if (srcPackageName.startsWith(".")) {
                     srcPackageName = srcPackageName.substring(1);
+                }
 
                 unitPackage.setText(srcPackageName);
                 wizard.notifyButtonStateChange();
@@ -641,8 +667,7 @@ public class UnitPanel extends JPanel
     }
 
     /**
-     * Attempt to return the package unitName minus a unitPackage path, null if the unitPackage path
-     * doesn't exist
+     * Attempt to return the package unitName minus a unitPackage path, null if the unitPackage path doesn't exist
      *
      * @param fullPath the absolute path
      * @return The package unitName or null
@@ -663,11 +688,21 @@ public class UnitPanel extends JPanel
     }
 
     public void focusLost(FocusEvent event) {
-        if (event.getSource() == unitName)
+        if (event.getSource() == unitName) {
             wizard.notifyButtonStateChange();
+        }
 
-        if ((event.getSource() == unitName) && (!unitName.getText().equals("")))
+        if ((event.getSource() == unitName) && (!unitName.getText().equals(""))) {
             help.setText(getUnitName() + ".html");
+        }
+    }
+
+    @Override
+    public void toolsAdded(java.util.List<Tool> tools) {
+    }
+
+    @Override
+    public void toolsRemoved(List<Tool> tools) {
     }
 
     /**

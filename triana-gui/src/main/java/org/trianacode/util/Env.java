@@ -92,6 +92,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
+import org.trianacode.EngineInit;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
@@ -103,11 +104,9 @@ import org.trianacode.taskgraph.clipin.HistoryClipIn;
 import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Home;
 import org.trianacode.taskgraph.util.Listing;
-import org.trianacode.taskgraph.util.Toolboxes;
 
 /**
  * Env allows a way of accessing various environment and system variables within Triana. Some methods convert from the
@@ -352,35 +351,34 @@ public final class Env {
     /**
      * Initialise the user config
      *
-     * @param tools the tool table
      * @param write a flag indicating whether changes to the config are written back to the config file
      */
-    public static void initConfig(ToolTable tools, boolean write) {
+    public static void initConfig(boolean write) {
         logger.info("Configuring environment");
 
         configFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE);
         configBakFile = new File(Env.getResourceDir() + Env.separator() + CONFIG_FILE_BAK);
 
         if (!configFile.exists()) {// First time run so need to set up paths
-            restoreDefaultConfig(tools);
-        } else {// read from the file
+            restoreDefaultConfig();
+        } else {// createTool from the file
             GUIEnv.loadDefaultColours();
             try {
-                Env.readConfig(tools, configFile);
+                Env.readConfig(configFile);
             }
             catch (Exception e) {
                 logger.warning("Corrupt config file, restoring from backup");
                 try {
-                    Env.readConfig(tools, configBakFile);
+                    Env.readConfig(configBakFile);
                 }
                 catch (Exception e1) {
                     logger.warning("Corrupt backup file, restoring defaults");
-                    restoreDefaultConfig(tools);
+                    restoreDefaultConfig();
                 }
             }
         }
         if (write) {
-            writeConfigThread = new WriteConfigThread(tools);
+            writeConfigThread = new WriteConfigThread();
             writeConfig();
             writeStateThread = new WriteStateThread();
         }
@@ -446,8 +444,8 @@ public final class Env {
     /**
      * Restore the default user settings
      */
-    private static void restoreDefaultConfig(ToolTable table) {
-        Toolboxes.loadToolboxes(table);
+    private static void restoreDefaultConfig() {
+        EngineInit.getToolResolver().loadToolboxes();
         GUIEnv.loadDefaultColours();
         String defaultEditor = Env.getString("defaultEditor");
         setUserProperty(CODE_EDITOR_STR, defaultEditor);
@@ -1152,7 +1150,7 @@ public final class Env {
     }
 
     /**
-     * read in the last worked on task graphs from disk
+     * createTool in the last worked on task graphs from disk
      *
      * @return true if task graphs are loaded, false otherwise
      */
@@ -1323,10 +1321,8 @@ public final class Env {
 
     /**
      * Write the triana configuration files to disk
-     *
-     * @param tools
      */
-    private static void writeConfigFile(ToolTable tools) {
+    private static void writeConfigFile() {
         File marker = aquireConfigFileLock();
 
         PrintWriter bw = null;
@@ -1501,7 +1497,7 @@ public final class Env {
     /**
      * Loads in the initialisation file and sets the relevant new variables i.e. does a save state.
      */
-    private static void readConfig(ToolTable tools, File file) throws Exception {
+    private static void readConfig(File file) throws Exception {
         BufferedReader br = null;
         try {
 
@@ -2094,14 +2090,12 @@ public final class Env {
      */
     private static class WriteConfigThread extends Thread {
 
-        private ToolTable tools;
         private boolean stop = false;
         protected int SLEEP_DELAY = 30000;
 
-        public WriteConfigThread(ToolTable tools) {
+        public WriteConfigThread() {
             this.setName("Triana Config Writer");
             this.setPriority(Thread.MIN_PRIORITY);
-            this.tools = tools;
             this.start();
         }
 
@@ -2133,7 +2127,7 @@ public final class Env {
 
         public void run() {
             while (!isStopped()) {
-                writeConfigFile(tools);
+                writeConfigFile();
                 try {
                     sleep(SLEEP_DELAY);
                 }
@@ -2141,7 +2135,7 @@ public final class Env {
                 }
             }
 
-            writeConfigFile(tools);
+            writeConfigFile();
         }
     }
 }

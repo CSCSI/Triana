@@ -59,33 +59,44 @@
 
 package org.trianacode.gui.panels;
 
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.taskgraph.util.FileUtils;
+import org.trianacode.util.Env;
 
 /**
  * Parameter panel class for editing the classpath
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created Jun 6, 2003: 6:02:57 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
-public class ClassPathPanel extends ParameterPanel implements ActionListener, PropertyChangeListener, ListSelectionListener {
+public class ClassPathPanel extends ParameterPanel
+        implements ActionListener, PropertyChangeListener, ListSelectionListener {
 
     private JList classpathList = new JList();
     private final String pathSeparator;
@@ -160,9 +171,9 @@ public class ClassPathPanel extends ParameterPanel implements ActionListener, Pr
     }
 
     /**
-     * This method is called when the panel is reset or cancelled. It should reset all the panels components to
-     * the values specified by the associated task, e.g. a component representing a parameter called "noise"
-     * should be set to the value returned by a getTool().getParameter("noise") call.
+     * This method is called when the panel is reset or cancelled. It should reset all the panels components to the
+     * values specified by the associated task, e.g. a component representing a parameter called "noise" should be set
+     * to the value returned by a getTool().getParameter("noise") call.
      */
     public void reset() {
     }
@@ -175,8 +186,8 @@ public class ClassPathPanel extends ParameterPanel implements ActionListener, Pr
     }
 
     /**
-     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows)
-     * used by the panel.
+     * This method is called when the panel is finished with. It should dispose of any components (e.g. windows) used by
+     * the panel.
      */
     public void dispose() {
     }
@@ -197,8 +208,9 @@ public class ClassPathPanel extends ParameterPanel implements ActionListener, Pr
         StringBuffer classpathBuf = new StringBuffer();
         for (int i = 0; i < classpathList.getModel().getSize(); i++) {
             classpathBuf.append((String) classpathList.getModel().getElementAt(i));
-            if (i < classpathList.getModel().getSize() - 1)
+            if (i < classpathList.getModel().getSize() - 1) {
                 classpathBuf.append(pathSeparator);
+            }
         }
         return classpathBuf.toString();
     }
@@ -233,15 +245,17 @@ public class ClassPathPanel extends ParameterPanel implements ActionListener, Pr
             if (!toolBoxes[i].isVirtual()) {
                 File[] classDirs = FileUtils.listEndsWith(toolBoxes[i].getPath(), "classes");
 
-                for (int count = 0; count < classDirs.length; count++)
+                for (int count = 0; count < classDirs.length; count++) {
                     allDirs.add(classDirs[count].getAbsolutePath());
+                }
             }
         }
 
-        if (addAllToolboxChk.isSelected())
+        if (addAllToolboxChk.isSelected()) {
             pathListModel.addElements(allDirs);
-        else
+        } else {
             pathListModel.removeElements(allDirs);
+        }
     }
 
     private void handleAddSelection() {
@@ -311,8 +325,9 @@ public class ClassPathPanel extends ParameterPanel implements ActionListener, Pr
         public void addElements(Object[] add) {
             for (int i = 0; i < add.length; i++) {
                 Object o = add[i];
-                if (!elements.contains(o))
+                if (!elements.contains(o)) {
                     elements.add(o);
+                }
             }
             notifyListeners();
         }

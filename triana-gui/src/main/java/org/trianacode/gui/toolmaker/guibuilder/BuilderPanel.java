@@ -59,12 +59,8 @@
 package org.trianacode.gui.toolmaker.guibuilder;
 
 
-import org.trianacode.gui.toolmaker.GUIPanel;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
@@ -74,13 +70,20 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.toolmaker.GUIPanel;
+import org.trianacode.util.Env;
+
 /**
  * A panel for defining gui builder interface components
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2002
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class BuilderPanel extends JPanel implements ItemListener, FocusListener {
 
@@ -209,8 +212,9 @@ public class BuilderPanel extends JPanel implements ItemListener, FocusListener 
     private void populateCompType() {
         DefaultComboBoxModel model = (DefaultComboBoxModel) comptype.getModel();
 
-        for (int count = 0; count < COMPONENT_TYPES.length; count++)
+        for (int count = 0; count < COMPONENT_TYPES.length; count++) {
             model.addElement(COMPONENT_TYPES[count]);
+        }
 
         comptype.addItemListener(this);
     }
@@ -259,16 +263,18 @@ public class BuilderPanel extends JPanel implements ItemListener, FocusListener 
         defval.setEnabled(param != null);
         defval.setText("");
 
-        if (curparam != null)
+        if (curparam != null) {
             guilines.put(curparam, getGUILine(curparam));
+        }
 
         curparam = param;
 
         if (param != null) {
             guicallback = false;
 
-            if (!params.containsKey(param))
+            if (!params.containsKey(param)) {
                 initParam(param);
+            }
 
             Enumeration enumeration = comppanels.elements();
             ComponentPanelInterface comp;
@@ -281,10 +287,13 @@ public class BuilderPanel extends JPanel implements ItemListener, FocusListener 
             defval.setText(guipanel.getDefaultValue(param));
             comptype.setSelectedItem(params.get(param));
 
-            if (guilines.containsKey(param))
-                ((ComponentPanelInterface) comppanels.get(params.get(param))).setGUIBuilderStr((String) guilines.get(param));
+            if (guilines.containsKey(param)) {
+                ((ComponentPanelInterface) comppanels.get(params.get(param)))
+                        .setGUIBuilderStr((String) guilines.get(param));
+            }
 
-            ((ComponentPanelInterface) comppanels.get(params.get(param))).notifyDefaultValue(guipanel.getDefaultValue(param));
+            ((ComponentPanelInterface) comppanels.get(params.get(param)))
+                    .notifyDefaultValue(guipanel.getDefaultValue(param));
 
             guicallback = true;
         }
@@ -302,8 +311,9 @@ public class BuilderPanel extends JPanel implements ItemListener, FocusListener 
      * @return the component type for the specified parameter
      */
     public String getComponent(String param) {
-        if (!params.containsKey(param))
+        if (!params.containsKey(param)) {
             initParam(param);
+        }
 
         return (String) params.get(param);
     }
@@ -312,11 +322,11 @@ public class BuilderPanel extends JPanel implements ItemListener, FocusListener 
      * @return the gui line for the specified parameter
      */
     public String getGUILine(String param) {
-        if (param.equals(curparam))
+        if (param.equals(curparam)) {
             return ((ComponentPanelInterface) comppanels.get(comptype.getSelectedItem())).getGUIBuilderStr(param);
-        else if (guilines.containsKey(param))
+        } else if (guilines.containsKey(param)) {
             return (String) guilines.get(param);
-        else {
+        } else {
             String temp = curparam;
 
             setCurrentParameter(param);
@@ -333,8 +343,9 @@ public class BuilderPanel extends JPanel implements ItemListener, FocusListener 
     public void setGUILine(String param, String guiline) {
         guilines.put(param, guiline);
 
-        if (param.equals(curparam))
+        if (param.equals(curparam)) {
             ((ComponentPanelInterface) comppanels.get(comptype.getSelectedItem())).setGUIBuilderStr(guiline);
+        }
     }
 
 
@@ -389,8 +400,9 @@ public class BuilderPanel extends JPanel implements ItemListener, FocusListener 
         String[] str = new String[list.size()];
         Iterator iter = list.iterator();
 
-        for (int count = 0; count < str.length; count++)
+        for (int count = 0; count < str.length; count++) {
             str[count] = (String) iter.next();
+        }
 
         return str;
     }

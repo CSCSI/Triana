@@ -58,9 +58,6 @@
  */
 package org.trianacode.gui.action.files;
 
-import org.trianacode.gui.hci.ApplicationFrame;
-import org.trianacode.util.Env;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -69,14 +66,14 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.trianacode.gui.hci.ApplicationFrame;
+import org.trianacode.util.Env;
+
 /**
- * Specific internal class that implements a listener just to listen to the recent
- * items list.
+ * Specific internal class that implements a listener just to listen to the recent items list.
  *
- * @author      Matthew Shields
- * @created     Thursday, May 29, 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
  */
 public class OpenRecentListener implements ActionListener {
 
@@ -89,13 +86,14 @@ public class OpenRecentListener implements ActionListener {
 
     /**
      * Add a recent item to the listeners list of recent items
+     *
      * @param fullName the full path to the recent item
      * @return the short name to be displayed in the menu
      */
     public String addRecent(String fullName) {
         StringTokenizer st = new StringTokenizer(Env.separator());
         Vector<String> splitName = new Vector<String>();
-        while(st.hasMoreTokens()) {
+        while (st.hasMoreTokens()) {
             splitName.add(st.nextToken());
         }
         String shortName = splitName.get(splitName.size() - 1);
@@ -104,8 +102,9 @@ public class OpenRecentListener implements ActionListener {
             boolean containsKey = true;
             while ((i >= 0) && containsKey) {
                 shortName = splitName.get(i) + Env.separator() + shortName;
-                if ((!itemTable.containsKey(shortName)) || (itemTable.get(shortName).equals(fullName)))
+                if ((!itemTable.containsKey(shortName)) || (itemTable.get(shortName).equals(fullName))) {
                     containsKey = false;
+                }
                 i--;
             }
         }

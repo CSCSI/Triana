@@ -16,17 +16,15 @@
 
 package org.trianacode.taskgraph.clipin;
 
-import org.trianacode.taskgraph.Task;
-
 import java.util.Hashtable;
+
+import org.trianacode.taskgraph.Task;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 28, 2009: 5:47:31 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ClipInStore {
@@ -51,10 +49,11 @@ public class ClipInStore {
     }
 
     protected Object getClipIn(String name) {
-        if (clipins.containsKey(name))
+        if (clipins.containsKey(name)) {
             return clipins.get(name);
-        else
+        } else {
             return null;
+        }
     }
 
     protected String[] getClipInNames() {

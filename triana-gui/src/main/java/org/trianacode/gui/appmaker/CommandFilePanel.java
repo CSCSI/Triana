@@ -58,15 +58,9 @@
  */
 package org.trianacode.gui.appmaker;
 
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.panels.TFileChooser;
-import org.trianacode.gui.windows.WizardInterface;
-import org.trianacode.gui.windows.WizardPanel;
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -75,14 +69,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.panels.TFileChooser;
+import org.trianacode.gui.windows.WizardInterface;
+import org.trianacode.gui.windows.WizardPanel;
+import org.trianacode.util.Env;
+
 /**
- * The panel for specifying the taskgraph that is executed from the
- * command line.
+ * The panel for specifying the taskgraph that is executed from the command line.
  *
- * @author      Ian Wang
- * @created     2nd November 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class CommandFilePanel extends JPanel
@@ -120,8 +124,9 @@ public class CommandFilePanel extends JPanel
 
 
     public void addCommandFileListener(CommandFileListener listener) {
-        if (!listeners.contains(listener))
+        if (!listeners.contains(listener)) {
             listeners.add(listener);
+        }
     }
 
     public void removeCommandFileListener(CommandFileListener listener) {
@@ -166,13 +171,15 @@ public class CommandFilePanel extends JPanel
     private File getOutputFile() {
         String filename = getApplicationName() + JAVA_SUFFIX;
 
-        if (!apppackagefield.getText().equals(""))
+        if (!apppackagefield.getText().equals("")) {
             filename = apppackagefield.getText().replace('.', File.separatorChar) + File.separatorChar + filename;
+        }
 
-        if (outputdirfield.getText().equals(""))
+        if (outputdirfield.getText().equals("")) {
             return new File(filename);
-        else
+        } else {
             return new File(getOutputDirectory() + File.separatorChar + filename);
+        }
     }
 
     public String getJavaFileName() {
@@ -304,15 +311,17 @@ public class CommandFilePanel extends JPanel
     private void setApplicationName(String filename) {
         String appname;
 
-        if (filename.equals(""))
+        if (filename.equals("")) {
             appname = "";
-        else if (filename.indexOf('.') == -1)
+        } else if (filename.indexOf('.') == -1) {
             appname = filename;
-        else
+        } else {
             appname = filename.substring(0, filename.indexOf('.'));
+        }
 
-        if ((!appname.equals("")) && (!Character.isUpperCase(appname.charAt(0))))
+        if ((!appname.equals("")) && (!Character.isUpperCase(appname.charAt(0)))) {
             appname = Character.toUpperCase(appname.charAt(0)) + appname.substring(1);
+        }
 
         appnamefield.setText(appname);
     }
@@ -347,9 +356,9 @@ public class CommandFilePanel extends JPanel
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
 
-            if (file.isDirectory())
+            if (file.isDirectory()) {
                 outputdirfield.setText(file.getAbsolutePath());
-            else {
+            } else {
                 outputdirfield.setText(file.getParentFile().getAbsolutePath());
                 setApplicationName(file.getName());
             }
@@ -370,10 +379,11 @@ public class CommandFilePanel extends JPanel
 
 
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == taskgraphbrowse)
+        if (event.getSource() == taskgraphbrowse) {
             handleBrowseTaskgraphs();
-        else if (event.getSource() == outputdirbrowse)
+        } else if (event.getSource() == outputdirbrowse) {
             handleBrowseOutputDir();
+        }
     }
 
 
@@ -381,11 +391,13 @@ public class CommandFilePanel extends JPanel
     }
 
     public void focusLost(FocusEvent event) {
-        if (event.getSource() == taskgraphfield)
+        if (event.getSource() == taskgraphfield) {
             notifyFileChanged(taskgraphfield.getText());
+        }
 
-        if (event.getSource() == appnamefield)
+        if (event.getSource() == appnamefield) {
             wizard.notifyButtonStateChange();
+        }
     }
 
 
@@ -397,13 +409,15 @@ public class CommandFilePanel extends JPanel
 
             setApplicationName(file.getName());
 
-            if (file.getParentFile() != null)
+            if (file.getParentFile() != null) {
                 outputdirfield.setText(file.getParentFile().getAbsolutePath());
-            else
+            } else {
                 outputdirfield.setText("");
+            }
 
-            for (Iterator iter = listeners.iterator(); iter.hasNext();)
+            for (Iterator iter = listeners.iterator(); iter.hasNext();) {
                 ((CommandFileListener) iter.next()).commandFileChanged(filename);
+            }
 
             wizard.notifyButtonStateChange();
         }

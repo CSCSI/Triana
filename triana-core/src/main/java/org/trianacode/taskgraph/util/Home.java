@@ -24,8 +24,6 @@ import java.util.logging.Logger;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 1, 2009: 1:31:57 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class Home {

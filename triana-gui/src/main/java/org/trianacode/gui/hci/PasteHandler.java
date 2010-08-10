@@ -58,6 +58,8 @@
  */
 package org.trianacode.gui.hci;
 
+import java.io.File;
+
 import org.trianacode.gui.TrianaDialog;
 import org.trianacode.gui.panels.PastePanel;
 import org.trianacode.gui.windows.ParameterWindow;
@@ -67,15 +69,11 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
-import java.io.File;
-
 /**
  * Handler class responsible for displaying the paste UI and responding to it.
  *
  * @author Matthew Shields
  * @version $Revsion:$
- * @created Apr 11, 2003: 3:07:19 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class PasteHandler {
 
@@ -145,8 +143,9 @@ public class PasteHandler {
                 String[] packageNames = panel.getUnitPackageNames();
                 String pack = convertToPackageNameStr(packageNames);
 
-                if (panel.createMissingDirs())
+                if (panel.createMissingDirs()) {
                     createDirs(toolbox, packageNames);
+                }
 
                 if (pack != null) {
                     for (int count = 0; count < tools.length; count++) {
@@ -163,8 +162,7 @@ public class PasteHandler {
         }
 
         /**
-         * Create any missing directories in the toolbox that are needed for a real package
-         * structure.
+         * Create any missing directories in the toolbox that are needed for a real package structure.
          *
          * @param toolbox
          * @param packagenames
@@ -172,13 +170,15 @@ public class PasteHandler {
         private void createDirs(String toolbox, String[] packagenames) {
             String path = toolbox;
             for (int i = 0; i < packagenames.length; i++) {
-                if (!path.endsWith(Env.separator()))
+                if (!path.endsWith(Env.separator())) {
                     path += Env.separator();
+                }
                 path += packagenames[i];
             }
             File packDir = new File(path);
-            if (!(packDir.exists() && packDir.isDirectory()))
+            if (!(packDir.exists() && packDir.isDirectory())) {
                 packDir.mkdirs();
+            }
         }
 
         /**

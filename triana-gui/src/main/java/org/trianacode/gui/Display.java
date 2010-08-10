@@ -58,33 +58,38 @@
  */
 package org.trianacode.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JWindow;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-
 
 /**
- * This class provides methods for calculating the size of the
- * screen which Triana is currently running on. Based on the size
- * OldUnit Programmers can compensate when creating OldUnit Windows so that
- * they appear relavive to the size of the screen and not way out
- * of proportion. The ratio's are calculated relative to a machine
- * running a 1024 x 768 computer. If the machine has a better resolution
- * than this then Triana will appear larger so that it occupies the same
- * proportion than it does on an SVGA screen.</p>
+ * This class provides methods for calculating the size of the screen which Triana is currently running on. Based on the
+ * size OldUnit Programmers can compensate when creating OldUnit Windows so that they appear relavive to the size of the
+ * screen and not way out of proportion. The ratio's are calculated relative to a machine running a 1024 x 768 computer.
+ * If the machine has a better resolution than this then Triana will appear larger so that it occupies the same
+ * proportion than it does on an SVGA screen.</p> <p/> <p>Triana uses this class extensively when creating its graphical
+ * user interface.  </p>
  * <p/>
- * <p>Triana uses this class extensively when creating its graphical user
- * interface.  </p>
- * <p/>
- * This class also provides some sueful routines which Triana uses. For example
- * there is a function here which displays Triana's title screen.
+ * This class also provides some sueful routines which Triana uses. For example there is a function here which displays
+ * Triana's title screen.
  *
  * @author Ian Taylor
  * @version $Revision: 4048 $
- * @created 16 Jan 1997
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class Display {
     /**
@@ -132,42 +137,40 @@ public class Display {
 
 
     /**
-     * This routine calibrates the X size or coordinate sent to it, so that
-     * things look the same no matter what computer you are on i.e. it scales
-     * the application to the size of this computer's screen.
+     * This routine calibrates the X size or coordinate sent to it, so that things look the same no matter what computer
+     * you are on i.e. it scales the application to the size of this computer's screen.
      */
     public static int x(int size) {
         int newX = (int) ((double) size * ratioX);
 
         // add one if number gets truncated
 
-        if (newX != ((double) size * ratioX))
+        if (newX != ((double) size * ratioX)) {
             ++newX;
+        }
 
         return newX;
     }
 
     /**
-     * This routine calibrates the Y size or coordinate sent to it, so that
-     * things look the same no matter what computer you are on i.e. it scales
-     * the application to the size of this computer's screen.
+     * This routine calibrates the Y size or coordinate sent to it, so that things look the same no matter what computer
+     * you are on i.e. it scales the application to the size of this computer's screen.
      */
     public static int y(int size) {
         int newY = (int) ((double) size * ratioY);
 
         // add one if number gets truncated
 
-        if (newY != ((double) size * ratioY))
+        if (newY != ((double) size * ratioY)) {
             ++newY;
+        }
 
         return newY;
     }
 
     /**
-     * Makes sure that the specified JFrame doesn't dissappear off the
-     * screen by checking the x and y coordinates of its desired
-     * position and clipping them so that it
-     * fits onto the particular screen.
+     * Makes sure that the specified JFrame doesn't dissappear off the screen by checking the x and y coordinates of its
+     * desired position and clipping them so that it fits onto the particular screen.
      *
      * @param fr the frame to be clipped into the screen size
      * @param x  the desired x coordinate
@@ -177,18 +180,21 @@ public class Display {
         int clipX, clipY;
         int scrY = screenY;
 
-        if (Env.os().equals("Windows 95"))
+        if (Env.os().equals("Windows 95")) {
             scrY = screenY - 20;
+        }
 
-        if ((x + fr.getSize().width + 5) > screenX)
+        if ((x + fr.getSize().width + 5) > screenX) {
             clipX = screenX - fr.getSize().width - 5;
-        else
+        } else {
             clipX = x;
+        }
 
-        if ((y + fr.getSize().height + 3) > scrY)
+        if ((y + fr.getSize().height + 3) > scrY) {
             clipY = scrY - fr.getSize().height - 3;
-        else
+        } else {
             clipY = y;
+        }
 
         return new Point(clipX, clipY);
     }
@@ -198,13 +204,10 @@ public class Display {
     }
 
     /**
-     * Makes sure that the specified JFrame doesn't dissappear off the
-     * screen by checking the x and y coordinates of its desired
-     * position and clipping them so that it
-     * fits onto the particular screen. OldUnit Programmers should use
-     * this function to place their displaying windows on the screen.
-     * Subclasses of ParameterPanel don't need to call this as it is
-     * called automatically.
+     * Makes sure that the specified JFrame doesn't dissappear off the screen by checking the x and y coordinates of its
+     * desired position and clipping them so that it fits onto the particular screen. OldUnit Programmers should use
+     * this function to place their displaying windows on the screen. Subclasses of ParameterPanel don't need to call
+     * this as it is called automatically.
      *
      * @param fr the frame to be clipped into the screen size
      */
@@ -232,26 +235,27 @@ public class Display {
 
 
     /**
-     * @return an anchor point for the specified object. If the object is a
-     *         menu in a pop-up window then this is based on the invoker, if the object
-     *         is not a component/invalid then comp is centralised.
+     * @return an anchor point for the specified object. If the object is a menu in a pop-up window then this is based
+     *         on the invoker, if the object is not a component/invalid then comp is centralised.
      */
     public static Point getAnchorPoint(Object anchor, Component comp) {
         Component anchcomp = null;
 
-        if (anchor instanceof JPopupMenu)
+        if (anchor instanceof JPopupMenu) {
             anchcomp = ((JPopupMenu) anchor).getInvoker();
-        else if ((anchor instanceof Component) && (((Component) anchor).getParent() instanceof JPopupMenu))
+        } else if ((anchor instanceof Component) && (((Component) anchor).getParent() instanceof JPopupMenu)) {
             anchcomp = ((JPopupMenu) ((Component) anchor).getParent()).getInvoker();
-        else if (anchor instanceof Component)
+        } else if (anchor instanceof Component) {
             anchcomp = (Component) comp;
+        }
 
         Point pos;
 
-        if ((anchcomp != null) && anchcomp.isShowing())
+        if ((anchcomp != null) && anchcomp.isShowing()) {
             pos = anchcomp.getLocationOnScreen();
-        else
+        } else {
             pos = new Point((screenX - comp.getSize().width) / 2, (screenY - comp.getSize().height) / 2);
+        }
 
         return clipFrameToScreen(comp, pos);
     }

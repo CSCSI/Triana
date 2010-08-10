@@ -58,6 +58,12 @@
  */
 package org.trianacode.gui.action.files;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -65,18 +71,11 @@ import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
 /**
  * Action class to handle all "open" actions.
  *
- * @author  Matthew Shields
- * @created May 2, 2003: 3:49:12 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class OpenAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -105,19 +104,22 @@ public class OpenAction extends AbstractAction implements ActionDisplayOptions {
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if ((mode == FILE_OR_GROUP_MODE) && selectionHandler.isSingleSelectedTool() && (selectionHandler.getSelectedTool() instanceof TaskGraph)) {
+        if ((mode == FILE_OR_GROUP_MODE) && selectionHandler.isSingleSelectedTool() && (selectionHandler
+                .getSelectedTool() instanceof TaskGraph)) {
             TaskGraph taskgraph = (TaskGraph) selectionHandler.getSelectedTool();
 
             if (GUIEnv.getTaskGraphPanelFor(taskgraph) != null) {
                 TaskGraphPanel panel = GUIEnv.getTaskGraphPanelFor(taskgraph);
                 GUIEnv.getApplicationFrame().getInternalFrameFor(panel).toFront();
                 GUIEnv.getApplicationFrame().getInternalFrameFor(panel).requestFocus();
-            } else if (taskgraph.getParent() == null)
+            } else if (taskgraph.getParent() == null) {
                 GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskgraph);
-            else
+            } else {
                 GUIEnv.getApplicationFrame().addChildTaskGraphPanel(taskgraph, GUIEnv.getTrianaClientFor(taskgraph));
-        } else
+            }
+        } else {
             TaskGraphFileHandler.open();
+        }
     }
 
 }

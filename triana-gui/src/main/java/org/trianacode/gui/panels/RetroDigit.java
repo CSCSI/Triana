@@ -59,15 +59,16 @@
 
 package org.trianacode.gui.panels;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+import javax.swing.JPanel;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Andrew
- * Date: 23-May-2004
- * Time: 16:21:45
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: Andrew Date: 23-May-2004 Time: 16:21:45 To change this template use File | Settings |
+ * File Templates.
  */
 public class RetroDigit extends JPanel {
     private Line[] lines = new Line[7];
@@ -75,16 +76,16 @@ public class RetroDigit extends JPanel {
 
 
     static boolean[][] digits = new boolean[][]{
-        {true, true, true, false, true, true, true}, // 0
-        {false, false, true, false, false, false, true}, // 1
-        {false, true, true, true, true, true, false}, // 2
-        {false, true, true, true, false, true, true}, // 3
-        {true, false, true, true, false, false, true}, // 4
-        {true, true, false, true, false, true, true}, // 5
-        {true, true, false, true, true, true, true}, // 6
-        {false, true, true, false, false, false, true}, // 7
-        {true, true, true, true, true, true, true}, // 8
-        {true, true, true, true, false, true, true}, // 9
+            {true, true, true, false, true, true, true}, // 0
+            {false, false, true, false, false, false, true}, // 1
+            {false, true, true, true, true, true, false}, // 2
+            {false, true, true, true, false, true, true}, // 3
+            {true, false, true, true, false, false, true}, // 4
+            {true, true, false, true, false, true, true}, // 5
+            {true, true, false, true, true, true, true}, // 6
+            {false, true, true, false, false, false, true}, // 7
+            {true, true, true, true, true, true, true}, // 8
+            {true, true, true, true, false, true, true}, // 9
     };
 
     static final int TOP_LEFT = 0;
@@ -132,24 +133,25 @@ public class RetroDigit extends JPanel {
                 int count = 0;
                 Color bg = getBackground();
                 Color fg = getForeground();
-                while(count < blinkcount) {
-                    if(getForeground().equals(fg)) {
+                while (count < blinkcount) {
+                    if (getForeground().equals(fg)) {
                         setForeground(bg);
-                    }
-                    else {
+                    } else {
                         setForeground(fg);
                     }
                     getToolkit().beep();
                     count++;
                     try {
                         sleep(blinkspeed);
-                    } catch(InterruptedException ie) {}
+                    } catch (InterruptedException ie) {
+                    }
                 }
             }
         };
         thread.setPriority(Thread.NORM_PRIORITY);
         thread.start();
     }
+
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;

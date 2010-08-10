@@ -59,26 +59,22 @@
 
 package org.trianacode.gui.main.imp;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+
+import javax.swing.AbstractButton;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
 import org.trianacode.gui.main.TrianaLayoutConstants;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * An component that displays text to fill its set size (i.e. the text expands
- * with the component)
+ * An component that displays text to fill its set size (i.e. the text expands with the component)
  *
- * @author Ian Wang
- *         <<<<<<< TextIcon.java
- * @version $Revision: 4048 $
- *          >>>>>>> 1.3.4.1
- * @created <<<<<<< TextIcon.java
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * =======
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
- * >>>>>>> 1.3.4.1
+ * @author Ian Wang <<<<<<< TextIcon.java
+ * @version $Revision: 4048 $ >>>>>>> 1.3.4.1
  */
 
 public class TextIcon extends AbstractButton {
@@ -109,9 +105,8 @@ public class TextIcon extends AbstractButton {
 
 
     /**
-     * Notifies this component that it now has a parent component.
-     * When this method is invoked, the chain of parent components is
-     * set up with <code>KeyboardAction</code> event listeners.
+     * Notifies this component that it now has a parent component. When this method is invoked, the chain of parent
+     * components is set up with <code>KeyboardAction</code> event listeners.
      *
      * @see #registerKeyboardAction
      */
@@ -165,8 +160,9 @@ public class TextIcon extends AbstractButton {
     private void updatePreferredSize() {
         FontMetrics fontmetrics = null;
 
-        if (getGraphics() != null)
+        if (getGraphics() != null) {
             fontmetrics = getGraphics().getFontMetrics(getFont());
+        }
 
         if (fontmetrics != null) {
             int width = Math.max(fontmetrics.stringWidth(text), fontmetrics.stringWidth(mintext));
@@ -228,12 +224,13 @@ public class TextIcon extends AbstractButton {
 
         int left;
 
-        if (getHorizontalAlignment() == LEFT)
+        if (getHorizontalAlignment() == LEFT) {
             left = 0;
-        else if (getHorizontalAlignment() == RIGHT)
+        } else if (getHorizontalAlignment() == RIGHT) {
             left = size.width - width;
-        else
+        } else {
             left = (size.width - width) / 2;
+        }
 
         graphs.drawString(text, left, fontmetrics.getAscent());
 

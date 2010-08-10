@@ -65,8 +65,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @version $Revision: 4048 $
  */
 public class HTMLSearchResults extends SearchResults {
 
@@ -81,12 +80,13 @@ public class HTMLSearchResults extends SearchResults {
         // info if needed.  Otherwise add the word
         if (vector != null) {
             for (Enumeration enumeration = vector.elements(); enumeration.hasMoreElements();) {
-                if (((HTMLDocumentInfo) enumeration.nextElement()).equals(info)) return;
+                if (((HTMLDocumentInfo) enumeration.nextElement()).equals(info)) {
+                    return;
+                }
             }
 
             vector.addElement(info);
-        }
-        else {
+        } else {
             vector = new Vector();
             vector.addElement(info);
             add(word, vector);

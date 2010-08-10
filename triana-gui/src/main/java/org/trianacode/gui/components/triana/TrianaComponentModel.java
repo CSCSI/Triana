@@ -59,6 +59,12 @@
 
 package org.trianacode.gui.components.triana;
 
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
@@ -82,8 +88,6 @@ import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
 
 /**
  * The default ToolComponentModel for a task
@@ -124,7 +128,8 @@ public class TrianaComponentModel implements
      * Initialises the menu that appears when the workspace is right-clicked on
      */
     private void initOpenGroupPopup(ToolSelectionHandler selhandler) {
-        JMenuItem groupeditor = new JMenuItem(new GroupEditorAction(selhandler, tools, ActionDisplayOptions.DISPLAY_NAME));
+        JMenuItem groupeditor = new JMenuItem(
+                new GroupEditorAction(selhandler, tools, ActionDisplayOptions.DISPLAY_NAME));
         JMenuItem resolvenodes = new JMenuItem(new ResolveNodesAction(selhandler, ActionDisplayOptions.DISPLAY_NAME));
         JMenuItem save = new JMenuItem(ActionTable.getAction(Actions.SAVE_ACTION));
         JMenuItem selectall = new JMenuItem(ActionTable.getAction(Actions.SELECT_ALL_ACTION));
@@ -141,8 +146,7 @@ public class TrianaComponentModel implements
     }
 
     /**
-     * Initialises the menu that appears when multiple selected tools in the
-     * workspace are right-clicked on
+     * Initialises the menu that appears when multiple selected tools in the workspace are right-clicked on
      */
     private void initMultipleSelectedPopup() {
         JMenuItem group = new JMenuItem(ActionTable.getAction(Actions.GROUP_ACTION));
@@ -314,16 +318,16 @@ public class TrianaComponentModel implements
 
 
     /**
-     * @return the icon for the specified tool (if null is returned then the
-     *         default leaf icon is used)
+     * @return the icon for the specified tool (if null is returned then the default leaf icon is used)
      */
     public Icon getTreeIcon(Tool tool) {
-        if (tool instanceof TaskGraph)
+        if (tool instanceof TaskGraph) {
             return GROUP_ICON;
-        else if (BrokenToolMonitor.isBroken(tool))
+        } else if (BrokenToolMonitor.isBroken(tool)) {
             return BROKEN_ICON;
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -337,10 +341,11 @@ public class TrianaComponentModel implements
      * @return the popup menu the tool when in the tree
      */
     public JPopupMenu getTreePopup(Tool tool) {
-        if (tool instanceof TaskGraph)
+        if (tool instanceof TaskGraph) {
             return groupTreePopup;
-        else
+        } else {
             return toolTreePopup;
+        }
     }
 
 
@@ -355,26 +360,25 @@ public class TrianaComponentModel implements
      * @return the popup menu the tool when in the workspace
      */
     public JPopupMenu getWorkspacePopup(Task task) {
-        if (task instanceof TaskGraph)
+        if (task instanceof TaskGraph) {
             return groupWorkspacePopup;
-        else
+        } else {
             return toolWorkspacePopup;
+        }
     }
 
 
     /**
-     * @return the popup menu for the open group (if null is returned
-     *         then the default popup menu is used, return a empty popup menu for no
-     *         popup)
+     * @return the popup menu for the open group (if null is returned then the default popup menu is used, return a
+     *         empty popup menu for no popup)
      */
     public JPopupMenu getOpenGroupPopup(TaskGraph task) {
         return openGroupPopup;
     }
 
     /**
-     * @return the popup menu when multiple tasks are selected in the workspace
-     *         (if null is returned then the default popup menu is used, return a empty
-     *         popup menu for no popup)
+     * @return the popup menu when multiple tasks are selected in the workspace (if null is returned then the default
+     *         popup menu is used, return a empty popup menu for no popup)
      */
     public JPopupMenu getMultipleSelectedPopup(Task[] tasks) {
         return multipleSelectedPopup;
@@ -382,9 +386,8 @@ public class TrianaComponentModel implements
 
 
     /**
-     * @return the action that is invoked when the task is activated (e.g.
-     *         double-clicked). If null is returned the default tool action is
-     *         used; to do nothing return a DoNothingAction.
+     * @return the action that is invoked when the task is activated (e.g. double-clicked). If null is returned the
+     *         default tool action is used; to do nothing return a DoNothingAction.
      */
     public Action getTaskAction(Task task) {
         return ActionTable.getAction(Actions.PROERTIES_ACTION);
@@ -392,8 +395,8 @@ public class TrianaComponentModel implements
 
 
     /**
-     * @return the task component used to represent the specified task (if null
-     *         is returned then the default component is used)
+     * @return the task component used to represent the specified task (if null is returned then the default component
+     *         is used)
      */
     public TaskComponent getTaskComponent(Task task) {
         return new MainTrianaTask(task);
@@ -401,12 +404,10 @@ public class TrianaComponentModel implements
 
 
     /**
-     * Called to determine if an icon for the specified action should be
-     * displayed, e.g. ADD_INPUT_NODE_ACTION. Returns whether the icon should
-     * be displayed (DISPLAY_ICON), should not be displayed (HIDE_ICON) or the
-     * action is unknown and should be deffered to the default handler
-     * (UNKNOWN_ACTION). If the default handler does not know the action then
-     * the icon is not displayed.
+     * Called to determine if an icon for the specified action should be displayed, e.g. ADD_INPUT_NODE_ACTION. Returns
+     * whether the icon should be displayed (DISPLAY_ICON), should not be displayed (HIDE_ICON) or the action is unknown
+     * and should be deffered to the default handler (UNKNOWN_ACTION). If the default handler does not know the action
+     * then the icon is not displayed.
      *
      * @param action the update action (e.g. ADD_INPUT_NODE_ACTION)
      * @return either DISPLAY_ICON, HIDE_ICON or UNKNOWN_ACTION
@@ -414,59 +415,62 @@ public class TrianaComponentModel implements
     public int isUpdateIcon(Task task, String action) {
         boolean display = false;
 
-        if (action.equals(UpdateActionConstants.INCREASE_INPUT_NODES_ACTION))
+        if (action.equals(UpdateActionConstants.INCREASE_INPUT_NODES_ACTION)) {
             display = (task.getDataInputNodeCount() < task.getMaxDataInputNodes());
-        else if (action.equals(UpdateActionConstants.DECREASE_INPUT_NODES_ACTION))
+        } else if (action.equals(UpdateActionConstants.DECREASE_INPUT_NODES_ACTION)) {
             display = (task.getDataInputNodeCount() > task.getMinDataInputNodes());
-        else if (action.equals(UpdateActionConstants.INCREASE_OUTPUT_NODES_ACTION))
+        } else if (action.equals(UpdateActionConstants.INCREASE_OUTPUT_NODES_ACTION)) {
             display = (task.getDataOutputNodeCount() < task.getMaxDataOutputNodes());
-        else if (action.equals(UpdateActionConstants.DECREASE_OUTPUT_NODES_ACTION))
+        } else if (action.equals(UpdateActionConstants.DECREASE_OUTPUT_NODES_ACTION)) {
             display = (task.getDataOutputNodeCount() > task.getMinDataOutputNodes());
-        else
+        } else {
             return UNKNOWN_ACTION;
+        }
 
-        if ((task instanceof TaskGraph) || (!GUIEnv.showNodeEditIcons()))
+        if ((task instanceof TaskGraph) || (!GUIEnv.showNodeEditIcons())) {
             return HIDE_ICON;
+        }
 
-        if (display)
+        if (display) {
             return DISPLAY_ICON;
-        else
+        } else {
             return HIDE_ICON;
+        }
     }
 
     /**
-     * Called to determine the action that is invoked when an update action is
-     * choosen.
+     * Called to determine the action that is invoked when an update action is choosen.
      *
      * @param action the update action (e.g. ADD_INPUT_NODE_ACTION)
      * @return either the action or null if unknown.
      */
     public Action getUpdateAction(Task task, String action) {
-        if (action.equals(UpdateActionConstants.INCREASE_INPUT_NODES_ACTION))
+        if (action.equals(UpdateActionConstants.INCREASE_INPUT_NODES_ACTION)) {
             return ActionTable.getAction(Actions.INC_INPUT_NODES_ACTION);
-        else if (action.equals(UpdateActionConstants.DECREASE_INPUT_NODES_ACTION))
+        } else if (action.equals(UpdateActionConstants.DECREASE_INPUT_NODES_ACTION)) {
             return ActionTable.getAction(Actions.DEC_INPUT_NODES_ACTION);
-        else if (action.equals(UpdateActionConstants.INCREASE_OUTPUT_NODES_ACTION))
+        } else if (action.equals(UpdateActionConstants.INCREASE_OUTPUT_NODES_ACTION)) {
             return ActionTable.getAction(Actions.INC_OUTPUT_NODES_ACTION);
-        else if (action.equals(UpdateActionConstants.DECREASE_OUTPUT_NODES_ACTION))
+        } else if (action.equals(UpdateActionConstants.DECREASE_OUTPUT_NODES_ACTION)) {
             return ActionTable.getAction(Actions.DEC_OUTPUT_NODES_ACTION);
+        }
 
         return null;
     }
 
 
     /**
-     * @return the action that is invoked when a group is activated (e.g. the
-     *         workspace is double-clicked). If null is returned the default workspace
-     *         action is used.
+     * @return the action that is invoked when a group is activated (e.g. the workspace is double-clicked). If null is
+     *         returned the default workspace action is used.
      */
     public Action getOpenGroupAction(TaskGraph taskgraph) {
-        return new GroupEditorAction(new ComponentSelectionHandler(taskgraph), tools, ActionDisplayOptions.DISPLAY_NAME);
+        return new GroupEditorAction(new ComponentSelectionHandler(taskgraph), tools,
+                ActionDisplayOptions.DISPLAY_NAME);
     }
 
     /**
-     * @return the taskgraph component used to represent the specified taskgraph
-     *         (if null is returned then the default component is used)
+     * @return the taskgraph component used to represent the specified taskgraph (if null is returned then the default
+     *         component is used)
      */
     public TaskGraphPanel getOpenGroupComponent(TaskGraph taskgraph, TrianaClient client) {
         return new MainTriana((TaskGraph) taskgraph, client);

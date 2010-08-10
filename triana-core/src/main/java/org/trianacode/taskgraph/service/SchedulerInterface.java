@@ -64,13 +64,11 @@ import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
 
 /**
- * The Interface that all schedulers must implement. This allows us to easily
- * "bolt" in new scheduler algorithms should we wish.
+ * The Interface that all schedulers must implement. This allows us to easily "bolt" in new scheduler algorithms should
+ * we wish.
  *
- * @author      Matthew Shields
- * @created     May 23, 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Matthew Shields
+ * @version $Revision: 4048 $
  */
 public interface SchedulerInterface {
 
@@ -86,8 +84,7 @@ public interface SchedulerInterface {
     public void runTaskGraph() throws SchedulerException;
 
     /**
-     * Runs the taskgraph by waking up all the input tasks. Attaches the
-     * specified object as a history clip-in
+     * Runs the taskgraph by waking up all the input tasks. Attaches the specified object as a history clip-in
      */
     public void runTaskGraph(HistoryClipIn history) throws SchedulerException;
 
@@ -98,8 +95,7 @@ public interface SchedulerInterface {
 
 
     /**
-     * Gracefully halt the execution of the task graph, retaining state
-     * information.
+     * Gracefully halt the execution of the task graph, retaining state information.
      */
     public void pauseTaskGraph() throws SchedulerException;
 

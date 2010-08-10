@@ -58,6 +58,13 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.JMenu;
+import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -65,18 +72,11 @@ import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.gui.main.TaskGraphOrganize;
 import org.trianacode.util.Env;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
 /**
  * Action class to handle all "select all" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
- * @created May 2, 2003: 3:49:12 PM
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class OrganizeAction extends AbstractAction implements ActionDisplayOptions {
 
@@ -111,7 +111,8 @@ public class OrganizeAction extends AbstractAction implements ActionDisplayOptio
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selhandler.getSelectedTaskgraph() != null)
+        if (selhandler.getSelectedTaskgraph() != null) {
             TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.GRAPH_ORGANIZE, selhandler.getSelectedTaskgraph());
+        }
     }
 }

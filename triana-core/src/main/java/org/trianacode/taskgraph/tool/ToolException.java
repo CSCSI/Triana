@@ -23,8 +23,6 @@ import java.io.IOException;
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jul 5, 2009: 6:12:30 PM
- * @date $Date:$ modified by $Author:$
  */
 
 public class ToolException extends IOException {

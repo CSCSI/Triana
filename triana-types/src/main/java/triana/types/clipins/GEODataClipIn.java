@@ -59,30 +59,24 @@
 package triana.types.clipins;
 
 
+import java.text.SimpleDateFormat;
+
 import org.trianacode.taskgraph.clipin.AttachInfo;
 import org.trianacode.taskgraph.clipin.ClipIn;
 import triana.types.util.GPSCalendar;
 
-import java.text.SimpleDateFormat;
-
 /**
- * GEODataClipIn is an Object containing information about data
- * derived from the GEO or other gravitational wave detector.
- * The data fields are: detector name, channel name, GPS time of
- * first data element, UTC calendar date String of the time of the
- * first data element, orginal precision of data (in bits), whether the data
- * has been calibrated or de-whitened, and a quality indicator for
- * the data. These data supplement the data that are held in
- * data sets that this ClipIn may be attached to.
+ * GEODataClipIn is an Object containing information about data derived from the GEO or other gravitational wave
+ * detector. The data fields are: detector name, channel name, GPS time of first data element, UTC calendar date String
+ * of the time of the first data element, orginal precision of data (in bits), whether the data has been calibrated or
+ * de-whitened, and a quality indicator for the data. These data supplement the data that are held in data sets that
+ * this ClipIn may be attached to.
+ * <p/>
+ * There are methods for setting and getting the two data. The dates are inter-convertible, and when one is changed by a
+ * set method then the other is automatically updated.
  *
- * There are methods for setting and getting the two data. The
- * dates are inter-convertible, and when one is changed by a set method
- * then the other is automatically updated.
- *
- * @author      Bernard Schutz
- * @created     28 October 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 
 public class GEODataClipIn extends Object implements ClipIn {
@@ -104,8 +98,7 @@ public class GEODataClipIn extends Object implements ClipIn {
     }
 
     /**
-     * Constructs a GEODataClipIn using the desired input data, with the
-     * time given in GPS milliseconds.
+     * Constructs a GEODataClipIn using the desired input data, with the time given in GPS milliseconds.
      */
     public GEODataClipIn(String det, String name, int prec, boolean cal, boolean dewhite, long gpsMs) {
         detector = det;
@@ -119,10 +112,10 @@ public class GEODataClipIn extends Object implements ClipIn {
     }
 
     /**
-     * Constructs a GEODataClipIn using the desired input data, with the
-     * time given by calendar arguments.
+     * Constructs a GEODataClipIn using the desired input data, with the time given by calendar arguments.
      */
-    public GEODataClipIn(String det, String name, int prec, boolean cal, boolean dewhite, int yr, int mo, int da, int hr, int min, int sec) {
+    public GEODataClipIn(String det, String name, int prec, boolean cal, boolean dewhite, int yr, int mo, int da,
+                         int hr, int min, int sec) {
         detector = det;
         channelName = name;
         precision = prec;
@@ -139,10 +132,8 @@ public class GEODataClipIn extends Object implements ClipIn {
      */
 
     /**
-     * This method is called before the clip-in enters a task's
-     * clip-in bucket. This occurs when either the data it is attached
-     * to is input by the task, or when the unit directly adds the
-     * clip-in to its bucket.
+     * This method is called before the clip-in enters a task's clip-in bucket. This occurs when either the data it is
+     * attached to is input by the task, or when the unit directly adds the clip-in to its bucket.
      *
      * @param info info about the task the clip-in is being attached to
      */
@@ -150,10 +141,8 @@ public class GEODataClipIn extends Object implements ClipIn {
     }
 
     /**
-     * This method is called when the clip-in is removed from a
-     * task's clip-in bucket. This occurs when either the data it is
-     * attached to is output by the task, or when the unit directly
-     * remove the clip-in from its bucket.
+     * This method is called when the clip-in is removed from a task's clip-in bucket. This occurs when either the data
+     * it is attached to is output by the task, or when the unit directly remove the clip-in from its bucket.
      *
      * @param info info about the task the clip-in is being removed from
      */
@@ -162,9 +151,8 @@ public class GEODataClipIn extends Object implements ClipIn {
     }
 
     /**
-     * Clones the ClipIn to an identical one. This is a copy by value,
-     * not by reference. This method must be implemented for each class
-     * in a way that depends on the contents of the ClipIn.
+     * Clones the ClipIn to an identical one. This is a copy by value, not by reference. This method must be implemented
+     * for each class in a way that depends on the contents of the ClipIn.
      *
      * @return a copy by value of the current ClipIn
      */
@@ -239,13 +227,12 @@ public class GEODataClipIn extends Object implements ClipIn {
 
 
     /**
-     * Sets the GPS time of the first sample of the data by giving calendar
-     * information
+     * Sets the GPS time of the first sample of the data by giving calendar information
      *
-     * @param yr The year of the first sample (4 digits)
-     * @param mo The month of the first sample (January = 0)
-     * @param da The day of the month of the first sample (starting at 1)
-     * @param hr The hour of the day of the first sample
+     * @param yr  The year of the first sample (4 digits)
+     * @param mo  The month of the first sample (January = 0)
+     * @param da  The day of the month of the first sample (starting at 1)
+     * @param hr  The hour of the day of the first sample
      * @param min The minute of the hour of the first sample
      * @param sec The second of the minute of the first sample
      */
@@ -317,8 +304,7 @@ public class GEODataClipIn extends Object implements ClipIn {
 
 
     /**
-     * Returns the GPS time of the first sample of the data by giving calendar
-     * information
+     * Returns the GPS time of the first sample of the data by giving calendar information
      *
      * @return String The time of the first sample of the data as a UTC calendar date String
      */

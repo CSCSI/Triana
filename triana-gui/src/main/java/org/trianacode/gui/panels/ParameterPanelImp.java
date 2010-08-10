@@ -62,10 +62,8 @@ package org.trianacode.gui.panels;
 /**
  * An concrete implementation of a parameter panel. This class should not be overridden.
  *
- * @author      Ian Wang
- * @created     27th May 2002
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 
 public class ParameterPanelImp extends ParameterPanel {

@@ -16,21 +16,20 @@
 
 package org.trianacode.gui.panels;
 
-import org.trianacode.util.Env;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+
+import javax.swing.JFileChooser;
+import org.trianacode.util.Env;
 
 /**
  * Class Description Here...
  *
  * @author Andrew Harrison
  * @version $Revision:$
- * @created Jun 25, 2009: 10:52:34 AM
- * @date $Date:$ modified by $Author:$
  */
 
 public class TFileChooser extends JFileChooser implements ActionListener {
@@ -45,8 +44,7 @@ public class TFileChooser extends JFileChooser implements ActionListener {
     }
 
     /**
-     * Create a TFileChooser pointing to the current directory for the specified
-     * directory type.
+     * Create a TFileChooser pointing to the current directory for the specified directory type.
      */
     public TFileChooser(String dirtype) {
         super();
@@ -55,8 +53,9 @@ public class TFileChooser extends JFileChooser implements ActionListener {
 
         File dir = new File(Env.getDirectory(dirtype));
 
-        if (dir.exists())
+        if (dir.exists()) {
             setCurrentDirectory(dir);
+        }
 
         addActionListener(this);
     }
@@ -73,8 +72,9 @@ public class TFileChooser extends JFileChooser implements ActionListener {
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if ((dirtype != null) && (e.getActionCommand().equals(APPROVE_SELECTION)))
+        if ((dirtype != null) && (e.getActionCommand().equals(APPROVE_SELECTION))) {
             Env.setDirectory(dirtype, getCurrentDirectory().getAbsolutePath());
+        }
     }
 
 }

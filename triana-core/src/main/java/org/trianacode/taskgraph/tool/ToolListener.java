@@ -58,17 +58,20 @@
  */
 package org.trianacode.taskgraph.tool;
 
+import java.util.List;
+
 
 /**
- * An interface implemented by classes that wish to be notified when tools
- * are added or removed.
+ * An interface implemented by classes that wish to be notified when tools are added or removed.
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 11th Feb 2003
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
-public interface ToolTableListener {
+public interface ToolListener {
+
+    public void toolsAdded(List<Tool> tools);
+
+    public void toolsRemoved(List<Tool> tools);
 
     /**
      * Called when a new tool is added

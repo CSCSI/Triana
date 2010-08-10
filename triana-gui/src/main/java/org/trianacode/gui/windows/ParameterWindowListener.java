@@ -61,10 +61,8 @@ package org.trianacode.gui.windows;
 /**
  * A listener that is notified when a parameter window is hidden.
  *
- * @author      Ian Wang
- * @created     2nd May 2003
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Ian Wang
+ * @version $Revision: 4048 $
  */
 public interface ParameterWindowListener {
 

@@ -62,44 +62,34 @@ package org.trianacode.taskgraph.clipin;
 import java.io.Serializable;
 
 /**
- * ClipIn is an Interface that can be implemented by any
- * Object to allow it to be added into and carried by a
- * TrianaType data Object. ClipIns carry optional information
- * that are not essential to the operation of the data Object
- * but which may be required by certain Units.
+ * ClipIn is an Interface that can be implemented by any Object to allow it to be added into and carried by a TrianaType
+ * data Object. ClipIns carry optional information that are not essential to the operation of the data Object but which
+ * may be required by certain Units.
  *
- *
- * @version     1.0
- * @author      Bernard Schutz
- * @version     $Revision: 4048 $
- * @date        $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
+ * @author Bernard Schutz
+ * @version $Revision: 4048 $
  */
 public interface ClipIn extends Serializable {
 
     /**
-     * This method is called before the clip-in enters a task's
-     * clip-in bucket. This occurs when either the data it is attached
-     * to is input by the task, or when the unit directly adds the
-     * clip-in to its bucket.
+     * This method is called before the clip-in enters a task's clip-in bucket. This occurs when either the data it is
+     * attached to is input by the task, or when the unit directly adds the clip-in to its bucket.
      *
      * @param info info about the task the clip-in is being attached to
      */
     public void initializeAttach(AttachInfo info);
 
     /**
-     * This method is called when the clip-in is removed from a
-     * task's clip-in bucket. This occurs when either the data it is
-     * attached to is output by the task, or when the unit directly
-     * remove the clip-in from its bucket.
+     * This method is called when the clip-in is removed from a task's clip-in bucket. This occurs when either the data
+     * it is attached to is output by the task, or when the unit directly remove the clip-in from its bucket.
      *
      * @param info info about the task the clip-in is being removed from
      */
     public void finalizeAttach(AttachInfo info);
 
     /**
-     * Clones the ClipIn to an identical one. This is a copy by value,
-     * not by reference. This method must be implemented for each class
-     * in a way that depends on the contents of the ClipIn.
+     * Clones the ClipIn to an identical one. This is a copy by value, not by reference. This method must be implemented
+     * for each class in a way that depends on the contents of the ClipIn.
      *
      * @return a copy by value of the current ClipIn
      */

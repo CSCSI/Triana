@@ -60,15 +60,12 @@ package org.trianacode.gui.action;
 
 
 /**
- * An interface that needs to be implemented by any classes that can have actions associated with
- * them to enable the action classes to handle commands correctly. i.e The tool tree will
- * return itself but button actions or the desktop pane will return the currently selected
- * MainTriana.
+ * An interface that needs to be implemented by any classes that can have actions associated with them to enable the
+ * action classes to handle commands correctly. i.e The tool tree will return itself but button actions or the desktop
+ * pane will return the currently selected MainTriana.
  *
- * @author  Matthew Shields
- * @created May 7, 2003: 2:33:22 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
- * @date    $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public interface SelectionManager {
 

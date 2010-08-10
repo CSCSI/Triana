@@ -58,31 +58,46 @@
  */
 package org.trianacode.gui.panels;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
 
 /**
  * A panel for compiling tools and generating XML
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
- * @created 2nd October
- * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 public class CompilePanel extends ParameterPanel
-        implements ActionListener, ItemListener, ToolTableListener, WindowListener, FocusListener {
+        implements ActionListener, ItemListener, ToolListener, WindowListener, FocusListener {
 
     public final static String JAVA_SUFFIX = ".java";
     public final static String XML_SUFFIX = ".xml";
@@ -242,10 +257,11 @@ public class CompilePanel extends ParameterPanel
         classButton.addActionListener(this);
 
 
-        if (LAST_CLASSPATH == null)
+        if (LAST_CLASSPATH == null) {
             classpath.setText(Env.getClasspath());
-        else
+        } else {
             classpath.setText(LAST_CLASSPATH);
+        }
 
         JPanel argpanel = new JPanel(new BorderLayout());
         argpanel.add(arg, BorderLayout.CENTER);
@@ -254,10 +270,11 @@ public class CompilePanel extends ParameterPanel
         argButton.setMargin(new Insets(6, 4, 2, 4));
         argButton.addActionListener(this);
 
-        if (LAST_ARG == null)
+        if (LAST_ARG == null) {
             arg.setText(Env.getJavacArgs());
-        else
+        } else {
             arg.setText(LAST_ARG);
+        }
 
         command.setCaretPosition(0);
         classpath.setCaretPosition(0);
@@ -383,8 +400,9 @@ public class CompilePanel extends ParameterPanel
      */
     public String getSourceDir() {
         String pathname = getBaseDir() + File.separatorChar + "src";
-        if (!(new File(pathname).exists()))
+        if (!(new File(pathname).exists())) {
             (new File(pathname)).mkdir();
+        }
         return pathname;
     }
 
@@ -582,16 +600,25 @@ public class CompilePanel extends ParameterPanel
 
 
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == unitbrowse)
+        if (event.getSource() == unitbrowse) {
             handleBrowseSource();
-        else if (event.getSource() == compilerbrowse)
+        } else if (event.getSource() == compilerbrowse) {
             handleBrowseCompiler();
-        else if (event.getSource() == filebrowse)
+        } else if (event.getSource() == filebrowse) {
             handleBrowseFile();
-        else if (event.getSource() == classButton)
+        } else if (event.getSource() == classButton) {
             showClasspathPanel();
-        else if (event.getSource() == argButton)
+        } else if (event.getSource() == argButton) {
             showTextEditPanel(argButton, arg.getText());
+        }
+    }
+
+    @Override
+    public void toolsAdded(java.util.List<Tool> tools) {
+    }
+
+    @Override
+    public void toolsRemoved(List<Tool> tools) {
     }
 
     /**
@@ -647,16 +674,20 @@ public class CompilePanel extends ParameterPanel
                 String packageNameStr = "";
                 String unitNameStr;
 
-                if (endofpack > toolboxStr.length() + 1)
-                    packageNameStr = absName.substring(toolboxStr.length() + 1, endofpack).replace(File.separatorChar, '.');
+                if (endofpack > toolboxStr.length() + 1) {
+                    packageNameStr = absName.substring(toolboxStr.length() + 1, endofpack)
+                            .replace(File.separatorChar, '.');
+                }
 
-                unitNameStr = absName.substring(endofpack + srcStr.length(), absName.lastIndexOf('.')).replace(File.separatorChar, '.');
+                unitNameStr = absName.substring(endofpack + srcStr.length(), absName.lastIndexOf('.'))
+                        .replace(File.separatorChar, '.');
 
                 unitname.setText(unitNameStr);
-                if (unitNameStr.lastIndexOf('.') == -1)
+                if (unitNameStr.lastIndexOf('.') == -1) {
                     toolname.setText(unitNameStr);
-                else
+                } else {
                     toolname.setText(unitNameStr.substring(unitNameStr.lastIndexOf('.') + 1));
+                }
 
                 String toolFileStr = absName.substring(0, endofpack + 1) + toolname.getText() + XML_SUFFIX;
 
@@ -764,8 +795,9 @@ public class CompilePanel extends ParameterPanel
                 ClassPathPanel classPathPanel = ((ClassPathPanel) paramwin.getParameterPanel());
                 String classpathStr = classPathPanel.getClasspath();
                 classpath.setText(classpathStr);
-                if (classPathPanel.isRetainCPCheck())
+                if (classPathPanel.isRetainCPCheck()) {
                     Env.setClasspath(classpathStr);
+                }
             } else if (paramwin.getTitle().equals(argButton.getActionCommand())) {
                 arg.setText(((TextAreaPanel) paramwin.getParameterPanel()).getText());
             }
@@ -799,10 +831,11 @@ public class CompilePanel extends ParameterPanel
     }
 
     private String checkAppendFileSeparator(String path) {
-        if (path.endsWith(Env.separator()) || path.equals(""))
+        if (path.endsWith(Env.separator()) || path.equals("")) {
             return path;
-        else
+        } else {
             return path + Env.separator();
+        }
     }
 
     private static class JavaFileFilter extends javax.swing.filechooser.FileFilter {
