@@ -108,7 +108,7 @@ public class ToolResolver implements ToolMetadataResolver {
 
     public void addToolbox(Toolbox toolbox) {
         addNewToolBox(toolbox);
-        resolve(toolbox.getPath());
+        resolve(toolbox);
         saveToolboxes();
         for (ToolListener listener : listeners) {
             listener.toolBoxAdded(toolbox);
@@ -143,7 +143,7 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     public void removeTool(Tool tool) {
-        String toolbox = tool.getToolBox();
+        String toolbox = tool.getToolBox().getPath();
         if (toolbox == null) {
             return;
         }
@@ -160,7 +160,7 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     public void deleteTool(Tool tool) {
-        String toolbox = tool.getToolBox();
+        String toolbox = tool.getToolBox().getPath();
         if (toolbox == null) {
             return;
         }
@@ -178,14 +178,14 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     public void addTool(Tool tool) {
-        String toolbox = tool.getToolBox();
+        Toolbox toolbox = tool.getToolBox();
         if (toolbox == null) {
             return;
         }
         ToolboxTools dated = tools.get(toolbox);
         if (dated == null) {
-            dated = new ToolboxTools(toolbox);
-            tools.put(toolbox, dated);
+            dated = new ToolboxTools(toolbox.getPath());
+            tools.put(toolbox.getPath(), dated);
         }
         boolean add = dated.addTool(tool);
         if (add) {
@@ -321,7 +321,10 @@ public class ToolResolver implements ToolMetadataResolver {
 
     public void refreshTools(URL url, String toolbox) {
         try {
-            resolveTools(url, toolbox);
+            Toolbox box = toolboxes.get(toolbox);
+            if (box != null) {
+                resolveTools(url, box);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -344,7 +347,7 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     @Override
-    public List<ToolMetadata> resolve(String toolbox) {
+    public List<ToolMetadata> resolve(Toolbox toolbox) {
         List<Tool> tools = resolveToolbox(toolbox);
         notifyToolsAdded(tools);
         List<ToolMetadata> ret = new ArrayList<ToolMetadata>();
@@ -398,10 +401,11 @@ public class ToolResolver implements ToolMetadataResolver {
 
     private void reresolve() {
         for (String s : toolboxes.keySet()) {
-            resolve(s);
+            Toolbox tb = toolboxes.get(s);
+            resolve(toolboxes.get(s));
             Collection<ToolMetadataResolver> resolvers = ResolverRegistry.getResolvers();
             for (ToolMetadataResolver resolver : resolvers) {
-                List<ToolMetadata> md = resolver.resolve(s);
+                List<ToolMetadata> md = resolver.resolve(tb);
                 if (md != null && md.size() > 0) {
                     List<Tool> useful = new ArrayList<Tool>();
                     for (ToolMetadata toolMetadata : md) {
@@ -418,9 +422,9 @@ public class ToolResolver implements ToolMetadataResolver {
      *
      * @param toolbox
      */
-    protected List<Tool> resolveToolbox(String toolbox) {
+    protected List<Tool> resolveToolbox(Toolbox toolbox) {
         List<URL> urls = new ArrayList<URL>();
-        URL toolboxUrl = UrlUtils.toURL(toolbox);
+        URL toolboxUrl = UrlUtils.toURL(toolbox.getPath());
         urls.addAll(findLocal(toolboxUrl));
         System.out.println("ToolResolver.resolve got back " + urls.size() + " URLs");
         List<Tool> ret = new ArrayList<Tool>();
@@ -508,7 +512,7 @@ public class ToolResolver implements ToolMetadataResolver {
      * @return
      * @throws Exception
      */
-    protected List<Tool> resolveTools(URL url, String toolbox) throws Exception {
+    protected List<Tool> resolveTools(URL url, Toolbox toolbox) throws Exception {
         Streamable streamable = getToolStream(url);
         if (streamable == null || !streamable.hasInputStream()) {
             return null;
@@ -529,11 +533,11 @@ public class ToolResolver implements ToolMetadataResolver {
             }
             ToolboxTools dated = this.tools.get(toolbox);
             if (dated == null) {
-                dated = new ToolboxTools(toolbox, tools);
+                dated = new ToolboxTools(toolbox.getPath(), tools);
             } else {
                 dated.addTools(tools);
             }
-            this.tools.put(toolbox, dated);
+            this.tools.put(toolbox.getPath(), dated);
         }
         return tools;
     }

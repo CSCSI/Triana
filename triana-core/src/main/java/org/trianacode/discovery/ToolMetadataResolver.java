@@ -3,6 +3,7 @@ package org.trianacode.discovery;
 import java.util.List;
 
 import org.trianacode.discovery.toolinfo.ToolMetadata;
+import org.trianacode.taskgraph.tool.Toolbox;
 
 /**
  * Resolver extension API. Resolvers will be asked to re-resolve periodically. They should therefore attempt to only
@@ -18,6 +19,6 @@ public interface ToolMetadataResolver {
 
     public String getName();
 
-    public List<ToolMetadata> resolve(String toolbox);
+    public List<ToolMetadata> resolve(Toolbox toolbox);
 
 }

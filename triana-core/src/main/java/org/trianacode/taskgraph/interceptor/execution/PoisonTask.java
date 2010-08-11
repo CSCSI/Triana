@@ -13,6 +13,7 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphContext;
 import org.trianacode.taskgraph.event.TaskListener;
 import org.trianacode.taskgraph.proxy.Proxy;
+import org.trianacode.taskgraph.tool.Toolbox;
 
 /**
  * @author Andrew Harrison
@@ -306,7 +307,7 @@ public class PoisonTask implements Task {
     }
 
     @Override
-    public String getToolBox() {
+    public Toolbox getToolBox() {
         return null;
     }
 
@@ -487,7 +488,7 @@ public class PoisonTask implements Task {
     }
 
     @Override
-    public void setToolBox(String toolboxpath) {
+    public void setToolBox(Toolbox toolboxpath) {
     }
 
     @Override

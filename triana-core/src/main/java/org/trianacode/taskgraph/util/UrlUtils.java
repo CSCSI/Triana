@@ -96,4 +96,22 @@ public class UrlUtils {
         }
         return null;
     }
+
+    public String encode(URL url) {
+        try {
+            return url.toURI().toASCIIString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String createToolPath(String qualifiedName) {
+        return createToolboxPath(qualifiedName).replace('.', '/');
+    }
+
+    public static String createToolboxPath(String path) {
+        return path.replace(' ', '_').toLowerCase();
+
+    }
 }

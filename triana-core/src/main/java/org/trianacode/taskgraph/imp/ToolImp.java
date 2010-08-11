@@ -75,6 +75,7 @@ import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.Toolbox;
 
 
 /**
@@ -192,7 +193,7 @@ public class ToolImp implements Tool {
     /**
      * The location of the toolbox this tool was loaded from
      */
-    private String toolboxpath = "";
+    private Toolbox toolbox = null;
 
 
     /**
@@ -347,15 +348,15 @@ public class ToolImp implements Tool {
     /**
      * Used by ToolTable to set the location of the toolbox this tool was loaded from
      */
-    public void setToolBox(String toolboxpath) {
-        this.toolboxpath = toolboxpath;
+    public void setToolBox(Toolbox toolboxpath) {
+        this.toolbox = toolboxpath;
     }
 
     /**
      * @return the path to the toolbox that this tool has been loaded from.
      */
-    public String getToolBox() {
-        return toolboxpath;
+    public Toolbox getToolBox() {
+        return toolbox;
     }
 
 

@@ -3,10 +3,7 @@ package org.trianacode.http;
 import java.io.Serializable;
 
 import org.thinginitself.http.Http;
-import org.thinginitself.http.HttpPeer;
-import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
-import org.thinginitself.streamable.StreamableObject;
 
 /**
  * Make a Java object available via restless.
@@ -15,20 +12,17 @@ import org.thinginitself.streamable.StreamableObject;
  */
 public class DataResource extends Resource {
 
-    Serializable object;
+    private Serializable object;
 
-    public DataResource(String urlName, Serializable object, HttpPeer webPeer) {
+    public DataResource(String urlName, Serializable object) {
         super(urlName, Http.Method.GET);
-
         System.out.println("Deploying an object with identifier " + urlName);
-
-        webPeer.addTarget(this);
         this.object = object;
     }
 
-    public void onGet(RequestContext context) {
-        StringBuffer item = new StringBuffer();
-        context.setResponseEntity(new StreamableObject(object, "text/plain"));
+    public Serializable getObject() {
+        return object;
     }
+
 
 }

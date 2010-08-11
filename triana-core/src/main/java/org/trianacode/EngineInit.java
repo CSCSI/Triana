@@ -48,9 +48,11 @@ public class EngineInit {
         initObjectDeserializers();
         initExtensions(extensions);
 
-        resolver.resolve();
         httpServices = new HTTPServices();
         httpServices.startServices(resolver);
+        resolver.addToolListener(HTTPServices.getWorkflowServer());
+        resolver.resolve();
+
     }
 
     public static ToolResolver getToolResolver() {

@@ -205,7 +205,7 @@ public interface Tool {
     /**
      * @return the path to the toolbox that this tool has been loaded from.
      */
-    public String getToolBox();
+    public Toolbox getToolBox();
 
 
     /**
@@ -405,7 +405,7 @@ public interface Tool {
     /**
      * Used by ToolTable to set the location of the toolbox this tool was loaded from
      */
-    public void setToolBox(String toolboxpath);
+    public void setToolBox(Toolbox toolbox);
 
     /**
      * used when creating clones that are not based on the same definition file type

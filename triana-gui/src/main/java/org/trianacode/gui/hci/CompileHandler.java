@@ -175,7 +175,7 @@ public class CompileHandler implements ParameterWindowListener {
                 }
 
                 unitPackage = proxy.getUnitPackage().replace('.', File.separatorChar);
-                toolBox = tool.getToolBox();
+                toolBox = tool.getToolBox().getPath();
                 toolPackage = tool.getToolPackage();
                 toolFile = tool.getDefinitionPath().toString();
                 sourceDir = computeSrcFileLocation(toolBox, unitPackage);

@@ -141,7 +141,7 @@ public class ToolTipWriter {
             appendDataTypes(tool, tip);
 
             tip.append("<br>ToolBox location : ");
-            tip.append(tool.getToolBox());
+            tip.append(tool.getToolBox().getPath());
             tip.append("<br>Tool Package : ");
             tip.append(tool.getToolPackage());
 

@@ -458,7 +458,7 @@ public class TaskGraphFileHandler implements SelectionManager {
             writeFile = false;
             SaveToolDialog dialog = new SaveToolDialog(group, tools);
             if (dialog.isGo()) {
-                String toolbox = group.getToolBox();
+                String toolbox = group.getToolBox().getPath();
                 File dir = new File(toolbox, group.getToolPackage().replace(".", File.separator));
                 dir.mkdirs();
                 definitionPath = UrlUtils.toURL(dir.getAbsolutePath() + File.separator + group.getToolName() + ".xml");

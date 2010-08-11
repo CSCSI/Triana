@@ -831,7 +831,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                         new BufferedWriter(new FileWriter(UrlUtils.getFile(tool.getDefinitionPath()))));
                 writer.writeComponent(tool);
                 writer.close();
-                toolTable.refreshLocation(tool.getDefinitionPath(), tool.getToolBox());
+                toolTable.refreshLocation(tool.getDefinitionPath(), tool.getToolBox().getPath());
             } catch (IOException except) {
                 throw (new RuntimeException(
                         "Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));

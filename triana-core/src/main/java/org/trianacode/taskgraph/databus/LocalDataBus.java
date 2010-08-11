@@ -29,7 +29,7 @@ public class LocalDataBus implements DatabusInterface {
     }
 
     public Serializable get(WorkflowDataPacket packet) {
-        System.out.println("Getting WorkflowDataPacket from store: " + packet.toString());
+        System.out.println("Getting WorkflowDataPacket from store: " + packet.getDataLocation());
         return datastore.get(packet);
     }
 
