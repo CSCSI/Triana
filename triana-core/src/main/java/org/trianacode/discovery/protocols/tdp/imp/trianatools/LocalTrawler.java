@@ -9,7 +9,6 @@ import org.trianacode.discovery.protocols.tdp.TDPRequest;
 import org.trianacode.discovery.protocols.tdp.TDPResponse;
 import org.trianacode.discovery.protocols.tdp.TDPServer;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
-import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolResolver;
 
 /**

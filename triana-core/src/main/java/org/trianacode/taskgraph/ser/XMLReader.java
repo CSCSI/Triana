@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.trianacode.discovery.toolinfo.ToolMetadata;
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.InstanceIDManager;
 import org.trianacode.taskgraph.Node;
