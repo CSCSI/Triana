@@ -203,7 +203,7 @@ public class RunnableTask extends AbstractRunnableTask
     /**
      * Initializes the unit associated with this runnable task.
      */
-    public void initUnit(ToolTable tools) throws TaskException {
+    public void initUnit() throws TaskException {
         if (unit != null) {
             unit.setRunnableInterface(this);
             unit.init();
@@ -215,7 +215,6 @@ public class RunnableTask extends AbstractRunnableTask
                     unit.parameterUpdated(paramnames[count], getParameter(paramnames[count]));
                 }
             }
-
             executionReset();
         }
     }

@@ -67,7 +67,6 @@ import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskFactory;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
 import org.trianacode.taskgraph.tool.Tool;
@@ -135,7 +134,7 @@ public class RunnableTaskFactory implements TaskFactory {
         RunnableTask task = new RunnableTask(tool, this, preserveinst);
 
         task.setParent(parent);
-        task.initUnit(TaskGraphManager.getToolTable());
+        task.initUnit();
         task.init();
 
         return task;
