@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import org.trianacode.EngineInit;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.taskgraph.tool.Tool;
@@ -245,7 +246,7 @@ public class SaveToolDialog extends JDialog implements ActionListener {
     }
 
     private void save(String toolbox, String pkg, String name) {
-        tool.setToolBox(toolbox);
+        tool.setToolBox(EngineInit.getToolResolver().getToolbox(toolbox));
         tool.setToolPackage(pkg);
         tool.setToolName(name);
         go = true;

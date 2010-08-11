@@ -154,7 +154,6 @@ public class ToolTableImpl implements ToolTable, ToolListener {
         catch (IOException except) {
             throw (new RuntimeException("Error writing xml for " + tool.getToolName() + ": " + except.getMessage()));
         }
-
         refreshLocation(UrlUtils.toURL(location), toolbox);
     }
 

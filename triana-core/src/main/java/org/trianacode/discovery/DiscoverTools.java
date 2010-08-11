@@ -60,10 +60,10 @@ public class DiscoverTools implements Timeable {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         //  scan every 10 seconds....
-        timer = new Timer(this, 10000);
-        timer.cont();
+        //timer = new Timer(this, 10000);
+        //timer.cont();
 
-        tick(timer);
+        //tick(timer);
     }
 
     public void startServices(ToolResolver resolver) {
@@ -85,11 +85,11 @@ public class DiscoverTools implements Timeable {
 
                 List<ToolMetadata> tools = data.getTools();
 
-                System.out.println("Here's the list of tools found from the bonjour service  !!");
+                /*System.out.println("Here's the list of tools found from the bonjour service  !!");
 
                 for (ToolMetadata toolmd : tools) {
                     System.out.println(toolmd.toString());
-                }
+                }*/
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (ClassNotFoundException e) {

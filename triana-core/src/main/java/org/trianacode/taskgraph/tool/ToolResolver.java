@@ -677,7 +677,7 @@ public class ToolResolver implements ToolMetadataResolver {
         if (ch == null) {
             ch = TypesMap.getAnnotated(url.toString());
         }
-        log.info("ToolResolver.add class hierarchy after trying annotations:" + ch + " for url "
+        log.fine("ToolResolver.add class hierarchy after trying annotations:" + ch + " for url "
                 + url);
 
         if (ch != null) {
@@ -864,8 +864,8 @@ public class ToolResolver implements ToolMetadataResolver {
                 String type = elem.getAttribute("type");
                 String virtual = elem.getAttribute("virtual");
                 String name = elem.getAttribute("name");
-                if (name == null) {
-                    name = "noname";
+                if (name == null || name.equals("No Type")) {
+                    name = UrlUtils.getLastPathComponent(toolbox);
                 }
                 boolean v = virtual != null && virtual.equals("true");
                 if (!v) {
@@ -873,7 +873,7 @@ public class ToolResolver implements ToolMetadataResolver {
                         log.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
                     } else {
                         if (type != null && type.length() > 0) {
-                            tbs.add(new Toolbox(toolbox, type, v));
+                            tbs.add(new Toolbox(toolbox, type, name, v));
                         } else {
                             tbs.add(new Toolbox(toolbox, name, v));
                         }

@@ -300,7 +300,9 @@ public class ApplicationFrame extends TrianaWindow
             SplashScreen splash = new SplashScreen();
             splash.showSplashScreen(5);
             tools = new ToolTableImpl(EngineInit.getToolResolver());
-            EngineInit.init(tools, Extension.class);
+            splash.setSplashProgress("Initializing Engine");
+
+            EngineInit.init(tools, false, Extension.class);
             splash.setSplashProgress(Env.getString("toolsInitLabel"));
             initTools();
             initActionTable();
@@ -319,6 +321,9 @@ public class ApplicationFrame extends TrianaWindow
 
             splash.setSplashProgress(Env.getString("toolLoadLabel"));
             initWindow(super.getTitle());
+
+            splash.setSplashProgress("Resolving Tools");
+            EngineInit.getToolResolver().resolve();
 
             addParentTaskGraphPanel();
 

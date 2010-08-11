@@ -18,6 +18,8 @@ package org.trianacode.taskgraph.tool;
 
 import java.io.File;
 
+import org.trianacode.taskgraph.util.UrlUtils;
+
 /**
  * Class Description Here...
  *
@@ -55,7 +57,7 @@ public class Toolbox {
     }
 
     public Toolbox(String path) {
-        this(path, "No Type", "noname", false);
+        this(path, "No Type", UrlUtils.getLastPathComponent(path), false);
     }
 
     public Toolbox(String path, String name, boolean virtual) {

@@ -70,7 +70,7 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     public void addTool(Tool tool) {
-        Path path = getPath()//.append(UrlUtils.createToolboxPath(tool.getToolBox()))
+        Path path = getPath().append(UrlUtils.createToolboxPath(tool.getToolBox().getName()))
                 .append((UrlUtils.createToolPath(tool.getQualifiedToolName())));
         System.out.println("TrianaHttpServer.addTool " + path);
         pathTree.addResource(new ToolResource(path, tool));

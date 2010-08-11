@@ -112,6 +112,12 @@ public class UrlUtils {
 
     public static String createToolboxPath(String path) {
         return path.replace(' ', '_').toLowerCase();
+    }
 
+    public static String getLastPathComponent(String path) {
+        if (path.indexOf("/") > -1) {
+            return path.substring(path.lastIndexOf("/") + 1, path.length());
+        }
+        return path;
     }
 }

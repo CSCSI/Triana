@@ -330,6 +330,7 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
     @Override
     public void toolsAdded(List<Tool> tools) {
         for (Tool tool : tools) {
+            System.out.println("ToolTreeModel.toolsAdded TOOL:" + tool.getQualifiedToolName());
             insertTool(tool);
         }
     }

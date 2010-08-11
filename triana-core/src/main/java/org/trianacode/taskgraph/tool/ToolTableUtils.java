@@ -61,12 +61,12 @@ public class ToolTableUtils {
      * a valid file and finally it checks to see if there is an appropriate file in the "help" directory for the tool.
      */
     public static String getUnitHelpFilePath(Tool tool) {
-        String helpLocation1 = tool.getToolBox() + File.separatorChar + tool.getToolPackage().replace('.',
+        String helpLocation1 = tool.getToolBox().getPath() + File.separatorChar + tool.getToolPackage().replace('.',
                 File.separatorChar) + File.separatorChar + "help" + File.separator;
         String helpLocation2 = null;
 
         if (tool.getProxy() instanceof JavaProxy) {
-            helpLocation2 = tool.getToolBox() + File.separatorChar
+            helpLocation2 = tool.getToolBox().getPath() + File.separatorChar
                     + ((JavaProxy) tool.getProxy()).getUnitPackage().replace(
                     '.', File.separatorChar) + File.separatorChar + "help" + File.separator;
         }
@@ -109,7 +109,7 @@ public class ToolTableUtils {
 
         JavaProxy proxy = (JavaProxy) tool.getProxy();
 
-        StringBuffer buff = new StringBuffer(tool.getToolBox());
+        StringBuffer buff = new StringBuffer(tool.getToolBox().getPath());
         if (buff.charAt(buff.length() - 1) != File.separatorChar) {
             buff.append(File.separator);
         }

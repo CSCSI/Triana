@@ -36,7 +36,7 @@ public class EngineInit {
 
     private static Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
 
-    public static void init(ToolTable table, Class... extensions) throws Exception {
+    public static void init(ToolTable table, boolean resolve, Class... extensions) throws Exception {
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         if (TaskGraphManager.getToolTable() == null) {
@@ -51,8 +51,9 @@ public class EngineInit {
         httpServices = new HTTPServices();
         httpServices.startServices(resolver);
         resolver.addToolListener(HTTPServices.getWorkflowServer());
-        resolver.resolve();
-
+        if (resolve) {
+            resolver.resolve();
+        }
     }
 
     public static ToolResolver getToolResolver() {
@@ -60,7 +61,7 @@ public class EngineInit {
     }
 
     public static void init() throws Exception {
-        init(null, new Class[0]);
+        init(null, true, new Class[0]);
     }
 
     private static void initExtensions(Class... exten) {

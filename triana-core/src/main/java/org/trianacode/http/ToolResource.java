@@ -63,6 +63,7 @@ public class ToolResource extends Resource {
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 XMLWriter writer = new XMLWriter(new BufferedWriter(new OutputStreamWriter(bout)));
                 writer.writeComponent(tool);
+                writer.close();
                 requestContext.setResponseEntity(new StreamableData(bout.toByteArray()));
             } catch (IOException e) {
                 requestContext.setResponseCode(500);
