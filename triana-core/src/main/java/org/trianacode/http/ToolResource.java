@@ -32,12 +32,14 @@ public class ToolResource extends Resource {
 
     private Tool tool;
     private StreamableFile helpFile = null;
+    private NoHelp noHelp = null;
     private Classpath cp = null;
 
 
     public ToolResource(Path path, Tool tool) {
         super(path, Http.Method.GET);
         this.tool = tool;
+        noHelp = new NoHelp(tool);
         String help = tool.getHelpFile();
         if (help != null) {
             File f = new File(help);
@@ -56,7 +58,7 @@ public class ToolResource extends Resource {
             if (helpFile != null) {
                 requestContext.setResponseEntity(helpFile);
             } else {
-                requestContext.setResponseCode(404);
+                requestContext.setResponseEntity(noHelp.getStreamable());
             }
         } else if (path.endsWith(DEFINITION)) {
             try {

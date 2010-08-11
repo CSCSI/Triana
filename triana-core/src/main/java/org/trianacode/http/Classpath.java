@@ -15,7 +15,8 @@ public class Classpath {
     private String list;
 
     public Classpath(List<String> paths) {
-        StringBuilder sb = new StringBuilder("<classpath>");
+        StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+        sb.append("<classpath>");
         for (String path : paths) {
             sb.append("<path>").append(path).append("</path>");
         }

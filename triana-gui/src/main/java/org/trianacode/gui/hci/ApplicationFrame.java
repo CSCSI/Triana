@@ -316,14 +316,15 @@ public class ApplicationFrame extends TrianaWindow
             splash.setSplashProgress(Env.getString("uiLabel"));
             initLayout();
 
+            splash.setSplashProgress("Resolving Tools");
+            EngineInit.getToolResolver().resolve();
+
             splash.setSplashProgress(Env.getString("stateLabel"));
             Env.readStateFiles();
 
             splash.setSplashProgress(Env.getString("toolLoadLabel"));
             initWindow(super.getTitle());
 
-            splash.setSplashProgress("Resolving Tools");
-            EngineInit.getToolResolver().resolve();
 
             addParentTaskGraphPanel();
 
