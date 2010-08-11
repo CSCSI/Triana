@@ -19,8 +19,8 @@ public class ToolData extends ToolMetadata {
     Object[] outputTypes;
     String popUpDescription;
 
-    public ToolData(String toolName, String displayName, URL url, Class unitWrapper) {
-        super(toolName, displayName, url, unitWrapper);
+    public ToolData(String toolName, String displayName, URL url, String unitWrapper, boolean taskgraph) {
+        super(toolName, displayName, url, unitWrapper, taskgraph);
     }
 
     public URL getHelpfile() {

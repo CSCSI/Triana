@@ -60,10 +60,10 @@ public class DiscoverTools implements Timeable {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         //  scan every 10 seconds....
-        //timer = new Timer(this, 10000);
-        //timer.cont();
+        timer = new Timer(this, 10000);
+        timer.cont();
 
-        //tick(timer);
+        tick(timer);
     }
 
     public void startServices(ToolResolver resolver) {

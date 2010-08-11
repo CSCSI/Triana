@@ -31,20 +31,13 @@ public class LocalTrawler extends TDPServer {
     @Override
     public TDPResponse handleRequest(TDPRequest request) {
         if (request.getRequest() == TDPRequest.Request.GET_TOOLS_LIST) {
-            List<Tool> tools = resolver.getLocalTools();
-            return new TDPResponse(getMetadata(tools));
+            List<ToolMetadata> tools = resolver.getLocalToolMetadata();
+            return new TDPResponse(tools);
         }
         // ??
         return new TDPResponse(new ArrayList<ToolMetadata>());
     }
 
-    private List<ToolMetadata> getMetadata(List<Tool> tools) {
-        List<ToolMetadata> ret = new ArrayList<ToolMetadata>();
-        for (Tool tool : tools) {
-            ret.add(new ToolMetadata(tool.getToolName(), tool.getToolName(), tool.getDefinitionPath(), null));
-        }
-        return ret;
-    }
 
     public String getServiceName() {
         return "TrianaService";

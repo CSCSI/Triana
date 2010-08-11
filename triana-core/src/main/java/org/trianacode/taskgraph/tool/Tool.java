@@ -169,6 +169,7 @@ public interface Tool {
      */
     public static final String DEFINITION_TRIANA_XML = "definition.triana.xml";
     public static final String DEFINITION_JAVA_CLASS = "definition.java.class";
+    public static final String DEFINITION_METADATA = "definition.metadata";
     public static final String DEFINITION_UNKNOWN = "definition.unknown";
 
     public String getVersion();

@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,9 +38,15 @@ import org.thinginitself.http.util.MimeHandler;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableFile;
 import org.thinginitself.streamable.StreamableStream;
+import org.trianacode.discovery.ResolverRegistry;
+import org.trianacode.discovery.ToolMetadataResolver;
+import org.trianacode.discovery.toolinfo.ToolMetadata;
 import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
@@ -53,7 +60,7 @@ import org.trianacode.taskgraph.util.UrlUtils;
  * @version 1.0.0 Aug 9, 2010
  */
 
-public class ToolResolver {
+public class ToolResolver implements ToolMetadataResolver {
 
 
     private static Logger log = Logger.getLogger(ToolResolver.class.getName());
@@ -74,13 +81,14 @@ public class ToolResolver {
 
     public static String[] excludedDirectories = {"CVS", "src", "lib"};
     public static String[] extensions = {".xml", ".class", ".jar"};
+    private Map<URL, Object> resolved = new ConcurrentHashMap<URL, Object>();
+
 
     private HttpPeer peer = new HttpPeer();
 
     private Map<String, ToolboxTools> tools = new ConcurrentHashMap<String, ToolboxTools>();
     protected Map<String, Toolbox> toolboxes = new ConcurrentHashMap<String, Toolbox>();
     private List<ToolListener> listeners = new ArrayList<ToolListener>();
-    private Map<URL, Object> resolved = new ConcurrentHashMap<URL, Object>();
 
     public long getResolveInterval() {
         return resolveInterval;
@@ -195,6 +203,17 @@ public class ToolResolver {
         return ret;
     }
 
+    public List<ToolMetadata> getToolMetadata() {
+        List<ToolMetadata> ret = new ArrayList<ToolMetadata>();
+        for (ToolboxTools toolboxTools : tools.values()) {
+            List<Tool> tools = toolboxTools.getTools();
+            for (Tool tool : tools) {
+                ret.add(createMetadata(tool));
+            }
+        }
+        return ret;
+    }
+
     public List<String> getToolNames() {
         List<String> ret = new ArrayList<String>();
         for (ToolboxTools toolboxTools : tools.values()) {
@@ -248,12 +267,38 @@ public class ToolResolver {
         return ret;
     }
 
+    public List<ToolMetadata> getLocalToolMetadata() {
+        List<ToolMetadata> ret = new ArrayList<ToolMetadata>();
+        for (ToolboxTools toolboxTools : tools.values()) {
+            String path = toolboxTools.getToolbox();
+            if (UrlUtils.getExistingFile(path) != null) {
+                List<Tool> tools = toolboxTools.getTools();
+                for (Tool tool : tools) {
+                    ret.add(createMetadata(tool));
+                }
+            }
+        }
+        return ret;
+    }
+
     public List<Tool> getTools(String toolbox) {
         ToolboxTools tt = this.tools.get(toolbox);
         if (tt != null) {
             return tt.getTools();
         }
         return new ArrayList<Tool>();
+    }
+
+    public List<ToolMetadata> getToolMetadata(String toolbox) {
+        List<ToolMetadata> ret = new ArrayList<ToolMetadata>();
+        ToolboxTools tt = this.tools.get(toolbox);
+        if (tt != null) {
+            List<Tool> tools = tt.getTools();
+            for (Tool tool : tools) {
+                ret.add(createMetadata(tool));
+            }
+        }
+        return ret;
     }
 
     public Tool getTool(String fullname) {
@@ -293,6 +338,29 @@ public class ToolResolver {
     }
 
 
+    @Override
+    public String getName() {
+        return "TrianaMetadataResolver";
+    }
+
+    @Override
+    public List<ToolMetadata> resolve(String toolbox) {
+        List<Tool> tools = resolveToolbox(toolbox);
+        notifyToolsAdded(tools);
+        List<ToolMetadata> ret = new ArrayList<ToolMetadata>();
+        for (Tool tool : tools) {
+            ret.add(createMetadata(tool));
+        }
+        return ret;
+    }
+
+    private void notifyToolsAdded(List<Tool> tools) {
+        for (ToolListener listener : listeners) {
+            listener.toolsAdded(tools);
+        }
+    }
+
+
     /**
      * get a streamable from a tool URL
      *
@@ -324,10 +392,25 @@ public class ToolResolver {
      */
     public void resolve() {
         loadToolboxes();
+        reresolve();
+        timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
+    }
+
+    private void reresolve() {
         for (String s : toolboxes.keySet()) {
             resolve(s);
+            Collection<ToolMetadataResolver> resolvers = ResolverRegistry.getResolvers();
+            for (ToolMetadataResolver resolver : resolvers) {
+                List<ToolMetadata> md = resolver.resolve(s);
+                if (md != null && md.size() > 0) {
+                    List<Tool> useful = new ArrayList<Tool>();
+                    for (ToolMetadata toolMetadata : md) {
+                        useful.add(createTool(toolMetadata));
+                    }
+                    notifyToolsAdded(useful);
+                }
+            }
         }
-        timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
     }
 
     /**
@@ -335,74 +418,68 @@ public class ToolResolver {
      *
      * @param toolbox
      */
-    protected void resolve(String toolbox) {
+    protected List<Tool> resolveToolbox(String toolbox) {
         List<URL> urls = new ArrayList<URL>();
         URL toolboxUrl = UrlUtils.toURL(toolbox);
         urls.addAll(findLocal(toolboxUrl));
         System.out.println("ToolResolver.resolve got back " + urls.size() + " URLs");
+        List<Tool> ret = new ArrayList<Tool>();
         for (URL url : urls) {
             try {
                 List<Tool> tools = resolveTools(url, toolbox);
-                for (ToolListener listener : listeners) {
-                    listener.toolsAdded(tools);
-                }
+                ret.addAll(tools);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return ret;
     }
 
     /**
-     * find tools on the local file system
+     * Will this work for taskgraph???
      *
-     * @param url
+     * @param metadata
      * @return
      */
-    private List<URL> findLocal(URL url) {
-        ArrayList<URL> files = new ArrayList<URL>();
-        File f = UrlUtils.getExistingFile(url);
-        if (f == null) {
-            return files;
-        }
-        if (f.getName().startsWith(".")) {
-            return files;
-        }
-        for (String extDir : excludedDirectories) {
-            if (f.getName().equals(extDir)) {
-                return files;
-            }
-        }
-        if (f.isDirectory()) {
-            File[] fs = f.listFiles(new FilenameFilter() {
-                public boolean accept(File file, String s) {
-                    File child = new File(file, s);
-                    if (child.isDirectory()) {
-                        return true;
-                    } else {
-                        for (String ext : extensions) {
-                            if (child.getName().endsWith(ext)) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
+    private Tool createTool(ToolMetadata metadata) {
+        try {
+            if (!metadata.isTaskgraph()) {
+                ToolImp tool = new ToolImp();
+                tool.setDefinitionType(Tool.DEFINITION_METADATA);
+                tool.setToolName(getClassName(metadata.getToolName()));
+                tool.setToolPackage(getPackageName(metadata.getToolName()));
+                String cls = metadata.getUnitWrapper();
+                if (cls == null) {
+                    tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
+                } else {
+                    tool.setProxy(new JavaProxy(getClassName(cls), getPackageName(cls)));
                 }
-            });
-            for (File file : fs) {
-                URL furl = UrlUtils.fromFile(file);
-                if (furl != null && resolved.get(furl) == null) {
-                    files.addAll(findLocal(furl));
-                    resolved.put(furl, new Object());
-                }
+                return tool;
+            } else {
+                TaskGraph taskgraph = TaskGraphManager.createTaskGraph();
+                taskgraph.setDefinitionType(Tool.DEFINITION_METADATA);
+                taskgraph.setToolName(getClassName(metadata.getToolName()));
+                taskgraph.setToolPackage(getPackageName(metadata.getToolName()));
+                return taskgraph;
             }
-        } else {
-            URL furl = UrlUtils.fromFile(f);
-            if (furl != null && resolved.get(furl) == null) {
-                files.add(furl);
-                resolved.put(furl, new Object());
-            }
+        } catch (TaskException e) {
+            log.warning("Error creating tool:" + FileUtils.formatThrowable(e));
+            return null;
         }
-        return files;
+    }
+
+    private ToolMetadata createMetadata(Tool tool) {
+        Proxy proxy = tool.getProxy();
+        String cls = null;
+        boolean taskgraph = true;
+        if (proxy != null && proxy instanceof JavaProxy) {
+            cls = tool.getQualifiedToolName();
+            taskgraph = false;
+        }
+        ToolMetadata ret = new ToolMetadata(tool.getQualifiedToolName(), tool.getQualifiedToolName(),
+                tool.getDefinitionPath(),
+                cls, taskgraph);
+        return ret;
     }
 
 
@@ -461,6 +538,61 @@ public class ToolResolver {
         return tools;
     }
 
+
+    /**
+     * find tools on the local file system
+     *
+     * @param url
+     * @return
+     */
+    private List<URL> findLocal(URL url) {
+        ArrayList<URL> files = new ArrayList<URL>();
+        File f = UrlUtils.getExistingFile(url);
+        if (f == null) {
+            return files;
+        }
+        if (f.getName().startsWith(".")) {
+            return files;
+        }
+        for (String extDir : excludedDirectories) {
+            if (f.getName().equals(extDir)) {
+                return files;
+            }
+        }
+        if (f.isDirectory()) {
+            File[] fs = f.listFiles(new FilenameFilter() {
+                public boolean accept(File file, String s) {
+                    File child = new File(file, s);
+                    if (child.isDirectory()) {
+                        return true;
+                    } else {
+                        for (String ext : extensions) {
+                            if (child.getName().endsWith(ext)) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            });
+            for (File file : fs) {
+                URL furl = UrlUtils.fromFile(file);
+                if (furl != null && resolved.get(furl) == null) {
+                    files.addAll(findLocal(furl));
+                    resolved.put(furl, new Object());
+                }
+            }
+        } else {
+            URL furl = UrlUtils.fromFile(f);
+            if (furl != null && resolved.get(furl) == null) {
+                files.add(furl);
+                resolved.put(furl, new Object());
+            }
+        }
+        return files;
+    }
+
+
     /**
      * process an XML tool description
      *
@@ -510,7 +642,7 @@ public class ToolResolver {
         ZipInputStream zin = (ZipInputStream) in;
         ZipEntry entry;
         while ((entry = zin.getNextEntry()) != null) {
-            if (entry.getName().endsWith(EXT_TASKGRAPH)) {
+            if (entry.getName().endsWith(ToolResolver.EXT_TASKGRAPH)) {
                 byte[] buff = new byte[2048];
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 int c;
@@ -520,7 +652,7 @@ public class ToolResolver {
                 ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
                 List<Tool> xmls = processXml(new StreamableStream(bin));
                 ret.addAll(xmls);
-            } else if (entry.getName().endsWith(EXT_JAVA_CLASS)) {
+            } else if (entry.getName().endsWith(ToolResolver.EXT_JAVA_CLASS)) {
                 List<Tool> clss = processClass(new URL("jar:" + url.toString() + "!/" + entry.getName()));
                 ret.addAll(clss);
             }
@@ -546,7 +678,7 @@ public class ToolResolver {
 
         if (ch != null) {
             Tool tool = createTool(ch.getName());
-            if (tool != null && tools.get(tool.getQualifiedToolName()) == null) {
+            if (tool != null) {
                 return Arrays.asList(tool);
             }
         }
@@ -566,7 +698,6 @@ public class ToolResolver {
             tool.setDefinitionType(Tool.DEFINITION_JAVA_CLASS);
             tool.setToolName(getClassName(className));
             tool.setToolPackage(getPackageName(className));
-
             tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
             return tool;
         } catch (TaskException e) {
@@ -762,9 +893,7 @@ public class ToolResolver {
 
     private class ResolveThread extends TimerTask {
         public void run() {
-            for (String s : toolboxes.keySet()) {
-                resolve(s);
-            }
+            reresolve();
         }
     }
 

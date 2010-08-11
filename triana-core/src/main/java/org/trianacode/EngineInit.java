@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.trianacode.discovery.ResolverRegistry;
+import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.http.HTTPServices;
 import org.trianacode.http.RendererRegistry;
 import org.trianacode.http.ToolRenderer;
@@ -64,6 +66,7 @@ public class EngineInit {
         ext.add(Interceptor.class);
         ext.add(ToolRenderer.class);
         ext.add(ToolboxRenderer.class);
+        ext.add(ToolMetadataResolver.class);
         for (Class aClass : exten) {
             if (!ext.contains(aClass)) {
                 ext.add(aClass);
@@ -89,6 +92,12 @@ public class EngineInit {
                 for (Object o : exts) {
                     ToolboxRenderer e = (ToolboxRenderer) o;
                     RendererRegistry.registerToolboxRenderer(e);
+                }
+            } else if (key.equals(ToolMetadataResolver.class)) {
+                List<Object> exts = extensions.get(key);
+                for (Object o : exts) {
+                    ToolMetadataResolver e = (ToolMetadataResolver) o;
+                    ResolverRegistry.registerResolver(e);
                 }
             }
         }
