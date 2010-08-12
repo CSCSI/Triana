@@ -165,14 +165,12 @@ public class ToolClassLoader extends URLClassLoader {
         return false;
     }
 
-    public File getLibFile(String relativePath) {
-        if (libs.contains(relativePath)) {
-            File f = new File(root, relativePath);
-            System.out.println("ToolClassLoader.getLibFile " + f.getAbsolutePath() + " exists:" + f.exists());
+    public File getFile(String relativePath) {
+        File f = new File(root, relativePath);
+        if (f.exists() && f.length() > 0) {
             return f;
         }
         return null;
-
     }
 
 

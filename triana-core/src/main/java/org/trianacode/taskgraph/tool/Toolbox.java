@@ -113,7 +113,7 @@ public class Toolbox {
     }
 
     public File getLibFile(String relativePath) {
-        return loader.getLibFile(relativePath);
+        return loader.getFile(relativePath);
     }
 
     public String getClassPath() {
