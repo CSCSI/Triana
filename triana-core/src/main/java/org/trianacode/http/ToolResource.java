@@ -45,7 +45,6 @@ public class ToolResource extends Resource {
         this.tool = tool;
         noHelp = new NoHelp(tool);
         helpFile = tool.getToolName() + ".html";
-        System.out.println("ToolResource.ToolResource HELP FILE:" + helpFile);
         List<String> libs = tool.getToolBox().getLibPaths();
         cp = new Classpath(libs);
     }
@@ -54,6 +53,9 @@ public class ToolResource extends Resource {
     @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
         String path = requestContext.getRequestPath();
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
         String me = getPath().toString();
         String res = path.substring(path.indexOf(me) + me.length(),
                 path.length());
@@ -89,7 +91,7 @@ public class ToolResource extends Resource {
         } else if (res.startsWith(CLASSPATH)) {
             String sub = res.substring(CLASSPATH.length(), res.length());
             File f = tool.getToolBox().getLibFile(sub);
-            if (f.exists() && f.length() > 0) {
+            if (f != null && f.exists() && f.length() > 0) {
                 if (f.isDirectory()) {
                     requestContext.setResponseEntity(new StreamableListDir(f).getStreamable());
                 } else {
