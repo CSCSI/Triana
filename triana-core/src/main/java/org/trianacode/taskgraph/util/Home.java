@@ -31,6 +31,7 @@ public class Home {
     static Logger logger = Logger.getLogger("org.trianacode.taskgraph.util.Home");
     private static String home = null;
     private static String os = null;
+    private static String arch = null;
 
 
     public static synchronized String home() {
@@ -76,6 +77,11 @@ public class Home {
         home = appHome.getAbsolutePath();
 
         return home;
+    }
+
+    public static synchronized String arch() {
+        arch = System.getProperty("os.arch").toLowerCase();
+        return arch;
     }
 
 

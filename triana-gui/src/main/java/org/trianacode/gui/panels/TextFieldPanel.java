@@ -95,7 +95,7 @@ public class TextFieldPanel extends UnitPanel implements ActionListener {
     /**
      * A reference to the vector which stores all of the Textfields
      */
-    Vector textFields;
+    Vector textFields = new Vector();
 
     String c[];
 

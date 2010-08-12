@@ -90,10 +90,15 @@ public class UrlUtils {
 
     public static URL toURL(String filePath) {
         try {
-            return new File(filePath).toURI().toURL();
+            return new URL(filePath);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            try {
+                return new File(filePath).toURI().toURL();
+            } catch (MalformedURLException ex) {
+                ex.printStackTrace();
+            }
         }
+
         return null;
     }
 

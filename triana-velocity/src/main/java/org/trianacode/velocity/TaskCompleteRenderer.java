@@ -9,6 +9,8 @@ import org.trianacode.http.ToolRenderer;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**
+ * TODO need to get a message to this that the task is complete - to remove it from the resource tree
+ *
  * @author Andrew Harrison
  * @version 1.0.0 Jul 21, 2010
  */

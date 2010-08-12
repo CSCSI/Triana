@@ -17,6 +17,8 @@
 package org.trianacode.taskgraph.tool;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 import org.trianacode.taskgraph.util.UrlUtils;
 
@@ -29,10 +31,34 @@ import org.trianacode.taskgraph.util.UrlUtils;
 
 public class Toolbox {
 
-    public static enum Type {
-        FILE,
-        HTTP
-    }
+    /**
+     * constants for directory names where native and java libs are stored in a toolbox. For a toolbox to know where
+     * these things are and have them loaded, and exposed, these naming convention must be followed.
+     * <p/>
+     * The OS-specific dir names should all be within a 'nativ' dir.
+     */
+    public static final String NATIVE_DIR = "nativ";
+    public static final String WIN_32_DIR = "win32";
+    public static final String WIN_64_DIR = "win64";
+    public static final String OSX_DIR = "osx";
+    public static final String OSX_32_DIR = "osx32";
+    public static final String OSX_64_DIR = "osx64";
+    public static final String NUX_32_DIR = "nux32";
+    public static final String NUX_64_DIR = "nux64";
+    public static final String LIB_DIR = "lib";
+    public static final String HELP_DIR = "help";
+
+    public static String[] nativeDirs =
+            {
+                    WIN_32_DIR,
+                    WIN_64_DIR,
+                    OSX_DIR,
+                    OSX_32_DIR,
+                    OSX_64_DIR,
+                    NUX_32_DIR,
+                    NUX_64_DIR
+            };
+
 
     private String path;
     private String type;
@@ -40,6 +66,7 @@ public class Toolbox {
     private String name;
 
     public static final String INTERNAL = "internal";
+    private ToolClassLoader loader = new ToolClassLoader();
 
     public Toolbox(String path, String type, String name, boolean virtual) {
         this.path = path;
@@ -74,6 +101,17 @@ public class Toolbox {
 
     public Toolbox(File file) {
         this(file, "No Type");
+    }
+
+    public String getClassPath() {
+        return loader.getClassPath();
+    }
+
+    public void loadTools() throws IOException {
+        ClassLoaders.addClassLoader(loader);
+        URL url = UrlUtils.toURL(getPath());
+        loader.addToolBox(url);
+        TypesMap.load(url);
     }
 
     public String getPath() {

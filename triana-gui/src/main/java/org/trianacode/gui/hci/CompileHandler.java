@@ -63,6 +63,7 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
+import org.trianacode.EngineInit;
 import org.trianacode.gui.panels.CompilePanel;
 import org.trianacode.gui.panels.ScrollingMessageFrame;
 import org.trianacode.gui.windows.ErrorDialog;
@@ -71,8 +72,8 @@ import org.trianacode.gui.windows.ParameterWindowListener;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolClassLoader;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.CompileUtil;
 import org.trianacode.util.CompilerException;
 import org.trianacode.util.Env;
@@ -146,8 +147,8 @@ public class CompileHandler implements ParameterWindowListener {
     private void init() {
         compiler = new CompileUtil(true);
         compiler.setCompilerLocation(Env.getCompilerCommand());
-        compiler.setCompilerClasspath(
-                Env.getClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
+        //compiler.setCompilerClasspath(
+        //        Env.getClasspath() + System.getProperty("path.separator") + ToolClassLoader.getLoader().getClassPath());
         compiler.setCompilerArguments(Env.getJavacArgs());
 
         errorFrame = new ScrollingMessageFrame("Automated Compile - Error Messages", false);
@@ -319,13 +320,13 @@ public class CompileHandler implements ParameterWindowListener {
 
     public void compile() {
         try {
+            Toolbox box = EngineInit.getToolResolver().getToolbox(toolBox);
             if (compileSource) {
                 if (!automatedCompile) {
                     compiler = new CompileUtil(sourceFilePath, true);
                     compiler.setCompilerLocation(panel.getCompilerCommand());
                     compiler.setCompilerClasspath(
-                            panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader
-                                    .getLoader().getClassPath());
+                            panel.getCompilerClasspath() + System.getProperty("path.separator") + box.getClassPath());
                     compiler.setCompilerArguments(panel.getCompilerArguments());
                 } else {
                     compiler.setJavaFile(sourceFilePath);
@@ -370,7 +371,9 @@ public class CompileHandler implements ParameterWindowListener {
 
 
     public void compileGUI(Tool tool) throws FileNotFoundException, CompilerException {
+
         if (compileGUI && tool.isParameterName(Tool.PARAM_PANEL_CLASS)) {
+            Toolbox box = EngineInit.getToolResolver().getToolbox(toolBox);
             String panelclass = (String) tool.getParameter(Tool.PARAM_PANEL_CLASS);
             panelclass = panelclass.substring(panelclass.lastIndexOf('.') + 1);
 
@@ -395,8 +398,7 @@ public class CompileHandler implements ParameterWindowListener {
                 compiler.setCompilerLocation(panel.getCompilerCommand());
                 //TODO
                 compiler.setCompilerClasspath(
-                        panel.getCompilerClasspath() + System.getProperty("path.separator") + ToolClassLoader
-                                .getLoader().getClassPath());
+                        panel.getCompilerClasspath() + System.getProperty("path.separator") + box.getClassPath());
                 compiler.setCompilerArguments(panel.getCompilerArguments());
             }
             compiler.setDestDir(destFilePath);

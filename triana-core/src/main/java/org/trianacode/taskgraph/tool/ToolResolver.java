@@ -69,11 +69,6 @@ public class ToolResolver implements ToolMetadataResolver {
 
     private Timer timer = new Timer();
 
-
-    static {
-        ClassLoaders.addClassLoader(ToolClassLoader.getLoader());
-    }
-
     public static final String MIME_ZIP = "application/zip";
     public static final String MIME_JAR = "application/java-archive";
     public static final String EXT_TASKGRAPH = ".xml";
@@ -491,10 +486,8 @@ public class ToolResolver implements ToolMetadataResolver {
         for (Toolbox toolbox : box) {
             if (!toolbox.isVirtual()) {
                 try {
-                    URL url = UrlUtils.toURL(toolbox.getPath());
-                    ToolClassLoader.getLoader().addToolBox(url);
-                    TypesMap.load(url);
                     if (toolboxes.get(toolbox.getPath()) == null) {
+                        toolbox.loadTools();
                         toolboxes.put(toolbox.getPath(), toolbox);
                     }
                 } catch (Exception e) {

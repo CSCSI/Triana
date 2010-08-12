@@ -220,6 +220,9 @@ public class Const extends Number implements Arithmetic, Comparable {
      * @return <I>True</I> if the given Object is a Const whose contents equal those of the current one
      */
     public boolean equals(Object num) {
+        if (num == null) {
+            return false;
+        }
         if (!(num instanceof Number)) {
             return false;
         }

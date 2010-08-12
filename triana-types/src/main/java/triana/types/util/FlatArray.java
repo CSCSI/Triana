@@ -1729,6 +1729,9 @@ public class FlatArray extends Object implements Serializable {
      * @return <i>True</i> if the arrays are similar
      */
     public static boolean similarArrays(Object a1, Object a2) {
+        if (a1 == null || a2 == null) {
+            return false;
+        }
         if ((!a1.getClass().isArray()) || (!a2.getClass().isArray())) {
             return false;
         }

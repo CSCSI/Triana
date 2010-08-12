@@ -75,7 +75,7 @@ import org.trianacode.gui.panels.ScrollerPanel;
  */
 public class ScrollerWindow extends ParameterWindow {
 
-    ScrollerPanel scrollerPanel = null;
+    ScrollerPanel scrollerPanel = new ScrollerPanel();
 
     //public JSlider slider=null;
 

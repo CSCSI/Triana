@@ -373,12 +373,14 @@ public class TaskImp extends ToolImp implements Task {
      * Sets the value for the specified parameter name.
      */
     public void setParameter(String name, Object value) {
+
         Object oldvalue = getParameter(name);
 
         super.setParameter(name, value);
-
-        if (!value.equals(oldvalue)) {
-            notifyParameterSet(name, getParameterType(name), oldvalue, value);
+        if (value != null) {
+            if (!value.equals(oldvalue)) {
+                notifyParameterSet(name, getParameterType(name), oldvalue, value);
+            }
         }
     }
 

@@ -106,14 +106,14 @@ public class ScrollerPanel extends UnitPanel implements ChangeListener,
      * The scrollbar.
      */
 
-    private JSlider slider;
+    private JSlider slider = new JSlider();
 
 
     /**
      * The display used to display the scrollbar's value.
      */
 
-    private JTextField display;
+    private JTextField display = new JTextField(10);
 
 
     /**
@@ -312,11 +312,11 @@ public class ScrollerPanel extends UnitPanel implements ChangeListener,
 
     protected void layoutPanel() {
 //        MAX_INT = 100;
-        slider = new JSlider();
+
         slider.setMinimum(0);
         slider.setMaximum(100);
 
-        display = new JTextField(10);
+
         titlelabel = new JLabel(title, JLabel.CENTER);
 //        minValue = new JTextField();
 //        maxValue = new JTextField();

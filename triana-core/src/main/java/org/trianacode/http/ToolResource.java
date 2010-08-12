@@ -73,7 +73,7 @@ public class ToolResource extends Resource {
         } else if (path.endsWith(EXECUTABLES)) {
             requestContext.setResponseEntity(cp.getStreamable());
         } else if (path.endsWith(getPath().getLast())) {
-            requestContext.setResponseEntity(new StreamableString("Tool", "text/plain"));
+            requestContext.setResponseEntity(new StreamableString("Tool", "text/plain")); // ummm
         } else {
             requestContext.setResponseCode(404);
         }

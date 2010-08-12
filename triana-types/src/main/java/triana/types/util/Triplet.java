@@ -196,11 +196,14 @@ public class Triplet extends Object implements Serializable {
 
     /**
      * Class method that tests a one-dimensional array to see if it is uniform and can therefore be converted to a
-     * Triplet.
+     * Triplet. TODO - ADDED BY ANDREW 12.08.10 - have I broken this?
      */
     public static boolean testUniform(double[] values) {
+        if (values == null) {
+            return false;
+        }
         int length = values.length;
-        if (length < 3) {
+        if (length > 0 && length < 3) {
             return true;
         }
         double step = values[1] - values[0];

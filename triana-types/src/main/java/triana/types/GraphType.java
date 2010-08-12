@@ -2638,7 +2638,7 @@ public abstract class GraphType extends TrianaType implements Arithmetic, AsciiC
      * @return <I>True</I> if the object equals the current one
      */
     public boolean equals(Object obj) {
-        if (!(obj instanceof GraphType)) {
+        if (obj == null || !(obj instanceof GraphType)) {
             return false;
         }
         GraphType other = (GraphType) obj;
@@ -2646,6 +2646,9 @@ public abstract class GraphType extends TrianaType implements Arithmetic, AsciiC
             return false;
         }
         int dim, dv;
+        if (independentComplex == null && other.independentComplex != null) {
+            return false;
+        }
         for (dim = 0; dim < independentVariables; dim++) {
             if (independentComplex[dim] != other.isIndependentComplex(dim)) {
                 return false;
@@ -2654,11 +2657,22 @@ public abstract class GraphType extends TrianaType implements Arithmetic, AsciiC
                 return false;
             }
         }
+        if (dependentComplex == null && other.dependentComplex != null) {
+            return false;
+        }
+        if (dataArrayTypeNames == null && other.dataArrayTypeNames != null) {
+            return false;
+        }
         for (dv = 0; dv < dependentVariables; dv++) {
+
             if (dependentComplex[dv] != other.isDependentComplex(dv)) {
                 return false;
             }
-            if (!dataArrayTypeNames[dv].equals(other.getDataArrayTypeNames(dv))) {
+            if (dataArrayTypeNames[dv] == null && other.getDataArrayTypeNames(dv) != null) {
+                return false;
+            }
+            if (dataArrayTypeNames[dv] != null && other.getDataArrayTypeNames(dv) != null
+                    && !dataArrayTypeNames[dv].equals(other.getDataArrayTypeNames(dv))) {
                 return false;
             }
             if (!getDependentLabels(dv).equals(other.getDependentLabels(dv))) {

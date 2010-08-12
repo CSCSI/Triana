@@ -46,6 +46,7 @@ public abstract class OldUnit extends Unit {
      * properties (e.g. default number of nodes) and tool parameters.
      */
     public void init() {
+        saveParameters();
     }
 
     /**
@@ -680,6 +681,9 @@ public abstract class OldUnit extends Unit {
             getTask().setParameter(Task.DEFAULT_INPUT_NODES, String.valueOf(incount));
             getTask().setParameter(Task.MIN_INPUT_NODES, String.valueOf(Task.DEFAULT_MIN_NODES));
         } else {
+            if (incount == 0) {
+                incount = 1;
+            }
             if (zerooutput) {
                 getTask().setParameter(Task.MAX_INPUT_NODES, String.valueOf(incount));
                 getTask().setParameter(Task.DEFAULT_INPUT_NODES, String.valueOf(incount));
@@ -699,7 +703,6 @@ public abstract class OldUnit extends Unit {
      */
     public void setResizableOutputs(boolean b) {
         int outcount = getTask().getOutputNodeCount();
-
         if (getTask().isParameterName(Task.DEFAULT_OUTPUT_NODES)) {
             outcount = Integer.parseInt((String) getTask().getParameter(Task.DEFAULT_OUTPUT_NODES));
         }
@@ -709,6 +712,9 @@ public abstract class OldUnit extends Unit {
             getTask().setParameter(Task.DEFAULT_OUTPUT_NODES, String.valueOf(outcount));
             getTask().setParameter(Task.MIN_OUTPUT_NODES, String.valueOf(Task.DEFAULT_MIN_NODES));
         } else {
+            if (outcount == 0) {
+                outcount = 1;
+            }
             if (zerooutput) {
                 getTask().setParameter(Task.MAX_OUTPUT_NODES, String.valueOf(outcount));
                 getTask().setParameter(Task.DEFAULT_OUTPUT_NODES, String.valueOf(outcount));
