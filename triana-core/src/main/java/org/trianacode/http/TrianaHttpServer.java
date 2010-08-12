@@ -72,7 +72,6 @@ public class TrianaHttpServer implements Target, ToolListener {
     public void addTool(Tool tool) {
         Path path = getPath().append(UrlUtils.createPath(tool.getToolBox().getName()))
                 .append((UrlUtils.createPath(tool.getQualifiedToolName())));
-        System.out.println("TrianaHttpServer.addTool " + path);
         pathTree.addResource(new ToolResource(path, tool));
 
     }
@@ -114,20 +113,23 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     private void process(RequestContext requestContext) {
+        System.out.println("TrianaHttpServer.process ENTER");
         Resource r = requestContext.getResource();
         if (r.methodIsAllowed(requestContext.getMethod())) {
             Streamable s = r.getStreamable();
             if (s != null) {
                 requestContext.setResponseEntity(s);
+            } else {
+                requestContext.setResponseCode(404);
             }
+        } else {
+            requestContext.setResponseCode(405);
         }
     }
 
     @Override
     public Resource getResource(RequestContext requestContext) throws RequestProcessException {
-        System.out.println("TrianaHttpServer.getResource CALLED with " + requestContext.getRequestPath());
         Resource r = pathTree.getResource(requestContext.getRequestPath());
-        System.out.println("TrianaHttpServer.getResource RESOURCE IS " + r);
         return r;
     }
 

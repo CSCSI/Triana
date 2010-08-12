@@ -19,6 +19,7 @@ package org.trianacode.taskgraph.tool;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import org.trianacode.taskgraph.util.UrlUtils;
 
@@ -101,6 +102,18 @@ public class Toolbox {
 
     public Toolbox(File file) {
         this(file, "No Type");
+    }
+
+    public ClassLoader getClassLoader() {
+        return loader;
+    }
+
+    public List<String> getLibPaths() {
+        return loader.getLibPaths();
+    }
+
+    public File getLibFile(String relativePath) {
+        return loader.getLibFile(relativePath);
     }
 
     public String getClassPath() {

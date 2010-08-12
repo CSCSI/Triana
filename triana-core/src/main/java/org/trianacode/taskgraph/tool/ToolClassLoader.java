@@ -22,10 +22,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.trianacode.taskgraph.util.Home;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 /**
@@ -39,22 +39,12 @@ public class ToolClassLoader extends URLClassLoader {
 
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolClassLoader");
 
-    private List<URL> nativeDirs = new ArrayList<URL>();
-
-    private List<URL> helpDirs = new ArrayList<URL>();
+    private List<String> libs = new ArrayList<String>();
+    private File root = null;
 
     public ToolClassLoader(ClassLoader classLoader) {
-        this(classLoader, new String[0]);
-    }
-
-    public ToolClassLoader(ClassLoader classLoader, String... paths) {
         super(new URL[0], classLoader);
-        log.fine("created with parent " + getParent().getClass().getName());
-        for (String path : paths) {
-            addPath(path);
-        }
     }
-
 
     public ToolClassLoader() {
         this(ClassLoader.getSystemClassLoader());
@@ -62,11 +52,23 @@ public class ToolClassLoader extends URLClassLoader {
 
 
     public void addToolBox(URL toolbox) {
+        addToolBox(toolbox, true, false);
+    }
+
+    public List<String> getLibPaths() {
+        return Collections.unmodifiableList(libs);
+    }
+
+    private void addToolBox(URL toolbox, boolean first, boolean descend) {
         if (UrlUtils.isFile(toolbox)) {
+
             try {
                 File box = new File(toolbox.toURI());
                 if (!box.exists() || box.length() == 0 || box.getName().startsWith(".")) {
                     return;
+                }
+                if (first) {
+                    root = box;
                 }
                 if (box.isDirectory()) {
                     File[] files = box.listFiles();
@@ -81,17 +83,21 @@ public class ToolClassLoader extends URLClassLoader {
                         if (file.isDirectory()) {
                             if (name.equals("classes")) {
                                 addPath(file.getAbsolutePath());
-                            } else if (name.equals(Toolbox.HELP_DIR)) {
-                                helpDirs.add(UrlUtils.fromFile(file));
+                            } else if (name.equals("help")) {
+                                addPath(file.getAbsolutePath());
+                                addToolBox(file.toURI().toURL(), false, true);
                             } else if (name.equals("src")) {
                                 continue;
                             } else if (name.equals("CVS")) {
                                 continue;
+                            } else if (name.equals("nativ")) {
+                                addPath(file.getAbsolutePath());
+                                addToolBox(file.toURI().toURL(), false, true);
                             } else {
-                                if (isNative(file)) {
-                                    nativeDirs.add(UrlUtils.fromFile(file));
+                                if (descend) {
+                                    addPath(file.getAbsolutePath());
                                 }
-                                addToolBox(file.toURI().toURL());
+                                addToolBox(file.toURI().toURL(), false, descend);
                             }
                         } else {
                             if (name.endsWith(".jar")) {
@@ -117,16 +123,22 @@ public class ToolClassLoader extends URLClassLoader {
                 }
             }
             if (add) {
-                if (isNative(toolbox)) {
-                    nativeDirs.add(toolbox);
-                } else if (isHelp(toolbox)) {
-                    helpDirs.add(toolbox);
-                }
                 addURL(toolbox);
             }
         }
 
-        log.info("ToolClassLoader for TOOLBOX " + toolbox + " CLASSPATH:" + getClassPath());
+        log.fine("ToolClassLoader for TOOLBOX " + toolbox + " CLASSPATH:" + getClassPath());
+    }
+
+    private boolean isUnderHelp(File file) {
+        File p = file.getParentFile();
+        while (p != null) {
+            if (p.getName().equals("help")) {
+                return true;
+            }
+            p = p.getParentFile();
+        }
+        return false;
     }
 
     private boolean isNative(File file) {
@@ -153,20 +165,18 @@ public class ToolClassLoader extends URLClassLoader {
         return false;
     }
 
-    private boolean isHelp(URL url) {
-        String path = url.getPath();
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
+    public File getLibFile(String relativePath) {
+        if (libs.contains(relativePath)) {
+            File f = new File(root, relativePath);
+            System.out.println("ToolClassLoader.getLibFile " + f.getAbsolutePath() + " exists:" + f.exists());
+            return f;
         }
-        if (path.endsWith(Toolbox.HELP_DIR)) {
-            return true;
-        }
-        return false;
+        return null;
+
     }
 
 
-    public void addPath(String path) {
-        log.fine("adding path:" + path);
+    private void addPath(String path) {
         File f = new File(path);
         if (f.exists()) {
             log.fine("parsing " + f.getAbsoluteFile());
@@ -184,7 +194,14 @@ public class ToolClassLoader extends URLClassLoader {
                         break;
                     }
                 }
+                String rootPath = root.getAbsolutePath();
+                String relPath = f.getAbsolutePath();
+                relPath = relPath.substring(relPath.indexOf(rootPath) + rootPath.length());
+                if (relPath.indexOf("help") == -1) {
+                    libs.add(relPath);
+                }
                 if (add) {
+                    log.info("adding URL:" + u);
                     addURL(u);
                 }
             } catch (MalformedURLException e) {
@@ -224,6 +241,7 @@ public class ToolClassLoader extends URLClassLoader {
         }
         return null;
     }
+/*
 
     private String getNativeDir() {
         String binlib = null;
@@ -246,5 +264,6 @@ public class ToolClassLoader extends URLClassLoader {
         }
         return binlib;
     }
+*/
 
 }

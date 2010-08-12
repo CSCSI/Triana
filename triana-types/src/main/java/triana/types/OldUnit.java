@@ -348,9 +348,9 @@ public abstract class OldUnit extends Unit {
         return null;
     }
 
-    public void setHelpFileLocation(String location) {
+    /*public void setHelpFileLocation(String location) {
         getTask().setParameter(Task.HELP_FILE_PARAM, location);
-    }
+    }*/
 
 
     /**
