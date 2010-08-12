@@ -65,21 +65,21 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     public void addToolbox(Toolbox toolbox) {
-        Path toolboxPath = getPath().append(UrlUtils.createToolboxPath(toolbox.getName()));
+        Path toolboxPath = getPath().append(UrlUtils.createPath(toolbox.getName()));
         pathTree.addResource(new ToolboxResource(toolboxPath, toolbox));
     }
 
     public void addTool(Tool tool) {
-        Path path = getPath().append(UrlUtils.createToolboxPath(tool.getToolBox().getName()))
-                .append((UrlUtils.createToolPath(tool.getQualifiedToolName())));
+        Path path = getPath().append(UrlUtils.createPath(tool.getToolBox().getName()))
+                .append((UrlUtils.createPath(tool.getQualifiedToolName())));
         System.out.println("TrianaHttpServer.addTool " + path);
         pathTree.addResource(new ToolResource(path, tool));
 
     }
 
     public void removeTool(Tool tool) {
-        Path path = getPath()//.append(UrlUtils.createToolboxPath(tool.getToolBox()))
-                .append((UrlUtils.createToolPath(tool.getQualifiedToolName())));
+        Path path = getPath().append(UrlUtils.createPath(tool.getToolBox().getName()))
+                .append((UrlUtils.createPath(tool.getQualifiedToolName())));
         pathTree.removeResource(path.toString());
 
     }

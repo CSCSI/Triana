@@ -106,12 +106,8 @@ public class UrlUtils {
         return null;
     }
 
-    public static String createToolPath(String qualifiedName) {
-        return createToolboxPath(qualifiedName).replace('.', '/');
-    }
-
-    public static String createToolboxPath(String path) {
-        return path.replace(' ', '_').toLowerCase();
+    public static String createPath(String path) {
+        return path.replace(' ', '_').replace('.', '/').toLowerCase();
     }
 
     public static String getLastPathComponent(String path) {
