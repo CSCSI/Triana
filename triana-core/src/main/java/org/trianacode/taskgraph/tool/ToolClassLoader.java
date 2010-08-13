@@ -208,7 +208,7 @@ public class ToolClassLoader extends URLClassLoader {
                             || f.getName().equals("nativ")) {
                         visibleRoots.add(s);
                     }
-                    if (!f.getName().equals("help")) {
+                    if (s.indexOf("/help/") == -1) {       // TODO HACK ALERT
                         libPaths.add(relPath);
                     }
 
