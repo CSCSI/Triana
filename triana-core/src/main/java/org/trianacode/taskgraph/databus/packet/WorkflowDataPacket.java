@@ -19,8 +19,9 @@ import java.net.URI;
  * User: Ian Taylor Date: Jul 24, 2010 Time: 12:42:20 PM To change this template use File | Settings | File Templates.
  */
 public class WorkflowDataPacket implements Serializable {
-    URI dataLocation;
-    boolean deleteAfterUse;
+
+    private URI dataLocation;
+    private boolean deleteAfterUse;
 
     public WorkflowDataPacket(URI dataLocation, boolean deleteAfterUse) {
         this.dataLocation = dataLocation;
@@ -36,10 +37,6 @@ public class WorkflowDataPacket implements Serializable {
 
     public URI getDataLocation() {
         return dataLocation;
-    }
-
-    public void setDataLocation(URI dataLocation) {
-        this.dataLocation = dataLocation;
     }
 
     public boolean isDeleteAfterUse() {
