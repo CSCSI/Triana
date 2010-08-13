@@ -1,7 +1,7 @@
 package org.trianacode.taskgraph.databus.packet;
 
 import java.io.Serializable;
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Simple wrapper for passing URLs between workflow units that allowfor adding extra metadata to be included along with
@@ -19,19 +19,26 @@ import java.net.URL;
  * User: Ian Taylor Date: Jul 24, 2010 Time: 12:42:20 PM To change this template use File | Settings | File Templates.
  */
 public class WorkflowDataPacket implements Serializable {
-    URL dataLocation;
+    URI dataLocation;
     boolean deleteAfterUse;
 
-    public WorkflowDataPacket(URL dataLocation, boolean deleteAfterUse) {
+    public WorkflowDataPacket(URI dataLocation, boolean deleteAfterUse) {
         this.dataLocation = dataLocation;
         this.deleteAfterUse = deleteAfterUse;
     }
 
-    public URL getDataLocation() {
+    public String getProtocol() {
+        if (dataLocation != null) {
+            return dataLocation.getScheme();
+        }
+        return null;
+    }
+
+    public URI getDataLocation() {
         return dataLocation;
     }
 
-    public void setDataLocation(URL dataLocation) {
+    public void setDataLocation(URI dataLocation) {
         this.dataLocation = dataLocation;
     }
 
@@ -41,5 +48,28 @@ public class WorkflowDataPacket implements Serializable {
 
     public void setDeleteAfterUse(boolean deleteAfterUse) {
         this.deleteAfterUse = deleteAfterUse;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        WorkflowDataPacket that = (WorkflowDataPacket) o;
+
+        if (dataLocation != null ? !dataLocation.equals(that.dataLocation) : that.dataLocation != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return dataLocation != null ? dataLocation.hashCode() : 0;
     }
 }

@@ -10,7 +10,14 @@ import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
  * <p/>
  * User: scmijt Date: Jul 23, 2010 Time: 3:15:00 PM To change this template use File | Settings | File Templates.
  */
-public interface DatabusInterface {
+public interface DatabusInterface1 {
+
+    /**
+     * return the protocol of the URLs minted by this databus
+     *
+     * @return
+     */
+    public String getProtocol();
 
     /**
      * Puts data into the databus
@@ -26,7 +33,7 @@ public interface DatabusInterface {
      * @param packet
      * @return
      */
-    public Serializable get(WorkflowDataPacket packet);
+    public Serializable get(WorkflowDataPacket packet) throws DataNotResolvableException;
 
     /**
      * Removes the URL and the data from the store.

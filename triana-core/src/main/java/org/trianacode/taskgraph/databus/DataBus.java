@@ -1,6 +1,7 @@
 package org.trianacode.taskgraph.databus;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The databus accepts a number of data stores that are capable of storing and retrieving objects using their URL as an
@@ -14,44 +15,35 @@ import java.util.ArrayList;
  * <p/>
  * User: scmijt Date: Jul 23, 2010 Time: 4:30:01 PM To change this template use File | Settings | File Templates.
  */
-public class DataBus extends ArrayList<DatabusInterface> {
+public class DataBus {
 
-    public enum DataBusType {
-        LOCAL_HTTP, ATTIC
-    }
-
-    ;
-
-    private static DataBus databuses = new DataBus();
+    private static Map<String, DatabusInterface1> databuses = new HashMap<String, DatabusInterface1>();
 
     static LocalDataBus local = new LocalDataBus();
 
     static {
-        // register new databuses here
-        databuses.add(local); // local imp by default - add others as and when we add them...
+        // local imp by default - add others as and when we add them...
+        registerDataBus(local);
     }
 
+    public static DatabusInterface1 registerDataBus(DatabusInterface1 databus) {
+        return databuses.put(databus.getProtocol(), databus);
+    }
 
-    /**
-     * Gets the databus objects that are registered on this VM.
-     *
-     * @return
-     */
-    public static DataBus getDataBus() {
-        return databuses;
+    public static DatabusInterface1 deregisterDataBus(DatabusInterface1 databus) {
+        return databuses.remove(databus.getProtocol());
     }
 
     /**
-     * Gets a databus for a particular databus type e.g. local, http
+     * Gets a databus for a particular protocol e.g. local, http
      *
-     * @param type
+     * @param protocol
      * @return
      */
-    public static DatabusInterface getDataBusFor(DataBusType type) {
-        if (type.equals(DataBusType.LOCAL_HTTP)) {
-            return local;
-        } else {
+    public static DatabusInterface1 getDataBus(String protocol) {
+        if (protocol == null) {
             return null;
         }
+        return databuses.get(protocol);
     }
 }

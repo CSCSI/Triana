@@ -5,6 +5,7 @@ package org.trianacode.taskgraph.databus;
  * change this template use File | Settings | File Templates.
  */
 public class DataNotResolvableException extends Exception {
+
     public DataNotResolvableException(String message) {
         super(message);
     }
