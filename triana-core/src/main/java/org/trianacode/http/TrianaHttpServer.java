@@ -1,11 +1,7 @@
 package org.trianacode.http;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.thinginitself.http.HttpPeer;
@@ -17,8 +13,6 @@ import org.thinginitself.http.Target;
 import org.thinginitself.http.util.PathTree;
 import org.thinginitself.streamable.Streamable;
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.Toolbox;
@@ -41,8 +35,8 @@ public class TrianaHttpServer implements Target, ToolListener {
         pathTree = new PathTree(path);
     }
 
-    public void addTask(ResourceSpawn task) {
-        peer.addTarget(task);
+    public void addExecutableTask(String path, Task task) {
+        peer.addTarget(new ResourceSpawn(path, task, peer));
     }
 
 
@@ -81,26 +75,6 @@ public class TrianaHttpServer implements Target, ToolListener {
                 .append((UrlUtils.createPath(tool.getQualifiedToolName())));
         pathTree.removeResource(path.toString());
 
-    }
-
-    /**
-     * Adds a workflow to the resource tree of this Http server
-     *
-     * @param workflowFile
-     * @throws IOException
-     * @throws TaskGraphException
-     */
-    public void addWorkflow(String workflowFile) throws IOException, TaskGraphException {
-        Reader r = null;
-        try {
-            URL url = new URL(workflowFile);
-            // r = new UrlReader(url);
-        } catch (MalformedURLException e) {
-            r = new FileReader(workflowFile);
-        }
-        XMLReader reader = new XMLReader(r);
-        ResourceSpawn res = new ResourceSpawn((Task) reader.readComponent());
-        addTask(res);
     }
 
     public HttpPeer getHTTPPeerInstance() {
@@ -188,4 +162,6 @@ public class TrianaHttpServer implements Target, ToolListener {
     @Override
     public void toolBoxRemoved(Toolbox toolbox) {
     }
+
+
 }

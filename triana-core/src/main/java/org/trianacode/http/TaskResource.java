@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 import org.thinginitself.http.Http;
+import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.Path;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.RequestProcessException;
@@ -24,12 +25,13 @@ public class TaskResource extends Resource implements ExecutionControlListener {
     private ExecutionController controller;
     private BlockingQueue<RenderInfo> nextTask = new SynchronousQueue<RenderInfo>();
     private boolean started = false;
+    private HttpPeer peer;
 
 
-    public TaskResource(Task task, String path) {
-        super(new Path(path),
-                new Http.Method[]{Http.Method.POST});
+    public TaskResource(Task task, String path, HttpPeer peer) {
+        super(new Path(path), new Http.Method[]{Http.Method.POST});
         this.task = task;
+        this.peer = peer;
         controller = new ExecutionController(task, this);
 
     }
@@ -39,7 +41,9 @@ public class TaskResource extends Resource implements ExecutionControlListener {
     }
 
     public Resource getResource(RequestContext context) throws RequestProcessException {
-        if (context.getRequestTarget().equals(getPath().toString())) {
+        System.out.println("TaskResource.getResource " + context.getRequestTarget());
+        System.out.println("TaskResource.getResource me " + getPath().toString());
+        if (context.getRequestTarget().startsWith(getPath().toString())) {
             return this;
         }
         return null;
@@ -47,6 +51,8 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
+        System.out.println("TaskResource.onPost ENTER " + requestContext.getRequestTarget());
+
         if (!started) {
             started = true;
             controller.begin();
@@ -99,6 +105,7 @@ public class TaskResource extends Resource implements ExecutionControlListener {
             ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_COMPLETED_TEMPLATE);
             r.init(task, task.getToolName());
             nextTask.put(new RenderInfo(r, ToolRenderer.TOOL_COMPLETED_TEMPLATE));
+            peer.removeTarget(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

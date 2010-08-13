@@ -421,7 +421,7 @@ public class ToolResolver implements ToolMetadataResolver {
         List<URL> urls = new ArrayList<URL>();
         URL toolboxUrl = UrlUtils.toURL(toolbox.getPath());
         urls.addAll(findLocal(toolboxUrl));
-        System.out.println("ToolResolver.resolve got back " + urls.size() + " URLs");
+        //System.out.println("ToolResolver.resolve got back " + urls.size() + " URLs");
         List<Tool> ret = new ArrayList<Tool>();
         for (URL url : urls) {
             try {

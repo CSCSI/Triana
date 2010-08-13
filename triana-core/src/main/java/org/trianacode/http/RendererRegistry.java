@@ -10,18 +10,29 @@ import java.util.Map;
 
 public class RendererRegistry {
 
-    private static Map<String, ToolRenderer> toolRenderers = new HashMap<String, ToolRenderer>();
+    private static Map<String, Class<? extends ToolRenderer>> toolRenderers
+            = new HashMap<String, Class<? extends ToolRenderer>>();
     private static Map<String, ToolboxRenderer> toolboxRenderers = new HashMap<String, ToolboxRenderer>();
 
     public static void registerToolRenderer(ToolRenderer renderer) {
         String[] types = renderer.getRenderTypes();
         for (String type : types) {
-            toolRenderers.put(type, renderer);
+            toolRenderers.put(type, renderer.getClass());
         }
     }
 
     public static ToolRenderer getToolRenderer(String renderType) {
-        return toolRenderers.get(renderType);
+        Class<? extends ToolRenderer> tr = toolRenderers.get(renderType);
+        if (tr != null) {
+            try {
+                return tr.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public static void registerToolboxRenderer(ToolboxRenderer renderer) {

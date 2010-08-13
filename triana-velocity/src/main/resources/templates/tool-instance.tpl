@@ -8,9 +8,9 @@
 
 <body>
 	<div>
-		<p>This is a tool instance page for the $toolname workflow</p>
-		<form action="/$path" METHOD="POST">
-		<input type="text" name="username" value="yes!">
+		<p>This is a tool instance page for the $toolname workflow. It creates a new instance of a task</p>
+		<form action="$path" METHOD="POST">
+		<input type="hidden" name="$toolname" value="yes!">
 		<input type="submit" value="Run">
 		</form>
 	</div>

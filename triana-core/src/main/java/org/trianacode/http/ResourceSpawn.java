@@ -2,6 +2,7 @@ package org.trianacode.http;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.RequestProcessException;
 import org.thinginitself.http.Resource;
@@ -17,22 +18,36 @@ public class ResourceSpawn extends MemoryTarget {
 
     private Task task;
     private AtomicInteger count = new AtomicInteger(0);
+    private HttpPeer peer;
 
-    public ResourceSpawn(Task task) {
-        super(task.getToolName());
+    public ResourceSpawn(String path, Task task, HttpPeer peer) {
+        super(path);
         this.task = task;
         ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE);
         r.init(task, task.getToolName());
-        Resource res = new Resource(task.getToolName(), r.render(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE));
+        Resource res = new Resource(getPath().append(task.getToolName()),
+                r.render(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE));
         store.put(res);
+        this.peer = peer;
     }
 
+
     public void onPost(RequestContext context) throws RequestProcessException {
-        String path = task.getToolName() + "/" + count.incrementAndGet();
-        TaskResource res = new TaskResource(task, path);
-        store.put(res);
+        System.out.println("ResourceSpawn.onPost ENTER " + context.getRequestTarget());
+        String path = task.getToolName() + "/" + count.incrementAndGet() + "/";
+        TaskResource res = new TaskResource(task, getPath().append(path).toString(), peer);
+        peer.addTarget(res);
         ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_INSTANCE_TEMPLATE);
         r.init(task, path);
         context.setResponseEntity(r.render(ToolRenderer.TOOL_INSTANCE_TEMPLATE));
     }
+
+    public org.thinginitself.http.Resource getResource(
+            org.thinginitself.http.RequestContext context) {
+
+        System.out.println("ResourceSpawn.getResource path:" + context.getRequestPath());
+        System.out.println("ResourceSpawn.getResource target:" + context.getRequestTarget());
+        return super.getResource(context);
+    }
+
 }
