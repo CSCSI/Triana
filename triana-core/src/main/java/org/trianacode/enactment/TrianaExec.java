@@ -240,7 +240,7 @@ public class TrianaExec {
          */
         public void setOutputData(Object[] outdata) {
             this.outdata = outdata;
-            System.out.println("Output Data is " + outdata[0]);
+            //System.out.println("Output Data is " + outdata[0]);
             thread.interrupt();
         }
 
