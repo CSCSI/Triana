@@ -108,11 +108,32 @@ public class Toolbox {
         return loader;
     }
 
+    /**
+     * get relative paths pointing to library files (.class, .jar)
+     *
+     * @return
+     */
     public List<String> getLibPaths() {
         return loader.getLibPaths();
     }
 
-    public File getLibFile(String relativePath) {
+    /**
+     * get a list of local files that can browsed by a user. Any file not equal to or a child of one of these strings
+     * will have access denied.
+     *
+     * @return
+     */
+    public List<String> getVisibleRoots() {
+        return loader.getVisibleRools();
+    }
+
+    /**
+     * attempt to get a local file with a path that is a child of the root of the toolbox
+     *
+     * @param relativePath
+     * @return
+     */
+    public File getFile(String relativePath) {
         return loader.getFile(relativePath);
     }
 

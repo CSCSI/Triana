@@ -39,7 +39,8 @@ public class ToolClassLoader extends URLClassLoader {
 
     static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolClassLoader");
 
-    private List<String> libs = new ArrayList<String>();
+    private List<String> visibleRoots = new ArrayList<String>();
+    private List<String> libPaths = new ArrayList<String>();
     private File root = null;
 
     public ToolClassLoader(ClassLoader classLoader) {
@@ -56,8 +57,9 @@ public class ToolClassLoader extends URLClassLoader {
     }
 
     public List<String> getLibPaths() {
-        return Collections.unmodifiableList(libs);
+        return Collections.unmodifiableList(libPaths);
     }
+
 
     private void addToolBox(URL toolbox, boolean first, boolean descend) {
         if (UrlUtils.isFile(toolbox)) {
@@ -173,6 +175,10 @@ public class ToolClassLoader extends URLClassLoader {
         return null;
     }
 
+    public List<String> getVisibleRools() {
+        return Collections.unmodifiableList(visibleRoots);
+    }
+
 
     private void addPath(String path) {
         File f = new File(path);
@@ -192,13 +198,20 @@ public class ToolClassLoader extends URLClassLoader {
                         break;
                     }
                 }
-                String rootPath = UrlUtils.fromFile(root).toString();
-                String relPath = UrlUtils.fromFile(f).toString();
-                relPath = relPath.substring(relPath.indexOf(rootPath) + rootPath.length());
-                if (relPath.indexOf("help") == -1) {
-                    libs.add(relPath);
-                }
                 if (add) {
+                    String rootPath = UrlUtils.fromFile(root).toString();
+                    String relPath = UrlUtils.fromFile(f).toString();
+                    relPath = relPath.substring(relPath.indexOf(rootPath) + rootPath.length());
+                    if (f.getName().equals("help")
+                            || f.getName().equals("classes")
+                            || f.getName().equals("lib")
+                            || f.getName().equals("nativ")) {
+                        visibleRoots.add(s);
+                    }
+                    if (!f.getName().equals("help")) {
+                        libPaths.add(relPath);
+                    }
+
                     log.info("adding URL:" + u);
                     addURL(u);
                 }

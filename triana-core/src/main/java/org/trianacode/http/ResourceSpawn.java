@@ -21,7 +21,7 @@ public class ResourceSpawn extends MemoryTarget {
     public ResourceSpawn(Task task) {
         super(task.getToolName());
         this.task = task;
-        ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_DESCRIPTION_TEMPLATE);
+        ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE);
         r.init(task, task.getToolName());
         Resource res = new Resource(task.getToolName(), r.render());
         store.put(res);

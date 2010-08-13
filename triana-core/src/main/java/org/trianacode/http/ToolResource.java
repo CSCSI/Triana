@@ -103,14 +103,14 @@ public class ToolResource extends Resource {
             requestContext.setResponseEntity(new StreamableString("Tool", "text/plain")); // TODO
         } else if (res.startsWith(CLASSPATH)) {
             String sub = res.substring(CLASSPATH.length(), res.length());
-            File f = tool.getToolBox().getLibFile(sub);
+            File f = tool.getToolBox().getFile(sub);
             if (f != null && f.exists() && f.length() > 0) {
-                requestContext.setResponseEntity(new StreamableFileHandler(f).getStreamable());
+                requestContext.setResponseEntity(
+                        new StreamableFileHandler(f, tool.getToolBox().getVisibleRoots()).getStreamable());
             } else {
                 requestContext.setResponseCode(404);
             }
         } else {
-            System.out.println("ToolResource.onGet REQUESTED RESOURCE:" + res);
             InputStream in = tool.getToolBox().getClassLoader().getResourceAsStream(res);
             if (in != null) {
                 StreamableStream ss = new StreamableStream(in, MimeHandler.getMime(res));
@@ -123,18 +123,17 @@ public class ToolResource extends Resource {
 
     @Override
     public void onPut(RequestContext requestContext) throws RequestProcessException {
-
+        requestContext.setResponseCode(405);
     }
 
     @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
+        requestContext.setResponseCode(405);
     }
 
     @Override
     public void onDelete(RequestContext requestContext) throws RequestProcessException {
+        requestContext.setResponseCode(405);
     }
 
-    @Override
-    public void onOptions(RequestContext requestContext) throws RequestProcessException {
-    }
 }
