@@ -524,7 +524,7 @@ public class ToolResolver implements ToolMetadataResolver {
                 tool.setDefinitionPath(url);
                 tool.setToolBox(toolbox);
             }
-            ToolboxTools dated = this.tools.get(toolbox);
+            ToolboxTools dated = this.tools.get(toolbox.getPath());
             if (dated == null) {
                 dated = new ToolboxTools(toolbox.getPath(), tools);
             } else {
@@ -983,7 +983,11 @@ public class ToolResolver implements ToolMetadataResolver {
         }
 
         public Tool getTool(String qualifiedName) {
-            return tools.get(qualifiedName).getTool();
+            DatedTool dt = tools.get(qualifiedName);
+            if (dt != null) {
+                return dt.getTool();
+            }
+            return null;
         }
 
         public boolean addTool(Tool tool) {

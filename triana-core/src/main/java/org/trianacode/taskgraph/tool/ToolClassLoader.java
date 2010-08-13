@@ -133,7 +133,7 @@ public class ToolClassLoader extends URLClassLoader {
     }
 
     private boolean isUnderHelp(File file) {
-        File p = file.getParentFile();
+        File p = file;
         while (p != null) {
             if (p.getName().equals("help")) {
                 return true;
