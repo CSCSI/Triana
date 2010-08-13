@@ -192,8 +192,8 @@ public class ToolClassLoader extends URLClassLoader {
                         break;
                     }
                 }
-                String rootPath = root.getAbsolutePath();
-                String relPath = f.getAbsolutePath();
+                String rootPath = UrlUtils.fromFile(root).toString();
+                String relPath = UrlUtils.fromFile(f).toString();
                 relPath = relPath.substring(relPath.indexOf(rootPath) + rootPath.length());
                 if (relPath.indexOf("help") == -1) {
                     libs.add(relPath);

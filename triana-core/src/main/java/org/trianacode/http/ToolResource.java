@@ -57,7 +57,7 @@ public class ToolResource extends Resource {
             ammended.add(lib);
 
         }
-        cp = new ToolboxClasspath(ammended, true);
+        cp = new ToolboxClasspath(ammended);
     }
 
 
@@ -97,8 +97,8 @@ public class ToolResource extends Resource {
             } catch (IOException e) {
                 requestContext.setResponseCode(500);
             }
-        } else if (path.endsWith(CLASSPATH + ".xml")) {
-            requestContext.setResponseEntity(cp.getStreamable());
+        } else if (path.endsWith(CLASSPATH + ".html")) {
+            requestContext.setResponseEntity(cp.getStreamable("text/html"));
         } else if (path.endsWith(getPath().getLast())) {
             requestContext.setResponseEntity(new StreamableString("Tool", "text/plain")); // TODO
         } else if (res.startsWith(CLASSPATH)) {
