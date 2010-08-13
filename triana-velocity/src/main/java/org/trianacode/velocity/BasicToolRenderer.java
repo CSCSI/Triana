@@ -13,19 +13,24 @@ import org.trianacode.taskgraph.tool.Tool;
  * @version 1.0.0 Jul 20, 2010
  */
 
-public class ToolCreateInstanceRenderer implements ToolRenderer {
+public class BasicToolRenderer implements ToolRenderer {
 
     private Tool tool;
     private String path;
-    private String templatePath = "/templates/tool-create.tpl";
-
+    private String create = "/templates/tool-create.tpl";
+    private String instance = "/templates/tool-instance.tpl";
+    private String description = "/templates/tool-description.tpl";
+    private String complete = "/templates/tool-complete.tpl";
 
     @Override
     public void init(Tool tool, String path) {
         this.tool = tool;
         this.path = path;
         try {
-            Output.registerTemplate(ToolCreateInstanceRenderer.TOOL_CREATE_INSTANCE_TEMPLATE, templatePath);
+            Output.registerTemplate(TOOL_CREATE_INSTANCE_TEMPLATE, create);
+            Output.registerTemplate(TOOL_COMPLETED_TEMPLATE, complete);
+            Output.registerTemplate(TOOL_DESCRIPTION_TEMPLATE, description);
+            Output.registerTemplate(TOOL_INSTANCE_TEMPLATE, instance);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,15 +38,18 @@ public class ToolCreateInstanceRenderer implements ToolRenderer {
 
     @Override
     public String[] getRenderTypes() {
-        return new String[]{ToolCreateInstanceRenderer.TOOL_CREATE_INSTANCE_TEMPLATE};
+        return new String[]{TOOL_CREATE_INSTANCE_TEMPLATE,
+                TOOL_INSTANCE_TEMPLATE,
+                TOOL_DESCRIPTION_TEMPLATE,
+                TOOL_COMPLETED_TEMPLATE};
     }
 
     @Override
-    public Streamable render() {
+    public Streamable render(String type) {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("path", path);
         properties.put("toolname", tool.getToolName());
         properties.put("toolpackage", tool.getToolPackage());
-        return Output.output(properties, ToolCreateInstanceRenderer.TOOL_CREATE_INSTANCE_TEMPLATE);
+        return Output.output(properties, type);
     }
 }

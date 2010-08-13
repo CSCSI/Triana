@@ -13,11 +13,11 @@ import org.trianacode.taskgraph.tool.Tool;
  * @version 1.0.0 Jul 20, 2010
  */
 
-public class ToolInstanceRenderer implements ToolRenderer {
+public class ToolDescriptionRenderer implements ToolRenderer {
 
     private Tool tool;
     private String path;
-    private String templatePath = "/templates/tool-instance.tpl";
+    private String templatePath = "/templates/tool-description.tpl";
 
 
     @Override
@@ -25,7 +25,7 @@ public class ToolInstanceRenderer implements ToolRenderer {
         this.tool = tool;
         this.path = path;
         try {
-            Output.registerTemplate(TOOL_INSTANCE_TEMPLATE, templatePath);
+            Output.registerTemplate(TOOL_DESCRIPTION_TEMPLATE, templatePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,7 +33,7 @@ public class ToolInstanceRenderer implements ToolRenderer {
 
     @Override
     public String[] getRenderTypes() {
-        return new String[]{TOOL_INSTANCE_TEMPLATE};
+        return new String[]{TOOL_DESCRIPTION_TEMPLATE};
     }
 
     @Override

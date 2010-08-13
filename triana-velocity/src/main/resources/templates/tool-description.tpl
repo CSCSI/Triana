@@ -8,11 +8,8 @@
 
 <body>
 	<div>
-		<p>This is a cool tool: $toolname</p>
-		<form action="$toolname" METHOD="POST">
-		<input type="hidden" name="please" value="yes!">
-		<input type="submit" value="GO!!!">
-		</form>
+		<p>This is a tool complete page for: $toolname</p>
+		<p>Goodbye</p>
 	</div>
 
 </body>

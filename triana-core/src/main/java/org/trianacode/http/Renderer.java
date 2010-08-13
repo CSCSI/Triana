@@ -11,7 +11,7 @@ public interface Renderer {
 
     public String[] getRenderTypes();
 
-    public Streamable render();
+    public Streamable render(String type);
 
 
 }

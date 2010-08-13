@@ -23,7 +23,7 @@ public class ResourceSpawn extends MemoryTarget {
         this.task = task;
         ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE);
         r.init(task, task.getToolName());
-        Resource res = new Resource(task.getToolName(), r.render());
+        Resource res = new Resource(task.getToolName(), r.render(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE));
         store.put(res);
     }
 
@@ -33,6 +33,6 @@ public class ResourceSpawn extends MemoryTarget {
         store.put(res);
         ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_INSTANCE_TEMPLATE);
         r.init(task, path);
-        context.setResponseEntity(r.render());
+        context.setResponseEntity(r.render(ToolRenderer.TOOL_INSTANCE_TEMPLATE));
     }
 }

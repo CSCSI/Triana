@@ -15,23 +15,21 @@ import org.trianacode.taskgraph.tool.Toolbox;
 
 public class ToolboxDescriptionRenderer implements ToolboxRenderer {
 
-    public static final String TOOLBOX_TEMPLATE = "toolbox.template";
-
     private Toolbox toolbox;
     private String path;
-    private String templatePath = "/templates/toolbox.tpl";
+    private String templatePath = "/templates/toolbox-description.tpl";
 
 
     @Override
     public String[] getRenderTypes() {
-        return new String[]{TOOLBOX_TEMPLATE};
+        return new String[]{TOOLBOX_DESCRIPTION_TEMPLATE};
     }
 
     @Override
-    public Streamable render() {
+    public Streamable render(String type) {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("toolboxpath", toolbox.getPath());
-        return Output.output(properties, TOOLBOX_TEMPLATE);
+        return Output.output(properties, type);
     }
 
     @Override
@@ -39,7 +37,7 @@ public class ToolboxDescriptionRenderer implements ToolboxRenderer {
         this.toolbox = toolbox;
         this.path = path;
         try {
-            Output.registerTemplate(TOOLBOX_TEMPLATE, templatePath);
+            Output.registerTemplate(TOOLBOX_DESCRIPTION_TEMPLATE, templatePath);
         } catch (IOException e) {
             e.printStackTrace();
         }

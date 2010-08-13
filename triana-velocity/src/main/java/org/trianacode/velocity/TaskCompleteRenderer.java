@@ -23,16 +23,16 @@ public class TaskCompleteRenderer implements ToolRenderer {
 
     @Override
     public String[] getRenderTypes() {
-        return new String[]{ToolCreateInstanceRenderer.TOOL_COMPLETED_TEMPLATE};
+        return new String[]{BasicToolRenderer.TOOL_COMPLETED_TEMPLATE};
     }
 
     @Override
-    public Streamable render() {
+    public Streamable render(String type) {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("path", path);
         properties.put("toolname", tool.getToolName());
         properties.put("toolpackage", tool.getToolPackage());
-        return Output.output(properties, ToolCreateInstanceRenderer.TOOL_COMPLETED_TEMPLATE);
+        return Output.output(properties, type);
 
     }
 
@@ -41,7 +41,7 @@ public class TaskCompleteRenderer implements ToolRenderer {
         this.tool = tool;
         this.path = path;
         try {
-            Output.registerTemplate(ToolCreateInstanceRenderer.TOOL_COMPLETED_TEMPLATE, templatePath);
+            Output.registerTemplate(TOOL_COMPLETED_TEMPLATE, templatePath);
         } catch (IOException e) {
             e.printStackTrace();
         }

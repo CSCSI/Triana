@@ -44,13 +44,13 @@ public class ToolParameterRenderer implements ToolRenderer {
     }
 
     @Override
-    public Streamable render() {
+    public Streamable render(String type) {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("path", path);
         properties.put("toolname", parent.getToolName());
         properties.put("toolpackage", parent.getToolPackage());
         properties.put("subtoolname", tool.getToolName());
         properties.put("subtoolpackage", tool.getToolPackage());
-        return Output.output(properties, TOOL_PARAMETER_TEMPLATE);
+        return Output.output(properties, type);
     }
 }

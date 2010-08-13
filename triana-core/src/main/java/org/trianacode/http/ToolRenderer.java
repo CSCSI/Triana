@@ -9,6 +9,7 @@ import org.trianacode.taskgraph.tool.Tool;
 
 public interface ToolRenderer extends Renderer {
 
+    String TOOL_DESCRIPTION_TEMPLATE = "tool.description.template";
     String TOOL_CREATE_INSTANCE_TEMPLATE = "tool.create.instance.template";
     String TOOL_INSTANCE_TEMPLATE = "tool.instance.template";
     String TOOL_PARAMETER_TEMPLATE = "tool.parameter.template";

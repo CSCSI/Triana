@@ -22,7 +22,7 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     private Task task;
     private ExecutionController controller;
-    private BlockingQueue<Renderer> nextTask = new SynchronousQueue<Renderer>();
+    private BlockingQueue<RenderInfo> nextTask = new SynchronousQueue<RenderInfo>();
     private boolean started = false;
 
 
@@ -54,8 +54,8 @@ public class TaskResource extends Resource implements ExecutionControlListener {
             controller.resume();
         }
         try {
-            Renderer renderer = nextTask.take();
-            requestContext.setResponseEntity(renderer.render());
+            RenderInfo info = nextTask.take();
+            requestContext.setResponseEntity(info.getRenderer().render(info.getTemplate()));
             requestContext.setSendBody(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -84,7 +84,7 @@ public class TaskResource extends Resource implements ExecutionControlListener {
             try {
                 ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_PARAMETER_TEMPLATE);
                 r.init(task, task.getToolName());
-                nextTask.put(r);
+                nextTask.put(new RenderInfo(r, ToolRenderer.TOOL_PARAMETER_TEMPLATE));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -98,9 +98,27 @@ public class TaskResource extends Resource implements ExecutionControlListener {
         try {
             ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_COMPLETED_TEMPLATE);
             r.init(task, task.getToolName());
-            nextTask.put(r);
+            nextTask.put(new RenderInfo(r, ToolRenderer.TOOL_COMPLETED_TEMPLATE));
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static class RenderInfo {
+        private Renderer renderer;
+        private String template;
+
+        private RenderInfo(Renderer renderer, String template) {
+            this.renderer = renderer;
+            this.template = template;
+        }
+
+        public Renderer getRenderer() {
+            return renderer;
+        }
+
+        public String getTemplate() {
+            return template;
         }
     }
 }
