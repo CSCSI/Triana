@@ -6,6 +6,8 @@ import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableString;
 
 /**
+ * TODO - temporary - this should be a template
+ *
  * @author Andrew Harrison
  * @version 1.0.0 Aug 11, 2010
  */
