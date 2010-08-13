@@ -8,7 +8,7 @@
 
 <body>
 	<div>
-		<p>This is a tool complete page for: $toolname</p>
+		<p>This is a tool description page for: $toolname</p>
 		<p>Goodbye</p>
 	</div>
 

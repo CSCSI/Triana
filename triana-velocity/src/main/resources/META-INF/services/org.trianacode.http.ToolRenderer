@@ -1,4 +1,2 @@
 org.trianacode.velocity.BasicToolRenderer
-org.trianacode.velocity.ToolCompleteRenderer
-org.trianacode.velocity.ToolInstanceRenderer
 org.trianacode.velocity.ToolParameterRenderer
