@@ -15,9 +15,8 @@ import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.RequestProcessException;
 import org.thinginitself.http.Resource;
 import org.thinginitself.http.util.MimeHandler;
-import org.thinginitself.http.util.StreamableListDir;
+import org.thinginitself.http.util.StreamableFileHandler;
 import org.thinginitself.streamable.StreamableData;
-import org.thinginitself.streamable.StreamableFile;
 import org.thinginitself.streamable.StreamableStream;
 import org.thinginitself.streamable.StreamableString;
 import org.trianacode.taskgraph.ser.XMLWriter;
@@ -55,9 +54,8 @@ public class ToolResource extends Resource {
                 lib = "classpath/" + lib;
             }
             ammended.add(lib);
-
         }
-        cp = new ToolboxClasspath(ammended);
+        cp = new ToolboxClasspath(tool.getToolBox().getName(), tool.getQualifiedToolName(), ammended);
     }
 
 
@@ -99,22 +97,18 @@ public class ToolResource extends Resource {
             }
         } else if (path.endsWith(CLASSPATH + ".html")) {
             requestContext.setResponseEntity(cp.getStreamable("text/html"));
+        } else if (path.endsWith(CLASSPATH + ".xml")) {
+            requestContext.setResponseEntity(cp.getStreamable("text/xml"));
         } else if (path.endsWith(getPath().getLast())) {
             requestContext.setResponseEntity(new StreamableString("Tool", "text/plain")); // TODO
         } else if (res.startsWith(CLASSPATH)) {
             String sub = res.substring(CLASSPATH.length(), res.length());
             File f = tool.getToolBox().getLibFile(sub);
             if (f != null && f.exists() && f.length() > 0) {
-                if (f.isDirectory()) {
-                    requestContext.setResponseEntity(new StreamableListDir(f).getStreamable());
-                } else {
-                    requestContext.setResponseEntity(new StreamableFile(f, MimeHandler.getMime(f.getName())));
-                }
+                requestContext.setResponseEntity(new StreamableFileHandler(f).getStreamable());
             } else {
                 requestContext.setResponseCode(404);
             }
-
-
         } else {
             System.out.println("ToolResource.onGet REQUESTED RESOURCE:" + res);
             InputStream in = tool.getToolBox().getClassLoader().getResourceAsStream(res);
@@ -124,7 +118,6 @@ public class ToolResource extends Resource {
             } else {
                 requestContext.setResponseCode(404);
             }
-
         }
     }
 

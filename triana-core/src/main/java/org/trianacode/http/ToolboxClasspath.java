@@ -13,19 +13,25 @@ import org.thinginitself.streamable.StreamableString;
 public class ToolboxClasspath {
 
     private List<String> ss;
+    private String toolbox;
+    private String tool;
 
     public ToolboxClasspath(Streamable s) {
 
     }
 
-    public ToolboxClasspath(List<String> paths) {
+    public ToolboxClasspath(String toolbox, String tool, List<String> paths) {
+        this.toolbox = toolbox;
+        this.tool = tool;
         this.ss = paths;
     }
 
     public Streamable getStreamable(String mime) {
         if (mime.equals("text/html")) {
             StringBuilder sb = new StringBuilder("");
-            sb.append("<html><head><title>Classpath</title></head><body><ul>");
+            sb.append("<html><head><title>Classpath for" + tool + "</title></head><body>");
+            sb.append("<p>Classpath for ").append(tool).append(" in toolbox ").append(toolbox).append("</p>\n")
+                    .append("<ul>");
             for (String path : ss) {
                 sb.append("<li><a href=\"").append(path).append("\">").append(path).append("</a></li>");
             }
@@ -33,7 +39,7 @@ public class ToolboxClasspath {
             return new StreamableString(sb.toString(), "text/html");
         } else {
             StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-            sb.append("<classpath>");
+            sb.append("<classpath toolbox=\"").append(toolbox).append("\" tool=\"").append(tool).append("\">");
             for (String path : ss) {
                 sb.append("<path>").append(path).append("</path>");
             }
