@@ -19,13 +19,6 @@ public class DataBus {
 
     private static Map<String, DataBusInterface> databuses = new HashMap<String, DataBusInterface>();
 
-    static LocalDataBus local = new LocalDataBus();
-
-    static {
-        // local imp by default - add others as and when we add them...
-        registerDataBus(local);
-    }
-
     public static DataBusInterface registerDataBus(DataBusInterface databus) {
         return databuses.put(databus.getProtocol(), databus);
     }

@@ -14,6 +14,8 @@ import org.trianacode.http.RendererRegistry;
 import org.trianacode.http.ToolRenderer;
 import org.trianacode.http.ToolboxRenderer;
 import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.databus.DataBus;
+import org.trianacode.taskgraph.databus.DataBusInterface;
 import org.trianacode.taskgraph.interceptor.Interceptor;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
@@ -70,6 +72,7 @@ public class EngineInit {
         ext.add(ToolRenderer.class);
         ext.add(ToolboxRenderer.class);
         ext.add(ToolMetadataResolver.class);
+        ext.add(DataBusInterface.class);
         for (Class aClass : exten) {
             if (!ext.contains(aClass)) {
                 ext.add(aClass);
@@ -101,6 +104,12 @@ public class EngineInit {
                 for (Object o : exts) {
                     ToolMetadataResolver e = (ToolMetadataResolver) o;
                     ResolverRegistry.registerResolver(e);
+                }
+            } else if (key.equals(DataBusInterface.class)) {
+                List<Object> exts = extensions.get(key);
+                for (Object o : exts) {
+                    DataBusInterface e = (DataBusInterface) o;
+                    DataBus.registerDataBus(e);
                 }
             }
         }
