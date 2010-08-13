@@ -888,6 +888,10 @@ public class ToolResolver implements ToolMetadataResolver {
 
     }
 
+    public void shutdown() {
+        timer.cancel();
+    }
+
     private class ResolveThread extends TimerTask {
         public void run() {
             reresolve();

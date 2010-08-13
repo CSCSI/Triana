@@ -171,7 +171,6 @@ public class TrianaExec {
      * @param unpack sets whether data within data messages is automatically unpacked in the results array
      */
     public Object[] run(Object[] data, boolean unpack) throws TaskGraphException, SchedulerException {
-        System.out.println("TrianaExec.run CALLED");
         ExecRun exec = new ExecRun(data, Thread.currentThread(), unpack);
         inmanager.addExecRun(exec);
 
@@ -224,7 +223,6 @@ public class TrianaExec {
          * @return the input data
          */
         public Object[] getInputData() {
-            System.out.println("Input Data is " + indata);
             return indata;
         }
 

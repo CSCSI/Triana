@@ -1,5 +1,6 @@
 package org.trianacode;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +57,7 @@ public class EngineInit {
         if (resolve) {
             resolver.resolve();
         }
+        new ShutdownHook().createHook();
     }
 
     public static ToolResolver getToolResolver() {
@@ -130,6 +132,41 @@ public class EngineInit {
             return Collections.unmodifiableList(exts);
         }
         return new ArrayList<Object>();
+    }
+
+
+    private static class ShutdownHook extends Thread {
+
+        private void add() {
+            try {
+                Method shutdownHook = java.lang.Runtime.class
+                        .getMethod("addShutdownHook", new Class[]{java.lang.Thread.class});
+                shutdownHook.invoke(Runtime.getRuntime(), new Object[]{this});
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void createHook() {
+            add();
+        }
+
+        public void run() {
+            System.out.println("EngineInit$ShutdownHook.run ENTER");
+            try {
+                resolver.shutdown();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(500);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("EngineInit$ShutdownHook.run EXIT");
+        }
     }
 
 }
