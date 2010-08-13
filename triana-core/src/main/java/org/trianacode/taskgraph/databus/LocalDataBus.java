@@ -13,7 +13,7 @@ import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
  * identify both the type of the data and the data itself. User: scmijt Date: Jul 23, 2010 Time: 3:15:41 PM To change
  * this template use File | Settings | File Templates.
  */
-public class LocalDataBus implements DatabusInterface1 {
+public class LocalDataBus implements DataBusInterface {
 
     public static final String LOCAL_PROTOCOL = "local";
 

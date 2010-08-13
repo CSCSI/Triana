@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class DataBus {
 
-    private static Map<String, DatabusInterface1> databuses = new HashMap<String, DatabusInterface1>();
+    private static Map<String, DataBusInterface> databuses = new HashMap<String, DataBusInterface>();
 
     static LocalDataBus local = new LocalDataBus();
 
@@ -26,11 +26,11 @@ public class DataBus {
         registerDataBus(local);
     }
 
-    public static DatabusInterface1 registerDataBus(DatabusInterface1 databus) {
+    public static DataBusInterface registerDataBus(DataBusInterface databus) {
         return databuses.put(databus.getProtocol(), databus);
     }
 
-    public static DatabusInterface1 deregisterDataBus(DatabusInterface1 databus) {
+    public static DataBusInterface deregisterDataBus(DataBusInterface databus) {
         return databuses.remove(databus.getProtocol());
     }
 
@@ -40,7 +40,7 @@ public class DataBus {
      * @param protocol
      * @return
      */
-    public static DatabusInterface1 getDataBus(String protocol) {
+    public static DataBusInterface getDataBus(String protocol) {
         if (protocol == null) {
             return null;
         }

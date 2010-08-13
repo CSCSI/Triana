@@ -10,7 +10,7 @@ import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
  * <p/>
  * User: scmijt Date: Jul 23, 2010 Time: 3:15:00 PM To change this template use File | Settings | File Templates.
  */
-public interface DatabusInterface1 {
+public interface DataBusInterface {
 
     /**
      * return the protocol of the URLs minted by this databus

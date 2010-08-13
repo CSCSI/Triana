@@ -82,8 +82,8 @@ import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.clipin.ClipInBucket;
 import org.trianacode.taskgraph.clipin.ClipInStore;
 import org.trianacode.taskgraph.databus.DataBus;
+import org.trianacode.taskgraph.databus.DataBusInterface;
 import org.trianacode.taskgraph.databus.DataNotResolvableException;
-import org.trianacode.taskgraph.databus.DatabusInterface1;
 import org.trianacode.taskgraph.databus.LocalDataBus;
 import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
@@ -531,7 +531,7 @@ public class RunnableTask extends AbstractRunnableTask
 
             // IAN T - gets the data by resolving the URL rather than just accepting the data as is.
             try {
-                DatabusInterface1 db = DataBus.getDataBus(packet.getProtocol());
+                DataBusInterface db = DataBus.getDataBus(packet.getProtocol());
                 data = db.get(packet);
             } catch (DataNotResolvableException e) {
                 e.printStackTrace();
