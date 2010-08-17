@@ -44,6 +44,7 @@
         <module>triana-velocity</module>
         <!--<module>triana-tool</module>-->
         <module>triana-app</module>
+		<module>triana-pegasus</module>
     </modules>
 
 </project>

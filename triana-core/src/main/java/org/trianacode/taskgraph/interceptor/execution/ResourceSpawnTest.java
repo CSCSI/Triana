@@ -25,5 +25,4 @@ public class ResourceSpawnTest {
         }
         HTTPServices.getWorkflowServer().addExecutableTask("spawn", (Task) tool);
     }
-
 }
