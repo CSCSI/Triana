@@ -40,9 +40,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.trianacode</groupId>
+            <artifactId>triana-gui</artifactId>
+            <version>0.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>pegasus.nodeps</groupId>
-		    <artifactId>pegasus</artifactId>
-		    <version>2.4.3</version>
+            <artifactId>pegasus</artifactId>
+            <version>2.4.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
