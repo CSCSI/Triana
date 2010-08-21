@@ -8,15 +8,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import mil.navy.nrl.discovery.json.*;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
 import mil.navy.nrl.discovery.api.DiscoveredServicesInterface;
 import mil.navy.nrl.discovery.api.ServiceInfo;
 import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
-import mil.navy.nrl.discovery.json.Attribute;
-import mil.navy.nrl.discovery.json.JsTree;
-import mil.navy.nrl.discovery.json.LeafNode;
-import mil.navy.nrl.discovery.json.LeafNodeObject;
-import mil.navy.nrl.discovery.json.Node;
 import mil.navy.nrl.discovery.tools.DNSServiceNames;
 import mil.navy.nrl.discovery.web.resources.ServiceResource;
 
@@ -166,7 +162,7 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
         Enumeration keys = tools.keys();
         JsTree tree = new JsTree();
 
-        String type;
+        String serviceName;
         System.out.println("Retrieving tool List .... with values " + tools.size());
 
         while (keys.hasMoreElements()) {
@@ -174,19 +170,19 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
             List serviceType = tools.get(key);
 
-            type = DNSServiceNames.getServiceTypeFrom(key.getQualifiedServiceType());
-            Node serviceTypeTreeNode = new Node(type);
+            serviceName = key.getServiceName();
+            Node serviceNameTreeNode = new Node(serviceName);
 
-            tree.add(serviceTypeTreeNode);
+            tree.add(serviceNameTreeNode );
 
             for (Object tool : serviceType) {
                 ToolMetadata tr = (ToolMetadata) tool;
                 Attribute attr = new Attribute(key.getServiceAddress() + ":"
                         + key.getPort() + "/" + tr.getUrl());
 
-                Node lastNode = recurseToolTree(tr.getUrl().getPath(), serviceTypeTreeNode);
+                Node lastNode = recurseToolTree(tr.getToolName(), serviceNameTreeNode);
 
-                LeafNode child = new LeafNode(tr.getDisplayName(), attr);
+                LeafNode child = new LeafNode(getName(tr.getToolName()), attr);
                 lastNode.getChildren().add(new LeafNodeObject(child));
             }
         }
@@ -194,19 +190,39 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
         return tree.doSerializeJSON();
     }
 
+    private String getName(String fullName) {
+        return fullName.substring(fullName.lastIndexOf(".")+1);
+    }
 
     private Node recurseToolTree(String toolURL, Node thisLevel) {
 
-        int index = toolURL.indexOf("/");
+        int index = toolURL.indexOf(".");
 
+        Node nextLevel=thisLevel;
+       
         if (index != -1) {
             String mylevel = toolURL.substring(0, index);
             String rest = toolURL.substring(index + 1); // rest of url
 
-            Node nextLevel = new Node(mylevel);
-            thisLevel.getChildren().add(nextLevel);
-            recurseToolTree(rest, nextLevel);
+            Node match = getMatchingChild(mylevel, thisLevel);
+            if (match==null) {
+                nextLevel = new Node(mylevel);
+                thisLevel.getChildren().add(nextLevel);
+            } else {
+                nextLevel = match;
+            }
+            nextLevel=recurseToolTree(rest, nextLevel);
         }
-        return thisLevel;
+        return nextLevel;
+    }
+
+    public Node getMatchingChild(String childName, Node node) {
+        Children children = node.getChildren();
+
+        for (Object child: children) {
+            if ((child instanceof Node) && (((Node)child).getData().equals(childName) ))
+                    return (Node)child;
+        }
+        return null;
     }
 }

@@ -39,7 +39,7 @@ public class LocalTrawler extends TDPServer {
 
 
     public String getServiceName() {
-        return "TrianaService";
+        return "LocalTools";
     }
 
 

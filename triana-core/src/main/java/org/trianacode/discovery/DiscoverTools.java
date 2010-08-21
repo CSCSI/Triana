@@ -29,10 +29,11 @@ import sun.misc.Timer;
  * Created by IntelliJ IDEA. User: scmijt Date: Jul 30, 2010 Time: 2:37:49 PM To change this template use File |
  * Settings | File Templates.
  */
-public class DiscoverTools implements Timeable {
+public class DiscoverTools extends Thread implements Timeable {
     private static WebBootstrap bonjourServer;
     private ServiceTypesAndProtocols tdpProtocols;
     private DiscoveredTools discoveredServices;
+    ToolResolver resolver;
 
 
     private Timer timer;
@@ -41,36 +42,45 @@ public class DiscoverTools implements Timeable {
     public DiscoverTools(HttpPeer httpEngine, ToolResolver resolver) {
         this.tdpProtocols = new ServiceTypesAndProtocols();
         this.httpEngine = httpEngine;
-
-        startServices(resolver);
-
-        ServiceTypes st = new ServiceTypes();
-
-        st.registerServiceType("http._tcp", "HTTP is cool....");
-
-        WebDefines webDefines = new WebDefines(null, null, null, null, null);
-
-        discoveredServices = new DiscoveredTools(this);
-
-        try {
-            bonjourServer = new WebBootstrap(discoveredServices, httpEngine,
-                    "TrianaServer", "triana", "Triana Bonjour Service!",
-                    "Published Services", webDefines, st);
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        //  scan every 10 seconds....
-        //timer = new Timer(this, 10000);
-        //timer.cont();
-
-        //tick(timer);
+        this.resolver=resolver;
+        Thread discoverThread = new Thread(this);
+        discoverThread.setPriority(Thread.MIN_PRIORITY);
+        discoverThread.start();
     }
 
     public void startServices(ToolResolver resolver) {
         new LocalTrawler(httpEngine, resolver);
     }
 
+    public void run() {
+        startServices(resolver);
+        ServiceTypes st = new ServiceTypes();
+
+        // you would use this to provide custom icons for Triana etc
+        WebDefines webDefines = new WebDefines(null, null, null, null, null);
+
+        discoveredServices = new DiscoveredTools(this);
+
+        try {
+            bonjourServer = new WebBootstrap(discoveredServices, httpEngine,
+                    "TrianaServer", "triana-web", "Triana Bonjour Service!",
+                    "Published Services", webDefines, st);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
+        //tick(null);
+        //  scan every 60 seconds....
+      //   timer = new Timer(this, 10000);
+        // timer.cont();
+
+         tick(null);
+
+    }
+
     public void tick(sun.misc.Timer timer) {
+        System.out.println("Looking for bonjour services !!");
         Object[] protocols = discoveredServices.getProtocols().toArray();
 
         for (Object obj : protocols) {
@@ -85,11 +95,12 @@ public class DiscoverTools implements Timeable {
 
                 List<ToolMetadata> tools = data.getTools();
 
-                /*System.out.println("Here's the list of tools found from the bonjour service  !!");
+                System.out.println("Here's the list of tools found from the bonjour service  !!");
 
                 for (ToolMetadata toolmd : tools) {
-                    System.out.println(toolmd.toString());
-                }*/
+                    // System.out.println(toolmd.toString());
+                    discoveredServices.addTool(toolmd,protocol);                    
+                }
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (ClassNotFoundException e) {
