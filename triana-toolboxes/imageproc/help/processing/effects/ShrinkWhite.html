@@ -1,0 +1,53 @@
+<HTML>
+
+<HEAD>
+    <TITLE>ShrinkWhite</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#ffffff" LINK="#ff0000" VLINK="#c0c0c0">
+<CENTER>
+    <H1>Invert</H1>
+    <LARGE><B>
+        Author : Melanie Rhianna Lewis<BR>
+        Input Type : TrianaPixelMap<BR>
+        Output Type : TrianaPixelMap<BR>
+        Date : <BR>
+    </B></LARGE>
+    <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+</CENTER>
+<DIV ALIGN="LEFT">
+    Reduces the sizes of the white areas in a TrianaPixelMap. Sensible results are more likely if the image is a grey
+    scale one.<P>
+    An example using this unit is:
+
+    <P>
+    <CENTER>
+        <IMG SRC="ben_edges_network.gif" BORDER="1">
+    </CENTER>
+    <P>
+        This network is a <I>Binary Edge Detector</I>. It detects prominent 'edges' ie. intensity changes in an image.
+        It then uses <A HREF="../../Color/help/ToGreyScale.html">ToGreyScale</A> to general a grey scale image and then
+        uses <A HREF="Threshold.html">Threshold</A> to generate a black and white image where all pixels of intensity
+        higher than the defined value are white and all others are black. It takes two copies of this image, one of
+        which has the white areas 'shrunk'. <A HREF="../../Manipulation/help/ImageDiff.html">ImageDiff</A> is used to
+        find the differences between the two images. Typical results are:
+
+    <P>
+    <CENTER>
+        <TABLE BGCOLOR="#e0e0e0" CELLSPACING="0" CELLPADDING="5" BORDER="1">
+            <TR>
+                <TD ALIGN="CENTER" VALIGN="TOP"><IMG SRC="ben_win.gif" WIDTH="210" HEIGHT="302" BORDER="0"></TD>
+                <TD ALIGN="CENTER" VALIGN="TOP"><IMG SRC="ben_win_edges.gif" WIDTH="210" HEIGHT="302" BORDER="0"></TD>
+            </TR>
+            <TR>
+                <TD ALIGN="CENTER" VALIGN="MIDDLE"><B>Before operation</B></TD>
+                <TD ALIGN="CENTER" VALIGN="MIDDLE"><B>After operation</B></TD>
+            </TR>
+        </TABLE>
+    </CENTER>
+    <H3>See also</H3>
+    <A HREF="Negate.html">Negate</A>, <A HREF="Threshold.html">Threshold</A>
+    <CENTER>
+        <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+    </CENTER>
+</BODY>

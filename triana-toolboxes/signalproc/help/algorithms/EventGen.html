@@ -1,0 +1,104 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>EventGen</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a>
+<center>
+    <h1>
+        EventGen</h1></center>
+
+<center>
+    <LARGE><b>Author : Bernard Schutz</b>
+        <br><b>Input Types : <a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a></b>
+        <br><b>Output Types : <a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a></b>
+        <br><b>Date : 25 June 2000</b>
+
+        <p></LARGE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of EventGen</a></li>
+
+    <li>
+        <a href="#using">Using EventGen</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of EventGen</h2>
+EventGen acts like <a href="Gaussian.html">Gaussian</a> or <a href="RandNoise.html">RandNoise</a>
+to add noise to a data stream, but this noise is non-Gaussian. It is added
+in the form of "events", which are short bursts of a specific form, but
+the bursts are generated at random times. The user can use the parameter
+window (below) to choose from several kinds of bursts, to set the amplitude,
+to control the event durations, to set the mean event spacings, and to
+adjust a parameter called "scale" whose effect depends on the type of burst
+chosen. See below for a description of the details of the various events
+that can be generated.
+<br>&nbsp;
+<h2>
+    <a NAME="using"></a>Using EventGen</h2>
+In the user interface window, the user can make several choices. In each
+case the burst is simply added to the input stream. The effect of the choice
+of amplitude and scale depends on the burst type and is listed with the
+burst types below. The amplitude of each burst is a random number uniformly
+distributed between zero and twice the amplitude chosen by the user in
+the interface window. The duration of each burst is a random number uniformly
+distributed between zero and twice the mean value that the user chooses.
+The events begin at times that are randomly chosen such that the mean interval
+between events is the value chosen by the user.&nbsp; The type of burst
+may be one of the following:
+<ul>
+    <li>
+        Gaussian noise. The added values are chosen from a normal distribution
+        with standard deviation given by the (random) amplitude of the particular
+        event and with a mean given by the scale value set in the user interface
+        window.
+    </li>
+
+    <li>
+        Uniform noise. The added values are chosen from a uniform distribution
+        in the interval (-amplitude + scale, amplitude + scale), for the (random)
+        amplitude of the particular event and the scale value set in the user interface
+        window. Thus, the distribution has mean value equal to scale.
+    </li>
+
+    <li>
+        Linear chirp. The added signal is a sinusoid with a uniformly increasing
+        frequency. It starts from phase 0 and frequency zero, and it reaches a
+        frequency equal to scale by the end of the (random) duration of the chirp,
+        where scale is the value set by the user in the interface window. The sinusoid
+        is multiplied by the (random) value of the amplitude.
+    </li>
+
+    <li>
+        Ring. The added signal is a sinusoid of constant frequency lasting the
+        (random) duration, with the (random) amplitude. The frequency is equal
+        to the value of scale chosen by the user in the interface window.
+    </li>
+</ul>
+
+<center><img SRC="Image21.gif" height=265 width=322></center>
+
+<p><br>
+    <br>
+    <br>
+    <br>
+
+<p>
+<hr WIDTH="15%" SIZE=4>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

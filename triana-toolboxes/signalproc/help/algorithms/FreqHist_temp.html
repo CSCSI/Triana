@@ -1,0 +1,70 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>Untitled</title>
+</head>
+<body>
+<!-- $MVD$:APP("MicroVision WebExpress") --><!-- $MVD$:COLOR("2","0","Black") -->
+<!-- $MVD$:COLOR("3","ff0000","Blue") --><!-- $MVD$:COLOR("4","ffff00","Cyan") -->
+<!-- $MVD$:COLOR("5","ff00","Green") --><!-- $MVD$:COLOR("6","ff00ff","Magenta") --><!-- $MVD$:COLOR("7","ff","Red") -->
+<!-- $MVD$:COLOR("8","ffff","Yellow") --><!-- $MVD$:COLOR("9","ffffff","White") -->
+<!-- $MVD$:COLOR("10","7f0000","Dk Blue") --><!-- $MVD$:COLOR("11","7f7f00","Dk Cyan") -->
+<!-- $MVD$:COLOR("12","7f00","Dk Green") --><!-- $MVD$:COLOR("13","7f007f","Dk Magenta") -->
+<!-- $MVD$:COLOR("14","7f","Dk Red") --><!-- $MVD$:COLOR("15","7f7f","Brown") -->
+<!-- $MVD$:COLOR("16","7f7f7f","Dk Grey") --><!-- $MVD$:COLOR("17","c0c0c0","Lt Grey") -->
+<h1>
+    FreqHist</h1>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of FreqHist</a></li>
+
+    <li>
+        <a href="#using">Using FreqHist</a></li>
+</ul>
+
+<h2>
+    <a NAME="description"></a>Description of FreqHist</h2>
+The unit called FreqHist computes the frequency histogram of the input
+data set. The input data may be either a SampleSet or a Spectrum. The output
+Histogram gives the number of input values that lie within certain intervals.
+The choice of intervals is described in the next section.
+<h2>
+    <a NAME="using"></a>Using FreqHist</h2>
+The user can set parameter values that determine how the Histogram is constructed.
+If default values are used, the output Histogram will have uniformly spaced
+intervals from either 0 to the maximum of the data set (if all the input
+data are non-negative) or from -m to +m, where m is the larger of the absolute
+values of the minimum (if this is negative) and maximum. Thus, if there
+are negative input values, the histogram intervals are symmetric about
+zero. The number of intervals depends on the number of input data values.
+The default values never include histogram intervals extending to infinity.
+<p>The user is recommended not to use the defaults if successive Histograms
+    will be added or otherwise compared, since the defaults will produce Histograms
+    with different numbers of intervals, depending on the details of the input
+    data sets. To set parameters, use the parameter window. This allows the
+    user to mix defaults (shown as "auto" in the parameter boxes) and user-defined
+    values for the number, width, and beginning of the intervals. The range
+    of values covered by the intervals extends from the beginning value to
+    the end, which is end = beginning + number * width.
+
+<p>When the user sets the range of the intervals by inserting values into
+    the parameter window for all the parameters, it will be possible for values
+    in the input data set to fall outside this interval. Therefore, the unit
+    always adds intervals extending to negative and positive infinity when
+    the user defines all the parameters. (See the help for the Histogram data
+    type for an explanation of what these extra intervals mean.) It does this
+    even if the extra "overflow" intervals are empty for the particular input
+    data set. This ensures that Histograms produced with a given set of user
+    parameters are always compatible for the purposes of addition, multiplication,
+    and so on: they always have exactly the same set of intervals. Use the
+    units Adder, Multiplier, etc for Histogram arithmetic.
+    <br>&nbsp;
+    <br>&nbsp;
+</body>
+</html>

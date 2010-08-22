@@ -42,8 +42,8 @@
         <module>triana-types</module>
         <module>triana-interceptors</module>
         <module>triana-velocity</module>
-        <!--<module>triana-tool</module>-->
-		<module>triana-pegasus</module>
+        <module>triana-toolboxes</module>
+        <module>triana-pegasus</module>
         <module>triana-app</module>
     </modules>
 

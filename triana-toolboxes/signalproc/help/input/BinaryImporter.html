@@ -1,0 +1,196 @@
+<HTML>
+<HEAD>
+    <TITLE>BinaryImporter</TITLE>
+</HEAD>
+<BODY TEXT="#000000" LINK="#ff00ff" VLINK="#800080" BGCOLOR="#fdf5e6" alink="#FF0000">
+
+<H1 ALIGN="CENTER">BinaryImporter</H1>
+
+<P ALIGN="CENTER">
+    <LARGE><B>Author : Ian Wang</B>
+</P>
+<P ALIGN="CENTER">
+    Input Types : None<BR>
+    Output Types : <A HREF="C:\triana\help/JavaDoc/triana/types/VectorType.html">VectorType</A><BR>
+    Date : 11 Jun 2003 </LARGE></P>
+</B><H2><A NAME="contents"></A>Contents</H2>
+
+<UL>
+    <LI><A HREF="#description">Description of BinaryImporter</A></LI>
+    <LI><A HREF="#using">Using BinaryImporter</A></LI>
+</UL>
+
+<P>
+<HR WIDTH="15%" SIZE=4>
+</P>
+<H2><A NAME="description"></A>Description of BinaryImporter</H2>
+
+<P>
+    The Binary Importer reads a stream of bytes from a input file and converts them into a Vector type. It is a very
+    powerful tool that can read almost input file formats, but takes a requires a little understanding to be used
+    correctly. The most important feature is that the data items (bytes) read from the file are considered to form a
+    table of a specified number of rows and columns. For our examples we shall assume that twenty data items are being
+    read from the file, as such:
+
+<pre><i> d1 d2 d3 d4 d5 ... d19 d20</i></pre>
+<p>
+
+    This input could be considered to be a data set with 5 columns and 4 rows:
+
+<pre><i>example 1:
+    d1 d2 d3 d4 d5
+    d6 d7 d8 d9 d10
+    d11 d12 d13 d14 d15
+    d16 d17 d18 d19 d20 (cols=5 rows=4)</i></pre>
+<p>
+
+    Or as a data set with 10 columns and 2 rows:
+
+<pre><i>example 2:
+    d1 d2 d3 d4 d5 d6 d7 d8 d9 d10
+    d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 (cols=10 rows=2)</i></pre>
+<p>
+
+    Or as 4 data sets, each with 5 columns and 1 row:
+
+<pre><i>example 3:
+    d1 d2 d3 d4 d5 (cols=5 rows=1)
+    +
+    d6 d7 d8 d9 d10 (cols=5 rows=1)
+    +
+    d11 d12 d13 d14 d15 (cols=5 rows=1)
+    +
+    d16 d17 d18 d19 d20 (cols=5 rows=1)</i></pre>
+<p>
+
+    The Binary Importer reads one data sets each time it is run, so in the last example data set 1 would be read the
+    first time Binary Importer was run, set 2 the second time and so on (this assumes that the file is not rewound every
+    run, see <A HREF="#REWIND">'Rewind Input Stream'</A>).
+
+<P>
+
+    Once the dimensions of the data set have been specified, Binary Importer can import either rows or columns from that
+    data set, and this can be all the rows/columns or just selected ones. So, assuming the dimensions from example 1
+    (cols=5 rows=4), we could just import column 2, or just import row 3:
+
+<pre><i>import column 2:
+    d2 d7 d12 d17 (cols=5 rows=4)</i></pre>
+<p>
+
+<pre><i>import row 3:
+    d11 d12 d13 d14 d15 (cols=5 rows=4)</i></pre>
+<p>
+
+    Alternatively, we could import columns 1-3 (columns 1, 2 and 3):
+
+<pre><i>import columns 1-3:
+    d1 d6 d11 d16
+    +
+    d2 d7 d12 d17
+    +
+    d3 d8 d13 d18 (cols=5 rows=4)</i></pre>
+<p>
+
+    In this situation, the columns read in are output by Binary Importer one after each other within the same run. So in
+    this scenario, a single run of Binary Importer would cause three vectors to be output.
+
+<P>
+
+    Extending this a little further, we could just import rows 4,1,2 from columns 3+ (3 onwards):
+
+<pre><i>import rows 4,1,2 from columns 3+
+    d18 d3 d8
+    +
+    d19 d4 d9
+    +
+    d20 d5 d10 (cols=5 rows=4)</i></pre>
+<p>
+
+    Again in this situation single run of Binary Importer would lead to three vectors being output.
+
+<H2><A NAME="using"></A>Using BinaryImporter</H2>
+
+Once specifying the dimensions of the data sets, and the columns/rows to be imported, is understood, the rest of the
+options should make sense. Binary Importer offers the following options:<P>
+
+<TABLE BORDER=1 WIDTH=80% ALIGN=CENTER>
+    <TR>
+        <TD WIDTH=30%><B>Filename</B></TD>
+        <TD>The name of the binary input file.</TD>
+    </TR>
+    <TR>
+        <TD><B>Data type</B></TD>
+        <TD>The type of data to be read in, e.g. an 8 byte Double or a 4 byte Integer (<i>default=Double (8bytes)</i>)
+        </TD>
+    </TR>
+    <TR>
+        <TD><B>Bytes per column</B></TD>
+        <TD>Usually the number of bytes per column will be the same as the data type. For example, if reading a file of
+            Doubles (8bytes), then column 1 would start at byte 0, column 2 at byte 8, column 3 at byte 16 and so on.
+            However, if the binary file contains a mix of data types, then the 'one byte per column' option sets column
+            1 to start at byte 0, column 2 to start at byte 1, column 3 to start at byte 2 and so on (<i>default=Same as
+                for data type</i>).
+        </TD>
+    </TR>
+    <TR>
+        <TD><B>Extract</B></TD>
+        <TD>Import either columns or rows (<i>default=Columns</i>.</TD>
+    </TR>
+    <TR>
+        <TD><B>Header offset</B></TD>
+        <TD>The number of bytes that are skipped at the start of the input file (<i>default=0</i>).</TD>
+    </TR>
+    <TR>
+        <TD><B>Number of columns</B></TD>
+        <TD>The number of columns in a data set as described above (<i>default=1</i>).</TD>
+    </TR>
+    <TR>
+        <TD><B>Number of rows</B></TD>
+        <TD>The number of rows in a data set as described above. If the number of rows is not specified then Binary
+            Importer reads until the end of file is reached (<i>default=1</i>).
+        </TD>
+    </TR>
+    <TR>
+        <TD><B>Extract columns</B></TD>
+        <TD>The columns to be extracted, e.g. 1,3-12,15+, where 3-12 means extract all columns between 3 and 12
+            inclusive, and 15+ means extract all columns from 15 until the end of the data set. If not specified then
+            all columns are extracted (1+). (<i>default=not specified</i>)
+        </TD>
+    </TR>
+    <TR>
+        <TD><B>Extract rows</B></TD>
+        <TD>The rows to be extracted, e.g. 1,3-12,15+, where 3-12 means extract all rows between 3 and 12 inclusive, and
+            15+ means extract all rows from 15 until the end of the data set. If not specified then all rows are
+            extracted (1+). (<i>default=not specified</i>)
+        </TD>
+    </TR>
+    <TR>
+        <TD><B>Reverse byte order</B></TD>
+        <TD>Whether data is read from high byte to low byte (standard) or from low byte to high byte (reverse) (<i>default=not
+            reverse</i>)
+        </TD>
+    </TR>
+    <TR>
+        <TD><B>Output on multiple nodes</B></TD>
+        <TD>Whether each column/row imported is output on a seperate node (multi-node), or output in turn from a single
+            node (<i>default=output on single node</i>)
+        </TD>
+    </TR>
+    <TR>
+        <TD><B>Header offset every iteration</B></TD>
+        <TD>Whether the header offset is applied every time the importer is run, or only when the file is first loaded (<i>default=not
+            offset every iteration</i>)
+        </TD>
+    </TR>
+    <TR>
+        <TD><A NAME="REWIND"><!-- --></A><B>Rewind input stream</B></TD>
+        <TD>When the file is reset to the start: <i>Every run</i> means that the file is reopened from the start
+            everytime the importer is run; <i>Automatic</i> means the file is only reopened from the start when the end
+            is reached; <i>Never</i> means the file is never reopened from the start, once the end is reached further
+            runs of the importer do nothing. (<i>default=Every run</i>)
+        </TD>
+    </TR>
+</TABLE>
+
+</BODY>
+</HTML>

@@ -17,6 +17,8 @@
 package org.trianacode.taskgraph.util;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.util.logging.Logger;
 
 /**
@@ -30,11 +32,48 @@ public class Home {
 
     static Logger logger = Logger.getLogger("org.trianacode.taskgraph.util.Home");
     private static String home = null;
+    private static File runHome = null;
     private static String os = null;
     private static String arch = null;
+    private static boolean isJarred = false;
 
+    public static synchronized File runHome() {
+        if (runHome != null) {
+            return runHome;
+        }
+        logger.info("calculating Triana run home...");
+        String fileSubPath = "triana-core/target/classes/org/trianacode/taskgraph/util/Home.class";
+        try {
+            URL url = Class.forName("org.trianacode.taskgraph.util.Home").getResource("Home.class");
+            String fullPath = url.toURI().toASCIIString();
+            if (fullPath.startsWith("jar:")) {
+                int entryStart = fullPath.indexOf("!/");
+                if (entryStart == -1) {
+                    entryStart = fullPath.length();
+                }
+                String file = fullPath.substring(4, entryStart);
+                runHome = new File(new URI(file));
+                isJarred = true;
+            } else { // presume file
+                if (fullPath.indexOf(fileSubPath) > -1) {
+                    fullPath = fullPath.substring(0, fullPath.indexOf(fileSubPath));
+                }
+                runHome = new File(new URI(fullPath));
+                isJarred = false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        logger.info("Triana runHome : " + runHome);
+        return runHome;
+    }
+
+    public static boolean isJarred() {
+        return isJarred;
+    }
 
     public static synchronized String home() {
+        runHome();
         if (home != null) {
             return home;
         }
@@ -75,7 +114,7 @@ public class Home {
             }
         }
         home = appHome.getAbsolutePath();
-
+        logger.info("Triana support home : " + home);
         return home;
     }
 

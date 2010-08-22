@@ -1,0 +1,417 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Author" content="Ian Taylor">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>MainTriana Help</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#DC143C" vlink="#551A8B" alink="#FF0000">
+<a href="../../../../help/index.html">Triana Help Index</a>
+<center>
+    <h1>
+
+        <hr width="100%">
+        <font color="#800000">Triana's Spectral Storage Model</font></h1>
+</center>
+
+<center>
+    <h1>
+
+        <hr width="100%">
+    </h1>
+</center>
+
+<center>
+    <h1>
+        Index</h1></center>
+
+<ul>
+    <li>
+        <a href="#intro">Triana and Frequency Data</a></li>
+
+    <li>
+        <a href="#understanding">Understanding Frequency-Domain Data Storage in
+            <font color="#800000">Triana</font></a></li>
+
+    <li>
+        <a href="#details">Storage Details</a></li>
+
+    <li>
+        <a href="#implementation">Implementation of the Triana Spectral Storage
+            Model</a></li>
+</ul>
+
+<h2>
+
+    <hr width="100%">
+    <a NAME="intro"></a><font color="#800000">Triana</font>
+    and Frequency Data
+</h2>
+Many of <font color="#800000">Triana</font>'s data types implement the
+Spectral interface, which requires a number of methods for storing and
+retrieving spectral data. The Spectral interface makes no assumptions about
+how the underlying data sets are stored. It provides continuity of operation
+of units that deal with spectral data even if they employ different storage
+models. The spectral data types provide special functions that return spectral
+data and their associated frequencies in monotonically increasing frequency
+order, so that the spectra can be displayed by a unit that does not have
+to know the details of the internal storage model. These functions are
+used by Triana's graphing units <a href="../../Output/help/Grapher.html">Grapher</a>
+and <a href="../../Output/help/MultiGraph.html">Multigraph</a>.
+<p>However, the details of how spectral data are stored are important to
+    users implementing data types and dealing directly with the data. The <font color="#800000">Triana</font>
+    storage model is close to other common formats for spectral data storage,
+    and it allows for efficient use of memory. The model is described in detail
+    here and in the <font color="#800000">Triana</font> JavaDoc help files
+    for the types <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>
+    and <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>.
+    <br>
+<hr width="100%">
+<h2>
+    <a NAME="understanding"></a>Understanding Frequency-Domain Data Storage
+    in
+    <font color="#800000">Triana</font></h2>
+<font color="#800000">Triana</font> stores spectral data in data types
+like <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>,
+<a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>,
+<a href="../../../../help/JavaDoc/triana/types/TimeFrequency.html">TimeFrequency</a>,
+and <a href="../../../../help/JavaDoc/triana/types/Spectrum2D.html">Spectrum2D</a>.
+Spectrum and ComplexSpectrum are essentially identical except that the
+data in Spectrum are real and in ComplexSpectrum complex. TimeFrequency
+is a two-dimensional data set, one dimension of which is spectral and the
+other time, so that it normally represents a sequence of spectra taken
+at different times. Spectrum2D is a genuine two-dimensional spectrum, such
+as might be obtained by performing an FFT on an image or other matrix.
+Both TimeFrequency and Spectrum2D can hold either real or complex data.
+Since FFTs generally produce complex output, the type Spectrum is normally
+used only for the output of units the produce power spectra or related
+objects.
+<p><i>One-dimensional spectral data</i> (including the spectral dimension
+    of TimeFrequency) can generally be stored in several different ways.
+<ul>
+    <li>
+        <b><i>Full-bandwidth</i></b> data storage means that the spectrum contains
+        data values for both positive and negative frequencies.
+    </li>
+
+    <li>
+        <b><i>One-sided</i></b> data storage means that only positive frequencies
+        are held in the data object; if negative frequencies are required they
+        are reconstructed from the positive frequencies, on the assumption that
+        the spectrum represents the Fourier transform of a real data set.
+    </li>
+
+    <li>
+        <b><i>Narrow-band</i></b> data storage means that the stored data represents
+        only a portion of the full spectrum; if a full-bandwidth spectrum is required
+        then it is reconstructed by putting zeros into the data values associated
+        with frequencies outside the stored bandwidth.
+    </li>
+</ul>
+Narrow-band data sets can be either one-sided or two-sided. Similarly one-sided
+data sets can be either wide-band or narrow-band. Narrow-band data sets
+keep a memory of how large the spectrum was from which they were filtered.
+This amounts effectively to remembering the highest frequency contained
+in that original spectrum, which is called the&nbsp;<a NAME="nyquist"></a><b>Nyquist
+    frequency</b> of the data set. This term is used in the filtering units,
+some of which offer the user the ability to reduce the Nyquist frequency.
+This means that the "memory" about the original spectrum will be altered
+so that, when the set is restored to a full-spectrum set, the highest frequency
+will be smaller. If the spectrum is FFT'd back to the time domain, then
+the sampling rate in the time domain will be correspondingly smaller, since
+this sampling rate is exactly twice the Nyquist frequency. Thus, lowering
+the Nyquist frequency will result in <b>down-sampling</b> of the time-domain
+data set associated with the spectrum.
+<p><font color="#800000">Triana</font> employs these various storage models
+    in order to save memory usage. In many applications, such as when spectra
+    are divided into separate bandwidths, using full-bandwidth data would mean
+    replicating many useless storage locations. However, because <font color="#800000">Triana</font>
+    data sets are self-describing, most <font color="#800000">Triana</font>
+    units that deal with spectra are written in such a way that they will automatically
+    do the right thing with data, regardless of its storage format. Users need
+    to be aware of the different storage models, however, when they display
+    them, combine them, or make use of their special properties. There is more
+    detail on this subject in the help file for the
+    <font color="#800000">Triana</font>
+    Spectral Model, which also defines the model completely.
+
+<p>For <i>two-dimensional spectral data</i>, narrow-banding in each dimension
+    makes sense, but one-sidedness has limited value, since data can be reflected
+    through two different zero-frequency lines. Therefore <font color="#800000">Triana</font>
+    generally uses only full-bandwidth 2D data sets.
+    <br>
+<hr width="100%">
+<h2>
+    <a NAME="details"></a>Storage Details</h2>
+The details of the storage of spectral data depend on the number <i>nFull
+</i>of
+points in the full-bandwidth spectrum associated with a spectral data set,
+and on whether the data are one-sided and/or narrow-band. The different
+cases are detailed here. In the discussions we use <i>f</i> to denote frequency,
+<i>f<sub>N</sub></i>
+to denote the <a href="#nyquist">Nyquist frequency</a> (the highest absolute
+value of the frequency that the spectrum could contain), <i>df</i> to denote
+the frequency resolution (difference of frequency between adjacent points
+in the spectrum), and <i>f<sub>low</sub></i> and <i>f<sub>high</sub></i>
+to denote the lowest and highest absolute values of the frequency that
+are actually contained in the stored data set. The discussion below covers
+four possible cases: <a href="#full-twoside">Full-spectrum</a>, <a href="#full-oneside">one-sided/full-bandwidth</a>,
+<a href="#narrow-twoside">two-sided/narrow-band</a>, and <a href="#narrow-oneside">one-sided/narrow-band</a>
+data.
+<br>&nbsp;
+<ul><a NAME="full-twoside"></a><b>Full-spectrum (two-sided, full-bandwidth)
+    data storage. </b>The data are two-sided (include negative frequencies)
+    and full-bandwidth (<i>f<sub>low</sub></i> = 0, <i>f<sub>high</sub>= f<sub>N</sub></i>).
+    The data are stored so that the positive-frequency elements are first,
+    followed by the negative-frequency elements. The highest frequency is associated
+    only with the negative-frequency band if <i>nFull</i> is even. Here is
+    a sketch of the data storage:
+    <p>if <i>nFull</i> is even then <i>f<sub>N </sub>= (nFull/2)df</i> and
+        the stored frequencies are
+        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0, <i>df</i>, 2<i>df,
+            ..., f<sub>N&nbsp;</sub> - df, -f<sub>N&nbsp;</sub> , -f<sub>N </sub>+
+            df, ..., -df.</i>
+        <br>If <i>nFull</i> is odd then <i>f<sub>max</sub> = f<sub>N </sub>= (nFull-1)/2
+            * df&nbsp; </i>and the stored frequencies are
+        <br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i>0, <i>df, 2df,
+            ..., f<sub>N&nbsp; </sub>, -f<sub>N&nbsp;</sub> , -f<sub>N </sub>+ df,
+            ..., -df.</i>
+
+    <p>If the spectrum is a Fourier transform of a real time-domain data set,
+        then there are symmetries. In both above cases, the amplitude at frequency
+        <i>f<sub>j</sub></i>
+        is the complex conjugate of that at -<i>f<sub>j</sub></i> . In case <i>nFull</i>
+        is even, this also implies that the amplitudes for
+        <i>f</i>=0 and for <i>-f<sub>N
+        </sub></i>are
+        real. If <i>nFull</i> is odd, then only the amplitude for
+        <i>f</i>=0 need
+        be real.
+
+    <p><a NAME="full-oneside"></a><b>One-sided, full-bandwidth data storage.&nbsp;</b>
+        Here only the non-negative frequencies are stored but the frequency domain
+        is full-band (<i>f<sub>low</sub></i> = 0, <i>f<sub>high</sub></i> <i>=
+            f<sub>N</sub></i>). If negative frequencies need to be reconstructed, they
+        are assumed to follow the rule above for complex-conjugates. The Triana
+        storage model does not, however, simply leave off the negative frequencies
+        of the full-spectrum storage scheme. In the case where <i>nFull</i> is
+        even, the highest frequency is in the negative-frequency range; in this
+        case, when data are made one-sided, the amplitude for -<i>f<sub>N</sub></i>
+        is stored at a new frequency value +<i>f<sub>N</sub> . </i>The storage
+        scheme is thus:</ul>
+
+<ul>0, <i>df, 2df, ..., f<sub>N </sub>.</i>
+
+    <p>If a two-sided spectrum derived from a <i>complex</i> time-series data
+        set is converted to one-sided, information will be lost. However, when
+        the two-sided spectrum is derived from a real time-series data set, then
+        the negative-frequency information is redundant, and the Triana one-sided
+        model is an efficient way to store all the information in the spectrum.
+        In this case the amplitudes at <i>f</i>=0 and<i> f</i> = <i>f<sub>N </sub></i>are
+        real.
+
+    <p><a NAME="narrow-twoside"></a><b>Narrow-band two-sided data storage.
+    </b>If a spectrum has been filtered, then only some data points may be
+        non-zero. The Triana storage model allows the zeros to be omitted if the
+        non-zero part of the spectrum is fully contained between two frequencies
+        <i>f<sub>low</sub></i> and <i>f<sub>high</sub></i>. When the data are two-sided,
+        then the amplitudes associated with the negative frequencies must also
+        be stored. The arrangement depends in detail on whether <i>nFull</i> is
+        even or odd, on whether <i>f</i>=0 is included in the band, and on whether
+        <i>n</i> = the length of the narrow-band data set is even or odd. The basic
+        assumption is that filtering removes paired frequencies: if any positive-frequency
+        amplitude is removed (set equal to zero), so is the corresponding negative-frequency
+        amplitude. If a unit performs an operation that does not act in such a
+        symmetrical way (such as the units <a href="NegativeF.html">NegativeF</a>
+        and <a href="PositiveF.html">PositiveF</a>, which zero the positive and
+        negative frequency amplitudes, respectively), then it cannot take advantage
+        of the narrow-band storage model.
+
+    <p>If <i>nFull</i> is <b>even</b>, then the frequencies of the two-sided
+        full-bandwidth spectrum at 0 and -<i>f<sub>N</sub> </i>are un-paired; in
+        particular there is no element at +<i>f<sub>N</sub>.</i>Thus, if the spectrum
+        has been filtered from the top only (low-pass) or from zero only (high-pass),
+        the narrow-band spectrum will have an odd number of elements; if it has
+        been filtered from both ends then it will have an even number of elements.
+        If <i>nFull</i> is <b>odd</b>, then the full-bandwidth spectrum contains
+        only one un-paired element at <i>f</i>=0; there are paired elements at
+        +<i>f<sub>N</sub> </i>and
+        <i>-f<sub>N</sub>.
+        </i>If it is filtered from
+        above, then the narrow-band data set likewise has an odd number of elements;
+        if from below then the result is an even number of elements.
+
+    <p>It can be seen from this discussion that if the narrow-band two-sided
+        data set has an odd number of elements, then it must include either (but
+        of course not both) <i>f</i>=0 or<i> f</i>=<i>-f<sub>N</sub> . </i>Conversely,
+        if it has an<i> </i>even number of elements, they are all paired. So the
+        storage model for an even number of elements is simple --
+
+    <p>If <i>n</i> is even then the stored frequencies are
+        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <i>f<sub>low</sub></i>
+        (>0) , <i>f<sub>low</sub></i> + <i>df</i>, <i>f<sub>low</sub></i>&nbsp;
+        + 2<i>df, ..., f<sub>high</sub> - df, f<sub>high </sub></i>,<i>-f<sub>high</sub>
+            , -f<sub>high</sub> + df, ..., -f<sub>low</sub></i> - <i>df., -f<sub>low</sub>.</i><i></i>
+
+    <p>That is, first the positive-frequency elements are stored, then the
+        same number of negative-frequency elements. There are no elements at <i>f</i>=0
+        or<i> f</i>=<i>-f<sub>N</sub> . </i>This is independent of whether <i>nFull</i>
+        is even or odd. If this data set is sent to the units <a href="../../Output/help/Grapher.html">Grapher</a>
+        or <a href="../../Output/help/MultiGraph.html">Multigraph</a>, it will
+        be displayed as two disjoint sets in the positive- and negative-frequency
+        domains. If displayed as a line-graph, there will be a line between the
+        highest negative-frequency point and the lowest positive-frequency point.
+        Do not be disturbed by this line; it just means that there is no data in
+        the data set between these values.
+
+    <p>On the other hand, if <i>n </i>is odd, then the storage will depend
+        on whether the un-paired element is at <i>f</i>=0 (part of the positive-frequency
+        domain) or <i>f</i>=<i>-f<sub>N</sub>&nbsp; </i>(part of the negative-frequency
+        domain). The two cases are --
+
+    <p>If <i>n</i> is odd and <i>f</i>=0 is present (so that&nbsp; <i>f<sub>low</sub></i>
+        = 0 is the un-paired element) then the stored frequencies are
+        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        0, <i>df</i>, 2<i>df, ..., f<sub>high</sub>, -f<sub>high</sub>, ..., -df.</i><i></i>
+
+    <p>If <i>n</i> is odd and <i>f</i>=0 is not present (so that&nbsp; <i>f<sub>low</sub></i>
+        > 0), then <i>f<sub>high</sub> =&nbsp;</i> <i>f<sub>N&nbsp;</sub> </i>is
+        the un-paired element and&nbsp; the stored frequencies are
+        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <i>f<sub>low</sub></i>
+        (>0) , <i>f<sub>low</sub></i> + <i>df, ..., f<sub>N
+        </sub>- df, -f<sub>N&nbsp;</sub>
+            , -f<sub>N </sub>+ df, ..., -f<sub>low</sub></i> - <i>df., -f<sub>low</sub></i>
+        <i>.</i><i></i>
+
+    <p><a NAME="narrow-oneside"></a><b>Narrow-band one-sided data storage.</b>
+        Like the full-bandwidth one-sided case, in this case the storage model
+        is simpler than in the two-sided case. The frequency range simply extends
+        from <i>f<sub>low</sub></i> and <i>f<sub>high</sub></i>. It is permissible
+        to have <i>f<sub>low</sub></i> = 0, in which case <i>f<sub>high</sub> &lt;
+            f<sub>N</sub> . </i>Alternatively, it is permissible for the last element
+        to be associated with <i>f<sub>high</sub> , </i>in which case <i>f<sub>low</sub></i>
+        > 0. The stored frequencies are
+        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <i>f<sub>low</sub></i> (>0) , <i>f<sub>low</sub></i> + <i>df, ..., f<sub>high</sub>
+            - df, f<sub>high</sub>.</i></ul>
+
+<hr width="100%">
+<br>&nbsp;
+<h2>
+    <a NAME="implementation"></a>Implementation of the <font color="#800000">Triana</font>
+    Spectral Storage Model</h2>
+In <font color="#800000">Triana</font> the storage model is implemented
+in the data types that implement the Spectral interface. Full details of
+the implementation are in the <font color="#800000">Triana</font> JavaDoc
+help files. But a few remarks are appropriate here, because these data
+types provide some standard methods that the user can make use of to inspect
+the data and decide how the data are stored. These are described here for
+users who want to program new units to handle spectral data.
+<p>Spectral data types inherit from GraphType, and so they have some standard
+    methods that can be used to access the data.
+<ul>
+    <li>
+        <tt>Object getDataArrayReal(0)</tt> and <tt>Object getDataArrayImag(0)</tt>
+        return the real and imaginary parts of the data, stored according to the
+        model described above. They return Objects, that must be cast to <tt>double[]
+    </tt>or <tt>double[][]</tt>, depending on whether the returned data are
+        one- or two-dimensional.
+    </li>
+
+    <li>
+        <tt>boolean isDependentComplex(0)</tt> returns <tt>true</tt> if the data
+        held in the object is complex, <tt>false</tt> if it is real.
+    </li>
+
+    <li>
+        <tt>int getDimensionLengths(0)</tt> returns the number of elements in the
+        first dimension of the data. For one-dimensional data like ComplexSpectrum,
+        this is the length of the data set, the same as the length of the <tt>double[]</tt>
+        array returned by <tt>getDataArrayReal(0)</tt>. For TimeFrequency data,
+        this is the number of time-steps. The number of points in the frequency
+        dimension is returned by <tt>int getDimensionLengths(1)</tt>.
+    </li>
+
+    <li>
+        <tt>double[] getIndependentScaleReal(0)</tt> returns the values of the
+        frequencies that are associated with the points actually held in the object,
+        for the one-dimensional types. For TimeFrequency data, this call returns
+        the time-values associated with the different spectra, while the frequency
+        values are returned by <tt>double[] getIndependentScaleReal(1)</tt>. These
+        calls are used by Grapher to set the horizontal scale values when spectra
+        are displayed.
+    </li>
+
+    <li>
+        <tt>Object getGraphArrayReal(0)</tt> and <tt>Object getGraphArrayImag(0)</tt>
+        return the data in order of monotonically increasing frequency. These calls
+        must be cast to the appropriate types, as for <tt>getDataArrayReal(0)</tt>above.
+        These calls are used by Grapher to get the vertical values when spectra
+        a displayed.
+    </li>
+</ul>
+In addition, some of the methods required by the Spectral interface can
+be used to get the data that is required to decide what kind of spectral
+data are stored in a data type. These include the following.
+<ul>
+    <li>
+        <tt>int getOriginalN(0)</tt>, which returns the number of points in the
+        full spectrum, called <i>nFull</i> above.
+    </li>
+
+    <li>
+        <tt>double getFrequencyResolution(0)</tt>, which returns the number called
+        <i>df</i> above.
+    </li>
+
+    <li>
+        <tt>double getLowerFrequencyBound(0)</tt>, which returns the number called
+        <i>f<sub>low</sub></i>&nbsp; above.
+    </li>
+
+    <li>
+        <tt>double getUpperFrequencyBound(0)</tt>, which returns the number called
+        <i>f<sub>high</sub> </i>above.
+    </li>
+
+    <li>
+        <tt>boolean isNarrow(0)</tt>, which returns <tt>true</tt> if the data set
+        is narrow-band, <tt>false</tt> if full-bandwidth.
+    </li>
+
+    <li>
+        <tt>boolean isTwoSided()</tt>, which returns <tt>true</tt> if the data
+        set is two-sided, <tt>false</tt> if one-sided. (No 0 is required in the
+        argument.)
+    </li>
+</ul>
+Moreover, the data types ComplexSpectrum, Spectrum, and TimeFrequency implement
+additional methods that can be useful:
+<ul>
+    <li>
+        <tt>double getNyquist()</tt>, which returns the Nyquist frequency, called
+        <i>f<sub>N
+        </sub></i> above.
+    </li>
+
+    <li>
+        <tt>double getSamplingRate()</tt>, which returns the sampling rate of the
+        time-series data whose transform might have produced the current spectrum.
+    </li>
+</ul>
+Finally, some of these functions have counterparts in <font color="#800000">Triana</font>
+units, which allow users to inspect data types at runtime. These include
+the units called <a href="../../DataParam/help/FrequencyResolution.html">FrequencyResolution</a>,
+<a href="../../DataParam/help/HighFreq.html">HighFreq</a>, Length, LowFreq,
+<a href="../../DataParam/help/SampleRate.html">SampleRate</a>, <a
+        href="../../DataParam/help/TestNarrow.html">TestNarrow</a>,
+and <a href="../../DataParam/help/TestTwoSided.html">TestTwoSided</a>.
+These accept a data set as input and produce the appropriate value as an
+output, which can then be used as input to other units to set parameters,
+or which can be displayed.
+</body>
+</html>

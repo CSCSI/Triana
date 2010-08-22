@@ -1,0 +1,84 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
+    <title>PackData</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a>
+<center>
+    <h1>
+        PackData</h1></center>
+
+<center>
+    <LARGE><b>Author : Bernard Schutz</b>
+        <br><b>Version: 1.1</b>
+        <br><b>Input Types : <a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a></b>
+        <br><b>Output Types : <a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a></b>
+        <br><b>Date : 25 June 2000</b>
+
+        <p></LARGE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of PackData</a></li>
+
+    <li>
+        <a href="#using">Using PackData</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of PackData</h2>
+PackData takes successive input SampleSets, concatenates them, and then
+re-packs them for output into SampleSets of a different length, possibly
+with overlaps (back-spacings like this can be important for searching for
+signals using FFTs). The user chooses the new output set length and the
+overlap, both given as numbers of elements. This unit can be used to prepare
+sets for the Fourier transform by making their length a convenient power
+of 2.
+<p>PackData correctly re-adjusts the acquisition time of data sets as it
+    outputs them, so that the timing information is correct.
+
+<p>
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="using"></a>Using PackData</h2>
+Packdata has a parameter window in which the user can set the length of
+the output set and the number of elements overlapping successive sets;
+if this is set to a number n then the last n elements of one output will
+be identical to the first n elements of the next. The default output length
+is 1024 elements, and the default overlap is 0. The output can be any number;
+in particular, it does not matter whether it is larger than or smaller
+than the input data set length.
+<br>&nbsp;
+<br>&nbsp;
+<br>
+<center>
+    <p><img SRC="Image22.gif" height=151 width=322></center>
+
+<p>Sometimes one wants to fix the length or overlap of data sets by giving
+    the amount of time rather than the number of samples. This can be done
+    in Triana using parameter-passing and arithmetic. PackData's node editor
+    window allows one to choose to input values for the number of samples and/or
+    the overlap. These in turn can be calculated from parameter outputs from
+    previous units where the sampling rate of the SampleSet was fixed, or by
+    using the output of the unit <a href="../../DataParam/help/SampleRate.html">SampleRate</a>
+    in the DataParam toolbox. Here is an example of PackData's node-editor
+    window being used to create an input node for the number of samples:
+<center>
+    <p><img SRC="image5RM.JPG" height=217 width=275>
+
+    <p>
+    <hr WIDTH="15%" SIZE=4>
+</center>
+
+</body>
+</html>

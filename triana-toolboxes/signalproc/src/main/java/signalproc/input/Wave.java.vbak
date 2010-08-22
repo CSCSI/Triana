@@ -1,0 +1,424 @@
+package triana.tools;
+
+/*
+ * Copyright (c) 1995 onwards, University of Wales College of Cardiff
+ *
+ * Permission to use and modify this software and its documentation for
+ * any purpose is hereby granted without fee provided a written agreement
+ * exists between the recipients and the University.
+ *
+ * Further conditions of use are that (i) the above copyright notice and
+ * this permission notice appear in all copies of the software and
+ * related documentation, and (ii) the recipients of the software and
+ * documentation undertake not to copy or redistribute the software and
+ * documentation to any other party.
+ *
+ * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+ * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
+ * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
+ * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
+ * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
+ * OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+import triana.util.*;
+import triana.ocl.*;
+import triana.types.*;
+import javax.swing.*;
+import java.awt.event.*;
+import triana.gui.windows.*;
+import triana.gui.panels.*;
+import triana.gui.*;
+
+/**
+ * A sine-wave generator with a variable frequency which is 
+ * changed by control double-clicking on the units icon. 
+ * Version 0.1 written by Ian Taylor then adapted by B.F. Shutz
+ * to add the control of phase and intensity and  G. S. Jones 
+ * to have the ability to retain phase and to control the type 
+ * of wave to output i.e. sinusoidal, triangular, saw tooth and 
+ * square. 
+ *
+ * @version 1.0 17 Feb 1997
+ * @author Ian Taylor, B.F. Shutz, Gareth S. Jones
+ * @see Unit
+ * @see WavePanel
+ */
+public class Wave extends Unit {
+    /**
+     * The Panel implementing the slider to pass a scaler value back to this
+     * unit. Also allows the editing of the SamplingRate and the number of 
+     * samples.
+     */
+    WavePanel myPanel;
+
+    /**
+     * The frequency of the sine-wave
+     */
+    double frequency; 
+ 
+    /**
+     * The sampling rate
+     */
+    double samplingRate;
+ 
+    /**
+     * The initial phase of the wave (between 0 and 1)
+     */
+    double phase;
+
+    /**
+     * The intensity of the wave
+     */
+    double intensity;
+
+    /**
+     * The number of samples to output
+     */
+    int samples;
+
+    /**
+     * The actual sine-wave
+     */
+    SampleSet wave;
+
+    /**
+     * Running value of Phase of wave
+     */
+    double phasePos;
+
+    /**
+     * Variable containing reference to the type of wave desired.
+     */
+    String type;
+
+    /**
+     * Variable indicating whether the phase is to be retained.
+     */
+    boolean phaseRet;
+
+    int count = 0;
+
+    /** 
+     * Initialses information specific to Wave. You can put things in
+     * constructors which you need to initialise. LoadParameters
+     * gets called after this function, so if there is a parameter
+     * file then the default vaues will get taken over
+     */
+   public void init() {
+        super.init();
+
+        allowZeroInputNodes();
+        setResizableInputs(true);
+        setResizableOutputs(true);
+
+        myPanel = new WavePanel();
+        myPanel.setObject(this, "Frequency");
+
+        // can do these within the Unit Panel if you prefer :-
+
+        frequency = 2000; // 2000 Hz by default 
+        samples = 512;
+        samplingRate = 8000;
+        phase = 0;
+        intensity = 1;
+        phaseRet = true;
+        type="Sinusoid Wave";
+
+        resetPanel();
+        }
+
+     /**
+      * Outputs a wave
+      */
+    public void process() {         
+        // the getTextField* functions get the data from each
+        // textfield but if the textfields contain a #node
+        // format the parameter is taken from the input node
+        // number specified instead.
+//        if (!myPanel.display.getText().equals(""))
+  //          frequency = getTextFieldDouble(myPanel.display);
+
+        frequency = myPanel.getValue();
+        samples = getTextFieldInt(myPanel.samp);
+        samplingRate = getTextFieldDouble(myPanel.srate);
+        phase = getTextFieldDouble(myPanel.phas);
+        intensity = getTextFieldDouble(myPanel.inten);
+        wave = new SampleSet(samplingRate, samples);
+        wave.initialiseData();  // allocate data and set it to zero
+        addFrequency(frequency , intensity , phase);
+        output(wave);
+        }
+
+
+    /**
+     * Saves the parameters of wave to the current parameter
+     * file.
+     */
+    public void saveParameters() {   
+        saveParameter("frequency", myPanel.display.getText());
+        saveParameter("samples", myPanel.samp.getText());
+        saveParameter("samplingRate", myPanel.srate.getText());
+        saveParameter("phase", myPanel.phas.getText());
+        saveParameter("intensity", myPanel.inten.getText());
+        saveParameter("phasePos", phasePos);
+        saveParameter("phaseRet", phaseRet);
+        saveParameter("type", type);
+        }
+
+    /**
+     * Loads the parameters of wave from the current parameter
+     * file.
+     */
+    public void setParameter(String name, String value) {      
+        if (name.equals("frequency"))
+            if (fromAnInputNode(value)) {
+                myPanel.setValues(0, 0, 0);                
+                myPanel.display.setText(value);
+                }
+            else {
+                frequency = strToDouble(value);
+                myPanel.setValues(0, frequency*2, frequency);
+                }
+
+        if (name.equals("samples"))
+            myPanel.samp.setText(value);
+
+        if (name.equals("samplingRate")) 
+            myPanel.srate.setText(value);
+
+        if (name.equals("phase"))
+            myPanel.phas.setText(value);
+
+        if (name.equals("intensity"))
+            myPanel.inten.setText(value);
+         
+        if (name.equals("phasePos"))
+            phasePos = Str.strToDouble(value);
+         
+        if (name.equals("phaseRet"))
+            phaseRet = strToBoolean(value);
+
+        if (name.equals("type")) 
+            type = value;
+        }
+
+     public void resetPanel() {
+        myPanel.type.setSelectedItem(type);
+
+        myPanel.srate.setText(String.valueOf(samplingRate));
+        myPanel.samp.setText(String.valueOf(samples));
+        myPanel.phas.setText(String.valueOf(phase));
+        myPanel.inten.setText(String.valueOf(intensity));
+
+        myPanel.setValues(0, frequency*2, frequency);
+
+        phasePos=0.0;
+        }
+
+    /**
+     * This function is called by init and must be implemented for each
+     * Triana unit to specify the input types allowed to be input to
+     * this unit.
+     *
+     * @returns the list of allowed input types for this units. The string 
+     * returned should be a list of types with one white space in
+     * between each.  
+     */
+    public String inputTypes() {
+        return "Const";
+        }
+
+    /**
+     * This function is called by init and must be implemented for each
+     * Triana unit to specify the output types which can be output from
+     * this unit.
+     *
+     * @returns the list of output types that this unit can produce. The string 
+     * returned should be a list of types with one white space in
+     * between each.  
+     */
+    public String outputTypes() {
+        return "SampleSet";
+        }
+
+    /**
+     * This returns a <b>brief!</b> description of what the unit does. The
+     * text here is shown in a pop up Panel when the user puts the mouse
+     * over the unit icon for more than a second.
+     */
+    public String getPopUpDescription() {
+        return "Generates a waveform";
+        }
+
+    /**
+     * This function must be implemented for each
+     * Triana unit to specify the help file for this unit. We really must
+     * insist that people write help file in order to keep Triana as
+     * user-friendly as possible! Help files should be written in html
+     * format. If not, they will displayed in text format. Enter the
+     * location as aa absolute path name or a network address e.g.
+     * </p><p>
+     * <center>
+     * "http:///www.astro.cf.ac.uk/pub/Ian.Taylor/Triana/Help/Wave.html"<br>
+     * or <br>
+     * "/usr/local/ian/Triana/Help/Wave.html"<br>
+     * </center>
+     *
+     * <p>If you don't wan't to provide help (!!!) the this function should
+     * return the String "none" or null.</p>
+     *
+     * @returns the location of the help file for this unit.  
+     */
+    public String getHelpFile() {
+        return "Wave.html";
+        }
+
+    /**
+     * @return Waves parameter Panel.
+     */
+    public JPanel myParameterPanel() {
+        return myPanel;
+        }
+
+    /**
+     * Creates a sinusoidal, saw tooth, triangular or square wave
+     */
+    void addFrequency(double f, double intensity , double Phase) {
+        int i;
+        double sc=0.0;
+        double saw=0.0;
+        long k=0;
+        long j=0;
+        double t1;
+        double inp;
+
+        double spacing, radianphase;
+        spacing=(1.0/ wave.samplingFrequency());
+        radianphase = 2.0*Math.PI*Phase;
+
+        if(phaseRet) {
+            j=(long)phasePos;
+            sc=1.0;
+            }
+
+        if(type.equals("Impulse")){
+            int pos;
+            if ((int)frequency > wave.size())
+                pos = wave.size();
+            else if ((int)frequency < 0)
+                pos = 0;
+            else
+                pos = (int)frequency;
+
+            for ( i = 0; i < wave.size(); ++i) {
+                if (i == pos)
+                    wave.data[i] = 1;
+                else
+                    wave.data[i] = 0;
+                }
+            return;
+            }
+
+        if(type.equals("Sinusoid Wave")){
+            for ( i = 0; i < wave.size(); ++i) {
+                k=(long)i+j;
+                t1 = ((double)k*(spacing));
+                inp=t1*f+Phase;
+                wave.data[i] =(intensity*Math.sin(((2.0*Math.PI)*inp)));
+                }
+            phasePos=(double)(k+1);
+            }
+
+        if(type.equals("Saw Tooth")){
+            for ( i = 0; i < wave.size(); ++i) {
+                k=(long)i+j;
+                t1 = ((double)k*(spacing));
+                inp=t1*f+Phase;
+                saw=(inp)%(1.0);
+                wave.data[i] =(2.0*intensity*(saw-0.5));
+	          }
+            phasePos=(double)(k+1);
+            }
+
+        if(type.equals("Triangular Wave")){
+            for ( i = 0; i < wave.size(); ++i) {
+                k=(long)i+j;
+                t1 =  ((double)k*(spacing));
+                inp=t1*f+Phase;
+                saw=(inp)%(1.0);
+                wave.data[i] =(4.0*intensity*(Math.abs(saw-0.5)-0.25));
+	          }
+            phasePos=(double)(k+1);
+            }
+
+        if(type.equals("Square Wave")){
+            for ( i = 0; i < wave.size(); ++i) {
+                k=(long)i+j;
+                t1 = ((double)k*(spacing));
+                inp=t1*f+Phase;
+                saw=(inp)%(1.0);
+                wave.data[i] =(2.0*intensity*(Math.round(saw+1.0)-1.5));
+                }
+            phasePos=(double)(k+1);
+            }
+        }
+   
+    public void reset() {
+        super.reset();
+        phasePos=0.0;
+        }
+
+    /**
+     * Invoked when an action occurs.
+     */
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof JTextField)
+            return;
+
+        super.actionPerformed(e);
+
+        if (e.getSource() instanceof JMenu)
+            return;
+
+        if ((myPanel==null) || (myPanel.display==null))
+            return;
+
+        if (myPanel.display.getText().equals(""))
+            return;
+
+        return;/*            
+        if (!fromAnInputNode(myPanel.display.getText()))
+            frequency = myPanel.getValue();
+
+        if (!fromAnInputNode(myPanel.samp.getText()))
+            samples = Str.strToInt(myPanel.samp.getText());
+
+        if (!fromAnInputNode(myPanel.srate.getText()))
+            samplingRate = Str.strToDouble(myPanel.srate.getText());
+
+        if (!fromAnInputNode(myPanel.phas.getText()))
+            phase = Str.strToDouble(myPanel.phas.getText());
+
+        if (!fromAnInputNode(myPanel.inten.getText()))
+            intensity = Str.strToDouble(myPanel.inten.getText());
+
+        type = (String)myPanel.type.getSelectedItem();
+        phaseRet = myPanel.phaseRet.isSelected(); */
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+

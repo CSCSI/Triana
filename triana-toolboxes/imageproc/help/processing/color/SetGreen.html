@@ -1,0 +1,40 @@
+<HTML>
+
+<HEAD>
+    <TITLE>SetGreen</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#ffffff" LINK="#ff0000" VLINK="#c0c0c0">
+<CENTER>
+    <H1>SetGreen</H1>
+    <LARGE><B>
+        Author : Melanie Rhianna Lewis<BR>
+        Input Type : TrianaPixelMap<BR>
+        Output Type : TrianaPixelMap<BR>
+        Date : <BR>
+    </B></LARGE>
+    <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+</CENTER>
+<DIV ALIGN="LEFT">
+    <CENTER>
+        <IMG SRC="binary_op.gif">
+    </CENTER>
+    SetGreen is a binary operator. A binary operator is one which takes data from two images and generates a third
+    image. It does this by taking the value of the corresponding pixels in each of the two input images and combining
+    the values using some operator to generate the apropriate pixel in the third image. Both input images must have the
+    same dimensions.
+    <P>
+        SetGreen takes the green channel from one TrianaPixelMap and combines it with the red and blue channels of the
+        other. Mathematically it can be expressed as follows:
+<PRE><CODE>
+    rr(i, j) = r2(i, j)
+    gr(i, j) = g1(i, j)
+    br(i, J) = b2(i, j)
+</CODE></PRE>
+    <H3>See also</H3>
+    <A HREF="GetRed.html">GetRed</A>, <A HREF="SetRed.html">SetRed</A>, <A HREF="GetGreen.html">GetGreen</A>, <A
+        HREF="GetBlue.html">GetBlue</A>, <A HREF="SetBlue.html">SetBlue</A>
+    <CENTER>
+        <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+    </CENTER>
+</BODY>

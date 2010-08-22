@@ -1,0 +1,131 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>Triana Help : Test</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <h1>
+        Test</h1></center>
+
+<center>
+    <LARGE><b>Author: B F Schutz</b>
+        <br>
+        <LARGE><b>Version : 1.0</b>
+            <br><b>Input Types: <a
+                    href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana.types.GraphType.html">GraphType</a>,
+                <a href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana.types.Const.html">Const</a></b>
+            <br><b>Output Types: <a href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana.types.Const.html">Const</a></b>
+            <br><b>Date:</b> <b>19 Aug 2000</b>
+
+            <p></LARGE>
+</center>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<br>&nbsp;
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of Test</a></li>
+
+    <li>
+        <a href="#moments">Tests Available</a></li>
+
+    <li>
+        <a href="#using">Using Test</a></li>
+</ul>
+
+<h2>
+    <a NAME="description"></a>Description of Test</h2>
+The unit called Test computes one of a number of true/false tests of the
+input data set. If the test evaluates to true, then the unit outputs a
+Const containing the number 1; if false, the output is 0. The input data
+set may be a GraphType or Const data set. If GraphType, the test is applied
+to the real part of the first dependent data set held in the data type.
+This can be a matrix of any size and dimensionality.
+<p>The output Const can be used by units like If to take actions on the
+    data set.
+
+<h2>
+    <a NAME="moments"></a>Tests Available</h2>
+The test is determined by choices made in the parameter window. The user
+chooses a test and a value. For example, if the test chosen is "mean>(value)"
+and if the user sets the parameter value to 0, then the test will evaluate
+to true if the mean value of the elements of the data set is positive.
+The value can be set to any real number; its default is 0.0. Twelve tests
+are available:
+<ol>
+    <li>
+        mean>(value)
+    </li>
+
+    <li>
+        mean>=(value)
+    </li>
+
+    <li>
+        mean&lt;=(value)
+    </li>
+
+    <li>
+        mean&lt;(value)
+    </li>
+
+    <li>
+        max>(value)
+    </li>
+
+    <li>
+        max>=(value)
+    </li>
+
+    <li>
+        max&lt;=(value)
+    </li>
+
+    <li>
+        max&lt;(value)
+    </li>
+
+    <li>
+        min>(value)
+    </li>
+
+    <li>
+        min>=(value)
+    </li>
+
+    <li>
+        min&lt;=(value)
+    </li>
+
+    <li>
+        min&lt;(value)
+    </li>
+</ol>
+The mean is computed as the average of all the elements of the data set.
+Max is the greatest value of all the elements of the data set. Min is the
+least value of all the elements of the data set. The default test is the
+first one, mean>(value).
+<h2>
+    <a NAME="using"></a>Using Test</h2>
+The user should open the parameter window to choose the appropriate test.
+The choice box is used to select the test. The slider is used to set the
+value used in the test. The defaults give the test "mean > 0". The parameter
+window is shown below:
+<center>
+    <p><img SRC="imageHPE.JPG" height=163 width=377></center>
+
+<p><br>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+</body>
+</html>

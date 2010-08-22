@@ -1,0 +1,161 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>Untitled</title>
+</head>
+<body>
+<!-- $MVD$:APP("MicroVision WebExpress") --><!-- $MVD$:COLOR("2","0","Black") -->
+<!-- $MVD$:COLOR("3","ff0000","Blue") --><!-- $MVD$:COLOR("4","ffff00","Cyan") -->
+<!-- $MVD$:COLOR("5","ff00","Green") --><!-- $MVD$:COLOR("6","ff00ff","Magenta") --><!-- $MVD$:COLOR("7","ff","Red") -->
+<!-- $MVD$:COLOR("8","ffff","Yellow") --><!-- $MVD$:COLOR("9","ffffff","White") -->
+<!-- $MVD$:COLOR("10","7f0000","Dk Blue") --><!-- $MVD$:COLOR("11","7f7f00","Dk Cyan") -->
+<!-- $MVD$:COLOR("12","7f00","Dk Green") --><!-- $MVD$:COLOR("13","7f007f","Dk Magenta") -->
+<!-- $MVD$:COLOR("14","7f","Dk Red") --><!-- $MVD$:COLOR("15","7f7f","Brown") -->
+<!-- $MVD$:COLOR("16","7f7f7f","Dk Grey") --><!-- $MVD$:COLOR("17","c0c0c0","Lt Grey") -->
+<h1>
+    AccumStat</h1>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of AccumStat</a></li>
+
+    <li>
+        <a href="#moments">Moments Calculated by AccumStat</a></li>
+
+    <li>
+        <a href="#using">Using AccumStat</a></li>
+</ul>
+
+<h2>
+    <a NAME="description"></a>Description of AccumStat</h2>
+The unit called AccumStat accumulates a certain number of data sets from
+the input (in either single-step or continuous mode) and computes statistical
+averages element-by-element. The input data sets can be GraphType or Const.
+The output consists of one or more data sets of the same type as the input,
+containing the desired statistics.
+<p>For example, if the input is a sequence of Spectrum's and the user chooses
+    in the parameter window to compute the mean of 10 data sets, then the output
+    will be a sequence of Spectrum's, each of whose elements is the average
+    of the corresponding elements in the last 10 input Spectrum's.
+
+<p>The user can use the parameter window to choose to compute the mean,
+    variance, and higher moments of the input data, up to the 8th moment. These
+    are described in more detail <a href="#moments">below</a>. Each statistic
+    is output to a different output node. All statistics up to the highest
+    moment being computed are output; thus, if one wants the 4th moment (related
+    to the kurtosis) then the mean, variance, and third moment are also computed
+    and are available from the first 3 output nodes. If they are not wanted,
+    then the user does not have to connect these nodes to anything. The unit
+    will function correctly even if some of the output nodes are not used.
+
+<p>The unit recomputes the statistics after receiving each new input data
+    set. It includes the newest data in the statistics and drops the oldest
+    set from the calculation, always keeping the last N sets in memory. The
+    output is thus a sliding statistical measure. Users should exercise caution
+    when using large data sets if memory is limited.
+
+<p>During a computation the user may change the number of inputs to be
+    averaged or the maximum number of statistics to be output. The unit will
+    respond safely and correctly. If the number of output nodes on the unit
+    is less than the selected number of moments to be output, extra output
+    nodes are added automatically. If the user sets the number of output nodes
+    of the unit to be larger than the number of statistics calculated, then
+    the statistics are repeated to the extra nodes cyclically. This allows
+    the unit to duplicate its output.
+
+<h2>
+    <a NAME="moments"></a>Moments Calculated by AccumStat</h2>
+The lowest moment (order 1) is the mean. Higher moments are taken about
+the mean. Here are their definitions. In what follows, N is the number
+of data sets accumulated for the statistics, x_j is the jth data value
+(the index j referring to the data set from which the value is taken),
+Sum_j means sum over all N data sets, and &lt;x> denotes the mean over
+the N data values.
+<ol>
+    <li>
+        Mean = &lt;x> = (1/N) Sum_j[ x_j].
+    </li>
+
+    <li>
+        Variance = (1/N) Sum_j[(x_j - &lt;x>)^2].
+    </li>
+
+    <li>
+        Skewness = (1/N) Sum_j[(x_j - &lt;x>)^3]. (Not normalized by variance)
+    </li>
+
+    <li>
+        Kurtosis = (1/N) Sum_j[(x_j - &lt;x>)^4]. (Not normalized by variance)
+    </li>
+
+    <li>
+        5th moment = (1/N) Sum_j[(x_j - &lt;x>)^5].
+    </li>
+
+    <li>
+        6th moment = (1/N) Sum_j[(x_j - &lt;x>)^6].
+    </li>
+
+    <li>
+        7th moment = (1/N) Sum_j[(x_j - &lt;x>)^7].
+    </li>
+
+    <li>
+        8th moment = (1/N) Sum_j[(x_j - &lt;x>)^8]
+    </li>
+</ol>
+Notice that skewness and kurtosis are more conventionally defined by dividing
+by an appropriate power of the variance. The moments calculated by AccumStat
+are not normalized in this way.
+<p>AccumStat calculates these moments hierarchically, using lower moments
+    to generate higher ones efficiently. Therefore, if a user wants the kurtosis
+    (4th moment) the unit will also compute and output the mean, variance,
+    and skewness.
+
+<h2>
+    <a NAME="using"></a>Using AccumStat</h2>
+Before running a network containing AccumStat, the user should select parameter
+values from the parameter window. The first parameter is the number of
+input data sets to accumulate; the default value is 10. The second parameter
+is the order of the largest moment that should be output. This can be any
+integer from 0 to 8. If the user enters 0, then the data will not be accumulated,
+but rather passed through the unit unchanged. If the user chooses more
+output ports than the number of moments, then the moments will be repeated
+cyclically to the extra output ports. As an example, if there are 2 moments
+(mean and variance) and 5 output ports, then the moments will be output
+in the following order: mean, variance, mean, variance, mean.
+<p>The unit accumulates the appropriate number of data sets to compute
+    the statistics. Once it has read in the required number, subsequent input
+    data sets cause the older ones to be discarded. Output starts after the
+    first input, so the correct statistics are not reached until the required
+    number of iterations. Nevertheless, the output during this initial period
+    contains the correct statistics for the number of sets accumulated so far.
+    The number of sets and the number of output moments can be changed during
+    the running of the network. AccumStat behaves appropriately in response
+    to such changes. If the user changes the data type arriving at the input,
+    then the unit resets itself and starts computing the statistics beginning
+    with the first new set. A manual reset of the whole network also causes
+    the unit to forget accumulated data.
+
+<p>The number of output nodes should be at least as large as the number
+    of moments. If this is not the case, the unit will create extra nodes.
+    There is no requirement to attach cables to all nodes. A user who wants
+    only the kurtosis (4th moment) must use a unit with at least 4 output ports,
+    but it is permissible to connect only the 4th node&nbsp; to a cable to
+    extract the kurtosis.
+
+<p>Because higher moments like kurtosis are not normalized to the variance,
+    the user should do this manually if required, for example by feeding the
+    variance output into MathCalc to get the required power (square for kurtosis)
+    and then putting the kurtosis output and the MathCalc output into Divider
+    to get a normalized kurtosis. Alternatively, both operations could be performed
+    by a single MathCalc unit, or by separate units in the Math/Functions toolbox.
+    <br>&nbsp;
+    <br>&nbsp;
+</body>
+</html>

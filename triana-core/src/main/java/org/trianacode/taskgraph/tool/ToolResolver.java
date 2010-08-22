@@ -394,6 +394,7 @@ public class ToolResolver implements ToolMetadataResolver {
         timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
     }
 
+
     private void reresolve() {
         for (String s : toolboxes.keySet()) {
             Toolbox tb = toolboxes.get(s);
@@ -822,6 +823,16 @@ public class ToolResolver implements ToolMetadataResolver {
         FileUtils.closeWriter(bw);
     }
 
+    private String findInternalToolboxes() {
+        if (Home.isJarred()) {
+            File f = Home.runHome();
+            File p = f.getParentFile();
+            return new File(p, "toolboxes").getAbsolutePath();
+        } else {
+            return new File(Home.runHome(), "toolboxes").getAbsolutePath();
+        }
+    }
+
     /**
      * load the toolboxes from a file description
      */
@@ -875,6 +886,11 @@ public class ToolResolver implements ToolMetadataResolver {
             }
             if (tbs.size() > 0) {
                 addNewToolBox(tbs.toArray(new Toolbox[tbs.size()]));
+            }
+            String internal = findInternalToolboxes();
+            if (internal != null) {
+                Toolbox intern = new Toolbox(internal, "internal", "default-toolboxes", false);
+                addNewToolBox(intern);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

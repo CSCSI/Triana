@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+    <META NAME="Generator" CONTENT="Microsoft Word 97">
+    <TITLE>ALE</TITLE>
+    <META NAME="Template" CONTENT="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY TEXT="#000000" LINK="#ff00ff" VLINK="#800080" BGCOLOR="#fdf5e6" alink="#FF0000">
+
+<H1 ALIGN="CENTER">ALE</H1>
+
+<P ALIGN="CENTER">
+    <LARGE><B>Author : Ian Taylor</B>
+</P>
+<P ALIGN="CENTER">
+    <LARGE><B>Version : 2.0 <BR>
+        <BR>
+        Input Types : </B><A HREF="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana/types/SampleSet.html"><B>SampleSet</B></A><B>
+        <BR>
+        Output Types : </B><A
+            HREF="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana/types/SampleSet.html"><B>SampleSet</B></A><B>
+        <BR>
+        Date : 18 Sep 2000</LARGE>
+</P>
+</B><H2><A NAME="contents"></A>Contents</H2>
+
+<UL>
+    <LI><A HREF="#description">Description of ALE</A></LI>
+    <LI><A HREF="#using">Using ALE</A></LI>
+    <LI><A HREF="#background">Theory Background</A></LI>
+</UL>
+
+<P>
+<HR WIDTH="15%" SIZE=4>
+</P>
+<H2><A NAME="description"></A>Description of ALE</H2>
+
+<P>This unit performs Adaptive Line Enhancement (ALE) otherwise known as adaptive noise cancelling on the input
+    SampleSet. ALE extracts narrow-band signals out of broad-band noise and therefore is useful for processing or <I>cleaning
+        up </I>continuous streams of noisy data. The function of the unit is a computer model of the following article :
+</P>
+
+<P>B. Widrow et al : Adaptive Noise Cancelling : Principles and Applications, Proceedings of the IEEE, Vol 63, No. 12,
+    December 1975.</P>
+
+<P>The next section describes how the ALE unit can used practically. Following this there is a section that goes into
+    detail about the operation and theory behind the operation of the unit.</P>
+
+<P>&nbsp;</P>
+
+<H2>Using ALE</H2>
+
+<P>ALE's parameter window (double-click on the unit while holding down the Control key) is used to edit the parameters
+    specific to the ALE unit. </P>
+
+<P ALIGN="CENTER"><IMG SRC="Image122.gif" WIDTH=548 HEIGHT=246></P>
+
+<P>The Adaptive Filter Type is the type of LMS updating to be used. This can be set to <I>Least Mean Squared </I>(LMS)
+    or <I>Normalized Least Mean Squared </I>(NLMS). See the next section for a description of these. The <I>step
+        size </I>is used to control the amount of <I>learning </I>or <I>stepping </I>the algorithm makes at each
+    iteration. Setting this too high will result in instability and can lead to mathematical mistakes (i.e. NaN messages
+    in the Grapher). Setting this too low may mean that the algorithm does not learn at all or that the amplitude of the
+    signal is drastically reduced. See the next section for guidelines of how to set this or choose <I>auto </I>for the
+    ALE unit to automatically set this dynamically for you. </P>
+<I><P>The number of taps</I>is the number of weights you use for the adaption. Again this value can be worked out
+empirically for your data set. Setting this too low can make the ALE act like a low-pass filter and setting it too high
+can add a reverb effect to your signal. Actually setting this value to about 1000 produces a wonderful Concert Room
+Reverb effect I've noticed!!</P>
+<P>The last parameter, <I>the Tap Size</I>, is used to govern at what interval the algorithm is applied to the samples.
+    This is normally set to 1 (i.e. apply algorithm to every sample) unless you want to use ALE to produce some other
+    kind of effect.</P>
+
+<P>The following example shows how ALE (set up with the above parameters) is used to clean up a waveform contaminated
+    with Gaussian noise. This is the algorithm:</P>
+
+<P ALIGN="CENTER"><IMG SRC="Image119.gif" WIDTH=462 HEIGHT=244></P>
+
+<P>&nbsp;The waveform is set so that the wave plus the noise lies within the 16-bit sampling range (i.e. -32768 to
+    -32767) which is the same range as we use for HI-FI recordings or for speech processing. I choose a frequency of 80
+    Hz i.e.</P>
+
+<P ALIGN="CENTER"><IMG SRC="Image120.gif" WIDTH=318 HEIGHT=289></P>
+
+<P>A high level of Gaussian nose was added:</P>
+
+<P ALIGN="CENTER"><IMG SRC="Image121.gif" WIDTH=377 HEIGHT=163></P>
+
+<P>&nbsp;</P>
+
+<P>This produced a wave form which looked like this :</P>
+
+<P>&nbsp;</P>
+
+<P ALIGN="CENTER"><IMG SRC="Image116.gif" WIDTH=451 HEIGHT=365></P>
+
+<P>As you can see the waveform is extremely distorted. However, after the ALE is applied to the signal the wave looks
+    like this:</P>
+
+<P ALIGN="CENTER"><BR>
+    <IMG SRC="Image117.gif" WIDTH=451 HEIGHT=365></P>
+
+<P>&nbsp;An almost perfect 80 HZ sine wave is extracted! This powerful algorithm can be used for many applications
+    including speech processing, chirp detection, frequency tracking and really anywhere where it is desirable to
+    extract a signal from a noisy background. Musicians, try cleaning up a distorted guitar using ALE!</P>
+
+<H2><A NAME="background"></A>Theory Background</H2>
+
+<P>ALE iteratively calculates the optimum filter coefficient vector <B>w</B><SUB>n</SUB> at the discrete time n, in such
+    a way that a cost function - usually a function of the the filter error e<SUB>n</SUB> (i.e., the difference of the
+    filter-output y<SUB>n</SUB> and the desired output d<SUB>n</SUB>) - gets minimised i.e.</P>
+
+<P>&nbsp;</P>
+
+<P ALIGN="CENTER"><IMG SRC="aleimages/adapfilt.gif" ALIGN="MIDDLE" WIDTH=206 HEIGHT=65 ALT="adaptive filter"><IMG
+        SRC="aleimages/eq_adap.gif" ALIGN="MIDDLE" WIDTH=178 HEIGHT=49></P>
+
+<P>The LMS algorithm attempts to minimise the mean squared error: </P>
+
+<P ALIGN="CENTER"><IMG SRC="aleimages/meanSquared.gif" WIDTH=63 HEIGHT=43 ALT="LMS cost function"></P>
+
+<P>It is basically a stochastic gradient algorithm. The filter coefficients travel along the first derivative of the
+    mean squared error with respect to the weight vector at time n down to the minimum. This leads to the LMS
+    update </P>
+
+<P ALIGN="CENTER"><IMG SRC="aleimages/update.gif" WIDTH=132 HEIGHT=13 ALT="LMS update"></P>
+
+<P>where <I>a</I> is the step-size (or learning rate). This step size is one of the crucial parameters of ALE. It has to
+    be smaller than 2/|<B>u</B><SUB>n</SUB>|<SUP>2</SUP> otherwise instability may result. However, setting it near this
+    limit can often produce unusual results. ALE's <I>auto </I>setting below attempts to dynamically change this value
+    as ALE is processing the input samples according to the sums of the squares of the current input. To do this is sets
+    the <I>a</I> parameter to the square of the sums of the squares of the input multiplied by N (the number of taps
+    i.e. samples that the ALE algorithm uses). ALE's normalized LMS (NLMS) algorithm uses the following update :</P>
+
+<P ALIGN="CENTER"><IMG SRC="aleimages/NLMSUpdate.gif" WIDTH=153 HEIGHT=44 ALT="NLMS update"><A NAME="using"></A></P>
+
+<P>
+<HR WIDTH="15%" SIZE=4>
+</P></BODY>
+</HTML>

@@ -1,0 +1,314 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>Graphical 2-D Displayer</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Output.html">Output Index</a>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <h1>
+        Grapher</h1></center>
+
+<center><b>Author : Ian Taylor</b>
+
+    <p><b>Input Types : <a href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana.types.VectorType.html">VectorType</a>,
+        Curve</b>
+
+    <p>Date : 2 August 2000</center>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<h1>
+    The Graphical Displayer</h1>
+The graphical displayer is a window can simultaneously display a number
+of data sets. Each data set can have its own line style and colour. Most
+triana data types can be displayed using the Grapher unit e.g. SampleSets,
+Spectra, Histograms, Curves etc. The specific types are converted automatically
+into the Triana VectorType and then Graphed.
+<br>&nbsp;
+<br>&nbsp;
+<br>
+<center>
+    <p><img SRC="Image29.gif" height=365 width=451></center>
+
+<p>The <i>AutoX </i>and <i>AutoY </i>check buttons enable and disable the
+    automatic scaling of the X and Y axis. If you would like to zoom into the
+    image then you must turn these off to stop the graph resetting to its maximum
+    and minimum x and y values.
+
+<p>The <i>Nice Nos </i>check box specifies whether the numbers on the axis
+    should quantise to the nearest nice values for displaying purposes. Often
+    it is more useful to see a scale such as 0, 100, 200, 300, 400 rather than
+    0 99.7, 198.4 etc even though the graph may have to be re-scaled to make
+    this possible.
+
+<p>The Full Size key returns the display to the maximum bounds.
+
+<p>The Snapshot button holds the Grapher on the current image even though
+    other signals may be input into it. This is handy if you're use Triana
+    as a visual feature detector. If you see what you are looking for then
+    you can click the Snapshot to analyse the plot more closely or to save
+    it to disk etc.
+
+<p>The Peak text field displays the peak frequency that is automatically
+    detected on each iteration. This is useful for quick look purposes. Other
+    points of interest may be seen more easily by using the marker descibed
+    below.
+
+<h2>
+    Menu's</h2>
+Each menu item is covered below :-
+<h3>
+    File</h3>
+
+<ul>
+    <li>
+        <b>Open : </b>Opens a file which has been previous saved by the grapher
+        or which has been saved by the TypeExport unit and loads it into the graphical
+        displayer.
+    </li>
+
+    <li>
+        <b>Save : </b>saves the contents of this grapher to a text file
+    </li>
+
+    <li>
+        <b>Print : </b>prints the contents of the window to a printer
+    </li>
+
+    <li>
+        <b>Close : </b>closes the window
+    </li>
+</ul>
+
+<h3>
+    Edit</h3>
+
+<ul>
+    <li>
+        <b>Undo Zoom : </b>Undoes the last zoom that the user performed.
+    </li>
+</ul>
+
+<h3>
+    Options</h3>
+
+<ul>
+    <li>
+        <b>Zooming : </b>Pulls up the <b><a href="#zcont">zoom options </a></b>window
+        for this grapher
+    </li>
+
+    <li>
+        <b>Show Graph Options : </b>Brings up the <a href="#graphcontrols">control
+        window</a> for the grapher.
+    </li>
+
+    <li>
+        <b>Graph Colours :</b> displays a window which allows you to edit the colours
+        of the graph e.g. the background colour, axis colour, axis label colour
+        and the colour of the text for the title of the Graph.
+    </li>
+
+    <li>
+        <b>Graph To Front : </b>each time the grapher receives new input it forces
+        itself to the front of other window which may be obscuring the view (this
+        is not the default). When this menu item is clicked its label is changed
+        to 'Not To Front' indicating that if clicked again the window would not
+        be brought to the front each time it is updated.
+    </li>
+</ul>
+
+<hr WIDTH="95%" SIZE=4>
+<h2>
+    Grapher Controls Window</h2>
+
+<center><img SRC="Image30.gif" height=158 width=552></center>
+
+<p>The Grapher's unit Window makes it possible to change many settings
+    to customize how the grapher display the data. The first two rows display
+    the <b>markers</b> which may be added to the graph. Markers allow the user
+    to draw vertical or horizontal lines on the graph and move them around
+    so that exact values can be viewed. Such values are inserted into these
+    fields.
+
+<p><b>Adding and Deleting Markers</b>
+
+<p>Vertical markers can be added by double clicking at the desired position
+    using the left mouse button. To add a horizontal marker, double click using
+    the right mouse button. On the top of the controls window (above), there
+    are 6 text fields. These display the precise positions of the markers and
+    the difference between the markers. You can therefore use the markers to
+    roughly measure, for example, signal to noise ratios etc. Markers can be
+    moved by dragging them with the mouse and they are deleted by double clicking
+    on them whilst holding down the control key.
+
+<p>The functions of the remaining widgets are described below in a chronological
+    order:
+
+<p>The <i>To Markers</i> button zooms the display into the box created
+    by positioning the four marker lines. The <i>Clr Markers</i> button clears
+    all markers from the display.
+
+<p>The Zooming button brings up the <a href="#zcont">Zooming-control window</a>.
+
+<p>The next two choice boxes allow the following plot options (for <b>spectral</b>
+    data only) :-
+<ul>
+    <li>
+        <b>Lin X : </b>displays the spectrum in a linear x plot.
+    </li>
+
+    <li>
+        <b>Log X : </b>displays the spectrum in a logarithmic x plot.
+    </li>
+
+    <li>
+        <b>Lin Y : </b>displays the spectrum in a linear y plot.
+    </li>
+
+    <li>
+        <b>Log Y : </b>displays the spectrum in a logarithmic y plot.
+    </li>
+</ul>
+The next four buttons allow the user to decrease and increase the number
+of x and y ticks, respectively. The next three choices allow the user to
+set the colours and line styles for the data being displayed from each
+input node. There are 13 colours to choose from and 4 different line styles
+:-
+<ol>
+    <li>
+        <b>Continuous :</b> When the points are joined.
+    </li>
+
+    <li>
+        <b>Scatter Plot :</b> When each data points is represented by a single
+        dot, and
+    </li>
+
+    <li>
+        <b>Impulse Plot :</b> When a line is drawn from each point vertically to
+        the lower horizontal axis.
+    </li>
+
+    <li>
+        <b>Bar Chart Plot :</b> Useful for displaying Histograms. A line is drawn
+        from each point vertically to the lower horizontal axis and horizontally
+        to the next point.
+    </li>
+</ol>
+
+<hr WIDTH="95%" SIZE=4>
+<h1>
+    Zooming</h1>
+There are many different ways of zooming into and out of the grapher. You
+can use the <b><a href="#zcont">zoom controller </a></b>window for precise
+zooming ranges or a more intuitive way is to drag into and out of the image
+using the <b>mouse. </b>This mechanism is covered in the next section.
+<h2>
+    Using the Mouse to Zoom</h2>
+There are various ways how you can use the mouse to zomm in and out of
+the image. These are listed below :-
+<ol>
+    <li>
+        You can zoom to the markers by clicking the ToMkr button on the control
+        panel.
+    </li>
+
+    <li>
+        To zoom out to full size press the <b>right </b>mouse button.
+    </li>
+</ol>
+The next functions are much more powerfull, allowing you to navigate through
+the image :-
+<ol>
+    <li>
+        To zoom drag (using the <b>left </b>mouse button) :-
+    </li>
+</ol>
+
+<ul>
+    <ul>
+        <li>
+            right to zoom in horizontally
+        </li>
+
+        <li>
+            left to zoom out horizontally
+        </li>
+
+        <li>
+            down to zoom in vertically
+        </li>
+
+        <li>
+            up to zoom out vertically
+        </li>
+    </ul>
+</ul>
+Therefore to zoom in, in both directions, drag the mouse at a 45 degree
+angle from top left to bottom right.
+<ol>
+    <li>
+        To <b>move around</b> whilst you are zoomed into an area you press down
+        the <b>control key</b> and drag (using the <b>left </b>or <b>right</b>
+        mouse button) left to move left, right to move right, up to move up and
+        down to move down.
+    </li>
+
+    <li>
+        Perhaps the most powerfull of all is the ability to drag to the position
+        in the display that you are interested in. This is a very usefull feature
+        when viewing spectral information because you can literally drag to the
+        frequency that you are interested in. To do this drag (using the <b>right</b>
+        mouse button) :-
+    </li>
+</ol>
+
+<ul>
+    <ul>
+        <li>
+            from <i>roughly</i> the top central part of the image to the bottom part
+            of the image which you are interested in. This zooms in and expands the
+            actual part of the image which you are dragging into. The image will be
+            effectively dragged increasingly towards the position you are dragging
+            to so you can stop at any time.
+        </li>
+
+        <li>
+            the reverse to zoom back out again.
+        </li>
+    </ul>
+</ul>
+
+<h2>
+    <a NAME="zcont"></a>Zooming options</h2>
+The Zoom option window allows you to specify precisely what area of the
+image you want to look at. Simply specify the north, east, south and west
+values editing the four self-explanatory text fields at the upper part
+of the window. There is also a button to go to half size, go back to full
+size and a radio button to select if the current zoom setting should be
+kept for future data inputs.
+<center>
+    <p><img SRC="Image31.gif" height=311 width=228></center>
+
+<p>Also, there are two choice boxes at the lower part of the window which
+    specify in which way to zoom. For example, if the user specifies the horizontal
+    zoom to <i>BOTH</i> then dragging the mouse to the right will zoom into
+    the centre part of the image. If <i>Zoom East</i> was selected then the
+    right part of the image would be expanded and so on. These options should
+    give the user enough flexibility to zoom in and out in the desired way
+    for their particular type of data.
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+</body>
+</html>
+

@@ -1,0 +1,132 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>AutoPad</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#DC143C" vlink="#551A8B" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a>
+<center>
+    <p>
+    <hr width=95% size=4 align=CENTER NOSHADE>
+</center>
+
+<center>
+    <h1>
+        <font color="#CC0000">Pad</font></h1></center>
+
+<center>
+    <LARGE><b>Author : Ian Taylor, Bernard Schutz</b>
+        <br><b>Date : 20 September 2000</b>
+        <br><b>Version: 2.0</b>
+        <br>&nbsp;
+        <p></LARGE>
+    <hr width=95% size=4 align=CENTER NOSHADE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of Pad</a></li>
+
+    <li>
+        <a href="#using">Using Pad</a></li>
+</ul>
+
+<p><br>
+<hr width=95% size=4 align=CENTER NOSHADE>
+<h2>
+    <a NAME="description"></a>Description of Pad</h2>
+
+<p><br>Pad extends the input data set (of type VectorType) with zeros according
+    to the choices that the user makes in the parameter window. The user can
+    choose to place the extra zeros at the beginning or at the end of the data
+    set. The user can choose one of four algorithms for adding zeros, and for
+    three of them the user must supply a value for an appropriate parameter.
+    The four choices are
+<ul>
+    <li>
+        <b>GivenMultipleOfLength</b>: The data set will be extended to a total
+        length which is the value of the given parameter times the current length.
+        If the parameter is given a value less than or equal to 1, nothing is done.
+    </li>
+
+    <li>
+        <b>NearestPowerOf2</b>: The data set will be extended to a total length
+        which is the next largest integer that is an exact integer power of 2.
+        If the input data set already has a length that is a power of 2, then it
+        is not extended. This operates like the unit <a href="AutoPad.html">AutoPad</a>,
+        except that here the user can choose to put the extra zeros at the beginning.
+    </li>
+
+    <li>
+        <b>GivenPowerOf2</b>: The data set will be extended to a total length which
+        equals 2 raised to the given parameter value. If this is smaller than the
+        existing length, nothing is done.
+    </li>
+
+    <li>
+        <b>GivenNumberOfElements</b>: The data set will be extended to a total
+        length which equals the given parameter value. If this is smaller than
+        the existing length, nothing is done.
+    </li>
+</ul>
+In all cases, the value computed from the choices in this window is the
+full length of the extended data set, <i>not</i> the number of zeros to
+be added. The default choice is <i>GivenMultipleOfLength</i> with the multiple
+equal to 1. This does nothing. In cases where nothing is done, the output
+data set is a copy of the input, not a reference to the input itself.
+<p>The way that this unit acts on VectorType inputs varies according to
+    the type. A pure <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a>
+    will be extended as described above.&nbsp; If the data are irregularly
+    sampled, they will be extended with a regular spacing equal to the size
+    of the first or last data interval, according to whether they are placed
+    at the beginning or the end. A <a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a>
+    or a <a href="../../../../help/JavaDoc/triana/types/ComplexSampleSet.html">ComplexSampleSet</a>
+    will be extended as described above and its sampling rate will not be changed.
+    A
+    <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>
+    or <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>
+    will be extended as described above; its frequency resolution will not
+    be changed, and the parameter <i>nFull</i> (the number of points in the
+    full data set from which it might have been derived by a Fourier transform)
+    is increased to the new size.&nbsp; If the spectral data are narrow-band,
+    the new length of the extended set is interpreted as the size of <i>nFull</i>,
+    not the size of the bandwidth of the data held in the object. Note that
+    Spectrum and ComplexSpectrum data sets cannot be extended at the front,
+    since it does not make sense to add points below zero frequency. More details
+    are given in the documentation for these spectral types. If the input set
+    is a Histogram, then the data set will be extended as described above.
+    If the zeros are to be added at the beginning and the first delimiter is
+    negative infinity, then nothing is done; similarly if the zeros are to
+    be added at the end and the last delimiter is positive infinity, nothing
+    is done.
+    <br>&nbsp;
+
+<p>
+<hr width=95% size=4 align=CENTER NOSHADE>
+<h2>
+    <a NAME="using"></a>Using Pad</h2>
+The user makes the choices of how Pad works in Pad's parameter window.
+The first line is a choice box for adding zeros at the beginning or the
+end of the set. The second line is another choice box giving the four alternatives
+described above. The third line is an integer slider where the user can
+set&nbsp; the parameter value needed by three of the methods. If <i>GivenMultipleOfLength</i>
+is chosen, then this value will be interpreted as the multiple to which
+the set is to be extended. If <i>GivenPowerOf2</i> is chosen, then this
+value will be interpreted as the power to raise 2 to, in order to get the
+final length of the set. If <i>GivenNumberOfElements</i> is chosen, then
+this value will be interpreted as the length of the extended data set.
+If <i>NearestPowerOf2</i> is chosen, then the parameter value will be ignored.
+<p>The default choices are: add data at the end, reaching a given multiple
+    of the existing data set length, with that multiple equal to 1.&nbsp; This
+    does nothing, since the final length equals the initial one.
+    <br>&nbsp;
+
+<p>
+<hr width=95% size=4 align=CENTER NOSHADE>
+</body>
+</html>

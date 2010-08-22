@@ -1,0 +1,139 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT  OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>HetDyneF</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a> , <a href="FreqFiltering.html">Filtering
+    in Triana</a> , <a href="FreqStoreModel.html">Triana Spectral Storage Model</a>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <h1>
+        HetdyneF</h1></center>
+
+<center>
+    <LARGE><b>Author : Bernard Schutz</b>
+
+        <p>
+            <LARGE><b>Version : 1.0</b>
+
+                <p><b>Input Types : <a
+                        href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a></b>
+                    <br><b>Output Types :&nbsp; <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a></b>
+                    <br><b>Date : 05 Mar 2001&nbsp;</b></LARGE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of HetdyneF</a></li>
+
+    <li>
+        <a href="#using">Using HetdyneF</a></li>
+
+    <li>
+        <a href="#heterodyne">Heterodyne Operations</a></li>
+
+    <li>
+        See also: <a href="FreqFiltering.html">Filtering in Triana</a> , <a href="FreqStoreModel.html">Triana
+        Spectral Storage Model</a></li>
+</ul>
+
+<hr width="15%" size="4">
+<h2>
+    <a NAME="description"></a>Description of HetdyneF</h2>
+The unit called HetdyneF performs a heterodyne operation in the frequency
+domain. It takes an input <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>
+data set and outputs two <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>
+sets, which are the cosine and sine quadratures of the heterodyne for the
+given frequency filtered to the given bandwidth. These output data sets
+represent essentially the Fourier transforms of the product of the time-series
+from which the input spectrum was created with a cosine or sine function
+at the given frequency. (See the discussion of heterodyning below for a
+fuller explanation of these terms.) The user chooses the heterodyne frequency
+and bandwidth in the parameter window.
+<p>The user can also choose to smooth the edges of the output bands using
+    a choice of window functions. The functions are those given in <a href="WindowFnc.html">WindowFnc</a>.
+    These are useful if the individual filtered spectra are to be inverted
+    back to the time-domain: a sharp cutoff gives unwanted oscillations in
+    the time-domain that are suppressed if the cutoff is smoothed.
+
+<p><a NAME="nyquist"></a>The user can also choose to reduce the Nyquist
+    frequency of each of the output sets to their upper-frequency cutoffs,
+    which is half of the given bandwidth. The Nyquist frequency is the highest
+    frequency that can be held in a spectral data set. When the data set is
+    inverted by <a href="FFT.html">FFT</a>,&nbsp; the time-domain result will
+    have a sampling frequency that is twice the Nyquist frequency. Thus, if
+    the user reduces the Nyquist frequency when filtering, then the time-domain
+    inversion will be sampled at twice the rate of the upper-frequency cutoff.
+    This ensures that the time-domain set contains no more samples than necessary.
+    Since it is normally the intention of heterodyning to produce a slowly-sampled
+    data set, this option is selected by default.
+
+<h2>
+    <a NAME="using"></a>Using HetdyneF</h2>
+HetdyneF's parameter window (double-click on the unit) is shown below.
+<center>
+    <p><img SRC="imageR4R.JPG" height=251 width=377></center>
+
+<p><br>
+    <br>
+    <br>
+    <br>
+
+<p>The first slider chooses the central frequency at which heterodyning
+    is performed, in Hz. Spectral data at this frequency is mapped to zero-frequency
+    in the output data sets.
+
+<p>The second slider chooses the full bandwidth about the heterodyne frequency
+    that will be included in the output data set, in Hz. The output data will
+    extend from zero-frequency up to <i>bandwidth</i>/2.
+
+<p>The third choice is the window function that can be used to smooth the
+    edges of the frequency band when it is output.
+
+<p>The fourth choice is a check box. Select this if you want the Nyquist
+    frequency of the output data sets to be reduced to <i>bandwidth</i>/2.
+    The output data set will be a full-bandwidth spectrum with this maximum
+    frequency. See the discussion <a href="#nyquist">above</a> for the meaning
+    of the Nyquist frequency.
+    <br>&nbsp;
+
+<h2>
+    <a NAME="heterodyne"></a>Heterodyne Operations</h2>
+Heterodying is normally defined in the time-domain. It is used to isolate
+the information in a small bandwidth <i>B</i> about a given frequency <i>f.</i>
+What one normally computes from a given function of time <i>x(t)</i> are
+the two products
+<blockquote><i>x<sub>c</sub>(t)</i> = <i>x(t)</i>cos(2*pi*<i>f</i>*<i>t</i>),
+    <i>x<sub>s</sub>(t)</i>
+    = <i>x(t)</i>sin(2*pi*<i>f</i>*<i>t</i>).
+</blockquote>
+One then filters these down to the desired bandwidth <i>B/2</i>, and then
+resamples the time-series at the rate B, which
+<br>is the smallest sampling rate which does not lose information about
+the filtered signals.
+<p>The unit HetdyneF does essentially this operation, but it works in the
+    frequency-domain. It takes as input the ComplexSpectrum that is produced
+    by the FFT of the original time-series. It outputs two ComplexSpectrum
+    data sets, which represent the FFTs of <i>x<sub>c</sub>(t)</i> and <i>x<sub>s</sub>(t)</i>
+    filtered to the appropriate bandwidth.
+
+<p>While resampling to a slower rate cannot be done in the frequency-domain,
+    it will be performed automatically when the output of HetdyneF is input
+    to the FFT unit, provided the Nyquist option is selected in the parameter
+    window (selected by default). This is because spectral data sets in Triana
+    contain information about the sampling rate of the original time-series
+    data set. This is contained in the Nyquist frequency, as described <a href="#nyquist">above</a>.
+
+<p>
+<hr width="15%" size="4">
+</body>
+</html>

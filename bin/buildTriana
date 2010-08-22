@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ../
+mvn install
+cd triana-app/dist
+./triana.sh

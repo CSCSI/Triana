@@ -57,7 +57,7 @@
             <version>0.1</version>
             <scope>compile</scope>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.trianacode</groupId>
             <artifactId>triana-pegasus</artifactId>
             <version>0.1</version>
@@ -135,8 +135,21 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>ant4</id>
+                        <phase>compile</phase>
+                        <configuration>
+                            <tasks>
+                                <ant dir="." target="clean"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
     <repositories>

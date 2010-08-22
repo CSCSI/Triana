@@ -1,0 +1,70 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>RandNoise</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#DC143C" vlink="#551A8B" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a>
+<br>
+<hr width=95% size=4 align=CENTER NOSHADE>
+<center>
+    <h1>
+        Gaussian</h1></center>
+
+<center>
+    <LARGE><b>Authors : Ian Taylor, Bernard Schutz</b>
+        <br><b>Input Types :
+            <a href="../../../../help/JavaDoc/triana/types/GraphType.html">GraphType</a>,
+            <a href="../../../../help/JavaDoc/triana/types/Const.html">Const</a></b>
+        <br><b>Output Types : <a href="../../../../help/JavaDoc/triana/types/GraphType.html">GraphType</a>,
+            <a href="../../../../help/JavaDoc/triana/types/Const.html">Const</a></b>
+        <br><b>Version: 2.0</b>
+        <br><b>Date : 20 June 2000</b>
+        <br></LARGE>
+</center>
+
+<hr width=95% size=4 align=CENTER NOSHADE>
+<br>&nbsp;
+<h2>
+    Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of Gaussian</a></li>
+
+    <li>
+        <a href="#using">Using Gaussian</a></li>
+</ul>
+
+<h2>
+    <a NAME="description"></a>Description of Gaussian</h2>
+The unit called Gaussian adds normally distributed random numbers to an
+input data set. The input set can be a GraphType or Const data set. The
+output is the same type as the input. Random numbers are added to every
+dependent data set that is of arithmetic type. If the set is complex, random
+numbers are added to both the real and imaginary parts. Any non-arithmetic
+data is passed through to the output.
+<p>The random numbers are normally distributed with a mean and standard
+    deviation that are set by the user in the parameter window. The default
+    mean is 0.0, and the default standard deviation is 1.0. The random numbers
+    are calculated by Java's Random class.
+
+<p>The random numbers are added to the input data set. A user who wants
+    a purely random set of numbers can use the Unit <a href="../../Input/help/Wave.html">Wave</a>
+    with the Intensity parameter set to 0.0 to generate a sequence of zeros
+    as input to RandNoise.
+    <br>&nbsp;
+
+<h2>
+    <a NAME="using"></a>Using Gaussian</h2>
+Users should open the parameter window to set the mean and standard deviation
+of the random numbers. These may be set by moving the sliders or typing
+numbers in the data-entry box. The parameter window is shown here:
+<center>
+    <p><img SRC="imageBSH.JPG" height=163 width=377></center>
+
+<hr width=95% size=4 align=CENTER NOSHADE>
+</body>
+</html>

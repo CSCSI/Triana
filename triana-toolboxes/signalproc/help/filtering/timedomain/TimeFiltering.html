@@ -1,0 +1,155 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Author" content="Ian Taylor">
+    <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
+    <title>MainTriana Help</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#DC143C" vlink="#551A8B" alink="#FF0000">
+<a href="../../../../help/index.html">Triana Help Index</a>,
+<a href="../../Algorithms/help/FreqFiltering.html">Frequency-Domain
+    Filtering in Triana</a>
+<center>
+    <hr width="100%">
+</center>
+
+<center>
+    <h1>
+        <font color="#800000">Time-Domain Filtering in Triana</font></h1></center>
+
+<center>
+    <h1>
+
+        <hr width="100%">
+    </h1>
+</center>
+
+<center>
+    <h1>
+        Index</h1></center>
+
+<ul>
+    <li>
+        <a href="#UnitList"><font color="#800000">Triana</font> Units for Time-Domain
+            Filtering</a></li>
+
+    <li>
+        <a href="#using">Using Time-Domain Filtering Tools</a></li>
+
+    <li>
+        <a href="#examples">Group Units</a></li>
+</ul>
+
+<h2>
+
+    <hr width="100%">
+    <a NAME="UnitList"></a><font color="#800000">Triana</font>
+    Units for Time-Domain Filtering
+</h2>
+There are a number of units in <font color="#800000">Triana</font> that
+perform filtering operations in the time domain. In this help file we list
+the units and then suggest ways to use them to solve important filtering
+problems.
+<p>The time-domain filtering units are in the SignalProc/Filtering toolbox.
+    They are:
+<ul>
+    <li>
+        <a href="FIR_LowPass.html">FIR_LowPass</a> -- A low-pass filter that smooths
+        the result with a windowing function.
+    </li>
+
+    <li>
+        <a href="FIR_HighPass.html">FIR_HighPass</a> -- A high-pass filter that
+        smooths the result with a windowing function.
+    </li>
+
+    <li>
+        <a href="FIR_BandPass.html">FIR_BandPass</a> -- A band-pass filter that
+        smooths the result with a windowing function.
+    </li>
+
+    <li>
+        <a href="FIR_Filter.html">FIR_Filter</a> -- A general FIR filtering unit
+        that will apply any filter whose coefficients are supplied by the user.
+    </li>
+
+    <li>
+        <a href="IIR_Filter.html">IIR_Filter</a> -- A general IIR filtering unit
+        that will apply any filter whose coefficients are supplied by the user.
+    </li>
+</ul>
+The Filtering toolbox also contains group units that are useful for inspecting
+filters and deciding which ones to use. These are LookFIR_Band, LookFIR_Low,
+LookFIR_Hig, SpectFIR_Band, SpectFIR_Low, and SpectFIR_High.
+<p>In addition there are units that are useful for display: <a href="../../Output/help/Grapher.html">Grapher</a>,
+    <a href="../../Output/help/MultiGraph.html">MultiGraph</a>,
+    <a href="ImageMapper.html">ImageMapper</a>,
+    and <a href="../../../ImageProc/Output/help/ImageView.html">ImageView</a>.
+    For an introduction to frequency-domain filtering in Triana, see the help
+    file <a href="../../Algorithms/help/FreqFiltering.html">Frequency-Domain
+        Filtering in Triana</a>.
+
+<p>
+<hr width="100%">
+<h2>
+    <a NAME="using"></a>Using Time-Domain Filtering Tools</h2>
+Most of the tools offer the user options in their parameter windows. Naturally,
+filtering units must be told the frequencies they are to select. In addition,
+three choices appear in many of the units: <a href="#narrow">"Filter Order..."</a>,
+<a href="#window">"Window"</a>,
+<a href="#reduce">"...filter
+    continued across successive input sets"</a>. They are explained here.
+<ul>
+    <li>
+        <a NAME="narrow"></a><b>"Filter Order ..." </b>The user gives here the
+        number of points used in convolving the filter with the data in the time
+        domain. The more points, the sharper will be the filter edges, but the
+        longer the computation will take.
+    </li>
+
+    <li>
+        <a NAME="window"></a><b>"Window"</b> Sharp edges in the Fourier transform
+        version of the filter produce oscillations in the time domain after filtering.
+        If these are unwanted, then the edges can be smoothed by applying a window
+        function to the time-domain representation of the filter before it is convolved
+        with the data. Window functions are smooth functions that have a value
+        close to 1 over most of their domain, falling symmetrically to very small
+        values at either end. <font color="#990000">Triana</font> units use the
+        window functions provided by the unit <a href="../../Algorithms/help/WindowFnc.html">WindowFnc</a>.
+        The default window is "Rectangle", which does no smoothing at all.
+    </li>
+
+    <li>
+        <a NAME="reduce"></a><b>"Check here if you want filter continued across
+        successive input sets" </b>Select this checkbox to ensure that the input
+        data stream is treated in a continuous manner even if it is split between
+        successive input data sets. The previous data set is remembered in order
+        to ensure that filtering on the first elements of the current data set
+        is done properly.
+    </li>
+</ul>
+
+<hr width="100%">
+<br>&nbsp;
+<h2>
+    <a NAME="examples"></a>Group Units</h2>
+The group units provide means of inspecting the filters. The groups called
+"Look..." plot a graph of the output of a filter on a unit impulse: this
+is the time-domain impulse response of the filter, and it shows the oscillations
+or lack of them created by the filter. The groups called "Spect..." plot
+a graph of the power spectrum of the output of the "Look..." units, which
+is then the frequency-domain impulse response function. This shows how
+much spectral leakage there is out of the pass-band. Graphs are displayed
+with logarithmic vertical axes.
+<p>To use the group units, drag them onto the working area of Triana and
+    double-click them to open a separate window showing the individual units,
+    or right-click the group unit and choose "Ungroup" to see all the individual
+    units. Then double-click the filtering unit to get the unit's parameter
+    window, which will allow you to choose the window function that you want
+    to use. Then run the group in Single Step mode.
+
+<p>
+<hr width="95%" size="4" align="center" noshade="noshade">
+</body>
+</html>

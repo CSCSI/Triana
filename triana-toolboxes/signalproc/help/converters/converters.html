@@ -1,0 +1,112 @@
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+    <META NAME="Generator" CONTENT="Microsoft Word 97">
+    <TITLE>The Convertors toolbox</TITLE>
+    <META NAME="Template" CONTENT="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY TEXT="#000000" LINK="#ff00ff" VLINK="#800080" BGCOLOR="#fdf5e6" ALINK="#FF0000">
+
+<P><A HREF="index.html">Index</A></P>
+
+<P>
+<HR SIZE=4>
+</P>
+<FONT COLOR="#ff00ff"><H1 ALIGN="CENTER">The Converters ToolBox </H1>
+</FONT>
+
+<P>&nbsp;</P>
+
+<P>This toolbox consists of a collection of units which convert from one TrianaType to another. Normally, these units
+    will be used in association with others which deal directly with vector data. One such unit, the Importer for
+    example, can be used to import data from text or binary files. Of coarse, before we can use this Vect vector data we
+    must give it some extra information e.g. a sample rate so that the various Triana units can display and process it
+    correctly. </P>
+
+<P>
+<HR SIZE=4>
+</P>
+<H3>Index</H3>
+
+<UL>
+    <LI><A HREF="#RawTo...">VectTo..</A></LI>
+    <LI><A HREF="Converters.html#...To2D">...ToVect</A></LI>
+</UL>
+
+<P>
+<HR SIZE=4>
+</P>
+<FONT COLOR="#ff0000"><H2><A NAME="RawTo___"></A>VectTo...</H2>
+</FONT>
+
+<P>&nbsp;</P>
+
+<UL>
+    <FONT COLOR="#008080">
+        <LI>VectToSSet
+    </FONT><FONT COLOR="#800000">. This unit converts the VectorType TrianaType into a SampleSet. For example, using
+    this unit you can load in a set of samples (using the Importer unit) and then convert these into a SampleSet by
+    adding extra information, such as sample rate, a descriptive string a time stamp etc. All such parameters can be set
+    by using VectToSSet's parameter window (shown when the user <I>control double-clicks</I> on the unit).</FONT> </LI>
+    <FONT COLOR="#008080">
+        <LI>VectToSpec
+    </FONT><FONT COLOR="#800000"> This unit converts the VectorType TrianaType into a Spectrum. For example, using this
+    unit you can load in a set of samples using the Importer unit and then convert this set of activations into a
+    Spectrum by adding extra information, such as sample rate, a descriptive string a time stamp etc. All such
+    parameters can be set by using VectToSpec's parameter window (shown when the user <I>control double-clicks</I> on
+    the unit).</FONT> </LI>
+    <FONT COLOR="#008080">
+        <LI>VectToCSSet
+    </FONT><FONT COLOR="#800000">. This unit converts the VectorType type into a ComplexSampleSet. For example, using
+    this unit you can load in a set of real and imaginary sample values using the Importer unit and then convert these
+    into a ComplexSampleSet by adding a sample rate, and an optional descriptive string and a time stamp. All parameters
+    are set by using VectToSSet's parameter window (activated when the user <I>control double-clicks</I> the unit). Also
+    in this parameter window, there is a choice box which allows you to specify what format the data is in i.e. whether
+    the data was packed real, imag, real, imag, real, imag etc. or real, real, real ... imag, imag, imag
+    ...</FONT> </LI>
+    <FONT COLOR="#008080">
+        <LI>VectToCSpec
+    </FONT><FONT COLOR="#800000">. This unit converts the VectorType type into a ComplexSpectrum. For example, using
+    this unit you can load in a set of real and imaginary sample values using the Importer unit and then convert this
+    into a ComplexSpectrum by adding a sample rate, and an optional descriptive string a time stamp. All parameters are
+    set by using VectToSSet's parameter window (activated when the user <I>control double-clicks</I> the unit). Also in
+    this parameter window, there is a choice box which allows you to specify what format the data is in i.e. whether the
+    data was packed real, imag, real, imag, real, imag etc. or real, real, real ... imag, imag, imag ...</FONT> </LI>
+    <FONT COLOR="#008080">
+        <LI>VectToConst
+    </FONT><FONT COLOR="#800000">. This unit converts the VectorType type into a Const, allowing a stream of constants
+    to be imported from a file via the Importer and this unit.</FONT> </LI></UL>
+
+<P>
+<HR>
+</P>
+<FONT COLOR="#ff0000"><H2 ALIGN="CENTER">...ToVect<A NAME="BM___To2D"></A></H2>
+</FONT><FONT COLOR="#800000"><P>These units are no longer needed as frequently as they wer in previous versions of
+    Triana. In most circumstances now, units that require this transformation (i.e. Grapher) do these conversions
+    automatically.</FONT> </P>
+
+<UL>
+    <FONT COLOR="#008080">
+        <LI>SSetToVect
+    </FONT><FONT COLOR="#800000">. This converts a SampleSet to a TwoD (2 dimensional type). </LI>
+</FONT><FONT COLOR="#008080">
+    <LI>SpecToVect
+</FONT><FONT COLOR="#800000">. This converts a Spectrum to a TwoD (2 dimensional type). </LI>
+</FONT><FONT COLOR="#008080">
+    <LI>VectToVect
+</FONT><FONT COLOR="#800000">. This converts a VectorType to a TwoD (2 dimensional type). </LI>
+</FONT><FONT COLOR="#008080">
+    <LI>HistToVect
+</FONT><FONT COLOR="#800000">. This converts a Histogram type into a TwoD (2 dimensional type) This is no longer needed
+    in most circumstances because units which require this transformation (i.e. the Grapher) do the conversion
+    automatically now.</LI></UL>
+
+</FONT><P>&nbsp;</P>
+
+<P>
+<HR>
+</P>
+<P>
+<HR>
+</P></BODY>
+</HTML>

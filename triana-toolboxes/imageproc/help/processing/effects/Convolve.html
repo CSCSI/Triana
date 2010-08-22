@@ -1,0 +1,66 @@
+<HTML>
+
+<HEAD>
+    <TITLE>Convolve</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#ffffff" LINK="#ff0000" VLINK="#c0c0c0">
+<CENTER>
+    <H1>Convolve</H1>
+    <LARGE><B>
+        Author : Melanie Rhianna Lewis<BR>
+        Input Type : TrianaPixelMap<BR>
+        Output Type : TrianaPixelMap<BR>
+        Date : <BR>
+    </B></LARGE>
+    <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+</CENTER>
+<DIV ALIGN="LEFT">
+    <CENTER>
+        <IMG SRC="convolution_matrix.gif">
+    </CENTER>
+    This Unit performs a general convolution on an image. The diagram above shows a pixel (red) and the eight others
+    which surround it (yellow). A general convolution generates a pixel in the result image by applying defined weights
+    to these nine pixels in the source image and taking the weighted average.<P>
+    If the weights are:
+<PRE><CODE>
+    Wa, Wb, Wc, Wd, We, Wf, Wg, Wh, Wi
+</CODE></PRE>
+    for the pixels A to I respectively then each pixel is generated thus:
+<PRE><CODE>
+    rr(i, j) = SUM(Wa x ra(i - 1, j - 1) + Wb x ra(i, j - 1) + ... Wi x ra(i + 1, j + 1)) / SUM(Wa + Wb + ... + Wi)
+    gr(i, j) = SUM(Wa x ga(i - 1, j - 1) + Wb x ga(i, j - 1) + ... Wi x ga(i + 1, j + 1)) / SUM(Wa + Wb + ... + Wi)
+    br(i, j) = SUM(Wa x ba(i - 1, j - 1) + Wb x ba(i, j - 1) + ... Wi x ba(i + 1, j + 1)) / SUM(Wa + Wb + ... + Wi)
+</CODE></PRE>
+    The matrix can be defined using the Unit window.<P>
+    <CENTER>
+        <IMG SRC="convolve_matrix_dialog.gif">
+    </CENTER>
+    <P>
+
+    <H3>Example</H3>
+    The network below uses values for Wa to Wi of -1, -1, -1, -1, 9, -1, -1, -1, -1 to carry out an edge detection.<P>
+    <CENTER>
+        <IMG SRC="gear_convolve_edge_detect_network.gif" BORDER="1">
+    </CENTER>
+    <P>
+</DIV>
+<CENTER>
+    <TABLE BGCOLOR="#e0e0e0" CELLSPACING="0" CELLPADDING="5" BORDER="1">
+        <TR>
+            <TD ALIGN="CENTER" VALIGN="TOP"><IMG SRC="gear_win.gif" WIDTH="266" HEIGHT="285" BORDER="0"></TD>
+            <TD ALIGN="CENTER" VALIGN="TOP"><IMG SRC="gear_win_convolve_edge_detect.gif" WIDTH="266" HEIGHT="285"
+                                                 BORDER="0"></TD>
+        </TR>
+        <TR>
+            <TD ALIGN="CENTER" VALIGN="MIDDLE"><B>Before operation</B></TD>
+            <TD ALIGN="CENTER" VALIGN="MIDDLE"><B>After operation</B></TD>
+        </TR>
+    </TABLE>
+</CENTER>
+<H3>See also</H3>
+<A HREF="Lnb.html">Lnb</A>, <A HREF="Snb.html">Snb</A>, <A HREF="ImageBlur.html">ImageBlur</A>
+<CENTER>
+    <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+</CENTER>
+</BODY>

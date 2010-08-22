@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tool>
+    <toolname>StringGraph1</toolname>
+    <package>common.string</package>
+    <version>0.1</version>
+    <inportnum>0</inportnum>
+    <outportnum>0</outportnum>
+    <inparam/>
+    <outparam/>
+    <parameters>
+        <param name="guiY" type="org.trianacode.gui">
+            <value>4.2555555555555555</value>
+        </param>
+        <param name="guiX" type="org.trianacode.gui">
+            <value>1.9814814814814814</value>
+        </param>
+    </parameters>
+    <tasks>
+        <task>
+            <toolname>StringGen</toolname>
+            <package>common.string</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>StringGen</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>common.string</value>
+                </param>
+            </proxy>
+            <renderingHints>
+                <renderingHint hint="TaskGraphFactory" proxyDependent="true">
+                    <param paramname="factory">
+                        <value>Default</value>
+                    </param>
+                </renderingHint>
+            </renderingHints>
+            <inportnum>0</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <output>
+                <type>java.lang.String</type>
+            </output>
+            <parameters>
+                <param name="outputType0" type="unknown">
+                    <value>java.lang.String</value>
+                </param>
+                <param name="str" type="userAccessible">
+                    <value>this is plain text</value>
+                </param>
+                <param name="guiY" type="org.trianacode.gui">
+                    <value>0.0</value>
+                </param>
+                <param name="guiX" type="org.trianacode.gui">
+                    <value>0.0</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>ReplaceFirst</toolname>
+            <package>common.string</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>ReplaceFirst</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>common.string</value>
+                </param>
+            </proxy>
+            <renderingHints>
+                <renderingHint hint="TaskGraphFactory" proxyDependent="true">
+                    <param paramname="factory">
+                        <value>Default</value>
+                    </param>
+                </renderingHint>
+            </renderingHints>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>java.lang.String</type>
+            </input>
+            <output>
+                <type>java.lang.String</type>
+            </output>
+            <parameters>
+                <param name="regex" type="userAccessible">
+                    <value>x</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>java.lang.String</value>
+                </param>
+                <param name="replaceWith" type="userAccessible">
+                    <value>y</value>
+                </param>
+                <param name="guiY" type="org.trianacode.gui">
+                    <value>1.9777777777777779</value>
+                </param>
+                <param name="guiX" type="org.trianacode.gui">
+                    <value>2.5407407407407407</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>StringViewer</toolname>
+            <package>common.string</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>StringViewer</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>common.string</value>
+                </param>
+            </proxy>
+            <renderingHints>
+                <renderingHint hint="TaskGraphFactory" proxyDependent="true">
+                    <param paramname="factory">
+                        <value>Default</value>
+                    </param>
+                </renderingHint>
+            </renderingHints>
+            <inportnum>1</inportnum>
+            <outportnum>0</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>java.lang.Object</type>
+            </input>
+            <parameters>
+                <param name="defaultNodeRequirement" type="internal">
+                    <value>essentialIfConnected</value>
+                </param>
+                <param name="str" type="userAccessible">
+                    <value>yx
+                    </value>
+                </param>
+                <param name="append" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="guiY" type="org.trianacode.gui">
+                    <value>4.111111111111111</value>
+                </param>
+                <param name="guiX" type="org.trianacode.gui">
+                    <value>2.474074074074074</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>ReplaceAll</toolname>
+            <package>common.string</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>ReplaceAll</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>common.string</value>
+                </param>
+            </proxy>
+            <renderingHints>
+                <renderingHint hint="TaskGraphFactory" proxyDependent="true">
+                    <param paramname="factory">
+                        <value>Default</value>
+                    </param>
+                </renderingHint>
+            </renderingHints>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>java.lang.String</type>
+            </input>
+            <output>
+                <type>java.lang.String</type>
+            </output>
+            <parameters>
+                <param name="regex" type="userAccessible">
+                    <value>.*</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>java.lang.String</value>
+                </param>
+                <param name="replaceWith" type="userAccessible">
+                    <value>x</value>
+                </param>
+                <param name="guiY" type="org.trianacode.gui">
+                    <value>0.24444444444444446</value>
+                </param>
+                <param name="guiX" type="org.trianacode.gui">
+                    <value>1.2740740740740741</value>
+                </param>
+            </parameters>
+        </task>
+        <connections>
+            <connection type="NonRunnable">
+                <source node="0" taskname="StringGen"/>
+                <target node="0" taskname="ReplaceAll"/>
+            </connection>
+            <connection type="NonRunnable">
+                <source node="0" taskname="ReplaceAll"/>
+                <target node="0" taskname="ReplaceFirst"/>
+            </connection>
+            <connection type="NonRunnable">
+                <source node="0" taskname="ReplaceFirst"/>
+                <target node="0" taskname="StringViewer"/>
+            </connection>
+        </connections>
+    </tasks>
+</tool>

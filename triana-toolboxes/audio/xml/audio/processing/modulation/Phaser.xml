@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tool>
+    <toolname>Phaser</toolname>
+    <package>audio.processing.modulation</package>
+    <version>0.1-SNAPSHOT</version>
+    <proxy type="Java">
+        <param paramname="unitName">
+            <value>VariableDelay</value>
+        </param>
+        <param paramname="unitPackage">
+            <value>audio.processing.modulation</value>
+        </param>
+    </proxy>
+    <inportnum>1</inportnum>
+    <outportnum>1</outportnum>
+    <inparam/>
+    <outparam/>
+    <input>
+        <type>triana.types.audio.MultipleAudio</type>
+    </input>
+    <output>
+        <type>triana.types.audio.MultipleAudio</type>
+    </output>
+    <parameters>
+        <param name="delayInMs" type="userAccessible">
+            <value>20</value>
+        </param>
+        <param name="LFOType" type="userAccessible">
+            <value>sinusoidal</value>
+        </param>
+        <param name="feedback" type="userAccessible">
+            <value>70</value>
+        </param>
+        <param name="amplitude" type="userAccessible">
+            <value>50</value>
+        </param>
+        <param name="filterType" type="userAccessible">
+            <value>comb</value>
+        </param>
+        <param name="summingType" type="userAccessible">
+            <value>Type 1</value>
+        </param>
+        <param name="oscillationPeriod" type="userAccessible">
+            <value>88200</value>
+        </param>
+        <param name="chunked" type="userAccessible">
+            <value>false</value>
+        </param>
+        <param name="guiY" type="gui">
+            <value>4.552631578947368</value>
+        </param>
+        <param name="guiX" type="gui">
+            <value>1.8596491228070176</value>
+        </param>
+    </parameters>
+</tool>

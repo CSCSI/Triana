@@ -1,0 +1,61 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>AutoPad</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#DC143C" vlink="#551A8B" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a>
+<center>
+    <p>
+    <hr width=95% size=4 align=CENTER NOSHADE>
+</center>
+
+<center>
+    <h1>
+        <font color="#CC0000">AutoPad</font></h1></center>
+
+<center>
+    <LARGE><b>Author : Ian Taylor, Bernard Schutz</b>
+        <br><b>Date : 30 August 2000</b>
+        <br><b>Version: 2.01</b>
+        <br>&nbsp;
+        <p></LARGE>
+    <hr width=95% size=4 align=CENTER NOSHADE>
+</center>
+
+<p>Autopad extends the input data set (of type VectorType) with zeros to
+    make the total number of data items equal to the nearest larger power of
+    two. Autopad has no parameters in order to make it convenient to use with
+    the FFT unit in order to make the FFT run most efficiently. If the input
+    set is already a power of 2 it is not extended.
+
+<p>The way that this unit acts on VectorType inputs varies according to
+    the type. A pure <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a>
+    will be extended as described above.&nbsp; If the data are irregularly
+    sampled, they will be extended with a regular spacing equal to the size
+    of the first or last data interval, according to whether they are placed
+    at the beginning or the end. A <a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a>
+    or a <a href="../../../../help/JavaDoc/triana/types/ComplexSampleSet.html">ComplexSampleSet</a>
+    will be extended as described above and its sampling rate will not be changed.
+    A <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>
+    or <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>
+    will be extended as described above; its frequency resolution will not
+    be changed, and the parameter nFull (the number of points in the full data
+    set from which it might have been derived by a Fourier transform) is increased
+    to the new size.&nbsp; If the spectral data are narrow-band, the new length
+    of the extended set is interpreted as the size of nFull, not the size of
+    the bandwidth of the data held in the object. Note that Spectrum and ComplexSpectrum
+    data sets cannot be extended at the front, since it does not make sense
+    to add points below zero frequency. More details are given in the documentation
+    for these spectral types. If the input set is a Histogram, then the data
+    set will be extended as described above. If the zeros are to be added at
+    the beginning and the first delimiter is negative infinity, then nothing
+    is done; similarly if the zeros are to be added at the end and the last
+    delimiter is positive infinity, nothing is done.
+
+<p>
+<hr width=95% size=4 align=CENTER NOSHADE>
+</body>
+</html>

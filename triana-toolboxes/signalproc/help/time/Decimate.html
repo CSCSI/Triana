@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+    <META NAME="Generator" CONTENT="Microsoft Word 97">
+    <TITLE>Decimate</TITLE>
+    <META NAME="Template" CONTENT="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY TEXT="#000000" LINK="#ff00ff" VLINK="#800080" BGCOLOR="#fdf5e6" alink="#FF0000">
+
+<H1 ALIGN="CENTER">Decimate</H1>
+
+<P ALIGN="CENTER">
+    <LARGE><B>Author : Ian Taylor</B>
+</P>
+<P ALIGN="CENTER">
+    <LARGE><B>Version : 2.0 <BR>
+        <BR>
+        Input Types : <A HREF="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana/types/SampleSet.html">SampleSet</A>
+        <BR>
+        Output Types : <A HREF="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana/types/SampleSet.html">SampleSet</A>
+        <BR>
+        Date : 01 Mar 2001</LARGE>
+</P>
+</B><H2><A NAME="contents"></A>Contents</H2>
+
+<UL>
+    <LI><A HREF="#description">Description of Decimate</A></LI>
+    <LI><A HREF="#using">Using Decimate</A></LI>
+</UL>
+
+<P>
+<HR WIDTH="15%" SIZE=4>
+</P>
+<H2><A NAME="description"></A>Description of Decimate</H2>
+
+<P>The unit called Decimate is a time-domain decimation routine which can be used to resample
+    the data to a sub-multiple sampling rate. The user can chose whether to reduce the number of
+    samples by a factor 2,3,4,5 etc. The resultant sample number must be divisable by the original
+    sampling rate. For example, an 8 kHz sampling rate can be reduced by 2 to 4kHz (by taking
+    every other sample) but cannot be reduced by a factor of 3. This would leave 2666.66 samples
+    left in the data set which would lead to unpredictable results. However a factor of
+    4 (to 2kHz) and 8 (to 1 kHz) etc are all vaild reductions in sampling rates.<BR>
+
+<p> The user can also choose to apply a low-pass filter to the data before the routine
+    is decimated. This will reduce the effects of aliasing when resampling the data set.
+    The low-pass filter is a simple averaging type which averages adjacent samples. This
+    has a gradual roll-off and may not be suitable for critical signals. There are
+    several much better filters within the Algorithms toolbox which can perform much
+    better filtering in the frequency domain.
+
+    &nbsp; </P>
+
+<H2><A NAME="using"></A>Using Decimate</H2>
+
+<P>Decimate's parameter window (double-click on the unit while holding down the Control key) is used to set
+    the decimation factor and whether a low-pass averaging filter should be applied to the signal. </P>
+
+<center>
+    <p><br><img SRC="decimate.gif" height=179 width=370></center>
+
+<p> For example, here the user is decimating by a factor of 2 (halving the sampling rate)
+    and not applying a low-pass averaging filter.</p>
+
+<P>
+<HR WIDTH="15%" SIZE=4>
+</P></BODY>
+</HTML>

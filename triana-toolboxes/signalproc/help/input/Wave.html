@@ -1,0 +1,113 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
+    <title>Wave</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Input.html">Index</a>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <h1>
+        Wave</h1></center>
+
+<center>
+    <LARGE><b>Author : Ian Taylor, Bernard Schutz, Gareth S Jones</b>
+        <br><b>Input Types : none</b>
+        <br><b>Output Types : <a
+                href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana.types.SampleSet.html">SampleSet</a></b>
+        <br>Date : 18 June 2003
+        <p></LARGE>
+</center>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<br>The Wave unit generates a waveform that can be analyzed or modified
+by subsequent units. The unit outputs a SampleSet containing the data and
+the sampling rate.
+<p>The user can choose from several different wave styles: <i>Sinusoidal
+    wave, Saw tooth, Triangular wave, Square wave </i>or an <i>Impulse waveform.
+</i>An
+    impulse is a single non-zero data value, surrounded by zero values. The
+    sampling rate, frequency, amplitude, phase, acquisition time, and length
+    of the waveform can all be chosen from the user interface window, shown
+    here:
+    <br>&nbsp;
+
+<p><br>
+<center>
+    <p><img SRC="wavePanel.gif" height=298 width=318></center>
+
+<p><br>
+    <br>
+    <br>
+    <br>
+
+<p>The <i>frequency</i> of the wave (in Hz) is the number of wave cycles
+    per second in the data. For the Impulse wave, this is the number of impulses
+    per second. The frequency can be changed by using the scrollbar at the
+    top of the window or by editing the text field just below it. The minimum
+    and maximum range for the scrollbar can be set using the two text fields
+    in the middle of the window. If the frequency is set to zero, the unit
+    will output a constant data set for most kinds of waveforms (the value
+    depending on the style of the waveform and the phase), but for the Impulse
+    waveform the effect is to create one impulse per data set, at a location
+    determined by the value of the phase.
+
+<p>The <i>amplitude</i>&nbsp; is the peak amplitude. All waves oscillate
+    between positive and negative values of this amplitude except the Impulse
+    waveform, which always has this height. If the user sets the amplitude
+    to zero, all output data values will be zero. In this case the unit ignores
+    all the other parameters except the number of samples, the sampling rate,
+    and the time of the first sample.&nbsp; This can be useful for generating
+    a "blank sheet" to which other effects are added by other units. The amplitude
+    can also be set to a negative value. For most waveforms this will be equivalent
+    to a shift of phase by 0.5, but for the Impulse waveform it will produce
+    impulses with negative amplitudes.
+
+<p>The <i>phase</i> is the location within the waveform at which the waveform
+    starts. It is given as a fraction of a full cycle, so it should be specified
+    in a range of 0 to 1, running from the beginning to the end of the waveform.
+    For the Sinusoidal wave, a phase of 0 is a standard sine function, a phase
+    of 0.25 generates a standard cosine. Other waveforms (except Impulse) have
+    their zero of phase defined so that they look as similar to the sine wave
+    as possible. Thus, for a triangular wave, the waveform with an initial
+    phase of zero rises from zero to 1 at a phase of 0.25, then descends linearly
+    to -1 at a phase of 0.75, then rises again to zero at phase 1. For the
+    Impulse waveform, the phase determines where within one period the impulse
+    actually occurs.
+
+<p>By clicking on the <i>Retain Phase check box</i>, the relative phase
+    between successive outputs from the unit is maintained.&nbsp; This means
+    that the waveforms in successive output sets will fit together as a continuous
+    wave. The phase display is updated to show the actual phase of the first
+    point of the waveform most recently output by the unit.
+
+<p>The number of <i>samples</i> that the SampleSet has can be changed using
+    the "Samples" field. This is the length of the output data set.
+
+<p>The <i>sampling rate</i> is changed using the "Sampling Rate" field.
+    This is the number of samples per second that the output set contains.
+    <br>&nbsp;
+<blockquote>Note that the duration of the data is the number of samples
+    divided by the sampling rate. The number of cycles of the waveform in the
+    data set is the duration times the frequency.
+</blockquote>
+
+<p><br>The <i>time of the first sample</i> is the time that will be written
+    into the acquistion time of the output SampleSet. If "retain phase" is
+    checked, then this time will be incremented for each successive output
+    data set by the duration of the previous one. The display of this time
+    is updated to show the actual time of the first point of the waveform most
+    recently output by the unit.
+    <br>&nbsp;
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+</body>
+</html>

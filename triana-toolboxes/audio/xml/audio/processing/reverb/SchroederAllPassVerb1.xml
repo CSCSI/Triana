@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tool>
+    <toolname>SchroederAllPass</toolname>
+    <package>audio.processing.reverb</package>
+    <version>0.1-SNAPSHOT</version>
+    <inportnum>1</inportnum>
+    <outportnum>1</outportnum>
+    <inparam/>
+    <outparam/>
+    <input>
+        <node index="0">
+            <type>triana.types.audio.MultipleAudio</type>
+        </node>
+    </input>
+    <output>
+        <node index="0">
+            <type>triana.types.audio.MultipleAudio</type>
+        </node>
+    </output>
+    <parameters>
+        <param name="guiY" type="gui">
+            <value>3.8157894736842106</value>
+        </param>
+        <param name="guiX" type="gui">
+            <value>2.232456140350877</value>
+        </param>
+        <param name="popUpDescription" type="unknown">
+            <value>No description for tool</value>
+        </param>
+    </parameters>
+    <tasks>
+        <task>
+            <toolname>AllPass</toolname>
+            <package>audio.processing.delay</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>AllPass</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.delay</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="feedback" type="userAccessible">
+                    <value>70</value>
+                </param>
+                <param name="guiY" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="chunked" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="delayInMs" type="userAccessible">
+                    <value>10.510</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>AllPass2</toolname>
+            <package>audio.processing.delay</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>AllPass</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.delay</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="feedback" type="userAccessible">
+                    <value>70</value>
+                </param>
+                <param name="guiY" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>2.833333333333333</value>
+                </param>
+                <param name="chunked" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="delayInMs" type="userAccessible">
+                    <value>1.130</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>AllPass1</toolname>
+            <package>audio.processing.delay</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>AllPass</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.delay</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="feedback" type="userAccessible">
+                    <value>70</value>
+                </param>
+                <param name="guiY" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>1.350877192982456</value>
+                </param>
+                <param name="chunked" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="delayInMs" type="userAccessible">
+                    <value>3.370</value>
+                </param>
+            </parameters>
+        </task>
+        <connections>
+            <connection type="NonRunnable">
+                <source node="0" taskname="AllPass"/>
+                <target node="0" taskname="AllPass1"/>
+            </connection>
+            <connection type="NonRunnable">
+                <source node="0" taskname="AllPass1"/>
+                <target node="0" taskname="AllPass2"/>
+            </connection>
+        </connections>
+        <groupnodemapping>
+            <input>
+                <node externalnode="0" node="0" taskname="AllPass"/>
+            </input>
+            <output>
+                <node externalnode="0" node="0" taskname="AllPass2"/>
+            </output>
+        </groupnodemapping>
+    </tasks>
+</tool>

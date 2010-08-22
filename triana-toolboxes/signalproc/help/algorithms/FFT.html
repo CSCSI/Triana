@@ -1,0 +1,152 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>FFT</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a> , <a href="FreqFiltering.html">Filtering
+    in Triana</a> , <a href="FreqStoreModel.html">Triana Spectral Storage Model</a>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <p><b><font face="Arial"><font size=+1>FFT : Fast Fourier Transform Unit</font></font></b>
+
+    <p>
+        <LARGE><b><i><font face="Arial">Authors: Bernard Schutz, Ian Taylor</font></i></b>
+
+            <p><b>Input Types :</b>
+
+            <p><b><a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a>,
+                <a href="../../../../help/JavaDoc/triana/types/MatrixType.html">MatrixType</a></b>
+
+            <p><b>Output Types :</b>
+
+            <p><b><a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a>,
+                <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a></b>,
+                <b><a href="../../../../help/JavaDoc/triana/types/ComplexSampleSet.html">ComplexSampleSet</a></b>,
+                <b><a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>,
+                    <a href="../../../../help/JavaDoc/triana/types/Spectrum2D.html">Spectrum2D</a></b>
+
+            <p><b>Date : 09<sup>th</sup> March 2001</b>
+
+            <p></LARGE>
+</center>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of FFT</a></li>
+
+    <li>
+        <a href="#using">Using FFT</a></li>
+
+    <li>
+        See also: <a href="FreqFiltering.html">Filtering in Triana</a> , <a href="FreqStoreModel.html">Triana
+        Spectral Storage Model</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of FFT</h2>
+The FFT is a unit which performs a fast Fourier transform (i.e. an FFT)
+or its inverse on one-dimensional or two-dimensional data sets. This is
+an efficient way to perform the discrete Fourier transform of the data.
+The FFT implemented here can handle input data sets of any length, although
+it will work most efficiently if the prime factors of the input number
+are all small. The input can be any (1D) VectorType or (2D) MatrixType.
+If the input has signal information, this is used in creating the output,
+as described in what follows. To understand the properties of spectral
+data sets, such as being one-sided, see <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>
+or <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>.
+<p>If the user chooses <b>automatic</b> operation in the user interface
+    window, and if the input is a <a href="../../../../help/JavaDoc/triana/types/Signal.html">Signal</a>
+    or <a href="../../../../help/JavaDoc/triana/types/Spectral.html">Spectral</a>
+    data type, then the unit automatically performs the correct type of transform.&nbsp;
+    Therefore, two successive applications of the FFT unit, starting with either
+    a SampleSet or a ComplexSpectrum, will produce a final output identical
+    to the original input, to within roundoff error. Here is how the unit makes
+    its choices:
+
+<p>If the input is a <a href="../../../../help/JavaDoc/triana/types/Spectral.html">Spectral</a>
+    data type, FFT performs the direct FFT. The output data type is a Spectrum
+    or ComplexSpectrum. A normalization is applied to ensure that the FFT output
+    is a sampled representation of the continuous Fourier transform X(f) of
+    the function of time x(t) represented by the input set, according to the
+    following equation
+
+<p>X(f) = integral[ x(t) exp( -2 Pi i f t )] dt.
+
+<p>This transfroms the input signal from a time representation to a frequency
+    one. The output data is a one-sided representation of the spectrum (negative
+    frequencies are not stored) if the input is a SampleSet.&nbsp; The output
+    is normally a ComplexSpectrum, but if the input is a ComplexSampleSet with
+    sufficient symmetry, the output will be a real Spectrum. For display or
+    further work, the ComplexSpectrum can then be transformed into an <a
+            href="../../triana/doc/help/tools/AmpSpect.html">amplitude
+    </a>spectrum
+    or a <a href="../../triana/doc/help/tools/PwrSpect.html">power
+    </a>spectrum.
+
+<p>If the input is a <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>
+    or a <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>,
+    the unit performs the inverse FFT.&nbsp; The output data type is a <a
+            href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a>
+    or a <a href="../../../../help/JavaDoc/triana/types/ComplexSampleSet.html">ComplexSampleSet</a>,
+    depending on whether the input set is one-sided or two-sided and what symmetry
+    it has. A normalization factor ensures that the inverse FFT output is a
+    sampled representation of the continuous data set x(t) represented by the
+    following continuous transform of the input set X(f):
+
+<p>x(t) = (1/ 2 Pi ) integral[ X(f) exp( 2 Pi i f t )] df.
+
+<p>This transforms the input spectrum back to the time domain.
+
+<p>If the user chooses <b>direct</b> or <b>inverse</b> operation, then
+    the unit ignores the type of the input data set and performs the requested
+    operation. It applies <b>normalizing factors</b> (1/N) if the appropriate
+    factor is chosen.
+
+<p>For some purposes, a windowing function should be applied to data <i>before</i>
+    it is transformed. The user interface gives a choice of some standard windows.
+    The choices are Bartlett, Blackman, Gaussian, Hamming, Hanning, and Welch.
+    These are described in the help file for <a href="WindowFnc.html">WindowFnc</a>.
+
+<p>For convenience, the user has an option to maximize speed of the transform
+    in the 1D case, or to minimize storage. The minimum storage option produces
+    a one-sided output, while the maximum speed option produces a two-sided
+    output.
+
+<p>For efficient operation, it is best that the input length should be
+    a power of 2. The unit allows the user to choose that the input is padded
+    to the nearest larger power of two.
+
+<p>
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="using"></a>Using FFT</h2>
+
+<center>
+    <p><br><img SRC="image82Q.JPG" height=179 width=370></center>
+
+<p>The FFT's parameter window allows the user to choose the type of operation
+    of the transform. There are 5 modes : Automatic, Direct, Direct/normalizated(1/N),
+    inverse or inverse/normalized(1/N). For one-dimensional data sets there
+    are three further options. One is to optimize the speed of the calculation
+    or the storage space of the result. A second option allows the user to
+    specify the windowing function required (if any). The third is a choice
+    of whether the unit should automatically pad out with zero's to the right
+    when applying the FFT.
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+</body>
+</html>

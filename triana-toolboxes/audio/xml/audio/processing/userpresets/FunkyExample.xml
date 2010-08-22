@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tool>
+    <toolname>FunkyExample</toolname>
+    <package>audio.processing.userpresets</package>
+    <version>0.1-SNAPSHOT</version>
+    <inportnum>1</inportnum>
+    <outportnum>1</outportnum>
+    <inparam/>
+    <outparam/>
+    <input>
+        <node index="0">
+            <type>triana.types.audio.MultipleAudio</type>
+        </node>
+    </input>
+    <output>
+        <node index="0">
+            <type>triana.types.audio.MultipleAudio</type>
+        </node>
+    </output>
+    <parameters>
+        <param name="guiY" type="gui">
+            <value>4.671052631578947</value>
+        </param>
+        <param name="guiX" type="gui">
+            <value>2.2149122807017543</value>
+        </param>
+        <param name="popUpDescription" type="unknown">
+            <value>No description for tool</value>
+        </param>
+    </parameters>
+    <tasks>
+        <taskgraph>
+            <toolname>Large Room</toolname>
+            <package>audio.processing.reverb</package>
+            <version>0.1</version>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <node index="0">
+                    <type>triana.types.audio.MultipleAudio</type>
+                </node>
+            </input>
+            <output>
+                <node index="0">
+                    <type>triana.types.audio.MultipleAudio</type>
+                </node>
+            </output>
+            <parameters>
+                <param name="guiY" type="gui">
+                    <value>3.1315789473684217</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>2.3421052631578947</value>
+                </param>
+                <param name="popUpDescription" type="unknown">
+                    <value>No description for tool</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+            </parameters>
+            <tasks>
+                <task>
+                    <toolname>Fader</toolname>
+                    <package>audio.processing.tools</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>Fader</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.tools</value>
+                        </param>
+                    </proxy>
+                    <inportnum>1</inportnum>
+                    <outportnum>4</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="outputType3" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="outputType2" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="outputType1" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="outputType0" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="volumeInDB" type="userAccessible">
+                            <value>0</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>1.9736842105263157</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>0.0</value>
+                        </param>
+                    </parameters>
+                </task>
+                <task>
+                    <toolname>AllPassFilter1</toolname>
+                    <package>audio.processing.delay</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>AllPassFilter</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.delay</value>
+                        </param>
+                    </proxy>
+                    <inportnum>1</inportnum>
+                    <outportnum>1</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="feedback" type="userAccessible">
+                            <value>70</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>2.131578947368421</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>5.149122807017544</value>
+                        </param>
+                        <param name="chunked" type="userAccessible">
+                            <value>false</value>
+                        </param>
+                        <param name="delayInMs" type="userAccessible">
+                            <value>5.000</value>
+                        </param>
+                    </parameters>
+                </task>
+                <task>
+                    <toolname>CombFilter3</toolname>
+                    <package>audio.processing.delay</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>CombFilter</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.delay</value>
+                        </param>
+                    </proxy>
+                    <inportnum>1</inportnum>
+                    <outportnum>1</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="delayInMs" type="userAccessible">
+                            <value>53.700</value>
+                        </param>
+                        <param name="feedback" type="userAccessible">
+                            <value>59</value>
+                        </param>
+                        <param name="outputType0" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="filterType" type="userAccessible">
+                            <value>Standard Feedback Filter</value>
+                        </param>
+                        <param name="chunked" type="userAccessible">
+                            <value>false</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>4.526315789473684</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>1.3070175438596492</value>
+                        </param>
+                    </parameters>
+                </task>
+                <task>
+                    <toolname>CombFilter2</toolname>
+                    <package>audio.processing.delay</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>CombFilter</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.delay</value>
+                        </param>
+                    </proxy>
+                    <inportnum>1</inportnum>
+                    <outportnum>1</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="delayInMs" type="userAccessible">
+                            <value>51.100</value>
+                        </param>
+                        <param name="feedback" type="userAccessible">
+                            <value>61</value>
+                        </param>
+                        <param name="outputType0" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="filterType" type="userAccessible">
+                            <value>Standard Feedback Filter</value>
+                        </param>
+                        <param name="chunked" type="userAccessible">
+                            <value>false</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>2.9736842105263155</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>1.3070175438596492</value>
+                        </param>
+                    </parameters>
+                </task>
+                <task>
+                    <toolname>CombFilter1</toolname>
+                    <package>audio.processing.delay</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>CombFilter</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.delay</value>
+                        </param>
+                    </proxy>
+                    <inportnum>1</inportnum>
+                    <outportnum>1</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="delayInMs" type="userAccessible">
+                            <value>47.100</value>
+                        </param>
+                        <param name="feedback" type="userAccessible">
+                            <value>65</value>
+                        </param>
+                        <param name="outputType0" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="filterType" type="userAccessible">
+                            <value>Standard Feedback Filter</value>
+                        </param>
+                        <param name="chunked" type="userAccessible">
+                            <value>false</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>1.5263157894736843</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>1.2982456140350878</value>
+                        </param>
+                    </parameters>
+                </task>
+                <task>
+                    <toolname>AllPassFilter</toolname>
+                    <package>audio.processing.delay</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>AllPassFilter</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.delay</value>
+                        </param>
+                    </proxy>
+                    <inportnum>1</inportnum>
+                    <outportnum>1</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="feedback" type="userAccessible">
+                            <value>70</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>2.131578947368421</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>3.956140350877193</value>
+                        </param>
+                        <param name="outputType0" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="chunked" type="userAccessible">
+                            <value>false</value>
+                        </param>
+                        <param name="delayInMs" type="userAccessible">
+                            <value>9.000</value>
+                        </param>
+                    </parameters>
+                </task>
+                <task>
+                    <toolname>NodeMixer</toolname>
+                    <package>audio.processing.tools</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>NodeMixer</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.tools</value>
+                        </param>
+                    </proxy>
+                    <inportnum>4</inportnum>
+                    <outportnum>1</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="noOfChannels" type="userAccessible">
+                            <value>Stereo</value>
+                        </param>
+                        <param name="outputType0" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="normalCheck" type="userAccessible">
+                            <value>false</value>
+                        </param>
+                        <param name="faderCheck" type="userAccessible">
+                            <value>true</value>
+                        </param>
+                        <param name="volumeInDB" type="userAccessible">
+                            <value>0</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>1.894736842105263</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>2.8157894736842106</value>
+                        </param>
+                        <param name="normal" type="userAccessible">
+                            <value>100</value>
+                        </param>
+                    </parameters>
+                </task>
+                <task>
+                    <toolname>CombFilter</toolname>
+                    <package>audio.processing.delay</package>
+                    <version>0.1</version>
+                    <proxy type="Java">
+                        <param paramname="unitName">
+                            <value>CombFilter</value>
+                        </param>
+                        <param paramname="unitPackage">
+                            <value>audio.processing.delay</value>
+                        </param>
+                    </proxy>
+                    <inportnum>1</inportnum>
+                    <outportnum>1</outportnum>
+                    <inparam/>
+                    <outparam/>
+                    <input>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </input>
+                    <output>
+                        <type>triana.types.audio.MultipleAudio</type>
+                    </output>
+                    <parameters>
+                        <param name="delayInMs" type="userAccessible">
+                            <value>49.700</value>
+                        </param>
+                        <param name="feedback" type="userAccessible">
+                            <value>60</value>
+                        </param>
+                        <param name="outputType0" type="unknown">
+                            <value>triana.types.audio.MultipleAudio</value>
+                        </param>
+                        <param name="filterType" type="userAccessible">
+                            <value>Standard Feedback Filter</value>
+                        </param>
+                        <param name="chunked" type="userAccessible">
+                            <value>false</value>
+                        </param>
+                        <param name="guiY" type="gui">
+                            <value>0.0</value>
+                        </param>
+                        <param name="guiX" type="gui">
+                            <value>1.2982456140350878</value>
+                        </param>
+                    </parameters>
+                </task>
+                <connections>
+                    <connection type="NonRunnable">
+                        <source node="0" taskname="Fader"/>
+                        <target node="0" taskname="CombFilter"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="1" taskname="Fader"/>
+                        <target node="0" taskname="CombFilter1"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="2" taskname="Fader"/>
+                        <target node="0" taskname="CombFilter2"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="3" taskname="Fader"/>
+                        <target node="0" taskname="CombFilter3"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="0" taskname="AllPassFilter"/>
+                        <target node="0" taskname="AllPassFilter1"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="0" taskname="CombFilter3"/>
+                        <target node="3" taskname="NodeMixer"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="0" taskname="CombFilter2"/>
+                        <target node="2" taskname="NodeMixer"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="0" taskname="CombFilter1"/>
+                        <target node="1" taskname="NodeMixer"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="0" taskname="NodeMixer"/>
+                        <target node="0" taskname="AllPassFilter"/>
+                    </connection>
+                    <connection type="NonRunnable">
+                        <source node="0" taskname="CombFilter"/>
+                        <target node="0" taskname="NodeMixer"/>
+                    </connection>
+                </connections>
+                <groupnodemapping>
+                    <input>
+                        <node externalnode="0" node="0" taskname="Fader"/>
+                    </input>
+                    <output>
+                        <node externalnode="0" node="0" taskname="AllPassFilter1"/>
+                    </output>
+                </groupnodemapping>
+            </tasks>
+        </taskgraph>
+        <task>
+            <toolname>Fader</toolname>
+            <package>audio.processing.tools</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>Fader</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.tools</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>2</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="guiY" type="gui">
+                    <value>4.157894736842106</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="outputType1" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+                <param name="volumeInDB" type="userAccessible">
+                    <value>0</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>HighPass</toolname>
+            <package>audio.processing.eq</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>HighPass</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.eq</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="guiY" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>0.9649122807017544</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+                <param name="Q" type="userAccessible">
+                    <value>0.700</value>
+                </param>
+                <param name="chunked" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="frequency" type="userAccessible">
+                    <value>5120.000</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>Flanger</toolname>
+            <package>audio.processing.modulation</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>VariableDelay</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.modulation</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="delayInMs" type="userAccessible">
+                    <value>1.000</value>
+                </param>
+                <param name="LFOType" type="userAccessible">
+                    <value>sinusoidal</value>
+                </param>
+                <param name="feedback" type="userAccessible">
+                    <value>85</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+                <param name="amplitude" type="userAccessible">
+                    <value>50</value>
+                </param>
+                <param name="filterType" type="userAccessible">
+                    <value>comb</value>
+                </param>
+                <param name="summingType" type="userAccessible">
+                    <value>Type 1</value>
+                </param>
+                <param name="oscillationPeriod" type="userAccessible">
+                    <value>88200</value>
+                </param>
+                <param name="chunked" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="guiY" type="gui">
+                    <value>1.6052631578947372</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>1.719298245614035</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>NodeMixer</toolname>
+            <package>audio.processing.tools</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>NodeMixer</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.tools</value>
+                </param>
+            </proxy>
+            <inportnum>2</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="noOfChannels" type="userAccessible">
+                    <value>Stereo</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+                <param name="normalCheck" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="faderCheck" type="userAccessible">
+                    <value>true</value>
+                </param>
+                <param name="volumeInDB" type="userAccessible">
+                    <value>0</value>
+                </param>
+                <param name="guiY" type="gui">
+                    <value>4.7631578947368425</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>3.1842105263157894</value>
+                </param>
+                <param name="normal" type="userAccessible">
+                    <value>100</value>
+                </param>
+            </parameters>
+        </task>
+        <connections>
+            <connection type="NonRunnable">
+                <source node="0" taskname="Flanger"/>
+                <target node="0" taskname="Large Room"/>
+            </connection>
+            <connection type="NonRunnable">
+                <source node="0" taskname="Large Room"/>
+                <target node="0" taskname="NodeMixer"/>
+            </connection>
+            <connection type="NonRunnable">
+                <source node="0" taskname="Fader"/>
+                <target node="0" taskname="HighPass"/>
+            </connection>
+            <connection type="NonRunnable">
+                <source node="1" taskname="Fader"/>
+                <target node="1" taskname="NodeMixer"/>
+            </connection>
+            <connection type="NonRunnable">
+                <source node="0" taskname="HighPass"/>
+                <target node="0" taskname="Flanger"/>
+            </connection>
+        </connections>
+        <groupnodemapping>
+            <input>
+                <node externalnode="0" node="0" taskname="Fader"/>
+            </input>
+            <output>
+                <node externalnode="0" node="0" taskname="NodeMixer"/>
+            </output>
+        </groupnodemapping>
+    </tasks>
+</tool>

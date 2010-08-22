@@ -1,0 +1,357 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Author" content="Ian Taylor">
+    <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
+    <title>MainTriana Help</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#DC143C" vlink="#551A8B" alink="#FF0000">
+<a href="../../../../help/index.html">Triana Help Index,</a>
+<a href="../../Filtering/help/TimeFiltering.html">Time-Domain Filtering
+    in Triana</a>
+<center>
+    <hr width="100%">
+</center>
+
+<center>
+    <h1>
+        <font color="#800000">Frequency-Domain Filtering in Triana</font></h1></center>
+
+<center>
+    <h1>
+
+        <hr width="100%">
+    </h1>
+</center>
+
+<center>
+    <h1>
+        Index</h1></center>
+
+<ul>
+    <li>
+        <a href="#UnitList"><font color="#800000">Triana</font> Units for Frequency-Domain
+            Filtering</a></li>
+
+    <li>
+        <a href="#understanding">Understanding Frequency-Domain Data Storage in
+            <font color="#800000">Triana</font></a></li>
+
+    <li>
+        <a href="#using">Using Frequency-Domain Filtering Tools</a></li>
+
+    <li>
+        <a href="#examples">Examples</a></li>
+</ul>
+
+<h2>
+
+    <hr width="100%">
+    <a NAME="UnitList"></a><font color="#800000">Triana</font>
+    Units for Frequency-Domain Filtering
+</h2>
+There are a number of units in <font color="#800000">Triana</font> that
+perform filtering operations in the frequency domain. In this help file
+we list the units and then suggest ways to use them to solve important
+filtering problems.
+<p>The main frequency-domain filtering units and associated units are:
+<ul>
+    <li>
+        <a href="FFT.html">FFT</a> -- forward and backward Fourier transforms on
+        1D and 2D data sets of any size
+    </li>
+
+    <li>
+        <a href="WindowFnc.html">WindowFnc</a> -- apply a window to the incoming
+        data
+    </li>
+
+    <li>
+        <a href="OneSide.html">OneSide</a> -- change a spectrum to one-sided
+    </li>
+
+    <li>
+        <a href="FullSpectrum.html">FullSpectrum</a> -- change a spectrum to full-bandwidth,
+        including negative frequencies
+    </li>
+
+    <li>
+        <a href="LowPass.html">LowPass</a> -- remove data at frequencies higher
+        than the given one.
+    </li>
+
+    <li>
+        <a href="BandPass.html">BandPass</a> -- remove data at frequencies outside
+        the given band.
+    </li>
+
+    <li>
+        <a href="HighPass.html">HighPass</a> -- remove data at frequencies below
+        the given one.
+    </li>
+
+    <li>
+        <a href="MultiBand.html">MultiBand</a> -- create several narrow-band data
+        sets covering adjacent bandwidths
+    </li>
+
+    <li>
+        <a href="PositiveF.html">PositiveF</a> -- return a spectrum with only the
+        positive-frequency data non-zero
+    </li>
+
+    <li>
+        <a href="NegativeF.html">NegativeF</a> -- return a spectrum with only the
+        negative-frequency data non-zero
+    </li>
+
+    <li>
+        <a href="HetdyneF.html">HetdyneF</a> -- return the cosine and sine quadratures
+        of the input data set heterodyned and filtered to a narrow band
+    </li>
+
+    <li>
+        <a href="Shift.html">Shift</a> -- cyclic shift of data set
+    </li>
+
+    <li>
+        <a href="SpecSeq.html">SpecSeq</a> -- assemble successive input spectral
+        data sets into a TimeFrequency data set
+    </li>
+
+    <li>
+        <a href="WinFT.html">WinFT</a> -- windowed Fourier transform
+    </li>
+</ul>
+In addition there are units that are useful for display: <a href="../../Output/help/Grapher.html">Grapher</a>,
+<a href="../../Output/help/MultiGraph.html">MultiGraph</a>,
+<a href="ImageMapper.html">ImageMapper</a>,
+and <a href="../../../ImageProc/Output/help/ImageView.html">ImageView</a>.
+For a description of Triana's time-domain filtering units, see the separate
+help file on <a href="../../Filtering/help/TimeFiltering.html">Time-Domain
+    Filtering in Triana</a>.
+<br>
+<hr width="100%">
+<h2>
+    <a NAME="understanding"></a>Understanding Frequency-Domain Data Storage
+    in
+    <font color="#800000">Triana</font></h2>
+<font color="#800000">Triana</font> stores spectral data in data types
+like <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>,
+<a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>,
+<a href="../../../../help/JavaDoc/triana/types/TimeFrequency.html">TimeFrequency</a>,
+and <a href="../../../../help/JavaDoc/triana/types/Spectrum2D.html">Spectrum2D</a>.
+Spectrum and ComplexSpectrum are essentially identical except that the
+data in Spectrum are real and in ComplexSpectrum complex. TimeFrequency
+is a two-dimensional data set, one dimension of which is spectral and the
+other time, so that it normally represents a sequence of spectra taken
+at different times. Spectrum2D is a genuine two-dimensional spectrum, such
+as might be obtained by performing an FFT on an image or other matrix.
+Both TimeFrequency and Spectrum2D can hold either real or complex data.
+Since FFTs generally produce complex output, the type Spectrum is normally
+used only for the output of units the produce power spectra or related
+objects.
+<p><i>One-dimensional spectral data</i> (including the spectral dimension
+    of TimeFrequency) can generally be stored in several different ways.
+<ul>
+    <li>
+        <b><i>Full-bandwidth</i></b> data storage means that the spectrum contains
+        data values for both positive and negative frequencies.
+    </li>
+
+    <li>
+        <b><i>One-sided</i></b> data storage means that only positive frequencies
+        are held in the data object; if negative frequencies are required they
+        are reconstructed from the positive frequencies, on the assumption that
+        the spectrum represents the Fourier transform of a real data set.
+    </li>
+
+    <li>
+        <b><i>Narrow-band</i></b> data storage means that the stored data represents
+        only a portion of the full spectrum; if a full-bandwidth spectrum is required
+        then it is reconstructed by putting zeros into the data values associated
+        with frequencies outside the stored bandwidth.
+    </li>
+</ul>
+Narrow-band data sets can be either one-sided or two-sided. Similarly one-sided
+data sets can be either wide-band or narrow-band. Narrow-band data sets
+keep a memory of how large the spectrum was from which they were filtered.
+This amounts effectively to remembering the highest frequency contained
+in that original spectrum, which is called the&nbsp;<a NAME="nyquist"></a><b>Nyquist
+    frequency</b> of the data set. This term is used in the filtering units,
+some of which offer the user the ability to reduce the Nyquist frequency.
+This means that the "memory" about the original spectrum will be altered
+so that, when the set is restored to a full-spectrum set, the highest frequency
+will be smaller. If the spectrum is FFT'd back to the time domain, then
+the sampling rate in the time domain will be correspondingly smaller, since
+this sampling rate is exactly twice the Nyquist frequency. Thus, lowering
+the Nyquist frequency will result in <b>down-sampling</b> of the time-domain
+data set associated with the spectrum.
+<p><font color="#800000">Triana</font> employs these various storage models
+    in order to save memory usage. In many applications, such as when spectra
+    are divided into separate bandwidths, using full-bandwidth data would mean
+    replicating many useless storage locations. However, because <font color="#800000">Triana</font>
+    data sets are self-describing, most <font color="#800000">Triana</font>
+    units that deal with spectra are written in such a way that they will automatically
+    do the right thing with data, regardless of its storage format. Users need
+    to be aware of the different storage models, however, when they display
+    them, combine them, or make use of their special properties. There is more
+    detail on this subject in the help file for the
+    <font color="#800000">Triana</font>
+    Spectral Model, which also defines the model completely.
+
+<p>For <i>two-dimensional spectral data</i>, narrow-banding in each dimension
+    makes sense, but one-sidedness has limited value, since data can be reflected
+    through two different zero-frequency lines. Therefore <font color="#800000">Triana</font>
+    generally uses only full-bandwidth 2D data sets.
+    <br>
+<hr width="100%">
+<h2>
+    <a NAME="using"></a>Using Frequency-Domain Filtering Tools</h2>
+Most of the tools offer the user options in their parameter windows. Naturally,
+filtering units must be told the frequencies they are to select. In addition,
+three choices appear in many of the units: <a href="#narrow">"Output narrow
+    band"</a>, <a href="#window">"Choose window ..."</a>, "<a href="#reduce">Reduce
+    Nyquist frequency ..."</a>. They are explained here.
+<ul>
+    <li>
+        <a NAME="narrow"></a><b>"Output narrow band?" </b>If the user selects this
+        checkbox, then the output will be a narrow-band data set containing only
+        the frequencies that pass through the filter (both positive and negative).
+        If the box is not selected, then the output will be a full-bandwidth spectrum
+        with zeros in the storage locations that have been filtered away. This
+        box should be selected if:
+    </li>
+
+    <ul>
+        <li>
+            the the user wants to conserve storage,
+        </li>
+
+        <li>
+            the data are to be displayed and the user wants full resolution in the
+            band passed by the filter,
+        </li>
+
+        <li>
+            the data are to be windowed later (see discussion in next paragraph), or
+        </li>
+
+        <li>
+            the data are to be subjected to further arithmetic (and the extra zeros
+            would require time-consuming wasted arithmetic).
+        </li>
+    </ul>
+    Leave the box un-selected if:
+    <ul>
+        <li>
+            the data are to be recombined with other parts of the spectrum by adding
+            spectral data sets together,
+        </li>
+
+        <li>
+            the user wants to display the data in a way that shows the isolated band
+            surrounded by zero-amplitude regions, or
+        </li>
+
+        <li>
+            speed rather than memory conservation is an issue, since in many operations
+            (such as an inverse FFT) the narrow-band data set will be automatically
+            converted back into a full-width spectrum.
+        </li>
+    </ul>
+
+    <li>
+        <a NAME="window"></a><b>"Choose window ..."</b> Sharp edges in data sets
+        produce oscillations in their Fourier transforms. If these are unwanted,
+        then the edges can be rounded first by applying a window function. Window
+        functions are smooth functions that have a value close to 1 over most of
+        their domain, falling symmetrically to very small values at either end.
+        Triana units use the window functions provided by the unit <a href="WindowFnc.html">WindowFnc</a>.
+        They are multiplied into the data set to round off edges. Triana applies
+        them (if the user chooses to use a window) in such a way that all sharp
+        edges are rounded by the window function.
+    </li>
+
+    <ul>
+        <li>
+            If a window is applied to a <i>time-domain</i> data set, such as <a
+                href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a>,
+            then the values at the beginning and end of the data set are reduced. When
+            the set is subsequently FFT'd, the high-frequency components of the FFT
+            will be reduced. The zero-frequency element of the FFT may also be lower,
+            since the average value of the data will probably have been reduced.
+        </li>
+
+        <li>
+            If a window is applied to a <i>frequency-domain </i>data set, then what
+            happens depends on the nature of the set.
+        </li>
+
+        <ul>
+            <li>
+                If the data set is full-bandwidth (even if it contains a narrow-band data
+                set padded out with zeros) it will be smoothed at the highest positive
+                and negative frequencies.
+            </li>
+
+            <li>
+                If the data set is one-sided but not narrow-band, it will be smoothed at
+                its highest frequency.
+            </li>
+
+            <li>
+                If the data set is narrow-band but includes zero-frequency, then it will
+                be smoothed at its highest positive and negative frequencies.
+            </li>
+
+            <li>
+                If the data set is narrow-band and does not include zero-frequency, then
+                both the positive- and negative-frequency parts of the spectrum will be
+                smoothed at both edges of their bands.
+            </li>
+        </ul>
+        If the window has been applied to the spectrum and the spectrum is subsequently
+        inverted, then oscillations in the time-domain function will be reduced.
+    </ul>
+
+    <li>
+        <a NAME="reduce"></a><b>"Reduce Nyquist frequency ..." </b>Select this
+        checkbox to reduce the <a href="#nyquist">Nyquist frequency</a> associated
+        with the data (which will result in <a href="#nyquist">down-sampling</a>
+        of the time-series if the spectrum is inverted). The Nyquist frequency
+        will be reduced to whatever frequency has been chosen in the filtering
+        unit as the highest frequency passed through the filter. Selecting this
+        option overrides any choice the user has made of wide- or narrow-band output.
+        If the output data set contains zero-frequency (say, a low-pass filter),
+        then it will be output as a full-bandwidth spectrum, because its upper
+        frequency limit equals its (new) Nyquist frequency. If it does not contain
+        zero-frequency, it will be output as a narrow-band spectrum.
+    </li>
+</ul>
+
+<hr width="100%">
+<br>&nbsp;
+<h2>
+    <a NAME="examples"></a>Examples</h2>
+Here are some examples of how to use the frequency-domain filtering tools.
+Each one refers to a group unit in the Demos toolbox of SignalProc.
+<br>&nbsp;
+<ul>
+    <li>
+        <b>LineCut</b>: removing a line from noisy data. If a signal contains an
+        unwanted sinusiodal component, the FFT of the signal can be filtered around
+        the frequency, and then subtracted from the original FFT.&nbsp; The filtered
+        data set is output as a full-spectrum data set so that it can be subtracted
+        from the original spectrum. In this example, the cut is windowed using
+        the Gaussian window.
+    </li>
+
+    <li>
+    </li>
+</ul>
+
+<hr width="95%" size="4" align="center" noshade="noshade">
+</body>
+</html>

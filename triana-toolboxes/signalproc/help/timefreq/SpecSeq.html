@@ -1,0 +1,79 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>SpecSeq</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a> , <a href="FreqFiltering.html">Filtering
+    in Triana</a> , <a href="FreqStoreModel.html">Triana Spectral Storage Model</a>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <h1>
+        SpecSeq</h1></center>
+
+<center>
+    <LARGE><b>Author : Bernard Schutz</b>
+
+        <p>
+            <LARGE><b>Version : 1.0</b>
+
+                <p><b>Input Types : <a
+                        href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a><a
+                        href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana/types/Spectrum.html">Spectrum</a></b>
+                    <br><b>Output Types : <a
+                            href="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana/types/MatrixType.html">MatrixType</a></b>
+                    <br><b>Date : 30 Dec 2000&nbsp;</b></LARGE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of SpecSeq</a></li>
+
+    <li>
+        <a href="#using">Using SpecSeq</a></li>
+
+    <li>
+        See also: <a href="FreqFiltering.html">Filtering in Triana</a> , <a href="FreqStoreModel.html">Triana
+        Spectral Storage Model</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of SpecSeq</h2>
+The unit called SpecSeq assembles a sequence of spectra arriving at its
+input node into a matrix, each row of which is a spectrum. This matrix
+is output as a TimeFrequency data set. The user can choose the number of
+sets to accumulate. The user can also choose whether to have the unit make
+one output every time-step or to wait until the entire set is accumulated
+before making an output. If output once per time-step is chosen, then the
+output matrix is changed so that it contains only the most recent data.
+In this way it can provide a rolling view of the data.
+<br>&nbsp;
+<h2>
+    <a NAME="using"></a>Using SpecSeq</h2>
+SpecSeq's parameter window (double-click on the unit) looks like this.
+<center>
+    <p><img SRC="image7I6.JPG" height=163 width=377></center>
+
+<p>The first parameter is an integer slider to choose the number of data
+    sets to accumulate, which is the number of rows in the matrix. The second
+    parameter is a checkbox&nbsp; to select whether the data should be output
+    every time-step (a rolling list of spectra) or only once after an entire
+    set has been accumulated. Choose the rolling list if you want the latest
+    possible view into the data. Do not choose the rolling list if memory conservation
+    is important or if you are assembling matrices for archiving and do not
+    want overlapping data.
+
+<p>
+<hr WIDTH="15%" SIZE=4>
+</body>
+</html>

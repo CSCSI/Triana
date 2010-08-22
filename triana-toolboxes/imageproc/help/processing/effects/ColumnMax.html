@@ -1,0 +1,48 @@
+<HTML>
+
+<HEAD>
+    <TITLE>ColumnMax</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#ffffff" LINK="#ff0000" VLINK="#c0c0c0">
+<CENTER>
+    <H1>ColumnMax</H1>
+    <LARGE><B>
+        Author : Melanie Rhianna Lewis<BR>
+        Input Type : TrianaPixelMap<BR>
+        Output Type : TrianaPixelMap<BR>
+        Date : <BR>
+    </B></LARGE>
+    <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+</CENTER>
+<DIV ALIGN="LEFT">
+    Works down the columns of pixels in a TrianaPixelMap finding the maximum value of the pixels so far. Ie. the red,
+    green and blue values in each in the resulting image are the maximum of all the red, green and blue values in the
+    source image above the pixel in that column.<P>
+    Mathematically:
+<PRE><CODE>
+    rr(i, j) = MAX(rs(i, 0), ... , rs(i, j - 1), rs(i, j))
+    gr(i, j) = MAX(gs(i, 0), ... , gs(i, j - 1), gs(i, j))
+    br(i, j) = MAX(bs(i, 0), ... , bs(i, j - 1), bs(i, j))
+</CODE></PRE>
+    <H3>Example</H3>
+</DIV>
+<CENTER>
+    <TABLE BGCOLOR="#e0e0e0" CELLSPACING="0" CELLPADDING="5" BORDER="1">
+        <TR>
+            <TD ALIGN="CENTER" VALIGN="TOP"><IMG SRC="ben_win.gif" WIDTH="210" HEIGHT="302" BORDER="0"></TD>
+            <TD ALIGN="CENTER" VALIGN="TOP"><IMG SRC="ben_win_col_max.gif" WIDTH="210" HEIGHT="302" BORDER="0"></TD>
+        </TR>
+        <TR>
+            <TD ALIGN="CENTER" VALIGN="MIDDLE"><B>Before operation</B></TD>
+            <TD ALIGN="CENTER" VALIGN="MIDDLE"><B>After operation</B></TD>
+        </TR>
+    </TABLE>
+</CENTER>
+<H3>See also</H3>
+<A HREF="ColIntegrate.html">ColIntegrate</A>, <A HREF="RowIntegrate.html">RowIntegrate</A>, <A
+        HREF="RowMax.html">RowMax</A>
+<CENTER>
+    <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+</CENTER>
+</BODY>

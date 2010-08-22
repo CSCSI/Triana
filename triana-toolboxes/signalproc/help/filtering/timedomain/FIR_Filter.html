@@ -1,0 +1,77 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
+    <title>FIR_Filter</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+
+<center>
+    <h1>
+        FIR_Filter</h1></center>
+
+<center>
+    <LARGE><b>Author : Bernard Schutz</b>
+
+        <p>
+            <LARGE><b>Version : 1.0</b>
+
+                <p><b>Input Types : <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a></b>
+                    <br><b>Output Types : <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a></b>
+                    <br><b>Date : 21 Feb 2002&nbsp;</b></LARGE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of FIR_Filter</a></li>
+
+    <li>
+        <a href="#using">Using FIR_Filter</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of FIR_Filter</h2>
+The unit called FIR_Filter applies a direct* FIR filter to the input data
+set. The filter is defined by the user giving the coefficients {a(j)},
+which are applied to the input data {x(j)} to produce output data {y(j)}by
+the formula
+<p>y(n) = a(0)x(n) + a(1)x(n-1) + a(2)x(n-2) + ...
+
+<p>This is re-applied at each value of n.
+
+<p>The user can select whether to continue the data values {x(n)} across
+    the successive data sets. When the algorithm starts on a new data set it
+    assumes that earlier values of x (i.e. x(-1), x(-2), etc) are all zero.
+
+<p>For more information, see the help file on <a href="TimeFiltering.html">time-domain
+    filtering in Triana</a>.
+    <br>&nbsp;
+
+<h2>
+    <a NAME="using"></a>Using FIR_Filter</h2>
+<img SRC="imagePL4.JPG" height=134 width=560>FIR_Filter's parameter window
+(double-click on the unit) is used to set the filter coefficients {a(j)}.
+The user enters any number of coefficients, separated by spaces. The order
+of the filter is assumed to be the number of such coefficients. The user
+can also choose whether to continue the filter from one data set to the
+next when the unit is accepting successive data sets. This option is selected
+by default. If each input should be treated as a new set then the check-box
+should be un-checked. he user must choose the filter coefficients according
+to what kind of effect is desired.
+<p>
+<hr WIDTH="15%" SIZE=4>
+<br><font size=-1>*A "direct" filter is applied by convolution on the input
+    data values. It does not use Fourier techniques. However, the input data
+    set is allowed to be any <b><a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a></b>,
+    so that it could be time-series data or spectral data.</font>
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

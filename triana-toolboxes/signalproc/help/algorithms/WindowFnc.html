@@ -1,0 +1,253 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
+    <title>WindowFnc</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a> , <a href="FreqFiltering.html">Frequency-Domain
+    Filtering in Triana</a> , <a href="../../Filtering/help/TimeFiltering.html">Time-Domain
+    Filtering in Triana</a>,&nbsp; <a href="FreqStoreModel.html">Triana Spectral
+    Storage Model</a>
+
+<p>
+<hr WIDTH="15%" SIZE=4>
+<center>
+    <h1>
+        WindowFnc</h1></center>
+
+<center>
+    <LARGE><b>Author : Ian Taylor, Bernard Schutz</b>
+
+        <p><b>Version: 2.0</b>
+
+        <p><b>Input Types : <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a>,
+            <a href="../../../../help/JavaDoc/triana/types/TimeFrequency.html">TimeFrequency</a></b>
+            <br><b>Output Types : <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a>,
+                <a href="../../../../help/JavaDoc/triana/types/TimeFrequency.html">TimeFrequency</a></b>
+            <br><b>Date : 3 March 2001</b>
+
+        <p></LARGE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of WindowFnc</a></li>
+
+    <li>
+        <a href="#using">Using WindowFnc</a></li>
+
+    <li>
+        <a href="#windows">Window Definitions</a></li>
+
+    <li>
+        See also: <a href="../../Filtering/help/TimeFiltering.html">Time-Domain
+        Filtering in Triana</a>, <a href="FreqFiltering.html">Frequency-Domain
+        Filtering in Triana</a> , <a href="FreqStoreModel.html">Triana Spectral
+        Storage Model</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of WindowFnc</h2>
+WindowFnc allows the user to apply one of six window functions to the input
+data set. A window function is a function which is multiplied into a data
+set in order to taper it at its edges. Such functions begin at a small
+value, rise smoothly to a peak, and then fall again in a symmetrical way.
+The choices offered here defined <a href="#windows">below</a>.
+<p>The unit can accept any <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a>
+    input, and works intelligently on special types. By default, it scales
+    the chosen window to the width of the input data set, multiplies the data
+    (real or complex is allowed) by the window, and outputs a data set of the
+    same type as the input but with the shaped data. However, if the input
+    is a <a href="../../../../help/JavaDoc/triana/types/Spectrum.html">Spectrum</a>
+    or <a href="../../../../help/JavaDoc/triana/types/ComplexSpectrum.html">ComplexSpectrum</a>,
+    then the function is applied in a way that matches the meaning of the data.
+    If the input spectrum contains zero-frequency, then the shaping is applied
+    only to the upper-frequency limit of the data. If the data is narrow-band
+    and does not include zero-frequency, then the shaping is applied to the
+    frequency band, rounding it off at its lower and upper limits.
+
+<p>The unit can also accept <a href="../../../../help/JavaDoc/triana/types/TimeFrequency.html">TImeFrequency</a>
+    input data. It windows the frequency dimension of this two-dimensional
+    data set, using the same principles as described in the previous paragraph,
+    and outputs a <a href="../../../../help/JavaDoc/triana/types/TimeFrequency.html">TimeFrequency</a>
+    data set containing the shaped data.
+
+<p>Windowing can be used with Fourier transforms to make the result of
+    a transform seem more reasonable. If a time-series has sharp edges, then
+    its Fourier transform will show oscillations or peaks. Rounding the shoulders
+    of the time-series makes the Fourier transform smoother. Conversely, if
+    the window function is applied to a spectrum before it is inverted to the
+    time domain, then the inversion will be smoother and not show the oscillations
+    that sharp edges in the spectrum would generate. The <a href="FFT.html">FFT</a>
+    unit contains the option to apply these windows to the input time-series
+    data. Other units offer rounding of spectral data sets using these as well:
+    <a href="WinFT.html">WinFT</a>,
+    <a href="../../Filtering/help/LowPass.html">LowPass</a>,
+    <a href="../../Filtering/help/HighPass.html">HighPass</a>,
+    <a href="../../Filtering/help/BandPass.html">BandPass</a>,
+    <a href="../../Filtering/help/MultiBand.html">MultiBand</a>,
+    and <a href="../../Filtering/help/HetdyneF.html">HetdyneF</a>. Windowing
+    is also available for time-domain filtering in the units <a
+            href="../../Filtering/help/FIR_LowPass.html">FIR_LowPass</a>,
+    <a href="../../Filtering/help/FIR_HighPass.html">FIR_HighPass</a>,
+    <a href="../../Filtering/help/FIR_BandPass.html">FIR_BandPass</a>.
+    <br>&nbsp;
+
+<h2>
+    <a NAME="using"></a>Using WindowFnc</h2>
+
+<p><br>The parameter window for WindowFnc is shown below:
+<center>
+    <p><img SRC="Image19.gif" height=101 width=300></center>
+
+<p>Just select the appropriate window from the choice box.
+    <br>&nbsp;
+    <br>&nbsp;
+
+<h2>
+    <a NAME="windows"></a>Description of the Windows</h2>
+The built-in windows are defined by the following names (see <a href="#reference">below</a>
+for a reference) and associated functions, all of which are given here
+on the domain (-0.5, 0.5):
+<ul>
+    <li>
+        Rectangle: 1
+    </li>
+
+    <li>
+        Bartlett: 1 - 2*|x|
+    </li>
+
+    <li>
+        Blackman: 0.42 + 0.5*cos(2*pi*x) + 0.08*cos(4*pi*x)
+    </li>
+
+    <li>
+        Gaussian: exp(-18*x^2).
+    </li>
+
+    <li>
+        Hamming: 0.54 + 0.46*cos( 2*pi*x)
+    </li>
+
+    <li>
+        Hann: cos^2(pi*x)&nbsp; (also known as Hanning)
+    </li>
+
+    <li>
+        Welch: 1 - 4*x^2
+    </li>
+
+    <li>
+        BlackmanHarris92: 0.35875 + 0.48829*cos( 2*pi*x ) + 0.14128*cos( 4*pi*x
+        ) + 0.01168*cos( 6*pi*x )
+    </li>
+
+    <li>
+        Nuttall3: 0.375 + 0.5*cos( 2*pi*x ) + 0.125*cos( 4*pi*x )
+    </li>
+
+    <li>
+        Nuttall3a: 0.40897 + 0.5*cos( 2*pi*x ) + 0.09103*cos( 4*pi*x )
+    </li>
+
+    <li>
+        Nuttall3b: 0.4243801 + 0.4973406*cos( 2*pi*x ) + 0.0782793*cos( 4*pi*x
+        )
+    </li>
+
+    <li>
+        Nuttall4: 0.3125 + 0.46875*cos( 2*pi*x ) + 0.1875*cos( 4*pi*x ) + 0.03125*cos(
+        6*pi*x )
+    </li>
+
+    <li>
+        SFT3F: 0.26526 + 0.5*cos( 2*pi*x ) + 0.23474*cos( 4*pi*x )
+    </li>
+
+    <li>
+        SFT4F: 0.21706 + 0.42103*cos( 2*pi*x ) + 0.28294*cos( 4*pi*x ) + 0.07897*cos(
+        6*pi*x )
+    </li>
+
+    <li>
+        SFT5F: 0.1881 + 0.36923*cos( 2*pi*x ) + 0.28702*cos( 4*pi*x ) + 0.13077*cos(
+        6*pi*x ) + .02488*cos( 8*pi*x )
+    </li>
+
+    <li>
+        SFT3M: 0.28235 + 0.52105*cos( 2*pi*x ) + 0.19659*cos( 4*pi*x )
+    </li>
+
+    <li>
+        SFT4M: 0.241906 + 0.460841*cos( 2*pi*x ) + 0.255381*cos( 4*pi*x ) + 0.041872*cos(
+        6*pi*x )
+    </li>
+
+    <li>
+        SFT5M: 0.209671 + 0.407331*cos( 2*pi*x ) + 0.281225*cos( 4*pi*x ) + 0.092669*cos(
+        6*pi*x ) + 0.0091036*cos( 8*pi*x )
+    </li>
+
+    <li>
+        FTNI: 0.2810639 + 0.5208972*cos( 2*pi*x ) + 0.1980399*cos( 4*pi*x )
+    </li>
+
+    <li>
+        FTHP: 1.0 + 1.912510941*cos( 2*pi*x ) + 1.079173272*cos( 4*pi*x ) + 0.1832630879*cos(
+        6*pi*x )
+    </li>
+
+    <li>
+        FTSRS: 1.0 + 1.93*cos( 2*pi*x ) + 1.29*cos( 4*pi*x ) + 0.388*cos( 6*pi*x
+        ) + 0.028*cos( 8*pi*x )
+    </li>
+
+    <li>
+        HFT70: 1 + 1.90796*cos( 2*pi*x ) + 1.07349*cos( 4*pi*x ) + 0.18199*cos(
+        6*pi*x )
+    </li>
+
+    <li>
+        HFT95: 1 + 1.9383379*cos( 2*pi*x ) + 1.3045202*cos( 4*pi*x ) + 0.4028270*cos(
+        6*pi*x ) + 0.0350665*cos( 8*pi*x )
+    </li>
+
+    <li>
+        Kaiser3, Kaiser4, Kaiser5, Kasier6, Kasier7: All Kaiser windows are computed
+        from the following formula, which depends on the parameter alpha:
+        I<sub>0</sub>(pi*alpha*sqrt(1-4*x^2))/I<sub>0</sub>(pi*alpha),
+        where I<sub>0</sub> is the Bessel function of order 0. The value of alpha
+        used for a particular window is given in its name: Kaiser3 uses alpha=3,
+        for example.
+    </li>
+
+    <br>&nbsp;</ul>
+All windows defined here are symmetrical about their center (x=0), and
+(except for Rectangle) they taper monotonically to a very small value from
+a maximum of 1. When a window function is used, its domain is scaled to
+the width of the input data set. If a window width has an odd number of
+elements, then the central value is 1 and values are sampled from the continuous
+functions defined here on either side of the maximum. If the window width
+is even, then the values are sampled symmetrically about the maximum, so
+that the maximum is not actually a sampled value. Note that the Rectangle
+window is not really a window at all: it does not modify the input data.
+<p><a NAME="reference"></a>The reference used for constructing these windows,
+    and for naming them, is: G Heinzel, A Rudiger, R Schilling, "Spectrum and
+    spectral density estimation by the discrete Fourier transform (DFT), including
+    a comprehensive list of window functions and some new flat-top windows",
+    preprint (2002). Contact: ghh@mpq.mpg.de
+    <br>&nbsp;
+
+<p>
+<hr WIDTH="15%" SIZE=4>
+</body>
+</html>

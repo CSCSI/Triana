@@ -1,0 +1,40 @@
+<HTML>
+
+<HEAD>
+    <TITLE>ImageOr</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#ffffff" LINK="#ff0000" VLINK="#c0c0c0">
+<CENTER>
+    <H1>ImageOr</H1>
+    <LARGE><B>
+        Author : Melanie Rhianna Lewis<BR>
+        Input Type : TrianaPixelMap<BR>
+        Output Type : TrianaPixelMap<BR>
+        Date : <BR>
+    </B></LARGE>
+    <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+</CENTER>
+<DIV ALIGN="LEFT">
+    <CENTER>
+        <IMG SRC="binary_op.gif">
+    </CENTER>
+    ImageOr is a binary operator. A binary operator is one which takes data from two images and generates a third image.
+    It does this by taking the value of the corresponding pixels in each of the two input images and combining the
+    values using some operator to generate the apropriate pixel in the third image. Both input images must have the same
+    dimensions.
+    <P>
+        ImageOr ORs the red values, green values and blue values for the two input images to generate a new image.
+        Mathematically it can be expressed as follows:
+<PRE><CODE>
+    rr(i, j) = r1(i, j) OR r2(i, j)
+    gr(i, j) = g1(i, j) OR g2(i, j)
+    br(i, J) = b1(i, j) OR b2(i, j)
+</CODE></PRE>
+    <H3>See also</H3>
+    <A HREF="ImageAdd.html">ImageAdd</A>, <A HREF="ImageAnd.html">ImageAnd</A>, <A HREF="ImageDiff.html">ImageDiff</A>,
+    <A HREF="ImageXor.html">ImageXor</A>
+    <CENTER>
+        <HR WIDTH="95%" SIZE="4" ALIGN="CENTER" NOSHADE>
+    </CENTER>
+</BODY>

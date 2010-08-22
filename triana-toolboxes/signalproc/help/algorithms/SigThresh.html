@@ -1,0 +1,92 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>SigThresh</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <h1>
+        SigThresh</h1></center>
+
+<center>
+    <LARGE><b>Author : Ian Taylor, Bernard Schutz</b>
+
+        <p>
+            <LARGE><b>Version : 2.0</b>
+
+                <p><b>Input Types : GraphType</b>
+
+                <p><b>Output Types : GraphType</b>
+
+                <p>Date : 16 March 2001
+</center>
+
+<br>&nbsp;
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of SigThresh</a></li>
+
+    <li>
+        <a href="#using">Using SigThresh</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of SigThresh</h2>
+The SigThresh unit allows the user to test data sets by comparing a quantity
+derived from their data to a given threshold value. If the data set <b>passes</b>
+the test then the input data is passed to the units <b>second</b> output
+node <b>otherwise</b> it is passed to the <b>first</b>. You can use this
+unit to process the data using different networks if a certain condition
+arises. For example, you may be waiting for an event to appear in the data
+and then when this event occurs you may want to process it and graph it
+in a particular way.
+<p>There are 5 different comparison tests you can use on the input data
+    sets. You can choose to use the mean, standard deviation, or RMS of the
+    entire data set, or you can compare the value or the absolute value of
+    each data point against the threshold value. In the value test, if the
+    given threshold value is negative, then the data are tested to see if they
+    exceed it in the negative sense, i.e. are smaller than the threshold.
+
+<p>Input data sets can be any GraphType objects. That means they can contain
+    multidimensional data arrays. All elements of such arrays are used in constructing
+    the tests.
+
+<p>If the data set is complex, its real part is used for the value and
+    mean tests, while the complex magnitude is used for the absolute value,
+    standard deviation and RMS tests.
+
+<p>If the data set contains more than one dependent data set, only the
+    first arithmetic data set is used.
+    <br>&nbsp;
+    <br>&nbsp;
+
+<h2>
+    <a NAME="using"></a>Using SigThresh</h2>
+The parameter window of SigThresh looks like this:
+<dir>
+    <dir>&nbsp;
+        <center>
+            <br><img SRC="Image23.gif" height=151 width=322></center>
+
+        <br>&nbsp;</dir>
+</dir>
+The first line is a choice box offering the five different threshold tests
+described above. The second line allows you to set the value of the threshold.
+<p>If you want the threshold to depend on values calculated elsewhere,
+    you can use the input node window of SigThresh to create an input node
+    for the threshold value.
+
+<p>
+<hr ALIGN="RIGHT" SIZE=4>
+</body>
+</html>

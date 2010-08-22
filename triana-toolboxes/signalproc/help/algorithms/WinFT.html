@@ -1,0 +1,143 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; I) [Netscape]">
+    <title>WinFT</title>
+</head>
+<body text="#000000" bgcolor="#FDF5E6" link="#FF00FF" vlink="#800080" alink="#FF0000">
+<a href="Algorithms.html">Algorithms Index</a> , <a href="FreqFiltering.html">Filtering
+    in Triana</a> , <a href="FreqStoreModel.html">Triana Spectral Storage Model</a>
+
+<p>
+<hr WIDTH="95%" SIZE=4>
+<center>
+    <h1>
+        WinFT</h1></center>
+
+<center>
+    <LARGE><b>Author : Bernard Schutz</b>
+
+        <p>
+            <LARGE><b>Version : 1.0</b>
+
+                <p><b>Input Types : <a href="../../../../help/JavaDoc/triana/types/SampleSet.html">SampleSet</a></b>
+                    <br><b>Output Types : <a href="../../../../help/JavaDoc/triana/types/TimeFrequency.html">TimeFrequency</a></b>
+
+                <p><b>Date : 5 January 2001&nbsp;</b></LARGE>
+</center>
+
+<h2>
+    <a NAME="contents"></a>Contents</h2>
+
+<ul>
+    <li>
+        <a href="#description">Description of WinFT</a></li>
+
+    <li>
+        <a href="#using">Using WinFT</a></li>
+
+    <li>
+        See also: <a href="FreqFiltering.html">Filtering in Triana</a> , <a href="FreqStoreModel.html">Triana
+        Spectral Storage Model</a></li>
+</ul>
+
+<hr WIDTH="15%" SIZE=4>
+<h2>
+    <a NAME="description"></a>Description of WinFT</h2>
+The unit called WinFT performs a windowed Fourier transform on an input
+data set. A window function, normally shorter in length than the input
+data set, is multiplied into the data set and a Fourier transform is taken
+of the resulting data. The window is then stepped along the data set, re-applied,
+and a new transform performed. The resulting set of transforms is arranged
+as a matrix and output as a TimeFrequency data type.
+<p>This can in turn be mapped to a color map, for example by <a href="ImageMapper.html">ImageMapper</a>,
+    and displayed.
+
+<p>The user can choose the kind of window function, or input a window function
+    at the second (optional) input node of the unit. The user can also choose
+    the length of the window, and the size of the step as the window moves
+    along the whole data set. The first transform places the start of the window
+    at the first data point of the input. The last transform is the last one
+    that can be done without wrapping the window around to the front of the
+    input data set.
+
+<p>The built-in windows are defined by the following names and associated
+    functions, all of which are given here on the domain (-0.5, 0.5):
+<ul>
+    <li>
+        Rectangle, having the constant value 1 inside its domain.
+    </li>
+
+    <li>
+        Bartlett, defined by 1 - 2*|x|
+    </li>
+
+    <li>
+        Blackman, defined by 0.42 + 0.5*cos(2*pi*x) + 0.08*cos(4*pi*x)
+    </li>
+
+    <li>
+        Gaussian, defined by exp(-18*x^2).
+    </li>
+
+    <li>
+        Hamming, defined by 0.54 + 0.46*cos( 2*pi*x)
+    </li>
+
+    <li>
+        Hanning, defined by cos^2(pi*x)
+    </li>
+
+    <li>
+        Welch, defined by 1 - 4*x^2
+    </li>
+</ul>
+All windows defined here are symmetrical about their center (x=0), and
+except for the rectangular one they taper monotonically to a very small
+value from a maximum of 1. When a window function is used, its domain is
+scaled to the width chosen by the user, and it is then normalized, so that
+the sum of the squares of the values of its elements equals 1. If a window
+width is chosen to have an odd number of elements, then the central value
+is 1 and values are sampled from the continuous functions defined here
+on either side of the maximum. If the window width is chosen to have an
+even number of elements, then they are sampled symmetrically about the
+maximum, so that the maximum is not actually a sampled value.
+<p>If the user inputs a window, it is also normalized before being used.
+
+<p>The window is multiplied into the data set in the appropriate domain,
+    and a Fourier transform is performed with a length equal to the size of
+    the window. Then the window is stepped along and the process is repeated.
+    <br>&nbsp;
+
+<h2>
+    <a NAME="using"></a>Using WinFT</h2>
+WinFT has has the following parameter window:
+<center>
+    <p><img SRC="WinFT.gif" height=207 width=377></center>
+
+<p>The first choice box offers the user the choice of the windows described
+    above. If the user inputs a window function at the second input node (see
+    below) then this choice is ignored. The second parameter is an integer
+    which is the width in data points of the chosen window. The user should
+    choose this in the light of the size of the input data set. If the width
+    is longer than the input, only one Fourier transform will be performed.
+    The third parameter is the step between successive windows. The difference
+    between the two integer parameters is the overlap between successive Fourier
+    transforms.
+
+<p>If the user uses the node dialog box to choose two input nodes, then
+    a <a href="../../../../help/JavaDoc/triana/types/VectorType.html">VectorType</a>
+    data set may be routed to the second input node and this will be used as
+    the window, after normalizing it. The window type and width parameters
+    will be ignored, but the step will be used as selected in the parameter
+    window. The input window could be constructed, for example, using <a
+            href="../../../Math/Calculator/help/MathCalc.html">MathCalc</a>.
+    <br>&nbsp;
+
+<p>
+<hr WIDTH="15%" SIZE=4>
+</body>
+</html>

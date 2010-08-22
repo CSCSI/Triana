@@ -1,0 +1,85 @@
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+    <META NAME="Generator" CONTENT="Microsoft Word 97">
+    <TITLE>Importer</TITLE>
+    <META NAME="Template" CONTENT="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY TEXT="#000000" LINK="#ff00ff" VLINK="#800080" BGCOLOR="#fdf5e6" ALINK="#FF0000">
+
+<H1 ALIGN="CENTER">Importer </H1>
+
+<P ALIGN="CENTER">
+    <LARGE><B>Author : Ian Taylor<BR>
+        Output Types : </B><A
+            HREF="http://www.triana.co.uk/documentation/Triana/JavaDoc/triana.types.VectorType.html"><B>VectorType</B></A><B>
+        Date : 12 July 2000</LARGE>
+</P>
+</B><P ALIGN="CENTER"><IMG SRC="Image5.gif" WIDTH=558 HEIGHT=361></P>
+
+<P>The Importer is a unit that allows the user to input data from a text or a binary file and output the data in
+    Triana's <I>Raw Data </I>format. For binary files, the size of each data element needs to be specified by using the
+    <I>Data Type</I> choice widget (see above) and for text files each element must appear on a separate line within the
+    file. This may well be extended to deal with files with items separated by spaces in the next release. Also, see the
+    exporter unit.</P>
+
+<P>
+<HR WIDTH="95%" SIZE=4>
+</P>
+<H2>The Importer Unit Window </H2>
+
+<P>This section appears at the upper left hand-side of the window. It controls the editing of 4 types of information
+    :-</P>
+<OL>
+
+    <B>
+        <LI>File Type :
+    </B>This can be either <I>binary</I> or <I>text</I> to load in data from a binary file or a text file,
+    respectively. </LI>
+    <B>
+        <LI>Data Type :
+    </B>This represents the data format <B>only if </B>the file type is binary. It asks the user for the format of the
+    data stored within the binary file e.g. double, float, int, long etc. For text files, this is not needed </LI>
+    <B>
+        <LI>Samples :
+    </B>This is the number of samples you want to load in on one iteration. </LI>
+    <B>
+        <LI>Offset :
+    </B>The offset from the point of the file where you want the Importer to start reading from. This should be
+    specified in the number of samples not in bytes.</LI>
+    <B>
+        <LI>Apply Offset At Each Iteration ? :
+    </B>If this is set to true then the Importer skips <B><I>offset </B></I>samples every time the Importer is run (i.e.
+    each time the start button is pressed in SingleStep mode or for each iteration in Step. Cont or Continuous modes).
+    If this is turned off then the offset is only applied when the Importer is at the start of the file.</LI>
+    <B>
+        <LI>Skip :
+    </B>The number of samples to skip between each read. This parameter along with the offset parameter is useful for
+    reading columns of data from a file. For example, if you had a file containing 4 columns e.g.<BR>
+    <BR>
+    1 2 3 4<BR>
+    5 6 7 8<BR>
+    9 10 11 12<BR>
+    13 14 15 16<BR>
+    <BR>
+    then to pick out the 1<SUP>st</SUP> column specify the <I>offset </I>to be 0 and the <I>skip factor </I>to be 3 i.e.
+    read value1<I> </I>and skip 2, 3 and 4 then read 5 etc. To read the 3<SUP>rd</SUP> column choose an <I>offset </I>of
+    2 and a <I>skip </I>factor of 3. Note that the data in the file does not have to be arranged in row and column
+    format. Triana reads in the next available value from the file whether they are organized evenly or not. Data can be
+    extracted out of any file therefore in this way.</LI>
+    <B>
+        <LI>Swap the Bits ?
+    </B>switch this flag if you are on the data has been generated on a Big endian machine and your are loading it into
+    a machine which is not (or vice-verse). This only applies for binary data and means, for example, that you can load
+    binary data files created on a Windows machine on a Unix machine.<A NAME="output"></A></LI>
+    <B>
+        <LI>File Loading :
+    </B>- This section appears at the bottom of the window. It consists of two rows of widgets. The first row allows the
+    user to choose the desired input file by typing in its name (full path and name of file) into a text field. The
+    buttons in the next to last row rewind the file (<I>rewind</I>) and allow the user to browse for the desired file
+    (<I>browse</I>). The last button makes the window invisible (i.e. the <I>ok </I>button).</LI></OL>
+
+<P>
+<HR WIDTH="95%" SIZE=4>
+</P></BODY>
+</HTML>

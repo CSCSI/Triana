@@ -11,11 +11,9 @@
     <property name="types-classes" value="../triana-types/target/classes"/>
     <property name="velocity-classes" value="../triana-velocity/target/classes"/>
     <property name="pegasus-classes" value="../triana-pegasus/target/classes"/>
-    <!--<property name="toolbox-classes" value="../triana-toolbox/target/classes"/>-->
-
+    <property name="toolboxes" value="../triana-toolboxes"/>
 
     <target name="triana-app">
-
         <mkdir dir="dist"/>
         <mkdir dir="dist/classes"/>
         <path id="jar.class.path">
@@ -38,11 +36,7 @@
         <copy todir="dist/classes" overwrite="yes">
             <fileset dir="${pegasus-classes}" includes="**/**" excludes=".svn"/>
         </copy>
-        <!--
-        <copy todir="target/classes" overwrite="yes">
-                    <fileset dir="${toolbox-classes}" includes="**/**"/>
-        </copy>
-        -->
+
         <manifestclasspath property="manifest.classpath.prop" jarfile="dist/triana-app-${version}.jar">
             <classpath refid="jar.class.path"/>
         </manifestclasspath>
@@ -60,9 +54,72 @@
             </filterset>
         </copy>
         <chmod dir="dist" perm="775" includes="**/*.sh,**/*.bat"/>
+        <mkdir dir="dist/toolboxes"/>
+        <antcall target="toolbox">
+            <param name="toolbox" value="audio"/>
+        </antcall>
+        <antcall target="toolbox">
+            <param name="toolbox" value="common"/>
+        </antcall>
+        <antcall target="toolbox">
+            <param name="toolbox" value="math"/>
+        </antcall>
+        <antcall target="toolbox">
+            <param name="toolbox" value="signalproc"/>
+        </antcall>
+        <antcall target="toolbox">
+            <param name="toolbox" value="imageproc"/>
+        </antcall>
     </target>
 
-    <target name="clean">
+    <target name="toolbox">
+        <mkdir dir="dist/toolboxes/${toolbox}"/>
+        <copy todir="dist/toolboxes/${toolbox}" overwrite="yes">
+            <fileset dir="${toolboxes}/${toolbox}" includes="lib/**"/>
+        </copy>
+        <copy todir="dist/toolboxes/${toolbox}" overwrite="yes">
+            <fileset dir="${toolboxes}/${toolbox}" includes="xml/**"/>
+        </copy>
+        <copy todir="dist/toolboxes/${toolbox}" overwrite="yes">
+            <fileset dir="${toolboxes}/${toolbox}/target" includes="*.jar"/>
+        </copy>
+    </target>
+
+    <target name="dev-toolboxes">
+        <delete dir="../toolboxes"/>
+        <mkdir dir="../toolboxes"/>
+        <antcall target="dev-toolbox">
+            <param name="toolbox" value="audio"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolbox" value="common"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolbox" value="math"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolbox" value="signalproc"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolbox" value="imageproc"/>
+        </antcall>
+    </target>
+
+    <target name="dev-toolbox">
+
+        <mkdir dir="../toolboxes/${toolbox}"/>
+        <copy todir="../toolboxes/${toolbox}" overwrite="yes">
+            <fileset dir="${toolboxes}/${toolbox}" includes="lib/**"/>
+        </copy>
+        <copy todir="../toolboxes/${toolbox}" overwrite="yes">
+            <fileset dir="${toolboxes}/${toolbox}" includes="xml/**"/>
+        </copy>
+        <copy todir="../toolboxes/${toolbox}" overwrite="yes">
+            <fileset dir="${toolboxes}/${toolbox}/target" includes="classes/**"/>
+        </copy>
+    </target>
+
+    <target name="clean" depends="dev-toolboxes">
         <delete dir="dist"/>
     </target>
 

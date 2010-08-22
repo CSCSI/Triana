@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tool>
+    <toolname>DistortedFlanger</toolname>
+    <package>audio.processing.userpresets</package>
+    <version>0.1-SNAPSHOT</version>
+    <inportnum>1</inportnum>
+    <outportnum>1</outportnum>
+    <inparam/>
+    <outparam/>
+    <input>
+        <node index="0">
+            <type>triana.types.audio.MultipleAudio</type>
+        </node>
+    </input>
+    <output>
+        <node index="0">
+            <type>triana.types.audio.MultipleAudio</type>
+        </node>
+    </output>
+    <parameters>
+        <param name="guiY" type="gui">
+            <value>2.723684210526316</value>
+        </param>
+        <param name="guiX" type="gui">
+            <value>1.6622807017543861</value>
+        </param>
+        <param name="popUpDescription" type="unknown">
+            <value>No description for tool</value>
+        </param>
+    </parameters>
+    <tasks>
+        <task>
+            <toolname>FuzzBox</toolname>
+            <package>audio.processing.distortion</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>FuzzBox</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.distortion</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="guiY" type="gui">
+                    <value>0.5</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+                <param name="threshold" type="userAccessible">
+                    <value>983</value>
+                </param>
+                <param name="gain" type="userAccessible">
+                    <value>3.500</value>
+                </param>
+            </parameters>
+        </task>
+        <task>
+            <toolname>Flanger</toolname>
+            <package>audio.processing.modulation</package>
+            <version>0.1</version>
+            <proxy type="Java">
+                <param paramname="unitName">
+                    <value>VariableDelay</value>
+                </param>
+                <param paramname="unitPackage">
+                    <value>audio.processing.modulation</value>
+                </param>
+            </proxy>
+            <inportnum>1</inportnum>
+            <outportnum>1</outportnum>
+            <inparam/>
+            <outparam/>
+            <input>
+                <type>triana.types.audio.MultipleAudio</type>
+            </input>
+            <output>
+                <type>triana.types.audio.MultipleAudio</type>
+            </output>
+            <parameters>
+                <param name="delayInMs" type="userAccessible">
+                    <value>1.000</value>
+                </param>
+                <param name="LFOType" type="userAccessible">
+                    <value>sinusoidal</value>
+                </param>
+                <param name="feedback" type="userAccessible">
+                    <value>90</value>
+                </param>
+                <param name="outputType0" type="unknown">
+                    <value>triana.types.audio.MultipleAudio</value>
+                </param>
+                <param name="amplitude" type="userAccessible">
+                    <value>50</value>
+                </param>
+                <param name="filterType" type="userAccessible">
+                    <value>comb</value>
+                </param>
+                <param name="summingType" type="userAccessible">
+                    <value>Type 1</value>
+                </param>
+                <param name="oscillationPeriod" type="userAccessible">
+                    <value>88200</value>
+                </param>
+                <param name="chunked" type="userAccessible">
+                    <value>false</value>
+                </param>
+                <param name="guiY" type="gui">
+                    <value>0.0</value>
+                </param>
+                <param name="guiX" type="gui">
+                    <value>1.2719298245614035</value>
+                </param>
+            </parameters>
+        </task>
+        <connections>
+            <connection type="NonRunnable">
+                <source node="0" taskname="FuzzBox"/>
+                <target node="0" taskname="Flanger"/>
+            </connection>
+        </connections>
+        <groupnodemapping>
+            <input>
+                <node externalnode="0" node="0" taskname="FuzzBox"/>
+            </input>
+            <output>
+                <node externalnode="0" node="0" taskname="Flanger"/>
+            </output>
+        </groupnodemapping>
+    </tasks>
+</tool>
