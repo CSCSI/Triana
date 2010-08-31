@@ -1,0 +1,36 @@
+MAVEN INTELLIJ integration
+==========================
+
+Here's some instructions on integrating Intellij with maven.
+They are not complete and it might be that I do some things in a round about way, but it works for me.
+
+1. When you download a maven project from svn, run mvn idea:idea in the root directory containing the pom.xml file.
+This will create an intellij project for you.
+2. open the project in Intellij.
+3. On the right of the screen you should see a sideways maven tab. Click on it.
+4. Click on the maven settings button with the spanner.
+    This will allow you to tell intellij where maven is in the maven config window.
+5. In the maven config window, edit maven home directory by clicking 'override' and inserting the path to
+    your maven installation, i.e. mine is "/Applications/java/apache-maven-2.2.1"
+6. In the maven config window edit the maven user settings by clicking "override" and
+    inserting where your maven settings.xml file, i.e. mine is "/Applications/java/apache-maven-2.2.1/conf/settings.xml"
+
+If you don't know where your settings.xml is, check in <maven-home>/conf/
+If you don't know where your maven home is and can't find it, take up flower arranging.
+
+NOTE: Annoyance factor - I seem to have to do this for every project -
+I'm sure there is a better but I haven't got round to finding it.
+
+7. Click ok.
+8. In the maven sidebar, click the Plus (+) button and navigate to the pom.xml file
+    from which you created the ipr file. Select this file and click ok. The sidebar should get populated
+    with the modules of the project. From here you can execute the maven targets like install, clean etc.
+
+9. The maven plugin tries to keep up to date with changes you make, e.g.
+    if you edit a pom file in intellij, it will offer to reimport.
+    This doesn't ways work in my experience. To force a reimport you can right click on a directory
+    or project in the left tree in intellij and select maven -> force reimport.
+
+NOTE: I also have an M2_HOME environment variable set pointing to my maven home. The maven plugin suggests that
+it can read this and does not need you to set the maven home in the config dialog if you have this set,
+but in my experience this is a bare-faced lie.
