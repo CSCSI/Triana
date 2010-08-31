@@ -66,6 +66,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -83,7 +84,6 @@ import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.util.ExtensionFinder;
 import org.trianacode.util.Env;
 
 /**
@@ -124,10 +124,10 @@ public class FileImportExportDecorator implements ActionListener {
     public int showImportDialog(Component parent) {
         System.out.println("FileImportExportDecorator.showImportDialog");
         init();
-        java.util.List<Object> importers = ExtensionFinder.services(TaskGraphImporterInterface.class);
+        List<TaskGraphImporterInterface> importers = ImportExportRegistry.getImporters();
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
-            JOptionPane.showMessageDialog(parent, "No Taskgraph Importers currently available", "Export",
+            JOptionPane.showMessageDialog(parent, "No Taskgraph Importers currently available", "Import",
                     JOptionPane.INFORMATION_MESSAGE,
                     GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
@@ -158,10 +158,10 @@ public class FileImportExportDecorator implements ActionListener {
      */
     public int showImportToolDialog(Component parent) {
         init();
-        java.util.List<Object> importers = ExtensionFinder.services(ToolImporterInterface.class);
+        List<ToolImporterInterface> importers = ImportExportRegistry.getToolImporters();
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
-            JOptionPane.showMessageDialog(parent, "No Tool Importers currently available", "Export",
+            JOptionPane.showMessageDialog(parent, "No Tool Importers currently available", "Import",
                     JOptionPane.INFORMATION_MESSAGE,
                     GUIEnv.getTrianaIcon());
             return TFileChooser.CANCEL_OPTION;
@@ -192,7 +192,7 @@ public class FileImportExportDecorator implements ActionListener {
      */
     public int showExportDialog(Component parent) {
         init();
-        java.util.List<Object> importers = ExtensionFinder.services(TaskGraphExporterInterface.class);
+        List<TaskGraphExporterInterface> importers = ImportExportRegistry.getExporters();
         Object[] plugins = importers.toArray(new Object[importers.size()]);
         if (plugins.length == 0) {
             JOptionPane.showMessageDialog(parent, "No Taskgraph Exporters currently available", "Export",

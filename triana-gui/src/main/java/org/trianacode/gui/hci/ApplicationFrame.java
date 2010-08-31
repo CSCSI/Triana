@@ -157,6 +157,10 @@ import org.trianacode.gui.components.triana.TrianaColorModel;
 import org.trianacode.gui.components.triana.TrianaComponentModel;
 import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.extensions.ExtensionManager;
+import org.trianacode.gui.extensions.ImportExportRegistry;
+import org.trianacode.gui.extensions.TaskGraphExporterInterface;
+import org.trianacode.gui.extensions.TaskGraphImporterInterface;
+import org.trianacode.gui.extensions.ToolImporterInterface;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.BrokenToolMonitor;
 import org.trianacode.gui.hci.tools.TaskGraphView;
@@ -302,7 +306,8 @@ public class ApplicationFrame extends TrianaWindow
             tools = new ToolTableImpl(EngineInit.getToolResolver());
             splash.setSplashProgress("Initializing Engine");
 
-            EngineInit.init(tools, false, Extension.class);
+            EngineInit.init(tools, false, Extension.class, TaskGraphExporterInterface.class,
+                    TaskGraphImporterInterface.class, ToolImporterInterface.class);
             splash.setSplashProgress(Env.getString("toolsInitLabel"));
             initTools();
             initActionTable();
@@ -456,6 +461,21 @@ public class ApplicationFrame extends TrianaWindow
             Extension e = (Extension) o;
             e.init(this);
             ExtensionManager.registerExtension(e);
+        }
+        en = EngineInit.getExtensions(TaskGraphExporterInterface.class);
+        for (Object o : en) {
+            TaskGraphExporterInterface e = (TaskGraphExporterInterface) o;
+            ImportExportRegistry.addExporter(e);
+        }
+        en = EngineInit.getExtensions(TaskGraphImporterInterface.class);
+        for (Object o : en) {
+            TaskGraphImporterInterface e = (TaskGraphImporterInterface) o;
+            ImportExportRegistry.addImporter(e);
+        }
+        en = EngineInit.getExtensions(ToolImporterInterface.class);
+        for (Object o : en) {
+            ToolImporterInterface e = (ToolImporterInterface) o;
+            ImportExportRegistry.addToolImporter(e);
         }
     }
 
