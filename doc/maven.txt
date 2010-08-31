@@ -5,7 +5,7 @@ Here's some instructions on integrating Intellij with maven.
 They are not complete and it might be that I do some things in a round about way, but it works for me.
 
 1. When you download a maven project from svn, run mvn idea:idea in the root directory containing the pom.xml file.
-This will create an intellij project for you.
+    This will create an intellij project for you.
 2. open the project in Intellij.
 3. On the right of the screen you should see a sideways maven tab. Click on it.
 4. Click on the maven settings button with the spanner.
