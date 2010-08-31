@@ -31,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.QuestionWindow;
+import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
@@ -44,12 +45,12 @@ import triana.types.util.Str;
  * audio into a stream of contiguous chunks, and output, or as the whole sound file in its entirity. Created by Dr. Ian
  * Taylor. Modified and updated by Eddie Al-Shakarchi. Contact e.alshakarchi@cs.cf.ac.uk .
  *
+ *
  * @author Eddie Al-Shakarchi
  * @version $Revision: 2921 $
  */
 
-public class LoadMp3 extends OldUnit {
-
+public class LoadMp3 extends Unit {
     static boolean bigendian = true;
 
     // Works out type of operating system in order to establish byte-order
@@ -106,7 +107,6 @@ public class LoadMp3 extends OldUnit {
 
             do {
                 try {
-                    System.out.println("QUICKTEST HELLO!");
 
                     System.out.println("Bytes:" + bytes);
                     System.out.println("Bytes Length:" + bytes.length);
@@ -120,7 +120,6 @@ public class LoadMp3 extends OldUnit {
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println("QUICKTEST CATCH");
                 }
 
                 if (bytesread == -1) {
@@ -128,7 +127,7 @@ public class LoadMp3 extends OldUnit {
                     if (con.reply == con.YES) {
                         reset();
                     } else {
-                        stop();
+                        //stop();
                         return;
                     }
                 }
@@ -136,8 +135,6 @@ public class LoadMp3 extends OldUnit {
 
 
             while (bytesread == -1);
-
-            System.out.println("QUICKTEST FINAL");
 
             if (bytesread != bufSize) {
                 byte[] newbytes = new byte[(int) bufSize];
@@ -259,7 +256,7 @@ public class LoadMp3 extends OldUnit {
     }
 
     /**
-     * Initialses information specific to LoadSound.
+     * Initialses information specific LoadMP3
      */
     public void init() {
         super.init();
@@ -439,14 +436,13 @@ public class LoadMp3 extends OldUnit {
 
                     //InputStream test2 = (InputStream) properties.get(test);
 
-                    System.out.println("OKAY THIS IS A TAUDIOFILEFORMAT ETC");
-
                     System.out.println("tag: " + tag);
                     System.out.println("val: " + val);
                     //System.out.println("test: " + test);
 
                 } else {
-                    System.out.println("THIS IS NOT TAUDIOFILEFORMAT ETC");
+
+                    // Do something
                 }
 
             } catch (Exception ex) {
@@ -655,7 +651,6 @@ public class LoadMp3 extends OldUnit {
 
         catch (Exception e) {
             e.printStackTrace();
-            System.out.println("QUICKTEST CATCH");
         }
     }
 
@@ -674,4 +669,39 @@ public class LoadMp3 extends OldUnit {
     public String getHelpFile() {
         return "LoadMp3.html";
     }
+
+
+    /**
+     * @return an array of the types accepted by each input node. For node indexes not covered the types specified by
+     *         getInputTypes() are assumed.
+     */
+    public String[][] getNodeInputTypes() {
+        return new String[0][0];
+    }
+
+    /**
+     * @return an array of the input types accepted by nodes not covered by getNodeInputTypes().
+     */
+    public String[] getInputTypes() {
+        return new String[]{};
+    }
+
+
+    /**
+     * @return an array of the types output by each output node. For node indexes not covered the types specified by
+     *         getOutputTypes() are assumed.
+     */
+    public String[][] getNodeOutputTypes() {
+        return new String[0][0];
+    }
+
+    /**
+     * @return an array of the input types output by nodes not covered by getNodeOutputTypes().
+     */
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
+    }
+
+}
+
 }

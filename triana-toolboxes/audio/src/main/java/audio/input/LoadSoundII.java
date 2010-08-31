@@ -1,6 +1,5 @@
 package audio.input;
 
-
 import java.io.File;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -14,9 +13,15 @@ import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
 
 /**
+ * A class for a Unit which allows the user to load a sound file into Triana. This unit allows the user to split the
+ * audio into a stream of contiguous chunks, and output, or as the whole sound file in its entirety. Created by Dr. Ian
+ * Taylor. Modified and updated by Eddie Al-Shakarchi. Contact e.alshakarchi@cs.cf.ac.uk .
+ *
+ * @author Ian Taylor
  * @author Eddie Al-Shakarchi
- * @version $Revision: 2915 $
+ * @version $Revision: 4052 $
  */
+
 public class LoadSoundII extends Unit {
     static boolean bigendian = true;
 
