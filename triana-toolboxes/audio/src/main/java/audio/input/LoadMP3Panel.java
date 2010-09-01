@@ -34,7 +34,7 @@ import triana.types.util.Str;
  * @author $AUTHOR
  * @version $Revision: 2915 $
  */
-public class LoadSoundIIPanel extends ParameterPanel {
+public class LoadMP3Panel extends ParameterPanel {
 
     // Define GUI components here, e.g.
     public static String fileName;
@@ -88,9 +88,7 @@ public class LoadSoundIIPanel extends ParameterPanel {
 
                 System.out.println("test me!!");
 
-                // Pay attention to reference back to LoadSoundII
                 LoadSoundII.createAudioInputStream(fc.getSelectedFile());
-
                 String fn = fc.getSelectedFile().getAbsolutePath();
                 System.out.println("fn = " + fn);
                 userScreen(fc.getSelectedFile().getName());
@@ -99,7 +97,7 @@ public class LoadSoundIIPanel extends ParameterPanel {
 
                 System.out.println("fn 3 = " + fn);
 
-                setParameter((LoadSoundIIPanel.fileName), fn);
+                setParameter((LoadMP3Panel.fileName), fn);
                 setParameter((LoadSoundII.fileName), fn);
 
 
@@ -275,18 +273,26 @@ public class LoadSoundIIPanel extends ParameterPanel {
 
         //parameterUpdate("bufSize", (Object)by);
         LoadSoundII.bufSize = (by);
+
+
         LoadSoundII.songSizeInSamples = (songSizeInSamples);
         LoadSoundII.outputSizeInSamples = (outputSizeInSamples);
         LoadSoundII.numberOfChunks = (numberOfChunks);
-        LoadSoundII.bytes = null;
-        LoadSoundII.ma = null;
 
+
+        //parameterUpdate("outputSizeInSamples", (Object)outputSizeInSamples);
+//        parameterUpdate("songSizeInSamples", (Object)songSizeInSamples);
+//        parameterUpdate("numberOfChunks", (Object)numberOfChunks);
+        LoadSoundII.bytes = null;
+
+        LoadSoundII.ma = null;
         if (entireFile.isSelected()) {
             LoadSoundII.gotEntireFile = true;
         } else {
             LoadSoundII.gotEntireFile = false;
         }
     }
+
 
     /**
      * This method is called when cancel is clicked on the parameter window. It should synchronize the GUI components
@@ -297,6 +303,7 @@ public class LoadSoundIIPanel extends ParameterPanel {
         //
         // namelabel.setText(getParameter("name"));         
     }
+
 
     /**
      * This method is called when a parameter in the task is updated. It should update the GUI in response to the

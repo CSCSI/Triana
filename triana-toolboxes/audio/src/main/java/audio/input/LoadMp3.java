@@ -20,7 +20,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -260,8 +259,35 @@ public class LoadMp3 extends Unit {
      */
     public void init() {
         super.init();
-        setResizableInputs(false);
-        setResizableOutputs(true);
+
+        // Initialise node properties
+        setDefaultInputNodes(0);
+        setMinimumInputNodes(0);
+        setMaximumInputNodes(0);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(0);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        // Initialise parameter update policy and output policy
+        setParameterUpdatePolicy(PROCESS_UPDATE);
+        setOutputPolicy(CLONE_MULTIPLE_OUTPUT);
+
+        // Initialise pop-up description and help file location
+        setPopUpDescription("Load in an audio file...");
+        setHelpFileLocation("LoadSoundII.html");
+
+        // Define initial value and type of parameters
+        defineParameter("fileName", "untitled", USER_ACCESSIBLE);
+        defineParameter("bufSize", "16384", USER_ACCESSIBLE);
+        defineParameter("songSizeInSamples", "", USER_ACCESSIBLE);
+        defineParameter("outputSizeInSamples", "", USER_ACCESSIBLE);
+        defineParameter("numberOfChunksInSong", "", USER_ACCESSIBLE);
+
+        System.out.println("first init method...?");
+        // Initialise custom panels interface
+        setParameterPanelClass("audio.input.LoadSoundIIPanel");
+        setParameterPanelInstantiate(ON_USER_ACCESS);
     }
 
     /**
@@ -269,53 +295,6 @@ public class LoadMp3 extends Unit {
      */
     public void reset() {
         super.reset();
-    }
-
-    /**
-     * Called when the stop button is pressed within the MainTriana Window
-     */
-    public void stopping() {
-        super.stopping();
-    }
-
-    /**
-     * Called when the start button is pressed within the MainTriana Window
-     */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves LoadSound's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("fileName", FileUtils.convertToVirtualName(fileName));
-        saveParameter("OutputBufferSizeInBytes", bufSize);
-        saveParameter("SongSizeInFrames", songSizeInSamples);
-        saveParameter("OutputBufferSizeInFrames", outputSizeInSamples);
-        saveParameter("NumberOfAudioChunksInSong", numberOfChunks);
-    }
-
-    /**
-     * Used to set each of LoadSound's parameters. This should NOT be used to update this unit's user interface
-     */
-    public void setParameter(String name, String value) {
-        if (name.equals("fileName")) {
-            fileName = FileUtils.convertFromVirtualName(value);
-            System.out.println("Updated fileName to " + fileName);
-        } else if (name.equals("OutputBufferSizeInBytes")) {
-            bufSize = strToLong(value);
-            System.out.println("Output Buffer file " + bufSize);
-        } else if (name.equals("SongSizeInFrames")) {
-            songSizeInSamples = strToLong(value);
-            System.out.println("Song Size in samples = " + songSizeInSamples);
-        } else if (name.equals("OutputBufferSizeInFrames")) {
-            outputSizeInSamples = strToLong(value);
-            System.out.println("Ouput buffer Size in frames = " + outputSizeInSamples);
-        } else if (name.equals("NumberOfAudioChunksInSong")) {
-            numberOfChunks = strToInt(value);
-            System.out.println("number of chunks " + numberOfChunks);
-        }
     }
 
     /**
@@ -340,54 +319,6 @@ public class LoadMp3 extends Unit {
      */
     public String outputTypes() {
         return "triana.types.audio.MultipleAudio";
-    }
-
-    public void doubleClick() {
-        try {
-
-
-            File file;
-            if (lastDir == null) {
-                file = new File(System.getProperty("user.dir"));
-            } else {
-                file = new File(lastDir);
-            }
-
-            JFileChooser fc = new JFileChooser(file);
-            fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
-                public boolean accept(File f) {
-                    if (f.isDirectory()) {
-                        return true;
-                    }
-                    String name = f.getName();
-                    if (name.endsWith(".au") || name.endsWith(".wav") || name.endsWith(".aiff") || name.endsWith(".aif")
-                            ||
-                            name.endsWith(".AU") || name.endsWith(".WAV") || name.endsWith(".WAV")
-                            || name.endsWith(".AIF") ||
-                            name.endsWith(".mp3") || name.endsWith(".MP3")) {
-                        return true;
-                    }
-                    return false;
-                }
-
-                public String getDescription() {
-                    return ".aif, .au, .mp3, .wav, .AU, .WAV, .AIF, .MP3";
-                }
-            });
-
-            if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                createAudioInputStream(fc.getSelectedFile());
-                String fn = fc.getSelectedFile().getAbsolutePath();
-                userScreen(fc.getSelectedFile().getName());
-                updateParameter("fileName", fn);
-                lastDir = fc.getSelectedFile().getPath();
-            }
-        } catch (SecurityException ex) {
-            // JavaSound.showInfoDialog();
-            ex.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     public void createAudioInputStream(File file) {
@@ -634,10 +565,10 @@ public class LoadMp3 extends Unit {
             }
 
             int by = (int) (frameSizeInBytes * outputSizeInSamples);
-            updateParameter("OutputBufferSizeInBytes", by);
-            updateParameter("OutputBufferSizeInFrames", outputSizeInSamples);
-            updateParameter("SongSizeInFrames", songSizeInSamples);
-            updateParameter("NumberOfAudioChunksInSong", numberOfChunks);
+//            updateParameter("OutputBufferSizeInBytes", by);
+//            updateParameter("OutputBufferSizeInFrames", outputSizeInSamples);
+//            updateParameter("SongSizeInFrames", songSizeInSamples);
+//            updateParameter("NumberOfAudioChunksInSong", numberOfChunks);
             bytes = null;
 
             ma = null;
@@ -687,6 +618,8 @@ public class LoadMp3 extends Unit {
     }
 
 
+
+
     /**
      * @return an array of the types output by each output node. For node indexes not covered the types specified by
      *         getOutputTypes() are assumed.
@@ -704,4 +637,4 @@ public class LoadMp3 extends Unit {
 
 }
 
-}
+

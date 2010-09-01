@@ -6,6 +6,7 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.QuestionWindow;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.util.Env;
@@ -66,6 +67,7 @@ public class LoadSoundII extends Unit {
         int chunkNo = 0;
         createAudioInputStream(new File(fileName));
         System.out.println("Chunk Number = " + chunkNo);
+        System.out.println("TESTMETESTMETESTMETESTMETESTMETESTME");
 
         while (chunkNo < numberOfChunks) {
 
@@ -85,8 +87,8 @@ public class LoadSoundII extends Unit {
             do {
                 try {
 
-                    //  System.out.println("Bytes:" + bytes);
-                    //  System.out.println("Bufsize:" + bufSize);
+                      System.out.println("!!!!!!Bytes:" + bytes);
+                      System.out.println("Bufsize:" + bufSize);
                     //  System.out.println("Bytesread: " + bytesread);
                     //  System.out.println("Audioinputstream: " + audioInputStream);
 
@@ -232,10 +234,10 @@ public class LoadSoundII extends Unit {
                 System.out.println("Frame Rate = " + format.getFrameRate());
 
             } catch (Exception ex) {
-                //ErrorDialog.show(ex.toString());
+                ErrorDialog.show(ex.toString());
             }
         } else {
-            // ErrorDialog.show("Audio file " + file.getAbsolutePath());
+             ErrorDialog.show("Audio file " + file.getAbsolutePath());
         }
     }
 
@@ -269,7 +271,6 @@ public class LoadSoundII extends Unit {
         defineParameter("outputSizeInSamples", "", USER_ACCESSIBLE);
         defineParameter("numberOfChunksInSong", "", USER_ACCESSIBLE);
 
-        System.out.println("first init method...?");
         // Initialise custom panels interface
         setParameterPanelClass("audio.input.LoadSoundIIPanel");
         setParameterPanelInstantiate(ON_USER_ACCESS);
