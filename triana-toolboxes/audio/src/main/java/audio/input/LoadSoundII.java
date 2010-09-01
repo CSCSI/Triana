@@ -67,7 +67,6 @@ public class LoadSoundII extends Unit {
         int chunkNo = 0;
         createAudioInputStream(new File(fileName));
         System.out.println("Chunk Number = " + chunkNo);
-        System.out.println("TESTMETESTMETESTMETESTMETESTMETESTME");
 
         while (chunkNo < numberOfChunks) {
 
