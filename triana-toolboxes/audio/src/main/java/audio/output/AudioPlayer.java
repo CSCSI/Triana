@@ -48,6 +48,8 @@ public class AudioPlayer extends Thread {
 
     public void run() {
         stop = false;
+
+        //System.out.println("bytes.size() = " + bytes.size());
         while (true) {
             if (bytes.size() > 0) {
                 byteArray = (byte[]) bytes.remove(0);

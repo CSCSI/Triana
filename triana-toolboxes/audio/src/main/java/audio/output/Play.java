@@ -99,12 +99,14 @@ public class Play extends Unit {
         }
 
         if (audioPlayer == null) {
+            System.out.println("play unit test 1");
             setUpPlayer(newformat); // can only set one format per output line
             format = newformat;
             audioPlayer = new AudioPlayer(outputChannel);
             audioPlayer.start();
             audioPlayer.addChunk(bytes);
         } else {
+            System.out.println("play unit test 2");
             audioPlayer.addChunk(bytes);
         }
 
@@ -112,14 +114,13 @@ public class Play extends Unit {
     }
 
     /**
-     * ************************************************************************************** This method sets up the
-     * player, and is only called IF there is a change in the format  * of the incoming audio. The SourceDataLine is
-     * opened and then started - it's written to in the AudioPlayer ****************************************************************************************
+     * This method sets up the player, and is only called IF there is a change in the format of the incoming audio.
+     * The SourceDataLine is opened and then started - it's written to in the AudioPlayer
      */
 
     public void setUpPlayer(AudioFormat audioFormat) {
 
-        System.out.println("Setting Up Player ..");
+        System.out.println("Setting Uppppppppp Player ..");
 
         // If source dataline is null, then close the channel
         if (outputChannel != null) {
@@ -298,7 +299,7 @@ public class Play extends Unit {
      * Called when the unit is disposed of.
      */
     public void dispose() {
-        System.out.println("Disposig Audio Player");
+        System.out.println("Disposing Audio Player");
         stopDeMusicMan();
     }
 
