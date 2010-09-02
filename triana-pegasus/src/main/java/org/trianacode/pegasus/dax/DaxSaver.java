@@ -67,7 +67,7 @@ public class DaxSaver extends AbstractFormatFilter implements TaskGraphExporterI
                     if(inNode.isConnected()){
                         String unitOut = inNode.getCable().getSendingTask().toString();
                         System.out.println("    Input node is connected : " + unitOut);
-                        job.addUses(new Filename(unitOut, 2));
+                        job.addUses(new Filename(unitOut, 1));
                     }
                 }
 
@@ -76,7 +76,7 @@ public class DaxSaver extends AbstractFormatFilter implements TaskGraphExporterI
                     if(outNode.isConnected()){
                         String unitIn = outNode.getCable().getReceivingTask().toString();
                         System.out.println("    Output node is connected : " + unitIn);
-                        job.addUses(new Filename(unitIn, 1));
+                        job.addUses(new Filename(unitIn, 2));
                     }
                 }
 
