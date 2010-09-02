@@ -1,7 +1,5 @@
 package org.trianacode.pegasus.dax;
 
-import org.griphyn.vdl.dax.Job;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,21 +13,12 @@ import java.util.List;
  */
 public class DaxJobChunk implements Serializable {
 
-    private Job job = null;
     private String jobName = "";
     private String jobArgs = "";
     private String outputFilename = "";
     private List<String> inFiles = new ArrayList();
     private List<String> outFiles = new ArrayList();
     private boolean isStub = false;
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
 
     public String getJobName() {
         return jobName;
