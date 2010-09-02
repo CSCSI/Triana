@@ -16,13 +16,9 @@
 
 package org.trianacode.taskgraph.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.trianacode.taskgraph.tool.ClassLoaders;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +26,6 @@ import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
-
-import org.trianacode.taskgraph.tool.ClassLoaders;
 
 /**
  * Implements 1.3 ServiceProvider discovery mechanism. Adds the Java classpath as a search path by default. Other paths
@@ -93,6 +87,7 @@ public class ExtensionFinder {
 
     public static Map<Class, List<Object>> getProviders(List<Class> providers, File file) {
         log.fine("searching for providers:" + file.getAbsolutePath());
+        System.out.println("*** Looking for extensions in : " + file.getAbsolutePath());
         Map<Class, List<Object>> ret = new HashMap<Class, List<Object>>();
         if (file.isDirectory()) {
             File meta = new File(file, "META-INF");
@@ -111,6 +106,7 @@ public class ExtensionFinder {
                                 List<String> done = new ArrayList<String>();
                                 while ((line = reader.readLine()) != null) {
                                     log.fine("got next service provider:" + line);
+                                    System.out.println("*** Found : " + line);
                                     try {
                                         if (!done.contains(line)) {
                                             Class cls = ClassLoaders.forName(line);
