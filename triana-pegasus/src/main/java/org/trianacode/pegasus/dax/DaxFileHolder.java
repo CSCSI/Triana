@@ -18,8 +18,10 @@ public class DaxFileHolder {
     private String trianaToolName = "";
     private int numInputNodes = 0;
     private int numOutputNodes = 0;
-    private HashMap jobIn = new HashMap();
-    private HashMap jobOut = new HashMap();
+    private HashMap jobsIn = new HashMap();
+    private HashMap jobsOut = new HashMap();
+    private int connectedInNodes = 0;
+    private int connectedOutNodes = 0;
 
     public Tool getTool() {
         return tool;
@@ -62,20 +64,38 @@ public class DaxFileHolder {
     }
 
     public void addJobIn(int node, String id){
-        jobIn.put(node, id);
+        jobsIn.put(node, id);
         numInputNodes ++;
     }
 
     public void addJobOut(int node, String id){
-        jobOut.put(node, id);
+        jobsOut.put(node, id);
         numOutputNodes++;
     }
 
     public String getJobAtInNode(int node){
-        return (String)jobIn.get(node);
+        return (String)jobsIn.get(node);
     }
 
     public String getJobAtOutNode(int node){
-        return (String)jobOut.get(node);
+        return (String)jobsOut.get(node);
+    }
+
+    public int getFreeInNode() {
+        return jobsIn.size();
+    }
+
+    public int getFreeOutNode() {
+        return jobsOut.size();
+    }
+
+    public int getUnconnectedInNode(){
+        connectedInNodes ++;
+        return (connectedInNodes-1);
+    }
+
+    public int getUnconnectedOutNode(){
+        connectedOutNodes ++;
+        return (connectedOutNodes -1);
     }
 }
