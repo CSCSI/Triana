@@ -79,7 +79,7 @@
             <artifactId>signalproc-jplot</artifactId>
             <version>0.1</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/jplot.jar</systemPath>
+            <systemPath>${basedir}/lib/JPlot.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.trianacode</groupId>
