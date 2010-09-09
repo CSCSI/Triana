@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.imp.RenderingHintImp;
 
 /**
  * @author Andrew Harrison
@@ -20,10 +22,12 @@ public class AnnotatedUnitWrapper extends Unit {
     private Method process;
     private String[] inputs;
     private String[] outputs;
+    private String[] renderingHints = new String[0];
     private Map<String, String> guiLines = new HashMap<String, String>();
     private String panelClass = null;
     private boolean aggregate = false;
     private boolean isArray = false;
+    private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
 
     private Map<String, Field> params = new HashMap<String, Field>();
 
@@ -76,6 +80,14 @@ public class AnnotatedUnitWrapper extends Unit {
         params.put(name, f);
     }
 
+    public void setRenderingHints(String[] renderingHints) {
+        this.renderingHints = renderingHints;
+    }
+
+    public void addRenderingDetail(String hint, String name, Field f) {
+        renderingDetails.put(new String[]{hint, name}, f);
+    }
+
     public void init() {
         setDefaultInputNodes(inputs.length);
         setMinimumInputNodes(inputs.length);
@@ -116,6 +128,29 @@ public class AnnotatedUnitWrapper extends Unit {
             setParameterPanelClass(panelClass);
             //setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
             //setParameterUpdatePolicy(Unit.IMMEDIATE_UPDATE);
+        }
+        if(renderingHints.length > 0) {
+            for (String s : renderingHints) {
+                RenderingHintImp hint = new RenderingHintImp(s, false);
+                getTask().addRenderingHint(hint);
+            }
+        }
+        if(renderingDetails.size() > 0) {
+            for (String[] s : renderingDetails.keySet()) {
+                try {
+                    Field f = params.get(s);
+                    Object o = f.get(annotated);
+                    if (o != null) {
+                        RenderingHint rh = getTask().getRenderingHint(s[0]);
+                        if(rh != null && rh instanceof RenderingHintImp) {
+                            RenderingHintImp imp = (RenderingHintImp)rh;
+                            imp.setRenderingDetail(s[1], o);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

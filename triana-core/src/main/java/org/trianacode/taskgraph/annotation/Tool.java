@@ -22,4 +22,6 @@ public @interface Tool {
     String displayPackage() default "";
 
     String panelClass() default "";
+
+    String[] renderingHints() default {};
 }

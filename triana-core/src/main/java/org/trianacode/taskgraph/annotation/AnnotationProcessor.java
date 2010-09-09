@@ -28,6 +28,7 @@ public class AnnotationProcessor {
         name = t.displayName();
         pkge = t.displayPackage();
         panelClass = t.panelClass();
+        String[] renderingHints = t.renderingHints();
 
         AnnotatedUnitWrapper wrapper = null;
         Method[] methods = annotated.getDeclaredMethods();
@@ -68,6 +69,9 @@ public class AnnotationProcessor {
                 }
                 wrapper = new AnnotatedUnitWrapper(name, pkge, annotatedObject, method, inputs,
                         outputs, willAggr);
+                if(renderingHints != null) {
+                    wrapper.setRenderingHints(renderingHints);
+                }
                 break;
             }
         }
@@ -155,6 +159,16 @@ public class AnnotationProcessor {
                     if (txt != null) {
                         ps.put(paramName, field);
                         guiLines.put(paramName, txt);
+                    }
+                }
+            }
+            if(!hasParam) {
+                RenderingHintDetail detail = field.getAnnotation(RenderingHintDetail.class);
+                if(detail != null) {
+                    String hint = detail.hint();
+                    String d = detail.detail();
+                    if(hint != null && d != null) {
+                        wrapper.addRenderingDetail(hint, d, field);
                     }
                 }
             }
