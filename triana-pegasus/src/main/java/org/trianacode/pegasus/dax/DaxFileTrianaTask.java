@@ -30,7 +30,7 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     public void paintComponent(Graphics g){
         Color c = Color.red;
         g.setColor(Color.green);
-        g.fillOval(0, 0, getSize().width, getSize().height);
+      //  g.fillOval(0, 0, getSize().width, getSize().height);
         g.setColor(c);
        // g.fill3DRect(0, 0, getSize().width, getSize().height, !isSelected());
     }
