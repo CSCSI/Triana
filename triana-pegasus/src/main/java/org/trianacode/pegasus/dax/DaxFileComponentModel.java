@@ -1,5 +1,6 @@
 package org.trianacode.pegasus.dax;
 
+import org.trianacode.gui.hci.tools.RegisterableToolComponentModel;
 import org.trianacode.gui.hci.tools.ToolComponentModel;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.Task;
@@ -14,7 +15,7 @@ import javax.swing.*;
  * Time: 2:53:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public class DaxFileComponentModel implements ToolComponentModel {
+public class DaxFileComponentModel implements RegisterableToolComponentModel {
     @Override
     public Icon getTreeIcon(Tool tool) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
@@ -59,5 +60,10 @@ public class DaxFileComponentModel implements ToolComponentModel {
     @Override
     public Action getUpdateAction(Task task, String action) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getRegistrationString() {
+        return "DAX_FILE_RENDERING_HINT";
     }
 }

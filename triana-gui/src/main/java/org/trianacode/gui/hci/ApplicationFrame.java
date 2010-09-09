@@ -86,7 +86,6 @@ import org.trianacode.gui.service.WorkflowActionManager;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.SplashScreen;
 import org.trianacode.gui.windows.TrianaWindow;
-import org.trianacode.pegasus.dax.DaxFileComponentModel;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
@@ -230,8 +229,11 @@ public class ApplicationFrame extends TrianaWindow
             tools = new ToolTableImpl(EngineInit.getToolResolver());
             splash.setSplashProgress("Initializing Engine");
 
-            EngineInit.init(tools, false, Extension.class, TaskGraphExporterInterface.class,
-                    TaskGraphImporterInterface.class, ToolImporterInterface.class);
+            EngineInit.init(tools, false, Extension.class,
+                    TaskGraphExporterInterface.class,
+                    TaskGraphImporterInterface.class,
+                    ToolImporterInterface.class,
+                    RegisterableToolComponentModel.class);
             splash.setSplashProgress(Env.getString("toolsInitLabel"));
             initTools();
             initActionTable();
@@ -244,6 +246,8 @@ public class ApplicationFrame extends TrianaWindow
 
             splash.setSplashProgress(Env.getString("uiLabel"));
             initLayout();
+            // init extensions that require some gui stuff to be there first
+            initPostLayoutExtensions();
 
             splash.setSplashProgress("Resolving Tools");
             EngineInit.getToolResolver().resolve();
@@ -404,6 +408,16 @@ public class ApplicationFrame extends TrianaWindow
             ToolImporterInterface e = (ToolImporterInterface) o;
             ImportExportRegistry.addToolImporter(e);
         }
+
+    }
+
+    private void initPostLayoutExtensions() {
+        TaskGraphView defaultview = TaskGraphViewManager.getDefaultTaskgraphView();
+        List<Object> en  = EngineInit.getExtensions(RegisterableToolComponentModel.class);
+        for (Object o : en) {
+            RegisterableToolComponentModel e = (RegisterableToolComponentModel) o;
+            defaultview.registerToolModel(e.getRegistrationString(), e);
+        }
     }
 
 
@@ -423,8 +437,6 @@ public class ApplicationFrame extends TrianaWindow
         defaultview.registerToolModel(ScriptConstants.SCRIPT_RENDERING_HINT, new ScriptComponentModel());
         defaultview.registerToolModel(TextToolConstants.TEXT_TOOL_RENDERING_HINT, new TextToolComponentModel());
         defaultview.registerToolModel(HiddenToolConstants.HIDDEN_RENDERING_HINT, new HiddenComponentModel());
-
-        defaultview.registerToolModel("DAX_FILE_RENDERING_HINT", new DaxFileComponentModel());
 
         TaskGraphView mapview = new TaskGraphView("Map View", defaultview);
         mapview.registerOpenGroupModel(MapConstants.MAP_RENDERING_HINT, new MapComponentModel());
