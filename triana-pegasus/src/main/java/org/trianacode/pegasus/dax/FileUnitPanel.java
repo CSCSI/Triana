@@ -88,6 +88,7 @@ public class FileUnitPanel extends ParameterPanel {
         });
         upperPanel.add(collection);
         upperPanel.add(collect);
+
         add(upperPanel);
 
         //Lower Panel
@@ -102,6 +103,7 @@ public class FileUnitPanel extends ParameterPanel {
             public void stateChanged(ChangeEvent changeEvent) {
                 numberOfFiles = slide.getValue();
                 numberLabel.setText("No. files : " + numberOfFiles);
+                fillFileListArea();
             }
         });
         lowerPanel1.add(numberLabel);
