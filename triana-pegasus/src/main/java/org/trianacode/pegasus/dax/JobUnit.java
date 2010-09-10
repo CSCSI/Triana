@@ -1,9 +1,7 @@
 package org.trianacode.pegasus.dax;
 
-import org.trianacode.taskgraph.annotation.Parameter;
+import org.trianacode.taskgraph.annotation.*;
 import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.TextFieldParameter;
-import org.trianacode.taskgraph.annotation.Tool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +15,24 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool
+@Tool(panelClass = "org.trianacode.pegasus.dax.JobUnitPanel", renderingHints = {"DAX_JOB_RENDERING_HINT"})
 public class JobUnit{
 
     @Parameter
     private String programmaticParam = "This is a process";
 
     @TextFieldParameter
-    private String name = "_";
+    private String name = "a_process";
 
     @TextFieldParameter
-    private String args = "ls -l ";
+    private String args = "an_argument";
+
+    @CheckboxParameter
+    private boolean collection = false;  
+
+    public String getArgs(){
+        return args;
+    }
 
     public void setName(String name) {
         this.name = name;
