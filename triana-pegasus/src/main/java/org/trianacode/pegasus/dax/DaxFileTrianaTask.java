@@ -14,25 +14,42 @@ import java.awt.*;
  */
 public class DaxFileTrianaTask extends MainTrianaTask {
 
-  //  private FileTrianaTaskDecoration docView = new FileTrianaTaskDecoration();
-
+    //  private FileTrianaTaskDecoration docView = new FileTrianaTaskDecoration();
+    Task task;
     /**
      * Constructs a new MainTrianaTask for viewing the specified task
      */
     public DaxFileTrianaTask(Task task) {
         super(task);
+        this.task = task;
         setSize(450, 450);
 
-     //   docView.setVisible(true);
-     //   add(docView);
+        //   docView.setVisible(true);
+        //   add(docView);
+    }
+
+    public Task getTask(){
+        return task;
     }
 
     public void paintComponent(Graphics g){
-        Color c = Color.red;
-        g.setColor(Color.green);
-      //  g.fillOval(0, 0, getSize().width, getSize().height);
+        Color c = g.getColor();
+
+        boolean collection = (Boolean)getTask().getParameter("collection");
+
+        if(collection){
+            g.setColor(Color.cyan.darker());
+            g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
+            g.setColor(Color.cyan);
+            g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
+        }else{
+            g.setColor(Color.cyan);
+            g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
+        }
+
+
         g.setColor(c);
-       // g.fill3DRect(0, 0, getSize().width, getSize().height, !isSelected());
+        paintProcessProgress(g);
     }
 
 //    public void mouseEntered(MouseEvent e){}
