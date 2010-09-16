@@ -392,7 +392,7 @@ public class ToolTableImpl implements ToolTable, ToolListener {
                 String locpath = new File(location.toURI()).getAbsolutePath();
                 List<String> paths = resolver.getToolboxPaths();
                 for (String path : paths) {
-                    File f = UrlUtils.getExistingFile(new URL(path));
+                    File f = UrlUtils.getExistingFile(UrlUtils.toURL(path));
                     if (f != null) {
                         if (locpath.startsWith(f.getAbsolutePath())) {
                             return path;
