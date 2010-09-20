@@ -9,7 +9,11 @@
 <body>
 	<div>
 		<p>This is a form!</p>
-		<form name="$form.name" action="$form.action" METHOD="$form.method">
+		<form
+		#if($form.hasClasses())
+		 class="$form.getClassesAsString()"
+		#end
+		name="$form.name" action="$form.action" METHOD="$form.method">
         #foreach( $comp in $form.components)
             $comp.render()
         #end
