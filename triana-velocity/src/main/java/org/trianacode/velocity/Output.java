@@ -1,15 +1,5 @@
 package org.trianacode.velocity;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -20,6 +10,10 @@ import org.apache.velocity.runtime.resource.util.StringResource;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableData;
+
+import java.io.*;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Andrew Harrison
@@ -82,6 +76,29 @@ public class Output {
             template.merge(context, writer);
             writer.close();
             return new StreamableData(bout.toByteArray(), "text/html");
+        }
+        catch (ResourceNotFoundException rnfe) {
+            rnfe.printStackTrace();
+        }
+        catch (ParseErrorException pee) {
+            pee.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String outputString(Map<String, Object> parameters, String templateType) {
+        VelocityContext context = new VelocityContext();
+        for (String s : parameters.keySet()) {
+            context.put(s, parameters.get(s));
+        }
+        try {
+            StringWriter writer = new StringWriter();
+            Template template = engine.getTemplate(templateType);
+            template.merge(context, writer);
+            writer.close();
+            return writer.toString();
         }
         catch (ResourceNotFoundException rnfe) {
             rnfe.printStackTrace();
