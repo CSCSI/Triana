@@ -1,15 +1,15 @@
 package org.trianacode.taskgraph.annotation;
 
+import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.imp.RenderingHintImp;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.Unit;
-import org.trianacode.taskgraph.imp.RenderingHintImp;
 
 /**
  * @author Andrew Harrison
@@ -129,21 +129,21 @@ public class AnnotatedUnitWrapper extends Unit {
             //setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
             //setParameterUpdatePolicy(Unit.IMMEDIATE_UPDATE);
         }
-        if(renderingHints.length > 0) {
+        if (renderingHints.length > 0) {
             for (String s : renderingHints) {
                 RenderingHintImp hint = new RenderingHintImp(s, false);
                 getTask().addRenderingHint(hint);
             }
         }
-        if(renderingDetails.size() > 0) {
+        if (renderingDetails.size() > 0) {
             for (String[] s : renderingDetails.keySet()) {
                 try {
                     Field f = params.get(s);
                     Object o = f.get(annotated);
                     if (o != null) {
                         RenderingHint rh = getTask().getRenderingHint(s[0]);
-                        if(rh != null && rh instanceof RenderingHintImp) {
-                            RenderingHintImp imp = (RenderingHintImp)rh;
+                        if (rh != null && rh instanceof RenderingHintImp) {
+                            RenderingHintImp imp = (RenderingHintImp) rh;
                             imp.setRenderingDetail(s[1], o);
                         }
                     }
@@ -239,19 +239,23 @@ public class AnnotatedUnitWrapper extends Unit {
         if (aggregate) {
             for (int count = 0; count < getInputNodeCount(); count++) {
                 Object o = getInputAtNode(count);
-                ins.add(o);
+                if (o != null) {
+                    ins.add(o);
+                }
             }
         } else {
             for (int count = 0; count < getInputNodeCount(); count++) {
                 Object o = getInputAtNode(count);
-                if (clss.length >= count) {
-                    if (clss[count].isAssignableFrom(o.getClass())) {
-                        ins.add(o);
+                if (o != null) {
+                    if (clss.length >= count) {
+                        if (clss[count].isAssignableFrom(o.getClass())) {
+                            ins.add(o);
+                        } else {
+                            throw new Exception("class is not assignable");
+                        }
                     } else {
-                        throw new Exception("class is not assignable");
+                        throw new Exception("parameter length is less than inputs");
                     }
-                } else {
-                    throw new Exception("parameter length is less than inputs");
                 }
             }
         }
