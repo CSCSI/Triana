@@ -85,9 +85,9 @@ public class JobUnitPanel extends ParameterPanel {
     }
 
     private void setParams(){
-        setParameter("args", argsField.getText());
-        setParameter("numberOfJobs", numberOfJobs);
-        setParameter("collection", collection);
+        getTask().setParameter("args", argsField.getText());
+        getTask().setParameter("numberOfJobs", numberOfJobs);
+        getTask().setParameter("collection", collection);
 
     }
 
