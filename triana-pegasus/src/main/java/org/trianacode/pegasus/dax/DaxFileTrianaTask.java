@@ -35,9 +35,7 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     public void paintComponent(Graphics g){
         Color c = g.getColor();
 
-        boolean collection = (Boolean)getTask().getParameter("collection");
-
-        if(collection){
+        if(isCollection()){
             g.setColor(Color.cyan.darker());
             g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
             g.setColor(Color.cyan);
@@ -52,5 +50,12 @@ public class DaxFileTrianaTask extends MainTrianaTask {
         paintProcessProgress(g);
     }
 
-//    public void mouseEntered(MouseEvent e){}
+    private boolean isCollection(){
+        Object o = getTask().getParameter("collection");
+        if(o.equals(true)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
