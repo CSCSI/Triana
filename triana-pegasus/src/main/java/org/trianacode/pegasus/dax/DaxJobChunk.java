@@ -3,6 +3,8 @@ package org.trianacode.pegasus.dax;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,10 +17,16 @@ public class DaxJobChunk implements Serializable {
 
     private String jobName = "";
     private String jobArgs = "";
+    private String jobID = "";
     private String outputFilename = "";
     private List<String> inFiles = new ArrayList();
     private List<String> outFiles = new ArrayList();
+    private Vector<DaxFileChunk> inFileChunks = new Vector();
+    private Vector<DaxFileChunk> outFileChunks = new Vector();
     private boolean isStub = false;
+    private boolean isCollection = false;
+    private DaxFileChunk outputFileChunk;
+    private UUID uuid;
 
     public String getJobName() {
         return jobName;
@@ -70,5 +78,66 @@ public class DaxJobChunk implements Serializable {
 
     public void setStub(boolean stub) {
         isStub = stub;
+    }
+
+    public boolean isCollection() {
+        return isCollection;
+    }
+
+    public void setCollection(boolean collection) {
+        isCollection = collection;
+    }
+
+    public List<DaxFileChunk> getInFileChunks() {
+        return inFileChunks;
+    }
+
+    public void addInFileChunk(DaxFileChunk chunk) {
+        inFileChunks.add(chunk);
+    }
+
+    public void setInFileChunks(Vector<DaxFileChunk> inFileChunks) {
+        this.inFileChunks = inFileChunks;
+    }
+
+    public List<DaxFileChunk> getOutFileChunks() {
+        return outFileChunks;
+    }
+
+    public void addOutFileChunk(DaxFileChunk chunk) {
+            outFileChunks.add(chunk);
+    }
+    public void setOutFileChunks(Vector<DaxFileChunk> outFileChunks) {
+        this.outFileChunks = outFileChunks;
+    }
+
+    public void setOutputFileChunk(DaxFileChunk outputFileChunk) {
+        this.outputFileChunk = outputFileChunk;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public String getJobID() {
+        return jobID;
+    }
+
+    public void setJobID(String jobID) {
+        this.jobID = jobID;
+    }
+
+
+    public void listChunks(){
+        for(DaxFileChunk c : inFileChunks){
+            System.out.println(" ****** Job : " + getJobName() + " has input : " + c.getFilename());
+        }
+        for(DaxFileChunk c : outFileChunks){
+            System.out.println(" ****** Job : " + getJobName() + " has output : " + c.getFilename());
+        }
     }
 }
