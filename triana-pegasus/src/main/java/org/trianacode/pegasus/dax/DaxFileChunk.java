@@ -18,6 +18,7 @@ public class DaxFileChunk implements Serializable {
     private UUID uuid = null;
     private Vector<DaxJobChunk> inJobChunks = new Vector();
     private Vector<DaxJobChunk> outJobChunks = new Vector();
+    private int numberOfFiles = 1;
 
     public String getFilename() {
         return filename;
@@ -73,5 +74,13 @@ public class DaxFileChunk implements Serializable {
         for(DaxJobChunk c : outJobChunks){
             System.out.println(" ******* File : " + getFilename() + " has output : " + c.getJobName());
         }
+    }
+
+    public void setNumberOfFiles(int numberOfFiles) {
+        this.numberOfFiles = numberOfFiles;
+    }
+
+    public int getNumberOfFiles() {
+        return numberOfFiles;
     }
 }
