@@ -29,30 +29,31 @@ public class FileUnitPanel extends ParameterPanel {
     JLabel collect = new JLabel("Not a collection");
     JTextField nameField = new JTextField("");
     JTextArea fileListArea = new JTextArea("Example filenames here..");
-    JPanel upperPanel = new JPanel(new GridLayout(2,2));
+    JPanel upperPanel = new JPanel(new GridLayout(3,2));
     JPanel lowerPanel = new JPanel(new GridLayout(2,3,5,5));
     JComboBox namingPattern = new JComboBox();
 
 
     public boolean isAutoCommitByDefault(){return true;}
 
-    public void parameterUpdate(String param, Object value){
-
-    }
-
     public void applyClicked(){ apply(); }
     public void okClicked(){ apply(); }
     //  public void cancelClicked(){ reset(); }
 
     private void apply(){
-        setParameter("fileName", nameField.getText());
-        getTask().setToolName(nameField.getText());
+        changeToolName(nameField.getText());
         fillFileListArea();
+    }
+
+    public void changeToolName(String name){
+        System.out.println("Changing tool " + getTask().getToolName() + " to : " + name);
+        setParameter("fileName", name);
+        getTask().setToolName(name);
     }
 
     @Override
     public void reset() {
-        nameField.setText((String)getParameter("fileName"));
+        //    nameField.setText((String)getParameter("fileName"));
     }
 
     @Override
@@ -64,12 +65,6 @@ public class FileUnitPanel extends ParameterPanel {
         upperPanel.add(nameLabel);
 
         nameField.setText((String) getParameter("fileName"));
-        nameField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                //             setParameter("fileName", nameField.getText());
-                apply();
-            }
-        });
         upperPanel.add(nameField);
 
         final JCheckBox collection = new JCheckBox("Collection", isCollection());
@@ -77,11 +72,11 @@ public class FileUnitPanel extends ParameterPanel {
             public void itemStateChanged(ItemEvent ie) {
                 if (collection.isSelected()) {
                     collect.setText("Collection of files.");
-                    setParameter("collection", true);
+                    setParameter("collection", "true");
                     setEnabling(lowerPanel, true);
                 } else {
                     collect.setText("Not a collection");
-                    setParameter("collection", false);
+                    setParameter("collection", "false");
                     setEnabling(lowerPanel, false);
                 }
             }
@@ -134,17 +129,18 @@ public class FileUnitPanel extends ParameterPanel {
                     System.out.println("Selected number : " + segments);
                     int parts = Integer.parseInt(segments);
                     NamingPanel np = new NamingPanel(parts);
-                    int answer = JOptionPane.showOptionDialog(
-                            lowerPanel, np, "Create naming strategy", JOptionPane.DEFAULT_OPTION,
-                            0, null, null, null
-                    );
-                    if (answer == JOptionPane.OK_OPTION)
-                    {
-                        System.out.println("Selected ok from naming dialog, typed : " + np.getName());
-                        // do stuff with the panel
-                    }
-                }
 
+                    /*              int answer = JOptionPane.showOptionDialog(
+                                         lowerPanel, np, "Create naming strategy", JOptionPane.DEFAULT_OPTION,
+                                         0, null, null, null
+                                 );
+                                 if (answer == JOptionPane.OK_OPTION)
+                                 {
+                                     System.out.println("Selected ok from naming dialog, typed : " + np.getName());
+                                     // do stuff with the panel
+                                 }
+                    */
+                }
             }
         });
         lowerPanel1.add(custom);
@@ -162,13 +158,22 @@ public class FileUnitPanel extends ParameterPanel {
         setEnabling(lowerPanel, isCollection());
     }
 
+    public void returnSomething(String thing){
+        System.out.println("Returned : " + thing);
+    }
+
+
     @Override
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private boolean isCollection(){
-        return (Boolean)getParameter("collection");
+        if(getParameter("collection").equals("true")){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public void setEnabling(Component c,boolean enable) {
@@ -205,26 +210,31 @@ public class FileUnitPanel extends ParameterPanel {
 
     }
 
-    class NamingPanel extends JPanel{
+    class NamingPanel extends JFrame{
         JLabel hi = new JLabel();
         JTextField name = new JTextField("");
         JComboBox separator;
         int parts = 1;
         String[] nameParts;
+        String[] patternOptions = {"0001", "dd-MMM-yy", "A", "ABC"};
+
 
         public NamingPanel(int p){
             this.parts = p;
             nameParts = new String[parts];
+            JPanel mainPanel = new JPanel();
 
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+            mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File name pattern"));
+
             JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-            JPanel lowerPanel = new JPanel(new GridLayout(parts + 1, 2, 5, 5));
-            hi.setText("File will have " + parts + " parts.");
+            hi.setText("Filename will have " + parts + " parts.");
             topPanel.add(hi);
             name.setText(buildName("-", parts));
             topPanel.add(name);
-            add(topPanel);
+            mainPanel.add(topPanel);
 
+            JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
             JLabel l1 = new JLabel("Seperator : ");
             String[] seperatorOptions = {"- (hyphen)", " (space)", "_ (underscore)", ". (period)", "(no seperator)"};
             separator = new JComboBox(seperatorOptions);
@@ -234,27 +244,88 @@ public class FileUnitPanel extends ParameterPanel {
                     setNameLabel(buildName(getSeparator(), parts));
                 }
             });
-            lowerPanel.add(l1);
-            lowerPanel.add(separator);
+            midPanel.add(l1);
+            midPanel.add(separator);
+            mainPanel.add(midPanel);
 
-            String[] patternOptions = {"0001", "dd-MMM-yy", "A", "ABC"};
+            JPanel lowerPanel = new JPanel(new GridLayout(parts, 3, 5, 5));
+
             for(int i = 0; i < parts; i++){
+                final int finalI = i;
+
                 final JComboBox section = new JComboBox(patternOptions);
                 section.setEditable(true);
-                final int finalI = i;
+
+                String[] patternDetail = {""};
+                final JComboBox detailChooser = new JComboBox(patternDetail);
+
                 section.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent actionEvent){
-                        setSection(finalI, (String)section.getSelectedItem());
+                        Object selected = section.getSelectedItem();
+                        setSection(finalI, (String)selected);
+                        setNameLabel(buildName(getSeparator(), parts));
+                        fillDetailCombo(detailChooser, selected);
+                    }
+                });
+
+                detailChooser.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent actionEvent){
+                        setSection(finalI, (String)detailChooser.getSelectedItem());
                         setNameLabel(buildName(getSeparator(), parts));
                     }
                 });
+
                 JLabel lx = new JLabel("Pattern " + (i+1) + " : ");
                 lowerPanel.add(lx);
                 lowerPanel.add(section);
+                lowerPanel.add(detailChooser);
             }
-            add(lowerPanel);
+            mainPanel.add(lowerPanel);
+            JButton ok = new JButton("Ok");
+            ok.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    returnSomething("words");
+                    dispose();
+                }
+            });
+            mainPanel.add(ok);
+            add(mainPanel);
+            this.setTitle("File naming pattern");
+            this.pack();
+            this.setVisible(true);
 
         }
+
+        private void fillDetailCombo(JComboBox detail, Object patternSelection){
+            detail.removeAllItems();
+            detail.setEditable(false);
+
+            if(patternSelection == patternOptions[0]){
+                String[] array = {"1", "01", "001", "0001"};
+                addArrayToCombo(detail, array);
+            }
+            if(patternSelection == patternOptions[1]){
+                String[] array = {"dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
+                addArrayToCombo(detail, array);
+            }
+            if(patternSelection == patternOptions[2]){
+                String[] array = {""};
+                addArrayToCombo(detail, array);
+                detail.setEditable(true);
+            }
+            if(patternSelection == patternOptions[3]){
+                String[] array = {"A", "AA", "AAA", "AAAA", "AAAAA"};
+                addArrayToCombo(detail, array);
+            }
+        }
+
+        private void addArrayToCombo(JComboBox box, String[] array){
+            for(int i = 0; i < array.length ; i++){
+                box.addItem(array[i]);
+            }
+        }
+
+
         private void setNameLabel(String n){
             name.setText(n);
         }
