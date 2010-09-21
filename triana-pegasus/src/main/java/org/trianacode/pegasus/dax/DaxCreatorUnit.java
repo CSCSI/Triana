@@ -26,10 +26,20 @@ public class DaxCreatorUnit {
     @TextFieldParameter
     private String fileName = "output.dax";
 
-    @Process
-    public String process(List in){
+    @Process(gather=true)
+    public void process(List in){
         System.out.println("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
+        DaxRegister register = DaxRegister.getDaxRegister();
+
+        //  daxFromInList(in);
+        daxFromRegister(register);
+
+        register.clear();
+
+    }
+
+    private void daxFromInList(List in){
         ADAG dax = new ADAG();
 
         for(int j = 0; j < in.size(); j++){
@@ -41,14 +51,15 @@ public class DaxCreatorUnit {
                     Job job = new Job();
                     job.addArgument(new PseudoText(inChunk.getJobArgs()));
                     job.setName("Process");
-                    job.setID("ID0000"+(j+1));
+                    String id = "0000000" + (j+1);
+                    job.setID("ID" + id.substring(id.length() - 7));
 
                     List inFiles = inChunk.getInFiles();
                     for(int i = 0; i < inFiles.size(); i++){
                         job.addUses(new Filename((String)inFiles.get(i), 1));
                     }
                     List outFiles = inChunk.getOutFiles();
-                   for(int i = 0; i < outFiles.size(); i++){
+                    for(int i = 0; i < outFiles.size(); i++){
                         job.addUses(new Filename((String)outFiles.get(i), 2));
                     }
                     dax.addJob(job);
@@ -62,22 +73,66 @@ public class DaxCreatorUnit {
             else{
                 System.out.println("*** Found something that wasn't a DaxJobChunk in input List ***");
             }
+        }
+
+        writeDax(dax);
+    }
+
+    private void daxFromRegister(DaxRegister register){
+  //      register.listAll();
+
+        ADAG dax = new ADAG();
+
+        List<DaxJobChunk> jobChunks = register.getJobChunks();
+
+        for(int j = 0; j < jobChunks.size(); j++){
+            DaxJobChunk jobChunk = jobChunks.get(j);
+            Job job = new Job();
+            job.addArgument(new PseudoText(jobChunk.getJobArgs()));
+            job.setName(jobChunk.getJobName());
+            String id = "0000000" + (j+1);
+            job.setID("ID" + id.substring(id.length() - 7));
+
+            jobChunk.listChunks();
+            
+            List inFiles = jobChunk.getInFileChunks();
+            for(int i = 0; i < inFiles.size(); i++){
+                String inFilename = ((DaxFileChunk)inFiles.get(i)).getFilename();
+                System.out.println("Job " + job.getID() + " named : " + job.getName() + " has input : " + inFilename);
+                job.addUses(new Filename(inFilename, 1));
+            }
+
+            List outFiles = jobChunk.getOutFileChunks();
+            for(int i = 0; i < outFiles.size(); i++){
+                String outFilename = ((DaxFileChunk)outFiles.get(i)).getFilename();
+                System.out.println("Job " + job.getID() + " named : "  + job.getName() + " has output : " + outFilename);
+                job.addUses(new Filename(outFilename, 2));
+            }
+            dax.addJob(job);
+            System.out.println("Added job : " + jobChunk.getJobName() + " to ADAG.");
 
         }
 
-        System.out.println("ADAG has " + dax.getJobCount() + " jobs in.");
-
-        try {
-            FileWriter fw = new FileWriter(fileName);
-            dax.toXML(fw, "", null );
-            fw.close();
-            System.out.println("File " + fileName + " saved.\n");
-        } catch (IOException e){
-            e.printStackTrace();  
-        }
-
-        return "Saved to " + fileName;
+        writeDax(dax);
 
     }
 
+    private void writeDax(ADAG dax){
+        System.out.println("ADAG has " + dax.getJobCount() + " jobs in.");
+
+        if(dax.getJobCount() > 0 ){
+
+            try {
+                FileWriter fw = new FileWriter(fileName);
+                dax.toXML(fw, "", null );
+                fw.close();
+                System.out.println("File " + fileName + " saved.\n");
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+
+        }else{
+            System.out.println("No jobs in DAX, will not create file. (Avoids overwrite)");
+        }
+    }
 }
