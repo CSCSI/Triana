@@ -3,8 +3,8 @@ package org.trianacode.pegasus.dax;
 import org.trianacode.taskgraph.annotation.*;
 import org.trianacode.taskgraph.annotation.Process;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -18,38 +18,87 @@ import java.util.List;
 @Tool(panelClass = "org.trianacode.pegasus.dax.JobUnitPanel", renderingHints = {"DAX_JOB_RENDERING_HINT"})
 public class JobUnit{
 
+
     @Parameter
     private String programmaticParam = "This is a process";
 
     @TextFieldParameter
-    private String name = "a_process";
+    private String jobName = "a_process";
 
     @TextFieldParameter
     private String args = "an_argument";
 
     @CheckboxParameter
-    private boolean collection = false;  
+    private boolean collection = false;
 
     public String getArgs(){
         return args;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.jobName = name;
     }
 
     @Process(gather=true)
-    public List process(List in) {
-        List fileStrings = new ArrayList();
+    public UUID process(List in) {
+        DaxJobChunk thisJob = new DaxJobChunk();
+
+        thisJob.setJobName(jobName);
+        thisJob.setUuid(UUID.randomUUID());
+
+        DaxRegister register = DaxRegister.getDaxRegister();
+        register.addJob(thisJob);
+
         System.out.println("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+
+
+        for(Object object : in){
+            if(object instanceof DaxFileChunk){
+                DaxFileChunk fileChunk = (DaxFileChunk)object;
+                System.out.println("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
+                fileChunk.addOutJobChunk(thisJob);
+                //        fileChunk.listChunks();
+
+                System.out.println("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
+                thisJob.addInFileChunk(fileChunk);
+                //        thisJob.listChunks();
+            }
+
+            else if(object instanceof UUID){
+                UUID uuid = (UUID)object;
+                DaxFileChunk fileChunk = register.getFileChunkFromUUID(uuid);
+
+                if(fileChunk != null){
+
+                    System.out.println("\nPrevious file was : " + fileChunk.getFilename() + "\n");
+                    System.out.println("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
+                    fileChunk.addOutJobChunk(thisJob);
+
+                    System.out.println("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
+                    thisJob.addInFileChunk(fileChunk);
+
+                }
+                else{
+                    System.out.println("FileChunk not found in register");
+                }
+            }
+
+            else{
+                System.out.println("Cannot handle input : " + object.getClass().getName());
+            }
+        }
+        /*
+        List fileStrings = new ArrayList();
+
         List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
-        
-        
+
+
             List<List> inList = (List<List>)in;
             for(int i = 0; i < inList.size(); i++){
                 Object o = inList.get(i);
                 if(o instanceof List){
                     List<List> innerList = (List)o;
+
                     for(int j = 0; j < innerList.size(); j++){
                         Object o2 = innerList.get(j);
                         if(o2 instanceof DaxJobChunk){
@@ -71,19 +120,26 @@ public class JobUnit{
                 }
             }
 
-        DaxJobChunk djc = new DaxJobChunk();
-
         System.out.println("Adding " + fileStrings.size() + " inputs to job.");
         for(int i = 0; i < fileStrings.size(); i++){
-            djc.addInFile((String)fileStrings.get(i));
+            thisJob.addInFile((String)fileStrings.get(i));
         }
 
-        djc.setJobArgs(args);
-        jcl.add(djc);
+        thisJob.setJobArgs(args);
+        System.out.println("Is collection : " + collection);
+        thisJob.setCollection(collection);
+
+
+
+        jcl.add(thisJob);
 
         System.out.println("\nList out is size: " + jcl.size() + " contains : " + jcl.toString() + ".\n ");
 
         return jcl;
+        */
+
+    //    register.listAll();
+        return thisJob.getUuid();
     }
 
 }
