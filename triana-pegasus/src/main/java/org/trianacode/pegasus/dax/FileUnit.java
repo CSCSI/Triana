@@ -17,10 +17,10 @@ import java.util.UUID;
 @Tool(panelClass = "org.trianacode.pegasus.dax.FileUnitPanel", renderingHints = {"DAX_FILE_RENDERING_HINT"})
 public class FileUnit {
 
-
-
     @Parameter
     private String programmaticParam = "This is a file";
+    @Parameter
+    private int numberOfFiles = 1;
 
     @TextFieldParameter
     private String fileName = "a.txt";
@@ -30,10 +30,14 @@ public class FileUnit {
 
     @Process(gather = true)
     public UUID fileUnitProcess(List in){
+
+        System.out.println("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
         DaxFileChunk thisFile = new DaxFileChunk();
 
         thisFile.setFilename(fileName);
         thisFile.setUuid(UUID.randomUUID());
+        thisFile.setCollection(collection);
+        thisFile.setNumberOfFiles(numberOfFiles);
 
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
@@ -44,7 +48,7 @@ public class FileUnit {
             if(object instanceof DaxJobChunk){
                 DaxJobChunk jobChunk = (DaxJobChunk)object;
 
-                System.out.println("\nPrevious job was : " + jobChunk.getJobName() + "\n");
+                System.out.println("Previous job was : " + jobChunk.getJobName());
 
                 System.out.println("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
                 jobChunk.addOutFileChunk(thisFile);
@@ -129,7 +133,7 @@ public class FileUnit {
 
         */
 
-   //     register.listAll();
+        //     register.listAll();
         return thisFile.getUuid();
     }
 }
