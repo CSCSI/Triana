@@ -22,10 +22,11 @@ public class JobUnitPanel extends ParameterPanel {
     private JTextField nameField = new JTextField("");
     private JTextField argsField = new JTextField("");
     private int numberOfJobs;
+    private boolean collection = false;
 
-    JLabel collect = new JLabel("Not a collection");
+    JLabel collectLabel = new JLabel("Not a collection");
 
-    public boolean isAutoCommitByDefault(){return true;}
+    //  public boolean isAutoCommitByDefault(){return true;}
 
     @Override
     public void init() {
@@ -36,7 +37,7 @@ public class JobUnitPanel extends ParameterPanel {
         JLabel nameLabel = new JLabel("Job Name :");
         upperPanel.add(nameLabel);
 
-        nameField.setText((String) getParameter("jobName"));
+        changeToolName(getTask().getToolName());
         upperPanel.add(nameField);
 
         JLabel argsLabel = new JLabel("Job Args :");
@@ -45,22 +46,22 @@ public class JobUnitPanel extends ParameterPanel {
         argsField.setText((String) getParameter("args"));
         upperPanel.add(argsField);
 
-        final JCheckBox collection = new JCheckBox("Collection", isCollection());
-        collection.addItemListener(new ItemListener() {
+        final JCheckBox collectionBox = new JCheckBox("Collection", isCollection());
+        collectionBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
-                if (collection.isSelected()) {
-                    collect.setText("Collection of jobs.");
-                    setParameter("collection", "true");
+                if (collectionBox.isSelected()) {
+                    collectLabel.setText("Collection of jobs.");
+                    collection = true;
                     setEnabling(lowerPanel, true);
                 } else {
-                    collect.setText("Not a collection");
-                    setParameter("collection", "false");
+                    collectLabel.setText("Not a collection");
+                    collection = false;
                     setEnabling(lowerPanel, false);
                 }
             }
         });
-        upperPanel.add(collection);
-        upperPanel.add(collect);
+        upperPanel.add(collectionBox);
+        upperPanel.add(collectLabel);
 
         add(upperPanel);
 
@@ -86,11 +87,14 @@ public class JobUnitPanel extends ParameterPanel {
     private void setParams(){
         setParameter("args", argsField.getText());
         setParameter("numberOfJobs", numberOfJobs);
+        setParameter("collection", collection);
+
     }
 
     public void changeToolName(String name){
+        nameField.setText(name);
         System.out.println("Changing tool " + getTask().getToolName() + " to : " + name);
-        setParameter("jobName", name);
+        getTask().setParameter("jobName", name);
         getTask().setToolName(name);
     }
 
