@@ -72,7 +72,7 @@ public class DaxRegister {
     public synchronized DaxJobChunk getJobChunkFromUUID(UUID uuid){
         for(DaxJobChunk chunk : jobChunks){
             UUID toCheck = chunk.getUuid();
-            System.out.println("Checking : " + uuid + " with : " + toCheck );
+      //      System.out.println("Checking : " + uuid + " with : " + toCheck );
             if(uuid.equals(toCheck)){
                 System.out.println("Register returning : " + chunk.getJobName());
                 return chunk;
@@ -84,7 +84,7 @@ public class DaxRegister {
     public synchronized DaxFileChunk getFileChunkFromUUID(UUID uuid){
         for(DaxFileChunk chunk : fileChunks){
             UUID toCheck = chunk.getUuid();
-            System.out.println("Checking : " + uuid + " with : " + toCheck );
+        //    System.out.println("Checking : " + uuid + " with : " + toCheck );
             if(uuid.equals(toCheck)){
                 System.out.println("Register returning : " + chunk.getFilename());
                 return chunk;
