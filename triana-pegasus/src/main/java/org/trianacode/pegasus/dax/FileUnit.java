@@ -3,8 +3,8 @@ package org.trianacode.pegasus.dax;
 import org.trianacode.taskgraph.annotation.*;
 import org.trianacode.taskgraph.annotation.Process;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,6 +17,8 @@ import java.util.List;
 @Tool(panelClass = "org.trianacode.pegasus.dax.FileUnitPanel", renderingHints = {"DAX_FILE_RENDERING_HINT"})
 public class FileUnit {
 
+
+
     @Parameter
     private String programmaticParam = "This is a file";
 
@@ -26,13 +28,62 @@ public class FileUnit {
     @CheckboxParameter
     private boolean collection = false;
 
-    @ChoiceParameter
-    private String[] pattern = {""};
-
     @Process(gather = true)
-    public List echoWithNewLine(List in){
-        String endString = fileName;
+    public UUID fileUnitProcess(List in){
+        DaxFileChunk thisFile = new DaxFileChunk();
+
+        thisFile.setFilename(fileName);
+        thisFile.setUuid(UUID.randomUUID());
+
+        DaxRegister register = DaxRegister.getDaxRegister();
+        register.addFile(thisFile);
+
         System.out.println("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+
+        for(Object object : in){
+            if(object instanceof DaxJobChunk){
+                DaxJobChunk jobChunk = (DaxJobChunk)object;
+
+                System.out.println("\nPrevious job was : " + jobChunk.getJobName() + "\n");
+
+                System.out.println("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
+                jobChunk.addOutFileChunk(thisFile);
+
+                System.out.println("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
+                thisFile.addInJobChunk(jobChunk);
+
+            }
+
+            else if(object instanceof UUID){
+                UUID uuid = (UUID)object;
+                DaxJobChunk jobChunk = register.getJobChunkFromUUID(uuid);
+
+                if(jobChunk != null){
+
+                    System.out.println("\nPrevious job was : " + jobChunk.getJobName() + "\n");
+
+                    System.out.println("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
+                    jobChunk.addOutFileChunk(thisFile);
+
+                    System.out.println("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
+                    thisFile.addInJobChunk(jobChunk);
+                }
+                else{
+                    System.out.println("jobChunk not found in register");
+                }
+            }
+
+            else{
+                System.out.println("Cannot handle input : " + object.getClass().getName());
+            }
+
+        }
+
+        if(in.size() == 0){
+            System.out.println("No jobs enter fileUnit : " + thisFile.getFilename());
+        }
+
+        /*
         List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
 
 
@@ -48,8 +99,10 @@ public class FileUnit {
                             System.out.println("Found a DaxJobChunk");
                             if(j == (innerList.size() - 1)){
                                 ((DaxJobChunk)o2).addOutFile(fileName);
+                                ((DaxJobChunk)o2).addOutFileChunk(thisFile);
                                 System.out.println("Added output file to job " + (i+1) + " of " + inList.size() + ".");
                                 ((DaxJobChunk) o2).setOutputFilename(fileName);
+                                ((DaxJobChunk) o2).setOutputFileChunk(thisFile);                                                                 
                                 System.out.println("Telling the jobs before and after this fileUnit that this file was in between them");                               
                             }
                             jcl.add((DaxJobChunk) o2);
@@ -73,6 +126,10 @@ public class FileUnit {
                 jcl.add(jc);
             }
         return jcl;
-    }
 
+        */
+
+   //     register.listAll();
+        return thisFile.getUuid();
+    }
 }
