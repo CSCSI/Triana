@@ -79,7 +79,7 @@ public class DaxCreatorUnit {
     }
 
     private void daxFromRegister(DaxRegister register){
-  //      register.listAll();
+        //      register.listAll();
 
         ADAG dax = new ADAG();
 
@@ -94,19 +94,35 @@ public class DaxCreatorUnit {
             job.setID("ID" + id.substring(id.length() - 7));
 
             jobChunk.listChunks();
-            
+
             List inFiles = jobChunk.getInFileChunks();
             for(int i = 0; i < inFiles.size(); i++){
-                String inFilename = ((DaxFileChunk)inFiles.get(i)).getFilename();
-                System.out.println("Job " + job.getID() + " named : " + job.getName() + " has input : " + inFilename);
-                job.addUses(new Filename(inFilename, 1));
+                DaxFileChunk chunk = (DaxFileChunk)inFiles.get(i);
+                if(chunk.isCollection()){
+                    for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
+                        System.out.println("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+                        job.addUses(new Filename(chunk.getFilename() + m, 1));
+                    }
+                }
+                else{
+                    System.out.println("Job " + job.getID() + " named : " + job.getName() + " has input : " + chunk.getFilename());
+                    job.addUses(new Filename(chunk.getFilename(), 1));
+                }
             }
 
             List outFiles = jobChunk.getOutFileChunks();
             for(int i = 0; i < outFiles.size(); i++){
-                String outFilename = ((DaxFileChunk)outFiles.get(i)).getFilename();
-                System.out.println("Job " + job.getID() + " named : "  + job.getName() + " has output : " + outFilename);
-                job.addUses(new Filename(outFilename, 2));
+                DaxFileChunk chunk = (DaxFileChunk)outFiles.get(i);
+                if(chunk.isCollection()){
+                    for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
+                        System.out.println("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+                        job.addUses(new Filename(chunk.getFilename() + m, 2));
+                    }
+                }
+                else{
+                    System.out.println("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+                    job.addUses(new Filename(chunk.getFilename(), 2));
+                }
             }
             dax.addJob(job);
             System.out.println("Added job : " + jobChunk.getJobName() + " to ADAG.");
