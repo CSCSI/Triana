@@ -38,7 +38,7 @@ public class JobUnit{
     public void setName(String name) {
         this.jobName = name;
     }
-
+    
     @Process(gather=true)
     public UUID process(List in) {
         DaxJobChunk thisJob = new DaxJobChunk();
@@ -49,7 +49,7 @@ public class JobUnit{
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addJob(thisJob);
 
-        System.out.println("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+        System.out.println("\nList into " + jobName + " is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
 
         for(Object object : in){
