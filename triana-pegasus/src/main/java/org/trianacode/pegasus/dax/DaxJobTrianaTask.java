@@ -28,9 +28,8 @@ public class DaxJobTrianaTask extends MainTrianaTask {
     public void paintComponent(Graphics g){
         Color c = g.getColor();
 
-        boolean collection = (Boolean)getTask().getParameter("collection");
 
-        if(collection){
+        if(isCollection()){
             g.setColor(Color.red.darker());
             g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
             g.setColor(Color.red);
@@ -43,5 +42,14 @@ public class DaxJobTrianaTask extends MainTrianaTask {
         g.setColor(c);
         paintProcessProgress(g);
 
+    }
+
+    private boolean isCollection(){
+        Object o = getTask().getParameter("collection");
+        if(o.equals(true)){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
