@@ -25,8 +25,9 @@ import java.awt.event.ItemListener;
 public class FileUnitPanel extends ParameterPanel {
 
     private int numberOfFiles = 1;
+    private boolean collection = false;
 
-    JLabel collect = new JLabel("Not a collection");
+    JLabel collectLabel = new JLabel("Not a collection");
     JTextField nameField = new JTextField("");
     JTextArea fileListArea = new JTextArea("Example filenames here..");
     JPanel upperPanel = new JPanel(new GridLayout(3,2));
@@ -34,7 +35,8 @@ public class FileUnitPanel extends ParameterPanel {
     JComboBox namingPattern = new JComboBox();
 
 
-    public boolean isAutoCommitByDefault(){return true;}
+
+    //   public boolean isAutoCommitByDefault(){return true;}
 
     public void applyClicked(){ apply(); }
     public void okClicked(){ apply(); }
@@ -43,11 +45,14 @@ public class FileUnitPanel extends ParameterPanel {
     private void apply(){
         changeToolName(nameField.getText());
         fillFileListArea();
+        getTask().setParameter("collection", collection);
+        getTask().setParameter("numberOfFiles", numberOfFiles);
     }
 
     public void changeToolName(String name){
+        nameField.setText(name);
         System.out.println("Changing tool " + getTask().getToolName() + " to : " + name);
-        setParameter("fileName", name);
+        getTask().setParameter("fileName", name);
         getTask().setToolName(name);
     }
 
@@ -64,25 +69,28 @@ public class FileUnitPanel extends ParameterPanel {
         JLabel nameLabel = new JLabel("File Name :");
         upperPanel.add(nameLabel);
 
-        nameField.setText((String) getParameter("fileName"));
+        changeToolName(getTask().getToolName());
         upperPanel.add(nameField);
 
-        final JCheckBox collection = new JCheckBox("Collection", isCollection());
-        collection.addItemListener(new ItemListener() {
+        collection = isCollection();
+        numberOfFiles = getFileNumber();
+
+        final JCheckBox collectionBox = new JCheckBox("Collection", collection);
+        collectionBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
-                if (collection.isSelected()) {
-                    collect.setText("Collection of files.");
-                    setParameter("collection", "true");
+                if (collectionBox.isSelected()) {
+                    collectLabel.setText("Collection of files.");
+                    collection = true;
                     setEnabling(lowerPanel, true);
                 } else {
-                    collect.setText("Not a collection");
-                    setParameter("collection", "false");
+                    collectLabel.setText("Not a collection");
+                    collection = false;
                     setEnabling(lowerPanel, false);
                 }
             }
         });
-        upperPanel.add(collection);
-        upperPanel.add(collect);
+        upperPanel.add(collectionBox);
+        upperPanel.add(collectLabel);
 
         add(upperPanel);
 
@@ -92,7 +100,7 @@ public class FileUnitPanel extends ParameterPanel {
         JPanel lowerPanel1 = new JPanel(new GridLayout(3, 2, 5, 5));
         final JLabel numberLabel = new JLabel("No. files : 1");
 
-        final JSlider slide = new JSlider(1, 999, 1);
+        final JSlider slide = new JSlider(1, 999, numberOfFiles);
         slide.setMajorTickSpacing(100);
         slide.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent changeEvent) {
@@ -129,17 +137,6 @@ public class FileUnitPanel extends ParameterPanel {
                     System.out.println("Selected number : " + segments);
                     int parts = Integer.parseInt(segments);
                     NamingPanel np = new NamingPanel(parts);
-
-                    /*              int answer = JOptionPane.showOptionDialog(
-                                         lowerPanel, np, "Create naming strategy", JOptionPane.DEFAULT_OPTION,
-                                         0, null, null, null
-                                 );
-                                 if (answer == JOptionPane.OK_OPTION)
-                                 {
-                                     System.out.println("Selected ok from naming dialog, typed : " + np.getName());
-                                     // do stuff with the panel
-                                 }
-                    */
                 }
             }
         });
@@ -155,7 +152,7 @@ public class FileUnitPanel extends ParameterPanel {
         lowerPanel.add(lowerPanel2, BorderLayout.CENTER);
         add(lowerPanel);
 
-        setEnabling(lowerPanel, isCollection());
+        setEnabling(lowerPanel, collection);
     }
 
     public void returnSomething(String thing){
@@ -169,10 +166,19 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private boolean isCollection(){
-        if(getParameter("collection").equals("true")){
+        if(getParameter("collection").equals(true)){
             return true;
         }else{
             return false;
+        }
+    }
+
+    private int getFileNumber(){
+        if(getParameter("numberOfFiles") != null){
+            return (Integer)getParameter("numberOfFiles");
+        }
+        else{
+            return 1;
         }
     }
 
