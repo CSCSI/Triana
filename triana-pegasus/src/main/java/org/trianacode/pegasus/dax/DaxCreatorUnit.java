@@ -101,6 +101,13 @@ public class DaxCreatorUnit {
                 if(chunk.isCollection()){
                     for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
                         System.out.println("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+
+                        if(chunk.getNamePattern() != null){
+                            System.out.println("Collection has a naming pattern");
+                        }else{
+                            System.out.println("Collection has no naming pattern, using *append int*");
+                        }
+
                         job.addUses(new Filename(chunk.getFilename() + m, 1));
                     }
                 }
@@ -116,6 +123,13 @@ public class DaxCreatorUnit {
                 if(chunk.isCollection()){
                     for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
                         System.out.println("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+
+                        if(chunk.getNamePattern() != null){
+                            System.out.println("Collection has a naming pattern");
+                        }else{
+                            System.out.println("Collection has no naming pattern, using *append int*");
+                        }
+
                         job.addUses(new Filename(chunk.getFilename() + m, 2));
                     }
                 }
