@@ -1,5 +1,7 @@
 package org.trianacode.pegasus.dax;
 
+import org.trianacode.pegasus.string.PatternCollection;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +21,7 @@ public class DaxFileChunk implements Serializable {
     private Vector<DaxJobChunk> inJobChunks = new Vector();
     private Vector<DaxJobChunk> outJobChunks = new Vector();
     private int numberOfFiles = 1;
+    private PatternCollection namePattern = null;
 
     public String getFilename() {
         return filename;
@@ -82,5 +85,13 @@ public class DaxFileChunk implements Serializable {
 
     public int getNumberOfFiles() {
         return numberOfFiles;
+    }
+
+    public PatternCollection getNamePattern() {
+        return namePattern;
+    }
+
+    public void setNamePattern(PatternCollection namePattern) {
+        this.namePattern = namePattern;
     }
 }
