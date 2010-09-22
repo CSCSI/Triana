@@ -59,16 +59,6 @@
 
 package org.trianacode.gui.main.imp;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.LayoutManager;
-import java.util.Hashtable;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.ToolTipManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
@@ -77,6 +67,10 @@ import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.constants.StripeToolConstants;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Hashtable;
 
 /**
  * The graphical representation of a tool.
@@ -326,16 +320,17 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
      * determined until this class is extended to produce a ToolImp, ToolBox or a TrianaTool.
      */
     public void paintComponent(Graphics graphs) {
-        drawRectangle(graphs, getToolColor());
+        drawRectangle(graphs, getToolColor(), graphs.getColor());
         drawStripes(graphs, getStripeColor(), getStripeWidth(), getStripeOffset());
     }
 
     /**
      * Paints the main tool rectangle
      */
-    protected void drawRectangle(Graphics graphs, Color color) {
+    protected void drawRectangle(Graphics graphs, Color color, Color orig) {
         graphs.setColor(color);
         graphs.fill3DRect(0, 0, getSize().width, getSize().height, !isSelected());
+        graphs.setColor(orig);
     }
 
     /**
