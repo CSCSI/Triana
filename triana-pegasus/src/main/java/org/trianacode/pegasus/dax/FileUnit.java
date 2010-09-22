@@ -1,5 +1,6 @@
 package org.trianacode.pegasus.dax;
 
+import org.trianacode.pegasus.string.PatternCollection;
 import org.trianacode.taskgraph.annotation.*;
 import org.trianacode.taskgraph.annotation.Process;
 
@@ -21,6 +22,8 @@ public class FileUnit {
     private String programmaticParam = "This is a file";
     @Parameter
     private int numberOfFiles = 1;
+    @Parameter
+    private PatternCollection namePattern = null;
 
     @TextFieldParameter
     private String fileName = "a.txt";
@@ -38,6 +41,7 @@ public class FileUnit {
         thisFile.setUuid(UUID.randomUUID());
         thisFile.setCollection(collection);
         thisFile.setNumberOfFiles(numberOfFiles);
+        thisFile.setNamePattern(namePattern);
 
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
