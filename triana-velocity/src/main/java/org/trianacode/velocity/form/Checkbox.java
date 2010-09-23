@@ -1,10 +1,27 @@
 package org.trianacode.velocity.form;
 
+import org.trianacode.velocity.Output;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Andrew Harrison
  * @version 1.0.0 Sep 20, 2010
  */
 public class Checkbox extends FormComponent {
+
+    public static final String CHECKBOX_TEMPLATE = "checkbox.template";
+    public static final String CHECKBOX_LOCATION = "/templates/checkbox.tpl";
+
+    static {
+        try {
+            Output.registerTemplate(CHECKBOX_TEMPLATE, CHECKBOX_LOCATION);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private String name;
     private String label;
@@ -53,8 +70,8 @@ public class Checkbox extends FormComponent {
     }
 
     public String render() {
-        String checked = this.checked ? "checked=\"checked\"" : "";
-        String classes = hasClasses() ? "class=\"" + getClassesAsString() + "\"" : "";
-        return "<p>" + label + "<input type=\"checkbox\" " + classes + "name=\"" + name + "\" value=\"" + name + "\"" + checked + " /></p>";
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("checkbox", this);
+        return Output.outputString(properties, CHECKBOX_TEMPLATE);
     }
 }
