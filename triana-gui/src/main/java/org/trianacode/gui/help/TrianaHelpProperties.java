@@ -68,12 +68,12 @@ import java.io.IOException;
 public class TrianaHelpProperties extends PropertiesEx {
 
     /**
-     * Returns the applications home directory.  If it is null it uses the value set in TrianaCalcDefaults.
+     * Returns the applications getApplicationDataDir directory.  If it is null it uses the value set in TrianaCalcDefaults.
      */
     public final static String getHomeDirectory() {
         String homeDirectory;
 
-        // Get the home directory from a command line property.  If it hasn't
+        // Get the getApplicationDataDir directory from a command line property.  If it hasn't
         // been defined then default to either /usr/local/TrianaCalc for UNIX
         // or C:\TrianaCalc for Windows otherwise it is set to null;
         if ((homeDirectory = System.getProperty("trianahelphome").trim()) == null) {
@@ -88,12 +88,12 @@ public class TrianaHelpProperties extends PropertiesEx {
     }
 
     /**
-     * Get the user's home directory
+     * Get the user's getApplicationDataDir directory
      *
-     * @return The user's home directory as a String
+     * @return The user's getApplicationDataDir directory as a String
      */
     public final static String getUserHomeDirectory() {
-        return System.getProperty("user.home");
+        return System.getProperty("user.getApplicationDataDir");
     }
 
     /**

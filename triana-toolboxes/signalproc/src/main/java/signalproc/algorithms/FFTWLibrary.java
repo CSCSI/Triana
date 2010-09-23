@@ -136,7 +136,7 @@ public class FFTWLibrary {
         for (int i=0; i<data.length; i++) {
             out1 = out1.concat(data[i]+"\n");
         }
-        FileUtils.writeToFile("/home/spxrpd/fftw_raw_pre_output.txt",out1);*/
+        FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_pre_output.txt",out1);*/
 
         double[] dbl = realNdPlan.transform(data);
 
@@ -144,7 +144,7 @@ public class FFTWLibrary {
         for (int i=0; i<dbl.length; i++) {
             out = out.concat(dbl[i]+"\n");
         }
-        FileUtils.writeToFile("/home/spxrpd/fftw_raw_output.txt",out);*/
+        FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_output.txt",out);*/
 
         //if its fw then the output is complex, if its bw then its real
 
@@ -480,13 +480,13 @@ public class FFTWLibrary {
             for (int i=0; i<data.length; i++) {
                 out = out.concat(data[i]+"\n");
             }*/
-            //FileUtils.writeToFile("/home/spxrpd/fftw_raw_output.txt",out);
+            //FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_output.txt",out);
 
             /*String out = new String();
            for (int i=0; i<data.length; i++) {
                out = out.concat(data[i]+"\n");
            }
-           FileUtils.writeToFile("/home/spxrpd/fftw_raw_sep_output.txt",out); */
+           FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_sep_output.txt",out); */
             ArrayList al = new ArrayList();
             int n = (int) Math.floor((data.length - 2) / 2);
             int length = data.length;
@@ -526,13 +526,13 @@ public class FFTWLibrary {
             for (int i=0; i<data.length; i++) {
                 out = out.concat(data[i]+"\n");
             }*/
-            //FileUtils.writeToFile("/home/spxrpd/fftw_raw_output.txt",out);
+            //FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_output.txt",out);
 
             /*String out = new String();
            for (int i=0; i<data.length; i++) {
                out = out.concat(data[i]+"\n");
            }
-           FileUtils.writeToFile("/home/spxrpd/fftw_raw_sep_output.txt",out); */
+           FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_sep_output.txt",out); */
             ArrayList al = new ArrayList();
             int n = (int) Math.floor((data.length - 1) / 2);
             int length = data.length;
@@ -578,13 +578,13 @@ public class FFTWLibrary {
             for (int i=0; i<data.length; i++) {
                 out = out.concat(data[i]+"\n");
             }*/
-            //FileUtils.writeToFile("/home/spxrpd/fftw_raw_output.txt",out);
+            //FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_output.txt",out);
 
             /*String out = new String();
            for (int i=0; i<data.length; i++) {
                out = out.concat(data[i]+"\n");
            }
-           FileUtils.writeToFile("/home/spxrpd/fftw_raw_sep_output.txt",out); */
+           FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_sep_output.txt",out); */
             ArrayList al = new ArrayList();
             int n = (int) Math.floor((data.length - 2) / 2);
             int length = data.length;
@@ -625,13 +625,13 @@ public class FFTWLibrary {
             for (int i=0; i<data.length; i++) {
                 out = out.concat(data[i]+"\n");
             }*/
-            //FileUtils.writeToFile("/home/spxrpd/fftw_raw_output.txt",out);
+            //FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_output.txt",out);
 
             /*String out = new String();
            for (int i=0; i<data.length; i++) {
                out = out.concat(data[i]+"\n");
            }
-           FileUtils.writeToFile("/home/spxrpd/fftw_raw_sep_output.txt",out); */
+           FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_sep_output.txt",out); */
             ArrayList al = new ArrayList();
             int n = (int) Math.floor((data.length - 1) / 2);
             int length = data.length;
@@ -677,13 +677,13 @@ public class FFTWLibrary {
             for (int i=0; i<data.length; i++) {
                 out = out.concat(data[i]+"\n");
             }*/
-            //FileUtils.writeToFile("/home/spxrpd/fftw_raw_output.txt",out);
+            //FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_output.txt",out);
 
             /*String out = new String();
            for (int i=0; i<data.length; i++) {
                out = out.concat(data[i]+"\n");
            }
-           FileUtils.writeToFile("/home/spxrpd/fftw_raw_sep_output.txt",out); */
+           FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_sep_output.txt",out); */
             ArrayList al = new ArrayList();
             int n = (int) Math.floor((data.length - 2) / 2);
             int length = data.length;
@@ -725,13 +725,13 @@ public class FFTWLibrary {
             for (int i=0; i<data.length; i++) {
                 out = out.concat(data[i]+"\n");
             }*/
-            //FileUtils.writeToFile("/home/spxrpd/fftw_raw_output.txt",out);
+            //FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_output.txt",out);
 
             /*String out = new String();
            for (int i=0; i<data.length; i++) {
                out = out.concat(data[i]+"\n");
            }
-           FileUtils.writeToFile("/home/spxrpd/fftw_raw_sep_output.txt",out); */
+           FileUtils.writeToFile("/getApplicationDataDir/spxrpd/fftw_raw_sep_output.txt",out); */
             ArrayList al = new ArrayList();
             int n = (int) Math.floor((data.length - 1) / 2);
             int length = data.length;

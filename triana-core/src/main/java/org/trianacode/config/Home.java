@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.trianacode.taskgraph.util;
+package org.trianacode.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.logging.Logger;
 
 /**
- * Class Description Here...
+ * Detects/creates the Application directory getApplicationDataDir for storing application specific data.
  *
  * @author Andrew Harrison
  * @version $Revision:$
@@ -30,21 +31,70 @@ import java.util.logging.Logger;
 
 public class Home {
 
-    static Logger logger = Logger.getLogger("org.trianacode.taskgraph.util.Home");
+    static Logger logger = Logger.getLogger("org.trianacode.config.Home");
     private static String home = null;
     private static File runHome = null;
     private static String os = null;
     private static String arch = null;
     private static boolean isJarred = false;
 
+    private static String defaultConfigFile;
+
+    /**
+     * Initializes the Triana getApplicationDataDir
+     */
+    static {
+        home = getApplicationDataDir();
+
+        // make the app getApplicationDataDir if it doesn't exist
+
+        File f = new File(home);
+        if (!f.exists()) f.mkdir();
+
+        defaultConfigFile = home + File.separator + TrianaProperties.PROPERTY_FILE;
+
+        f = new File(defaultConfigFile);
+
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /*
+     * Gets the config file.
+     *
+     */
+    public static String getDefaultConfigFile() {
+        return defaultConfigFile;
+    }
+
+
     public static synchronized File runHome() {
+         return calculateRunHome();
+    }
+
+    /**
+     * @return the absolute path to the user resource directory.
+     */
+    public static synchronized String getApplicationDataDir() {
+        return calculateHome();
+    }
+
+
+
+    private static synchronized File calculateRunHome() {
         if (runHome != null) {
             return runHome;
         }
-        logger.info("calculating Triana run home...");
+        logger.info("calculating Triana run hom...");
         String fileSubPath = "triana-core/target/classes/org/trianacode/taskgraph/util/Home.class";
         try {
-            URL url = Class.forName("org.trianacode.taskgraph.util.Home").getResource("Home.class");
+            URL url = Class.forName("org.trianacode.config.Home").getResource("Home.class");
             String fullPath = url.toURI().toASCIIString();
             if (fullPath.startsWith("jar:")) {
                 int entryStart = fullPath.indexOf("!/");
@@ -72,17 +122,17 @@ public class Home {
         return isJarred;
     }
 
-    public static synchronized String home() {
+    private static synchronized String calculateHome() {
         runHome();
         if (home != null) {
             return home;
         }
-        logger.info("calculating Triana home");
+        logger.info("calculating Triana application data directory");
         File appHome;
         String triana = "Triana4";
         File file = new File(System.getProperty("user.home"));
         if (!file.isDirectory()) {
-            logger.severe("User home not a valid directory: " + file);
+            logger.severe("Application data directory not a valid directory: " + file);
             appHome = new File(triana);
         } else {
             String os = os();
@@ -114,7 +164,7 @@ public class Home {
             }
         }
         home = appHome.getAbsolutePath();
-        logger.info("Triana support home : " + home);
+        logger.info("Triana support application data directory : " + home);
         return home;
     }
 

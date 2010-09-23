@@ -1122,7 +1122,7 @@ public class FileUtils {
 
     /**
      * Convert the given fileName into a machine independant form by making use of the environment variables to set up
-     * relative paths etc. for example, instead of using /home/specta/ian/grodcl/dir/file.name we would use
+     * relative paths etc. for example, instead of using /getApplicationDataDir/specta/ian/grodcl/dir/file.name we would use
      * $TRIANA/dir/file.name so that we could convert the file to the relevant directory on any machine.
      */
     public static String convertToVirtualName(String fileName) {
@@ -1136,11 +1136,11 @@ public class FileUtils {
         }
 
 /*        System.out.println("File = " + newFile);
-        if (Env.home().length() <= newFile.length())
-            System.out.println("File = " + newFile.substring(0, Env.home().length()));
-        System.out.println("File = " + Env.home());
+        if (Env.getApplicationDataDir().length() <= newFile.length())
+            System.out.println("File = " + newFile.substring(0, Env.getApplicationDataDir().length()));
+        System.out.println("File = " + Env.getApplicationDataDir());
   */
-        String userHome = System.getProperty("user.home");
+        String userHome = System.getProperty("user.getApplicationDataDir");
         if (userHome.length() <= newFile.length()) {
             if (newFile.substring(0, userHome.length()).equalsIgnoreCase(userHome)) {
                 newFile = "$USER_HOME" + newFile.substring(userHome.length());
@@ -1165,7 +1165,7 @@ public class FileUtils {
 
 
         if (newFile.indexOf("$USER_HOME") != -1) {
-            newFile = System.getProperty("user.home") + newFile.substring("$USER_HOME".length());
+            newFile = System.getProperty("user.getApplicationDataDir") + newFile.substring("$USER_HOME".length());
         }
 
         if (newFile.indexOf("://") == -1) {

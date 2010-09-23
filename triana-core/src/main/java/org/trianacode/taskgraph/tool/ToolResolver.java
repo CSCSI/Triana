@@ -52,7 +52,7 @@ import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.taskgraph.util.Home;
+import org.trianacode.config.Home;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 /**
@@ -772,7 +772,7 @@ public class ToolResolver implements ToolMetadataResolver {
 
     private void saveToolboxes() {
         try {
-            File file = new File(Home.home() + File.separator + "toolboxes.xml");
+            File file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
             PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
             DocumentHandler handler = new DocumentHandler();
 
@@ -800,13 +800,13 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     private void createDefaultToolboxes() throws IOException {
-        File file = new File(Home.home() + File.separator + "toolboxes.xml");
+        File file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
         PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
         DocumentHandler handler = new DocumentHandler();
 
         Element root = handler.element("toolboxes");
         handler.setRoot(root);
-        File defToolbox = new File(Home.home() + File.separator + "toolbox");
+        File defToolbox = new File(Home.getApplicationDataDir() + File.separator + "toolbox");
         defToolbox.mkdirs();
 
         Toolbox tb = new Toolbox(defToolbox.getAbsolutePath(), Toolbox.INTERNAL, "user");
@@ -839,12 +839,12 @@ public class ToolResolver implements ToolMetadataResolver {
     public void loadToolboxes() {
         BufferedReader br = null;
         try {
-            File file = new File(Home.home() + File.separator + "toolboxes.xml");
+            File file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
             if (!file.exists() || file.length() == 0) {
                 createDefaultToolboxes();
 
             }
-            file = new File(Home.home() + File.separator + "toolboxes.xml");
+            file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
             List<Toolbox> tbs = new ArrayList<Toolbox>();
 
 

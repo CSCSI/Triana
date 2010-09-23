@@ -333,7 +333,7 @@ public abstract class OldUnit extends Unit {
      * insist that people write help files in order to keep Triana as user-friendly as possible! Help files should be
      * written in html format. If not, they will displayed in text format. You can simply enter the name of the unit
      * (.html) and then Triana looks for this help file in several places e.g. :- </p> <p/> <ol> <li> in
-     * $GRIDHOME/doc/help and then within the <b>tool</b> and <b> main </b> subdirectories. <li> in the users home
+     * $GRIDHOME/doc/help and then within the <b>tool</b> and <b> main </b> subdirectories. <li> in the users getApplicationDataDir
      * directory within a directory called help and then within the <b>tool</b> and <b> main </b> subdirectories. <li>
      * Any path specified by the GRID_HELP environment variable and also then within the <b>tool</b> and <b> main </b>
      * subdirectories. <p/> You can alternatively enter the location as an absolute path name or a network address e.g.

@@ -105,14 +105,14 @@ import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.taskgraph.util.Home;
+import org.trianacode.config.Home;
 import org.trianacode.taskgraph.util.Listing;
 
 /**
  * Env allows a way of accessing various environment and system variables within Triana. Some methods convert from the
  * Java system properties to suitable labels which are of more use within Triana. To get the particular variable you
  * want just call any of these functions from within any unit e.g. :-</p> <p/> <center> Env.trianahome() </center> <p>
- * returns triana's home directory.</p><p>
+ * returns triana's getApplicationDataDir directory.</p><p>
  * <p/>
  * The toString() method is also useful for identifying all the system properties at run-time to make sure your system
  * is set up correctly. This message is printed out Triana or Triana is used.
@@ -254,7 +254,7 @@ public final class Env {
     public static Vector<String> allTypes = null;
 
     /**
-     * Reference to the Triana home directory : Calculated in static {}
+     * Reference to the Triana getApplicationDataDir directory : Calculated in static {}
      */
     public static String home = null;
 
@@ -295,10 +295,10 @@ public final class Env {
     private static Hashtable peerconfig = new Hashtable();
 
     /**
-     * Initializes the Triana home
+     * Initializes the Triana getApplicationDataDir
      */
     static {
-        home = Home.home();
+        home = Home.getApplicationDataDir();
     }
 
 
@@ -600,10 +600,10 @@ public final class Env {
     }
 
     /**
-     * Returns Java's home directory
+     * Returns Java's getApplicationDataDir directory
      */
     public final static String javaHome() {
-        String java = System.getProperty("java.home");
+        String java = System.getProperty("java.getApplicationDataDir");
 
         if (java == null) {
             return "";
@@ -615,11 +615,11 @@ public final class Env {
     }
 
     /**
-     * Returns the user's home directory
+     * Returns the user's getApplicationDataDir directory
      */
     public final static String userHome() {
         if (userHome == null) {
-            userHome = System.getProperty("user.home");
+            userHome = System.getProperty("user.getApplicationDataDir");
             if (userHome.equals("")) {
                 userHome = File.separator;
             }
@@ -649,7 +649,7 @@ public final class Env {
     }
 
     /**
-     * @return the default compiler (from java.home)
+     * @return the default compiler (from java.getApplicationDataDir)
      */
     public static String getDefaultCompilerCommand() {
         String home = Env.javaHome();
@@ -788,7 +788,7 @@ public final class Env {
      * Returns the TRIANA environment variable.
      */
     public final static String home() {
-        return Home.home();
+        return Home.getApplicationDataDir();
     }
 
     /**
@@ -815,7 +815,7 @@ public final class Env {
 
 
     /**
-     * Returns the Windows home directory. Obviously just works for windows.
+     * Returns the Windows getApplicationDataDir directory. Obviously just works for windows.
      */
     public final static String windir() {
         return System.getProperty("windir").trim();
@@ -1955,7 +1955,7 @@ public final class Env {
     }
 
     /**
-     * The base for all Triana home page.
+     * The base for all Triana getApplicationDataDir page.
      */
     public static String homePage() {
         return "http://www.trianacode.org";

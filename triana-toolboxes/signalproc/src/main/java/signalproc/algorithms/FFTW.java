@@ -98,7 +98,7 @@ public class FFTW extends OldUnit {
     boolean planForward;
     FFTWLibrary fftwlib;
     String planType = "Estimate";
-//    private String wisdomFile = System.getProperty("user.home") + System.getProperty("file.separator") + "fftw.wisdom";
+//    private String wisdomFile = System.getProperty("user.getApplicationDataDir") + System.getProperty("file.separator") + "fftw.wisdom";
 
     /**
      * ********************************************* ** A Java FFT algorithm    ***

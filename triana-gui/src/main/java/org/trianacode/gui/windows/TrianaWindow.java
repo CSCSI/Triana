@@ -329,7 +329,7 @@ public abstract class TrianaWindow extends JFrame
             findWordDialog.dispose();
         }
 
-//        System.out.println( new String(Env.home() + File.separator + "system" + File.separator + "indexes" + File.separator + indexFileName));
+//        System.out.println( new String(Env.getApplicationDataDir() + File.separator + "system" + File.separator + "indexes" + File.separator + indexFileName));
 
         try {
             String fn = Env.home() + File.separator + "system" +
