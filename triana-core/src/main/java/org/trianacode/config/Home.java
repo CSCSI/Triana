@@ -40,6 +40,11 @@ public class Home {
 
     private static String defaultConfigFile;
 
+    // Defines for property names
+
+    static final String DEFAULT_PROPERTY_FILE = TrianaProperties.DOMAIN + " .properties";        // Property file
+
+
     /**
      * Initializes the Triana getApplicationDataDir
      */
@@ -51,7 +56,7 @@ public class Home {
         File f = new File(home);
         if (!f.exists()) f.mkdir();
 
-        defaultConfigFile = home + File.separator + TrianaProperties.PROPERTY_FILE;
+        defaultConfigFile = home + File.separator + DEFAULT_PROPERTY_FILE;
 
         f = new File(defaultConfigFile);
 
@@ -85,6 +90,29 @@ public class Home {
         return calculateHome();
     }
 
+    /**
+     * returns the
+     * @return
+     */
+    public static String getHomeProper() {
+        if (Home.isJarred()) {
+            File f = Home.runHome();
+            File p = f.getParentFile().getParentFile().getParentFile();
+            return p.getAbsolutePath();
+        } else {
+            return Home.runHome().getParentFile().getAbsolutePath(); // is this correct?
+        }
+    }
+
+    public static String[] getInternalToolboxes() {
+        String paths = System.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
+
+        if (paths!=null)
+            return paths.split(",");
+        else
+            return new String[0];
+        
+    }
 
 
     private static synchronized File calculateRunHome() {

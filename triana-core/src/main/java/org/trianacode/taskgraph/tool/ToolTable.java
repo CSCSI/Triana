@@ -193,4 +193,9 @@ public interface ToolTable {
     public String getPasteFileLocation(String toolname, String pack, String toolbox);
 
 
+    /**
+     * Gets the tool resolver for this tool table -- added by Ian T to fix the static loading of tool resolvers.
+     *
+     */
+    public ToolResolver getToolResolver();
 }

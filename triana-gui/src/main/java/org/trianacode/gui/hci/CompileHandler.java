@@ -63,7 +63,6 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
-import org.trianacode.EngineInit;
 import org.trianacode.gui.panels.CompilePanel;
 import org.trianacode.gui.panels.ScrollingMessageFrame;
 import org.trianacode.gui.windows.ErrorDialog;
@@ -114,14 +113,17 @@ public class CompileHandler implements ParameterWindowListener {
     private ScrollingMessageFrame errorFrame;
     private Tool targetTool;
 
+    ToolTable toolTable;
+
     /**
      * Construct a compile handler that will be used to automatically compile tools. Set the tool and then call compile,
      * errors will be reported but ignored, messages will be appended to a dialog.
      *
      * @param automatedCompile if <b>true</b> reports will be append to a dialog and compilation won't be interupted
      */
-    public CompileHandler(boolean automatedCompile) {
+    public CompileHandler(boolean automatedCompile, ToolTable tools) {
         this.automatedCompile = automatedCompile;
+        this.toolTable=tools;
 
         if (automatedCompile) {
             init();
@@ -132,7 +134,7 @@ public class CompileHandler implements ParameterWindowListener {
      * Construct a compiler handler for compiling a specified tool
      */
     public CompileHandler(Tool tool, ToolTable tools) {
-        this(false);
+        this(false, tools);
 
         if (panel == null) {
             panel = new CompilePanel(tools);
@@ -320,7 +322,7 @@ public class CompileHandler implements ParameterWindowListener {
 
     public void compile() {
         try {
-            Toolbox box = EngineInit.getToolResolver().getToolbox(toolBox);
+            Toolbox box = toolTable.getToolResolver().getToolbox(toolBox);
             if (compileSource) {
                 if (!automatedCompile) {
                     compiler = new CompileUtil(sourceFilePath, true);
@@ -373,7 +375,7 @@ public class CompileHandler implements ParameterWindowListener {
     public void compileGUI(Tool tool) throws FileNotFoundException, CompilerException {
 
         if (compileGUI && tool.isParameterName(Tool.PARAM_PANEL_CLASS)) {
-            Toolbox box = EngineInit.getToolResolver().getToolbox(toolBox);
+            Toolbox box = toolTable.getToolResolver().getToolbox(toolBox);
             String panelclass = (String) tool.getParameter(Tool.PARAM_PANEL_CLASS);
             panelclass = panelclass.substring(panelclass.lastIndexOf('.') + 1);
 

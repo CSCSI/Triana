@@ -1,35 +1,22 @@
 package org.trianacode.taskgraph.tool;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.w3c.dom.Element;
+import org.trianacode.config.Home;
+import org.trianacode.config.TrianaProperties;
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
@@ -48,11 +35,9 @@ import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.config.Home;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 /**
@@ -84,6 +69,15 @@ public class ToolResolver implements ToolMetadataResolver {
     private Map<String, ToolboxTools> tools = new ConcurrentHashMap<String, ToolboxTools>();
     protected Map<String, Toolbox> toolboxes = new ConcurrentHashMap<String, Toolbox>();
     private List<ToolListener> listeners = new ArrayList<ToolListener>();
+
+    TrianaProperties properties;
+
+    // disable the creation without properties.
+    private ToolResolver() {}
+
+    public ToolResolver(TrianaProperties properties) {
+        this.properties = properties;
+    }
 
     public long getResolveInterval() {
         return resolveInterval;
@@ -336,12 +330,10 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
 
-    @Override
     public String getName() {
         return "TrianaMetadataResolver";
     }
 
-    @Override
     public List<ToolMetadata> resolve(Toolbox toolbox) {
         List<Tool> tools = resolveToolbox(toolbox);
         notifyToolsAdded(tools);
@@ -492,7 +484,7 @@ public class ToolResolver implements ToolMetadataResolver {
                         toolboxes.put(toolbox.getPath(), toolbox);
                     }
                 } catch (Exception e) {
-                    log.warning("Error adding toolbox: " + FileUtils.formatThrowable(e));
+                    log.warning("Error adding toolbox: \n" + toolbox.getPath() + " --- " + FileUtils.formatThrowable(e));
                 }
             }
         }
@@ -771,137 +763,74 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     private void saveToolboxes() {
+        properties.setProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY, toCSV());
         try {
-            File file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
-            PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-            DocumentHandler handler = new DocumentHandler();
-
-            Element root = handler.element("toolboxes");
-            handler.setRoot(root);
-
-
-            List<Toolbox> toolboxes = getToolboxes();
-            for (int count = 0; count < toolboxes.size(); count++) {
-                Element toolbox = handler.element("toolbox");
-                handler.add(toolboxes.get(count).getPath(), toolbox);
-
-                toolbox.setAttribute("type", toolboxes.get(count).getType());
-                toolbox.setAttribute("virtual", toolboxes.get(count).isVirtual() + "");
-                toolbox.setAttribute("name", toolboxes.get(count).getName());
-                handler.add(toolbox, root);
-            }
-            handler.output(bw, true);
-            bw.flush();
-            FileUtils.closeWriter(bw);
+            properties.saveProperties();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void createDefaultToolboxes() throws IOException {
-        File file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
-        PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-        DocumentHandler handler = new DocumentHandler();
-
-        Element root = handler.element("toolboxes");
-        handler.setRoot(root);
-        File defToolbox = new File(Home.getApplicationDataDir() + File.separator + "toolbox");
-        defToolbox.mkdirs();
-
-        Toolbox tb = new Toolbox(defToolbox.getAbsolutePath(), Toolbox.INTERNAL, "user");
-        Element toolbox = handler.element("toolbox");
-        handler.add(tb.getPath(), toolbox);
-
-        toolbox.setAttribute("type", tb.getType());
-        toolbox.setAttribute("virtual", tb.isVirtual() + "");
-        toolbox.setAttribute("name", tb.getName());
-        handler.add(toolbox, root);
-
-        handler.output(bw, true);
-        bw.flush();
-        FileUtils.closeWriter(bw);
-    }
-
-    private String findInternalToolboxes() {
-        if (Home.isJarred()) {
-            File f = Home.runHome();
-            File p = f.getParentFile();
-            return new File(p, "toolboxes").getAbsolutePath();
-        } else {
-            return new File(Home.runHome(), "toolboxes").getAbsolutePath();
+            System.err.println("WARNING: properties could not be saved to " + Home.getDefaultConfigFile());
+            e.printStackTrace();  
         }
     }
 
     /**
-     * load the toolboxes from a file description
+     * converts the toolboxes into a CSV list
+     *
+     * @return
+     */
+    private String toCSV() {
+        StringBuffer toolboxesstr = new StringBuffer();
+
+        List<Toolbox> toolboxes = getToolboxes();
+        for (int count = 0; count < toolboxes.size(); count++) {
+            toolboxesstr.append(toolboxes.get(count).getPath());
+            toolboxesstr.append(", ");
+        }
+
+        return toolboxesstr.toString();
+    }
+
+    /**
+     * Creates a lilst of toolbox paths from a cvs representation
+     * @return
+     */
+    public String[] csvToStringArray(String csv) {
+        String [] paths = csv.split(",");
+        String []trimmed = new String[paths.length];
+        int i=0;
+        for (String path: paths) {
+            trimmed[i++] = path.trim();
+        }
+        return trimmed;
+    }
+
+
+    private String[] createDefaultToolboxes() {
+        String defaultToolboxPaths = TrianaProperties.getDefaultConfiguration().getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
+        return csvToStringArray(defaultToolboxPaths);
+    }
+
+    /**
+     * load the toolboxes using the TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY
      */
     public void loadToolboxes() {
         BufferedReader br = null;
-        try {
-            File file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
-            if (!file.exists() || file.length() == 0) {
-                createDefaultToolboxes();
 
-            }
-            file = new File(Home.getApplicationDataDir() + File.separator + "toolboxes.xml");
-            List<Toolbox> tbs = new ArrayList<Toolbox>();
+        String[] toolboxPaths;
+
+        String toolboxPathsCSV = properties.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
+
+        if ( (toolboxPathsCSV==null) || (toolboxPathsCSV.equals("")))
+            toolboxPaths = createDefaultToolboxes();
+        else
+            toolboxPaths = csvToStringArray(toolboxPathsCSV);
 
 
-            br = new BufferedReader(new FileReader(file));
-            DocumentHandler handler = new DocumentHandler(br);
+        for (String toolboxPath: toolboxPaths) {
+            // need test for remote ones here - todo with bonjour stuff ....  for now assume local
 
-            Element root = handler.root();
-
-            if (!root.getLocalName().equals("toolboxes")) {
-                throw (new Exception("Corrupt config file: " + file.getAbsolutePath()));
-            }
-
-            List elementList = handler.getChildren(root);
-            Iterator iter = elementList.iterator();
-            Element elem;
-            String toolbox;
-
-            while (iter.hasNext()) {
-                elem = ((Element) iter.next());
-                toolbox = elem.getTextContent().trim();
-                String type = elem.getAttribute("type");
-                String virtual = elem.getAttribute("virtual");
-                String name = elem.getAttribute("name");
-                if (name == null || name.equals("No Type")) {
-                    name = UrlUtils.getLastPathComponent(toolbox);
-                }
-                boolean v = virtual != null && virtual.equals("true");
-                if (!v) {
-                    if (!new File(toolbox).exists()) {
-                        log.severe("Error: Toolbox " + toolbox + " doesn't exists removing from config");
-                    } else {
-                        if (type != null && type.length() > 0) {
-                            tbs.add(new Toolbox(toolbox, type, name, v));
-                        } else {
-                            tbs.add(new Toolbox(toolbox, name, v));
-                        }
-                    }
-                }
-            }
-            if (tbs.size() > 0) {
-                addNewToolBox(tbs.toArray(new Toolbox[tbs.size()]));
-            }
-            String internal = findInternalToolboxes();
-            if (internal != null) {
-                Toolbox intern = new Toolbox(internal, "internal", "default-toolboxes", false);
-                addNewToolBox(intern);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            FileUtils.closeReader(br);
+            Toolbox intern = new Toolbox(toolboxPath, "internal", "default-toolboxes", false);
+            addNewToolBox(intern);
         }
-
     }
 
     public void shutdown() {

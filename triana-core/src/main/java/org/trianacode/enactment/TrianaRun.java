@@ -59,7 +59,7 @@
 
 package org.trianacode.enactment;
 
-import org.trianacode.EngineInit;
+import org.trianacode.TrianaInstance;
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
@@ -129,11 +129,13 @@ public class TrianaRun {
      * Create and initialise a new tool table
      */
     public static void initToolTable() {
+        TrianaInstance engine = new TrianaInstance();
         try {
-            EngineInit.init();
+            engine.init();
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
     }
 
     /**

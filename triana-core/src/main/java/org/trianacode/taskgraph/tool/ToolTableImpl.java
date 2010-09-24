@@ -43,7 +43,7 @@ public class ToolTableImpl implements ToolTable, ToolListener {
     // The standard tool box types
     public static final String USER_TOOLBOX = "user";
 
-
+    
     /**
      * An array list of tool listeners
      */
@@ -72,6 +72,10 @@ public class ToolTableImpl implements ToolTable, ToolListener {
         listeners.remove(listener);
     }
 
+
+    public ToolResolver getToolResolver() {
+        return resolver;
+    }
 
     /**
      * A method to lookup the tool with the given the tool name.

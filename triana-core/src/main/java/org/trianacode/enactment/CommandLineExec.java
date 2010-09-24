@@ -67,7 +67,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.trianacode.EngineInit;
+import org.trianacode.TrianaInstance;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
@@ -564,10 +564,10 @@ public class CommandLineExec extends TrianaExec {
             System.out.println("File not found: " + file.getAbsolutePath());
             return;
         }
-
+        TrianaInstance engine = new TrianaInstance();
         try {
             try {
-                EngineInit.init();
+                engine.init();
             } catch (Exception e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }

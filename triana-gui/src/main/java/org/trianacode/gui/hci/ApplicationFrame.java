@@ -60,7 +60,7 @@ package org.trianacode.gui.hci;
 
 import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
-import org.trianacode.EngineInit;
+import org.trianacode.TrianaInstance;
 import org.trianacode.gui.action.*;
 import org.trianacode.gui.action.clipboard.CopyAction;
 import org.trianacode.gui.action.clipboard.CutAction;
@@ -189,6 +189,7 @@ public class ApplicationFrame extends TrianaWindow
      */
     private Object selected;
 
+    TrianaInstance engine;
 
     /**
      * Initialise the application
@@ -222,14 +223,24 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     private void init() {
+
+        engine = new TrianaInstance();
+
         try {
             logger.info("Initialising");
             SplashScreen splash = new SplashScreen();
             splash.showSplashScreen(5);
-            tools = new ToolTableImpl(EngineInit.getToolResolver());
+
+        try {
+            engine.init();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+            tools = new ToolTableImpl(engine.getToolResolver());
             splash.setSplashProgress("Initializing Engine");
 
-            EngineInit.init(tools, false, Extension.class,
+            engine.init(tools, false, Extension.class,
                     TaskGraphExporterInterface.class,
                     TaskGraphImporterInterface.class,
                     ToolImporterInterface.class,
@@ -250,7 +261,7 @@ public class ApplicationFrame extends TrianaWindow
             initPostLayoutExtensions();
 
             splash.setSplashProgress("Resolving Tools");
-            EngineInit.getToolResolver().resolve();
+            engine.getToolResolver().resolve();
 
             splash.setSplashProgress(Env.getString("stateLabel"));
             Env.readStateFiles();
@@ -384,26 +395,26 @@ public class ApplicationFrame extends TrianaWindow
      * Discover and initialize the extension classes and populate the extension manager
      */
     private void initExtensions() {
-        List<Object> en = EngineInit.getExtensions(Extension.class);
+        List<Object> en = engine.getExtensions(Extension.class);
         for (Object o : en) {
             Extension e = (Extension) o;
             e.init(this);
             ExtensionManager.registerExtension(e);
         }
-        en = EngineInit.getExtensions(TaskGraphExporterInterface.class);
+        en = engine.getExtensions(TaskGraphExporterInterface.class);
         for (Object o : en) {
             TaskGraphExporterInterface e = (TaskGraphExporterInterface) o;
             System.out.println("**** Found an exporter : " + e.toString());
             ImportExportRegistry.addExporter(e);
         }
-        en = EngineInit.getExtensions(TaskGraphImporterInterface.class);
+        en = engine.getExtensions(TaskGraphImporterInterface.class);
         for (Object o : en) {
             TaskGraphImporterInterface e = (TaskGraphImporterInterface) o;
             System.out.println("**** Found an importer : " + e.toString());
 
             ImportExportRegistry.addImporter(e);
         }
-        en = EngineInit.getExtensions(ToolImporterInterface.class);
+        en = engine.getExtensions(ToolImporterInterface.class);
         for (Object o : en) {
             ToolImporterInterface e = (ToolImporterInterface) o;
             ImportExportRegistry.addToolImporter(e);
@@ -413,7 +424,7 @@ public class ApplicationFrame extends TrianaWindow
 
     private void initPostLayoutExtensions() {
         TaskGraphView defaultview = TaskGraphViewManager.getDefaultTaskgraphView();
-        List<Object> en  = EngineInit.getExtensions(RegisterableToolComponentModel.class);
+        List<Object> en  = engine.getExtensions(RegisterableToolComponentModel.class);
         for (Object o : en) {
             RegisterableToolComponentModel e = (RegisterableToolComponentModel) o;
             defaultview.registerToolModel(e.getRegistrationString(), e);

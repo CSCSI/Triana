@@ -3,7 +3,7 @@ package org.trianacode.taskgraph.interceptor.execution;
 import java.io.File;
 import java.io.FileReader;
 
-import org.trianacode.EngineInit;
+import org.trianacode.TrianaInstance;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.ser.XMLReader;
 
@@ -25,7 +25,14 @@ public class ExecutionControlTest implements ExecutionControlListener {
     public static void main(String[] args) throws Exception {
 
         File file = new File(args[0]);
-        EngineInit.init();
+
+        TrianaInstance engine = new TrianaInstance();
+        try {
+            engine.init();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        
         XMLReader reader = new XMLReader(new FileReader(file));
         ExecutionControlTest test = new ExecutionControlTest((Task) reader.readComponent());
         test.start();

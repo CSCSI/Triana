@@ -91,8 +91,8 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.trianacode.TrianaInstance;
 import org.w3c.dom.Element;
-import org.trianacode.EngineInit;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
@@ -302,6 +302,8 @@ public final class Env {
     }
 
 
+    
+
     /**
      * Adds a user property listener to Env
      */
@@ -445,7 +447,11 @@ public final class Env {
      * Restore the default user settings
      */
     private static void restoreDefaultConfig() {
-        EngineInit.getToolResolver().loadToolboxes();
+
+        /// IAN T - BAD - need to fix this static reference - its the only one that causes issues.
+        // created a throw away instance for now but needs fixing properly.
+        
+        new TrianaInstance().getToolResolver().loadToolboxes();
         GUIEnv.loadDefaultColours();
         String defaultEditor = Env.getString("defaultEditor");
         setUserProperty(CODE_EDITOR_STR, defaultEditor);

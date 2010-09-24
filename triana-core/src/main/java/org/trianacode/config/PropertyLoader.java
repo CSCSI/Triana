@@ -1,16 +1,28 @@
 package org.trianacode.config;
 
-import java.io.File;
-import java.io.FileInputStream;
+import org.trianacode.TrianaInstance;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- * Created by IntelliJ IDEA.
- * User: scmijt
+ * Property loader:  This tries several ways of initialising the properties.   There are two use
+ * cases:
+ *
+ * <ol>
+ * <li> When app is ran from the command line
+ * <li> When app is embedded.
+ * </ol>
+ *
+ * When run from the command line the system defaults to its default values by loading in from the triana
+ * properties file in the app directory or from default values.  When ran from an app,
+ * it starts with the values passed from a properties object (if available).   Thereafter, it
+ * goes through a sequence of searching the property file list if available and then overriding any
+ * property with a property that has been defined using the System properties.
+ *
+ * User: Ian Taylor
  * Date: Sep 23, 2010
  * Time: 11:28:10 AM
  * To change this template use File | Settings | File Templates.
@@ -18,109 +30,72 @@ import java.util.Properties;
 public class PropertyLoader {
 
     TrianaProperties props;
+    TrianaInstance engine;
 
     /**
-      * Creates a config by loading in the properties from the various sources of
-      * property files and system properties.
-      *
-      * @throws java.io.IOException
-      */
-     public PropertyLoader(Properties properties) throws IOException {
-         // either load from system OR from the properties provided.
-         if(properties == null){
-             this.props = new TrianaProperties();
-             loadProperties(TrianaProperties.PROPERTY_FILE);
+     * Creates a config by loading in the properties from the various sources of
+     * property files and system properties.
+     *
+     * @throws java.io.IOException
+     */
+    public PropertyLoader(TrianaInstance engine, Properties properties) throws IOException {
+        this.engine=engine;
+        // either load from system OR from the properties provided.
+        if(properties == null){
+            this.props = new TrianaProperties(engine);
+            String defaultvals = System.getProperty(Home.DEFAULT_PROPERTY_FILE);
+            if (defaultvals!=null) {
+                InputStream stream = ResourceManagement.getInputStreamFor(defaultvals);
+                if (stream!=null)
+                    props.load(stream);
+            }
+        } else {   // assume another app is in control and load properties from there
+            this.props = new TrianaProperties(engine,properties);
+        }
 
-             // loads in the file list using the property.file.list system property
-             String filelist = System.getProperty(TrianaProperties.PROPERTY_FILE_LIST);
-             String filelistarr[];
+        // loads in the file list using the property.file.list system property
+        String filelist = System.getProperty(TrianaProperties.PROPERTY_FILE_LIST_PROPERTY);
 
-             if (filelist!=null) {
-                filelistarr=filelist.split(",");
-                 for (String file: filelistarr) {
-                    loadProperties(file);
-                }
-             }
-         } else {
-             this.props = new TrianaProperties(properties);
-         }
+
+        if (filelist!=null) { // we have other configuration files
+            String filelistarr[];
+
+            filelistarr=filelist.split(",");
+            for (String file: filelistarr) {
+                InputStream stream = ResourceManagement.getInputStreamFor(file, ResourceManagement.Type.PROPERTY);
+                if (stream!=null)
+                    props.load(stream);
+            }
+        }
 
         // over-ride any of the values with system values, in case, the user specified any of the
-        // value directly on the command line
-        
+        // value directly on the command line or within another application
         props.overrideUsingSystemProperties();
-     }
+
+        props.saveProperties();
+    }
 
 
-     /**
-      * Returns the properties specific to this GumpConfig
-      *
-      * Implementors of MulticastSockets and Transports can be configured using these properties
-      */
-     public Properties getProperties(){
-         return props;
-     }
+        /**
+         * Returns the properties specific to this GumpConfig
+         *
+         * Implementors of MulticastSockets and Transports can be configured using these properties
+         */
+    public TrianaProperties getProperties(){
+        return props;
+    }
 
-     /**
-      * loads in the properties from the the given filename, which also acts as
-      * the property name.  The method searches for properties in three different locations:
-      *
-      * <ol>
-      * <li> A filename specified by the property named propertyFileName
-      * <li> the user's getApplicationDataDir directory, in a directory called .gump/
-      * <li> then finally in the jar file in a file called config/propertyFileName
-      * </ol>
-      *
-      * There IS ONE propertyFileName, and several custom files that can be loaded in by the system:
-      *
-      * <ol>
-      * <li> gump.properties
-      * <li> gump.properties.file.list, which is a list of file names (comma separated) contains files
-      * that will also be loaded by the system.
-      * </ol>
-      *
-      * @throws java.io.IOException
-      */
-     public void loadProperties(String propertyFileName) throws IOException {
-         InputStream stream=null;
 
-         //Try 3 ways to find the properties.
+    public void printProperties() {
+        System.out.println("Properties are :");
+        Enumeration propNames;
+        // copy into the system properties
+        propNames = System.getProperties().keys();
 
-         String propertyFileLocation = System.getProperty(propertyFileName);
-         String propertyUserLoc = Home.getDefaultConfigFile();
-         File userFile = new File(propertyUserLoc);
+        while (propNames.hasMoreElements()) {
+            String el=(String)propNames.nextElement();
 
-         if (propertyFileLocation!=null) {
-             stream = new FileInputStream(propertyFileLocation);
-         } else if (userFile.exists()) { // found file in ~/.gump
-             stream = new FileInputStream(userFile);
-         } else {
-             // try second find config/gump.properties in the jar file.
-             String properties = "config/" + propertyFileName;
-             URL propertyURL = Thread.currentThread().getContextClassLoader().getResource(properties);
-             if (propertyURL!=null)
-                 stream = propertyURL.openStream();
-         }
-
-         if (stream!=null) {
-             props.load(stream);
-             //props.load(stream);
-             stream.close();
-         } else {
-             System.err.println("WARNING: Cannot find " + propertyFileName + " file (at "+userFile.getAbsolutePath()+") to initialise the system");
-         }
-     }
-
-     public void printProperties() {
-         System.out.println("Properties are :");
-         Enumeration propNames;
-         // copy into the system properties
-         propNames = System.getProperties().keys();
-
-         while (propNames.hasMoreElements()) {
-             String el=(String)propNames.nextElement();
-
-             System.out.println(el + " = " + System.getProperty(el));
-         }
-     }
+            System.out.println(el + " = " + System.getProperty(el));
+        }
+    }
 }

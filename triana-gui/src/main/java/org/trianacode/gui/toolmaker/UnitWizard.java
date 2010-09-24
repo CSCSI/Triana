@@ -66,7 +66,7 @@ import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.trianacode.EngineInit;
+
 import org.trianacode.gui.windows.WizardListener;
 import org.trianacode.gui.windows.WizardWindow;
 import org.trianacode.taskgraph.TaskException;
@@ -157,7 +157,7 @@ public class UnitWizard implements WizardListener {
     private ParamsPanel paramspanel;
     private GUIPanel guipanel;
     private FinalPanel finalpanel;
-    private ToolTable tools;
+    private ToolTable toolTable;
 
     /**
      * the wizard window
@@ -166,7 +166,7 @@ public class UnitWizard implements WizardListener {
 
 
     public UnitWizard(ToolTable tools, Frame owner) {
-        this.tools = tools;
+        this.toolTable = tools;
         toolpanel = new UnitPanel(tools);
         typespanel = new TypesPanel(getTypes(), toolpanel);
         paramspanel = new ParamsPanel(DATA_TYPES, PARAM_TYPES);
@@ -749,7 +749,7 @@ public class UnitWizard implements WizardListener {
 
             placeholder.setPopUpDescription(toolpanel.getPopUpDescription());
             placeholder.setHelpFile(getToolHelpFilePath());
-            placeholder.setToolBox(EngineInit.getToolResolver().getToolbox(toolpanel.getToolBox()));
+            placeholder.setToolBox(toolTable.getToolResolver().getToolbox(toolpanel.getToolBox()));
 
             String saveFile = finalpanel.getPlaceHolderFile();
             if (FileUtils.fileExists(saveFile)) {
@@ -767,7 +767,7 @@ public class UnitWizard implements WizardListener {
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
-            tools.refreshLocation(UrlUtils.toURL(saveFile), placeholder.getToolBox().getPath());
+            toolTable.refreshLocation(UrlUtils.toURL(saveFile), placeholder.getToolBox().getPath());
             return true;
         } catch (TaskException except) {
             System.err.println("Error Generating Placeholder: " + except.getMessage());

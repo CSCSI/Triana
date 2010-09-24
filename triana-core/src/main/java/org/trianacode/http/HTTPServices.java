@@ -10,9 +10,8 @@ import org.trianacode.taskgraph.tool.ToolResolver;
  * User: scmijt Date: Jul 30, 2010 Time: 12:06:44 PM To change this template use File | Settings | File Templates.
  */
 public class HTTPServices {
-    static TrianaHttpServer workflowServer;
-    static HttpPeer httpEngine;
-    static DiscoverTools discoverTools;
+    TrianaHttpServer workflowServer;
+    HttpPeer httpEngine;
 
     public HTTPServices() {
     }
@@ -26,14 +25,13 @@ public class HTTPServices {
 
         httpEngine = workflowServer.getHTTPPeerInstance();
 
-        discoverTools = new DiscoverTools(httpEngine, resolver);
     }
 
-    public static TrianaHttpServer getWorkflowServer() {
+    public TrianaHttpServer getWorkflowServer() {
         return workflowServer;
     }
 
-    public static HttpPeer getHttpEngine() {
+    public HttpPeer getHttpEngine() {
         return httpEngine;
     }
 

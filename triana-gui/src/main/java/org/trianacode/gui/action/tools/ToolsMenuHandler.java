@@ -103,7 +103,7 @@ public class ToolsMenuHandler implements ActionListener {
     }
 
     private void rebuildAllTools() {
-        final CompileHandler compiler = new CompileHandler(true);
+        final CompileHandler compiler = new CompileHandler(true, tools);
         Thread thread = new Thread() {
             public void run() {
 
@@ -131,7 +131,7 @@ public class ToolsMenuHandler implements ActionListener {
                     "Select", JOptionPane.INFORMATION_MESSAGE,
                     GUIEnv.getTrianaIcon());
         } else {
-            final CompileHandler compiler = new CompileHandler(true);
+            final CompileHandler compiler = new CompileHandler(true, tools);
             Thread thread = new Thread() {
                 public void run() {
                     for (int i = 0; i < ts.length; i++) {

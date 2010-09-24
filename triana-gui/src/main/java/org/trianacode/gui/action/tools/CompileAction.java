@@ -113,7 +113,7 @@ public class CompileAction extends AbstractAction implements ActionDisplayOption
         } else {
             final Tool[] selectedTools = selhandler.getSelectedTools();
 
-            final CompileHandler compiler = new CompileHandler(true);
+            final CompileHandler compiler = new CompileHandler(true, tools);
             Thread thread = new Thread() {
                 public void run() {
                     for (int i = 0; i < selectedTools.length; i++) {
