@@ -105,7 +105,7 @@ public class Locations {
             File p = f.getParentFile().getParentFile().getParentFile();
             return p.getAbsolutePath();
         } else {
-            return Locations.runHome().getParentFile().getAbsolutePath(); // is this correct?
+            return Locations.runHome().getAbsolutePath(); // is this correct?
         }
     }
 
