@@ -1,6 +1,7 @@
 package org.trianacode.config;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -15,12 +16,13 @@ import java.util.List;
  * Values can either be Strings (single) or lists (List) of Strings.
  *
  * User: Ian Taylor
- * 
+ *
  * Date: Sep 24, 2010
  * Time: 9:35:27 AM
  * To change this template use File | Settings | File Templates.
  */
 public class ArgumentParser {
+    private static final String NL = System.getProperty("line.separator");
     Hashtable <String,List>arguments;
     ArrayList <String>argumentPrefixes;
 
@@ -37,7 +39,7 @@ public class ArgumentParser {
 
     /**
      * Adds an argument prefix to the list of prefixes that are used to identify arguments
-     * 
+     *
      * @param prefix
      */
     public void addArgumentPrefix(String prefix) {
@@ -59,8 +61,9 @@ public class ArgumentParser {
 
             valp=i+1;
 
+            values=new ArrayList<String>();
+
             if (valp<args.length) {
-                values=new ArrayList<String>();
                 boolean moreValues;
 
                 do {
@@ -74,9 +77,11 @@ public class ArgumentParser {
                     }
                 } while (moreValues);
             }
-            
+
+            arguments.put(argument,values);
+
             i=valp;
-            
+
         } while (i<args.length);
     }
 
@@ -95,7 +100,7 @@ public class ArgumentParser {
      * Gets values fgor this argument
      *
      * @param argument argument to search for (containing the prefix)
-     * 
+     *
      * @return a List of values for this argument or bull if not found
      */
     public List getArgumentValues(String argument) {
@@ -105,7 +110,7 @@ public class ArgumentParser {
 
     /**
      * Returns a list of arguments as a String[]
-     * 
+     *
      * @param argument
      * @return
      */
@@ -120,7 +125,7 @@ public class ArgumentParser {
             strvals[i]=val;
             ++i;
         }
-        
+
         return strvals;
     }
 
@@ -132,4 +137,35 @@ public class ArgumentParser {
     public Hashtable<String,List> getArguments() {
         return arguments;
     }
+
+    public void listArguments() {
+        System.out.println(toString());
+
+    }
+
+    public String toString() {
+
+        StringBuffer allargs=new StringBuffer();
+
+        Enumeration args= arguments.keys();
+
+
+        while (args.hasMoreElements()) {
+            StringBuffer onearg=new StringBuffer();
+            String arg = (String)args.nextElement();
+            List<String> vals = arguments.get(arg);
+
+            onearg.append(arg);
+            onearg.append(" ");
+            for (String val: vals) {
+                onearg.append(val);
+                onearg.append(" ");
+            }
+
+            allargs.append(onearg.toString().trim());
+            allargs.append(NL);
+        }
+        return allargs.toString();
+    }
 }
+
