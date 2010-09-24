@@ -256,8 +256,8 @@ public class ToolClassLoader extends URLClassLoader {
 
     private String getNativeDir() {
         String binlib = null;
-        String os = Home.os();
-        String arch = Home.arch();
+        String os = Locations.os();
+        String arch = Locations.arch();
         if (os.equals("osx")) {
             binlib = Toolbox.OSX_DIR;
         } else if (os.equals("windows")) {

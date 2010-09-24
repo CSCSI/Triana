@@ -31,6 +31,6 @@ public class ResourceSpawnTest {
             System.out.println("Tool is not a Task:" + args[0] + ". I need a Task.");
             System.exit(0);
         }
-        HTTPServices.getWorkflowServer().addExecutableTask("spawn", (Task) tool);
+        engine.getHttpServices().getWorkflowServer().addExecutableTask("spawn", (Task) tool);
     }
 }

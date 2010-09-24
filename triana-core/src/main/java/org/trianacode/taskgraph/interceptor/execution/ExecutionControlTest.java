@@ -43,7 +43,6 @@ public class ExecutionControlTest implements ExecutionControlListener {
         controller.begin();
     }
 
-    @Override
     public void executionSuspended(Task task) {
         System.out.println("ExecutionTest.executionSuspended FOR TASK:" + task.getToolName());
         try {
@@ -56,7 +55,6 @@ public class ExecutionControlTest implements ExecutionControlListener {
 
     }
 
-    @Override
     public void executionComplete(Task task) {
         System.out.println("ExecutionTest.executionComplete TASK HAS FINISHED");
 

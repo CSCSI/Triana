@@ -58,6 +58,9 @@
  */
 package org.trianacode.taskgraph.tool;
 
+import org.trianacode.config.TrianaProperties;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
+
 import java.net.URL;
 
 
@@ -79,6 +82,8 @@ public interface ToolTable {
     public Toolbox[] getToolBoxes();
 
     public String[] getToolBoxPaths();
+
+    public TrianaProperties getProperties();
 
     /**
      * @return the tool box path of the specified type (null if no tool box specified for that type)

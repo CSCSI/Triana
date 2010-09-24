@@ -13,6 +13,8 @@ public abstract class FormComponent {
 
     public abstract String render();
 
+    
+
     public String getClassesAsString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < classes.size(); i++) {

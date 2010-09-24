@@ -7,7 +7,12 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- *
+ * The TrianaProperties class stores the properties for a Triana instance.  Triana properties
+ * are propagated through all the relevant Triana classes so that oneset of properties can be
+ * used per triana instance. TrianaProperties also contains a default configuration that is
+ * packaged with Triana as shipped.  These properties can be altered by any third party
+ * application to configure the look and feel and locations for the various toolboxes,
+ * templates etc.
  */
 public class TrianaProperties extends Properties {
 
@@ -31,13 +36,20 @@ public class TrianaProperties extends Properties {
 
     public static final String PROPERTY_FILE_LIST_PROPERTY = DOMAIN + ".property.file.list";
 
-    public static final String WEB_TEMPLATE_PROPERTY =  DOMAIN + ".web.template";
-    public static final String WEB_TOOL_TEMPLATE_PROPERTY =  DOMAIN + ".web.tool.template";
     public static final String TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY =  DOMAIN + ".toolbox.description.template";
-    public static final String TOOL_HELP_TEMPLATE_PROPERTY =  DOMAIN + ".tool.help.template";
+    public static final String TOOL_DESCRIPTION_TEMPLATE_PROPERTY =  DOMAIN + ".tool.description.template";
     public static final String CREATE_TOOL_INSTANCE_PROPERTY =  DOMAIN + ".create.tool.instance";
     public static final String TOOL_INSTANCE_PROPERTY =  DOMAIN + ".tool.instance";
-    public static final String TOOL_PARAMETER_PROPERTY =  DOMAIN + ".tool.parameter.window.template";
+    public static final String TOOL_PARAMETER_WINDOW_TEMPLATE_PROPERTY =  DOMAIN + ".tool.parameter.window.template";
+    public static final String FORM_TEMPLATE_PROPERTY = DOMAIN + ".form.template";
+    public static final String CHECKBOX_TEMPLATE_PROPERTY = DOMAIN + ".checkbox.template";
+    public static final String TOOL_COMPLETED_TEMPLATE_PROPERTY = DOMAIN + ".tool.completed.template";
+
+    // NOT USED at present:
+
+    public static final String WEB_TEMPLATE_PROPERTY =  DOMAIN + ".web.template";
+    public static final String WEB_TOOL_TEMPLATE_PROPERTY =  DOMAIN + ".web.tool.template";
+    public static final String TOOL_HELP_TEMPLATE_PROPERTY =  DOMAIN + ".tool.help.template";
 
     TrianaInstance engine;
 
@@ -82,21 +94,31 @@ public class TrianaProperties extends Properties {
     public static Properties getDefaultConfiguration() {
         Properties properties = new Properties();
 
-        properties.put(Home.DEFAULT_PROPERTY_FILE, Home.getApplicationDataDir() + DOMAIN + " .properties");
+        properties.put(Locations.DEFAULT_PROPERTY_FILE, Locations.getApplicationDataDir() + DOMAIN + " .properties");
         // PROPERTY_FILE_LIST is null
 
-        String homeDir = Home.getHomeProper() + "/";
+        String homeDir = Locations.getHomeProper() + "/";
 
         properties.put(TOOLBOX_SEARCH_PATH_PROPERTY, homeDir + "triana-toolboxes, " + homeDir + "triana-pegasus");
 
-        properties.put(TEMPLATE_SEARCH_PATH_PROPERTY, "");
-        properties.put(WEB_TEMPLATE_PROPERTY,  "");
-        properties.put(WEB_TOOL_TEMPLATE_PROPERTY,  "");
-        properties.put(TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY,  "");
-        properties.put(TOOL_HELP_TEMPLATE_PROPERTY,  "");
-        properties.put(CREATE_TOOL_INSTANCE_PROPERTY,  "");
-        properties.put(TOOL_INSTANCE_PROPERTY,   "");
-        properties.put(TOOL_PARAMETER_PROPERTY, "");
+        // should we do this???
+        
+        properties.put(TEMPLATE_SEARCH_PATH_PROPERTY, homeDir + "triana-velocity" + File.separator +
+                                    "src" + File.separator + "main" + File.separator + "resources");
+
+        properties.put(TOOL_PARAMETER_WINDOW_TEMPLATE_PROPERTY, "/templates/tool-params.tpl");
+
+
+        properties.put(CREATE_TOOL_INSTANCE_PROPERTY,  "/templates/tool-create.tpl");
+        properties.put(TOOL_COMPLETED_TEMPLATE_PROPERTY, "/templates/tool-complete.tpl");
+        properties.put(TOOL_INSTANCE_PROPERTY,   "/templates/tool-instance.tpl");
+        properties.put(TOOL_DESCRIPTION_TEMPLATE_PROPERTY,  "/templates/tool-description.tpl");
+
+        properties.put(TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY,  "/templates/toolbox-description.tpl");
+
+        properties.put(FORM_TEMPLATE_PROPERTY, "/templates/form.tpl");
+        properties.put(CHECKBOX_TEMPLATE_PROPERTY, "/templates/checkbox.tpl");
+                         
 
         return properties;
     }
@@ -140,7 +162,7 @@ public class TrianaProperties extends Properties {
      *  Saves the properties to the default config file
      */
     public void saveProperties(String comments) throws IOException {
-        File file = new File(Home.getDefaultConfigFile());
+        File file = new File(Locations.getDefaultConfigFile());
 
         OutputStream outstream = new FileOutputStream(file);
 

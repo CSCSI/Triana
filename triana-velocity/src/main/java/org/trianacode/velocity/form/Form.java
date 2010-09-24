@@ -1,12 +1,10 @@
 package org.trianacode.velocity.form;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.velocity.Output;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Andrew Harrison
@@ -15,25 +13,22 @@ import java.util.Map;
 public class Form extends FormComponent {
 
     public static final String FORM_TEMPLATE = "form.template";
-    public static final String FORM_LOCATION = "/templates/form.tpl";
 
-    static {
-        try {
-            Output.registerTemplate(FORM_TEMPLATE, FORM_LOCATION);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private String name;
     private String action;
     private String method;
     private List<FormComponent> components = new ArrayList<FormComponent>();
 
-    public Form(String name, String action, String method) {
+    public Form(String name, String action, String method, Properties properties) {
         this.name = name;
         this.action = action;
         this.method = method;
+        try {
+            Output.registerTemplate(FORM_TEMPLATE, properties.getProperty(TrianaProperties.FORM_TEMPLATE_PROPERTY));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -65,10 +60,11 @@ public class Form extends FormComponent {
     }
 
     public static void main(String[] args) {
-        Form form = new Form("myform", "cgi-bin", "post");
-        form.addComponent(new Checkbox("skiing", true, "myClass", "myOtherClass"));
-        form.addComponent(new Checkbox("snowboarding", "snow boarding"));
-        form.addComponent(new Checkbox("surfing"));
+        Properties props =TrianaProperties.getDefaultConfiguration();
+        Form form = new Form("myform", "cgi-bin", "post", props);
+        form.addComponent(new Checkbox("skiing", true, props,"myClass", "myOtherClass"));
+        form.addComponent(new Checkbox("snowboarding", "snow boarding", props));
+        form.addComponent(new Checkbox("surfing", props));
         form.addClass("cls1");
         form.addClass("cls2");
         System.out.println(form.render());

@@ -68,6 +68,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.TaskException;
@@ -195,6 +196,10 @@ public class ToolImp implements Tool {
      */
     private Toolbox toolbox = null;
 
+    /**
+     * Current Triana properties configuration
+     */
+    TrianaProperties properties;
 
     /**
      * Default constructor
@@ -206,7 +211,9 @@ public class ToolImp implements Tool {
     /**
      * Creates a clone of the specified tool
      */
-    public ToolImp(Tool tool) throws TaskException {
+    public ToolImp(Tool tool, TrianaProperties properties) throws TaskException {
+        this.properties=properties;
+        
         try {
             setDefinitionType(tool.getDefinitionType());
             setToolName(tool.getToolName());
@@ -296,14 +303,16 @@ public class ToolImp implements Tool {
         return toolname;
     }
 
-    @Override
     public String getDisplayName() {
         return displayName;
     }
 
-    @Override
     public String getDisplayPackage() {
         return displayPackage;
+    }
+
+    public TrianaProperties getProperties() {
+        return properties;
     }
 
     public void setDisplayName(String displayName) {

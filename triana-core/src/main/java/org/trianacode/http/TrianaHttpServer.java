@@ -30,7 +30,10 @@ public class TrianaHttpServer implements Target, ToolListener {
     private String path = "triana";
 
     public TrianaHttpServer() {
-        peer = new HttpPeer();
+        this.peer = new HttpPeer();
+
+        System.out.println("HTTPServer: http peer - " + peer);
+        
         peer.addTarget(this);
         pathTree = new PathTree(path);
     }
@@ -81,7 +84,6 @@ public class TrianaHttpServer implements Target, ToolListener {
         return peer;
     }
 
-    @Override
     public Path getPath() {
         return new Path(path);
     }
@@ -101,65 +103,53 @@ public class TrianaHttpServer implements Target, ToolListener {
         }
     }
 
-    @Override
     public Resource getResource(RequestContext requestContext) throws RequestProcessException {
         Resource r = pathTree.getResource(requestContext.getRequestPath());
         return r;
     }
 
-    @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
         process(requestContext);
     }
 
-    @Override
     public void onPut(RequestContext requestContext) throws RequestProcessException {
         process(requestContext);
     }
 
-    @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
         process(requestContext);
     }
 
-    @Override
     public void onDelete(RequestContext requestContext) throws RequestProcessException {
         process(requestContext);
     }
 
-    @Override
     public void onOptions(RequestContext requestContext) throws RequestProcessException {
     }
 
-    @Override
     public void toolsAdded(List<Tool> tools) {
         for (Tool tool : tools) {
             addTool(tool);
         }
     }
 
-    @Override
     public void toolsRemoved(List<Tool> tools) {
         for (Tool tool : tools) {
             removeTool(tool);
         }
     }
 
-    @Override
     public void toolAdded(Tool tool) {
         addTool(tool);
     }
 
-    @Override
     public void toolRemoved(Tool tool) {
         removeTool(tool);
     }
 
-    @Override
     public void toolBoxAdded(Toolbox toolbox) {
     }
 
-    @Override
     public void toolBoxRemoved(Toolbox toolbox) {
     }
 

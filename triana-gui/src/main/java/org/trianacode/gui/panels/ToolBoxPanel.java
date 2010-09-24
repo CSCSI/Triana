@@ -215,7 +215,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                                 GUIEnv.getTrianaIcon());
                         break;
                     } else {
-                        tools.addToolBox(new Toolbox(current));
+                        tools.addToolBox(new Toolbox(current,tools.getProperties()));
                         toolBoxItems.add(current);
                     }
                 }

@@ -20,7 +20,7 @@ public class ToolParameterRenderer implements ToolRenderer {
     private Task parent;
     private Tool tool;
     private String path;
-    private String templatePath = "/templates/tool-params.tpl";
+    private String templatePath;
 
 
     @Override
@@ -31,6 +31,8 @@ public class ToolParameterRenderer implements ToolRenderer {
         }
         this.tool = tool;
         this.path = path;
+        templatePath = tool.getProperties().getProperty("TOOL_PARAMETER_WINDOW_TEMPLATE_PROPERTY");
+
         try {
             Output.registerTemplate(TOOL_PARAMETER_TEMPLATE, templatePath);
         } catch (IOException e) {

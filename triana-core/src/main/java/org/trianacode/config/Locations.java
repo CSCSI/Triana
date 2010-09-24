@@ -24,14 +24,18 @@ import java.util.logging.Logger;
 
 /**
  * Detects/creates the Application directory getApplicationDataDir for storing application specific data.
+ * this is  rehash of Home, which allows you to find out about the home directory of
+ *  the Jar (or dist) but also the home directory of triana where all the toolboxes live (getHomeProper).
+ *  It also allows you to find the application directory and the config file. The new config file
+ *  is named org.trianacode.properties and is in the app data directory.
  *
  * @author Andrew Harrison
  * @version $Revision:$
  */
 
-public class Home {
+public class Locations {
 
-    static Logger logger = Logger.getLogger("org.trianacode.config.Home");
+    static Logger logger = Logger.getLogger("org.trianacode.config.Locations");
     private static String home = null;
     private static File runHome = null;
     private static String os = null;
@@ -42,7 +46,7 @@ public class Home {
 
     // Defines for property names
 
-    static final String DEFAULT_PROPERTY_FILE = TrianaProperties.DOMAIN + " .properties";        // Property file
+    static final String DEFAULT_PROPERTY_FILE = TrianaProperties.DOMAIN + ".properties";        // Property file
 
 
     /**
@@ -91,16 +95,17 @@ public class Home {
     }
 
     /**
-     * returns the
+     * returns the root directory for triana
+     * 
      * @return
      */
     public static String getHomeProper() {
-        if (Home.isJarred()) {
-            File f = Home.runHome();
+        if (Locations.isJarred()) {
+            File f = Locations.runHome();
             File p = f.getParentFile().getParentFile().getParentFile();
             return p.getAbsolutePath();
         } else {
-            return Home.runHome().getParentFile().getAbsolutePath(); // is this correct?
+            return Locations.runHome().getParentFile().getAbsolutePath(); // is this correct?
         }
     }
 
@@ -120,9 +125,9 @@ public class Home {
             return runHome;
         }
         logger.info("calculating Triana run hom...");
-        String fileSubPath = "triana-core/target/classes/org/trianacode/taskgraph/util/Home.class";
+        String fileSubPath = "triana-core/target/classes/org/trianacode/taskgraph/util/Locations.class";
         try {
-            URL url = Class.forName("org.trianacode.config.Home").getResource("Home.class");
+            URL url = Class.forName("org.trianacode.config.Locations").getResource("Locations.class");
             String fullPath = url.toURI().toASCIIString();
             if (fullPath.startsWith("jar:")) {
                 int entryStart = fullPath.indexOf("!/");

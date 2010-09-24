@@ -9,6 +9,7 @@ import org.trianacode.config.TrianaProperties;
 import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.http.HTTPServices;
 import org.trianacode.http.RendererRegistry;
 import org.trianacode.http.ToolRenderer;
@@ -21,7 +22,6 @@ import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.ser.Base64ObjectDeserializer;
 import org.trianacode.taskgraph.ser.ObjectDeserializationManager;
-import org.trianacode.taskgraph.tool.ToolResolver;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImpl;
 import org.trianacode.taskgraph.util.ExtensionFinder;
@@ -29,6 +29,11 @@ import org.trianacode.taskgraph.util.ExtensionFinder;
 /**
  * This class represents an instance of Triana and allows arguments to be passed to it and properties for
  * defining the various parameters that Triana can accept.
+ *
+ * All references are now NON STATIC and propagated these through the many classes that expected
+ * static references.  Also configured this so that it can accept
+ * command line arguments (need to be defined) and it now creates all of the necessary classes required by
+ * an instance e.g. properties.
  *
  * @author Andrew Harrison, hacked by Ian T
  * @version 1.0.0 Jul 22, 2010
@@ -44,7 +49,7 @@ public class TrianaInstance {
     private Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
     TrianaProperties props;
     PropertyLoader propertyLoader;
-    DiscoverTools discoverTools;
+    DiscoverTools discoveryTools;
 
     ArgumentParser parser;
 
@@ -65,8 +70,11 @@ public class TrianaInstance {
         propertyLoader = new PropertyLoader (this, null);
         props = propertyLoader.getProperties();
 
-        resolver= new ToolResolver(props);
-        
+
+        httpServices = new HTTPServices();
+        discoveryTools = new DiscoverTools(httpServices.getHttpEngine(), props);
+        resolver= discoveryTools.getToolResolver();
+
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         if (TaskGraphManager.getToolTable() == null) {
@@ -78,23 +86,33 @@ public class TrianaInstance {
         initObjectDeserializers();
         initExtensions(extensions);
 
-
-        httpServices = new HTTPServices();
-
-        // discoverTools = new DiscoverTools(httpServices.getHttpEngine(), resolver);
-
-        httpServices.startServices(resolver);
-
-
         resolver.addToolListener(httpServices.getWorkflowServer());
         if (resolve) {
+            System.out.println("Resolving" );
             resolver.resolve();
         }
+        
+        httpServices.startServices(resolver);
+
+        System.out.println("Starting HTTP Services " );
+
         new ShutdownHook().createHook();
     }
 
     public ToolResolver getToolResolver() {
         return resolver;
+    }
+
+    public HTTPServices getHttpServices() {
+        return httpServices;
+    }
+
+    public TrianaProperties getProps() {
+        return props;
+    }
+
+    public DiscoverTools getDiscoveryTools() {
+        return discoveryTools;
     }
 
     public void init() throws Exception {

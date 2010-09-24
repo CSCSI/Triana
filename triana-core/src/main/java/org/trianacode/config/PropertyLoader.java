@@ -43,7 +43,7 @@ public class PropertyLoader {
         // either load from system OR from the properties provided.
         if(properties == null){
             this.props = new TrianaProperties(engine);
-            String defaultvals = System.getProperty(Home.DEFAULT_PROPERTY_FILE);
+            String defaultvals = System.getProperty(Locations.DEFAULT_PROPERTY_FILE);
             if (defaultvals!=null) {
                 InputStream stream = ResourceManagement.getInputStreamFor(defaultvals);
                 if (stream!=null)

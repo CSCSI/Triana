@@ -250,7 +250,7 @@ public class TaskGraphUtils {
      * Creates a clone of the specified tool
      */
     private static Tool toolClone(Tool tool) throws TaskException {
-        return new ToolImp(tool);
+        return new ToolImp(tool, tool.getProperties());
     }
 
     /**

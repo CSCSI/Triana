@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 /**
@@ -69,27 +70,30 @@ public class Toolbox {
     public static final String INTERNAL = "internal";
     private ToolClassLoader loader = new ToolClassLoader();
 
-    public Toolbox(String path, String type, String name, boolean virtual) {
+    TrianaProperties properties;
+
+    public Toolbox(String path, String type, String name, boolean virtual, TrianaProperties properties) {
         this.path = path;
+        this.properties=properties;
         this.type = type;
         this.name = name;
         isVirtual = virtual;
     }
 
-    public Toolbox(String path, String type, String name) {
-        this(path, type, name, false);
+    public Toolbox(String path, String type, String name, TrianaProperties properties) {
+        this(path, type, name, false, properties);
     }
 
-    public Toolbox(String path, String name) {
-        this(path, "No Type", name, false);
+    public Toolbox(String path, String name, TrianaProperties properties) {
+        this(path, "No Type", name, false, properties);
     }
 
-    public Toolbox(String path) {
-        this(path, "No Type", UrlUtils.getLastPathComponent(path), false);
+    public Toolbox(String path, TrianaProperties properties) {
+        this(path, "No Type", UrlUtils.getLastPathComponent(path), false, properties);
     }
 
-    public Toolbox(String path, String name, boolean virtual) {
-        this(path, "No Type", name, virtual);
+    public Toolbox(String path, String name, boolean virtual, TrianaProperties properties) {
+        this(path, "No Type", name, virtual, properties);
     }
 
     public Toolbox(File file, String type) {
@@ -102,6 +106,10 @@ public class Toolbox {
 
     public Toolbox(File file) {
         this(file, "No Type");
+    }
+
+    public TrianaProperties getProperties() {
+        return properties;
     }
 
     public ClassLoader getClassLoader() {

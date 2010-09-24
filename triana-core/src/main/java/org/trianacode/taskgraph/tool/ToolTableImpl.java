@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.trianacode.config.TrianaProperties;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.util.UrlUtils;
 
@@ -42,6 +44,7 @@ public class ToolTableImpl implements ToolTable, ToolListener {
 
     // The standard tool box types
     public static final String USER_TOOLBOX = "user";
+    TrianaProperties properties;
 
     
     /**
@@ -53,7 +56,12 @@ public class ToolTableImpl implements ToolTable, ToolListener {
 
     public ToolTableImpl(ToolResolver resolver) {
         this.resolver = resolver;
+        properties = resolver.getProperties();
         resolver.addToolListener(this);
+    }
+
+    public TrianaProperties getProperties() {
+        return properties; 
     }
 
     /**
@@ -430,32 +438,26 @@ public class ToolTableImpl implements ToolTable, ToolListener {
         resolver.removeTool(tool);
     }
 
-    @Override
     public void toolsAdded(List<Tool> tools) {
         notifyToolsAdded(tools);
     }
 
-    @Override
     public void toolsRemoved(List<Tool> tools) {
         notifyToolsRemoved(tools);
     }
 
-    @Override
     public void toolAdded(Tool tool) {
         notifyToolAdded(tool);
     }
 
-    @Override
     public void toolRemoved(Tool tool) {
         notifyToolRemoved(tool);
     }
 
-    @Override
     public void toolBoxAdded(Toolbox toolbox) {
         notifyToolboxAdded(toolbox);
     }
 
-    @Override
     public void toolBoxRemoved(Toolbox toolbox) {
         notifyToolboxRemoved(toolbox);
     }

@@ -60,6 +60,7 @@ package org.trianacode.taskgraph.tool;
 
 import java.net.URL;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.TaskException;
@@ -206,6 +207,13 @@ public interface Tool {
      * @return the path to the toolbox that this tool has been loaded from.
      */
     public Toolbox getToolBox();
+
+    /**
+     * Returns the current Triana properties
+     * 
+     * @return
+     */
+    public TrianaProperties getProperties();
 
 
     /**

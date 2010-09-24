@@ -10,13 +10,14 @@ import org.thinginitself.http.Resource;
 import org.thinginitself.http.Response;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableObject;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.discovery.protocols.tdp.TDPRequest;
 import org.trianacode.discovery.protocols.tdp.TDPResponse;
 import org.trianacode.discovery.protocols.tdp.TDPServer;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.LocalTrawler;
 import org.trianacode.discovery.protocols.thirdparty.ServiceTypesAndProtocols;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
-import org.trianacode.taskgraph.tool.ToolResolver;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import mil.navy.nrl.discovery.WebBootstrap;
 import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
 import mil.navy.nrl.discovery.types.ServiceTypes;
@@ -33,16 +34,18 @@ public class DiscoverTools extends Thread implements Timeable {
     private static WebBootstrap bonjourServer;
     private ServiceTypesAndProtocols tdpProtocols;
     private DiscoveredTools discoveredServices;
-    ToolResolver resolver;
+    ToolResolver toolResolver;
 
 
     private Timer timer;
     private HttpPeer httpEngine;
+    TrianaProperties properties;
 
-    public DiscoverTools(HttpPeer httpEngine, ToolResolver resolver) {
+    public DiscoverTools(HttpPeer httpEngine, TrianaProperties properties) {
         this.tdpProtocols = new ServiceTypesAndProtocols();
         this.httpEngine = httpEngine;
-        this.resolver=resolver;
+        this.properties=properties;
+        this.toolResolver=new ToolResolver(properties);
         Thread discoverThread = new Thread(this);
         discoverThread.setPriority(Thread.MIN_PRIORITY);
         discoverThread.start();
@@ -52,8 +55,12 @@ public class DiscoverTools extends Thread implements Timeable {
         new LocalTrawler(httpEngine, resolver);
     }
 
+    public ToolResolver getToolResolver() {
+        return toolResolver;
+    }
+
     public void run() {
-        startServices(resolver);
+        startServices(toolResolver);
         ServiceTypes st = new ServiceTypes();
 
         // you would use this to provide custom icons for Triana etc

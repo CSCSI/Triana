@@ -3,8 +3,10 @@ package org.trianacode.velocity;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.thinginitself.streamable.Streamable;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.http.ToolRenderer;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -17,20 +19,17 @@ public class BasicToolRenderer implements ToolRenderer {
 
     private Tool tool;
     private String path;
-    private String create = "/templates/tool-create.tpl";
-    private String instance = "/templates/tool-instance.tpl";
-    private String description = "/templates/tool-description.tpl";
-    private String complete = "/templates/tool-complete.tpl";
 
     @Override
     public void init(Tool tool, String path) {
         this.tool = tool;
         this.path = path;
+        Properties props = tool.getProperties();
         try {
-            Output.registerTemplate(TOOL_CREATE_INSTANCE_TEMPLATE, create);
-            Output.registerTemplate(TOOL_COMPLETED_TEMPLATE, complete);
-            Output.registerTemplate(TOOL_DESCRIPTION_TEMPLATE, description);
-            Output.registerTemplate(TOOL_INSTANCE_TEMPLATE, instance);
+            Output.registerTemplate(TOOL_CREATE_INSTANCE_TEMPLATE, props.getProperty(TrianaProperties.CREATE_TOOL_INSTANCE_PROPERTY));
+            Output.registerTemplate(TOOL_COMPLETED_TEMPLATE, props.getProperty(TrianaProperties.TOOL_COMPLETED_TEMPLATE_PROPERTY));
+            Output.registerTemplate(TOOL_DESCRIPTION_TEMPLATE, props.getProperty(TrianaProperties.TOOL_DESCRIPTION_TEMPLATE_PROPERTY));
+            Output.registerTemplate(TOOL_INSTANCE_TEMPLATE, props.getProperty(TrianaProperties.TOOL_INSTANCE_PROPERTY));
         } catch (IOException e) {
             e.printStackTrace();
         }

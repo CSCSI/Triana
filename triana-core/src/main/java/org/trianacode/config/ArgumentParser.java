@@ -5,8 +5,11 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
- * Simple convenience class to make command lines easier to deal with.   String is converted into a hashtable of
- * key/value pairs that contain the various command line arguments that the user has supplied.
+ * Simple convenience class to make command lines easier to deal with.   String is
+ * converted into a hashtable of key/value pairs that contain the various command
+ * line arguments that the user has supplied.  It also allows you to add prefixes for
+ * identifying arguments and you can return a String[] or a List or values for each
+ * parameter
  *
  *
  * Values can either be Strings (single) or lists (List) of Strings.

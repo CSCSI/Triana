@@ -10,6 +10,7 @@ import org.apache.velocity.runtime.resource.util.StringResource;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableData;
+import org.trianacode.config.ResourceManagement;
 
 import java.io.*;
 import java.util.Map;
@@ -51,9 +52,16 @@ public class Output {
         repository = StringResourceLoader.getRepository();
     }
 
+    /**
+     * Uses the resource management now to find the file rather than using the classpath ...
+     * 
+     * @param path
+     * @return
+     * @throws IOException
+     */
     private static String getTemplate(String path) throws IOException {
-        InputStream inStream = Output.class
-                .getResourceAsStream(path);
+        InputStream inStream = ResourceManagement.getInputStreamFor(path, ResourceManagement.Type.TEMPLATE);
+        
         StringBuilder stringBuilder = new StringBuilder();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
         String line;
@@ -64,6 +72,12 @@ public class Output {
     }
 
 
+    /**
+     *
+     * @param parameters
+     * @param templateType
+     * @return
+     */
     public static Streamable output(Map<String, Object> parameters, String templateType) {
         VelocityContext context = new VelocityContext();
         for (String s : parameters.keySet()) {

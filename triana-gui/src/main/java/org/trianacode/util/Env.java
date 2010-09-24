@@ -92,6 +92,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.trianacode.TrianaInstance;
+import org.trianacode.config.Locations;
 import org.w3c.dom.Element;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -105,7 +106,6 @@ import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.config.Home;
 import org.trianacode.taskgraph.util.Listing;
 
 /**
@@ -298,7 +298,7 @@ public final class Env {
      * Initializes the Triana getApplicationDataDir
      */
     static {
-        home = Home.getApplicationDataDir();
+        home = Locations.getApplicationDataDir();
     }
 
 
@@ -704,7 +704,7 @@ public final class Env {
      * LINUX  - <i>linux</i> is returned </li>
      */
     public final static String os() {
-        return Home.os();
+        return Locations.os();
     }
 
     public int getEndian() {
@@ -794,7 +794,7 @@ public final class Env {
      * Returns the TRIANA environment variable.
      */
     public final static String home() {
-        return Home.getApplicationDataDir();
+        return Locations.getApplicationDataDir();
     }
 
     /**

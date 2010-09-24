@@ -2,6 +2,7 @@ package org.trianacode.taskgraph.interceptor.execution;
 
 import java.net.URL;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.NodeException;
@@ -21,6 +22,20 @@ import org.trianacode.taskgraph.tool.Toolbox;
  */
 
 public class PoisonTask implements Task {
+    TrianaProperties properties;
+
+
+    public PoisonTask(TrianaProperties properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Not sure what this does - how is this created etc ?
+     * @return
+     */
+    public TrianaProperties getProperties() {
+        return properties;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
     @Override
     public String getQualifiedTaskName() {

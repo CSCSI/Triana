@@ -6,7 +6,13 @@ import java.util.Properties;
 
 /**
  *
- * Class that attempts to look in various places for the specified file
+ * Class that attempts to look in various places for a specified file and its type.  At the core of
+ * this class is the loading mechnism which currently attempts to load in the file from either
+ * the specified path or from the classpath (e.g. a jar).   It then performs a number of higher level
+ * searches for the file based on the file type, which can be specified as an argument.   For example,
+ * if a file type is a tool, then it will iterate through all of the toolbox paths and attempt to
+ * load the resource from each location. It will then try the classpath to see if this resource can
+ * be found there.
  * 
  * Date: Sep 23, 2010
  * Time: 5:10:21 PM
@@ -47,7 +53,7 @@ public class ResourceManagement {
 
         dirlistarr=filelist.split(",");
          for (String dir: dirlistarr) {
-             String file = dir + File.separator + filen;
+             String file = dir.trim() + File.separator + filen;
              stream = getInputStreamFor(file);
              if (stream !=null)
                  return stream; // if we find a valid stream then return

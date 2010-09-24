@@ -1,4 +1,4 @@
-package org.trianacode.taskgraph.tool;
+package org.trianacode.discovery.protocols.tdp.imp.trianatools;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.trianacode.config.Home;
+import org.trianacode.config.Locations;
 import org.trianacode.config.TrianaProperties;
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
@@ -36,6 +36,7 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
@@ -45,7 +46,7 @@ import org.trianacode.taskgraph.util.UrlUtils;
  * @version 1.0.0 Aug 9, 2010
  */
 
-public class ToolResolver implements ToolMetadataResolver {
+public class ToolResolver implements ToolMetadataResolver, Runnable {
 
 
     private static Logger log = Logger.getLogger(ToolResolver.class.getName());
@@ -93,6 +94,10 @@ public class ToolResolver implements ToolMetadataResolver {
 
     public void removeToolListener(ToolListener listener) {
         listeners.remove(listener);
+    }
+
+    public TrianaProperties getProperties() {
+        return properties;
     }
 
     public void addToolbox(Toolbox toolbox) {
@@ -379,13 +384,20 @@ public class ToolResolver implements ToolMetadataResolver {
 
     /**
      * primary method of this class. It loads the toolboxes, resolves the tools and notifies listeners.
+     *
+     * Ian T - changed this to run in a thread upon start up so we can see the GUI quicker
      */
     public void resolve() {
-        loadToolboxes();
-        reresolve();
+        // new Thread(this).start();
+        run();
         timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
     }
 
+
+    public void run() {
+        loadToolboxes();
+        reresolve();
+    }
 
     private void reresolve() {
         for (String s : toolboxes.keySet()) {
@@ -767,7 +779,7 @@ public class ToolResolver implements ToolMetadataResolver {
         try {
             properties.saveProperties();
         } catch (IOException e) {
-            System.err.println("WARNING: properties could not be saved to " + Home.getDefaultConfigFile());
+            System.err.println("WARNING: properties could not be saved to " + Locations.getDefaultConfigFile());
             e.printStackTrace();  
         }
     }
@@ -828,7 +840,7 @@ public class ToolResolver implements ToolMetadataResolver {
         for (String toolboxPath: toolboxPaths) {
             // need test for remote ones here - todo with bonjour stuff ....  for now assume local
 
-            Toolbox intern = new Toolbox(toolboxPath, "internal", "default-toolboxes", false);
+            Toolbox intern = new Toolbox(toolboxPath, "internal", "default-toolboxes", false, properties);
             addNewToolBox(intern);
         }
     }

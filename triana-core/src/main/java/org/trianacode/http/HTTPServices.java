@@ -1,8 +1,7 @@
 package org.trianacode.http;
 
 import org.thinginitself.http.HttpPeer;
-import org.trianacode.discovery.DiscoverTools;
-import org.trianacode.taskgraph.tool.ToolResolver;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 
 /**
  * Starts off the HTTP and discovery services...
@@ -14,16 +13,15 @@ public class HTTPServices {
     HttpPeer httpEngine;
 
     public HTTPServices() {
+        workflowServer = new TrianaHttpServer();
+        httpEngine = workflowServer.getHTTPPeerInstance();
     }
 
     public void startServices(ToolResolver resolver) throws Exception {
 
         // start a http server first
 
-        workflowServer = new TrianaHttpServer();
         workflowServer.start();
-
-        httpEngine = workflowServer.getHTTPPeerInstance();
 
     }
 

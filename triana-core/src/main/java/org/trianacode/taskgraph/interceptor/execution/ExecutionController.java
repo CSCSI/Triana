@@ -6,6 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.TrianaExec;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
@@ -23,13 +24,15 @@ public class ExecutionController {
     private ExecutionQueue queue;
     private TrianaExec exec;
     private BlockingQueue<Task> currTask = new ArrayBlockingQueue<Task>(3);
-
+    TrianaProperties properties;
 
     private Executor executor = Executors.newFixedThreadPool(3);
 
     public ExecutionController(Task task, ExecutionControlListener listener) {
+        this.properties=properties;
         this.task = task;
         this.listener = listener;
+        task.getProperties();
     }
 
     public void begin() {
@@ -107,7 +110,7 @@ public class ExecutionController {
                 }
             }
             try {
-                queue.putBlockingTask(new PoisonTask());
+                queue.putBlockingTask(new PoisonTask(properties));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
