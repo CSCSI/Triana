@@ -94,10 +94,10 @@ public class TrianaProperties extends Properties {
     public static Properties getDefaultConfiguration() {
         Properties properties = new Properties();
 
-        properties.put(Locations.DEFAULT_PROPERTY_FILE, Locations.getApplicationDataDir() + "/" + DOMAIN + ".properties");
+        properties.put(Locations.DEFAULT_PROPERTY_FILE, Locations.getApplicationDataDir() + File.separator + DOMAIN + ".properties");
         // PROPERTY_FILE_LIST is null
 
-        String homeDir = Locations.getHomeProper() + "/";
+        String homeDir = Locations.getHomeProper() + File.separator;
 
         properties.put(TOOLBOX_SEARCH_PATH_PROPERTY, homeDir + "triana-toolboxes, " + homeDir + "triana-pegasus");
 
