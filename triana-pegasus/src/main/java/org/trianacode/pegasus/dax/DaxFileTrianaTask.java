@@ -35,15 +35,15 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     public void paintComponent(Graphics g){
         Color c = g.getColor();
 
-        if(isCollection()){
-            g.setColor(Color.cyan.darker());
-            g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
-            g.setColor(Color.cyan);
-            g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
-        }else{
-            g.setColor(Color.cyan);
-            g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
-        }
+//        if(isCollection()){
+//            g.setColor(Color.cyan.darker());
+//            g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
+//            g.setColor(Color.cyan);
+//            g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
+//        }else{
+//            g.setColor(Color.cyan);
+//            g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
+//        }
 
 
         g.setColor(c);

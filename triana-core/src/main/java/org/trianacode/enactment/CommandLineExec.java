@@ -567,7 +567,7 @@ public class CommandLineExec extends TrianaExec {
         try {
             TrianaInstance engine=null;
             try {
-                engine = new TrianaInstance(args, true, null);
+                engine = new TrianaInstance(args, null);
             } catch (Exception e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 System.exit(1);

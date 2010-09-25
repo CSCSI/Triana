@@ -64,59 +64,20 @@ package org.trianacode.taskgraph;
  * @author Matthew Shields
  * @version $Revision: 4048 $
  */
-public final class ExecutionState {
+public enum ExecutionState {
 
-    private String state;
+    NOT_INITIALIZED,
+    NOT_EXECUTABLE,
+    SCHEDULED,
+    RUNNING,
+    PAUSED,
+    COMPLETE,
+    RESETING,
+    RESET,
+    ERROR,
+    SUSPENDED,
+    UNKNOWN,
+    LOCK
 
-    public static final ExecutionState NOT_INITIALIZED = new ExecutionState("not initialized");
-    public static final ExecutionState NOT_EXECUTABLE = new ExecutionState("not executable");
-    public static final ExecutionState SCHEDULED = new ExecutionState("scheduled");
-    public static final ExecutionState RUNNING = new ExecutionState("running");
-    public static final ExecutionState PAUSED = new ExecutionState("paused");
-    public static final ExecutionState COMPLETE = new ExecutionState("complete");
-    public static final ExecutionState RESETING = new ExecutionState("reseting");
-    public static final ExecutionState RESET = new ExecutionState("reset");
-    public static final ExecutionState ERROR = new ExecutionState("error");
-    public static final ExecutionState SUSPENDED = new ExecutionState("suspended");
-    public static final ExecutionState UNKNOWN = new ExecutionState("unknown");
-    public static final ExecutionState LOCK = new ExecutionState("lock");
-
-
-    private ExecutionState(String state) {
-        this.state = state;
-    }
-
-
-    public String getState() {
-        return state;
-    }
-
-    /**
-     * @return a string representation of the object.
-     */
-    public String toString() {
-        return state;
-    }
-
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ExecutionState)) {
-            return false;
-        }
-
-        final ExecutionState executionState = (ExecutionState) o;
-
-        if (state != null ? !state.equals(executionState.state) : executionState.state != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public int hashCode() {
-        return (state != null ? state.hashCode() : 0);
-    }
 
 }

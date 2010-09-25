@@ -76,12 +76,7 @@ import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
-import org.trianacode.taskgraph.service.DataMessage;
-import org.trianacode.taskgraph.service.IOCable;
-import org.trianacode.taskgraph.service.RunnableInstance;
-import org.trianacode.taskgraph.service.Scheduler;
-import org.trianacode.taskgraph.service.SchedulerException;
-import org.trianacode.taskgraph.service.TrianaServer;
+import org.trianacode.taskgraph.service.*;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 
@@ -131,13 +126,17 @@ public class TrianaRun {
      * Ian T - this is as diodgy as hell.... what is this class for?
      */
     public static void initToolTable() {
-        TrianaInstance engine;
-        try {
-            engine = new TrianaInstance(null, true, null);
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+//        TrianaInstance engine;
+//        try {
+//            engine = new TrianaInstance(null, null);
+//        } catch (Exception e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
 
+    }
+
+    public SchedulerInterface getScheduler() {
+        return scheduler;
     }
 
     /**
@@ -206,12 +205,12 @@ public class TrianaRun {
 
         for (int count = 0; count < innodes.length; count++) {
             incables[count] = new ExecCable();
-            incables[count].connectInput((Node) innodes[count]);
+            incables[count].connectInput(innodes[count]);
         }
 
         for (int count = 0; count < outnodes.length; count++) {
             outcables[count] = new ExecCable();
-            outcables[count].connectOutput((Node) outnodes[count]);
+            outcables[count].connectOutput(outnodes[count]);
         }
     }
 
@@ -370,7 +369,7 @@ public class TrianaRun {
      */
     public void dispose() {
         scheduler.resetTaskGraph();
-        ((TaskGraph) taskgraph).dispose();
+        taskgraph.dispose();
     }
 
 

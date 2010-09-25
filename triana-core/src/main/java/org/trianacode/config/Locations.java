@@ -125,7 +125,7 @@ public class Locations {
             return runHome;
         }
         logger.info("calculating Triana run hom...");
-        String fileSubPath = "triana-core/target/classes/org/trianacode/taskgraph/util/Locations.class";
+        String fileSubPath = "triana-core/target/classes/org/trianacode/config/Locations.class";
         try {
             URL url = Class.forName("org.trianacode.config.Locations").getResource("Locations.class");
             String fullPath = url.toURI().toASCIIString();

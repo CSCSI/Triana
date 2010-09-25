@@ -1050,8 +1050,6 @@ public class TaskImp extends ToolImp implements Task {
     }
 
     public Object getContextProperty(String name) {
-        System.out.println("TaskImp.getContextProperty CALLED. I AM " + getToolName() + ", PARENT IS " + getParent());
-        //new Exception().printStackTrace();
         Object ret = context.getProperty(name);
         if (ret == null && getParent() != null) {
             ret = getParent().getContextProperty(name);

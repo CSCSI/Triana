@@ -320,6 +320,7 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
      * determined until this class is extended to produce a ToolImp, ToolBox or a TrianaTool.
      */
     public void paintComponent(Graphics graphs) {
+        super.paintComponent(graphs);
         drawRectangle(graphs, getToolColor(), graphs.getColor());
         drawStripes(graphs, getStripeColor(), getStripeWidth(), getStripeOffset());
     }

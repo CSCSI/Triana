@@ -445,7 +445,7 @@ public final class Env {
         // it we restore to defaults, then we shoudl do this property in ApplicationFrame
         // not as a static method ....
 
-        throw new RuntimeException("Crap code alert - fix me");
+        //throw new RuntimeException("Crap code alert - fix me");
 
         /// IAN T - BAD - need to fix this static reference - its the only one that causes issues.
         // created a throw away instance for now but needs fixing properly.

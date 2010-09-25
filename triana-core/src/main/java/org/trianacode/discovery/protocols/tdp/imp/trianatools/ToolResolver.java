@@ -78,7 +78,6 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
 
     public ToolResolver(TrianaProperties properties) {
         this.properties = properties;
-        resolve();
     }
 
     public long getResolveInterval() {

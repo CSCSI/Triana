@@ -122,7 +122,6 @@ public class Row extends JPanel implements ActionListener {
     private JButton browse;
     private Filter filefilter;
 
-    private Class clazz;
 
     /**
      * used for textfield, checkbox and choice parameter input

@@ -80,9 +80,9 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         combo.setPrototypeDisplayValue("01234567890123456789");
         Toolbox[] toolboxes = tools.getToolBoxes();
         for (int count = 0; count < toolboxes.length; count++) {
-            if (!toolboxes[count].getType().equals(Toolbox.INTERNAL)) {
+            //if (!toolboxes[count].getType().equals(Toolbox.INTERNAL)) {
                 model.addElement(toolboxes[count].getPath());
-            }
+            //}
         }
         JPanel listpanel = new JPanel(new BorderLayout(3, 0));
         listpanel.add(new JLabel("Choose a toolbox:"), BorderLayout.WEST);

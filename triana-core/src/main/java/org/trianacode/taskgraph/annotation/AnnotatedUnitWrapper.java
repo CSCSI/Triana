@@ -28,6 +28,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private boolean aggregate = false;
     private boolean isArray = false;
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
+    
 
     private Map<String, Field> params = new HashMap<String, Field>();
 

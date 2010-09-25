@@ -70,7 +70,15 @@
         <antcall target="toolbox">
             <param name="toolbox" value="imageproc"/>
         </antcall>
+        <jar jarfile="dist/triana-exec-${version}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.trianacode.enactment.Exec"/>
+                <attribute name="Class-Path" value=". ${manifest.classpath.prop}"/>
+            </manifest>
+            <fileset dir="dist/classes" includes="**/**" excludes=".svn"/>
+        </jar>
     </target>
+
 
     <target name="toolbox">
         <mkdir dir="dist/toolboxes/${toolbox}"/>
@@ -125,27 +133,31 @@
 
 
     <target name="mvn-install">
+        <!--
         <exec executable="mvn">
-            <arg value="-e"/>
-            <arg value="install:install-file"/>
-            <arg value="-Dfile=dist/triana-app-${version}.jar"/>
-            <arg value="-DpomFile=pom.xml"/>
-            <arg value="-Dversion=${version}"/>
-            <arg value="-Dpackaging=jar"/>
-        </exec>
+                    <arg value="-e"/>
+                    <arg value="install:install-file"/>
+                    <arg value="-Dfile=dist/triana-app-${version}.jar"/>
+                    <arg value="-DpomFile=pom.xml"/>
+                    <arg value="-Dversion=${version}"/>
+                    <arg value="-Dpackaging=jar"/>
+                </exec>-->
+        
     </target>
 
     <target name="mvn-deploy">
+        <!--
         <exec executable="mvn">
-            <arg value="-e"/>
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=dist/triana-app-${version}.jar"/>
-            <arg value="-DpomFile=pom.xml"/>
-            <arg value="-Dversion=${version}"/>
-            <arg value="-Durl=scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven"/>
-            <arg value="-DrepositoryId=trianacode-maven-repos"/>
-            <arg value="-Dpackaging=jar"/>
-        </exec>
+                    <arg value="-e"/>
+                    <arg value="deploy:deploy-file"/>
+                    <arg value="-Dfile=dist/triana-app-${version}.jar"/>
+                    <arg value="-DpomFile=pom.xml"/>
+                    <arg value="-Dversion=${version}"/>
+                    <arg value="-Durl=scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven"/>
+                    <arg value="-DrepositoryId=trianacode-maven-repos"/>
+                    <arg value="-Dpackaging=jar"/>
+                </exec>-->
+        
     </target>
 
 </project>

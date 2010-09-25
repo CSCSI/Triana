@@ -134,15 +134,18 @@ public class TrianaInstance {
     }
 
     private void initExtensions(Class... exten) {
+
         List ext = new ArrayList<Class>();
         ext.add(Interceptor.class);
         ext.add(ToolRenderer.class);
         ext.add(ToolboxRenderer.class);
         ext.add(ToolMetadataResolver.class);
         ext.add(DataBusInterface.class);
-        for (Class aClass : exten) {
-            if (!ext.contains(aClass)) {
-                ext.add(aClass);
+        if (exten != null) {
+            for (Class aClass : exten) {
+                if (!ext.contains(aClass)) {
+                    ext.add(aClass);
+                }
             }
         }
         extensions = ExtensionFinder.services(ext);

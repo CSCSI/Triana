@@ -49,27 +49,24 @@ public class ArgumentParser {
     public void parse() throws ArgumentParsingException {
         String argument;
         String value;
+        int i = 0;
 
         int valp;
-        List<String> values;
 
-        for (int i = 0; i < args.length; i++) {
-
-
+        for (;i < args.length;) {
+            List<String> values = new ArrayList<String>();
             argument = args[i];
-
+            System.out.println("ArgumentParser.parse arg:" + argument);
             if (!isAnArgument(argument))
                 throw new ArgumentParsingException("Argument " + argument + " not valid");
 
             valp = i + 1;
-
-            values = new ArrayList<String>();
-
             if (valp < args.length) {
-                boolean moreValues;
 
+                boolean moreValues;
                 do {
                     value = args[valp];
+                    values.add(value);
                     moreValues = false;
                     if (!isAnArgument(value)) {
                         values.add(value);
@@ -117,10 +114,15 @@ public class ArgumentParser {
      */
     public String getArgumentValue(String argument) {
         List<String> vals = arguments.get(argument);
-        if (vals == null || vals.size() == 0) {
+        if (vals == null) {
             return null;
         }
-        return vals.get(0);
+        for (String val : vals) {
+            if(val.length() > 0) {
+                return val;
+            }
+        }
+        return null;
     }
 
 
