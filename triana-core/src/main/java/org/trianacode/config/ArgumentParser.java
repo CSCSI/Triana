@@ -1,9 +1,9 @@
 package org.trianacode.config;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Simple convenience class to make command lines easier to deal with.   String is
@@ -11,27 +11,27 @@ import java.util.List;
  * line arguments that the user has supplied.  It also allows you to add prefixes for
  * identifying arguments and you can return a String[] or a List or values for each
  * parameter
- *
- *
+ * <p/>
+ * <p/>
  * Values can either be Strings (single) or lists (List) of Strings.
- *
+ * <p/>
  * User: Ian Taylor
- *
+ * <p/>
  * Date: Sep 24, 2010
  * Time: 9:35:27 AM
  * To change this template use File | Settings | File Templates.
  */
 public class ArgumentParser {
     private static final String NL = System.getProperty("line.separator");
-    Hashtable <String,List>arguments;
-    ArrayList <String>argumentPrefixes;
+    Map<String, List<String>> arguments;
+    ArrayList<String> argumentPrefixes;
 
     String args[];
 
     public ArgumentParser(String[] args) {
         this.args = args;
-        arguments=new Hashtable <String,List>();
-        argumentPrefixes= new ArrayList <String>();
+        arguments = new HashMap<String, List<String>>();
+        argumentPrefixes = new ArrayList<String>();
 
         argumentPrefixes.add("-");
         argumentPrefixes.add("--");
@@ -49,47 +49,50 @@ public class ArgumentParser {
     public void parse() throws ArgumentParsingException {
         String argument;
         String value;
-        int i=0;
-        int valp;
-        List <String>values;
 
-        do {
+        int valp;
+        List<String> values;
+
+        for (int i = 0; i < args.length; i++) {
+
+
             argument = args[i];
 
             if (!isAnArgument(argument))
                 throw new ArgumentParsingException("Argument " + argument + " not valid");
 
-            valp=i+1;
+            valp = i + 1;
 
-            values=new ArrayList<String>();
+            values = new ArrayList<String>();
 
-            if (valp<args.length) {
+            if (valp < args.length) {
                 boolean moreValues;
 
                 do {
                     value = args[valp];
-                    moreValues=false;
+                    moreValues = false;
                     if (!isAnArgument(value)) {
                         values.add(value);
                         ++valp;
-                        if (valp<args.length)
-                            moreValues=true;
+                        if (valp < args.length)
+                            moreValues = true;
                     }
                 } while (moreValues);
             }
 
-            arguments.put(argument,values);
+            arguments.put(argument, values);
 
-            i=valp;
+            i = valp;
+        }
 
-        } while (i<args.length);
     }
 
     // - or -- is consider a property, which might have an optional value in the following
     // array element. If no value is supplied then the value element is set to ""
+
     private boolean isAnArgument(String argument) {
 
-        for (String prefix: argumentPrefixes) {
+        for (String prefix : argumentPrefixes) {
             if (argument.startsWith(prefix)) return true;
         }
 
@@ -100,11 +103,24 @@ public class ArgumentParser {
      * Gets values fgor this argument
      *
      * @param argument argument to search for (containing the prefix)
-     *
      * @return a List of values for this argument or bull if not found
      */
-    public List getArgumentValues(String argument) {
+    public List<String> getArgumentValues(String argument) {
         return arguments.get(argument);
+    }
+
+    /**
+     * returns the first value or null;
+     *
+     * @param argument
+     * @return
+     */
+    public String getArgumentValue(String argument) {
+        List<String> vals = arguments.get(argument);
+        if (vals == null || vals.size() == 0) {
+            return null;
+        }
+        return vals.get(0);
     }
 
 
@@ -116,13 +132,13 @@ public class ArgumentParser {
      */
     public String[] getArgumentAsStringValues(String argument) {
         List<String> vals = getArgumentValues(argument);
-        if (vals==null) return null;
+        if (vals == null) return null;
 
-        String strvals[]=new String[vals.size()];
+        String strvals[] = new String[vals.size()];
 
-        int i=0;
-        for (String val: vals) {
-            strvals[i]=val;
+        int i = 0;
+        for (String val : vals) {
+            strvals[i] = val;
             ++i;
         }
 
@@ -130,11 +146,11 @@ public class ArgumentParser {
     }
 
     /**
-     *  Gets the arguments along with corresponding values
+     * Gets the arguments along with corresponding values
      *
      * @return as a hashtable of key (argument as a string) and values (as a List)
      */
-    public Hashtable<String,List> getArguments() {
+    public Map<String, List<String>> getArguments() {
         return arguments;
     }
 
@@ -145,19 +161,15 @@ public class ArgumentParser {
 
     public String toString() {
 
-        StringBuffer allargs=new StringBuffer();
+        StringBuffer allargs = new StringBuffer();
 
-        Enumeration args= arguments.keys();
-
-
-        while (args.hasMoreElements()) {
-            StringBuffer onearg=new StringBuffer();
-            String arg = (String)args.nextElement();
+        for (String arg : arguments.keySet()) {
+            StringBuffer onearg = new StringBuffer();
             List<String> vals = arguments.get(arg);
 
             onearg.append(arg);
             onearg.append(" ");
-            for (String val: vals) {
+            for (String val : vals) {
                 onearg.append(val);
                 onearg.append(" ");
             }
