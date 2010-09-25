@@ -36,16 +36,15 @@ public class DiscoverTools extends Thread implements Timeable {
     private DiscoveredTools discoveredServices;
     ToolResolver toolResolver;
 
-
     private Timer timer;
     private HttpPeer httpEngine;
     TrianaProperties properties;
 
-    public DiscoverTools(HttpPeer httpEngine, TrianaProperties properties) {
+    public DiscoverTools(ToolResolver resolver, HttpPeer httpEngine, TrianaProperties properties) {
         this.tdpProtocols = new ServiceTypesAndProtocols();
         this.httpEngine = httpEngine;
         this.properties=properties;
-        this.toolResolver=new ToolResolver(properties);
+        this.toolResolver=resolver;
         Thread discoverThread = new Thread(this);
         discoverThread.setPriority(Thread.MIN_PRIORITY);
         discoverThread.start();
@@ -142,5 +141,9 @@ public class DiscoverTools extends Thread implements Timeable {
 
     public static WebBootstrap getBonjourServer() {
         return bonjourServer;
+    }
+
+    public void shutdown() {
+        bonjourServer.getDiscovery().shutdown();
     }
 }

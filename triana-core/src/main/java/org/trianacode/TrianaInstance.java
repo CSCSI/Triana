@@ -1,5 +1,6 @@
 package org.trianacode;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -35,7 +36,7 @@ import org.trianacode.taskgraph.util.ExtensionFinder;
  * command line arguments (need to be defined) and it now creates all of the necessary classes required by
  * an instance e.g. properties.
  *
- * @author Andrew Harrison, hacked by Ian T
+ * @author Andrew Harrison, rewrite by Ian T
  * @version 1.0.0 Jul 22, 2010
  */
 
@@ -44,7 +45,7 @@ public class TrianaInstance {
     String args[] =null;
 
     private HTTPServices httpServices;
-    private ToolResolver resolver;
+    private ToolResolver toolResolver;
 
     private Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
     TrianaProperties props;
@@ -55,51 +56,61 @@ public class TrianaInstance {
 
     ArgumentParser parser;
 
+
+    public TrianaInstance(String[] args, Class... extensions) throws IOException {
+        this(null, args, extensions);
+    }
+
+
     /**
      * Creates am instance of Triana.
      *
+     * @param progress a notifier to notify upon the progress of the initialization
      * @param args command line arguments
-     * @param resolve resolve tools upon startup
      * @param extensions list of extensions to load
      * 
      * @throws Exception
      */
-    public TrianaInstance(String[] args, boolean resolve, Class... extensions) throws Exception {
+    public TrianaInstance(TrianaInstanceProgressListener progress, String[] args, Class... extensions) throws IOException {
+
+        progress.setProgressSteps(4);
+        
+        progress.showCurrentProgress("Initializing Engine");
+
         this.args = args;
 
         if (args!=null)  {
             parser = new ArgumentParser(args);
         }
 
+
         propertyLoader = new PropertyLoader (this, null);
         props = propertyLoader.getProperties();
 
+        progress.showCurrentProgress("Searching for local tools");
+
+        toolResolver=new ToolResolver(props);
+        toolTable = new ToolTableImpl(toolResolver);
+
         httpServices = new HTTPServices();
-        discoveryTools = new DiscoverTools(httpServices.getHttpEngine(), props);
-        resolver= discoveryTools.getToolResolver();
-        toolTable = new ToolTableImpl(resolver);
-        resolver.addToolListener(httpServices.getWorkflowServer());
+        toolResolver.addToolListener(httpServices.getWorkflowServer());
+        httpServices.startServices(toolResolver);
+        discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
+
+        progress.showCurrentProgress("Started Discovery and HTTP Services");
 
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         initObjectDeserializers();
         initExtensions(extensions);
 
-        if (resolve) {
-            System.out.println("Resolving" );
-            resolver.resolve();
-        }
-
-        httpServices.startServices(resolver);
-
-        System.out.println("Starting HTTP Services " );
-
         new ShutdownHook().createHook();
+        progress.showCurrentProgress("Triana Initialization complete");
     }
 
 
     public ToolResolver getToolResolver() {
-        return resolver;
+        return toolResolver;
     }
 
     public HTTPServices getHttpServices() {
@@ -205,7 +216,8 @@ public class TrianaInstance {
         public void run() {
             System.out.println("TrianaInstance$ShutdownHook.run ENTER");
             try {
-                resolver.shutdown();
+                toolResolver.shutdown();
+                discoveryTools.shutdown();
             } catch (Exception e) {
                 e.printStackTrace();
             }

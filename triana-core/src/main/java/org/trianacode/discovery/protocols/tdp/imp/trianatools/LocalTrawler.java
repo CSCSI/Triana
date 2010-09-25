@@ -32,7 +32,6 @@ public class LocalTrawler extends TDPServer {
             List<ToolMetadata> tools = resolver.getLocalToolMetadata();
             return new TDPResponse(tools);
         }
-        // ??
         return new TDPResponse(new ArrayList<ToolMetadata>());
     }
 

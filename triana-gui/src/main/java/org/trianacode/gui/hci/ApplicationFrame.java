@@ -61,6 +61,7 @@ package org.trianacode.gui.hci;
 import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
 import org.trianacode.TrianaInstance;
+import org.trianacode.TrianaInstanceProgressListener;
 import org.trianacode.gui.action.*;
 import org.trianacode.gui.action.clipboard.CopyAction;
 import org.trianacode.gui.action.clipboard.CutAction;
@@ -129,7 +130,7 @@ import java.util.logging.Logger;
 public class ApplicationFrame extends TrianaWindow
         implements TaskListener, TaskGraphListener, InternalFrameListener,
         ToolSelectionHandler, SelectionManager, TreeModelListener,
-        ComponentListener, LocalDeployAssistant, FocusListener {
+        ComponentListener, LocalDeployAssistant, FocusListener, TrianaInstanceProgressListener {
 
     static Logger logger = Logger.getLogger("org.trianacode.gui.hci.ApplicationFrame");
 
@@ -190,6 +191,7 @@ public class ApplicationFrame extends TrianaWindow
     private Object selected;
 
     TrianaInstance engine;
+    SplashScreen splash = new SplashScreen();
 
     /**
      * Initialise the application
@@ -222,17 +224,22 @@ public class ApplicationFrame extends TrianaWindow
         super(title);
     }
 
+
+    public void showCurrentProgress(String progress) {
+        splash.setSplashProgress(progress);
+    }
+
+    public void setProgressSteps(int stepsInInitialization) {
+        splash.showSplashScreen(stepsInInitialization);
+    }
+
     private void init(String args[]) {
 
 
         try {
             logger.info("Initialising");
-            SplashScreen splash = new SplashScreen();
-            splash.showSplashScreen(5);
 
-            splash.setSplashProgress("Initializing Engine");
-
-            engine = new TrianaInstance(args, false, Extension.class,
+            engine = new TrianaInstance(this, args, Extension.class,
                     TaskGraphExporterInterface.class,
                     TaskGraphImporterInterface.class,
                     ToolImporterInterface.class,
@@ -240,30 +247,21 @@ public class ApplicationFrame extends TrianaWindow
 
             tools = engine.getToolTable();
             
-            splash.setSplashProgress(Env.getString("toolsInitLabel"));
             initTools();
             initActionTable();
             initWorkflowVerifiers();
             initMonitors();
             initExtensions();
 
-            splash.setSplashProgress(Env.getString("prefsLabel"));
             Env.initConfig(true);
 
-            splash.setSplashProgress(Env.getString("uiLabel"));
             initLayout();
             // init extensions that require some gui stuff to be there first
             initPostLayoutExtensions();
 
-            splash.setSplashProgress("Resolving Tools");
-            engine.getToolResolver().resolve();
-
-            splash.setSplashProgress(Env.getString("stateLabel"));
             Env.readStateFiles();
 
-            splash.setSplashProgress(Env.getString("toolLoadLabel"));
             initWindow(super.getTitle());
-
 
             addParentTaskGraphPanel();
 

@@ -78,6 +78,7 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
 
     public ToolResolver(TrianaProperties properties) {
         this.properties = properties;
+        resolve();
     }
 
     public long getResolveInterval() {
@@ -388,8 +389,8 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
      * Ian T - changed this to run in a thread upon start up so we can see the GUI quicker
      */
     public void resolve() {
-        // new Thread(this).start();
-        run();
+        new Thread(this).start();
+       // run();
         timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
     }
 

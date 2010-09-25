@@ -3,6 +3,8 @@ package org.trianacode.http;
 import org.thinginitself.http.HttpPeer;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 
+import java.io.IOException;
+
 /**
  * Starts off the HTTP and discovery services...
  * <p/>
@@ -17,7 +19,7 @@ public class HTTPServices {
         httpEngine = workflowServer.getHTTPPeerInstance();
     }
 
-    public void startServices(ToolResolver resolver) throws Exception {
+    public void startServices(ToolResolver resolver) throws IOException {
 
         // start a http server first
 
