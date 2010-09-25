@@ -1,9 +1,5 @@
 package org.trianacode;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.*;
-
 import org.trianacode.config.ArgumentParser;
 import org.trianacode.config.PropertyLoader;
 import org.trianacode.config.TrianaProperties;
@@ -27,10 +23,14 @@ import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImpl;
 import org.trianacode.taskgraph.util.ExtensionFinder;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.*;
+
 /**
  * This class represents an instance of Triana and allows arguments to be passed to it and properties for
  * defining the various parameters that Triana can accept.
- *
+ * <p/>
  * All references are now NON STATIC and propagated these through the many classes that expected
  * static references.  Also configured this so that it can accept
  * command line arguments (need to be defined) and it now creates all of the necessary classes required by
@@ -42,7 +42,7 @@ import org.trianacode.taskgraph.util.ExtensionFinder;
 
 public class TrianaInstance {
 
-    String args[] =null;
+    String args[] = null;
 
     private HTTPServices httpServices;
     private ToolResolver toolResolver;
@@ -65,31 +65,31 @@ public class TrianaInstance {
     /**
      * Creates am instance of Triana.
      *
-     * @param progress a notifier to notify upon the progress of the initialization
-     * @param args command line arguments
+     * @param progress   a notifier to notify upon the progress of the initialization
+     * @param args       command line arguments
      * @param extensions list of extensions to load
-     * 
      * @throws Exception
      */
     public TrianaInstance(TrianaInstanceProgressListener progress, String[] args, Class... extensions) throws IOException {
 
-        progress.setProgressSteps(4);
-        
-        progress.showCurrentProgress("Initializing Engine");
-
+        if (progress != null) {
+            progress.setProgressSteps(4);
+            progress.showCurrentProgress("Initializing Engine");
+        }
         this.args = args;
 
-        if (args!=null)  {
+        if (args != null) {
             parser = new ArgumentParser(args);
         }
 
 
-        propertyLoader = new PropertyLoader (this, null);
+        propertyLoader = new PropertyLoader(this, null);
         props = propertyLoader.getProperties();
 
-        progress.showCurrentProgress("Searching for local tools");
-
-        toolResolver=new ToolResolver(props);
+        if (progress != null) {
+            progress.showCurrentProgress("Searching for local tools");
+        }
+        toolResolver = new ToolResolver(props);
         toolTable = new ToolTableImpl(toolResolver);
 
         httpServices = new HTTPServices();
@@ -97,15 +97,19 @@ public class TrianaInstance {
         httpServices.startServices(toolResolver);
         discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
 
-        progress.showCurrentProgress("Started Discovery and HTTP Services");
-
+        toolResolver.resolve();
+        if (progress != null) {
+            progress.showCurrentProgress("Started Discovery and HTTP Services");
+        }
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         initObjectDeserializers();
         initExtensions(extensions);
 
         new ShutdownHook().createHook();
-        progress.showCurrentProgress("Triana Initialization complete");
+        if (progress != null) {
+            progress.showCurrentProgress("Triana Initialization complete");
+        }
     }
 
 
