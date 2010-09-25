@@ -194,7 +194,7 @@ public class ApplicationFrame extends TrianaWindow
     /**
      * Initialise the application
      */
-    public static ApplicationFrame initTriana() {
+    public static ApplicationFrame initTriana(String args[]) {
         // todo: this is crap, use andrew's UI stuff
         UIDefaults uiDefaults = UIManager.getDefaults();
         Object font = ((FontUIResource) uiDefaults.get("TextArea.font")).deriveFont((float) 11);
@@ -209,7 +209,7 @@ public class ApplicationFrame extends TrianaWindow
         }
 
         ApplicationFrame app = new ApplicationFrame("Triana");
-        app.init();
+        app.init(args);
 
         return app;
     }
@@ -222,29 +222,24 @@ public class ApplicationFrame extends TrianaWindow
         super(title);
     }
 
-    private void init() {
+    private void init(String args[]) {
 
-        engine = new TrianaInstance();
 
         try {
             logger.info("Initialising");
             SplashScreen splash = new SplashScreen();
             splash.showSplashScreen(5);
 
-        try {
-            engine.init();
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-            tools = new ToolTableImpl(engine.getToolResolver());
             splash.setSplashProgress("Initializing Engine");
 
-            engine.init(tools, false, Extension.class,
+            engine = new TrianaInstance(args, false, Extension.class,
                     TaskGraphExporterInterface.class,
                     TaskGraphImporterInterface.class,
                     ToolImporterInterface.class,
                     RegisterableToolComponentModel.class);
+
+            tools = engine.getToolTable();
+            
             splash.setSplashProgress(Env.getString("toolsInitLabel"));
             initTools();
             initActionTable();

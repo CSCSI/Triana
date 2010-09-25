@@ -127,11 +127,13 @@ public class TrianaRun {
 
     /**
      * Create and initialise a new tool table
+     *
+     * Ian T - this is as diodgy as hell.... what is this class for?
      */
     public static void initToolTable() {
-        TrianaInstance engine = new TrianaInstance();
+        TrianaInstance engine;
         try {
-            engine.init();
+            engine = new TrianaInstance(null, true, null);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

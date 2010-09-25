@@ -130,7 +130,7 @@ public class Triana {
         }
 
         if (starttriana) {
-            ApplicationFrame.initTriana();
+            ApplicationFrame.initTriana(args);
         } else {
             System.exit(0);
         }

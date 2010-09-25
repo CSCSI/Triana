@@ -51,53 +51,52 @@ public class TrianaInstance {
     PropertyLoader propertyLoader;
     DiscoverTools discoveryTools;
 
+    ToolTable toolTable;
+
     ArgumentParser parser;
 
-    public TrianaInstance() {
-        this(null);
-    }
-
-    public TrianaInstance(String[] args) {
+    /**
+     * Creates am instance of Triana.
+     *
+     * @param args command line arguments
+     * @param resolve resolve tools upon startup
+     * @param extensions list of extensions to load
+     * 
+     * @throws Exception
+     */
+    public TrianaInstance(String[] args, boolean resolve, Class... extensions) throws Exception {
         this.args = args;
 
         if (args!=null)  {
             parser = new ArgumentParser(args);
         }
-    }
-
-    public void init(ToolTable table, boolean resolve, Class... extensions) throws Exception {
 
         propertyLoader = new PropertyLoader (this, null);
         props = propertyLoader.getProperties();
 
-
         httpServices = new HTTPServices();
         discoveryTools = new DiscoverTools(httpServices.getHttpEngine(), props);
         resolver= discoveryTools.getToolResolver();
+        toolTable = new ToolTableImpl(resolver);
+        resolver.addToolListener(httpServices.getWorkflowServer());
 
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
-        if (TaskGraphManager.getToolTable() == null) {
-            if (table == null) {
-                table = new ToolTableImpl(resolver);
-            }
-            TaskGraphManager.initToolTable(table);
-        }
         initObjectDeserializers();
         initExtensions(extensions);
 
-        resolver.addToolListener(httpServices.getWorkflowServer());
         if (resolve) {
             System.out.println("Resolving" );
             resolver.resolve();
         }
-        
+
         httpServices.startServices(resolver);
 
         System.out.println("Starting HTTP Services " );
 
         new ShutdownHook().createHook();
     }
+
 
     public ToolResolver getToolResolver() {
         return resolver;
@@ -115,8 +114,8 @@ public class TrianaInstance {
         return discoveryTools;
     }
 
-    public void init() throws Exception {
-        init(null, true, new Class[0]);
+    public ToolTable getToolTable() {
+        return toolTable;
     }
 
     private void initExtensions(Class... exten) {

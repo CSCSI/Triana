@@ -14,11 +14,12 @@ public class ResourceSpawnTest {
 
     public static void main(String[] args) throws Exception {
 
-        TrianaInstance engine = new TrianaInstance();
+        TrianaInstance engine=null;
         try {
-            engine.init();
+            engine = new TrianaInstance(args, true, null);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            System.exit(1);
         }
 
         Tool tool = engine.getToolResolver().getTool(args[0]);

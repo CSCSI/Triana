@@ -564,12 +564,13 @@ public class CommandLineExec extends TrianaExec {
             System.out.println("File not found: " + file.getAbsolutePath());
             return;
         }
-        TrianaInstance engine = new TrianaInstance();
         try {
+            TrianaInstance engine=null;
             try {
-                engine.init();
+                engine = new TrianaInstance(args, true, null);
             } catch (Exception e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                System.exit(1);
             }
 
             XMLReader reader = new XMLReader(new FileReader(file));

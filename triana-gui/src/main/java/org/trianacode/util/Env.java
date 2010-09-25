@@ -301,9 +301,6 @@ public final class Env {
         home = Locations.getApplicationDataDir();
     }
 
-
-    
-
     /**
      * Adds a user property listener to Env
      */
@@ -435,11 +432,8 @@ public final class Env {
                 return url.substring(0, ind);
             }
             return null;
-
-
             // not in jar. need to find root directory we are in.
         }
-
     }
 
 
@@ -447,16 +441,21 @@ public final class Env {
      * Restore the default user settings
      */
     private static void restoreDefaultConfig() {
+        // This is crap code .... If not used then fine otherwise we need to fix it
+        // it we restore to defaults, then we shoudl do this property in ApplicationFrame
+        // not as a static method ....
+
+        throw new RuntimeException("Crap code alert - fix me");
 
         /// IAN T - BAD - need to fix this static reference - its the only one that causes issues.
         // created a throw away instance for now but needs fixing properly.
         
-        new TrianaInstance().getToolResolver().loadToolboxes();
+ /*       new TrianaInstance().getToolResolver().loadToolboxes();
         GUIEnv.loadDefaultColours();
         String defaultEditor = Env.getString("defaultEditor");
         setUserProperty(CODE_EDITOR_STR, defaultEditor);
         setUserProperty(HELP_EDITOR_STR, defaultEditor);
-        setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));
+        setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));      */
     }
 
 

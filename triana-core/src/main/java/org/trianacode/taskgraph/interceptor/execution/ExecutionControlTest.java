@@ -26,11 +26,12 @@ public class ExecutionControlTest implements ExecutionControlListener {
 
         File file = new File(args[0]);
 
-        TrianaInstance engine = new TrianaInstance();
+        TrianaInstance engine=null;
         try {
-            engine.init();
+            engine = new TrianaInstance(args, true, null);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            System.exit(1);
         }
         
         XMLReader reader = new XMLReader(new FileReader(file));
