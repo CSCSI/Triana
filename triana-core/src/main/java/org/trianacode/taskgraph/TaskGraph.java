@@ -59,6 +59,7 @@
 package org.trianacode.taskgraph;
 
 import org.trianacode.taskgraph.event.TaskGraphListener;
+import org.trianacode.taskgraph.service.ExecutionListener;
 import org.trianacode.taskgraph.tool.Tool;
 
 /**
@@ -67,11 +68,22 @@ import org.trianacode.taskgraph.tool.Tool;
  * @author Ian Wang
  * @version $Revision: 4048 $
  */
-public interface TaskGraph extends Task {
+public interface TaskGraph extends Task, ExecutionListener {
 
     public static final int CONTROL_TASK_CONNECTED = 0;
     public static final int CONTROL_TASK_DISCONNECTED = 1;
     public static final int CONTROL_TASK_UNSTABLE = 2;
+
+
+    /**
+     * Adds a execution listener to this runnable instance
+     */
+    public void addExecutionListener(ExecutionListener listener);
+    /**
+     * Removes a execution listener from this runnable instance
+     */
+    public void removeExecutionListener(ExecutionListener listener);
+
 
     /**
      * Constructs a new task for looping over the group, optionally preserving the original instance id in the new task.

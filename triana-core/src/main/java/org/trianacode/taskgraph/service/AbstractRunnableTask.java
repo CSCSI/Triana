@@ -62,11 +62,7 @@ package org.trianacode.taskgraph.service;
 
 import java.util.ArrayList;
 
-import org.trianacode.taskgraph.ExecutionState;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
-import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -109,6 +105,11 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
     public AbstractRunnableTask(Tool tool, TaskFactory factory, boolean preserveinst) throws TaskException {
         super(tool, factory, preserveinst);
+    }
+
+    public void setParent(TaskGraph taskgraph) {
+        super.setParent(taskgraph);
+        addExecutionListener(taskgraph);
     }
 
 
@@ -169,7 +170,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         setParameter(EXECUTION_REQUEST_COUNT, String.valueOf(executionRequest));
 
         synchronized (ExecutionState.LOCK) {
-            if ((getExecutionState() != ExecutionState.RUNNING) && (getExecutionState() != ExecutionState.RESETING)) {
+            if ((getExecutionState() != ExecutionState.RUNNING) && (getExecutionState() != ExecutionState.RESETTING)) {
                 setExecutionState(ExecutionState.SCHEDULED);
             }
         }
@@ -184,7 +185,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         waitPause();
 
         synchronized (ExecutionState.LOCK) {
-            if (getExecutionState() != ExecutionState.RESETING) {
+            if (getExecutionState() != ExecutionState.RESETTING) {
                 setExecutionState(ExecutionState.RUNNING);
             }
         }
@@ -203,7 +204,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         setParameter(EXECUTION_COUNT, String.valueOf(executionCount));
 
         synchronized (ExecutionState.LOCK) {
-            if ((getExecutionState() != ExecutionState.RESETING) && (getExecutionState() != ExecutionState.ERROR)) {
+            if ((getExecutionState() != ExecutionState.RESETTING) && (getExecutionState() != ExecutionState.ERROR)) {
                 if (getExecutionRequestCount() == getExecutionCount()) {
                     setExecutionState(ExecutionState.COMPLETE);
                 } else {
@@ -282,7 +283,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
             if ((getExecutionState() != ExecutionState.RESET) &&
                     (getExecutionState() != ExecutionState.NOT_EXECUTABLE) &&
                     (getExecutionState() != ExecutionState.UNKNOWN)) {
-                setExecutionState(ExecutionState.RESETING);
+                setExecutionState(ExecutionState.RESETTING);
             }
         }
     }
@@ -326,7 +327,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     private void notifyExecutionRequest() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
-        ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_REQUEST, this);
+        ExecutionEvent event = new ExecutionEvent(ExecutionState.SCHEDULED, this);
 
         for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionRequested(event);
@@ -336,7 +337,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     private void notifyExecutionStarting() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
-        ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_STARTING, this);
+        ExecutionEvent event = new ExecutionEvent(ExecutionState.RUNNING, this);
 
         for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionStarting(event);
@@ -346,7 +347,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     private void notifyExecutionFinished() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
-        ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_FINISHED, this);
+        ExecutionEvent event = new ExecutionEvent(ExecutionState.COMPLETE, this);
 
         for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionFinished(event);
@@ -356,7 +357,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     private void notifyExecutionReset() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
-        ExecutionEvent event = new ExecutionEvent(ExecutionEvent.EXECUTION_RESET, this);
+        ExecutionEvent event = new ExecutionEvent(ExecutionState.RESET, this);
 
         for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionReset(event);
@@ -366,7 +367,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     private void notifyExecutionStateChange(ExecutionState newstate, ExecutionState oldstate) {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
-        ExecutionStateEvent event = new ExecutionStateEvent(this, newstate, oldstate);
+        ExecutionEvent event = new ExecutionEvent(newstate, oldstate, this);
 
         for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionStateChanged(event);

@@ -63,23 +63,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.NodeException;
-import org.trianacode.taskgraph.NodeUtils;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.TPoint;
-import org.trianacode.taskgraph.TRectangle;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.TaskLayoutUtils;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.event.ControlTaskStateEvent;
 import org.trianacode.taskgraph.event.ParameterUpdateEvent;
 import org.trianacode.taskgraph.event.TaskDisposedEvent;
@@ -89,6 +75,9 @@ import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
 import org.trianacode.taskgraph.event.TaskListener;
 import org.trianacode.taskgraph.event.TaskNodeEvent;
 import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.service.ExecutionEvent;
+import org.trianacode.taskgraph.service.ExecutionListener;
+import org.trianacode.taskgraph.service.RunnableInstance;
 import org.trianacode.taskgraph.tool.Tool;
 
 
@@ -128,6 +117,14 @@ public class TaskGraphImp extends TaskImp
 
 
     /**
+     * a list of the execution listeners for this task
+     */
+    protected ArrayList<ExecutionListener> execlisteners = new ArrayList<ExecutionListener>();
+
+    private AtomicInteger currentState = new AtomicInteger(-1);
+
+
+    /**
      * Create a taskgraph that uses the default task factory.
      */
     public TaskGraphImp() throws TaskException {
@@ -162,6 +159,23 @@ public class TaskGraphImp extends TaskImp
         }
 
         initgroupnodes = true;
+    }
+
+
+    /**
+     * Adds a execution listener to this runnable instance
+     */
+    public void addExecutionListener(ExecutionListener listener) {
+        if (!execlisteners.contains(listener)) {
+            execlisteners.add(listener);
+        }
+    }
+
+    /**
+     * Removes a execution listener from this runnable instance
+     */
+    public void removeExecutionListener(ExecutionListener listener) {
+        execlisteners.remove(listener);
     }
 
     /**
@@ -1177,5 +1191,66 @@ public class TaskGraphImp extends TaskImp
         super.dispose();
     }
 
+    @Override
+    public void executionStateChanged(ExecutionEvent event) {
+        for (ExecutionListener execlistener : execlisteners) {
+            execlistener.executionStateChanged(event);
+        }
+    }
+
+    @Override
+    public void executionRequested(ExecutionEvent event) {
+        if(currentState.get() < 0) {
+            currentState.set(0);
+            ExecutionEvent evt = new ExecutionEvent(event.getState(), this);
+            for (ExecutionListener execlistener : execlisteners) {
+                execlistener.executionRequested(evt);
+            }
+        }
+    }
+
+    @Override
+    public void executionStarting(ExecutionEvent event) {
+        if (currentState.get() < 1) {
+            currentState.set(1);
+            ExecutionEvent evt = new ExecutionEvent(event.getState(), this);
+            for (ExecutionListener execlistener : execlisteners) {
+                execlistener.executionStarting(evt);
+            }
+        }
+    }
+
+    @Override
+    public void executionFinished(ExecutionEvent event) {
+        if(isFinished(this)) {
+            ExecutionEvent evt = new ExecutionEvent(event.getState(), this);
+            for (ExecutionListener execlistener : execlisteners) {
+                execlistener.executionFinished(evt);
+            }
+        }
+
+    }
+
+    @Override
+    public void executionReset(ExecutionEvent event) { 
+    }
+
+    private boolean isFinished(TaskGraph taskgraph) {
+        Task[] tasks = taskgraph.getTasks(true);
+        boolean finished = true;
+
+        for (int count = 0; (count < tasks.length) && (finished); count++) {
+            if (tasks[count] instanceof RunnableInstance) {
+                finished = finished && ((tasks[count]).getExecutionState()
+                        == ExecutionState.COMPLETE);
+            }
+
+            if (tasks[count] instanceof TaskGraph) {
+                finished = finished && isFinished((TaskGraph) tasks[count]);
+            }
+        }
+
+        return finished;
+    }
 }
 

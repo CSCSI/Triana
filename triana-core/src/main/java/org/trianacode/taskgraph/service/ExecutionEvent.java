@@ -59,6 +59,9 @@
 
 package org.trianacode.taskgraph.service;
 
+import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.Task;
+
 
 /**
  * The event that is generated when a task receives an execution request or starts/finishes an execution cycle.
@@ -69,26 +72,31 @@ package org.trianacode.taskgraph.service;
 
 public class ExecutionEvent {
 
-    public static final int EXECUTION_REQUEST = 0;
-    public static final int EXECUTION_STARTING = 1;
-    public static final int EXECUTION_FINISHED = 2;
-    public static final int EXECUTION_RESET = 2;
-
-    private int id;
-    private RunnableInstance task;
+    private ExecutionState state;
+    private ExecutionState oldState;
+    private Task task;
 
 
-    public ExecutionEvent(int id, RunnableInstance task) {
-        this.id = id;
+    public ExecutionEvent(ExecutionState state, ExecutionState oldState, Task task) {
+        this.state = state;
+        this.oldState = oldState;
         this.task = task;
     }
 
-
-    public int getId() {
-        return id;
+    public ExecutionEvent(ExecutionState state, Task task) {
+        this.state = state;
+        this.task = task;
     }
 
-    public RunnableInstance getRunnableInstance() {
+    public ExecutionState getState() {
+        return state;
+    }
+
+    public ExecutionState getOldState() {
+        return oldState;
+    }
+
+    public Task getTask() {
         return task;
     }
 

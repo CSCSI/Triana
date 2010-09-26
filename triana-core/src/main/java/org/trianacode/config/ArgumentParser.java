@@ -56,10 +56,8 @@ public class ArgumentParser {
         for (;i < args.length;) {
             List<String> values = new ArrayList<String>();
             argument = args[i];
-            System.out.println("ArgumentParser.parse arg:" + argument);
             if (!isAnArgument(argument))
                 throw new ArgumentParsingException("Argument " + argument + " not valid");
-
             valp = i + 1;
             if (valp < args.length) {
 
@@ -123,6 +121,10 @@ public class ArgumentParser {
             }
         }
         return null;
+    }
+
+    public boolean isOption(String option) {
+        return arguments.keySet().contains(option);
     }
 
 

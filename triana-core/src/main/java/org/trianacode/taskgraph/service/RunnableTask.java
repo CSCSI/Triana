@@ -742,7 +742,7 @@ public class RunnableTask extends AbstractRunnableTask
                 executionRequested();
             }
 
-            if (getExecutionState() != ExecutionState.RESETING) {
+            if (getExecutionState() != ExecutionState.RESETTING) {
                 beforeProcess();
 
                 synchronized (THREAD_LOCK) {
@@ -758,7 +758,7 @@ public class RunnableTask extends AbstractRunnableTask
                 afterProcess();
             }
         }
-        while ((runAgain-- > 0) && (getExecutionState() != ExecutionState.RESETING));
+        while ((runAgain-- > 0) && (getExecutionState() != ExecutionState.RESETTING));
 
         finishProcess();
 
@@ -767,7 +767,7 @@ public class RunnableTask extends AbstractRunnableTask
     }
 
     private void finishProcess() {
-        if (getExecutionState().equals(ExecutionState.RESETING)) {
+        if (getExecutionState().equals(ExecutionState.RESETTING)) {
             unit.reset();
             wakeups.clear();
             runAgain = 0;

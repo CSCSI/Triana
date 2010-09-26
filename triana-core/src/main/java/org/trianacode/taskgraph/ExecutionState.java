@@ -72,12 +72,20 @@ public enum ExecutionState {
     RUNNING,
     PAUSED,
     COMPLETE,
-    RESETING,
+    RESETTING,
     RESET,
     ERROR,
     SUSPENDED,
     UNKNOWN,
-    LOCK
+    LOCK;
+
+    public static ExecutionState getState(int ordinal) {
+        ExecutionState[] all = values();
+        if(ordinal >= 0 && ordinal < all.length) {
+            return all[ordinal];
+        }
+        return null;
+    }
 
 
 }

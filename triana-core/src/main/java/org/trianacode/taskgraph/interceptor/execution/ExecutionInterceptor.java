@@ -38,7 +38,6 @@ public class ExecutionInterceptor implements Interceptor {
     }
 
     protected Object intercept(Node sendNode, Node receiveNode, Object data, boolean send) {
-        System.out.println("==========================ExecutionInterceptor.intercept==========================");
         Task task;
         if (send) {
             task = sendNode.getTask();
@@ -51,7 +50,6 @@ public class ExecutionInterceptor implements Interceptor {
             id = (String) task.getContextProperty(ExecutionBus.SEND_ID);
         } else {
             id = (String) task.getContextProperty(ExecutionBus.RECEIVE_ID);
-            System.out.println("ExecutionInterceptor.intercept got receive id:" + id);
         }
         if (id == null) {
             return data;

@@ -122,8 +122,8 @@ public interface SchedulerInterface {
      */
     public void notifyError(RunnableInstance cause);
 
-    public void addExecutionStateListener(ExecutionStateListener listener);
+    public void addExecutionListener(ExecutionListener listener);
 
-    public void removeExecutionStateListener(ExecutionStateListener listener);
+    public void removeExecutionListener(ExecutionListener listener);
 
 }

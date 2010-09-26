@@ -140,6 +140,14 @@ public class ApplicationFrame extends TrianaWindow
     private static int TOOL_TIP_SHOW_DELAY = ToolTipManager.sharedInstance().getInitialDelay();
     private static int TOOL_TIP_HIDE_DELAY = Integer.MAX_VALUE;
 
+    static {
+        try {
+            javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new TrianaTheme());
+        } catch (Exception mre) {
+            //press on
+        }
+    }
+
 
     /**
      * the current loaded tools
@@ -198,18 +206,7 @@ public class ApplicationFrame extends TrianaWindow
      */
     public static ApplicationFrame initTriana(String args[]) {
         // todo: this is crap, use andrew's UI stuff
-        UIDefaults uiDefaults = UIManager.getDefaults();
-        Object font = ((FontUIResource) uiDefaults.get("TextArea.font")).deriveFont((float) 11);
-
-        Enumeration enumeration = uiDefaults.keys();
-        while (enumeration.hasMoreElements()) {
-            Object key = enumeration.nextElement();
-
-            if (key.toString().endsWith("font")) {
-                uiDefaults.put(key, font);
-            }
-        }
-
+        // Andrew Sept 2010: Done - 6 years on... :-)
         ApplicationFrame app = new ApplicationFrame("Triana");
         app.init(args);
 

@@ -71,7 +71,7 @@ public interface ExecutionListener {
     /**
      * Notified when the execution state of the task changes
      */
-    public void executionStateChanged(ExecutionStateEvent event);
+    public void executionStateChanged(ExecutionEvent event);
 
 
     /**

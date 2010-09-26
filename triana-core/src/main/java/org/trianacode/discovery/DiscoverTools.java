@@ -144,6 +144,8 @@ public class DiscoverTools extends Thread implements Timeable {
     }
 
     public void shutdown() {
-        bonjourServer.getDiscovery().shutdown();
+        if(bonjourServer != null) {
+            bonjourServer.getDiscovery().shutdown();
+        }
     }
 }

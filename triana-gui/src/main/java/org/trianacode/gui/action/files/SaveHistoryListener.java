@@ -85,7 +85,6 @@ import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.service.ClipableTaskInterface;
 import org.trianacode.taskgraph.service.ExecutionEvent;
 import org.trianacode.taskgraph.service.ExecutionListener;
-import org.trianacode.taskgraph.service.ExecutionStateEvent;
 import org.trianacode.taskgraph.service.RunnableInstance;
 import org.trianacode.taskgraph.service.RunnableTask;
 import org.trianacode.taskgraph.util.FileUtils;
@@ -248,13 +247,15 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
     }
 
     public void executionFinished(ExecutionEvent event) {
-        if (infotable.containsKey(event.getRunnableInstance())) {
-            RunnableTask task = (RunnableTask) event.getRunnableInstance();
+        if (infotable.containsKey(event.getTask())) {
+            Task task = event.getTask();
+            if(task instanceof RunnableTask) {
             SaveHistoryInfo info = (SaveHistoryInfo) infotable.get(task);
 
-            if (task.isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
-                saveHistory(task, getFile(task, info));
+            if (((RunnableTask)task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
+                saveHistory((RunnableTask)task, getFile(task, info));
                 info.increaseSequenceNumber();
+            }
             }
         }
     }
@@ -262,7 +263,7 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
     public void executionReset(ExecutionEvent event) {
     }
 
-    public void executionStateChanged(ExecutionStateEvent event) {
+    public void executionStateChanged(ExecutionEvent event) {
     }
 
 

@@ -124,7 +124,7 @@ public class Locations {
         if (runHome != null) {
             return runHome;
         }
-        logger.info("calculating Triana run hom...");
+        logger.fine("calculating Triana run hom...");
         String fileSubPath = "triana-core/target/classes/org/trianacode/config/Locations.class";
         try {
             URL url = Class.forName("org.trianacode.config.Locations").getResource("Locations.class");
@@ -147,7 +147,7 @@ public class Locations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logger.info("Triana runHome : " + runHome);
+        logger.fine("Triana runHome : " + runHome);
         return runHome;
     }
 
@@ -160,7 +160,7 @@ public class Locations {
         if (home != null) {
             return home;
         }
-        logger.info("calculating Triana application data directory");
+        logger.fine("calculating Triana application data directory");
         File appHome;
         String triana = "Triana4";
         File file = new File(System.getProperty("user.home"));
@@ -197,7 +197,7 @@ public class Locations {
             }
         }
         home = appHome.getAbsolutePath();
-        logger.info("Triana support application data directory : " + home);
+        logger.fine("Triana support application data directory : " + home);
         return home;
     }
 

@@ -73,18 +73,14 @@ public class DiscoveredTools implements DiscoveredServicesInterface {
 
     public void addTool(ToolMetadata tool, ServiceInfoEndpoint serviceType) {
 
-        System.out.println("Adding tool : " + tool.getDisplayName());
-
         List list = null;
 
         synchronized (tools) {
             list = tools.get(serviceType);
             if (list == null) { // create a list for this service type
                 list = Collections.synchronizedList(new LinkedList<ServiceResource>());
-                System.out.println("Adding service type " + serviceType);
                 tools.put(serviceType, list);
             }
-            System.out.println("Adding tool to list ");
             if (!list.contains(tool)) {
                 list.add(tool);
             } // add the service

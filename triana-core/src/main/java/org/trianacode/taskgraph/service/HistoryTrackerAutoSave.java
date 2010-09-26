@@ -83,18 +83,15 @@ public class HistoryTrackerAutoSave implements ExecutionListener {
     }
 
     public void executionFinished(ExecutionEvent event) {
-        if (!(event.getRunnableInstance() instanceof Task)) {
-            return;
-        }
 
-        Task task = (Task) event.getRunnableInstance();
+        Task task = event.getTask();
 
         if (!String.valueOf(Boolean.TRUE).equals(task.getParameter(AUTO_SAVE))) {
             return;
         }
 
 /*
-            RunnableTask task = (RunnableTask) event.getRunnableInstance();
+            RunnableTask task = (RunnableTask) event.getTask();
             SaveHistoryInfo info = (SaveHistoryInfo) infotable.get(task);
 
             if (task.isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
@@ -107,6 +104,6 @@ public class HistoryTrackerAutoSave implements ExecutionListener {
     public void executionReset(ExecutionEvent event) {
     }
 
-    public void executionStateChanged(ExecutionStateEvent event) {
+    public void executionStateChanged(ExecutionEvent event) {
     }
 }
