@@ -60,8 +60,10 @@ package org.trianacode.gui.hci;
 
 import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
+import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
 import org.trianacode.TrianaInstanceProgressListener;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.*;
 import org.trianacode.gui.action.clipboard.CopyAction;
 import org.trianacode.gui.action.clipboard.CutAction;
@@ -96,11 +98,11 @@ import org.trianacode.taskgraph.constants.MapConstants;
 import org.trianacode.taskgraph.constants.ScriptConstants;
 import org.trianacode.taskgraph.constants.TextToolConstants;
 import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.service.LocalDeployAssistant;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableImpl;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -110,7 +112,6 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -118,9 +119,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyVetoException;
 import java.io.File;
+import java.io.FileReader;
 import java.util.*;
 import java.util.List;
-import java.util.logging.Logger;
 
 
 /**
@@ -132,7 +133,8 @@ public class ApplicationFrame extends TrianaWindow
         ToolSelectionHandler, SelectionManager, TreeModelListener,
         ComponentListener, LocalDeployAssistant, FocusListener, TrianaInstanceProgressListener {
 
-    static Logger logger = Logger.getLogger("org.trianacode.gui.hci.ApplicationFrame");
+    private static Log log = Loggers.LOGGER;
+
 
     /**
      * tool tip delays
@@ -234,7 +236,7 @@ public class ApplicationFrame extends TrianaWindow
 
 
         try {
-            logger.info("Initialising");
+            log.info("Initialising");
 
             engine = new TrianaInstance(this, args, Extension.class,
                     TaskGraphExporterInterface.class,
@@ -243,7 +245,7 @@ public class ApplicationFrame extends TrianaWindow
                     RegisterableToolComponentModel.class);
 
             tools = engine.getToolTable();
-            
+
             initTools();
             initActionTable();
             initWorkflowVerifiers();
@@ -259,8 +261,20 @@ public class ApplicationFrame extends TrianaWindow
             Env.readStateFiles();
 
             initWindow(super.getTitle());
-
-            addParentTaskGraphPanel();
+            if (args.length > 0) {
+                try {
+                    File f = new File(args[0]);
+                    XMLReader reader = new XMLReader(new FileReader(f));
+                    Tool t = reader.readComponent();
+                    if (t instanceof TaskGraph) {
+                        addParentTaskGraphPanel((TaskGraph) t);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                addParentTaskGraphPanel();
+            }
 
             splash.setSplashProgress("");
             splash.hideSplashScreen();
@@ -311,7 +325,7 @@ public class ApplicationFrame extends TrianaWindow
      * Initialise the actions in the ActionTable
      */
     private void initActionTable() {
-        logger.fine("Init");
+        log.debug("Init");
         ActionTable.putAction(ActionTable.NEW_ACTION, new NewAction());
         ActionTable.putAction(ActionTable.OPEN_ACTION, new OpenAction(this));
         ActionTable.putAction(ActionTable.OPEN_FILE_ACTION, new OpenAction(this, OpenAction.FILE_ONLY_MODE));
@@ -368,7 +382,7 @@ public class ApplicationFrame extends TrianaWindow
      * Initialise the actions in the ActionTable
      */
     private void initWorkflowVerifiers() {
-        logger.fine("Init");
+        log.debug("Init");
         WorkflowActionManager.registerWorkflowAction(new TrianaWorkflowVerifier());
         //WorkflowActionManager.registerWorkflowAction(new ProtoServiceWorkflowVerifier());
     }
@@ -377,7 +391,7 @@ public class ApplicationFrame extends TrianaWindow
      * Initialise the application monitors
      */
     private void initMonitors() {
-        logger.fine("Init");
+        log.debug("Init");
         //new ServicesMonitor();
     }
 
@@ -394,13 +408,13 @@ public class ApplicationFrame extends TrianaWindow
         en = engine.getExtensions(TaskGraphExporterInterface.class);
         for (Object o : en) {
             TaskGraphExporterInterface e = (TaskGraphExporterInterface) o;
-            System.out.println("**** Found an exporter : " + e.toString());
+            log.debug("**** Found an exporter : " + e.toString());
             ImportExportRegistry.addExporter(e);
         }
         en = engine.getExtensions(TaskGraphImporterInterface.class);
         for (Object o : en) {
             TaskGraphImporterInterface e = (TaskGraphImporterInterface) o;
-            System.out.println("**** Found an importer : " + e.toString());
+            log.debug("**** Found an importer : " + e.toString());
 
             ImportExportRegistry.addImporter(e);
         }
@@ -414,7 +428,7 @@ public class ApplicationFrame extends TrianaWindow
 
     private void initPostLayoutExtensions() {
         TaskGraphView defaultview = TaskGraphViewManager.getDefaultTaskgraphView();
-        List<Object> en  = engine.getExtensions(RegisterableToolComponentModel.class);
+        List<Object> en = engine.getExtensions(RegisterableToolComponentModel.class);
         for (Object o : en) {
             RegisterableToolComponentModel e = (RegisterableToolComponentModel) o;
             defaultview.registerToolModel(e.getRegistrationString(), e);
@@ -527,7 +541,7 @@ public class ApplicationFrame extends TrianaWindow
      * Initialises the tool table
      */
     public void initTools() {
-        logger.fine("Init");
+        log.debug("Init");
 
         toolmonitor = new BrokenToolMonitor(tools);
         toolmonitor.start();

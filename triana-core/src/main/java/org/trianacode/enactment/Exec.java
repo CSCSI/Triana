@@ -19,6 +19,7 @@ import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.UUID;
 
 /**
  * @author Andrew Harrison
@@ -30,7 +31,7 @@ public class Exec implements ExecutionListener {
     public static final String PID_DIR = "pids";
     public static String tmpdir = System.getProperty("user.home");
 
-    private String pid = "1";//UUID.randomUUID().toString();
+    private String pid = UUID.randomUUID().toString();
 
     private TrianaRun runner;
 

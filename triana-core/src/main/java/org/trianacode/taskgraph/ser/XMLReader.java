@@ -16,26 +16,9 @@
 
 package org.trianacode.taskgraph.ser;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.InstanceIDManager;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.NodeException;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.TaskGraphUtils;
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
@@ -43,6 +26,14 @@ import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class Description Here...
@@ -53,7 +44,7 @@ import org.trianacode.taskgraph.tool.Tool;
 
 public class XMLReader implements XMLConstants {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.ser.XMLReader");
+    static Log log = Loggers.TOOL_LOGGER;
 
     /**
      * Instance of a SAXBuilder from JDOM

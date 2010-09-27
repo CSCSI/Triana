@@ -16,18 +16,20 @@
 
 package org.trianacode.config;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.logging.Logger;
 
 /**
  * Detects/creates the Application directory getApplicationDataDir for storing application specific data.
  * this is  rehash of Home, which allows you to find out about the home directory of
- *  the Jar (or dist) but also the home directory of triana where all the toolboxes live (getHomeProper).
- *  It also allows you to find the application directory and the config file. The new config file
- *  is named org.trianacode.properties and is in the app data directory.
+ * the Jar (or dist) but also the home directory of triana where all the toolboxes live (getHomeProper).
+ * It also allows you to find the application directory and the config file. The new config file
+ * is named org.trianacode.properties and is in the app data directory.
  *
  * @author Andrew Harrison
  * @version $Revision:$
@@ -35,7 +37,8 @@ import java.util.logging.Logger;
 
 public class Locations {
 
-    static Logger logger = Logger.getLogger("org.trianacode.config.Locations");
+    private static Log logger = Loggers.CONFIG_LOGGER;
+
     private static String home = null;
     private static File runHome = null;
     private static String os = null;
@@ -78,13 +81,14 @@ public class Locations {
      * Gets the config file.
      *
      */
+
     public static String getDefaultConfigFile() {
         return defaultConfigFile;
     }
 
 
     public static synchronized File runHome() {
-         return calculateRunHome();
+        return calculateRunHome();
     }
 
     /**
@@ -96,7 +100,7 @@ public class Locations {
 
     /**
      * returns the root directory for triana
-     * 
+     *
      * @return
      */
     public static String getHomeProper() {
@@ -112,11 +116,11 @@ public class Locations {
     public static String[] getInternalToolboxes() {
         String paths = System.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
 
-        if (paths!=null)
+        if (paths != null)
             return paths.split(",");
         else
             return new String[0];
-        
+
     }
 
 
@@ -124,7 +128,7 @@ public class Locations {
         if (runHome != null) {
             return runHome;
         }
-        logger.fine("calculating Triana run hom...");
+        logger.debug("calculating Triana run hom...");
         String fileSubPath = "triana-core/target/classes/org/trianacode/config/Locations.class";
         try {
             URL url = Class.forName("org.trianacode.config.Locations").getResource("Locations.class");
@@ -147,7 +151,7 @@ public class Locations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logger.fine("Triana runHome : " + runHome);
+        logger.debug("Triana runHome : " + runHome);
         return runHome;
     }
 
@@ -160,16 +164,16 @@ public class Locations {
         if (home != null) {
             return home;
         }
-        logger.fine("calculating Triana application data directory");
+        logger.debug("calculating Triana application data directory");
         File appHome;
         String triana = "Triana4";
         File file = new File(System.getProperty("user.home"));
         if (!file.isDirectory()) {
-            logger.severe("Application data directory not a valid directory: " + file);
+            logger.error("Application data directory not a valid directory: " + file);
             appHome = new File(triana);
         } else {
             String os = os();
-            logger.fine("OS is " + os);
+            logger.debug("OS is " + os);
             if (os.indexOf("osx") > -1) {
                 File libDir = new File(file, "Library/Application Support");
                 libDir.mkdirs();
@@ -183,7 +187,7 @@ public class Locations {
                 if (appData != null && appData.isDirectory()) {
                     appHome = new File(appData, triana);
                 } else {
-                    logger.severe("Could not find %APPDATA%: " + APPDATA);
+                    logger.error("Could not find %APPDATA%: " + APPDATA);
                     appHome = new File(file, triana);
                 }
             } else {
@@ -193,11 +197,11 @@ public class Locations {
         if (!appHome.exists()) {
             if (appHome.mkdir()) {
             } else {
-                logger.severe("Could not create " + appHome);
+                logger.error("Could not create " + appHome);
             }
         }
         home = appHome.getAbsolutePath();
-        logger.fine("Triana support application data directory : " + home);
+        logger.debug("Triana support application data directory : " + home);
         return home;
     }
 

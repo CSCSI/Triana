@@ -58,17 +58,9 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Vector;
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
 import org.trianacode.config.TrianaProperties;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.TaskException;
@@ -77,6 +69,10 @@ import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.Toolbox;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 
 /**
@@ -87,7 +83,7 @@ import org.trianacode.taskgraph.tool.Toolbox;
  */
 public class ToolImp implements Tool {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.imp.ToolImp");
+    static Log log = Loggers.TOOL_LOGGER;
 
 
     private String version = "0.1";
@@ -212,8 +208,8 @@ public class ToolImp implements Tool {
      * Creates a clone of the specified tool
      */
     public ToolImp(Tool tool, TrianaProperties properties) throws TaskException {
-        this.properties=properties;
-        
+        this.properties = properties;
+
         try {
             setDefinitionType(tool.getDefinitionType());
             setToolName(tool.getToolName());
@@ -512,7 +508,7 @@ public class ToolImp implements Tool {
      * Used to set the parameter types.
      */
     public void setParameterType(String name, String type) {
-        log.fine("setting parameter type for name:" + name + " to " + type);
+        log.debug("setting parameter type for name:" + name + " to " + type);
         paramtypes.put(name, type);
     }
 

@@ -59,14 +59,8 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.ImageIcon;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JToggleButton;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
@@ -85,7 +79,6 @@ public class BaseInternalFrame extends JInternalFrame {
     private JToggleButton associatedButton;
     private JRadioButtonMenuItem associatedMenuButton;
 
-    private boolean isClosable;
     private int initialWidth;
     private int initialHeight;
 
@@ -106,8 +99,6 @@ public class BaseInternalFrame extends JInternalFrame {
                 isClosable, //closable
                 true, //maximizable
                 true);//iconifiable
-
-        this.isClosable = isClosable;
 
         setBackground(Color.white);
         setForeground(Color.blue);
@@ -159,7 +150,6 @@ public class BaseInternalFrame extends JInternalFrame {
      */
     public BaseInternalFrame(String title, boolean resizable, boolean closable) {
         super(title, resizable, closable);
-        this.isClosable = isClosable;
         saveSize();
     }
 
@@ -169,7 +159,6 @@ public class BaseInternalFrame extends JInternalFrame {
     public BaseInternalFrame(String title, boolean resizable, boolean closable,
                              boolean maximizable) {
         super(title, resizable, closable, maximizable);
-        this.isClosable = isClosable;
         saveSize();
     }
 
@@ -179,7 +168,6 @@ public class BaseInternalFrame extends JInternalFrame {
     public BaseInternalFrame(String title, boolean resizable, boolean closable,
                              boolean maximizable, boolean iconifiable) {
         super(title, resizable, closable, maximizable, iconifiable);
-        this.isClosable = isClosable;
         saveSize();
     }
 

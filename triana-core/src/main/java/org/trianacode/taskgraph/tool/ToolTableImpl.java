@@ -16,6 +16,13 @@
 
 package org.trianacode.taskgraph.tool;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.config.TrianaProperties;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.ser.XMLWriter;
+import org.trianacode.taskgraph.util.UrlUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,12 +30,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Logger;
-
-import org.trianacode.config.TrianaProperties;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
-import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.util.UrlUtils;
 
 /**
  * Class Description Here...
@@ -39,14 +40,14 @@ import org.trianacode.taskgraph.util.UrlUtils;
 
 public class ToolTableImpl implements ToolTable, ToolListener {
 
-    private static Logger log = Logger.getLogger(ToolTableImpl.class.getName());
+    private static Log log = Loggers.TOOL_LOGGER;
 
 
     // The standard tool box types
     public static final String USER_TOOLBOX = "user";
     TrianaProperties properties;
 
-    
+
     /**
      * An array list of tool listeners
      */
@@ -61,7 +62,7 @@ public class ToolTableImpl implements ToolTable, ToolListener {
     }
 
     public TrianaProperties getProperties() {
-        return properties; 
+        return properties;
     }
 
     /**
@@ -148,9 +149,9 @@ public class ToolTableImpl implements ToolTable, ToolListener {
      * @param toolbox the toolbox the tool is pasted into (ignore if irrelevant)
      */
     public void insertTool(Tool tool, String pack, String toolbox) {
-        log.fine("ToolTableImp.insertTool full name:" + tool.getQualifiedToolName());
+        log.debug("ToolTableImp.insertTool full name:" + tool.getQualifiedToolName());
         if (resolver.getTool(tool.getQualifiedToolName()) != null) {
-            log.fine("Not pasting. Tool already exists with name " + tool.getQualifiedToolName());
+            log.debug("Not pasting. Tool already exists with name " + tool.getQualifiedToolName());
             return;
         }
 

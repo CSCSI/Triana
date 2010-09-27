@@ -58,27 +58,9 @@
  */
 package org.trianacode.taskgraph.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
-import org.trianacode.taskgraph.ExecutionState;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.Unit;
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.ClipInBucket;
 import org.trianacode.taskgraph.clipin.ClipInStore;
 import org.trianacode.taskgraph.databus.DataBus;
@@ -91,6 +73,11 @@ import org.trianacode.taskgraph.ser.TrianaObjectInputStream;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 /**
  * An extension to Task that allows the underlying OldUnit to be instantiated and run.
  * <p/>
@@ -100,6 +87,9 @@ import org.trianacode.taskgraph.tool.ToolTable;
 
 public class RunnableTask extends AbstractRunnableTask
         implements RunnableInstance, RunnableInterface, ControlInterface, Runnable {
+
+    private static Log log = Loggers.TOOL_LOGGER;
+
 
     // A internal string representing null
     private static final String NULL_STR = "#<---NULL->#";
@@ -679,7 +669,7 @@ public class RunnableTask extends AbstractRunnableTask
     void output(RunnableNodeInterface node, Object data, boolean blocking) {
 
 
-        System.out.println("RunnableTask.output ENTER with data:" + data);
+        log.debug("RunnableTask.output ENTER with data:" + data);
         if (!node.isParameterNode()) {
             waitPause();
 
@@ -698,7 +688,7 @@ public class RunnableTask extends AbstractRunnableTask
 
             //HTTPServices.getWorkflowServer().addDataResource(packet.getDataLocation().getPath(), (Serializable) data);
 
-            System.out.println("RunnableTask.output ENTER URL = " + packet.getDataLocation());
+            log.debug("RunnableTask.output ENTER URL = " + packet.getDataLocation());
             DataMessage mess = new DataMessage(packet, extract);
 
             if (blocking) {
@@ -847,7 +837,7 @@ public class RunnableTask extends AbstractRunnableTask
      */
     public void process() {
         try {
-            System.out.println("RUNNING " + getQualifiedTaskName());
+            log.debug("RUNNING " + getQualifiedTaskName());
             waitPause();
 
             try {
@@ -858,7 +848,7 @@ public class RunnableTask extends AbstractRunnableTask
             }
 
             if (!getExecutionState().equals(ExecutionState.ERROR)) {
-                System.out.println("FINISHED RUNNING " + getQualifiedTaskName());
+                log.debug("FINISHED RUNNING " + getQualifiedTaskName());
             } else {
                 System.err
                         .println("ERROR RUNNING " + getQualifiedTaskName() + " (" + getParameter(ERROR_MESSAGE) + ")");

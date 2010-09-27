@@ -16,14 +16,15 @@
 
 package org.trianacode.taskgraph.tool;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Class Description Here...
@@ -34,7 +35,7 @@ import org.trianacode.taskgraph.proxy.java.JavaProxy;
 
 public class ToolTableUtils {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolTableUtils");
+    static Log log = Loggers.TOOL_LOGGER;
 
 
     /**
@@ -138,7 +139,7 @@ public class ToolTableUtils {
                 try {
                     ClassLoaders.forName(name);
                 } catch (ClassNotFoundException e) {
-                    log.warning("Broken tool: " + name);
+                    log.warn("Broken tool: " + name);
                     return true;
                 }
 
@@ -147,7 +148,7 @@ public class ToolTableUtils {
                     try {
                         ClassLoaders.forName((String) tool.getParameter(Tool.PARAM_PANEL_CLASS));
                     } catch (ClassNotFoundException e) {
-                        log.warning("Broken tool: " + name);
+                        log.warn("Broken tool: " + name);
                         return true;
                     }
                 }

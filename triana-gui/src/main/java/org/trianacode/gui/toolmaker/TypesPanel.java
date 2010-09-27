@@ -59,27 +59,14 @@
 package org.trianacode.gui.toolmaker;
 
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Window;
+import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.util.Env;
 
 /**
  * The tool wizard panel for editing the input/output types of a tool
@@ -270,7 +257,7 @@ public class TypesPanel extends JPanel implements ActionListener {
 
             dialog.setLocation(parent.getLocation().x + (parent.getSize().width / 2) - (dialog.getSize().width / 2),
                     parent.getLocation().y + (parent.getSize().height / 2) - (dialog.getSize().height / 2));
-            dialog.show();
+            dialog.setVisible(true);
 
             if (dialog.isAccepted()) {
                 Type type = dialog.getType();

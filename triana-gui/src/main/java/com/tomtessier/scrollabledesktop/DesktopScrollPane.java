@@ -59,16 +59,8 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-
-import javax.swing.ImageIcon;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">

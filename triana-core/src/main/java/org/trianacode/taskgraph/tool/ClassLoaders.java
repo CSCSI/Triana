@@ -16,12 +16,14 @@
 
 package org.trianacode.taskgraph.tool;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 /**
  * Somewhere to put all those class loaders. This takes a brute force approach to finding a class by name.
@@ -32,7 +34,7 @@ import java.util.logging.Logger;
 
 public class ClassLoaders {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ClassLoaders");
+    static Log log = Loggers.CONFIG_LOGGER;
 
 
     /**
@@ -178,7 +180,7 @@ public class ClassLoaders {
         Object ret =
                 AccessController.doPrivileged(new PrivilegedAction() {
                     public Object run() {
-                        log.fine("trying to find " + className);
+                        log.debug("trying to find " + className);
                         try {
                             // Check if the class is a registered class then
                             // use the classloader for that class.
@@ -192,7 +194,7 @@ public class ClassLoaders {
                         //check the list of loaders
                         for (int i = 0; i < loaders.size(); i++) {
                             ClassLoader classLoader = loaders.get(i);
-                            log.fine("next class loader:" + classLoader);
+                            log.debug("next class loader:" + classLoader);
                             try {
                                 return Class.forName(className, true, classLoader);
                             } catch (ClassNotFoundException cnfe) {
@@ -239,7 +241,7 @@ public class ClassLoaders {
         Object ret =
                 AccessController.doPrivileged(new PrivilegedAction() {
                     public Object run() {
-                        log.fine("trying to find " + className);
+                        log.debug("trying to find " + className);
 
                         // Check if the class is a registered class then
                         // use the classloader for that class.
@@ -253,7 +255,7 @@ public class ClassLoaders {
                         //check the list of loaders
                         for (int i = 0; i < loaders.size(); i++) {
                             classLoader = loaders.get(i);
-                            log.fine("next class loader:" + classLoader);
+                            log.debug("next class loader:" + classLoader);
                             URL url = classLoader.getResource(className);
                             if (url != null) {
                                 return url;

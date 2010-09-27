@@ -1,22 +1,6 @@
 package org.trianacode.discovery.protocols.tdp.imp.trianatools;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.trianacode.config.Locations;
-import org.trianacode.config.TrianaProperties;
+import org.apache.commons.logging.Log;
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
@@ -25,9 +9,12 @@ import org.thinginitself.http.util.MimeHandler;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableFile;
 import org.thinginitself.streamable.StreamableStream;
+import org.trianacode.config.Locations;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphManager;
@@ -41,6 +28,13 @@ import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
 
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 /**
  * @author Andrew Harrison
  * @version 1.0.0 Aug 9, 2010
@@ -49,7 +43,7 @@ import org.trianacode.taskgraph.util.UrlUtils;
 public class ToolResolver implements ToolMetadataResolver, Runnable {
 
 
-    private static Logger log = Logger.getLogger(ToolResolver.class.getName());
+    private static Log log = Loggers.TOOL_LOGGER;
 
     private long resolveInterval = 10 * 1000;
 
@@ -74,7 +68,9 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
     TrianaProperties properties;
 
     // disable the creation without properties.
-    private ToolResolver() {}
+
+    private ToolResolver() {
+    }
 
     public ToolResolver(TrianaProperties properties) {
         this.properties = properties;
@@ -384,12 +380,12 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
 
     /**
      * primary method of this class. It loads the toolboxes, resolves the tools and notifies listeners.
-     *
+     * <p/>
      * Ian T - changed this to run in a thread upon start up so we can see the GUI quicker
      */
     public void resolve() {
         new Thread(this).start();
-       // run();
+        // run();
         timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
     }
 
@@ -467,7 +463,7 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
                 return taskgraph;
             }
         } catch (TaskException e) {
-            log.warning("Error creating tool:" + FileUtils.formatThrowable(e));
+            log.warn("Error creating tool:", e);
             return null;
         }
     }
@@ -496,7 +492,7 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
                         toolboxes.put(toolbox.getPath(), toolbox);
                     }
                 } catch (Exception e) {
-                    log.warning("Error adding toolbox: \n" + toolbox.getPath() + " --- " + FileUtils.formatThrowable(e));
+                    log.warn("Error adding toolbox:" + toolbox.getPath(), e);
                 }
             }
         }
@@ -613,7 +609,7 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
             return new ArrayList<Tool>();
         } catch (Exception e) {
             e.printStackTrace();
-            log.fine("error reading xml file " + FileUtils.formatThrowable(e));
+            log.debug("error reading xml file ", e);
             throw new ToolException("Error reading tool :" + FileUtils.formatThrowable(e));
         } finally {
             try {
@@ -671,11 +667,11 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
      */
     private List<Tool> processClass(URL url) throws Exception {
         ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
-        log.fine("ToolResolver.add class hierarchy:" + ch);
+        log.debug("ToolResolver.add class hierarchy:" + ch);
         if (ch == null) {
             ch = TypesMap.getAnnotated(url.toString());
         }
-        log.fine("ToolResolver.add class hierarchy after trying annotations:" + ch + " for url "
+        log.debug("ToolResolver.add class hierarchy after trying annotations:" + ch + " for url "
                 + url);
 
         if (ch != null) {
@@ -703,7 +699,7 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
             tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
             return tool;
         } catch (TaskException e) {
-            log.warning("Error creating tool:" + FileUtils.formatThrowable(e));
+            log.warn("Error creating tool:", e);
             return null;
         }
     }
@@ -780,7 +776,7 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
             properties.saveProperties();
         } catch (IOException e) {
             System.err.println("WARNING: properties could not be saved to " + Locations.getDefaultConfigFile());
-            e.printStackTrace();  
+            e.printStackTrace();
         }
     }
 
@@ -803,13 +799,14 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
 
     /**
      * Creates a lilst of toolbox paths from a cvs representation
+     *
      * @return
      */
     public String[] csvToStringArray(String csv) {
-        String [] paths = csv.split(",");
-        String []trimmed = new String[paths.length];
-        int i=0;
-        for (String path: paths) {
+        String[] paths = csv.split(",");
+        String[] trimmed = new String[paths.length];
+        int i = 0;
+        for (String path : paths) {
             trimmed[i++] = path.trim();
         }
         return trimmed;
@@ -831,13 +828,13 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
 
         String toolboxPathsCSV = properties.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
 
-        if ( (toolboxPathsCSV==null) || (toolboxPathsCSV.equals("")))
+        if ((toolboxPathsCSV == null) || (toolboxPathsCSV.equals("")))
             toolboxPaths = createDefaultToolboxes();
         else
             toolboxPaths = csvToStringArray(toolboxPathsCSV);
 
 
-        for (String toolboxPath: toolboxPaths) {
+        for (String toolboxPath : toolboxPaths) {
             // need test for remote ones here - todo with bonjour stuff ....  for now assume local
 
             Toolbox intern = new Toolbox(toolboxPath, "internal", "default-toolboxes", false, properties);

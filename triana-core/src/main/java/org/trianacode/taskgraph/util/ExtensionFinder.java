@@ -16,6 +16,8 @@
 
 package org.trianacode.taskgraph.util;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 
 import java.io.*;
@@ -24,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
 /**
@@ -37,7 +38,7 @@ import java.util.zip.ZipEntry;
 
 public class ExtensionFinder {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.util.ExtensionFinder");
+    static Log log = Loggers.CONFIG_LOGGER;
 
     private static List<File> searchDirs = new ArrayList<File>();
 
@@ -51,7 +52,7 @@ public class ExtensionFinder {
 
                 File f = new File(path);
                 if (f.exists() && f.length() > 0) {
-                    log.fine("adding search path:" + f.getAbsolutePath());
+                    log.debug("adding search path:" + f.getAbsolutePath());
                     searchDirs.add(f);
                 }
             }
@@ -86,8 +87,8 @@ public class ExtensionFinder {
 
 
     public static Map<Class, List<Object>> getProviders(List<Class> providers, File file) {
-        log.fine("searching for providers:" + file.getAbsolutePath());
-        System.out.println("*** Looking for extensions in : " + file.getAbsolutePath());
+        log.debug("searching for providers:" + file.getAbsolutePath());
+        log.debug("*** Looking for extensions in : " + file.getAbsolutePath());
         Map<Class, List<Object>> ret = new HashMap<Class, List<Object>>();
         if (file.isDirectory()) {
             File meta = new File(file, "META-INF");
@@ -105,8 +106,8 @@ public class ExtensionFinder {
                                 impls = new ArrayList<Object>();
                                 List<String> done = new ArrayList<String>();
                                 while ((line = reader.readLine()) != null) {
-                                    log.fine("got next service provider:" + line);
-                                    System.out.println("*** Found : " + line);
+                                    log.debug("got next service provider:" + line);
+                                    log.debug("*** Found : " + line);
                                     try {
                                         if (!done.contains(line)) {
                                             Class cls = ClassLoaders.forName(line);
@@ -117,12 +118,12 @@ public class ExtensionFinder {
                                             done.add(line);
                                         }
                                     } catch (Exception e1) {
-                                        log.fine("Exception thrown trying to load service provider class " + line + ":"
+                                        log.debug("Exception thrown trying to load service provider class " + line + ":"
                                                 + FileUtils.formatThrowable(e1));
                                     }
                                 }
                             } catch (IOException e) {
-                                log.fine("error thrown while reading file:" + e.getMessage());
+                                log.debug("error thrown while reading file:" + e.getMessage());
                             }
                             if (impls.size() > 0) {
                                 ret.put(provider, impls);
@@ -159,7 +160,7 @@ public class ExtensionFinder {
                                 List<Object> impls = new ArrayList<Object>();
                                 List<String> done = new ArrayList<String>();
                                 while ((line = reader.readLine()) != null) {
-                                    log.fine("got next service provider:" + line);
+                                    log.debug("got next service provider:" + line);
                                     // check if the class is in this jar
                                     ZipEntry sp = jf.getEntry(line.replace(".", "/") + ".class");
                                     if (sp != null) {
@@ -173,8 +174,7 @@ public class ExtensionFinder {
                                                 done.add(line);
                                             }
                                         } catch (Exception e1) {
-                                            log.fine("Exception thrown trying to load service provider class " + line
-                                                    + ":" + FileUtils.formatThrowable(e1));
+                                            log.debug("Exception thrown trying to load service provider class " + line, e1);
                                         }
                                     }
                                 }
@@ -185,8 +185,7 @@ public class ExtensionFinder {
                         }
                     }
                 } catch (IOException e) {
-                    log.fine("Exception thrown trying to load service providers from file " + file + ":" + FileUtils
-                            .formatThrowable(e));
+                    log.debug("Exception thrown trying to load service providers from file " + file, e);
                 }
             }
 

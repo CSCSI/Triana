@@ -17,15 +17,15 @@
 package org.trianacode.taskgraph.ser;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.trianacode.taskgraph.util.FileUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 /**
  * Class Description Here...
@@ -36,7 +36,7 @@ import org.trianacode.taskgraph.util.FileUtils;
 
 public class ObjectMarshaller implements XMLConstants {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.ser.ObjectMarshaller");
+    static Log log = Loggers.TOOL_LOGGER;
 
 
     private static Base64ObjectDeserializer deser = new Base64ObjectDeserializer();
@@ -57,7 +57,7 @@ public class ObjectMarshaller implements XMLConstants {
                 marshall.close();
             }
             catch (IOException e) {
-                log.warning("Error marshalling object " + javaObject + " : " + FileUtils.formatThrowable(e));
+                log.warn("Error marshalling object " + javaObject, e);
             }
         }
         return result;

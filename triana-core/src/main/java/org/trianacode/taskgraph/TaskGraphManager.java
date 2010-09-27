@@ -59,13 +59,8 @@
 
 package org.trianacode.taskgraph;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.event.TaskGraphCreatedEvent;
 import org.trianacode.taskgraph.event.TaskGraphManagerListener;
 import org.trianacode.taskgraph.imp.TaskGraphImp;
@@ -73,6 +68,8 @@ import org.trianacode.taskgraph.proxy.DefaultFactoryInit;
 import org.trianacode.taskgraph.service.TrianaServer;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+
+import java.util.*;
 
 
 /**
@@ -88,7 +85,7 @@ public class TaskGraphManager {
     public static final String DEFAULT_FACTORY_TYPE = "Default";
     public static final String NON_RUNNABLE_FACTORY_TYPE = "NonRunnable";
     public static final String TOOL_DEF_FACTORY_TYPE = "ToolDef";
-    static Logger logger = Logger.getLogger(TaskGraphManager.class.getName());
+    private static Log logger = Loggers.TOOL_LOGGER;
 
 
     /**

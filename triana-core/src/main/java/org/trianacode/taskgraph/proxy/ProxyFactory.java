@@ -59,9 +59,11 @@
 
 package org.trianacode.taskgraph.proxy;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.logging.Logger;
 
 
 /**
@@ -75,13 +77,13 @@ import java.util.logging.Logger;
 public class ProxyFactory {
 
     private static final Hashtable insts = new Hashtable();
-    static Logger logger = Logger.getLogger(ProxyFactory.class.getName());
+    static Log logger = Loggers.CONFIG_LOGGER;
 
     /**
      * Initialises the proxy factory
      */
     public static void initProxyFactory() {
-        logger.fine("Init Proxy Factory");
+        logger.debug("Init Proxy Factory");
         DefaultFactoryInit.initProxyFactory();
 
         /*Object[] plugins = PluginLoader.getInstance().getInstances(PluginInit.class);

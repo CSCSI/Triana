@@ -16,38 +16,22 @@
 
 package org.trianacode.taskgraph.util;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.tool.ClassLoaders;
+
+import javax.swing.*;
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.awt.*;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.logging.Logger;
 import java.util.zip.ZipFile;
-
-import javax.swing.ImageIcon;
-import org.trianacode.taskgraph.tool.ClassLoaders;
 
 /**
  * Class Description Here...
@@ -58,7 +42,7 @@ import org.trianacode.taskgraph.tool.ClassLoaders;
 
 public class FileUtils {
 
-    static Logger logger = Logger.getLogger("org.trianacode.taskgraph.util.FileUtils");
+    static Log logger = Loggers.TOOL_LOGGER;
 
 
     public static final int ASCII = 0;
@@ -112,7 +96,7 @@ public class FileUtils {
             try {
                 copyFilesRecursive(src, dest);
             } catch (IOException e) {
-                logger.warning("Exception thrown while renaming:" + FileUtils.formatThrowable(e));
+                logger.warn("Exception thrown while renaming:" + FileUtils.formatThrowable(e));
                 return false;
             }
         }
@@ -432,7 +416,7 @@ public class FileUtils {
                 ds.close();
             }
         } catch (Exception ee) {
-            logger.warning("\"Error Copying from \\n\" +\n" +
+            logger.warn("\"Error Copying from \\n\" +\n" +
                     "                    loc1 + \"  to \\n\" + loc2" + ":" + formatThrowable(ee));
 
 
@@ -464,7 +448,7 @@ public class FileUtils {
                 prn = new PrintWriter(new BufferedWriter(fwrite));
             }
         } catch (IOException io) {
-            logger.warning("Couldn't open a writer " + name + ":" + formatThrowable(io));
+            logger.warn("Couldn't open a writer " + name + ":" + formatThrowable(io));
         }
         return prn;
     }
@@ -499,7 +483,7 @@ public class FileUtils {
             FileWriter fwrite = new FileWriter(name, append);
             prn = new PrintWriter(new BufferedWriter(fwrite));
         } catch (IOException io) {
-            logger.warning("Couldn't open a writer " + name + ":" + formatThrowable(io));
+            logger.warn("Couldn't open a writer " + name + ":" + formatThrowable(io));
 
         }
         return prn;
@@ -679,7 +663,7 @@ public class FileUtils {
                 ds = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(name)));
             }
         } catch (IOException io) {
-            logger.warning("Couldn't open an Output Stream for " + name + ":" + formatThrowable(io));
+            logger.warn("Couldn't open an Output Stream for " + name + ":" + formatThrowable(io));
         }
         return ds;
     }
@@ -821,10 +805,10 @@ public class FileUtils {
             dir = "system/icons";
         }
         String imageURL = dir + imageName;
-        logger.finest("loading icon: " + imageURL);
+        logger.trace("loading icon: " + imageURL);
         URL imageResource = ClassLoaders.getResource(imageURL);
         if (imageResource == null) {
-            logger.warning("error loading icon: " + imageURL);
+            logger.warn("error loading icon: " + imageURL);
             return null;
         } else {
             return Toolkit.getDefaultToolkit().getImage(imageResource);
@@ -1068,10 +1052,10 @@ public class FileUtils {
             st = new String(b);
             dis.close();
         } catch (FileNotFoundException ee) {
-            logger.warning("Couldn't find file " + filename + ":" + formatThrowable(ee));
+            logger.warn("Couldn't find file " + filename + ":" + formatThrowable(ee));
             return null;
         } catch (IOException eee) {
-            logger.warning("IO exception on file " + filename + ":" + formatThrowable(eee));
+            logger.warn("IO exception on file " + filename + ":" + formatThrowable(eee));
             return null;
         }
 
@@ -1255,7 +1239,7 @@ public class FileUtils {
                                        String searchFilter, boolean recurseDirs) {
         String absDir = absolutePath(searchdir);
 
-        logger.fine("Listing directory: " + absDir);
+        logger.debug("Listing directory: " + absDir);
 
         Listing allNames = listDir(absDir, recurseDirs);
         // contains high structure
@@ -1279,7 +1263,7 @@ public class FileUtils {
             s = f.getCanonicalPath();
         }
         catch (IOException ee) {
-            logger.severe("Couldn't get absolue Path for " + path + ":" + formatThrowable(ee));
+            logger.error("Couldn't get absolue Path for " + path, ee);
         }
 
         return s;
@@ -1303,7 +1287,7 @@ public class FileUtils {
         }
         catch (MalformedURLException murl) {
 
-            logger.warning("Internet Address " + dir + " does not exist!");
+            logger.warn("Internet Address " + dir + " does not exist!");
             return null;
         }
 
@@ -1357,7 +1341,7 @@ public class FileUtils {
             }
         }
         catch (MalformedURLException murl) {
-            logger.warning("Internet Address " + dir +
+            logger.warn("Internet Address " + dir +
                     " does not exist!");
             return null;
         }
@@ -1389,7 +1373,7 @@ public class FileUtils {
             dir.openConnection();
         }
         catch (Exception ee) {
-            logger.warning("Internet Address " + dir + " does not exist!");
+            logger.warn("Internet Address " + dir + " does not exist!");
             return null;
         }
 
@@ -1428,7 +1412,7 @@ public class FileUtils {
             }
             catch (MalformedURLException murl) {
                 // not possible but :-
-                logger.severe(file + "is not valid :" + formatThrowable(murl));
+                logger.error(file + "is not valid", murl);
                 return null;
             }
 

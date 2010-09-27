@@ -58,24 +58,18 @@
  */
 package org.trianacode.gui.windows;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import org.trianacode.gui.Display;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.Display;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
 
 /**
  * Just calls the JOptionPane with the appropriate values for an ErrorDialog
@@ -133,9 +127,12 @@ public class ErrorDialog implements Serializable {
         ImageIcon ima = GUIEnv.getTrianaIcon();
         JLabel icon = new JLabel(ima);
         icon.setBorder(new EmptyBorder(3, 3, 3, 3));
+        JScrollPane scroll = new JScrollPane(textarea);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         showit.getContentPane().setLayout(new BorderLayout());
-        showit.getContentPane().add(textarea, BorderLayout.EAST);
+        showit.getContentPane().add(scroll, BorderLayout.EAST);
         showit.getContentPane().add(icon, BorderLayout.WEST);
         showit.getContentPane().add(buttonpanel, BorderLayout.SOUTH);
 
@@ -157,7 +154,7 @@ public class ErrorDialog implements Serializable {
         if (text == null) {
             text = "";
         } else {
-            text += "\n\r";
+            text += "\n";
         }
 
         boolean disp = false;
@@ -168,7 +165,7 @@ public class ErrorDialog implements Serializable {
         }
 
         show(text + Env.getString("FullTrace") +
-                "\n\r" + ss.toString());
+                "\n\n" + ss.toString());
         try {
             sr.close();
             ss.close();

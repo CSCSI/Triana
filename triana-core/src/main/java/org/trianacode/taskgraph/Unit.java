@@ -16,16 +16,16 @@
 
 package org.trianacode.taskgraph;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.clipin.ClipInStore;
 import org.trianacode.taskgraph.service.ControlInterface;
 import org.trianacode.taskgraph.service.RunnableInterface;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.util.FileUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class Description Here...
@@ -36,7 +36,7 @@ import org.trianacode.taskgraph.util.FileUtils;
 
 public abstract class Unit {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.Unit");
+    static Log log = Loggers.PROCESS_LOGGER;
 
 
     /**
@@ -265,12 +265,12 @@ public abstract class Unit {
 
     public final void parameterUpdated(String paramname, Object value) {
         Object[] existing = definedParams.get(paramname);
-        log.fine("param:" + paramname + "\n" +
+        debug("param:" + paramname + "\n" +
                 "new value:" + value + "\n" +
                 "existing type for param: " + getTask().getParameterType(paramname));
 
         if (existing != null && existing.length == 2 && existing[0] != null && !existing[0].equals(value)) {
-            log.fine("setting new type for param " + paramname + " : " + (String) existing[1]);
+            debug("setting new type for param " + paramname + " : " + (String) existing[1]);
             getTask().setParameterType(paramname, (String) existing[1]);
         }
         parameterUpdate(paramname, value);
@@ -776,15 +776,15 @@ public abstract class Unit {
     }
 
     public void debug(String msg) {
-        log.fine(msg);
+        log.debug(msg);
     }
 
     public void log(String msg, Throwable t) {
-        log.info(msg + " Exception:" + FileUtils.formatThrowable(t));
+        log.info(msg, t);
     }
 
     public void debug(String msg, Throwable t) {
-        log.fine(msg + " Exception:" + FileUtils.formatThrowable(t));
+        log.debug(msg, t);
     }
 
 }

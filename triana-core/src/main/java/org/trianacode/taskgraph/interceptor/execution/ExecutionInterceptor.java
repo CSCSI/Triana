@@ -1,7 +1,7 @@
 package org.trianacode.taskgraph.interceptor.execution;
 
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.interceptor.Interceptor;
@@ -13,7 +13,7 @@ import org.trianacode.taskgraph.interceptor.Interceptor;
 
 public class ExecutionInterceptor implements Interceptor {
 
-    private static Logger log = Logger.getLogger(ExecutionInterceptor.class.getName());
+    private static Log log = Loggers.EXECUTION_LOGGER;
 
     @Override
     public String getName() {

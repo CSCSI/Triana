@@ -1,9 +1,10 @@
 package org.trianacode.discovery;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.List;
-
+import mil.navy.nrl.discovery.WebBootstrap;
+import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
+import mil.navy.nrl.discovery.types.ServiceTypes;
+import mil.navy.nrl.discovery.web.template.WebDefines;
+import org.apache.commons.logging.Log;
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
@@ -15,15 +16,16 @@ import org.trianacode.discovery.protocols.tdp.TDPRequest;
 import org.trianacode.discovery.protocols.tdp.TDPResponse;
 import org.trianacode.discovery.protocols.tdp.TDPServer;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.LocalTrawler;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.discovery.protocols.thirdparty.ServiceTypesAndProtocols;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
-import mil.navy.nrl.discovery.WebBootstrap;
-import mil.navy.nrl.discovery.api.ServiceInfoEndpoint;
-import mil.navy.nrl.discovery.types.ServiceTypes;
-import mil.navy.nrl.discovery.web.template.WebDefines;
+import org.trianacode.enactment.logging.Loggers;
 import sun.misc.Timeable;
 import sun.misc.Timer;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
 
 
 /**
@@ -31,20 +33,24 @@ import sun.misc.Timer;
  * Settings | File Templates.
  */
 public class DiscoverTools extends Thread implements Timeable {
+
+    private static Log log = Loggers.TOOL_LOGGER;
+
+
     private static WebBootstrap bonjourServer;
     private ServiceTypesAndProtocols tdpProtocols;
     private DiscoveredTools discoveredServices;
-    ToolResolver toolResolver;
+    private ToolResolver toolResolver;
 
     private Timer timer;
     private HttpPeer httpEngine;
-    TrianaProperties properties;
+    private TrianaProperties properties;
 
     public DiscoverTools(ToolResolver resolver, HttpPeer httpEngine, TrianaProperties properties) {
         this.tdpProtocols = new ServiceTypesAndProtocols();
         this.httpEngine = httpEngine;
-        this.properties=properties;
-        this.toolResolver=resolver;
+        this.properties = properties;
+        this.toolResolver = resolver;
         Thread discoverThread = new Thread(this);
         discoverThread.setPriority(Thread.MIN_PRIORITY);
         discoverThread.start();
@@ -78,15 +84,15 @@ public class DiscoverTools extends Thread implements Timeable {
 
         //tick(null);
         //  scan every 60 seconds....
-      //   timer = new Timer(this, 10000);
+        //   timer = new Timer(this, 10000);
         // timer.cont();
 
-         tick(null);
+        tick(null);
 
     }
 
     public void tick(sun.misc.Timer timer) {
-        System.out.println("Looking for bonjour services !!");
+        log.debug("Looking for bonjour services !!");
         Object[] protocols = discoveredServices.getProtocols().toArray();
 
         for (Object obj : protocols) {
@@ -101,11 +107,11 @@ public class DiscoverTools extends Thread implements Timeable {
 
                 List<ToolMetadata> tools = data.getTools();
 
-                System.out.println("Here's the list of tools found from the bonjour service  !!");
+                log.debug("Here's the list of tools found from the bonjour service  !!");
 
                 for (ToolMetadata toolmd : tools) {
-                    // System.out.println(toolmd.toString());
-                    discoveredServices.addTool(toolmd,protocol);                    
+                    log.debug(toolmd.toString());
+                    discoveredServices.addTool(toolmd, protocol);
                 }
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -144,7 +150,7 @@ public class DiscoverTools extends Thread implements Timeable {
     }
 
     public void shutdown() {
-        if(bonjourServer != null) {
+        if (bonjourServer != null) {
             bonjourServer.getDiscovery().shutdown();
         }
     }

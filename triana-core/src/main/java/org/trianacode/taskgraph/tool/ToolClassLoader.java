@@ -16,6 +16,10 @@
 
 package org.trianacode.taskgraph.tool;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.util.UrlUtils;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -24,9 +28,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
-
-import org.trianacode.taskgraph.util.UrlUtils;
 
 /**
  * Class Description Here...
@@ -37,7 +38,7 @@ import org.trianacode.taskgraph.util.UrlUtils;
 
 public class ToolClassLoader extends URLClassLoader {
 
-    static Logger log = Logger.getLogger("org.trianacode.taskgraph.tool.ToolClassLoader");
+    static Log log = Loggers.TOOL_LOGGER;
 
     private List<String> visibleRoots = new ArrayList<String>();
     private List<String> libPaths = new ArrayList<String>();
@@ -129,7 +130,7 @@ public class ToolClassLoader extends URLClassLoader {
             }
         }
 
-        log.fine("ToolClassLoader for TOOLBOX " + toolbox + " CLASSPATH:" + getClassPath());
+        log.debug("ToolClassLoader for TOOLBOX " + toolbox + " CLASSPATH:" + getClassPath());
     }
 
     private boolean isUnderHelp(File file) {
@@ -183,7 +184,7 @@ public class ToolClassLoader extends URLClassLoader {
     private void addPath(String path) {
         File f = new File(path);
         if (f.exists()) {
-            log.fine("parsing " + f.getAbsoluteFile());
+            log.debug("parsing " + f.getAbsoluteFile());
             try {
                 String s = f.toURI().toURL().toString();
                 if (f.isDirectory() && !s.endsWith("/")) {

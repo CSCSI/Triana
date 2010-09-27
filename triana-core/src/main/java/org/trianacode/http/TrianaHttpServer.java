@@ -1,15 +1,6 @@
 package org.trianacode.http;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-
-import org.thinginitself.http.HttpPeer;
-import org.thinginitself.http.Path;
-import org.thinginitself.http.RequestContext;
-import org.thinginitself.http.RequestProcessException;
-import org.thinginitself.http.Resource;
-import org.thinginitself.http.Target;
+import org.thinginitself.http.*;
 import org.thinginitself.http.util.PathTree;
 import org.thinginitself.streamable.Streamable;
 import org.trianacode.taskgraph.Task;
@@ -17,6 +8,10 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.UrlUtils;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Andrew Harrison
@@ -32,8 +27,6 @@ public class TrianaHttpServer implements Target, ToolListener {
     public TrianaHttpServer() {
         this.peer = new HttpPeer();
 
-        System.out.println("HTTPServer: http peer - " + peer);
-        
         peer.addTarget(this);
         pathTree = new PathTree(path);
     }
