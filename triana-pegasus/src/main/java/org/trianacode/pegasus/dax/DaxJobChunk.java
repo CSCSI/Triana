@@ -27,6 +27,7 @@ public class DaxJobChunk implements Serializable {
     private boolean isCollection = false;
     private DaxFileChunk outputFileChunk;
     private UUID uuid;
+    private int numberOfJobs;
 
     public String getJobName() {
         return jobName;
@@ -139,5 +140,13 @@ public class DaxJobChunk implements Serializable {
         for(DaxFileChunk c : outFileChunks){
             System.out.println(" ****** Job : " + getJobName() + " has output : " + c.getFilename());
         }
+    }
+
+    public int getNumberOfJobs() {
+        return numberOfJobs;
+    }
+
+    public void setNumberOfJobs(int numberOfJobs) {
+        this.numberOfJobs = numberOfJobs;
     }
 }
