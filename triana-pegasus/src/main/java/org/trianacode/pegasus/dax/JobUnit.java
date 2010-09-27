@@ -21,6 +21,8 @@ public class JobUnit{
 
     @Parameter
     private String programmaticParam = "This is a process";
+    @Parameter
+    private int numberOfJobs = 1;
 
     @TextFieldParameter
     private String jobName = "a_process";
@@ -45,6 +47,8 @@ public class JobUnit{
 
         thisJob.setJobName(jobName);
         thisJob.setUuid(UUID.randomUUID());
+        thisJob.setCollection(collection);
+        thisJob.setNumberOfJobs(numberOfJobs);
 
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addJob(thisJob);
