@@ -112,6 +112,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -141,14 +142,6 @@ public class ApplicationFrame extends TrianaWindow
      */
     private static int TOOL_TIP_SHOW_DELAY = ToolTipManager.sharedInstance().getInitialDelay();
     private static int TOOL_TIP_HIDE_DELAY = Integer.MAX_VALUE;
-
-    static {
-        try {
-            javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new TrianaTheme());
-        } catch (Exception mre) {
-            //press on
-        }
-    }
 
 
     /**
@@ -209,6 +202,18 @@ public class ApplicationFrame extends TrianaWindow
     public static ApplicationFrame initTriana(String args[]) {
         // todo: this is crap, use andrew's UI stuff
         // Andrew Sept 2010: Done - 6 years on... :-)
+        UIDefaults uiDefaults = UIManager.getDefaults();
+        Object font = ((FontUIResource) uiDefaults.get("TextArea.font")).deriveFont((float) 11);
+
+        Enumeration enumeration = uiDefaults.keys();
+        while (enumeration.hasMoreElements()) {
+            Object key = enumeration.nextElement();
+
+            if (key.toString().endsWith("font")) {
+                uiDefaults.put(key, font);
+            }
+        }
+
         ApplicationFrame app = new ApplicationFrame("Triana");
         app.init(args);
 
