@@ -27,7 +27,6 @@ public class Loggers {
      */
     public static final Log LOGGER = LogFactory.getLog("TRIANA");
 
-
     /**
      * logs execution state changes to a running taskgraph
      */
@@ -47,6 +46,11 @@ public class Loggers {
      * logs tool related messages
      */
     public static final Log TOOL_LOGGER = LogFactory.getLog("TRIANA.TOOL");
+
+    /**
+     * logger for development.
+     */
+    public static final Log DEV_LOGGER = LogFactory.getLog("TRIANA.DEV");
 
 
     public static void setLogLevel(int level) {
