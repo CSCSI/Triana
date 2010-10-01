@@ -54,7 +54,7 @@ public class Correlate extends Unit {
         }
 
         new ErrorDialog(null, "Invalid Input Data to " + getToolName());
-        stop();
+        //stop();
     }
 
 
@@ -138,8 +138,7 @@ public class Correlate extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "Correlate.html";

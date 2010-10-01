@@ -1,14 +1,13 @@
 package imageproc.input;
 
-import java.awt.Image;
-
 import org.trianacode.gui.windows.ErrorDialog;
-import org.trianacode.gui.windows.Input;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 import triana.types.TrianaImage;
 import triana.types.TrianaPixelMap;
+
+import java.awt.*;
 
 /**
  * A URLImage unit which loads an image from a HTTP adddress
@@ -35,7 +34,7 @@ public class URLImage extends Unit {
         if (trianaImage == null) {
             ErrorDialog.show(null,
                     getTask().getToolName() + ": " + Env.getString("ImageError"));
-            stop();  // stops the scheduler and hence this process!
+            //stop();  // stops the scheduler and hence this process!
         } else {
             output(new TrianaPixelMap(trianaImage));
         }
@@ -97,7 +96,6 @@ public class URLImage extends Unit {
         return new String[]{"triana.types.TrianaPixelMap"};
     }
 
-    
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when
@@ -108,8 +106,7 @@ public class URLImage extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "URLImage.html";

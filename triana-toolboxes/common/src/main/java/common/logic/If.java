@@ -1,11 +1,11 @@
 package common.logic;
 
-import java.awt.event.ActionEvent;
-
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
 import triana.types.util.Str;
+
+import java.awt.event.ActionEvent;
 
 /**
  * If takes two inputs: the first is the test value (Const) and the second is the data that gets routed to either the
@@ -53,7 +53,7 @@ public class If extends Unit {
         if (!(input instanceof Const)) {
             new ErrorDialog(null, "First input to If must be a " +
                     "Constant!!!");
-            stop();
+            //stop();
             return;
         }
 
@@ -84,7 +84,7 @@ public class If extends Unit {
 
         String guilines = "";
         guilines += "Test value $title threshold Scroller -10 10 0.0\n";
-        setGUIBuilderV2Info(guilines);    
+        setGUIBuilderV2Info(guilines);
 
 //        myWindow = new ScrollerWindow(this, "Set test value.");
 //        myWindow.setValues(0.0, 10, threshold);
@@ -124,8 +124,8 @@ public class If extends Unit {
     public String[] getOutputTypes() {
         return new String[]{"triana.types.TrianaType"};
     }
+
     /**
-     *
      * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {

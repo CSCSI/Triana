@@ -1,10 +1,10 @@
 package common.input;
 
-import java.text.DecimalFormat;
-import java.util.Random;
-
 import org.trianacode.taskgraph.Unit;
 import triana.types.Document;
+
+import java.text.DecimalFormat;
+import java.util.Random;
 
 /**
  * Create a Condor job submit description file
@@ -25,7 +25,7 @@ public class CondorSubmitDescription extends Unit {
         Object[][] desc = (Object[][]) getParameter("CondorSubmitDescription");
 
         Document doc = new Document();
-        doc.setFile(System.getProperty("java.io.tmpdir")
+        doc.setFile(System.getProperty("java.io.PIDS_DIR")
                 + System.getProperty("file.separator")
                 + "triana-"
                 + new DecimalFormat("00000").format(new Random().nextInt(100000))

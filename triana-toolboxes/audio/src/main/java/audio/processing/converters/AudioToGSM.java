@@ -2,9 +2,9 @@ package audio.processing.converters;
 
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
-import triana.types.audio.gsm.encoder.Encoder;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
+import triana.types.audio.gsm.encoder.Encoder;
 
 /**
  * A AudioToGSM unit to ..
@@ -35,7 +35,7 @@ public class AudioToGSM extends Unit {
 
         if (bytedata == null) {
             ErrorDialog.show("Error in " + getTask().getToolName() + " Cannot convert given format to GSM\n" + "Data MUST be 16-bit and have a sampling rate of 8KHz");
-            stop();
+            //stop();
             return;
         }
 
@@ -123,8 +123,7 @@ public class AudioToGSM extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "AudioToGSM.html";

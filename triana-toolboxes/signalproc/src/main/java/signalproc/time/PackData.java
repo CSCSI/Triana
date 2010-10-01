@@ -53,7 +53,7 @@ public class PackData extends Unit {
         if (samplingRate != input.getSamplingRate()) {
             new ErrorDialog(null,
                     "Error! The sampling rate of the input data sets has changed during the sequence. Repackaging cannot continue.");
-            stop();
+            //stop();
             return;
         }
 
@@ -186,8 +186,7 @@ public class PackData extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "PackData.html";

@@ -1,15 +1,15 @@
 package audio.output;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
-import javax.swing.JFileChooser;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
 import triana.types.audio.gsm.encoder.Encoder;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.FileOutputStream;
 
 
 /**
@@ -51,7 +51,7 @@ public class WriteGSM extends Unit {
         if (bytedata == null) {
             ErrorDialog.show("Error in " + getToolName() + " Cannot convert given format to GSM\n"
                     + "Data MUST be 16-bit and have a sampling rate of 8KHz");
-            stop();
+            //stop();
             return;
         }
 
@@ -107,7 +107,6 @@ public class WriteGSM extends Unit {
 //    public void starting() {
 //        super.starting();
 //    }
-
     public void doubleClick() {
         try {
             File file;
@@ -194,8 +193,7 @@ public class WriteGSM extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "WriteGSM.html";

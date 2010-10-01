@@ -2,13 +2,7 @@ package common.processing;
 
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
-import triana.types.ComplexSampleSet;
-import triana.types.ComplexSpectrum;
-import triana.types.Const;
-import triana.types.EmptyingType;
-import triana.types.GraphType;
-import triana.types.SampleSet;
-import triana.types.Spectrum;
+import triana.types.*;
 import triana.types.util.FlatArray;
 
 /**
@@ -64,7 +58,7 @@ public class Complexify extends Unit {
             if (!realOnly) {
                 if (!(((GraphType) input).isCompatible(input2))) {
                     new ErrorDialog(null, "Input sets to Complexify are not " + "compatible!!! Check their size, number of data sets, and other parameters.");
-                    stop();
+                    //stop();
                     return;
                 }
             }
@@ -101,7 +95,7 @@ public class Complexify extends Unit {
             if (!(input2 instanceof Const)) {
                 new ErrorDialog(null, "Input sets to Complexify are not " +
                         "of the same type!!! Check their types.");
-                stop();
+                //stop();
                 return;
             }
 
@@ -162,7 +156,7 @@ public class Complexify extends Unit {
      *         space.
      */
 
-     public String[] getInputTypes() {
+    public String[] getInputTypes() {
         return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
@@ -174,8 +168,7 @@ public class Complexify extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "Complexify.html";

@@ -137,7 +137,7 @@ public class MathCalc extends Unit implements ComputeManager {
 
         if (!matchedType) {
             ErrorDialog.show(null, "Incompatible Types in " + getTask().getToolName());
-            stop();
+            //stop();
         }
     }
 
@@ -329,9 +329,8 @@ public class MathCalc extends Unit implements ComputeManager {
      * @return a string containing the names of the types allowed to be input to MathCalc, each separated by a white
      *         space.
      */
-    
+
     /**
-     *
      * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {

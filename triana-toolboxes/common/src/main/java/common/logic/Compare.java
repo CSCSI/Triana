@@ -105,7 +105,7 @@ public class Compare extends Unit {
         } else if (operator.equals(">")) {
             if (complex) {
                 new ErrorDialog(null, "Cannot Compare complex data for inequality!!! ");
-                stop();
+                //stop();
                 return;
             }
             for (i = 0; i < numberOfData; i++) {
@@ -117,7 +117,7 @@ public class Compare extends Unit {
         } else if (operator.equals(">=")) {
             if (complex) {
                 new ErrorDialog(null, "Cannot Compare complex data for inequality!!! ");
-                stop();
+                //stop();
                 return;
             }
             for (i = 0; i < numberOfData; i++) {
@@ -129,7 +129,7 @@ public class Compare extends Unit {
         } else if (operator.equals("<")) {
             if (complex) {
                 new ErrorDialog(null, "Cannot Compare complex data for inequality!!! ");
-                stop();
+                //stop();
                 return;
             }
             for (i = 0; i < numberOfData; i++) {
@@ -141,7 +141,7 @@ public class Compare extends Unit {
         } else if (operator.equals("<=")) {
             if (complex) {
                 new ErrorDialog(null, "Cannot Compare complex data for inequality!!! ");
-                stop();
+                //stop();
                 return;
             }
             for (i = 0; i < numberOfData; i++) {
@@ -191,7 +191,7 @@ public class Compare extends Unit {
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(1);
-        
+
         // Initialise task parameters with default values (if not already initialised)
         Task task = getTask();
 
@@ -249,8 +249,8 @@ public class Compare extends Unit {
     public String[] getOutputTypes() {
         return new String[]{"triana.types.Const"};
     }
+
     /**
-     *
      * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {

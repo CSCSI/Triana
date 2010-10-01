@@ -30,7 +30,7 @@ public class ImageAdd extends Unit {
             new ErrorDialog(
                     getTask().getToolName() + ": Error, incompatible image dimensions." + "\n" +
                             "Dimensions for the source images must be similar!");
-            stop();  // stops the scheduler and hence this process!
+            //stop();  // stops the scheduler and hence this process!
         } else {
             PixelMap newPixelMap = new PixelMap(pixelMap1);
             int[] pixels1 = pixelMap1.pixels;
@@ -112,7 +112,6 @@ public class ImageAdd extends Unit {
     }
 
     /**
-     *
      * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {

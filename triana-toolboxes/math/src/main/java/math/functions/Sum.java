@@ -33,7 +33,7 @@ public class Sum extends Unit {
                 s = s.add(nextInput);
             } else {
                 ErrorDialog.show("Incompatible data sets in " + getToolName());
-                stop();
+                //stop();
             }
         }
         output(sum);
@@ -56,7 +56,7 @@ public class Sum extends Unit {
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
-        
+
     }
 
 
@@ -100,8 +100,7 @@ public class Sum extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "Sum.html";

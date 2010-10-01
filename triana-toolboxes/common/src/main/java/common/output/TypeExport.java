@@ -1,12 +1,12 @@
 package common.output;
 
-import java.awt.event.ActionEvent;
-
 import org.trianacode.gui.panels.UnitPanel;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.TrianaType;
 import triana.types.util.Str;
+
+import java.awt.event.ActionEvent;
 
 /**
  * A TypeExport unit to export in triana's ASCII format
@@ -31,7 +31,7 @@ public class TypeExport extends Unit {
         TrianaType data = (TrianaType) getInputAtNode(0);
 
         if (myPanel.sendNextPacket((Object) data) == -1) {
-            stop();
+            //stop();
             return;
         }
 
@@ -107,13 +107,11 @@ public class TypeExport extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "Output.html";
     }
-
 
 
     /**
@@ -133,7 +131,7 @@ public class TypeExport extends Unit {
      * Captures the events thrown out by TypeExportPanel.
      */
     public void actionPerformed(ActionEvent e) {
-    //    super.actionPerformed(e);   // we need this
+        //    super.actionPerformed(e);   // we need this
     }
 }
 

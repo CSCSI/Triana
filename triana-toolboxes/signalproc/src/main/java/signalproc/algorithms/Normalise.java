@@ -45,7 +45,7 @@ public class Normalise extends Unit {
         }
 
         new ErrorDialog(null, "Invalid Input Data to " + getToolName());
-        stop();
+        //stop();
     }
 
 
@@ -94,7 +94,7 @@ public class Normalise extends Unit {
 
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
-        setMaximumOutputNodes(Integer.MAX_VALUE);  
+        setMaximumOutputNodes(Integer.MAX_VALUE);
     }
 
 
@@ -131,7 +131,6 @@ public class Normalise extends Unit {
 //    public String outputTypes() {
 //        return "Spectrum VectorType SampleSet";
 //    }
-
     public String[] getInputTypes() {
         return new String[]{"triana.types.Spectrum", "triana.types.VectorType", "triana.types.SampleSet"};
     }
@@ -152,8 +151,7 @@ public class Normalise extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "Normalise.html";

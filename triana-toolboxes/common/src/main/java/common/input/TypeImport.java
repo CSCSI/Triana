@@ -34,7 +34,7 @@ public class TypeImport extends Unit {
         data = (AsciiComm) myPanel.getNextPacket(true);
 
         if (data == null) { // The user does not want to continue from start
-            stop();  // stops the scheduler and hence this process!
+            //stop();  // stops the scheduler and hence this process!
             return;
         }
 
@@ -131,8 +131,7 @@ public class TypeImport extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "Input.html";

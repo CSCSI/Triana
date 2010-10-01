@@ -2,9 +2,9 @@ package audio.processing.converters;
 
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
-import triana.types.audio.gsm.decoder.GSMDecoder;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
+import triana.types.audio.gsm.decoder.GSMDecoder;
 
 /**
  * A GSMToAudio unit to ..
@@ -33,7 +33,7 @@ public class GSMToAudio extends Unit {
 
         if (bytedata == null) {
             ErrorDialog.show("Error in " + getTask().getToolName() + " Cannot convert given format to Audio\n" + "Data MUST be in GSM Format!");
-            stop();
+            //stop();
             return;
         }
 
@@ -123,8 +123,7 @@ public class GSMToAudio extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "GSMToAudio.html";

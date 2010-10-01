@@ -1,13 +1,13 @@
 package signalproc.time;
 
-import java.awt.Window;
-import java.awt.event.ActionEvent;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSampleSet;
 import triana.types.SampleSet;
 import triana.types.TrianaType;
 import triana.types.VectorType;
+
+import java.awt.*;
 
 /**
  * A Concat unit join together two or more data sets by appending one after another.
@@ -68,14 +68,14 @@ public class Concat extends Unit {
                     new ErrorDialog(null, "First input to Concat " +
                             "was SampleSet, but input number " +
                             String.valueOf(j + jskip) + " was not. Unit fails.");
-                    stop();
+                    //stop();
                     return;
                 } else if (((SampleSet) input[0]).getSamplingRate() != ((SampleSet) input[j]).getSamplingRate()) {
                     new ErrorDialog(null, "First input to Concat " +
                             "and input number " + String.valueOf(j + jskip) +
                             " do not have the same sampling frequency. " +
                             "Unit fails.");
-                    stop();
+                    //stop();
                     return;
                 }
                 length[j] = ((SampleSet) input[j]).size();
@@ -104,7 +104,7 @@ public class Concat extends Unit {
                     new ErrorDialog(null, "First input to Concat " +
                             "was ComplexSampleSet, but input number " +
                             String.valueOf(j + jskip) + " was not. Unit fails.");
-                    stop();
+                    //stop();
                     return;
                 } else if (((ComplexSampleSet) input[0]).getSamplingRate() != ((ComplexSampleSet) input[j])
                         .getSamplingRate()) {
@@ -112,7 +112,7 @@ public class Concat extends Unit {
                             "and input number " + String.valueOf(j + jskip) +
                             " do not have the same sampling frequency. " +
                             "Unit fails.");
-                    stop();
+                    //stop();
                     return;
                 }
                 length[j] = ((ComplexSampleSet) input[j]).size();
@@ -145,7 +145,7 @@ public class Concat extends Unit {
                     new ErrorDialog(null, "First input to Concat " +
                             "was VectorType, but input number " +
                             String.valueOf(j + jskip) + " was not. Unit fails.");
-                    stop();
+                    //stop();
                     return;
                 }
                 length[j] = ((VectorType) input[j]).size();
@@ -213,7 +213,6 @@ public class Concat extends Unit {
 //    public String outputTypes() {
 //        return "VectorType";
 //    }
-
     public String[] getInputTypes() {
         return new String[]{"triana.types.VectorType"};
     }
@@ -221,10 +220,9 @@ public class Concat extends Unit {
     public String[] getOutputTypes() {
         return new String[]{"triana.types.VectorType"};
     }
-    
+
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "Concat.html";
