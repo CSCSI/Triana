@@ -213,7 +213,7 @@ public class ToolClassLoader extends URLClassLoader {
                         libPaths.add(relPath);
                     }
 
-                    log.info("adding URL:" + u);
+                    log.debug("adding URL:" + u);
                     addURL(u);
                 }
             } catch (MalformedURLException e) {
@@ -239,7 +239,7 @@ public class ToolClassLoader extends URLClassLoader {
     }
 
     protected String findLibrary(String name) {
-        System.out.println("ToolClassLoader.findLibrary called with name:" + name);
+        log.debug("ToolClassLoader.findLibrary called with name:" + name);
         //String archDir = getNativeDir();
         String lib = System.mapLibraryName(name);
         URL url = this.getResource(lib);

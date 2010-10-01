@@ -52,10 +52,10 @@ public class AnnotatedUnitWrapper extends Unit {
         this.outputs = outputs;
         this.aggregate = aggregate;
         for (String input : inputs) {
-            log("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
+            debug("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
         }
         for (String output : outputs) {
-            log("AnnotatedUnitWrapper.AnnotatedUnitWrapper OUTPUT:" + output);
+            debug("AnnotatedUnitWrapper.AnnotatedUnitWrapper OUTPUT:" + output);
         }
         if (aggregate) {
             Class[] clss = process.getParameterTypes();
@@ -122,7 +122,7 @@ public class AnnotatedUnitWrapper extends Unit {
         }
         String gl = sb.toString();
         if (gl.length() > 0) {
-            log("AnnotatedUnitWrapper.init guiLines:" + gl);
+            debug("AnnotatedUnitWrapper.init guiLines:" + gl);
             setGUIBuilderV2Info(gl);
         }
         if (panelClass != null && panelClass.length() > 0) {
