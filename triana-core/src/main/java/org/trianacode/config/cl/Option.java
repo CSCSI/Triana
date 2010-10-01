@@ -38,7 +38,7 @@ public class Option {
         this.longOpt = longOpt;
         this.value = value;
         this.description = description;
-        this.multiple = false;
+        this.multiple = multiple;
     }
 
     public String getShortOpt() {
