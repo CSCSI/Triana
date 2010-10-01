@@ -48,7 +48,7 @@ public class DaxJobTrianaTask extends MainTrianaTask {
             g.fillRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
 
             g.setColor(Color.black);
-            g.drawString((String)getTool().getParameter("name"), (int)(getSize().width *0.3), (int)(getSize().height * 0.9));
+            g.drawString((String)getTool().getParameter("name"), (int)(getSize().width *0.15), (int)(getSize().height * 0.9));
 
 
             g.setColor(Color.black);
