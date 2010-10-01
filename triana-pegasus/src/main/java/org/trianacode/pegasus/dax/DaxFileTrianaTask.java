@@ -42,7 +42,7 @@ public class DaxFileTrianaTask extends MainTrianaTask {
             g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
 
             g.setColor(Color.black);
-            g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
+            g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
         }else{
             g.setColor(Color.cyan);
             g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);

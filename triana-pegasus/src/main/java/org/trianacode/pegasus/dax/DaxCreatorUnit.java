@@ -22,7 +22,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool
+@Tool(panelClass="org.trianacode.pegasus.dax.DaxCreatorPanel")
 public class DaxCreatorUnit {
 
     @TextFieldParameter
@@ -231,9 +231,10 @@ public class DaxCreatorUnit {
         }
     }
 
+
     private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 }

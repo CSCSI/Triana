@@ -182,8 +182,12 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private int getFileNumber(){
-        if(getParameter("numberOfFiles") != null){
-            return (Integer)getParameter("numberOfFiles");
+        Object o = getParameter("numberOfFiles");
+        if(o != null){
+            System.out.println("Object from parameter *numberOfFiles : " + o.toString());
+
+            String s = o.toString();
+            return Integer.parseInt(s);
         }
         else{
             return 1;
