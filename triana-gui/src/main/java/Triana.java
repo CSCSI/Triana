@@ -80,7 +80,7 @@ public class Triana {
      */
     public static final String LOG_LEVEL = "l";
     public static final String WORKFLOW = "w";
-    public static final String GUI = "g";
+    public static final String NOGUI = "n";
 
     /**
      * non gui arguments
@@ -107,8 +107,8 @@ public class Triana {
         ArgumentParser parser = new ArgumentParser(args);
         parser.parse();
 
-        boolean runGui = parser.isOption(GUI);
-        if (runGui) {
+        boolean runNoGui = parser.isOption(NOGUI);
+        if (!runNoGui) {
             String logLevel = parser.getArgumentValue(LOG_LEVEL);
             if (logLevel != null) {
                 Loggers.setLogLevel(logLevel);
