@@ -57,7 +57,7 @@
  *
  */
 
-package triana.audio.gsm.decoder;
+package triana.types.audio.gsm.decoder;
 
 //    $Id: GSMDriver.java 981 2003-05-29 13:59:10Z spxmss $
 

@@ -617,6 +617,13 @@ public abstract class Unit {
     }
 
     /**
+     * Stops the network running
+     */
+//    public void stop() {
+//        getRunnableInterface().notifyError(null);
+//    }
+
+    /**
      * Convienience method for setting the default pop-up description.
      */
     public void setPopUpDescription(String location) {

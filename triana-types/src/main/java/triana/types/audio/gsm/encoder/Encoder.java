@@ -57,7 +57,7 @@
  *
  */
 
-package triana.audio.gsm.encoder;
+package triana.types.audio.gsm.encoder;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -66,11 +66,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import triana.types.audio.gsm.encoder.Gsm_State;
+
 public class Encoder extends Thread {
 
     /* Every Encoder has a state through completion */
     private Gsm_State g_s = new Gsm_State();
-    private Long_term lg_term_Obj = new Long_term();
+    private triana.types.audio.gsm.encoder.Long_term lg_term_Obj = new triana.types.audio.gsm.encoder.Long_term();
     private Lpc lpc_Obj = new Lpc();
     private Rpe rpe_Obj = new Rpe();
     private Short_term sh_term_Obj = new Short_term();

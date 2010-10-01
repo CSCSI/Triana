@@ -58,7 +58,7 @@
  */
 
 
-package triana.audio.gsm.encoder;
+package triana.types.audio.gsm.encoder;
 
 
 public class GsmException extends Exception {

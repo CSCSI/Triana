@@ -57,7 +57,7 @@
  *
  */
 
-package triana.audio.gsm.encoder;
+package triana.types.audio.gsm.encoder;
 
 import java.awt.Component;
 import java.awt.Dimension;

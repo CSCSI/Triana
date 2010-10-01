@@ -57,7 +57,7 @@
  *
  */
 
-package triana.audio.gsm.decoder;
+package triana.types.audio.gsm.decoder;
 
 //    $Id: GSMDecoder.java 981 2003-05-29 13:59:10Z spxmss $
 
@@ -81,7 +81,7 @@ package triana.audio.gsm.decoder;
 //  Carsten Bormann (cabo@cs.tu-berlin.de),
 //  Technische Universitaet Berlin
 
-import triana.audio.gsm.encoder.Gsm_Def;
+import triana.types.audio.gsm.encoder.Gsm_Def;
 
 
 public final class GSMDecoder {

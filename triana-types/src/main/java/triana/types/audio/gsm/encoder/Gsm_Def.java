@@ -57,7 +57,7 @@
  *
  */
 
-package triana.audio.gsm.encoder;
+package triana.types.audio.gsm.encoder;
 
 public abstract class Gsm_Def {
 

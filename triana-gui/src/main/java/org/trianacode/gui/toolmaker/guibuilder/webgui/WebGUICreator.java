@@ -2,6 +2,7 @@ package org.trianacode.gui.toolmaker.guibuilder.webgui;
 
 /**
  * Created by IntelliJ IDEA. User: eddie Date: Jul 27, 2010 Time: 10:53:42 AM To change this template use File |
+ * Author: Eddie Al-Shakarchi
  * Settings | File Templates.
  */
 
