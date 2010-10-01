@@ -91,8 +91,8 @@ public class Scheduler implements SchedulerInterface {
      * Construct a scheduler for the given taskgraph and registers it with all the tasks in the taskgraph
      */
     public Scheduler(TaskGraph taskgraph) {
+        System.out.println("Scheduler.Scheduler ENTER with taskgraph:" + taskgraph.getQualifiedTaskName());
         this.taskgraph = taskgraph;
-        this.taskgraph.addExecutionListener(logger);
     }
 
 
