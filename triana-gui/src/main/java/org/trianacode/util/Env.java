@@ -59,41 +59,7 @@
 package org.trianacode.util;
 
 
-import java.applet.Applet;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
-import org.w3c.dom.Element;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
@@ -107,6 +73,16 @@ import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Listing;
+import org.w3c.dom.Element;
+
+import java.applet.Applet;
+import java.awt.*;
+import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.*;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Env allows a way of accessing various environment and system variables within Triana. Some methods convert from the
@@ -449,13 +425,13 @@ public final class Env {
 
         /// IAN T - BAD - need to fix this static reference - its the only one that causes issues.
         // created a throw away instance for now but needs fixing properly.
-        
- /*       new TrianaInstance().getToolResolver().loadToolboxes();
-        GUIEnv.loadDefaultColours();
-        String defaultEditor = Env.getString("defaultEditor");
-        setUserProperty(CODE_EDITOR_STR, defaultEditor);
-        setUserProperty(HELP_EDITOR_STR, defaultEditor);
-        setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));      */
+
+        /*       new TrianaInstance().getToolResolver().loadToolboxes();
+ GUIEnv.loadDefaultColours();
+ String defaultEditor = Env.getString("defaultEditor");
+ setUserProperty(CODE_EDITOR_STR, defaultEditor);
+ setUserProperty(HELP_EDITOR_STR, defaultEditor);
+ setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));      */
     }
 
 
@@ -625,12 +601,10 @@ public final class Env {
     public final static String userHome() {
         if (userHome == null) {
             userHome = System.getProperty("user.getApplicationDataDir");
-            if (userHome.equals("")) {
+            if (userHome == null || userHome.equals("") || userHome.equals("$")) {
                 userHome = File.separator;
             }
-            if (userHome.equals("$")) {
-                userHome = File.separator;
-            }
+
         }
         return userHome;
     }
