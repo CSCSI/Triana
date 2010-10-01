@@ -58,16 +58,9 @@
  */
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphUtils;
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -76,6 +69,9 @@ import org.trianacode.taskgraph.tool.Tool;
  * Implementation of the TaskgraphFactoryInterface, creates a RunnableTask and associated OldUnit and tool classes
  */
 public class RunnableTaskFactory implements TaskFactory {
+
+    private static Log log = Loggers.TOOL_LOGGER;
+
 
     private String factoryname = DEFAULT_FACTORY_NAME;
 
@@ -146,11 +142,11 @@ public class RunnableTaskFactory implements TaskFactory {
     public Node createNode(Task task, boolean input) {
         if (task instanceof RunnableInstance) {
             RunnableNode rn = new RunnableNode((RunnableInstance) task, input);
-            System.out.println("RunnableTaskFactory.createNode created runnable node");
+            log.debug("RunnableTaskFactory.createNode created runnable node");
             return rn;
         } else if (task instanceof TaskGraph) {
             RunnableNode rn = new RunnableNode((TaskGraph) task, input);
-            System.out.println("RunnableTaskFactory.createNode created new RunnableNode");
+            log.debug("RunnableTaskFactory.createNode created new RunnableNode");
             return rn;
         } else {
             throw new RuntimeException("Inconsistent taskgraph; cannot attach a runnable node to a non-runnable task");
@@ -177,11 +173,11 @@ public class RunnableTaskFactory implements TaskFactory {
     public Cable createCable(Node sendnode, Node recnode) throws CableException {
         if ((recnode.getTopLevelNode() instanceof RunnableNode)
                 && (sendnode.getTopLevelNode() instanceof RunnableNode)) {
-            System.out.println("RunnableTaskFactory.createCable both are runnable nodes");
+            log.debug("RunnableTaskFactory.createCable both are runnable nodes");
             RunnableCable cable = new RunnableCable();
-            System.out.println("RunnableTaskFactory.createCable trying to craete runnable cable");
+            log.debug("RunnableTaskFactory.createCable trying to craete runnable cable");
             cable.connect(sendnode, recnode);
-            System.out.println("RunnableTaskFactory.createCable created runnable cable");
+            log.debug("RunnableTaskFactory.createCable created runnable cable");
 
             return cable;
         }

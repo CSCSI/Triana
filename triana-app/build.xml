@@ -70,13 +70,6 @@
         <antcall target="toolbox">
             <param name="toolbox" value="imageproc"/>
         </antcall>
-        <jar jarfile="dist/triana-exec-${version}.jar">
-            <manifest>
-                <attribute name="Main-Class" value="org.trianacode.enactment.Exec"/>
-                <attribute name="Class-Path" value=". ${manifest.classpath.prop}"/>
-            </manifest>
-            <fileset dir="dist/classes" includes="**/**" excludes=".svn"/>
-        </jar>
     </target>
 
 
@@ -142,7 +135,7 @@
                     <arg value="-Dversion=${version}"/>
                     <arg value="-Dpackaging=jar"/>
                 </exec>-->
-        
+
     </target>
 
     <target name="mvn-deploy">
@@ -157,7 +150,7 @@
                     <arg value="-DrepositoryId=trianacode-maven-repos"/>
                     <arg value="-Dpackaging=jar"/>
                 </exec>-->
-        
+
     </target>
 
 </project>

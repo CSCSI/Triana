@@ -52,6 +52,16 @@ public class Loggers {
      */
     public static final Log DEV_LOGGER = LogFactory.getLog("TRIANA.DEV");
 
+    public static void setLogLevel(String level) {
+        int l = 4;
+        try {
+            l = Integer.parseInt(level);
+        } catch (Exception e) {
+
+        }
+        setLogLevel(l);
+
+    }
 
     public static void setLogLevel(int level) {
         if (level < 0 || level > 7) {
@@ -76,6 +86,11 @@ public class Loggers {
         }
         Level l = Level.toLevel(ll.toString());
         Logger.getRootLogger().setLevel(Level.OFF);
+        Logger.getLogger(logger).setLevel(l);
+    }
+
+    public static void deactivateLogger(String logger) {
+        Level l = Level.toLevel(LogLevels.OFF.toString());
         Logger.getLogger(logger).setLevel(l);
     }
 

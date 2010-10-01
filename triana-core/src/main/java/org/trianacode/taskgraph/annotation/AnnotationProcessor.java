@@ -37,10 +37,8 @@ public class AnnotationProcessor {
             Process p = method.getAnnotation(Process.class);
             if (p != null) {
                 boolean aggr = p.gather();
-                System.out.println("AnnotationProcessor.createUnit gather:" + aggr);
                 boolean willAggr = false;
                 Class[] params = method.getParameterTypes();
-                System.out.println("AnnotationProcessor.createUnit parameters:" + params.length);
                 String[] inputs = null;
                 if (aggr && params.length == 1) {
                     Class coll = params[0];
@@ -51,7 +49,6 @@ public class AnnotationProcessor {
                         inputs = new String[]{"java.lang.Object"};
                         willAggr = true;
                     }
-                    System.out.println("AnnotationProcessor.createUnit created aggregated input type:" + inputs[0]);
                 }
                 if (inputs == null) {
                     inputs = new String[params.length];
@@ -69,7 +66,7 @@ public class AnnotationProcessor {
                 }
                 wrapper = new AnnotatedUnitWrapper(name, pkge, annotatedObject, method, inputs,
                         outputs, willAggr);
-                if(renderingHints != null) {
+                if (renderingHints != null) {
                     wrapper.setRenderingHints(renderingHints);
                 }
                 break;
@@ -162,12 +159,12 @@ public class AnnotationProcessor {
                     }
                 }
             }
-            if(!hasParam) {
+            if (!hasParam) {
                 RenderingHintDetail detail = field.getAnnotation(RenderingHintDetail.class);
-                if(detail != null) {
+                if (detail != null) {
                     String hint = detail.hint();
                     String d = detail.detail();
-                    if(hint != null && d != null) {
+                    if (hint != null && d != null) {
                         wrapper.addRenderingDetail(hint, d, field);
                     }
                 }

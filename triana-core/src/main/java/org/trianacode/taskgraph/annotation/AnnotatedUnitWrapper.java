@@ -28,7 +28,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private boolean aggregate = false;
     private boolean isArray = false;
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
-    
+
 
     private Map<String, Field> params = new HashMap<String, Field>();
 
@@ -52,10 +52,10 @@ public class AnnotatedUnitWrapper extends Unit {
         this.outputs = outputs;
         this.aggregate = aggregate;
         for (String input : inputs) {
-            System.out.println("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
+            log("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
         }
         for (String output : outputs) {
-            System.out.println("AnnotatedUnitWrapper.AnnotatedUnitWrapper OUTPUT:" + output);
+            log("AnnotatedUnitWrapper.AnnotatedUnitWrapper OUTPUT:" + output);
         }
         if (aggregate) {
             Class[] clss = process.getParameterTypes();
@@ -122,7 +122,7 @@ public class AnnotatedUnitWrapper extends Unit {
         }
         String gl = sb.toString();
         if (gl.length() > 0) {
-            System.out.println("AnnotatedUnitWrapper.init guiLines:" + gl);
+            log("AnnotatedUnitWrapper.init guiLines:" + gl);
             setGUIBuilderV2Info(gl);
         }
         if (panelClass != null && panelClass.length() > 0) {

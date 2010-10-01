@@ -267,16 +267,19 @@ public class ApplicationFrame extends TrianaWindow
 
             initWindow(super.getTitle());
             if (args.length > 0) {
-                try {
-                    File f = new File(args[0]);
-                    XMLReader reader = new XMLReader(new FileReader(f));
-                    Tool t = reader.readComponent();
-                    if (t instanceof TaskGraph) {
-                        addParentTaskGraphPanel((TaskGraph) t);
+                for (String arg : args) {
+                    try {
+                        File f = new File(arg);
+                        XMLReader reader = new XMLReader(new FileReader(f));
+                        Tool t = reader.readComponent();
+                        if (t instanceof TaskGraph) {
+                            addParentTaskGraphPanel((TaskGraph) t);
+                        }
+                    } catch (Exception e) {
+                        log.error(e);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+
             } else {
                 addParentTaskGraphPanel();
             }

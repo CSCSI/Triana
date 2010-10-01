@@ -45,25 +45,26 @@ public class Exec implements ExecutionListener {
         try {
             ArgumentParser parser = new ArgumentParser(args);
             parser.parse();
-            String pid = parser.getArgumentValue("-p");
-            String wf = parser.getArgumentValue("-w");
+
+            String pid = parser.getArgumentValue("p");
+            String wf = parser.getArgumentValue("w");
             if (wf != null) {
                 System.out.println(new Exec(pid).executeFile(wf));
                 System.exit(0);
             }
-            boolean stat = parser.isOption("-s");
+            boolean stat = parser.isOption("s");
             if (stat && pid != null) {
                 int val = readFile(pid);
                 System.out.println(statusToString(val));
                 System.exit(0);
             }
-            String com = parser.getArgumentValue("-c");
+            String com = parser.getArgumentValue("c");
             if (com != null && pid != null) {
                 int i = commandToInt(com);
                 writeFile(i, pid, false);
                 System.exit(0);
             }
-            String execute = parser.getArgumentValue("-e");
+            String execute = parser.getArgumentValue("e");
             if (execute != null) {
                 new Exec(pid).executeWorkflow(execute);
             } else {
@@ -157,16 +158,16 @@ public class Exec implements ExecutionListener {
         runner = new TrianaRun(tool);
         runner.getScheduler().addExecutionListener(this);
         runner.runTaskGraph();
-//        while (!runner.isFinished()) {
-//            synchronized (this) {
-//                try {
-//                    wait(100);
-//                } catch (InterruptedException e) {
-//
-//                }
-//            }
-//        }
-//        runner.dispose();
+        while (!runner.isFinished()) {
+            synchronized (this) {
+                try {
+                    wait(100);
+                } catch (InterruptedException e) {
+
+                }
+            }
+        }
+        runner.dispose();
 //        try {
 //            writeFile(FINISHED, pid, false);
 //        } catch (IOException e) {

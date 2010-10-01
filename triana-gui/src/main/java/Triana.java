@@ -57,9 +57,14 @@
  *
  */
 
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.config.ArgumentParser;
+import org.trianacode.enactment.Exec;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.ApplicationFrame;
+
+import java.util.List;
 
 /**
  * Main Launcher Class
@@ -68,20 +73,56 @@ import org.trianacode.gui.hci.ApplicationFrame;
  * @version $Revision: 4048 $
  */
 public class Triana {
-    static Logger log = Logger.getLogger("Triana");
+    static Log log = Loggers.LOGGER;
 
     /**
      * the triana arguments
      */
-    private static final String DEBUG_ARG = "-debug";
-    private static final String NODEBUG_ARG = "-nodebug";
-    private static final String HELP_ARG1 = "-help";
-    private static final String HELP_ARG2 = "-?";
+    public static final String LOG_LEVEL = "l";
+    public static final String WORKFLOW = "w";
+    public static final String GUI = "g";
+
+    /**
+     * non gui arguments
+     */
+
+    /**
+     * executes a workflow takes a workflow file name
+     */
+    public static final String EXECUTE = "e";
+    /**
+     * takes a running instance id. Used for interacting with a running taskgraph
+     */
+    public static final String PID = "p";
+    /**
+     * combined with PID, retrieves current status
+     */
+    public static final String STATUS = "s";
 
     /**
      * The main program for the ApplicationFrame class
      */
     public static void main(String[] args) throws Exception {
+
+        ArgumentParser parser = new ArgumentParser(args);
+        parser.parse();
+
+        boolean runGui = parser.isOption(GUI);
+        if (runGui) {
+            String logLevel = parser.getArgumentValue(LOG_LEVEL);
+            if (logLevel != null) {
+                Loggers.setLogLevel(logLevel);
+            }
+
+            String[] wfs = new String[0];
+            List<String> workflows = parser.getArgumentValues(WORKFLOW);
+            if (workflows != null && workflows.size() > 0) {
+                wfs = workflows.toArray(new String[workflows.size()]);
+            }
+            ApplicationFrame.initTriana(wfs);
+        } else {
+            Exec.main(args);
+        }
 
 
         // ToDo: should have factory code to put OS specifics in
@@ -119,44 +160,8 @@ public class Triana {
                   e.printStackTrace();
               }
           }*/
-        boolean starttriana = true;
 
 
-        for (int count = 0; count < args.length; count++) {
-            if (args[count].equals(HELP_ARG1) || args[count].equals(HELP_ARG2)) {
-                printArgumentHelp();
-                starttriana = false;
-            }
-        }
-
-        if (starttriana) {
-            ApplicationFrame.initTriana(args);
-        } else {
-            System.exit(0);
-        }
-    }
-
-    /**
-     * Outputs help on the Triana arguments to the command line
-     */
-    private static void printArgumentHelp() {
-
-        int colwidth = 15;
-
-        System.out.println("Usage: triana <options>");
-        System.out.println("where possible options include:");
-        System.out.println(
-                "     " + DEBUG_ARG + getPadStr(DEBUG_ARG, colwidth) + "Stream debug information to command line");
-        System.out.println("     " + NODEBUG_ARG + getPadStr(NODEBUG_ARG, colwidth) + "Disable all debug output");
-        System.out.println("     " + HELP_ARG1 + " " + HELP_ARG2 + getPadStr(HELP_ARG1 + " " + HELP_ARG2, colwidth)
-                + "Show argument help");
-    }
-
-    /**
-     * @return a column padding string for the argument help
-     */
-    private static String getPadStr(String option, int length) {
-        return "                                              ".substring(0, length - option.length());
     }
 
 

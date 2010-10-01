@@ -1,9 +1,6 @@
 package org.trianacode.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Simple convenience class to make command lines easier to deal with.   String is
@@ -24,14 +21,14 @@ import java.util.Map;
 public class ArgumentParser {
     private static final String NL = System.getProperty("line.separator");
     Map<String, List<String>> arguments;
-    ArrayList<String> argumentPrefixes;
+    TreeSet<String> argumentPrefixes;
 
     String args[];
 
     public ArgumentParser(String[] args) {
         this.args = args;
         arguments = new HashMap<String, List<String>>();
-        argumentPrefixes = new ArrayList<String>();
+        argumentPrefixes = new TreeSet<String>(new PrefixComparator());
 
         argumentPrefixes.add("-");
         argumentPrefixes.add("--");
@@ -43,6 +40,7 @@ public class ArgumentParser {
      * @param prefix
      */
     public void addArgumentPrefix(String prefix) {
+
         argumentPrefixes.add(prefix);
     }
 
@@ -53,7 +51,7 @@ public class ArgumentParser {
 
         int valp;
 
-        for (;i < args.length;) {
+        for (; i < args.length;) {
             List<String> values = new ArrayList<String>();
             argument = args[i];
             if (!isAnArgument(argument))
@@ -64,7 +62,6 @@ public class ArgumentParser {
                 boolean moreValues;
                 do {
                     value = args[valp];
-                    values.add(value);
                     moreValues = false;
                     if (!isAnArgument(value)) {
                         values.add(value);
@@ -75,7 +72,7 @@ public class ArgumentParser {
                 } while (moreValues);
             }
 
-            arguments.put(argument, values);
+            arguments.put(getArgument(argument), values);
 
             i = valp;
         }
@@ -92,6 +89,18 @@ public class ArgumentParser {
         }
 
         return false;
+    }
+
+
+    private String getArgument(String argument) {
+
+        for (String prefix : argumentPrefixes) {
+            if (argument.startsWith(prefix)) {
+                return argument.substring(prefix.length(), argument.length());
+            }
+        }
+
+        return argument;
     }
 
     /**
@@ -116,7 +125,7 @@ public class ArgumentParser {
             return null;
         }
         for (String val : vals) {
-            if(val.length() > 0) {
+            if (val.length() > 0) {
                 return val;
             }
         }
@@ -182,6 +191,20 @@ public class ArgumentParser {
             allargs.append(NL);
         }
         return allargs.toString();
+    }
+
+    private class PrefixComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String o1, String o2) {
+            if (o1.length() > o2.length()) {
+                return -1;
+            }
+            if (o1.length() < o2.length()) {
+                return 1;
+            }
+            return o1.compareTo(o2);
+        }
     }
 }
 
