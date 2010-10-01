@@ -9,10 +9,7 @@ import org.trianacode.taskgraph.service.ExecutionEvent;
 import org.trianacode.taskgraph.service.ExecutionListener;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -29,33 +26,36 @@ public class Exec implements ExecutionListener {
 
 
     public static final String PID_DIR = "pids";
-    public static String tmpdir = System.getProperty("user.home");
+    public static File PIDS_DIR = new File(Locations.getApplicationDataDir(), PID_DIR);
+
+    static {
+        PIDS_DIR.mkdirs();
+    }
 
     private String pid = UUID.randomUUID().toString();
 
     private TrianaRun runner;
 
     public Exec(String pid) {
-        if (pid != null) {
+        if (pid != null && pid.length() > 0) {
             this.pid = pid;
         }
     }
 
     public static void main(String[] args) {
+        cleanPids();
         try {
             ArgumentParser parser = new ArgumentParser(args);
             parser.parse();
 
             String pid = parser.getArgumentValue("p");
-            String wf = parser.getArgumentValue("w");
-            if (wf != null) {
-                System.out.println(new Exec(pid).executeFile(wf));
-                System.exit(0);
-            }
-            boolean stat = parser.isOption("s");
-            if (stat && pid != null) {
-                int val = readFile(pid);
-                System.out.println(statusToString(val));
+            List<String> wfs = parser.getArgumentValues("w");
+            if (wfs != null) {
+                if (wfs.size() != 1) {
+                    System.out.println("Only one workflow can be specified.");
+                    System.exit(1);
+                }
+                System.out.println(new Exec(pid).executeFile(wfs.get(0)));
                 System.exit(0);
             }
             String com = parser.getArgumentValue("c");
@@ -64,11 +64,19 @@ public class Exec implements ExecutionListener {
                 writeFile(i, pid, false);
                 System.exit(0);
             }
-            String execute = parser.getArgumentValue("e");
-            if (execute != null) {
-                new Exec(pid).executeWorkflow(execute);
+            wfs = parser.getArgumentValues("e");
+            if (wfs != null) {
+                if (wfs.size() != 1) {
+                    System.out.println("Only one workflow can be specified.");
+                    System.exit(1);
+                }
+                new Exec(pid).executeWorkflow(wfs.get(0));
             } else {
-                System.out.println("Unknown options:" + parser.toString());
+                if (pid != null) {
+                    int val = readFile(pid);
+                    System.out.println(statusToString(val));
+                    System.exit(0);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,7 +132,7 @@ public class Exec implements ExecutionListener {
         } else {
             bin = new File(Locations.getHomeProper(), "bin");
         }
-        String script = "triana-exec";
+        String script = "triana";
         if (Locations.os().equals("windows")) {
             script += ".bat";
         } else {
@@ -143,7 +151,7 @@ public class Exec implements ExecutionListener {
     private void executeWorkflow(String wf) throws Exception {
         File f = new File(wf);
         if (!f.exists() || f.length() == 0) {
-            log("Cannot find workflow file:" + wf);
+            System.out.println("Cannot find workflow file:" + wf);
             System.exit(1);
         }
         TrianaInstance engine = new TrianaInstance(new String[0], null);
@@ -219,7 +227,7 @@ public class Exec implements ExecutionListener {
     }
 
     private static int readFile(String pid) throws IOException {
-        File lockfile = new File(tmpdir, pid);
+        File lockfile = new File(PIDS_DIR, pid);
         if (lockfile.exists() && lockfile.length() > 0) {
             RandomAccessFile file = new RandomAccessFile(lockfile, "rw");
             FileChannel f = file.getChannel();
@@ -237,7 +245,7 @@ public class Exec implements ExecutionListener {
 
     private static void writeFile(int command, String pid, boolean create) throws IOException {
 
-        File lockfile = new File(tmpdir, pid);
+        File lockfile = new File(PIDS_DIR, pid);
         if (!create) {
             if (!lockfile.exists() || lockfile.length() == 0) {
                 return;
@@ -264,7 +272,7 @@ public class Exec implements ExecutionListener {
     }
 
     private static void deleteFile(String pid) throws IOException {
-        File lockfile = new File(tmpdir, pid);
+        File lockfile = new File(PIDS_DIR, pid);
         RandomAccessFile file = new RandomAccessFile(lockfile, "rw");
         FileChannel f = file.getChannel();
         FileLock fl = f.lock();
@@ -276,11 +284,6 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionStateChanged(ExecutionEvent event) {
-        try {
-            log(event.getTask().getToolName() + ":" + event.getState().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -309,7 +312,7 @@ public class Exec implements ExecutionListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        runner.dispose();
+        //runner.dispose();
     }
 
     @Override
@@ -351,18 +354,35 @@ public class Exec implements ExecutionListener {
             }
         }
     }
+//
+//    private void log(String log) throws Exception {
+//        File file = new File(System.getProperty("user.home"), pid + ".log");
+//        RandomAccessFile raf = new RandomAccessFile(file, "rw");
+//        raf.seek(file.length());
+//        FileChannel f = raf.getChannel();
+//        FileLock fl = f.lock();
+//        ByteBuffer bb = ByteBuffer.allocate((log + "\n").getBytes().length);
+//        bb.put((log + "\n").getBytes()).flip();
+//        f.write(bb);
+//        f.force(false);
+//        fl.release();
+//        raf.close();
+//    }
 
-    private void log(String log) throws Exception {
-        File file = new File(System.getProperty("user.home"), pid + ".log");
-        RandomAccessFile raf = new RandomAccessFile(file, "rw");
-        raf.seek(file.length());
-        FileChannel f = raf.getChannel();
-        FileLock fl = f.lock();
-        ByteBuffer bb = ByteBuffer.allocate((log + "\n").getBytes().length);
-        bb.put((log + "\n").getBytes()).flip();
-        f.write(bb);
-        f.force(false);
-        fl.release();
-        raf.close();
+    private static void cleanPids() {
+        File[] pids = PIDS_DIR.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".pid") || name.endsWith(".log");
+            }
+        });
+        long now = System.currentTimeMillis();
+        for (File file : pids) {
+            long mod = file.lastModified();
+            if (mod + (3600000 * 24) < now) {
+                file.delete();
+
+            }
+        }
+
     }
 }

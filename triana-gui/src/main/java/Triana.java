@@ -99,29 +99,54 @@ public class Triana {
      */
     public static final String STATUS = "s";
 
+    public static final String HELP = "h";
+
+    private static String usage() {
+        return "\nUsage:\n" +
+                "\t-n run with no user interface\n" +
+                "\t-w <workflows> supply one or more workflows (only a single workflow when used with -n)\n" +
+                "\t-l <log level> log level 0 (off) to 7 (all)\n" +
+                "\t-e <workflow> execute workflow (in non-gui mode)\n" +
+                "\t-p <pid> get status of running workflow (in non-gui mode)\n" +
+                "\t-h prints this message\n";
+
+    }
+
     /**
-     * The main program for the ApplicationFrame class
+     * The main program for Triana
      */
     public static void main(String[] args) throws Exception {
 
         ArgumentParser parser = new ArgumentParser(args);
         parser.parse();
-
+//        Map<String, List<String>> map = parser.getArguments();
+//        for (String s : map.keySet()) {
+//            System.out.println("Triana.main option:" + s);
+//            System.out.println("Triana.main vals:" + map.get(s));
+//        }
+        boolean help = parser.isOption(HELP);
+        if (help) {
+            System.out.println(usage());
+            System.exit(0);
+        }
+        String logLevel = parser.getArgumentValue(LOG_LEVEL);
+        if (logLevel != null) {
+            Loggers.setLogLevel(logLevel);
+        }
         boolean runNoGui = parser.isOption(NOGUI);
-        if (!runNoGui) {
-            String logLevel = parser.getArgumentValue(LOG_LEVEL);
-            if (logLevel != null) {
-                Loggers.setLogLevel(logLevel);
-            }
-
+        boolean pid = parser.isOption(PID);
+        boolean stat = parser.isOption(STATUS);
+        boolean exec = parser.isOption(EXECUTE);
+        if (runNoGui || pid || stat || exec) {
+            Exec.main(args);
+        } else {
             String[] wfs = new String[0];
             List<String> workflows = parser.getArgumentValues(WORKFLOW);
             if (workflows != null && workflows.size() > 0) {
                 wfs = workflows.toArray(new String[workflows.size()]);
             }
             ApplicationFrame.initTriana(wfs);
-        } else {
-            Exec.main(args);
+
         }
 
 
