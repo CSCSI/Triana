@@ -1,5 +1,7 @@
 package org.trianacode.pegasus.dax;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.panels.ParameterPanel;
 
 import javax.swing.*;
@@ -93,7 +95,7 @@ public class JobUnitPanel extends ParameterPanel {
 
     public void changeToolName(String name){
         nameField.setText(name);
-        System.out.println("Changing tool " + getTask().getToolName() + " to : " + name);
+        log("Changing tool " + getTask().getToolName() + " to : " + name);
         getTask().setParameter("jobName", name);
         getTask().setToolName(name);
     }
@@ -131,5 +133,10 @@ public class JobUnitPanel extends ParameterPanel {
     @Override
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+        private void log(String s){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(s);
+        //System.out.println(s);
     }
 }

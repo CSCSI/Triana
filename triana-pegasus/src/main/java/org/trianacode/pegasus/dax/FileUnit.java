@@ -1,5 +1,7 @@
 package org.trianacode.pegasus.dax;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.pegasus.string.PatternCollection;
 import org.trianacode.taskgraph.annotation.*;
 import org.trianacode.taskgraph.annotation.Process;
@@ -34,7 +36,7 @@ public class FileUnit {
     @Process(gather = true)
     public UUID fileUnitProcess(List in){
 
-        System.out.println("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
+        log("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
         DaxFileChunk thisFile = new DaxFileChunk();
 
         thisFile.setFilename(fileName);
@@ -46,18 +48,18 @@ public class FileUnit {
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
 
-        System.out.println("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+        log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         for(Object object : in){
             if(object instanceof DaxJobChunk){
                 DaxJobChunk jobChunk = (DaxJobChunk)object;
 
-                System.out.println("Previous job was : " + jobChunk.getJobName());
+                log("Previous job was : " + jobChunk.getJobName());
 
-                System.out.println("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
+                log("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
                 jobChunk.addOutFileChunk(thisFile);
 
-                System.out.println("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
+                log("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                 thisFile.addInJobChunk(jobChunk);
 
             }
@@ -68,27 +70,27 @@ public class FileUnit {
 
                 if(jobChunk != null){
 
-                    System.out.println("\nPrevious job was : " + jobChunk.getJobName() + "\n");
+                    log("\nPrevious job was : " + jobChunk.getJobName() + "\n");
 
-                    System.out.println("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
+                    log("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
                     jobChunk.addOutFileChunk(thisFile);
 
-                    System.out.println("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
+                    log("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                     thisFile.addInJobChunk(jobChunk);
                 }
                 else{
-                    System.out.println("jobChunk not found in register");
+                    log("jobChunk not found in register");
                 }
             }
 
             else{
-                System.out.println("Cannot handle input : " + object.getClass().getName());
+                log("Cannot handle input : " + object.getClass().getName());
             }
 
         }
 
         if(in.size() == 0){
-            System.out.println("No jobs enter fileUnit : " + thisFile.getFilename());
+            log("No jobs enter fileUnit : " + thisFile.getFilename());
         }
 
         /*
@@ -104,30 +106,30 @@ public class FileUnit {
                     for(int j = 0; j < innerList.size(); j++){
                         Object o2 = innerList.get(j);
                         if(o2 instanceof DaxJobChunk){
-                            System.out.println("Found a DaxJobChunk");
+                            log("Found a DaxJobChunk");
                             if(j == (innerList.size() - 1)){
                                 ((DaxJobChunk)o2).addOutFile(fileName);
                                 ((DaxJobChunk)o2).addOutFileChunk(thisFile);
-                                System.out.println("Added output file to job " + (i+1) + " of " + inList.size() + ".");
+                                log("Added output file to job " + (i+1) + " of " + inList.size() + ".");
                                 ((DaxJobChunk) o2).setOutputFilename(fileName);
                                 ((DaxJobChunk) o2).setOutputFileChunk(thisFile);                                                                 
-                                System.out.println("Telling the jobs before and after this fileUnit that this file was in between them");                               
+                                log("Telling the jobs before and after this fileUnit that this file was in between them");                               
                             }
                             jcl.add((DaxJobChunk) o2);
                         }
                         else{
-                            System.out.println("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
+                            log("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
                         }
                     }
 
 
                 }
                 else{
-                    System.out.println("Incoming list didn't contain a list, contains : " + o.getClass().toString());
+                    log("Incoming list didn't contain a list, contains : " + o.getClass().toString());
                 }
             }
             if(in.size() == 0){
-                System.out.println("No jobs handed to this one. Creating job stub with this filename");
+                log("No jobs handed to this one. Creating job stub with this filename");
                 DaxJobChunk jc = new DaxJobChunk();
                 jc.setOutputFilename(fileName);
                 jc.setStub(true);
@@ -139,5 +141,11 @@ public class FileUnit {
 
         //     register.listAll();
         return thisFile.getUuid();
+    }
+
+    private void log(String s){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(s);
+        //System.out.println(s);
     }
 }

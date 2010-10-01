@@ -1,5 +1,8 @@
 package org.trianacode.pegasus.dax;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,14 +29,14 @@ public class DaxRegister {
     }
 
     public synchronized void listAll(){
-        System.out.println("+++++++++++++++++++++++++++++++LIST ALL +++++++++++++++++++++++++");
+        log("+++++++++++++++++++++++++++++++LIST ALL +++++++++++++++++++++++++");
         for(DaxJobChunk chunk : jobChunks){
             chunk.listChunks();
         }
         for(DaxFileChunk chunk : fileChunks){
             chunk.listChunks();
         }
-        System.out.println("------------------------------END LIST ALL -----------------------");
+        log("------------------------------END LIST ALL -----------------------");
 
     }
 
@@ -42,13 +45,13 @@ public class DaxRegister {
         for(DaxFileChunk chunk : fileChunks){
             if(chunk == thisFile){
                 duplicate = true;
-                System.out.println("Found a duplicate");
+                log("Found a duplicate");
             }
         }
         if(!duplicate){
             fileChunks.add(thisFile);
         }
-    //    listAll();
+        //    listAll();
     }
 
     public synchronized void addJob(DaxJobChunk thisJob) {
@@ -56,13 +59,13 @@ public class DaxRegister {
         for(DaxJobChunk chunk : jobChunks){
             if(chunk == thisJob){
                 duplicate = true;
-                System.out.println("Found a duplicate");
+                log("Found a duplicate");
             }
         }
         if(!duplicate){
             jobChunks.add(thisJob);
         }
-     //   listAll();
+        //   listAll();
     }
 
     public synchronized List<DaxJobChunk> getJobChunks() {
@@ -72,9 +75,9 @@ public class DaxRegister {
     public synchronized DaxJobChunk getJobChunkFromUUID(UUID uuid){
         for(DaxJobChunk chunk : jobChunks){
             UUID toCheck = chunk.getUuid();
-      //      System.out.println("Checking : " + uuid + " with : " + toCheck );
+            //      log("Checking : " + uuid + " with : " + toCheck );
             if(uuid.equals(toCheck)){
-                System.out.println("Register returning : " + chunk.getJobName());
+                log("Register returning : " + chunk.getJobName());
                 return chunk;
             }
         }
@@ -84,9 +87,9 @@ public class DaxRegister {
     public synchronized DaxFileChunk getFileChunkFromUUID(UUID uuid){
         for(DaxFileChunk chunk : fileChunks){
             UUID toCheck = chunk.getUuid();
-        //    System.out.println("Checking : " + uuid + " with : " + toCheck );
+            //    log("Checking : " + uuid + " with : " + toCheck );
             if(uuid.equals(toCheck)){
-                System.out.println("Register returning : " + chunk.getFilename());
+                log("Register returning : " + chunk.getFilename());
                 return chunk;
             }
         }
@@ -96,5 +99,11 @@ public class DaxRegister {
     public void clear() {
         fileChunks.clear();
         jobChunks.clear();
+    }
+
+    private void log(String s){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(s);
+        //System.out.println(s);
     }
 }

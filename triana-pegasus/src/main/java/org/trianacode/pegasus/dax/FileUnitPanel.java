@@ -1,5 +1,7 @@
 package org.trianacode.pegasus.dax;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.pegasus.string.AlphabetPattern;
 import org.trianacode.pegasus.string.CounterPattern;
@@ -42,6 +44,12 @@ public class FileUnitPanel extends ParameterPanel {
     public void okClicked(){ apply(); }
     //  public void cancelClicked(){ reset(); }
 
+    private void log(String s){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(s);
+        //System.out.println(s);
+    }
+
     private void apply(){
         changeToolName(nameField.getText());
         fillFileListArea();
@@ -51,7 +59,7 @@ public class FileUnitPanel extends ParameterPanel {
 
     public void changeToolName(String name){
         nameField.setText(name);
-        System.out.println("Changing tool " + getTask().getToolName() + " to : " + name);
+        log("Changing tool " + getTask().getToolName() + " to : " + name);
         getTask().setParameter("fileName", name);
         getTask().setToolName(name);
     }
@@ -134,7 +142,7 @@ public class FileUnitPanel extends ParameterPanel {
                 );
 
                 if (!segments.equals("-1") && segments != null){
-                    System.out.println("Selected number : " + segments);
+                    log("Selected number : " + segments);
                     int parts = Integer.parseInt(segments);
                     NamingPanel np = new NamingPanel(parts);
                 }
@@ -156,7 +164,7 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     public void returnSomething(String thing){
-        System.out.println("Returned : " + thing);
+        log("Returned : " + thing);
     }
 
 
@@ -339,7 +347,7 @@ public class FileUnitPanel extends ParameterPanel {
 
         private void setSection(int i, String s){
             nameParts[i] = s;
-            System.out.println("Setting namePart " + i + " as : "+ s);
+            log("Setting namePart " + i + " as : "+ s);
         }
 
         private String getSeparator(){

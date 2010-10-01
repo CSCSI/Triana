@@ -1,7 +1,6 @@
 package org.trianacode.pegasus.dax;
 
 import org.trianacode.gui.hci.tools.RegisterableToolComponentModel;
-import org.trianacode.gui.hci.tools.ToolComponentModel;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;

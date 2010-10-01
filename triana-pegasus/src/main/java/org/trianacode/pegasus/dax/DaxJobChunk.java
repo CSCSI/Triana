@@ -1,5 +1,8 @@
 package org.trianacode.pegasus.dax;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +109,7 @@ public class DaxJobChunk implements Serializable {
     }
 
     public void addOutFileChunk(DaxFileChunk chunk) {
-            outFileChunks.add(chunk);
+        outFileChunks.add(chunk);
     }
     public void setOutFileChunks(Vector<DaxFileChunk> outFileChunks) {
         this.outFileChunks = outFileChunks;
@@ -135,10 +138,10 @@ public class DaxJobChunk implements Serializable {
 
     public void listChunks(){
         for(DaxFileChunk c : inFileChunks){
-            System.out.println(" ****** Job : " + getJobName() + " has input : " + c.getFilename());
+            log("Job : " + getJobName() + " has input : " + c.getFilename());
         }
         for(DaxFileChunk c : outFileChunks){
-            System.out.println(" ****** Job : " + getJobName() + " has output : " + c.getFilename());
+            log("Job : " + getJobName() + " has output : " + c.getFilename());
         }
     }
 
@@ -148,5 +151,11 @@ public class DaxJobChunk implements Serializable {
 
     public void setNumberOfJobs(int numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
+    }
+
+    private void log(String s){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(s);
+        //System.out.println(s);
     }
 }

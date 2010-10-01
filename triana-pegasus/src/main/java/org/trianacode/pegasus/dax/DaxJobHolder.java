@@ -21,6 +21,7 @@ public class DaxJobHolder {
     private int numOutputNodes = 0;
     private HashMap filesIn = new HashMap();
     private HashMap filesOut = new HashMap();
+    private boolean isCollection = false;
 
     public Tool getTool() {
         return tool;
@@ -33,10 +34,12 @@ public class DaxJobHolder {
     public String getToolname() {
         return toolname;
     }
-
+    
     public void setToolname(String toolname) {
         this.toolname = toolname;
     }
+
+
 
     public int getNumInputNodes() {
         return numInputNodes;
@@ -84,5 +87,13 @@ public class DaxJobHolder {
 
     public String getLinkAtOutNode(int node){
         return (String)filesOut.get(node);
+    }
+
+    public boolean isCollection() {
+        return isCollection;
+    }
+
+    public void setCollection(boolean collection) {
+        isCollection = collection;
     }
 }

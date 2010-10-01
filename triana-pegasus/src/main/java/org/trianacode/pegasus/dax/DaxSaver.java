@@ -40,11 +40,17 @@ public class DaxSaver extends AbstractFormatFilter implements TaskGraphExporterI
         Task[] tasks = taskgraph.getTasks(false);
         int i = 0;
         for(Task task : tasks){
+            System.out.println("\nTaskGraph contains task : " + task.toString() + " (" + task.getToolName() + ")");
+
             JavaProxy proxy = (JavaProxy)task.getProxy();
             Unit unit = proxy.getUnit();
-
-            System.out.println("\nTaskGraph contains task : " + task.toString() + " (" + task.getToolName() + ")");
+            if(unit instanceof AnnotatedUnitWrapper){
+                AnnotatedUnitWrapper auw = (AnnotatedUnitWrapper)unit;
+                System.out.println("It's a auw");
+            }
+            Object param = task.getParameter("args");
             System.out.println("Unitname from proxy : " + proxy.getUnitName() + " Unit : " + unit.toString());
+            System.out.println("*args* : " + param);
 
             if(proxy.getUnitName().equals("JobUnit")){
                 AnnotatedUnitWrapper au = (AnnotatedUnitWrapper)unit;
@@ -53,7 +59,8 @@ public class DaxSaver extends AbstractFormatFilter implements TaskGraphExporterI
                 i++;
                 Job job = new Job();
 
-                String args = "getArgs()";
+                String args = (String)task.getParameter("args");
+                
                 job.addArgument(new PseudoText(args));
 
                 String name = "getName()";
