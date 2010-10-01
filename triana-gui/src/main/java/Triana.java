@@ -107,7 +107,7 @@ public class Triana {
                 "\t-w <workflows> supply one or more workflows (only a single workflow when used with -n)\n" +
                 "\t-l <log level> log level 0 (off) to 7 (all)\n" +
                 "\t-e <workflow> execute workflow (in non-gui mode)\n" +
-                "\t-p <pid> get status of running workflow (in non-gui mode)\n" +
+                "\t-p <pid> get status of running workflow (in non-gui mode -w returns pid)\n" +
                 "\t-h prints this message\n";
 
     }
