@@ -83,7 +83,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
     @Override
     public TaskGraph importWorkflow(File file) throws TaskGraphException, IOException {
-       log("importWorkflow called.");
+        log("importWorkflow called.");
         setFile(file);
         NodeList jobList = getJobInfo();
 
@@ -195,7 +195,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
             initJobTool(tool, node);
 
             try {
-                Task task = tg.createTask(tool);               
+                Task task = tg.createTask(tool);
                 JavaProxy jp = (JavaProxy)tool.getProxy();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -217,10 +217,31 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
         attachCables(tg);
         log("Attached Cables. Trying to organize taskgraph.");
+        tg = combineUnits(tg);
+
+
         TaskGraphOrganize.organizeTaskGraph(0, tg);
 
         return tg;
 
+    }
+
+    private TaskGraph combineUnits(TaskGraph tg){
+
+        Task[] tasks = tg.getTasks(false);
+        for(Task task : tasks){
+            if(task.getDataInputNodeCount() > 3){
+                System.out.println("Task : " + task.getToolName() + " has : " + task.getDataInputNodeCount() + " input nodes.");
+
+            }
+            if(task.getDataOutputNodeCount() > 3){
+                System.out.println("Task : " + task.getToolName() + " has : " + task.getDataOutputNodeCount() + " output nodes.");
+
+            }
+        }
+
+
+        return tg;
     }
 
     private Task getTaskFromTool(Tool tool){
@@ -351,7 +372,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
                             DaxFileHolder dfh = (DaxFileHolder)iter.next();
                             if(dfh.getFilename().equals(fileName)){
                                 String parentID = getNodeAttributeValue(jobNode, "id");
-                               log("Files parent is job : " + parentID);
+                                log("Files parent is job : " + parentID);
                                 if(getNodeAttributeValue(node, "link").equals("input")){
                                     int nodeNumber = dfh.getFreeOutNode();
                                     dfh.addJobOut(nodeNumber, parentID);
@@ -475,7 +496,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         int inputNodes = dfh.getNumInputNodes();
         int outputNodes = dfh.getNumOutputNodes();
 
-       log("Creating file : " + dfh.getFilename() + " with " + inputNodes + " inputnodes and " + outputNodes + " outputnodes.");
+        log("Creating file : " + dfh.getFilename() + " with " + inputNodes + " inputnodes and " + outputNodes + " outputnodes.");
 
         try {
             tool.setDataInputNodeCount(inputNodes);
