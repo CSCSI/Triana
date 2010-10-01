@@ -1,6 +1,9 @@
-package org.trianacode.config;
+package org.trianacode.config.cl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Simple convenience class to make command lines easier to deal with.   String is
@@ -21,14 +24,14 @@ import java.util.*;
 public class ArgumentParser {
     private static final String NL = System.getProperty("line.separator");
     Map<String, List<String>> arguments;
-    TreeSet<String> argumentPrefixes;
+    ArrayList<String> argumentPrefixes;
 
     String args[];
 
     public ArgumentParser(String[] args) {
         this.args = args;
         arguments = new HashMap<String, List<String>>();
-        argumentPrefixes = new TreeSet<String>(new PrefixComparator());
+        argumentPrefixes = new ArrayList<String>();
 
         argumentPrefixes.add("-");
         argumentPrefixes.add("--");
@@ -40,7 +43,6 @@ public class ArgumentParser {
      * @param prefix
      */
     public void addArgumentPrefix(String prefix) {
-
         argumentPrefixes.add(prefix);
     }
 
@@ -72,7 +74,7 @@ public class ArgumentParser {
                 } while (moreValues);
             }
 
-            arguments.put(getArgument(argument), values);
+            arguments.put(argument, values);
 
             i = valp;
         }
@@ -91,17 +93,6 @@ public class ArgumentParser {
         return false;
     }
 
-
-    private String getArgument(String argument) {
-
-        for (String prefix : argumentPrefixes) {
-            if (argument.startsWith(prefix)) {
-                return argument.substring(prefix.length(), argument.length());
-            }
-        }
-
-        return argument;
-    }
 
     /**
      * Gets values fgor this argument
@@ -193,18 +184,5 @@ public class ArgumentParser {
         return allargs.toString();
     }
 
-    private class PrefixComparator implements Comparator<String> {
-
-        @Override
-        public int compare(String o1, String o2) {
-            if (o1.length() > o2.length()) {
-                return -1;
-            }
-            if (o1.length() < o2.length()) {
-                return 1;
-            }
-            return o1.compareTo(o2);
-        }
-    }
 }
 

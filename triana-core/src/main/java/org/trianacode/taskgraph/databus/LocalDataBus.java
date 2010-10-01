@@ -1,12 +1,13 @@
 package org.trianacode.taskgraph.databus;
 
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.UUID;
-
-import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 
 /**
  * Simple local implementation of datstore.  Local objects are converted into a local URL which can be used to uniquely
@@ -32,7 +33,7 @@ public class LocalDataBus implements DataBusInterface {
     }
 
     public Serializable get(WorkflowDataPacket packet) throws DataNotResolvableException {
-        System.out.println("Getting WorkflowDataPacket from store: " + packet.getDataLocation());
+        Loggers.EXECUTION_LOGGER.debug("Getting WorkflowDataPacket from store: " + packet.getDataLocation());
         Serializable s = datastore.get(packet);
         if (s == null) {
             throw new DataNotResolvableException("No data for packet:" + packet.getDataLocation());

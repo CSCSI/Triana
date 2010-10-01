@@ -59,7 +59,10 @@
 
 
 import org.apache.commons.logging.Log;
-import org.trianacode.config.ArgumentParser;
+import org.trianacode.config.cl.ArgumentController;
+import org.trianacode.config.cl.ArgumentParsingException;
+import org.trianacode.config.cl.Option;
+import org.trianacode.config.cl.OptionValues;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.ApplicationFrame;
@@ -79,6 +82,7 @@ public class Triana {
      * the triana arguments
      */
     public static final String LOG_LEVEL = "l";
+    public static final String ISOLATED_LOGGER = "i";
     public static final String WORKFLOW = "w";
     public static final String NOGUI = "n";
 
@@ -93,60 +97,66 @@ public class Triana {
     /**
      * takes a running instance id. Used for interacting with a running taskgraph
      */
-    public static final String PID = "p";
+    public static final String UUID = "u";
     /**
-     * combined with PID, retrieves current status
+     * combined with UUID, retrieves current status
      */
     public static final String STATUS = "s";
 
     public static final String HELP = "h";
 
-    private static String usage() {
-        return "\nUsage:\n" +
-                "\t-n run with no user interface\n" +
-                "\t-w <workflows> supply one or more workflows (only a single workflow when used with -n)\n" +
-                "\t-l <log level> log level 0 (off) to 7 (all)\n" +
-                "\t-e <workflow> execute workflow (in non-gui mode)\n" +
-                "\t-p <pid> get status of running workflow (in non-gui mode -w returns pid)\n" +
-                "\t-h prints this message\n";
-
-    }
+    private static Option[] clOptions = {
+            new Option("n", "no-gui", "run with no user interface"),
+            new Option("w", "workflow", "workflows", "supply one or more workflows (only a single workflow when used with -n)", true),
+            new Option("l", "log-level", "log level 0 (off) to 7 (all)"),
+            new Option("e", "execute", "workflow", "execute workflow (in non-gui mode)"),
+            new Option("u", "uuid", "get status of running workflow (in non-gui mode). The -w option in non-gui mode returns a unique id for a workflow"),
+            new Option("i", "isolate-logger", "logger", "isolate a particular logger and shut down all others"),
+            new Option("h", "help", "prints this message")
+    };
 
     /**
      * The main program for Triana
      */
     public static void main(String[] args) throws Exception {
 
-        ArgumentParser parser = new ArgumentParser(args);
-        parser.parse();
-//        Map<String, List<String>> map = parser.getArguments();
-//        for (String s : map.keySet()) {
-//            System.out.println("Triana.main option:" + s);
-//            System.out.println("Triana.main vals:" + map.get(s));
-//        }
-        boolean help = parser.isOption(HELP);
-        if (help) {
-            System.out.println(usage());
+        ArgumentController parser = new ArgumentController(clOptions);
+        OptionValues vals = null;
+        try {
+            vals = parser.parse(args);
+        } catch (ArgumentParsingException e) {
+            System.out.println(e.getMessage());
+            System.out.println(parser.usage());
             System.exit(0);
         }
-        String logLevel = parser.getArgumentValue(LOG_LEVEL);
-        if (logLevel != null) {
-            Loggers.setLogLevel(logLevel);
+        boolean help = vals.hasOption(HELP);
+        if (help) {
+            System.out.println(parser.usage());
+            System.exit(0);
         }
-        boolean runNoGui = parser.isOption(NOGUI);
-        boolean pid = parser.isOption(PID);
-        boolean stat = parser.isOption(STATUS);
-        boolean exec = parser.isOption(EXECUTE);
+        String logLevel = vals.getOptionValue(LOG_LEVEL);
+
+        String logger = vals.getOptionValue(ISOLATED_LOGGER);
+        if (logger != null) {
+            Loggers.isolateLogger(logger, logLevel == null ? "INFO" : logLevel);
+        } else {
+            if (logLevel != null) {
+                Loggers.setLogLevel(logLevel);
+            }
+        }
+        boolean runNoGui = vals.hasOption(NOGUI);
+        boolean pid = vals.hasOption(UUID);
+        boolean stat = vals.hasOption(STATUS);
+        boolean exec = vals.hasOption(EXECUTE);
         if (runNoGui || pid || stat || exec) {
-            Exec.main(args);
+            Exec.exec(args);
         } else {
             String[] wfs = new String[0];
-            List<String> workflows = parser.getArgumentValues(WORKFLOW);
-            if (workflows != null && workflows.size() > 0) {
+            List<String> workflows = vals.getOptionValues(WORKFLOW);
+            if (workflows != null) {
                 wfs = workflows.toArray(new String[workflows.size()]);
             }
             ApplicationFrame.initTriana(wfs);
-
         }
 
 

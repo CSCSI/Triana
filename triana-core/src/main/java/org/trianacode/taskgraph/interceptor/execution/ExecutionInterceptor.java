@@ -27,13 +27,11 @@ public class ExecutionInterceptor implements Interceptor {
 
     @Override
     public Object interceptSend(Node sendNode, Node receiveNode, Object data) {
-        log.info("ENTER");
         return intercept(sendNode, receiveNode, data, true);
     }
 
     @Override
     public Object interceptReceive(Node sendNode, Node receiveNode, Object data) {
-        log.info("ENTER");
         return intercept(sendNode, receiveNode, data, false);
     }
 

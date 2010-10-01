@@ -58,11 +58,9 @@
  */
 package org.trianacode.taskgraph.service;
 
+import org.trianacode.enactment.logging.ExecutionStateLogger;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The scheduler is responsible for waking-up all the input tasks in a taskgraph when the taskgraph is run.
@@ -86,12 +84,15 @@ public class Scheduler implements SchedulerInterface {
      */
     private HistoryClipIn history;
 
+    private ExecutionStateLogger logger = new ExecutionStateLogger();
+
 
     /**
      * Construct a scheduler for the given taskgraph and registers it with all the tasks in the taskgraph
      */
     public Scheduler(TaskGraph taskgraph) {
         this.taskgraph = taskgraph;
+        this.taskgraph.addExecutionListener(logger);
     }
 
 
@@ -215,6 +216,7 @@ public class Scheduler implements SchedulerInterface {
      */
     public void notifyError(RunnableInstance cause) {
         stopTaskGraph(taskgraph);
+        taskgraph.removeExecutionListener(logger);
     }
 
     @Override
@@ -226,7 +228,6 @@ public class Scheduler implements SchedulerInterface {
     public void removeExecutionListener(ExecutionListener listener) {
         taskgraph.removeExecutionListener(listener);
     }
-
 
 
     /**
@@ -271,7 +272,6 @@ public class Scheduler implements SchedulerInterface {
      * Send all tasks in the task graph a wake up call (except the control task)
      */
     private void runTaskGraph(TaskGraph tgraph) {
-        System.out.println("Scheduler.runTaskGraph CALLED");
         if ((tgState != ExecutionState.ERROR) && (tgState != ExecutionState.RESETTING)) {
             tgState = ExecutionState.RUNNING;
 
@@ -301,7 +301,6 @@ public class Scheduler implements SchedulerInterface {
      */
     private void resumeTaskGraph(TaskGraph tgraph) {
         if (tgState.equals(ExecutionState.PAUSED)) {
-            ExecutionState oldState = tgState;
             tgState = ExecutionState.RUNNING;
             Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
 
@@ -318,7 +317,6 @@ public class Scheduler implements SchedulerInterface {
      */
     private void resetTaskGraph(final TaskGraph tgraph) {
         if (tgState != ExecutionState.RESETTING) {
-            ExecutionState oldState = tgState;
             tgState = ExecutionState.RESETTING;
 
             Runnable runnable = new Runnable() {
@@ -389,7 +387,6 @@ public class Scheduler implements SchedulerInterface {
      * Stops all tasks for an error
      */
     private void stopTaskGraph(TaskGraph tgraph) {
-        ExecutionState oldState = tgState;
         tgState = ExecutionState.ERROR;
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
 
@@ -398,6 +395,7 @@ public class Scheduler implements SchedulerInterface {
                 ((RunnableInstance) tasks[count]).pause();
             }
         }
+
     }
 
 }

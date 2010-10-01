@@ -1,8 +1,11 @@
 package org.trianacode.enactment;
 
 import org.trianacode.TrianaInstance;
-import org.trianacode.config.ArgumentParser;
 import org.trianacode.config.Locations;
+import org.trianacode.config.cl.ArgumentController;
+import org.trianacode.config.cl.ArgumentParsingException;
+import org.trianacode.config.cl.Option;
+import org.trianacode.config.cl.OptionValues;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.service.ExecutionEvent;
@@ -28,6 +31,15 @@ public class Exec implements ExecutionListener {
     public static final String PID_DIR = "pids";
     public static File PIDS_DIR = new File(Locations.getApplicationDataDir(), PID_DIR);
 
+    private static Option[] clOptions = {
+            new Option("n", "no-gui", "run with no user interface"),
+            new Option("l", "log-level", "log level 0 (off) to 7 (all)"),
+            new Option("w", "workflow", "workflow", "supply one workflow file. Returns a unique id for a workflow", false),
+            new Option("e", "execute", "workflow", "execute workflow"),
+            new Option("u", "uuid", "get status of running workflow."),
+            new Option("h", "help", "prints this message")
+    };
+
     static {
         PIDS_DIR.mkdirs();
     }
@@ -43,13 +55,23 @@ public class Exec implements ExecutionListener {
     }
 
     public static void main(String[] args) {
+        exec(args);
+    }
+
+    public static void exec(String[] args) {
         cleanPids();
         try {
-            ArgumentParser parser = new ArgumentParser(args);
-            parser.parse();
-
-            String pid = parser.getArgumentValue("p");
-            List<String> wfs = parser.getArgumentValues("w");
+            ArgumentController parser = new ArgumentController(clOptions);
+            OptionValues vals = null;
+            try {
+                vals = parser.parse(args);
+            } catch (ArgumentParsingException e) {
+                System.out.println(e.getMessage());
+                System.out.println(parser.usage());
+                System.exit(0);
+            }
+            String pid = vals.getOptionValue("u");
+            List<String> wfs = vals.getOptionValues("w");
             if (wfs != null) {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
@@ -58,13 +80,13 @@ public class Exec implements ExecutionListener {
                 System.out.println(new Exec(pid).executeFile(wfs.get(0)));
                 System.exit(0);
             }
-            String com = parser.getArgumentValue("c");
+            String com = vals.getOptionValue("c");
             if (com != null && pid != null) {
                 int i = commandToInt(com);
                 writeFile(i, pid, false);
                 System.exit(0);
             }
-            wfs = parser.getArgumentValues("e");
+            wfs = vals.getOptionValues("e");
             if (wfs != null) {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
@@ -142,7 +164,7 @@ public class Exec implements ExecutionListener {
         args.add(script);
         args.add("-e");
         args.add(wf);
-        args.add("-p");
+        args.add("-u");
         args.add(pid);
         runProcess(args, bin);
         return pid;

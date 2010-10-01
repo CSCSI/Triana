@@ -1,8 +1,8 @@
 package org.trianacode;
 
-import org.trianacode.config.ArgumentParser;
 import org.trianacode.config.PropertyLoader;
 import org.trianacode.config.TrianaProperties;
+import org.trianacode.config.cl.ArgumentParser;
 import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;

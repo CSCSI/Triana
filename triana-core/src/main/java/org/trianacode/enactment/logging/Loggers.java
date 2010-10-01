@@ -33,6 +33,11 @@ public class Loggers {
     public static final Log EXECUTION_LOGGER = LogFactory.getLog("TRIANA.EXECUTION");
 
     /**
+     * undocumented :-)
+     */
+    public static final Log EXECUTION_STATE_LOGGER = LogFactory.getLog("TRIANA.EXECUTION.STATE");
+
+    /**
      * logger to be used by Units - see Unit.log()
      */
     public static final Log PROCESS_LOGGER = LogFactory.getLog("TRIANA.PROCESS");
@@ -52,6 +57,16 @@ public class Loggers {
      */
     public static final Log DEV_LOGGER = LogFactory.getLog("TRIANA.DEV");
 
+    private static String[] LOG_NAMES = {
+            "TRIANA",
+            "TRIANA.EXECUTION",
+            "TRIANA.EXECUTION.STATE",
+            "TRIANA.PROCESS",
+            "TRIANA.CONFIGURATION",
+            "TRIANA.TOOL",
+            "TRIANA.DEV",
+    };
+
     public static void setLogLevel(String level) {
         int l = 4;
         try {
@@ -60,6 +75,17 @@ public class Loggers {
 
         }
         setLogLevel(l);
+
+    }
+
+    public static void isolateLogger(String logger, String level) {
+        int l = 4;
+        try {
+            l = Integer.parseInt(level);
+        } catch (Exception e) {
+
+        }
+        isolateLogger(logger, l);
 
     }
 
@@ -85,13 +111,22 @@ public class Loggers {
             ll = LogLevels.INFO;
         }
         Level l = Level.toLevel(ll.toString());
-        Logger.getRootLogger().setLevel(Level.OFF);
-        Logger.getLogger(logger).setLevel(l);
+        for (String s : LOG_NAMES) {
+            deactivateLogger(s);
+        }
+        Logger log = Logger.getLogger(logger);
+        if (log != null) {
+            log.setLevel(l);
+        }
+
     }
 
     public static void deactivateLogger(String logger) {
         Level l = Level.toLevel(LogLevels.OFF.toString());
-        Logger.getLogger(logger).setLevel(l);
+        Logger log = Logger.getLogger(logger);
+        if (log != null) {
+            log.setLevel(l);
+        }
     }
 
     static {
