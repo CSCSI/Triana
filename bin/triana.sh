@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd $TRIANA/triana-app/dist/
+cd ../triana-app/dist/
 ./triana.sh $*

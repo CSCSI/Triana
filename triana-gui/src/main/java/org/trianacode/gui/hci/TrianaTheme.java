@@ -2,14 +2,14 @@ package org.trianacode.gui.hci;
 
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.OceanTheme;
 import java.awt.*;
 
 /**
  * @author Andrew Harrison
  * @version 1.0.0 Sep 26, 2010
  */
-public class TrianaTheme extends DefaultMetalTheme {
+public class TrianaTheme extends OceanTheme {
 
     private final ColorUIResource primary1 = new ColorUIResource(102, 153, 153);
     private final ColorUIResource primary2 = new ColorUIResource(128, 192, 192);
