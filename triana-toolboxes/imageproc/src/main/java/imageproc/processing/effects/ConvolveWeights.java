@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.trianacode.gui.panels.UnitPanel;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 
 public class ConvolveWeights extends UnitPanel implements ActionListener {
     ActionListener listenerUnit;
@@ -29,7 +29,7 @@ public class ConvolveWeights extends UnitPanel implements ActionListener {
         super();
     }
 
-    public void setObject(OldUnit unit) {
+    public void setObject(Unit unit) {
         super.setObject(unit);
 
         textField00 = new JTextField("0", 4);

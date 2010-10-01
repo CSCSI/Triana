@@ -1,6 +1,5 @@
 package audio.processing.delay;
 
-
 import javax.sound.sampled.AudioFormat;
 import org.trianacode.taskgraph.Unit;
 import triana.types.audio.MultipleAudio;
@@ -40,8 +39,7 @@ public class AllPass extends Unit {
         int noOfChannels = af.getChannels();
         float sampleRate = af.getSampleRate();
 
-        // This line converts the delay in ms to number of samples and
-        // calls it delayOffset
+        // This line converts the delay in ms to number of samples and calls it delayOffset
         int delayOffset = ((int) (delayInMs * sampleRate) / 1000);
 
         if (allpass == null) {
@@ -99,7 +97,7 @@ public class AllPass extends Unit {
         guilines += "Delay in Milliseconds $title delayInMs Scroller 0 1500 100 false\n";
         guilines += "Feedback level (%) $title feedback IntScroller 0 100 25 false\n";
         guilines += "Chunked Data? $title chunked Checkbox false\n";
-        System.out.println("guilines = " + guilines);
+        //System.out.println("guilines = " + guilines);
         setGUIBuilderV2Info(guilines);
     }
 

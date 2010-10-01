@@ -42,10 +42,10 @@ import javax.swing.JTextField;
 import org.trianacode.gui.panels.UnitPanel;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.QuestionWindow;
+import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
 import triana.types.AsciiComm;
-import triana.types.OldUnit;
 
 /**
  * A TypeImportPanel UnitPanel to import any datatype which supports the AsciiComm type interface.  There is code also
@@ -92,7 +92,7 @@ public class TypeImportPanel extends UnitPanel implements ActionListener {
     public TypeImportPanel() {
     }
 
-    public void setObject(OldUnit unit, int mode) {
+    public void setObject(Unit unit, int mode) {
         super.setObject(unit);
         this.mode = mode;
         createWidgets();

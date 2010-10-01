@@ -1,6 +1,5 @@
 package signalproc.output;
 
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Window;
@@ -25,7 +24,6 @@ import hep.aida.IPlotter;
 import hep.aida.IPlotterRegion;
 import jas.aida.gui.JASGUIAnalysisFactory;
 import triana.types.GraphType;
-
 
 /**
  * Used by Histogrammer to plot graphs on the client side.

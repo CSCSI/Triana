@@ -1,35 +1,9 @@
 package signalproc.filtering.timedomain;
 
-/*
- * Copyright (c) 1995 - 1998 University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
 import triana.types.util.SigAnalWindows;
-
+import triana.types.util.Str;
 
 /**
  * An FIR_LowPass unit to apply an FIR low-pass filter smoothed by a windowing function chosen by the user. The order
@@ -41,7 +15,7 @@ import triana.types.util.SigAnalWindows;
  * @author B F Schutz
  * @version 2.0 23 February 2002
  */
-public class FIR_LowPass extends OldUnit {
+public class FIR_LowPass extends Unit {
 
     String filterType;
     static int defaultOrder = 9;
@@ -58,7 +32,7 @@ public class FIR_LowPass extends OldUnit {
 
     public void process() throws Exception {
 
-        SampleSet wave = (SampleSet) getInputNode(0);
+        SampleSet wave = (SampleSet) getInputAtNode(0);
         int length = wave.size();
         freqToNyquist = freq / wave.getSamplingRate() * 2;
 
@@ -145,7 +119,7 @@ public class FIR_LowPass extends OldUnit {
         filterType = "Rectangle";
         freq = 250;
 
-        setUseGUIBuilder(true);
+        //setUseGUIBuilder(true);
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
         setMaximumInputNodes(1);
@@ -153,19 +127,26 @@ public class FIR_LowPass extends OldUnit {
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Cutoff Frequency (Hz) $title freq Scroller 0.0 4000 250\n";
+        guilines += "Filter Order (number of points) $title order IntScroller 3 255 9\n";
+        guilines += "Window $title filterType Choice " + SigAnalWindows.listOfWindows() + " \n";
+        guilines += "Check here if you want filter continued across successive input sets $title continuity Checkbox true\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format (see Triana help).
      */
-    public void setGUIInformation() {
-        addGUILine("Cutoff Frequency (Hz) $title freq Scroller 0.0 4000 250");
-        addGUILine("Filter Order (number of points) $title order IntScroller 3 255 9");
-        addGUILine("Window $title filterType Choice " + SigAnalWindows.listOfWindows());
-        addGUILine(
-                "Check here if you want filter continued across successive input sets $title continuity Checkbox true");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Cutoff Frequency (Hz) $title freq Scroller 0.0 4000 250");
+//        addGUILine("Filter Order (number of points) $title order IntScroller 3 255 9");
+//        addGUILine("Window $title filterType Choice " + SigAnalWindows.listOfWindows());
+//        addGUILine(
+//                "Check here if you want filter continued across successive input sets $title continuity Checkbox true");
+//    }
 
     /**
      * Reset's FIR_LowPass
@@ -179,32 +160,32 @@ public class FIR_LowPass extends OldUnit {
     /**
      * Saves FIR_LowPass's parameters.
      */
-    public void saveParameters() {
-        saveParameter("filterType", filterType);
-        saveParameter("order", order);
-        saveParameter("freq", freq);
-        saveParameter("continuity", continuity);
-    }
+//    public void saveParameters() {
+//        saveParameter("filterType", filterType);
+//        saveParameter("order", order);
+//        saveParameter("freq", freq);
+//        saveParameter("continuity", continuity);
+//    }
 
     /**
      * Used to set each of FIR_LowPass's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("filterType")) {
-            filterType = value;
+            filterType = (String) value;
         }
         if (name.equals("order")) {
-            order = strToInt(value);
+            order = Str.strToInt((String) value);
             previousData = new double[order];
             coefficients = new double[order];
         }
         if (name.equals("freq")) {
-            freq = strToDouble(value);
+            freq = Str.strToDouble((String) value);
         }
         if (name.equals("continuity")) {
-            continuity = strToBoolean(value);
+            continuity = Str.strToBoolean((String) value);
         }
     }
 
@@ -212,15 +193,23 @@ public class FIR_LowPass extends OldUnit {
      * @return a string containing the names of the types allowed to be input to FIR_LowPass, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+//    public String inputTypes() {
+//        return "SampleSet";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from FIR_LowPass, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "SampleSet";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from FIR_LowPass, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
     /**

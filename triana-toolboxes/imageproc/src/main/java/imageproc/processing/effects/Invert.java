@@ -1,32 +1,6 @@
 package imageproc.processing.effects;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.TrianaPixelMap;
 import triana.types.image.PixelMap;
 
@@ -36,14 +10,14 @@ import triana.types.image.PixelMap;
  * @author Melanie Rhianna Lewis
  * @version 1.0 alpha 29 Aug 1997
  */
-public class Invert extends OldUnit {
+public class Invert extends Unit {
 
     /**
      * ********************************************* ** USER CODE of Invert goes here    ***
      * *********************************************
      */
     public void process() {
-        TrianaPixelMap trianaPixelMap = (TrianaPixelMap) getInputNode(0);
+        TrianaPixelMap trianaPixelMap = (TrianaPixelMap) getInputAtNode(0);
         PixelMap pixelMap = trianaPixelMap.getPixelMap();
         int[] pixels = pixelMap.getPixels();
         int width = pixelMap.getWidth();
@@ -71,8 +45,13 @@ public class Invert extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
     }
 
 
@@ -99,16 +78,13 @@ public class Invert extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Invert, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "TrianaPixelMap";
-    }
+    public String[] getInputTypes() {
+         return new String[]{"triana.types.TrianaPixelMap"};
+     }
 
-    /**
-     * @return a string containing the names of the types output from Invert, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "TrianaPixelMap";
-    }
+     public String[] getOutputTypes() {
+         return new String[]{"triana.types.TrianaPixelMap"};
+     }
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when

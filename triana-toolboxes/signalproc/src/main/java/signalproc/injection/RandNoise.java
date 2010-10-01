@@ -1,49 +1,23 @@
 package signalproc.injection;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
 import triana.types.EmptyingType;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.util.FlatArray;
-
+import triana.types.util.Str;
 
 /**
  * A RandNoise unit to add uniformly distributed noise to the elements of an input data array. The array can be real or
  * complex. The returned data type will be the same as the input. Parameters can be used to set the lower and upper
  * bounds on the distribution.
  * <p/>
- * This OldUnit obeys the conventions of Triana Type 2 data types.
+ * This Unit obeys the conventions of Triana Type 2 data types.
  *
  * @author Bernard Schutz
  * @version 2.0 20 June 2000
  */
-public class RandNoise extends OldUnit {
+public class RandNoise extends Unit {
 
     /**
      * Offset parameters will be added to each element of the input array.
@@ -76,7 +50,7 @@ public class RandNoise extends OldUnit {
         }
         output = input;
         Class outputClass = output.getClass();
-        setOutputType(outputClass);
+        //setOutputType(outputClass);
         scale = upperBound - lowerBound;
 
         if (input instanceof GraphType) {
@@ -129,7 +103,7 @@ public class RandNoise extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
 
 
         setDefaultInputNodes(1);
@@ -140,9 +114,13 @@ public class RandNoise extends OldUnit {
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
+        String guilines = "";
+        guilines += "Set lower bound of uniform distribution $title lowerBound Scroller -1.0 1.0 0.0\n";
+        guilines += "Set upper bound of uniform distribution $title upperBound Scroller 1.0 10.0 1.0\n";
+        setGUIBuilderV2Info(guilines);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
 
     }
 
@@ -150,11 +128,10 @@ public class RandNoise extends OldUnit {
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Set lower bound of uniform distribution $title lowerBound Scroller -1.0 1.0 0.0");
-        addGUILine("Set upper bound of uniform distribution $title upperBound Scroller 1.0 10.0 1.0");
-    }
-
+//    public void setGUIInformation() {
+//        addGUILine("Set lower bound of uniform distribution $title lowerBound Scroller -1.0 1.0 0.0");
+//        addGUILine("Set upper bound of uniform distribution $title upperBound Scroller 1.0 10.0 1.0");
+//    }
 
     /**
      * Resets RandNoise
@@ -167,23 +144,23 @@ public class RandNoise extends OldUnit {
     /**
      * Saves RandNoise's parameters.
      */
-    public void saveParameters() {
-        saveParameter("lowerBound", lowerBound);
-        saveParameter("upperBound", upperBound);
-    }
+//    public void saveParameters() {
+//        saveParameter("lowerBound", lowerBound);
+//        saveParameter("upperBound", upperBound);
+//    }
 
 
     /**
      * Used to set each of RandNoise's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("lowerBound")) {
-            lowerBound = strToDouble(value);
+            lowerBound = Str.strToDouble((String) value);
         }
         if (name.equals("upperBound")) {
-            upperBound = strToDouble(value);
+            upperBound = Str.strToDouble((String) value);
         }
     }
 
@@ -192,15 +169,23 @@ public class RandNoise extends OldUnit {
      * @return a string containing the names of the types allowed to be input to RandNoise, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "GraphType Const";
+//    public String inputTypes() {
+//        return "GraphType Const";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from RandNoise, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "GraphType Const";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.type.Const"};
     }
 
-    /**
-     * @return a string containing the names of the types output from RandNoise, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "GraphType Const";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.type.Const"};
     }
 
     /**
@@ -222,9 +207,9 @@ public class RandNoise extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
 
 }

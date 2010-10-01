@@ -28,12 +28,13 @@ package math.calculator;
 
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.TrianaType;
 import triana.types.VectorType;
 import triana.types.util.FlatArray;
+import triana.types.util.Str;
 import triana.types.util.StringSplitter;
 
 /**
@@ -43,7 +44,7 @@ import triana.types.util.StringSplitter;
  * @author Bernard Schutz
  * @version 1.1 13 January 2001
  */
-public class MathCalc extends OldUnit implements ComputeManager {
+public class MathCalc extends Unit implements ComputeManager {
 
 //    public DebugWindow debug = null;
 
@@ -158,7 +159,7 @@ public class MathCalc extends OldUnit implements ComputeManager {
             if (!(g instanceof Const)) {
                 firstType = g;
             }
-            setOutputType(g.getClass()); // set output anyway
+            //setOutputType(g.getClass()); // set output anyway
         }
 
         if (g instanceof Const) {
@@ -214,14 +215,12 @@ public class MathCalc extends OldUnit implements ComputeManager {
             debug.print(text); */
     }
 
-    @Override
     public String[] getInputTypes() {
-        return new String[0];
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
-    @Override
     public String[] getOutputTypes() {
-        return new String[0];
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
     /**
@@ -230,9 +229,13 @@ public class MathCalc extends OldUnit implements ComputeManager {
     public void init() {
         super.init();
 
-        allowZeroInputNodes();
-        setResizableInputs(true);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
         Task task = getTask();
 
@@ -293,10 +296,10 @@ public class MathCalc extends OldUnit implements ComputeManager {
 
         }
         if (name.equals("debug")) {
-            c.displayProgress = strToBoolean(value);
+            c.displayProgress = Str.strToBoolean(value);
         }
         if (name.equals("optimise")) {
-            c.optimise = strToBoolean(value);
+            c.optimise = Str.strToBoolean(value);
         }
 
         if (name.equals("optimise") || name.equals("expression")) {
@@ -326,17 +329,7 @@ public class MathCalc extends OldUnit implements ComputeManager {
      * @return a string containing the names of the types allowed to be input to MathCalc, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "GraphType Const";
-    }
-
-    /**
-     * @return a string containing the names of the types output from MathCalc, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "GraphType Const";
-    }
-
+    
     /**
      *
      * @returns the location of the help file for this unit.

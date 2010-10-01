@@ -85,9 +85,8 @@ public class LoadSoundII extends Unit {
 
             do {
                 try {
-
-                      System.out.println("!!!!!!Bytes:" + bytes);
-                      System.out.println("Bufsize:" + bufSize);
+                    //  System.out.println("!!!!!!Bytes:" + bytes);
+                    //  System.out.println("Bufsize:" + bufSize);
                     //  System.out.println("Bytesread: " + bytesread);
                     //  System.out.println("Audioinputstream: " + audioInputStream);
 

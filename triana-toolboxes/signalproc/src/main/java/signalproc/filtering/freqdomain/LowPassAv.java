@@ -1,33 +1,8 @@
 package signalproc.filtering.freqdomain;
 
-/*
- * Copyright (c) 1995 - 1998 University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
+import triana.types.util.Str;
 
 
 /**
@@ -36,7 +11,7 @@ import triana.types.SampleSet;
  * @author ian
  * @version 1.0 beta 18 Jun 1999
  */
-public class LowPassAv extends OldUnit {
+public class LowPassAv extends Unit {
 
     double CutOff;
 
@@ -46,7 +21,7 @@ public class LowPassAv extends OldUnit {
      * *********************************************
      */
     public void process() throws Exception {
-        SampleSet wave = (SampleSet) getInputNode(0);
+        SampleSet wave = (SampleSet) getInputAtNode(0);
 
         double MovingAverage = 0.0;
         int i;
@@ -71,7 +46,7 @@ public class LowPassAv extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
@@ -81,15 +56,18 @@ public class LowPassAv extends OldUnit {
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
+        String guilines = "";
+        guilines += "Set the Low-Pass Cut-Off Average Value $title CutOff Scroller 0 500 5\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format (see Triana help).
      */
-    public void setGUIInformation() {
-        addGUILine("Set the Low-Pass Cut-Off Average Value $title CutOff Scroller 0 500 5");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Set the Low-Pass Cut-Off Average Value $title CutOff Scroller 0 500 5");
+//    }
 
     /**
      * Reset's LowPassAv
@@ -101,18 +79,18 @@ public class LowPassAv extends OldUnit {
     /**
      * Saves LowPassAv's parameters.
      */
-    public void saveParameters() {
-        saveParameter("CutOff", CutOff);
-    }
+//    public void saveParameters() {
+//        saveParameter("CutOff", CutOff);
+//    }
 
     /**
      * Used to set each of LowPassAv's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("CutOff")) {
-            CutOff = strToDouble(value);
+            CutOff = Str.strToDouble((String) value);
         }
     }
 
@@ -129,6 +107,14 @@ public class LowPassAv extends OldUnit {
      */
     public String outputTypes() {
         return "SampleSet";
+    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
+    }
+
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
     /**

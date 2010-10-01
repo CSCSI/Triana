@@ -1,51 +1,26 @@
 package math.functions;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSampleSet;
 import triana.types.ComplexSpectrum;
 import triana.types.Const;
 import triana.types.EmptyingType;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.SampleSet;
 import triana.types.Spectrum;
 import triana.types.util.FlatArray;
+import triana.types.util.Str;
 
 /**
  * A Scaler unit to rescale (by a given complex number) the elements of an input data array. The array can be real or
  * complex. The returned data type will be real or complex as appropriate.
  * <p/>
- * This OldUnit obeys the conventions of Triana Type 2 data types.
+ * This Unit obeys the conventions of Triana Type 2 data types.
  *
  * @author Bernard Schutz
  * @version 2.1 13 January 2001
  */
-public class Scaler extends OldUnit {
+public class Scaler extends Unit {
 
     /**
      * Offset parameters will be added to each element of the input array.
@@ -84,7 +59,7 @@ public class Scaler extends OldUnit {
             output = input;
         }
         Class outputClass = output.getClass();
-        setOutputType(outputClass);
+        //setOutputType(outputClass);
 
         if ((scaleImag != 0.0) || (scaleReal != 1.0)) {
 
@@ -139,28 +114,41 @@ public class Scaler extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setDefaultInputNodes(1);
+//        setMinimumInputNodes(1);
+//        setMaximumInputNodes(1);
+//
+//        setDefaultOutputNodes(1);
+//        setMinimumOutputNodes(1);
+//        setMaximumOutputNodes(1);
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
-        setMaximumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
 
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
-        setMaximumOutputNodes(1);
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
+        String guilines = "";
+        guilines += "Set real part of scaling multiplier $title scaleReal Scroller -100.0 100.0 0.0\n";
+        guilines += "Set imaginary part of scaling multiplier $title scaleImag Scroller -100.0 100.0 0.0\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Set real part of scaling multiplier $title scaleReal Scroller -100.0 100.0 0.0");
-        addGUILine("Set imaginary part of scaling multiplier $title scaleImag Scroller -100.0 100.0 0.0");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Set real part of scaling multiplier $title scaleReal Scroller -100.0 100.0 0.0");
+//        addGUILine("Set imaginary part of scaling multiplier $title scaleImag Scroller -100.0 100.0 0.0");
+//    }
 
 
     /**
@@ -174,23 +162,23 @@ public class Scaler extends OldUnit {
     /**
      * Saves Scaler's parameters.
      */
-    public void saveParameters() {
-        saveParameter("scaleReal", scaleReal);
-        saveParameter("scaleImag", scaleImag);
-    }
+//    public void saveParameters() {
+//        saveParameter("scaleReal", scaleReal);
+//        saveParameter("scaleImag", scaleImag);
+//    }
 
 
     /**
      * Used to set each of Scaler's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("scaleReal")) {
-            scaleReal = strToDouble(value);
+            scaleReal = Str.strToDouble((String) value);
         }
         if (name.equals("scaleImag")) {
-            scaleImag = strToDouble(value);
+            scaleImag = Str.strToDouble((String) value);
         }
     }
 
@@ -199,15 +187,12 @@ public class Scaler extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Scaler, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "GraphType Const";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
-    /**
-     * @return a string containing the names of the types output from Scaler, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "GraphType Const";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
     /**
@@ -229,9 +214,9 @@ public class Scaler extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
 
 }

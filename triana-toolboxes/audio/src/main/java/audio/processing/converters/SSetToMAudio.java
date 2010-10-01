@@ -1,6 +1,5 @@
 package audio.processing.converters;
 
-
 import javax.sound.sampled.AudioFormat;
 import org.trianacode.taskgraph.Unit;
 import audio.processing.tools.NormaliserEffect;
@@ -37,12 +36,6 @@ public class SSetToMAudio extends Unit {
     private float normal;
     AudioFormat newformat = null;
     NormaliserEffect normalise = null;
-
-
-    /**
-     * **************************************************************************************** This is the main
-     * processing method. Called whenever there is data for the unit to process *****************************************************************************************
-     */
 
     public void process() throws Exception {
 

@@ -1,33 +1,8 @@
 package signalproc.time;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
+import triana.types.util.Str;
 
 
 /**
@@ -36,7 +11,7 @@ import triana.types.SampleSet;
  * @author ian
  * @version 2.0 01 Mar 2001
  */
-public class Decimate extends OldUnit {
+public class Decimate extends Unit {
 
     int decimationFactor = 1;
     boolean ApplyFilter = false;
@@ -47,7 +22,7 @@ public class Decimate extends OldUnit {
      * *********************************************
      */
     public void process() throws Exception {
-        SampleSet input = (SampleSet) getInputNode(0);
+        SampleSet input = (SampleSet) getInputAtNode(0);
 
         if ((lcoeffs == null) || (lcoeffs.length != (decimationFactor * 2))) {
             lcoeffs = new double[decimationFactor * 2];
@@ -132,24 +107,28 @@ public class Decimate extends OldUnit {
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
-        setUseGUIBuilder(true);
-
-        setRequireDoubleInputs(false);
-        setCanProcessDoubleArrays(false);
-
-        setResizableInputs(false);
-        setResizableOutputs(true);
+//        setUseGUIBuilder(true);
+//
+//        setRequireDoubleInputs(false);
+//        setCanProcessDoubleArrays(false);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+        String guilines = "";
+        guilines += "Enter the decimation factor (e.g. 2 = half sample rate) $title decimationFactor IntScroller 1 100 1\n";
+        guilines += "Apply Low-Pass Averaging Filter ? $title ApplyFilter Checkbox false\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine(
-                "Enter the decimation factor (e.g. 2 = half sample rate) $title decimationFactor IntScroller 1 100 1");
-        addGUILine("Apply Low-Pass Averaging Filter ? $title ApplyFilter Checkbox false");
-    }
+//    public void setGUIInformation() {
+//        addGUILine(
+//                "Enter the decimation factor (e.g. 2 = half sample rate) $title decimationFactor IntScroller 1 100 1");
+//        addGUILine("Apply Low-Pass Averaging Filter ? $title ApplyFilter Checkbox false");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -168,30 +147,29 @@ public class Decimate extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves Decimate's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("decimationFactor", decimationFactor);
-        saveParameter("ApplyFilter", ApplyFilter);
-    }
-
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves Decimate's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("decimationFactor", decimationFactor);
+//        saveParameter("ApplyFilter", ApplyFilter);
+//    }
 
     /**
      * Used to set each of Decimate's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("decimationFactor")) {
-            decimationFactor = strToInt(value);
+            decimationFactor = Str.strToInt((String) value);
         }
         if (name.equals("ApplyFilter")) {
-            ApplyFilter = strToBoolean(value);
+            ApplyFilter = Str.strToBoolean((String) value);
         }
     }
 
@@ -205,15 +183,23 @@ public class Decimate extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Decimate, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+//    public String inputTypes() {
+//        return "SampleSet";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from Decimate, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "SampleSet";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from Decimate, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
     /**

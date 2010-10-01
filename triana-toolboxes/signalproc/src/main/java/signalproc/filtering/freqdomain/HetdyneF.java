@@ -57,7 +57,6 @@
  */
 package signalproc.filtering.freqdomain;
 
-
 import org.trianacode.taskgraph.Unit;
 import signalproc.algorithms.Shift;
 import triana.types.ComplexSpectrum;

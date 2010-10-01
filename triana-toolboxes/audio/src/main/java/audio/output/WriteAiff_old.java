@@ -25,7 +25,6 @@ import triana.types.audio.MultipleAudio;
  *
  * @author Eddie Al-Shakarchi
  * @version $Revision: 4052 $
- * @see WriteAU WriteWAV AudioWriter
  */
 
 public class WriteAiff_old extends Unit {

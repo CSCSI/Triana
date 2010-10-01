@@ -1,37 +1,11 @@
-/*
- * Copyright (c) 1995 - 1998 University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
 package common.logic;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.TrianaType;
 import triana.types.util.Str;
 
@@ -42,7 +16,7 @@ import triana.types.util.Str;
  * @author Shalil Majithia
  * @version $Revision: 2921 $
  */
-public class LoopUnit extends OldUnit {
+public class LoopUnit extends Unit {
 
     private String parameterName;
     private int startParameterValue = 0;
@@ -59,10 +33,10 @@ public class LoopUnit extends OldUnit {
         TrianaType input;
 
         if (loopStarting) {
-            input = (TrianaType) getInputNode(0);
+            input = (TrianaType) getInputAtNode(0);
             loopStarting = false;
         } else {
-            input = (TrianaType) getInputNode(1);
+            input = (TrianaType) getInputAtNode(1);
         }
 
         if (loopCompleted()) {
@@ -88,10 +62,13 @@ public class LoopUnit extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
-        setResizableInputs(false);
-        setResizableOutputs(false);
-    }
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);    }
 
     /**
      * Reset Loop
@@ -104,17 +81,17 @@ public class LoopUnit extends OldUnit {
     /**
      * Saves Loop parameters.
      */
-    public void saveParameters() {
-        saveParameter("start", startParameterValue);
-        saveParameter("end", endParameterValue);
-        saveParameter("increment", incrementValue);
-    }
+//    public void saveParameters() {
+//        saveParameter("start", startParameterValue);
+//        saveParameter("end", endParameterValue);
+//        saveParameter("increment", incrementValue);
+//    }
 
     /**
      * Used to set each of Loop parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, String value) {
+//        updateGUIParameter(name, value);
 
         if (name.equals("start")) {
             startParameterValue = Str.strToInt(value);
@@ -136,7 +113,7 @@ public class LoopUnit extends OldUnit {
      */
 
     public String getPopUpDescription() {
-        return "This OldUnit is used to implement a Loop";
+        return "This Unit is used to implement a Loop";
     }
 
     /**
@@ -203,6 +180,19 @@ public class LoopUnit extends OldUnit {
 
         return parameterNames;
     }
+
+    public String[] getInputTypes() {
+        return new String[]{"java.lang.Object"};
+    }
+
+    /**
+     * @return a string containing the names of the types output from Compare, each separated by a white space.
+     */
+    public String[] getOutputTypes() {
+        return new String[]{"java.lang.Object"};
+    }
+
+
 
 }
 

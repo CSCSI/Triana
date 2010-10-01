@@ -1,36 +1,10 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSpectrum;
-import triana.types.OldUnit;
 import triana.types.Spectrum;
 import triana.types.util.FlatArray;
-
+import triana.types.util.Str;
 
 /**
  * A LPF unit to ..
@@ -38,7 +12,7 @@ import triana.types.util.FlatArray;
  * @author B F Schutz
  * @version 2.0 02 Mar 2001
  */
-public class LPF extends OldUnit {
+public class LPF extends Unit {
 
     double lowPass = 100;
     boolean noZeros = false;
@@ -124,21 +98,34 @@ public class LPF extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Give upper frequency limit (Hz) $title lowPass Scroller 0 1000 100\n";
+        guilines += "Output narrow-band? (Do not check if you want full-band output with zeros.) $title noZeros Checkbox false\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Give upper frequency limit (Hz) $title lowPass Scroller 0 1000 100");
-        addGUILine(
-                "Output narrow-band? (Do not check if you want full-band output with zeros.) $title noZeros Checkbox false");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Give upper frequency limit (Hz) $title lowPass Scroller 0 1000 100");
+//        addGUILine(
+//                "Output narrow-band? (Do not check if you want full-band output with zeros.) $title noZeros Checkbox false");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -157,30 +144,29 @@ public class LPF extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves LPF's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("lowPass", lowPass);
-        saveParameter("noZeros", noZeros);
-    }
-
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves LPF's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("lowPass", lowPass);
+//        saveParameter("noZeros", noZeros);
+//    }
 
     /**
      * Used to set each of LPF's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("lowPass")) {
-            lowPass = strToDouble(value);
+            lowPass = Str.strToDouble((String) value);
         }
         if (name.equals("noZeros")) {
-            noZeros = strToBoolean(value);
+            noZeros = Str.strToBoolean((String) value);
         }
     }
 
@@ -188,20 +174,6 @@ public class LPF extends OldUnit {
      * Don't need to use this for GUI Builder units as everthing is updated by triana automatically
      */
     public void updateWidgetFor(String name) {
-    }
-
-    /**
-     * @return a string containing the names of the types allowed to be input to LPF, each separated by a white space.
-     */
-    public String inputTypes() {
-        return "ComplexSpectrum Spectrum";
-    }
-
-    /**
-     * @return a string containing the names of the types output from LPF, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "ComplexSpectrum Spectrum";
     }
 
     /**
@@ -213,8 +185,19 @@ public class LPF extends OldUnit {
     }
 
     /**
+     * @return a string containing the names of the types allowed to be input to LPF, each separated by a white space.
+     */
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum"};
+    }
+
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum"};
+    }
+
+    /**
      *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "";

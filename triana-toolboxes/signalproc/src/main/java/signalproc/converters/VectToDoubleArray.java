@@ -1,9 +1,7 @@
 package signalproc.converters;
 
-
 import org.trianacode.taskgraph.Unit;
 import triana.types.VectorType;
-
 
 /**
  * Converts a vector type into two double arrays

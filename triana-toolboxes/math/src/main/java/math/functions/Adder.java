@@ -33,7 +33,7 @@ import triana.types.Const;
 /**
  * A Adder unit to add, with possible scaling, the data from all the input nodes.
  * <p/>
- * This OldUnit obeys the conventions of Triana Type 2 data types.
+ * This Unit obeys the conventions of Triana Type 2 data types.
  *
  * @author Ian Taylor
  * @version 2.0 10 August 2000

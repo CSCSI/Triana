@@ -24,7 +24,6 @@
  */
 package signalproc.algorithms;
 
-
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
 import triana.types.Curve;

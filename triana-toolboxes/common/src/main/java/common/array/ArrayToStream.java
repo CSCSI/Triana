@@ -31,7 +31,6 @@ public class ArrayToStream extends Unit {
         }
     }
 
-
     /**
      * Called when the unit is created. Initialises the unit's properties and parameters.
      */

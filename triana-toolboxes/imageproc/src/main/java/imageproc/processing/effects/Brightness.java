@@ -1,32 +1,6 @@
 package imageproc.processing.effects;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.TrianaPixelMap;
 import triana.types.image.PixelMap;
 
@@ -37,7 +11,7 @@ import triana.types.image.PixelMap;
  * @author Melanie Lewis
  * @version 1.0 alpha 20 Aug 1997
  */
-public class Brightness extends OldUnit {
+public class Brightness extends Unit {
 
     // some examples of parameters
 
@@ -55,7 +29,7 @@ public class Brightness extends OldUnit {
      * *********************************************
      */
     public void process() {
-        TrianaPixelMap trianaPixelMap = (TrianaPixelMap) getInputNode(0);
+        TrianaPixelMap trianaPixelMap = (TrianaPixelMap) getInputAtNode(0);
         PixelMap pixelMap = trianaPixelMap.getPixelMap();
         PixelMap newPixelMap = new PixelMap(pixelMap);
         int[] newPixels = newPixelMap.getPixels();
@@ -90,10 +64,15 @@ public class Brightness extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
 
-        setUseGUIBuilder(true);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+//        setUseGUIBuilder(true);
 
 /*        addvalue = 0;
 
@@ -101,12 +80,18 @@ public class Brightness extends OldUnit {
         myWindow.setParameterName(parameterName);
         myWindow.setValues(min, max, addvalue);
         myWindow.updateWidgets(); */
+
+
+        String guilines = "";
+        guilines += "Enter brightness level (" + min + " to " + max + ") $title " + parameterName + " IntScroller " + min
+                + " " + max + " 0\n";
+        setGUIBuilderV2Info(guilines);        
     }
 
-    public void setGUIInformation() {
-        addGUILine("Enter brightness level (" + min + " to " + max + ") $title " + parameterName + " IntScroller " + min
-                + " " + max + " 0");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Enter brightness level (" + min + " to " + max + ") $title " + parameterName + " IntScroller " + min
+//                + " " + max + " 0");
+//    }
 
 
     /**
@@ -119,16 +104,16 @@ public class Brightness extends OldUnit {
     /**
      * Saves Brightness's parameters to the parameter file.
      */
-    public void saveParameters() {
-        if (getTask().isParameterName(parameterName)) {
-            saveParameter(parameterName, (String) getTask().getParameter(parameterName));
-        } else {
-            saveParameter(parameterName, 0);
-        }
-
-        saveParameter("minimum", min);
-        saveParameter("maximum", max);
-    }
+//    public void saveParameters() {
+//        if (getTask().isParameterName(parameterName)) {
+//            saveParameter(parameterName, (String) getTask().getParameter(parameterName));
+//        } else {
+//            saveParameter(parameterName, 0);
+//        }
+//
+//        saveParameter("minimum", min);
+//        saveParameter("maximum", max);
+//    }
 
 
     public void setParameter(String name, String value) {
@@ -153,15 +138,12 @@ public class Brightness extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Brightness, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "TrianaPixelMap";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.TrianaPixelMap"};
     }
 
-    /**
-     * @return a string containing the names of the types output from Brightness, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "TrianaPixelMap";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.TrianaPixelMap"};
     }
 
     /**

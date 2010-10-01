@@ -40,7 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.trianacode.gui.panels.UnitPanel;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 
 /**
  * A TwoDWindow UnitWindow to output a 2D type within VectorType.
@@ -77,7 +77,7 @@ public class TwoDWindow extends UnitPanel implements ActionListener, DocumentLis
         super();
     }
 
-    public void setObject(OldUnit unit) {
+    public void setObject(Unit unit) {
         super.setObject(unit);
         createWidgets();
         layoutPanel();

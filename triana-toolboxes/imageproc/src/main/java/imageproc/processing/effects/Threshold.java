@@ -1,36 +1,11 @@
 package imageproc.processing.effects;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.event.ActionEvent;
 
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.TrianaPixelMap;
 import triana.types.image.PixelMap;
+import triana.types.util.Str;
 
 /**
  * A Threshold unit to ..
@@ -38,7 +13,7 @@ import triana.types.image.PixelMap;
  * @author Melanie Lewis
  * @version 1.0 alpha 20 Aug 1997
  */
-public class Threshold extends OldUnit {
+public class Threshold extends Unit {
 
     // some examples of parameters
 
@@ -56,7 +31,7 @@ public class Threshold extends OldUnit {
      * *********************************************
      */
     public void process() {
-        TrianaPixelMap trianaPixelMap = (TrianaPixelMap) getInputNode(0);
+        TrianaPixelMap trianaPixelMap = (TrianaPixelMap) getInputAtNode(0);
         PixelMap pixelMap = trianaPixelMap.getPixelMap();
         PixelMap newPixelMap = new PixelMap(pixelMap);
         int[] newPixels = newPixelMap.getPixels();
@@ -86,10 +61,19 @@ public class Threshold extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
 
-        setUseGUIBuilder(true);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Threshold level (" + min + " to " + max + ") $title " + parameterName + " IntScroller " + min + " " + max + " " + threshold;
+        setGUIBuilderV2Info(guilines);
+
+
 
         /*myWindow = new IntScrollerWindow(this, "Enter Threshold level (0 to 255)");
         myWindow.setParameterName(parameterName);
@@ -97,10 +81,9 @@ public class Threshold extends OldUnit {
         myWindow.updateWidgets();*/
     }
 
-    public void setGUIInformation() {
-        addGUILine("Threshold level (" + min + " to " + max + ") $title " + parameterName + " IntScroller " + min + " "
-                + max + " " + threshold);
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Threshold level (" + min + " to " + max + ") $title " + parameterName + " IntScroller " + min + " " + max + " " + threshold);
+//    }
 
     /**
      * Reset's Threshold
@@ -112,20 +95,20 @@ public class Threshold extends OldUnit {
     /**
      * Saves Brightness's parameters to the parameter file.
      */
-    public void saveParameters() {
-        saveParameter(parameterName, threshold);
-        saveParameter("minimum", min);
-        saveParameter("maximum", max);
-    }
+//    public void saveParameters() {
+//        saveParameter(parameterName, threshold);
+//        saveParameter("minimum", min);
+//        saveParameter("maximum", max);
+//    }
 
 
-    public void setParameter(String name, String value) {
+    public void parameterUpdate(String name, String value) {
         if (name.equals(parameterName)) {
-            threshold = strToInt(value);
+            threshold = Str.strToInt(value);
         } else if (name.equals("minimum")) {
-            min = strToInt(value);
+            min = Str.strToInt(value);
         } else if (name.equals("maximum")) {
-            max = strToInt(value);
+            max = Str.strToInt(value);
         }
     }
 
@@ -142,16 +125,13 @@ public class Threshold extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Threshold, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "TrianaPixelMap";
-    }
+    public String[] getInputTypes() {
+         return new String[]{"triana.types.TrianaPixelMap"};
+     }
 
-    /**
-     * @return a string containing the names of the types output from Threshold, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "TrianaPixelMap";
-    }
+     public String[] getOutputTypes() {
+         return new String[]{"triana.types.TrianaPixelMap"};
+     }
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when
@@ -181,13 +161,13 @@ public class Threshold extends OldUnit {
     /**
      * Captures the events thrown out by ScrollerWindow.
      */
-    public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
-
-        /*if (e.getSource() == myWindow.slider) {
-        threshold = myWindow.getValue();
-        }*/
-    }
+//    public void actionPerformed(ActionEvent e) {
+//        super.actionPerformed(e);   // we need this
+//
+//        /*if (e.getSource() == myWindow.slider) {
+//        threshold = myWindow.getValue();
+//        }*/
+//    }
 }
 
 

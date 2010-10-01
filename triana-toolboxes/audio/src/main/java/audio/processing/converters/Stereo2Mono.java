@@ -1,33 +1,7 @@
 package audio.processing.converters;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.audio.MultipleAudio;
-
 
 /**
  * A Stereo2Mono unit to ..
@@ -35,14 +9,14 @@ import triana.types.audio.MultipleAudio;
  * @author ian
  * @version 2.0 29 Dec 2000
  */
-public class Stereo2Mono extends OldUnit {
+public class Stereo2Mono extends Unit {
 
     /**
      * ********************************************* ** USER CODE of Stereo2Mono goes here    ***
      * *********************************************
      */
     public void process() throws Exception {
-        MultipleAudio input = (MultipleAudio) getInputNode(0);
+        MultipleAudio input = (MultipleAudio) getInputAtNode(0);
 
         MultipleAudio left = new MultipleAudio(1);
         left.setChannel(0, input.getChannel(0), input.getChannelFormat(0));
@@ -61,8 +35,12 @@ public class Stereo2Mono extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(false);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(0);
+        setMaximumInputNodes(1);
+        setDefaultOutputNodes(2);
+        setMinimumOutputNodes(0);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
     }
 
     /**
@@ -79,12 +57,7 @@ public class Stereo2Mono extends OldUnit {
         super.stopping();
     }
 
-    /**
-     * Called when the start button is pressed within the MainTriana Window
-     */
-    public void starting() {
-        super.starting();
-    }
+
 
     /**
      * Saves Stereo2Mono's parameters.
@@ -108,15 +81,15 @@ public class Stereo2Mono extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Stereo2Mono, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
 
     /**
-     * @return a string containing the names of the types output from Stereo2Mono, each separated by a white space.
+     * @return an array of the output types for FuzzyBox
      */
-    public String outputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
 
     /**

@@ -1,39 +1,12 @@
 package signalproc.filtering.freqdomain;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import signalproc.algorithms.FullSpectrum;
 import triana.types.ComplexSpectrum;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.Spectral;
 import triana.types.Spectrum;
 import triana.types.TimeFrequency;
-
 
 /**
  * A PositiveF unit to extract the positive frequencies in spectral data set. It sets the negative frequencies to zero.
@@ -41,7 +14,7 @@ import triana.types.TimeFrequency;
  * @author B F Schutz
  * @version 1.1 16 Mar 2001
  */
-public class PositiveF extends OldUnit {
+public class PositiveF extends Unit {
 
     /**
      * ********************************************* ** USER CODE of PositiveF goes here    ***
@@ -49,7 +22,7 @@ public class PositiveF extends OldUnit {
      */
     public void process() throws Exception {
 
-        GraphType input = (GraphType) getInputNode(0);
+        GraphType input = (GraphType) getInputAtNode(0);
 
         keepPositiveFrequencies(input);
 
@@ -137,8 +110,8 @@ public class PositiveF extends OldUnit {
 
         // set these to true if your unit can process double-precision
         // arrays
-        setRequireDoubleInputs(false);
-        setCanProcessDoubleArrays(false);
+//        setRequireDoubleInputs(false);
+//        setCanProcessDoubleArrays(false);
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
@@ -148,8 +121,8 @@ public class PositiveF extends OldUnit {
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
     }
 
     /**
@@ -169,9 +142,9 @@ public class PositiveF extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
     /**
      * Saves PositiveF's parameters.
@@ -195,16 +168,25 @@ public class PositiveF extends OldUnit {
      * @return a string containing the names of the types allowed to be input to PositiveF, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "ComplexSpectrum Spectrum TimeFrequency";
+//    public String inputTypes() {
+//        return "ComplexSpectrum Spectrum TimeFrequency";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from PositiveF, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "ComplexSpectrum Spectrum TimeFrequency";
+//    }
+//
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.TimeFrequency"};
     }
 
-    /**
-     * @return a string containing the names of the types output from PositiveF, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "ComplexSpectrum Spectrum TimeFrequency";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.TimeFrequency"};
     }
+
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when

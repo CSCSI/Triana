@@ -1,6 +1,5 @@
 package signalproc.algorithms;
 
-
 import java.util.ArrayList;
 
 /**

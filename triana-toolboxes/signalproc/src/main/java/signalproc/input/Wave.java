@@ -1,32 +1,7 @@
 package signalproc.input;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
 import org.trianacode.taskgraph.Task;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
 
 /**
@@ -38,7 +13,7 @@ import triana.types.SampleSet;
  * @author Ian Taylor, Bernard Schutz, Gareth S. Jones
  * @version 1.4 2 March 2002
  */
-public class Wave extends OldUnit {
+public class Wave extends Unit {
 
     /**
      * The frequency of the wave
@@ -175,8 +150,8 @@ public class Wave extends OldUnit {
         wave.setTitle(getTask().getToolName());
 
         if (phaseRet) {
-            updateWidgetFor("time");
-            updateWidgetFor("phase");
+//            updateWidgetFor("time");
+//            updateWidgetFor("phase");
             timeStamp += samples / samplingRate;
             phase = phasePos;
         }
@@ -227,15 +202,23 @@ public class Wave extends OldUnit {
     /**
      * @returns the list of allowed input types for this units.
      */
-    public String inputTypes() {
-        return "";
+//    public String inputTypes() {
+//        return "";
+//    }
+//
+//    /**
+//     * @returns the list of output types that this unit can produce.
+//     */
+//    public String outputTypes() {
+//        return "SampleSet";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{};
     }
 
-    /**
-     * @returns the list of output types that this unit can produce.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
     /**

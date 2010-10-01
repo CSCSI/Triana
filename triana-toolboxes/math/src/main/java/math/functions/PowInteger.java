@@ -1,49 +1,23 @@
 package math.functions;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
 import triana.types.EmptyingType;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.util.FlatArray;
-
+import triana.types.util.Str;
 
 /**
  * A PowInteger unit to raise the elements of an input data array to an integer power. The array can be real or
  * complex.
  * <p/>
- * This OldUnit obeys the conventions of Triana Type 2 data types.
+ * This Unit obeys the conventions of Triana Type 2 data types.
  *
  * @author Bernard Schutz
  * @version 2.1 13 January 2001
  */
-public class PowInteger extends OldUnit {
+public class PowInteger extends Unit {
 
     /**
      * Integer power parameter
@@ -73,7 +47,7 @@ public class PowInteger extends OldUnit {
             return;
         }
         Class inputClass = input.getClass();
-        setOutputType(inputClass);
+        //setOutputType(inputClass);
         output = input;
 
         if (input instanceof GraphType) {
@@ -94,7 +68,7 @@ public class PowInteger extends OldUnit {
                                     inputdataR[j] = Double.NaN;
                                     inputdataI[j] = Double.NaN;
                                     new ErrorDialog(null,
-                                            getName() + ": Attempt to raise zero to power zero returns NaN.");
+                                            getTask().getToolName() + ": Attempt to raise zero to power zero returns NaN.");
                                 } else {
                                     inputdataR[j] = 1.0;
                                     inputdataI[j] = 0.0;
@@ -141,7 +115,7 @@ public class PowInteger extends OldUnit {
                                 if (inputdataR[j] == 0.0) {
                                     inputdataR[j] = Double.NaN;
                                     new ErrorDialog(null,
-                                            getName() + ": Attempt to raise zero to power zero returns NaN.");
+                                            getTask().getToolName() + ": Attempt to raise zero to power zero returns NaN.");
                                 } else {
                                     inputdataR[j] = 1;
                                 }
@@ -182,7 +156,7 @@ public class PowInteger extends OldUnit {
                     if ((r == 0.0) && (i == 0.0)) {
                         r = Double.NaN;
                         i = Double.NaN;
-                        new ErrorDialog(null, getName() + ": Attempt to raise zero to power zero returns NaN.");
+                        new ErrorDialog(null, getTask().getToolName() + ": Attempt to raise zero to power zero returns NaN.");
                     } else {
                         r = 1.0;
                         i = 0.0;
@@ -219,7 +193,7 @@ public class PowInteger extends OldUnit {
                 if (power == 0) {
                     if (r == 0.0) {
                         r = Double.NaN;
-                        new ErrorDialog(null, getName() + ": Attempt to raise zero to power zero returns NaN.");
+                        new ErrorDialog(null, getTask().getToolName() + ": Attempt to raise zero to power zero returns NaN.");
                     } else {
                         r = 1.0;
                     }
@@ -258,24 +232,35 @@ public class PowInteger extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+//        // This is to ensure that we receive arrays containing double-precision numbers
+//        setRequireDoubleInputs(true);
+//        setCanProcessDoubleArrays(true);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
-        // This is to ensure that we receive arrays containing double-precision numbers
-        setRequireDoubleInputs(true);
-        setCanProcessDoubleArrays(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
 
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Give integer power $title power IntScroller -5 5 1\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Give integer power $title power IntScroller -5 5 1");
-
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Give integer power $title power IntScroller -5 5 1");
+//
+//    }
 
 
     /**
@@ -288,36 +273,32 @@ public class PowInteger extends OldUnit {
     /**
      * Saves PowInteger's parameters to the parameter file.
      */
-    public void saveParameters() {
-        saveParameter("power", power);
-    }
+//    public void saveParameters() {
+//        saveParameter("power", power);
+//    }
 
     /**
      * Used to set each of Cosine's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("power")) {
-            power = strToInt(value);
+            power = Str.strToInt((String) value);
         }
 
     }
-
 
     /**
      * @return a string containing the names of the types allowed to be input to PowInteger, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "GraphType Const";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
-    /**
-     * @return a string containing the names of the types output from PowInteger, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "GraphType Const";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
     /**
@@ -338,9 +319,9 @@ public class PowInteger extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
 
 }

@@ -13,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.windows.WindowButtonConstants;
 
-
 /**
  * $POPUP_DESCRIPTION
  *

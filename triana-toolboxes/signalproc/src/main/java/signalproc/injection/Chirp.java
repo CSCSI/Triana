@@ -1,34 +1,8 @@
 package signalproc.injection;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
-
+import triana.types.util.Str;
 
 /**
  * A Chirp unit to add coalescing binary waveforms to an input data set in the time domain. The signal accelerates in
@@ -38,7 +12,7 @@ import triana.types.SampleSet;
  * @author B F Schutz
  * @version 2.4 12 Dec 2001
  */
-public class Chirp extends OldUnit {
+public class Chirp extends Unit {
 
     double ampl = 1;
     double chirpMass = 1;
@@ -72,7 +46,7 @@ public class Chirp extends OldUnit {
         double beta = alpha * Math.pow(chirpMass, 5. / 3.);
         chirpLife = Math.pow(f0, exp1) / beta;
 
-        SampleSet input = (SampleSet) getInputNode(0);
+        SampleSet input = (SampleSet) getInputAtNode(0);
 
         double rate = input.getSamplingRate();
         double interval = 1.0 / rate;
@@ -99,7 +73,7 @@ public class Chirp extends OldUnit {
         }
         System.out.println("jLim= " + jLim);
 
-        System.out.println(getName() + ": rate = " + String.valueOf(rate) + ", intial f = " + String.valueOf(f)
+        System.out.println(getToolName() + ": rate = " + String.valueOf(rate) + ", intial f = " + String.valueOf(f)
                 + ", initial arg = " + String.valueOf(arg) + ", interval = " + String.valueOf(interval) + ", tstart = "
                 + String.valueOf(tstart) + ", chirpLife = " + String.valueOf(chirpLife));
 
@@ -127,10 +101,10 @@ public class Chirp extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
-
-        setRequireDoubleInputs(false);
-        setCanProcessDoubleArrays(false);
+//        setUseGUIBuilder(true);
+//
+//        setRequireDoubleInputs(false);
+//        setCanProcessDoubleArrays(false);
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
@@ -140,23 +114,32 @@ public class Chirp extends OldUnit {
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        String guilines = "";
+        guilines += "Initial amplitude of chirp $title ampl Scroller 0 100 1\n";
+        guilines += "chirp mass in solar masses $title chirpMass Scroller 0 100 1\n";
+        guilines += "initial frequency in Hz $title f0 Scroller 0 1000 10\n";
+        guilines += "initial phase of chirp (fraction of 2*Pi) $title phase Scroller 0 1 0\n";
+        guilines += "Is the time (below) relative to data set start?\n (Un-check if absolute time) $title relative Checkbox true\n";
+        guilines += "start time of chirp in seconds $title t0 Scroller 0 100 1\n";
+        setGUIBuilderV2Info(guilines);
+
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Initial amplitude of chirp $title ampl Scroller 0 100 1");
-        addGUILine("chirp mass in solar masses $title chirpMass Scroller 0 100 1");
-        addGUILine("initial frequency in Hz $title f0 Scroller 0 1000 10");
-        addGUILine("initial phase of chirp (fraction of 2*Pi) $title phase Scroller 0 1 0");
-        addGUILine(
-                "Is the time (below) relative to data set start?\n (Un-check if absolute time) $title relative Checkbox true");
-        addGUILine("start time of chirp in seconds $title t0 Scroller 0 100 1");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Initial amplitude of chirp $title ampl Scroller 0 100 1");
+//        addGUILine("chirp mass in solar masses $title chirpMass Scroller 0 100 1");
+//        addGUILine("initial frequency in Hz $title f0 Scroller 0 1000 10");
+//        addGUILine("initial phase of chirp (fraction of 2*Pi) $title phase Scroller 0 1 0");
+//        addGUILine(
+//                "Is the time (below) relative to data set start?\n (Un-check if absolute time) $title relative Checkbox true");
+//        addGUILine("start time of chirp in seconds $title t0 Scroller 0 100 1");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -176,46 +159,45 @@ public class Chirp extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves Chirp's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("ampl", ampl);
-        saveParameter("chirpMass", chirpMass);
-        saveParameter("f0", f0);
-        saveParameter("phase", phase);
-        saveParameter("relative", relative);
-        saveParameter("t0", t0);
-    }
-
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves Chirp's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("ampl", ampl);
+//        saveParameter("chirpMass", chirpMass);
+//        saveParameter("f0", f0);
+//        saveParameter("phase", phase);
+//        saveParameter("relative", relative);
+//        saveParameter("t0", t0);
+//    }
 
     /**
      * Used to set each of Chirp's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("ampl")) {
-            ampl = strToDouble(value);
+            ampl = Str.strToDouble((String) value);
         }
         if (name.equals("chirpMass")) {
-            chirpMass = strToDouble(value);
+            chirpMass = Str.strToDouble((String) value);
         }
         if (name.equals("f0")) {
-            f0 = strToDouble(value);
+            f0 = Str.strToDouble((String) value);
         }
         if (name.equals("phase")) {
-            phase = strToDouble(value) * 2 * Math.PI;
+            phase = Str.strToDouble((String) value) * 2 * Math.PI;
         }
         if (name.equals("relative")) {
-            relative = strToBoolean(value);
+            relative = Str.strToBoolean((String) value);
         }
         if (name.equals("t0")) {
-            t0 = strToDouble(value);
+            t0 = Str.strToDouble((String) value);
         }
     }
 
@@ -229,15 +211,23 @@ public class Chirp extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Chirp, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+//    public String inputTypes() {
+//        return "SampleSet";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from Chirp, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "SampleSet";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from Chirp, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
     /**

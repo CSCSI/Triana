@@ -1,38 +1,11 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSpectrum;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.Spectrum;
 import triana.types.TimeFrequency;
 import triana.types.util.FlatArray;
-
 
 /**
  * A OneSide unit to convert two-sided spectra to one-sided spectra. If the input spectrum is not conjugate-symmetric,
@@ -41,14 +14,14 @@ import triana.types.util.FlatArray;
  * @author B F Schutz
  * @version 1.1 09 January 2001
  */
-public class OneSide extends OldUnit {
+public class OneSide extends Unit {
 
     /**
      * ********************************************* ** USER CODE of OneSide goes here    ***
      * *********************************************
      */
     public void process() throws Exception {
-        GraphType input = (GraphType) getInputNode(0);
+        GraphType input = (GraphType) getInputAtNode(0);
         GraphType output = null;
         int sym;
         double[] real, imag;
@@ -58,7 +31,7 @@ public class OneSide extends OldUnit {
                 real = ((Spectrum) input).getData();
                 sym = FFTC.testConjugateSymmetry(real, null);
                 if (sym != 1) {
-                    println("Information will be lost on conversion to one-sided!.");
+                    System.out.println("Information will be lost on conversion to one-sided!.");
                 }
                 real = FlatArray
                         .convertToOneSided(real, ((Spectrum) input).getOriginalN(), ((Spectrum) input).isNarrow(),
@@ -74,7 +47,7 @@ public class OneSide extends OldUnit {
                 imag = ((ComplexSpectrum) input).getDataImag();
                 sym = FFTC.testConjugateSymmetry(real, imag);
                 if (sym != 1) {
-                    println("Information will be lost on conversion to one-sided!.");
+                    System.out.println("Information will be lost on conversion to one-sided!.");
                 }
                 real = FlatArray.convertToOneSided(real, ((ComplexSpectrum) input).getOriginalN(),
                         ((ComplexSpectrum) input).isNarrow(),
@@ -95,7 +68,7 @@ public class OneSide extends OldUnit {
                     mimag = (double[][]) ((TimeFrequency) input).getDataArrayImag(0);
                     sym = FFTC.testConjugateSymmetry(mreal[0], mimag[0]);
                     if (sym != 1) {
-                        println("Information will be lost on conversion to one-sided!.");
+                        System.out.println("Information will be lost on conversion to one-sided!.");
                     }
                     int rows = mreal.length;
                     for (int k = 0; k < rows; k++) {
@@ -118,7 +91,7 @@ public class OneSide extends OldUnit {
                     mreal = (double[][]) ((TimeFrequency) input).getDataArrayReal(0);
                     sym = FFTC.testConjugateSymmetry(mreal[0], null);
                     if (sym != 1) {
-                        println("Information will be lost on conversion to one-sided!.");
+                        System.out.println("Information will be lost on conversion to one-sided!.");
                     }
                     int rows = mreal.length;
                     for (int k = 0; k < rows; k++) {
@@ -149,8 +122,15 @@ public class OneSide extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);    
     }
 
     /**
@@ -170,9 +150,9 @@ public class OneSide extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
     /**
      * Saves OneSide's parameters.
@@ -196,15 +176,27 @@ public class OneSide extends OldUnit {
      * @return a string containing the names of the types allowed to be input to OneSide, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "ComplexSpectrum Spectrum TimeFrequency";
+//    public String inputTypes() {
+//        return "ComplexSpectrum Spectrum TimeFrequency";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from OneSide, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "ComplexSpectrum Spectrum TimeFrequency";
+//    }
+//
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.TimeFrequency"};
     }
 
     /**
-     * @return a string containing the names of the types output from OneSide, each separated by a white space.
+     * @return an array of the output types for MyMakeCurve
      */
-    public String outputTypes() {
-        return "ComplexSpectrum Spectrum TimeFrequency";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.TimeFrequency"};
     }
 
     /**

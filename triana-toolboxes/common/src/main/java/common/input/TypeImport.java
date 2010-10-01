@@ -1,35 +1,9 @@
 package common.input;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import org.trianacode.gui.panels.UnitPanel;
+import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.AsciiComm;
-import triana.types.OldUnit;
 import triana.types.TrianaType;
 import triana.types.util.Str;
 
@@ -40,7 +14,7 @@ import triana.types.util.Str;
  * @author B F Schutz
  * @version 1.1 20 August 2000
  */
-public class TypeImport extends OldUnit {
+public class TypeImport extends Unit {
 
     int offset = 0;
     String file = "";
@@ -64,10 +38,9 @@ public class TypeImport extends OldUnit {
             return;
         }
 
-        setOutputType(data.getClass());
+        //setOutputType(data.getClass());
 
-        myPanel.numberLoaded.setText(String.valueOf(Str.strToInt(
-                myPanel.numberLoaded.getText()) + 1));
+        myPanel.numberLoaded.setText(String.valueOf(Str.strToInt(myPanel.numberLoaded.getText()) + 1));
 
         output((TrianaType) data);
     }
@@ -79,17 +52,22 @@ public class TypeImport extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
         myPanel = new TypeImportPanel();
         myPanel.setObject(this, TypeImportPanel.ASCII);
 
-        try {
-            setOutputType(Class.forName("triana.types.SampleSet"));
-        }
-        catch (ClassNotFoundException cn) {
-        }
+//        try {
+//            setOutputType(Class.forName("triana.types.SampleSet"));
+//        }
+//        catch (ClassNotFoundException cn) {
+//        }
     }
 
     /**
@@ -100,18 +78,18 @@ public class TypeImport extends OldUnit {
         myPanel.openFile();
     }
 
-    public void saveParameters() {
-        saveParameter("offset", offset);
-        saveParameter("file",
-                FileUtils.convertToVirtualName(file));
-    }
+//    public void saveParameters() {
+//        saveParameter("offset", offset);
+//        saveParameter("file",
+//                FileUtils.convertToVirtualName(file));
+//    }
 
     /**
      * Loads DeSerialize's parameters of from the parameter file.
      */
     public void setParameter(String name, String value) {
         if (name.equals("offset")) {
-            offset = strToInt(value);
+            offset = Str.strToInt(value);
         }
 
         if (name.equals("file")) {
@@ -133,15 +111,15 @@ public class TypeImport extends OldUnit {
      * @return a string containing the names of the types allowed to be input to TypeImport, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "AsciiComm";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.AsciiComm"};
     }
 
     /**
-     * @return a string containing the names of the types output from TypeImport, each separated by a white space.
+     * @return a string containing the names of the types output from Compare, each separated by a white space.
      */
-    public String outputTypes() {
-        return "TrianaType";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.TrianaType"};
     }
 
     /**
@@ -169,10 +147,10 @@ public class TypeImport extends OldUnit {
     }
 
 
-    public void cleanUp() {
-        myPanel.closeFile();
-        super.cleanUp();
-    }
+//    public void cleanUp() {
+//        myPanel.closeFile();
+//        super.cleanUp();
+//    }
 }
 
 

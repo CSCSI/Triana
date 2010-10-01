@@ -1,35 +1,9 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.event.ActionEvent;
 
+import org.trianacode.taskgraph.Unit;
 import triana.types.Histogram;
-import triana.types.OldUnit;
 import triana.types.VectorType;
 
 
@@ -49,7 +23,7 @@ import triana.types.VectorType;
  * @author B F Schutz
  * @version 1.1 16 Dec 2002
  */
-public class FreqHist extends OldUnit {
+public class FreqHist extends Unit {
     /**
      * The UnitWindow for FreqHist
      */
@@ -74,7 +48,7 @@ public class FreqHist extends OldUnit {
         double max = 0.0;
         double min = 0.0;
         double x;
-        input = (VectorType) getInputNode(0);
+        input = (VectorType) getInputAtNode(0);
         datasize = input.size();
         values = input.getDataReal();
         max = values[0];
@@ -155,7 +129,7 @@ public class FreqHist extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
 
         setMinimumInputNodes(1);
         setMaximumInputNodes(1);
@@ -163,17 +137,22 @@ public class FreqHist extends OldUnit {
         setMinimumOutputNodes(1);
         setDefaultOutputNodes(1);
 
+        String guilines = "";
+        guilines += "Give number of bins in histogram $title numberOfBins TextField auto\n";
+        guilines += "Give width of each bin $title binWidth TextField auto\n";
+        guilines += "Give starting value of lowest bin $title lowestBinStartsAt TextField auto\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Give number of bins in histogram $title numberOfBins TextField auto");
-        addGUILine("Give width of each bin $title binWidth TextField auto");
-        addGUILine("Give starting value of lowest bin $title lowestBinStartsAt TextField auto");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Give number of bins in histogram $title numberOfBins TextField auto");
+//        addGUILine("Give width of each bin $title binWidth TextField auto");
+//        addGUILine("Give starting value of lowest bin $title lowestBinStartsAt TextField auto");
+//    }
 
 
     /**
@@ -186,24 +165,24 @@ public class FreqHist extends OldUnit {
     /**
      * Saves ReplaceAll's parameters to the parameter file.
      */
-    public void saveParameters() {
-        saveParameter("numberOfBins", numberOfBins);
-        saveParameter("binWidth", binWidth);
-        saveParameter("lowestBinStartsAt", lowestBinStartsAt);
-    }
+//    public void saveParameters() {
+//        saveParameter("numberOfBins", numberOfBins);
+//        saveParameter("binWidth", binWidth);
+//        saveParameter("lowestBinStartsAt", lowestBinStartsAt);
+//    }
 
     /**
      * Used to set each of ReplaceAll's parameters.
      */
-    public void setParameter(String name, String value) {
+    public void parameterUpdate(String name, Object value) {
         if (name.equals("numberOfBins")) {
-            numberOfBins = value;
+            numberOfBins = (String) value;
         }
         if (name.equals("binWidth")) {
-            binWidth = value;
+            binWidth = (String) value;
         }
         if (name.equals("lowestBinStartsAt")) {
-            lowestBinStartsAt = value;
+            lowestBinStartsAt = (String) value;
         }
     }
 
@@ -211,16 +190,24 @@ public class FreqHist extends OldUnit {
      * @return a string containing the names of the types allowed to be input to FreqHist, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "VectorType";
+//    public String inputTypes() {
+//        return "VectorType";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from FreqHist, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "Histogram";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.VectorType"};
     }
 
-    /**
-     * @return a string containing the names of the types output from FreqHist, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "Histogram";
-    }
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.Histogram"};
+    }        
 
     /**
      *
@@ -243,9 +230,9 @@ public class FreqHist extends OldUnit {
     /**
      * Captures the events thrown out by TextFieldWindow.
      */
-    public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
-    }
+//    public void actionPerformed(ActionEvent e) {
+//        super.actionPerformed(e);   // we need this
+//    }
 
 }
 

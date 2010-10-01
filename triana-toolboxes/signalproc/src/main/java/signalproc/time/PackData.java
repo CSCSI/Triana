@@ -1,45 +1,19 @@
 package signalproc.time;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import org.trianacode.gui.windows.ErrorDialog;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
-
+import triana.types.util.Str;
 
 /**
  * A PackData unit to repackage a data stream into SampleSets of a specified length with an optional overlap between
- * successive sets. Since the input and output are generally asynchronous, it only makes sense to use this OldUnit in
+ * successive sets. Since the input and output are generally asynchronous, it only makes sense to use this Unit in
  * Continuous mode.
  *
  * @author Bernard Schutz
  * @version 1.1 25 July 2000
  */
-public class PackData extends OldUnit {
+public class PackData extends Unit {
 
     int samples = 1024;
     int overlap = 0;
@@ -60,7 +34,7 @@ public class PackData extends OldUnit {
 
         overlapStart = samples - overlap;
 
-        input = (SampleSet) getInputNode(0);
+        input = (SampleSet) getInputAtNode(0);
         length = input.size();
         oldElementsRemaining = length;
         inputAcqTime = input.getAcquisitionTime();
@@ -112,7 +86,7 @@ public class PackData extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
@@ -121,16 +95,21 @@ public class PackData extends OldUnit {
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Number of samples in new data sets $title samples IntScroller 0 8192 1024\n";
+        guilines += "Overlapping samples with next data set $title overlap IntScroller 0 2048 0\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Number of samples in new data sets $title samples IntScroller 0 8192 1024");
-        addGUILine("Overlapping samples with next data set $title overlap IntScroller 0 2048 0");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Number of samples in new data sets $title samples IntScroller 0 8192 1024");
+//        addGUILine("Overlapping samples with next data set $title overlap IntScroller 0 2048 0");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -149,29 +128,29 @@ public class PackData extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves PackData's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("samples", samples);
-        saveParameter("overlap", overlap);
-    }
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves PackData's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("samples", samples);
+//        saveParameter("overlap", overlap);
+//    }
 
     /**
      * Used to set each of PackData's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("samples")) {
-            samples = strToInt(value);
+            samples = Str.strToInt((String) value);
         }
         if (name.equals("overlap")) {
-            overlap = strToInt(value);
+            overlap = Str.strToInt((String) value);
         }
     }
 
@@ -179,15 +158,23 @@ public class PackData extends OldUnit {
      * @return a string containing the names of the types allowed to be input to PackData, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+//    public String inputTypes() {
+//        return "SampleSet";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from PackData, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "SampleSet";
+//    }
+//
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from PackData, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
     /**

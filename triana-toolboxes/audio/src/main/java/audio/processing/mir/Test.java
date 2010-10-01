@@ -1,6 +1,5 @@
 package audio.processing.mir;
 
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 import javax.sound.sampled.AudioFileFormat;
 import org.trianacode.taskgraph.Unit;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
-
 
 /**
  * Tests the passing of baseFileFormat from node to node

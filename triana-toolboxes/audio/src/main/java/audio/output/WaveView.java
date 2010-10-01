@@ -1,31 +1,5 @@
 package audio.output;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -41,7 +15,7 @@ import javax.swing.JTextField;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.UnitPanel;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.TrianaType;
 import triana.types.audio.MultipleAudio;
 
@@ -51,7 +25,7 @@ import triana.types.audio.MultipleAudio;
  * @author ian
  * @version 2.0 31 Dec 2000
  */
-public class WaveView extends OldUnit implements ActionListener, AdjustmentListener {
+public class WaveView extends Unit implements ActionListener, AdjustmentListener {
     /**
      * The UnitPanel for WaveView
      */
@@ -75,7 +49,7 @@ public class WaveView extends OldUnit implements ActionListener, AdjustmentListe
      * *********************************************
      */
     public void process() throws Exception {
-        TrianaType in = getInputNode(0);
+        TrianaType in = (TrianaType) getInputAtNode(0);
 
         if (in instanceof MultipleAudio) {
             MultipleAudio input = (MultipleAudio) in;
@@ -105,8 +79,8 @@ public class WaveView extends OldUnit implements ActionListener, AdjustmentListe
         super.init();
 
         waveViewPanel = new WaveViewPanel();
-        waveViewPanelWindow = new JFrame(getName() + " Viewer");
-        waveViewToolBar = new WaveViewToolBar(getName() + " toolbar", this);
+        waveViewPanelWindow = new JFrame(getToolName() + " Viewer");
+        waveViewToolBar = new WaveViewToolBar(getToolName() + " toolbar", this);
         waveViewPanelWindow.setSize(winSizeX, winSizeY);
         waveViewPanelWindow.setLocation(20, Display.screenY - winSizeY - 50);
 
@@ -125,8 +99,8 @@ public class WaveView extends OldUnit implements ActionListener, AdjustmentListe
         waveViewPanelWindow.getContentPane().add(waveViewToolBar, BorderLayout.EAST);
         waveViewPanelWindow.getContentPane().add(info, BorderLayout.SOUTH);
 
-        setResizableInputs(false);
-        setResizableOutputs(false);
+//        setResizableInputs(false);
+//        setResizableOutputs(false);
 
         waveViewParameters = new WaveViewParameters();
         waveViewParameters.setObject(this);
@@ -160,9 +134,9 @@ public class WaveView extends OldUnit implements ActionListener, AdjustmentListe
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
     /**
      * Saves WaveView's parameters.
@@ -186,15 +160,15 @@ public class WaveView extends OldUnit implements ActionListener, AdjustmentListe
      * @return a string containing the names of the types allowed to be input to WaveView, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
 
     /**
      * @return a string containing the names of the types output from WaveView, each separated by a white space.
      */
-    public String outputTypes() {
-        return "none";
+    public String[] getOutputTypes() {
+        return new String[]{};
     }
 
     /**
@@ -220,16 +194,16 @@ public class WaveView extends OldUnit implements ActionListener, AdjustmentListe
     }
 
 
-    public void cleanUp() {
-        super.cleanUp();
-        waveViewPanelWindow.setVisible(false);
-    }
+//    public void cleanUp() {
+//        super.cleanUp();
+//        waveViewPanelWindow.setVisible(false);
+//    }
 
     /**
      * Captures the events thrown out by WaveViewParameters.
      */
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
+        //super.actionPerformed(e);   // we need this
 
         if (e.getSource() instanceof JButton) {
             JScrollBar scrollbar = scrollerForWaveViewPanel.getHorizontalScrollBar();
@@ -258,7 +232,7 @@ public class WaveView extends OldUnit implements ActionListener, AdjustmentListe
                 waveViewPanel.detail();
                 setInfo();
             } else if (b == waveViewToolBar.properties) {
-                doubleClick();
+                //doubleClick();
             }
             if (scrollbarAdjust) {
                 scrollbar.addAdjustmentListener(this);

@@ -1,6 +1,5 @@
 package audio.output;
 
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -10,7 +9,6 @@ import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
 import triana.types.audio.AudioUtils;
 import triana.types.audio.MultipleAudio;
-
 
 /**
  * @author

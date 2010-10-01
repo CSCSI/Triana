@@ -1,38 +1,12 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSpectrum;
-import triana.types.OldUnit;
 import triana.types.Spectral;
 import triana.types.Spectrum;
 import triana.types.TimeFrequency;
 import triana.types.VectorType;
-
+import triana.types.util.Str;
 
 /**
  * A SpecSeq unit to accumulate a sequence of spectra into a TimeFrequency matrix.
@@ -40,7 +14,7 @@ import triana.types.VectorType;
  * @author B F Schutz
  * @version 1.0 30 Dec 2000
  */
-public class SpecSeq extends OldUnit {
+public class SpecSeq extends Unit {
 
     int nSpec = 64;
     double[][] real, imag;
@@ -63,8 +37,8 @@ public class SpecSeq extends OldUnit {
         if (start) {
             start = false;
             count = 0;
-            println(getName() + " count = " + String.valueOf(count));
-            VectorType input = (VectorType) getInputNode(0);
+            System.out.println(getToolName() + " count = " + String.valueOf(count));
+            VectorType input = (VectorType) getInputAtNode(0);
             real = new double[nSpec][input.size()];
             imag = null;
             if (input instanceof ComplexSpectrum) {
@@ -82,10 +56,10 @@ public class SpecSeq extends OldUnit {
             interval = 1.0 / ((Spectral) input).getFrequencyResolution(0);
         } else {
             count++;
-            println(getName() + " count = " + String.valueOf(count));
-            VectorType input = (VectorType) getInputNode(0);
+            System.out.println(getToolName() + " count = " + String.valueOf(count));
+            VectorType input = (VectorType) getInputAtNode(0);
             if (!input.isCompatible(firstInput)) {
-                println(getName() + " Input " + String.valueOf(count)
+                System.out.println(getToolName() + " Input " + String.valueOf(count)
                         + " is not compatible with first one. Do nothing.");
                 return;
             }
@@ -128,20 +102,33 @@ public class SpecSeq extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "How many input spectra should be accumulated? $title nSpec IntScroller 1 1000 64\n";
+        guilines += "Rolling list? $title roll Checkbox true\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("How many input spectra should be accumulated? $title nSpec IntScroller 1 1000 64");
-        addGUILine("Rolling list? $title roll Checkbox true");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("How many input spectra should be accumulated? $title nSpec IntScroller 1 1000 64");
+//        addGUILine("Rolling list? $title roll Checkbox true");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -161,30 +148,30 @@ public class SpecSeq extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves SpecSeq's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("nSpec", nSpec);
-        saveParameter("roll", roll);
-    }
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves SpecSeq's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("nSpec", nSpec);
+//        saveParameter("roll", roll);
+//    }
 
 
     /**
      * Used to set each of SpecSeq's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("nSpec")) {
-            nSpec = strToInt(value);
+            nSpec = Str.strToInt((String) value);
         }
         if (name.equals("roll")) {
-            roll = strToBoolean(value);
+            roll = Str.strToBoolean((String) value);
         }
     }
 
@@ -198,16 +185,27 @@ public class SpecSeq extends OldUnit {
      * @return a string containing the names of the types allowed to be input to SpecSeq, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "ComplexSpectrum Spectrum";
+//    public String inputTypes() {
+//        return "ComplexSpectrum Spectrum";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from SpecSeq, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "TimeFrequency";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum"};
     }
 
     /**
-     * @return a string containing the names of the types output from SpecSeq, each separated by a white space.
+     * @return an array of the output types for MyMakeCurve
      */
-    public String outputTypes() {
-        return "TimeFrequency";
-    }
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.TimeFrequency"};
+    }    
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when

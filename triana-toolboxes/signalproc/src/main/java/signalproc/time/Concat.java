@@ -1,37 +1,10 @@
 package signalproc.time;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-
 import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSampleSet;
-import triana.types.OldUnit;
 import triana.types.SampleSet;
 import triana.types.TrianaType;
 import triana.types.VectorType;
@@ -42,7 +15,7 @@ import triana.types.VectorType;
  * @author B.F. Schutz
  * @version 2.0 20 September 20000
  */
-public class Concat extends OldUnit {
+public class Concat extends Unit {
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when
@@ -61,7 +34,7 @@ public class Concat extends OldUnit {
         double[] data = {0.0};
         double[] datai = {0.0};
 
-        int nodes = inputNodes();
+        int nodes = getTask().getDataInputNodeCount();
         int jskip = 0;
         int j;
 
@@ -73,7 +46,7 @@ public class Concat extends OldUnit {
 
         input[0] = getInputAtNode(0);
         Class inputClass = input[0].getClass();
-        setOutputType(inputClass);
+        //setOutputType(inputClass);
 
         while ((input[0] == null) && (jskip < nodes)) {
             jskip++;
@@ -86,10 +59,10 @@ public class Concat extends OldUnit {
             cumLength[0] = totalLength;
             j = 1;
             while (j + jskip < nodes) {
-                input[j] = getInputNode(j + jskip);
+                input[j] = getInputAtNode(j + jskip);
                 while ((input[j] == null) && (jskip < nodes)) {
                     jskip++;
-                    input[j] = getInputNode(j + jskip);
+                    input[j] = getInputAtNode(j + jskip);
                 }
                 if (!(input[j] instanceof SampleSet)) {
                     new ErrorDialog(null, "First input to Concat " +
@@ -122,10 +95,10 @@ public class Concat extends OldUnit {
             cumLength[0] = totalLength;
             j = 1;
             while (j + jskip < nodes) {
-                input[j] = getInputNode(j + jskip);
+                input[j] = getInputAtNode(j + jskip);
                 while ((input[j] == null) && (jskip < nodes)) {
                     jskip++;
-                    input[j] = getInputNode(j + jskip);
+                    input[j] = getInputAtNode(j + jskip);
                 }
                 if (!(input[j] instanceof ComplexSampleSet)) {
                     new ErrorDialog(null, "First input to Concat " +
@@ -163,10 +136,10 @@ public class Concat extends OldUnit {
             cumLength[0] = totalLength;
             j = 1;
             while (j + jskip < nodes) {
-                input[j] = getInputNode(j + jskip);
+                input[j] = getInputAtNode(j + jskip);
                 while ((input[j] == null) && (jskip < nodes)) {
                     jskip++;
-                    input[j] = getInputNode(j + jskip);
+                    input[j] = getInputAtNode(j + jskip);
                 }
                 if (!(input[j] instanceof VectorType)) {
                     new ErrorDialog(null, "First input to Concat " +
@@ -200,8 +173,8 @@ public class Concat extends OldUnit {
         super.init();
 
 //        changeInputNodes(2);
-        setResizableInputs(true);
-        setResizableOutputs(true);
+//        setResizableInputs(true);
+//        setResizableOutputs(true);
 
         setDefaultInputNodes(2);
         setDefaultOutputNodes(1);
@@ -230,17 +203,25 @@ public class Concat extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Concat, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "VectorType";
+//    public String inputTypes() {
+//        return "VectorType";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from Concat, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "VectorType";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.VectorType"};
     }
 
-    /**
-     * @return a string containing the names of the types output from Concat, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "VectorType";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.VectorType"};
     }
-
+    
     /**
      *
      * @returns the location of the help file for this unit.  
@@ -261,11 +242,10 @@ public class Concat extends OldUnit {
     /**
      * Captures the events thrown out by Concat.
      */
-    public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
-
-    }
-
+//    public void actionPerformed(ActionEvent e) {
+//        super.actionPerformed(e);   // we need this
+//
+//    }
 }
 
 

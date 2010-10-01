@@ -1,49 +1,22 @@
 package audio.processing.tools;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.audio.MultipleAudio;
 
-
 /**
- * A Invert unit to ..
+ * A Invert unit to invert a WaveForm
  *
  * @author ian
  * @version 2.0 03 Jan 2001
  */
-public class InvertWave extends OldUnit {
+public class InvertWave extends Unit {
 
     /**
      * ********************************************* ** USER CODE of Invert goes here    ***
      * *********************************************
      */
     public void process() throws Exception {
-        MultipleAudio audio = (MultipleAudio) getInputNode(0);
+        MultipleAudio audio = (MultipleAudio) getInputAtNode(0);
 
         Object audioL = audio.getChannel(0);
         Object audioR = audio.getChannel(1);
@@ -51,7 +24,7 @@ public class InvertWave extends OldUnit {
         if (audioL instanceof short[]) { // 16-bit audio
             if (!(audioR instanceof short[]) && (audioR != null)) {
                 throw new Exception(
-                        "Incompatible types in " + getName() + "\nLeft Audio is 16-bit and Right is 8 or 24-bit");
+                        "Incompatible types in " + getTask().getToolName() + "\nLeft Audio is 16-bit and Right is 8 or 24-bit");
             }
             if (audioL != null) { // left side
                 short[] waveL = ((short[]) audioL);
@@ -70,7 +43,7 @@ public class InvertWave extends OldUnit {
         else if (audioL instanceof byte[]) { // 8-bit audio
             if (!(audioR instanceof byte[]) && (audioR != null)) {
                 throw new Exception(
-                        "Incompatible types in " + getName() + "\nLeft Audio is 16-bit and Right is 8 or 24-bit");
+                        "Incompatible types in " + getTask().getToolName() + "\nLeft Audio is 16-bit and Right is 8 or 24-bit");
             }
             if (audioL != null) { // left side
                 byte[] waveL = ((byte[]) audioL);
@@ -89,7 +62,7 @@ public class InvertWave extends OldUnit {
         else if (audioL instanceof int[]) { // 24 and 32-bit audio
             if (!(audioR instanceof int[]) && (audioR != null)) {
                 throw new Exception(
-                        "Incompatible types in " + getName() + "\nLeft Audio is 16-bit and Right is 8 or 24-bit");
+                        "Incompatible types in " + getTask().getToolName() + "\nLeft Audio is 16-bit and Right is 8 or 24-bit");
             }
             if (audioL != null) { // left side
                 int[] waveL = ((int[]) audioL);
@@ -113,8 +86,14 @@ public class InvertWave extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+                // Initialise node properties
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
     }
 
     /**
@@ -129,13 +108,6 @@ public class InvertWave extends OldUnit {
      */
     public void stopping() {
         super.stopping();
-    }
-
-    /**
-     * Called when the start button is pressed within the MainTriana Window
-     */
-    public void starting() {
-        super.starting();
     }
 
     /**
@@ -157,18 +129,17 @@ public class InvertWave extends OldUnit {
     }
 
     /**
-     * @return a string containing the names of the types allowed to be input to Invert, each separated by a white
-     *         space.
+     * @return an array of the input types
      */
-    public String inputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
 
     /**
-     * @return a string containing the names of the types output from Invert, each separated by a white space.
+     * @return an array of the output types
      */
-    public String outputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
 
     /**

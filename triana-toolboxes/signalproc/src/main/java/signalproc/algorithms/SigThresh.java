@@ -1,34 +1,9 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.util.FlatArray;
+import triana.types.util.Str;
 
 /**
  * A SigThresh unit to route an input GraphType data set to one of two output nodes, depending on whether the data it
@@ -39,7 +14,7 @@ import triana.types.util.FlatArray;
  * @author Bernard Schutz
  * @version $Revision: 2921 $
  */
-public class SigThresh extends OldUnit {
+public class SigThresh extends Unit {
 
     // some examples of parameters
 
@@ -54,7 +29,7 @@ public class SigThresh extends OldUnit {
      */
     public void process() throws Exception {
         boolean passed = false;
-        GraphType input = (GraphType) getInputNode(0);
+        GraphType input = (GraphType) getInputAtNode(0);
         int dv = 0;
         while (!input.isArithmeticArray(dv)) {
             dv++;
@@ -180,20 +155,33 @@ public class SigThresh extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
-
-        setResizableInputs(false);
-        setResizableOutputs(false);
-        allowZeroOutputNodes();
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(false);
+//        allowZeroOutputNodes();
 
         threshold = 1.0;
         type = "Amplitude";
+
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Choose Threshold Type $title type Choice Amplitude Mean ABS StdDev RMS\n";
+        guilines += "Threshold Value $title threshold Scroller 0 10000 1000\n";
+        setGUIBuilderV2Info(guilines);
     }
 
-    public void setGUIInformation() {
-        addGUILine("Choose Threshold Type $title type Choice Amplitude Mean ABS StdDev RMS");
-        addGUILine("Threshold Value $title threshold Scroller 0 10000 1000");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Choose Threshold Type $title type Choice Amplitude Mean ABS StdDev RMS");
+//        addGUILine("Threshold Value $title threshold Scroller 0 10000 1000");
+//    }
 
     /**
      * Reset's SigThresh
@@ -205,19 +193,19 @@ public class SigThresh extends OldUnit {
     /**
      * Saves SigThresh's parameters.
      */
-    public void saveParameters() {
-        saveParameter("threshold", threshold);
-        saveParameter("type", type);
-    }
+//    public void saveParameters() {
+//        saveParameter("threshold", threshold);
+//        saveParameter("type", type);
+//    }
 
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("type")) {
-            type = value;
+            type = (String) value;
         }
         if (name.equals("threshold")) {
-            threshold = strToDouble(value);
+            threshold = Str.strToDouble((String) value);
         }
     }
 
@@ -226,16 +214,28 @@ public class SigThresh extends OldUnit {
      * @return a string containing the names of the types allowed to be input to SigThresh, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "GraphType";
+//    public String inputTypes() {
+//        return "GraphType";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from SigThresh, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "GraphType";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.GraphType"};
     }
 
     /**
-     * @return a string containing the names of the types output from SigThresh, each separated by a white space.
+     * @return an array of the output types for MyMakeCurve
      */
-    public String outputTypes() {
-        return "GraphType";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.GraphType"};
     }
+
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when

@@ -1,37 +1,11 @@
 package imageproc.input;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.Image;
 
 import org.trianacode.gui.panels.FilePanel;
+import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.FileName;
-import triana.types.OldUnit;
 import triana.types.TrianaImage;
 import triana.types.TrianaPixelMap;
 import triana.types.TrianaType;
@@ -42,7 +16,7 @@ import triana.types.TrianaType;
  * @author Ian Taylor
  * @version 1.0 alpha 21 Aug 1997
  */
-public class ImageReader extends OldUnit {
+public class ImageReader extends Unit {
 
     String imageName = "";
 
@@ -62,7 +36,7 @@ public class ImageReader extends OldUnit {
      */
     public void process() {
         if (getTask().getDataInputNodeCount() > 0) {
-            TrianaType t = getInputNode(0);
+            TrianaType t = (TrianaType) getInputAtNode(0);
             process(((FileName) t).getFile());
         } else {
             process(imageName);
@@ -86,9 +60,16 @@ public class ImageReader extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(true);
-        setMaximumInputNodes(1);
-        setResizableOutputs(true);
+//        setResizableInputs(true);
+//        setResizableOutputs(true);
+
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);                      
     }
 
     /**
@@ -101,9 +82,9 @@ public class ImageReader extends OldUnit {
     /**
      * Saves ImageReader's parameters to the parameter file.
      */
-    public void saveParameters() {
-        saveParameter(FilePanel.FILE_NAME, FileUtils.convertToVirtualName(imageName));
-    }
+//    public void saveParameters() {
+//        saveParameter(FilePanel.FILE_NAME, FileUtils.convertToVirtualName(imageName));
+//    }
 
     /**
      * Loads ImageReader's parameters of from the parameter file.
@@ -112,21 +93,17 @@ public class ImageReader extends OldUnit {
         if (name.equals(FilePanel.FILE_NAME)) {
             imageName = FileUtils.convertFromVirtualName(value);
         }
+    }    
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.FileName"};
     }
 
     /**
-     * @return a string containing the names of the types allowed to be input to ImageReader, each separated by a white
-     *         space.
+     * @return a string containing the names of the types output from Compare, each separated by a white space.
      */
-    public String inputTypes() {
-        return "FileName";
-    }
-
-    /**
-     * @return a string containing the names of the types output from ImageReader, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "TrianaPixelMap";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.TrianaPixelMap"};
     }
 
     /**

@@ -1,36 +1,10 @@
 package audio.processing.converters;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
 import org.trianacode.gui.windows.ErrorDialog;
-import triana.audio.gsm.decoder.GSMDecoder;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
+import triana.types.audio.gsm.decoder.GSMDecoder;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
-
 
 /**
  * A GSMToAudio unit to ..
@@ -38,7 +12,8 @@ import triana.types.audio.MultipleAudio;
  * @author ian
  * @version 2.0 03 Jan 2001
  */
-public class GSMToAudio extends OldUnit {
+public class GSMToAudio extends Unit {
+
     GSMDecoder gsmdecoder = new GSMDecoder();
 
     /**
@@ -46,7 +21,7 @@ public class GSMToAudio extends OldUnit {
      * *********************************************
      */
     public void process() throws Exception {
-        MultipleAudio audio = (MultipleAudio) getInputNode(0);
+        MultipleAudio audio = (MultipleAudio) getInputAtNode(0);
         AudioChannelFormat format = audio.getAudioChannelFormat(0);
 
         byte[] bytedata = null;
@@ -57,8 +32,7 @@ public class GSMToAudio extends OldUnit {
         }
 
         if (bytedata == null) {
-            ErrorDialog.show("Error in " + getName() + " Cannot convert given format to Audio\n"
-                    + "Data MUST be in GSM Format!");
+            ErrorDialog.show("Error in " + getTask().getToolName() + " Cannot convert given format to Audio\n" + "Data MUST be in GSM Format!");
             stop();
             return;
         }
@@ -77,8 +51,13 @@ public class GSMToAudio extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
     }
 
     /**
@@ -98,9 +77,9 @@ public class GSMToAudio extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
     /**
      * Saves GSMToAudio's parameters.
@@ -124,15 +103,15 @@ public class GSMToAudio extends OldUnit {
      * @return a string containing the names of the types allowed to be input to GSMToAudio, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
 
     /**
-     * @return a string containing the names of the types output from GSMToAudio, each separated by a white space.
+     * @return an array of the output types for this unit
      */
-    public String outputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
 
     /**

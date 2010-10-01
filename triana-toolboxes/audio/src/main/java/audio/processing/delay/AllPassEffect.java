@@ -33,7 +33,7 @@ public class AllPassEffect extends AudioEffect16Bit {
      * @param forwardMemSize the size of the forward memory to be used by AudioEffect16bit class.
      * @param feedback       the level of attenutation of the delayed signal in the the feedback comb filter. Should be
      *                       divided by 100 to give value in percent.
-     * @param delayOffset    the size of the delay in samples. Used to calculate appropriate buffer size
+//     * @param delayOffset    the size of the delay in samples. Used to calculate appropriate buffer size
      * @param chunked        boolean value to indicate if the user is using chunked data. Used by process method to
      *                       choose suitable method.
      */

@@ -1,37 +1,11 @@
 package common.logic;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.event.ActionEvent;
 
 import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
-import triana.types.OldUnit;
-
+import triana.types.util.Str;
 
 /**
  * If takes two inputs: the first is the test value (Const) and the second is the data that gets routed to either the
@@ -41,7 +15,7 @@ import triana.types.OldUnit;
  * @author B.F. Schutz
  * @version 2.0 20 August 2000
  */
-public class If extends OldUnit {
+public class If extends Unit {
     /**
      * The UnitWindow for If
      */
@@ -72,7 +46,7 @@ public class If extends OldUnit {
         input = getInputAtNode(0);
         input2 = getInputAtNode(1);
         Class inputClass = input2.getClass();
-        setOutputType(inputClass);
+        //setOutputType(inputClass);
 
         boolean sendToFirst = false;
 
@@ -94,29 +68,27 @@ public class If extends OldUnit {
         }
     }
 
-
     /**
      * Initialses information specific to If.
      */
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(false);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
 
-        setUseGUIBuilder(true);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Test value $title threshold Scroller -10 10 0.0\n";
+        setGUIBuilderV2Info(guilines);    
 
 //        myWindow = new ScrollerWindow(this, "Set test value.");
 //        myWindow.setValues(0.0, 10, threshold);
 
-    }
-
-    /**
-     * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
-     *         Such lines must in the specified GUI text format.
-     */
-    public void setGUIInformation() {
-        addGUILine("Test value $title threshold Scroller -10 10 0.0");
     }
 
     /**
@@ -129,33 +101,29 @@ public class If extends OldUnit {
     /**
      * Saves If's parameters to the parameter file.
      */
-    public void saveParameters() {
-        saveParameter("threshold", threshold);
-    }
+//    public void saveParameters() {
+//        saveParameter("threshold", threshold);
+//    }
 
     /**
      * Loads If's parameters of from the parameter file.
      */
-    public void setParameter(String name, String value) {
+    public void parameterUpdate(String name, String value) {
         if (name.equals("threshold")) {
-            threshold = strToDouble(value);
+            threshold = Str.strToDouble(value);
         }
     }
 
-    /**
-     * @return a string containing the names of the types allowed to be input to If, each separated by a white space.
-     */
-    public String inputTypes() {
-        return "Const TrianaType";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.TrianaType", "triana.types.Const"};
     }
 
     /**
-     * @return a string containing the names of the types output from If, each separated by a white space.
+     * @return a string containing the names of the types output from Compare, each separated by a white space.
      */
-    public String outputTypes() {
-        return "TrianaType";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.TrianaType"};
     }
-
     /**
      *
      * @returns the location of the help file for this unit.
@@ -178,7 +146,7 @@ public class If extends OldUnit {
      * Captures the events thrown out by If.
      */
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
+        //super.actionPerformed(e);   // we need this
 
         //if (e.getSource() == myWindow.slider) {
         //    threshold = myWindow.getValue();

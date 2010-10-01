@@ -1,61 +1,25 @@
 package audio.processing.tools;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import org.trianacode.taskgraph.Unit;
 import triana.types.Document;
-import triana.types.OldUnit;
 import triana.types.audio.MultipleAudio;
+import triana.types.util.Str;
 
-/**
- * A MatchFilter unit to ..
- *
- * @author ian
- * @version 2.0 31 Dec 2000
- */
-public class MatchFilter extends OldUnit {
+public class MatchFilter extends Unit {
     StringBuffer output;
     int count = 0;
 
     int matchNum = 10;
     TreeSet matches = new TreeSet();
 
-
-    /**
-     * ********************************************* ** USER CODE of MatchFilter goes here    ***
-     * *********************************************
-     */
     public void process() throws Exception {
         ++count;
         matches.clear();
-        MultipleAudio wave = (MultipleAudio) getInputNode(0);
-        MultipleAudio filter = (MultipleAudio) getInputNode(1);
+        MultipleAudio wave = (MultipleAudio) getInputAtNode(0);
+        MultipleAudio filter = (MultipleAudio) getInputAtNode(1);
 
         Object waveAudio = wave.getChannel(0);
 
@@ -67,7 +31,7 @@ public class MatchFilter extends OldUnit {
 
             if (!(filterAudio instanceof short[])) {
                 throw new Exception(
-                        "Incompatible types in " + getName() + "\nWave is 16-bit and filter is 8 or 24-bit");
+                        "Incompatible types in " + getTask().getToolName() + "\nWave is 16-bit and filter is 8 or 24-bit");
             }
             short[] waveAud = ((short[]) waveAudio);
             short[] filtAud = ((short[]) filterAudio);
@@ -116,23 +80,31 @@ public class MatchFilter extends OldUnit {
         }
     }
 
-
     /**
      * Initialses information specific to MatchFilter.
      */
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(2);
+        setMinimumInputNodes(2);
+        setMaximumInputNodes(2);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
         output = new StringBuffer();
         count = 0;
+
+        String guilines = "";
+        guilines += "Number of matchNum (Best match output first) ? $title matchNum IntScroller 0 100 10";
+        setGUIBuilderV2Info(guilines);
     }
 
-    public void setGUIInformation() {
-        addGUILine("Number of matchNum (Best match output first) ? $title matchNum IntScroller 0 100 10");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Number of matchNum (Best match output first) ? $title matchNum IntScroller 0 100 10");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -150,28 +122,10 @@ public class MatchFilter extends OldUnit {
         super.stopping();
     }
 
-    /**
-     * Called when the start button is pressed within the MainTriana Window
-     */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves MatchFilter's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("matchNum", matchNum);
-    }
-
-    /**
-     * Used to set each of MatchFilter's parameters. This should NOT be used to update this unit's user interface
-     */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
-
+    public void parameterUpdate(String name, String value) {
+        // Code to update local variables
         if (name.equals("matchNum")) {
-            matchNum = strToInt(value);
+            matchNum = (int) Str.strToDouble(value);
         }
     }
 
@@ -185,15 +139,18 @@ public class MatchFilter extends OldUnit {
      * @return a string containing the names of the types allowed to be input to MatchFilter, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "triana.types.audio.MultipleAudio";
+    /**
+     * @return an array of the input types for CombFilter
+     */
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.audio.MultipleAudio"};
     }
-
     /**
      * @return a string containing the names of the types output from MatchFilter, each separated by a white space.
      */
-    public String outputTypes() {
-        return "Document";
+    
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.Document"};
     }
 
     /**

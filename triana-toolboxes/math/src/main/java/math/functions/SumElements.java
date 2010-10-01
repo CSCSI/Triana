@@ -1,35 +1,10 @@
 package math.functions;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.util.FlatArray;
+import triana.types.util.Str;
 
 /**
  * A SumElements unit to compute sum or average of the elements of any data set.
@@ -37,7 +12,7 @@ import triana.types.util.FlatArray;
  * @author B F Schutz
  * @version 1.1 28 Feb 2001
  */
-public class SumElements extends OldUnit {
+public class SumElements extends Unit {
 
     int dv = 0;
     String type = "Sum";
@@ -104,29 +79,34 @@ public class SumElements extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setRequireDoubleInputs(false);
+//        setCanProcessDoubleArrays(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
 
-        setRequireDoubleInputs(false);
-        setCanProcessDoubleArrays(true);
-
-        setResizableInputs(false);
-        setResizableOutputs(true);
         setDefaultInputNodes(1);
         setDefaultOutputNodes(1);
         setMinimumInputNodes(1);
         setMinimumOutputNodes(1);
 
+        String guilines = "";
+        guilines += "Which dependent variable do you want to compute the sum of squares of? $title dv IntScroller 0 5 0\n";
+        guilines += "Choose value to be computed: $title type Choice Sum Average\n";
+        setGUIBuilderV2Info(guilines);        
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine(
-                "Which dependent variable do you want to compute the sum of squares of? $title dv IntScroller 0 5 0");
-        addGUILine("Choose value to be computed: $title type Choice Sum Average");
-    }
+//    public void setGUIInformation() {
+//        addGUILine(
+//                "Which dependent variable do you want to compute the sum of squares of? $title dv IntScroller 0 5 0");
+//        addGUILine("Choose value to be computed: $title type Choice Sum Average");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -145,30 +125,30 @@ public class SumElements extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves SumElements's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("dv", dv);
-        saveParameter("type", type);
-    }
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves SumElements's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("dv", dv);
+//        saveParameter("type", type);
+//    }
 
 
     /**
      * Used to set each of SumElements's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void updateParameter(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("dv")) {
-            dv = strToInt(value);
+            dv = Str.strToInt((String) value);
         }
         if (name.equals("type")) {
-            type = value;
+            type = (String) value;
         }
     }
 
@@ -182,15 +162,12 @@ public class SumElements extends OldUnit {
      * @return a string containing the names of the types allowed to be input to SumElements, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "GraphType";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.GraphType"};
     }
 
-    /**
-     * @return a string containing the names of the types output from SumElements, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "Const";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.Const"};
     }
 
     /**

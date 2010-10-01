@@ -1,35 +1,8 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995, 1996, 1997, 1998 University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.util.SigAnalWindows;
-
 
 /**
  * WindowFnc allows the user to apply one of 6 window functions to the input signal: Bartlett, Blackman, Gaussian,
@@ -43,14 +16,14 @@ import triana.types.util.SigAnalWindows;
  * @author Bernard Schutz
  * @version 2.01 18 March 2001
  */
-public class WindowFnc extends OldUnit {
+public class WindowFnc extends Unit {
 
     String WindowFunction = "(none)";
 
     public void process() throws Exception {
         GraphType input, result;
 
-        input = (GraphType) getInputNode(0);
+        input = (GraphType) getInputAtNode(0);
 
         if (WindowFunction.equals("(none)")) {
             result = input;
@@ -66,9 +39,9 @@ public class WindowFnc extends OldUnit {
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format (see Triana help).
      */
-    public void setGUIInformation() {
-        addGUILine("Window Function ? $title WindowFunction Choice " + SigAnalWindows.listOfWindows());
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Window Function ? $title WindowFunction Choice " + SigAnalWindows.listOfWindows());
+//    }
 
 
     /**
@@ -85,10 +58,21 @@ public class WindowFnc extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Window Function ? $title WindowFunction Choice " + SigAnalWindows.listOfWindows();
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
@@ -96,33 +80,41 @@ public class WindowFnc extends OldUnit {
      * <p/>
      * /** Saves FFT's parameters.
      */
-    public void saveParameters() {
-        saveParameter("WindowFunction", WindowFunction);
-    }
+//    public void saveParameters() {
+//        saveParameter("WindowFunction", WindowFunction);
+//    }
 
     /**
      * Used to set each of FFT's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("WindowFunction")) {
-            WindowFunction = value;
+            WindowFunction = (String) value;
         }
     }
 
     /**
      * @return a string containing the names of the types allowed to be input to FFT, each separated by a white space.
      */
-    public String inputTypes() {
-        return "VectorType TimeFrequency";
+//    public String inputTypes() {
+//        return "VectorType TimeFrequency";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from FFT, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "VectorType TimeFrequency";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.VectorType", "triana.types.TimeFrequency"};
     }
 
-    /**
-     * @return a string containing the names of the types output from FFT, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "VectorType TimeFrequency";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.VectorType", "triana.types.TimeFrequency"};
     }
 
     /**

@@ -3,7 +3,6 @@ package signalproc.converters;
 import org.trianacode.taskgraph.Unit;
 import triana.types.MatrixType;
 
-
 /**
  * Converts a matrix to double arrays
  *

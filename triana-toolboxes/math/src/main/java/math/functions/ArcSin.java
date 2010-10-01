@@ -1,40 +1,14 @@
 package math.functions;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSampleSet;
 import triana.types.ComplexSpectrum;
 import triana.types.Const;
 import triana.types.EmptyingType;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.SampleSet;
 import triana.types.Spectrum;
 import triana.types.util.FlatArray;
@@ -50,12 +24,12 @@ import triana.types.util.FlatArray;
  * complex, then the output data will be complex. If necessary input SampleSet and Spectrum sets will be converted to
  * ComplexSampleSet and ComplexSpectrum on output.
  * <p/>
- * This OldUnit obeys the conventions of Triana Type 2 data types.
+ * This Unit obeys the conventions of Triana Type 2 data types.
  *
  * @author Bernard Schutz
  * @version 2.1 13 January 2001
  */
-public class ArcSin extends OldUnit {
+public class ArcSin extends Unit {
 
     double Pi2 = Math.PI / 2.0;
 
@@ -99,7 +73,7 @@ public class ArcSin extends OldUnit {
             output = input;
         }
         Class outputClass = output.getClass();
-        setOutputType(outputClass);
+        //setOutputType(outputClass);
 
 
         if (input instanceof GraphType) {
@@ -152,8 +126,8 @@ public class ArcSin extends OldUnit {
                             }
                             ((GraphType) output).setDataArrayReal(tempR.restoreArray(false), dv);
                         } else {
-                            setText("WARNING: SEE DEBUG WINDOW!");
-                            println("Warning: Some input real data to " + getName()
+                            //setText("WARNING: SEE DEBUG WINDOW!");
+                            System.out.println("Warning: Some input real data to " + getTask().getToolName()
                                     + " are out of range (abs(data) < 1). Output will be complex.");
                             inputdataI = new double[inputdataR.length];
                             for (j = 0; j < inputdataI.length; j++) {
@@ -211,8 +185,8 @@ public class ArcSin extends OldUnit {
             } else if (Math.abs(r) <= 1.0) {
                 r = Math.asin(r);
             } else {
-                setText("WARNING: SEE DEBUG WINDOW!");
-                println("Warning: Input Const to " + getName() + " is real but out of range, (abs(" + String.valueOf(r)
+                //setText("WARNING: SEE DEBUG WINDOW!");
+                System.out.println("Warning: Input Const to " + getTask().getToolName() + " is real but out of range, (abs(" + String.valueOf(r)
                         + ") > 1). Output will be a complex Const.");
                 if (r > 0) {
                     i = Math.log(r + Math.sqrt(r * r - 1.0));
@@ -239,11 +213,21 @@ public class ArcSin extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
-        // This is to ensure that we receive arrays containing double-precision numbers
-        setRequireDoubleInputs(true);
-        setCanProcessDoubleArrays(true);
+
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+//        // This is to ensure that we receive arrays containing double-precision numbers
+//        setRequireDoubleInputs(true);
+//        setCanProcessDoubleArrays(true);
 
     }
 
@@ -270,15 +254,12 @@ public class ArcSin extends OldUnit {
      * @return a string containing the names of the types allowed to be input to ArcSin, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "GraphType Const";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
-    /**
-     * @return a string containing the names of the types output from ArcSin, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "GraphType Const";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
     /**
@@ -301,10 +282,10 @@ public class ArcSin extends OldUnit {
     /**
      * Captures the events thrown out by ArcSin.
      */
-    public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
-
-    }
+//    public void actionPerformed(ActionEvent e) {
+//        super.actionPerformed(e);   // we need this
+//
+//    }
 }
 
 

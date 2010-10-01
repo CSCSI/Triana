@@ -1,6 +1,5 @@
 package audio.processing.eq;
 
-
 import javax.sound.sampled.AudioFormat;
 import org.trianacode.taskgraph.Unit;
 import triana.types.audio.MultipleAudio;

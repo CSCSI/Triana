@@ -1,49 +1,24 @@
 package math.functions;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.VectorType;
+import triana.types.util.Str;
 
 /**
  * A PhaseCont unit to smooth out jumps of 2 Pi in an inut sequence of real data representing a phase angle, so that the
  * angle moves smoothly to values larger than Pi or smaller than -Pi. </p><p> Most functions constrain the phase of a
  * complex number or the angle of a vector in the 2D plane to a principal range of (-Pi, Pi), for example the function
- * atan2. This OldUnit takes the output of such angle-finders and makes it continuous outside the principal range by
+ * atan2. This Unit takes the output of such angle-finders and makes it continuous outside the principal range by
  * looking for big discontinuities (where the phase jumps from near -Pi to near +Pi, for example, and adds an
  * appropriate multiple of 2*Pi to the angle to eliminate the jump. </p><p> PhaseCont does not find the original phase.
- * It takes output from a OldUnit that does and smooths the phase. PhaseCont should only be used when one expects a
+ * It takes output from a Unit that does and smooths the phase. PhaseCont should only be used when one expects a
  * smoothly changing phase from one element to the next; it will not make sensible answers when applied, for example, to
  * phase noise. </p><p> This method can be used to find winding numbers of curves around the origin.
  *
  * @author B F Schutz
  * @version 1.1 13 January 2001
  */
-public class PhaseCont extends OldUnit {
+public class PhaseCont extends Unit {
 
     boolean carryOver = true;
 
@@ -59,7 +34,7 @@ public class PhaseCont extends OldUnit {
     public void process() throws Exception {
         input = (VectorType) getInputAtNode(0);
         output = (VectorType) input;
-        setOutputType(output.getClass());
+        //setOutputType(output.getClass());
 
         double[] outputdata = output.getData();
 
@@ -105,26 +80,36 @@ public class PhaseCont extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+//        // This is to ensure that we receive arrays containing double-precision numbers
+//        setRequireDoubleInputs(true);
+//        setCanProcessDoubleArrays(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
-        // This is to ensure that we receive arrays containing double-precision numbers
-        setRequireDoubleInputs(true);
-        setCanProcessDoubleArrays(true);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
         jump = 0.0;
         lastPhase = 0.0;
-
+                
+        String guilines = "";
+        guilines += "Continue phase from one input data set to next? $title carryOver Checkbox true\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Continue phase from one input data set to next? $title carryOver Checkbox true");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Continue phase from one input data set to next? $title carryOver Checkbox true");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -143,26 +128,26 @@ public class PhaseCont extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves PhaseCont's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("carryOver", carryOver);
-    }
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves PhaseCont's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("carryOver", carryOver);
+//    }
 
 
     /**
      * Used to set each of PhaseCont's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("carryOver")) {
-            carryOver = strToBoolean(value);
+            carryOver = Str.strToBoolean((String) value);
         }
     }
 
@@ -176,15 +161,12 @@ public class PhaseCont extends OldUnit {
      * @return a string containing the names of the types allowed to be input to PhaseCont, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "VectorType";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.VectorType"};
     }
 
-    /**
-     * @return a string containing the names of the types output from PhaseCont, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "VectorType";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.VectorType"};
     }
 
     /**

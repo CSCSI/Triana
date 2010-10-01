@@ -1,6 +1,5 @@
 package audio.processing.mir;
 
-
 import java.util.Map;
 
 import javax.sound.sampled.AudioFileFormat;

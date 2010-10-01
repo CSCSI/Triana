@@ -1,35 +1,9 @@
 package common.logic;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
-import triana.types.OldUnit;
 import triana.types.VectorType;
 
 /**
@@ -41,7 +15,7 @@ import triana.types.VectorType;
  * @author B.F. Schutz
  * @version 2.0 20 August 2000
  */
-public class Compare extends OldUnit {
+public class Compare extends Unit {
 
     /**
      * The UnitWindow for Compare
@@ -82,8 +56,8 @@ public class Compare extends OldUnit {
 
         if (input instanceof VectorType) {
             if (!((VectorType) input).isCompatible(input2)) {
-                new ErrorDialog(null, "Inputs to " + getName() + " are not compatible. Execution fails.");
-                stop();
+                new ErrorDialog(null, "Inputs to " + getTask().getToolName() + " are not compatible. Execution fails.");
+                getRunnableInterface().notifyError(null); //used to be stop();
                 return;
             }
 
@@ -209,9 +183,15 @@ public class Compare extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        // Initialise node properties
+        setDefaultInputNodes(2);
+        setMinimumInputNodes(2);
+        setMaximumInputNodes(2);
 
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(1);
+        
         // Initialise task parameters with default values (if not already initialised)
         Task task = getTask();
 
@@ -238,17 +218,17 @@ public class Compare extends OldUnit {
         super.reset();
     }
 
-    /**
-     * Saves Compare's parameters to the parameter file.
-     */
-    public void saveParameters() {
-        saveParameter("operator", operator);
-    }
+//    /**
+//     * Saves Compare's parameters to the parameter file.
+//     */
+//    public void saveParameters() {
+//        saveParameter("operator", operator);
+//    }
 
     /**
      * Loads Compare's parameters of from the parameter file.
      */
-    public void setParameter(String name, String value) {
+    public void parameterUpdate(String name, String value) {
         if (name.equals("operator")) {
             operator = value;
         }
@@ -258,17 +238,17 @@ public class Compare extends OldUnit {
      * @return a string containing the names of the types allowed to be input to Compare, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "VectorType Const";
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.VectorType", "triana.types.Const"};
     }
 
     /**
      * @return a string containing the names of the types output from Compare, each separated by a white space.
      */
-    public String outputTypes() {
-        return "Const";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.Const"};
     }
-
     /**
      *
      * @returns the location of the help file for this unit.
@@ -288,20 +268,3 @@ public class Compare extends OldUnit {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

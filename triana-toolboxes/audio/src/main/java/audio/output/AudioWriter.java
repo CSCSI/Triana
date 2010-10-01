@@ -13,8 +13,6 @@ import org.tritonus.share.sampled.file.AudioOutputStream;
  * @author Eddie Al-Shakarchi
  * @version $Revision: 2921 $
  * @see WriteAiff_old
- * @see WriteAU
- * @see WriteWAV
  */
 
 public class AudioWriter extends Thread {
@@ -51,7 +49,7 @@ public class AudioWriter extends Thread {
         while (true) {
             if (bytes.size() > 0) {
                 byteArray = (byte[]) bytes.remove(0);
-                System.out.println("i = " + i);
+                //System.out.println("i = " + i);
                 i++;
                 try {
                     audioOutputStream.write(byteArray, 0, byteArray.length);
@@ -65,12 +63,6 @@ public class AudioWriter extends Thread {
                 break;
             }
             byteArray = null;
-            //try {
-            //  audioOutputStream.close();
-            //}
-            //catch (IOException e) {
-            //    e.printStackTrace();
-            // }
         }// End of while
     }
 }

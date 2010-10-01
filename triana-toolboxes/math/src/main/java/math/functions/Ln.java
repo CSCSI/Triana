@@ -1,41 +1,15 @@
 package math.functions;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * LnRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSampleSet;
 import triana.types.ComplexSpectrum;
 import triana.types.Const;
 import triana.types.EmptyingType;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.SampleSet;
 import triana.types.Spectrum;
 import triana.types.util.FlatArray;
@@ -45,12 +19,12 @@ import triana.types.util.FlatArray;
  * complex. If real, the output is normally real, but if there are negative elements then a complex data set will be
  * output.
  * <p/>
- * This OldUnit obeys the conventions of Triana Type 2 data types.
+ * This Unit obeys the conventions of Triana Type 2 data types.
  *
  * @author Bernard Schutz
  * @version 2.1 13 January 2001
  */
-public class Ln extends OldUnit {
+public class Ln extends Unit {
 
 
     /**
@@ -75,7 +49,7 @@ public class Ln extends OldUnit {
             return;
         }
         Class inputClass = input.getClass();
-        setOutputType(inputClass);
+        //setOutputType(inputClass);
         output = input;
 
         if (input instanceof GraphType) {
@@ -107,7 +81,7 @@ public class Ln extends OldUnit {
                         for (j = 0; j < inputdataR.length; j++) {
                             d = inputdataR[j];
                             if (d == 0) {
-                                new ErrorDialog(null, "For input element " + String.valueOf(j) + " to unit " + getName()
+                                new ErrorDialog(null, "For input element " + String.valueOf(j) + " to unit " + getTask().getToolName()
                                         + "  is exactly zero. Logarithm set to negative infinity.");
                                 inputdataR[j] = Double.NEGATIVE_INFINITY;
                             } else if (d < 0) {
@@ -126,7 +100,7 @@ public class Ln extends OldUnit {
                         } else if (output instanceof Spectrum) {
                             output = new ComplexSpectrum((Spectrum) output);
                         }
-                        setOutputType(output.getClass());
+                        //setOutputType(output.getClass());
                         tempR.setFlatArray(inputdataI);
                         ((GraphType) output).setDataArrayImag(tempR.restoreArray(true), dv);
                     }
@@ -160,12 +134,21 @@ public class Ln extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+//
+//        // This is to ensure that we receive arrays containing double-precision numbers
+//        setRequireDoubleInputs(true);
+//        setCanProcessDoubleArrays(true);
 
-        // This is to ensure that we receive arrays containing double-precision numbers
-        setRequireDoubleInputs(true);
-        setCanProcessDoubleArrays(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
 
 
     }
@@ -192,15 +175,12 @@ public class Ln extends OldUnit {
     /**
      * @return a string containing the names of the types allowed to be input to Ln, each separated by a white space.
      */
-    public String inputTypes() {
-        return "GraphType Const";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
-    /**
-     * @return a string containing the names of the types output from Ln, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "GraphType Const";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.GraphType", "triana.types.Const"};
     }
 
     /**
@@ -223,10 +203,10 @@ public class Ln extends OldUnit {
     /**
      * Captures the events thrown out by Ln.
      */
-    public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
-
-    }
+//    public void actionPerformed(ActionEvent e) {
+//        super.actionPerformed(e);   // we need this
+//
+//    }
 }
 
 

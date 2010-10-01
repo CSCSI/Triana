@@ -1,33 +1,8 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
+import triana.types.util.Str;
 
 
 /**
@@ -36,7 +11,7 @@ import triana.types.SampleSet;
  * @author ian
  * @version 2.0 18 Sep 2000
  */
-public class ALE extends OldUnit {
+public class ALE extends Unit {
     String type = "NLMS";
     int tapSpacing = 1;
     String stepsize = "auto";
@@ -50,7 +25,7 @@ public class ALE extends OldUnit {
     public void process() throws Exception {
         if (ale == null) {
             ale = new ALEProcessor(N, 1, stepsize, type, false);
-            ale.setObject(this);
+            //ale.setObject(this);
         }
 
         SampleSet input = (SampleSet) getInputAtNode(0);
@@ -68,22 +43,37 @@ public class ALE extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Adaptive Filter Type $title type Choice NLMS LMS\n";
+        guilines += "Enter Step Size (or choose 'auto') $title stepsize TextField auto\n";
+        guilines += "Enter Number of Taps : $title numberOfTaps IntScroller 0 1000 200\n";
+        guilines += "Enter Tap Size : $title tapSpacing IntScroller 0 100 1\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Adaptive Filter Type $title type Choice NLMS LMS");
-        addGUILine("Enter Step Size (or choose 'auto') $title stepsize TextField auto");
-        addGUILine("Enter Number of Taps : $title numberOfTaps IntScroller 0 1000 200");
-        addGUILine("Enter Tap Size : $title tapSpacing IntScroller 0 100 1");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Adaptive Filter Type $title type Choice NLMS LMS");
+//        addGUILine("Enter Step Size (or choose 'auto') $title stepsize TextField auto");
+//        addGUILine("Enter Number of Taps : $title numberOfTaps IntScroller 0 1000 200");
+//        addGUILine("Enter Tap Size : $title tapSpacing IntScroller 0 100 1");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -105,52 +95,51 @@ public class ALE extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves ALE's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("type", type);
-        saveParameter("stepsize", stepsize);
-        saveParameter("numberOfTaps", N);
-        saveParameter("tapSpacing", tapSpacing);
-    }
-
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves ALE's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("type", type);
+//        saveParameter("stepsize", stepsize);
+//        saveParameter("numberOfTaps", N);
+//        saveParameter("tapSpacing", tapSpacing);
+//    }
 
     /**
      * Used to set each of ALE's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (ale == null) {
             ale = new ALEProcessor(N, 1, stepsize, type, false);
-            ale.setObject(this);
+            //ale.setObject(this);
         }
 
         if (name.equals("type")) {
-            type = value;
+            type = (String) value;
             if (ale != null) {
                 ale.setWeightUpdateType(type);
             }
         }
         if (name.equals("stepsize")) {
-            stepsize = value;
+            stepsize = (String) value;
             if (ale != null) {
                 ale.setStepSize(stepsize);
             }
         }
         if (name.equals("numberOfTaps")) {
-            N = strToInt(value);
+            N = Str.strToInt((String) value);
             if (ale != null) {
                 ale.setNumberOfTaps(N);
             }
         }
         if (name.equals("tapSpacing")) {
-            tapSpacing = strToInt(value);
+            tapSpacing = Str.strToInt((String) value);
             if (ale != null) {
                 ale.setTapSpacing(tapSpacing);
             }
@@ -166,15 +155,12 @@ public class ALE extends OldUnit {
     /**
      * @return a string containing the names of the types allowed to be input to ALE, each separated by a white space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from ALE, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
     /**
@@ -192,10 +178,4 @@ public class ALE extends OldUnit {
     public String getHelpFile() {
         return "ALE.html";
     }
-
-
 }
-
-
-
-

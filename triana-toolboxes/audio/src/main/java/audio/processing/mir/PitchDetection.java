@@ -1,6 +1,5 @@
 package audio.processing.mir;
 
-
 import java.util.Arrays;
 
 import org.apache.commons.lang.ArrayUtils;

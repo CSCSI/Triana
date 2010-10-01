@@ -1,6 +1,5 @@
 package audio.processing.mir;
 
-
 import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSpectrum;
 import triana.types.Spectrum;

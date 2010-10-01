@@ -1,9 +1,7 @@
 package common.string;
 
-
 import org.trianacode.taskgraph.Unit;
 import triana.types.TrianaType;
-
 
 /**
  * View any object as a String

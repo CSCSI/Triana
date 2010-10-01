@@ -1,39 +1,14 @@
 package signalproc.algorithms;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.util.ArrayList;
 
 import org.trianacode.gui.windows.ErrorDialog;
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
 import triana.types.TimeFrequency;
 import triana.types.TrianaType;
 import triana.types.VectorType;
+import triana.types.util.Str;
 
 
 /**
@@ -42,7 +17,7 @@ import triana.types.VectorType;
  * @author B F Schutz
  * @version 1.0 05 Jan 2001
  */
-public class WinFT extends OldUnit {
+public class WinFT extends Unit {
 
     String windowType = "Rectangle";
     int windowSize = 256;
@@ -61,11 +36,11 @@ public class WinFT extends OldUnit {
         double[] window = null;
         boolean rectWindow = (windowType.equals("Rectangle"));
 
-        SampleSet input = (SampleSet) getInputNode(0);
+        SampleSet input = (SampleSet) getInputAtNode(0);
         double[] data = input.getData();
 
-        if (getInputNodes() > 1) {
-            VectorType windowIn = (VectorType) getInputNode(1);
+        if (getTask().getDataInputNodeCount() > 1) {
+            VectorType windowIn = (VectorType) getInputAtNode(1);
             if (windowIn == TrianaType.NOT_READY) {
                 if (oldWindowInput == null) {
                     ErrorDialog.show(null,
@@ -221,25 +196,39 @@ public class WinFT extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
+//
+//        setResizableInputs(true);
+//        setResizableOutputs(true);
+//        if (getInputNodes() > 1) {
+//            setOptional(1);
+//        }  // read in a window but only once
 
-        setResizableInputs(true);
-        setResizableOutputs(true);
-        if (getInputNodes() > 1) {
-            setOptional(1);
-        }  // read in a window but only once
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Choose time-domain window $title windowType Choice Rectangle Bartlett Blackman Gaussian Hamming Hanning Welch\n";
+        guilines += "Width of window (number of points) $title windowSize IntScroller 0 4096 256\n";
+        guilines += "Step between successive windows (number of points) $title windowStep IntScroller 0 256 4\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine(
-                "Choose time-domain window $title windowType Choice Rectangle Bartlett Blackman Gaussian Hamming Hanning Welch");
-        addGUILine("Width of window (number of points) $title windowSize IntScroller 0 4096 256");
-        addGUILine("Step between successive windows (number of points) $title windowStep IntScroller 0 256 4");
-    }
+//    public void setGUIInformation() {
+//        addGUILine(
+//                "Choose time-domain window $title windowType Choice Rectangle Bartlett Blackman Gaussian Hamming Hanning Welch");
+//        addGUILine("Width of window (number of points) $title windowSize IntScroller 0 4096 256");
+//        addGUILine("Step between successive windows (number of points) $title windowStep IntScroller 0 256 4");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -258,34 +247,34 @@ public class WinFT extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
+//    public void starting() {
+//        super.starting();
+//    }
 
     /**
      * Saves WinFT's parameters.
      */
-    public void saveParameters() {
-        saveParameter("windowType", windowType);
-        saveParameter("windowSize", windowSize);
-        saveParameter("windowStep", windowStep);
-    }
+//    public void saveParameters() {
+//        saveParameter("windowType", windowType);
+//        saveParameter("windowSize", windowSize);
+//        saveParameter("windowStep", windowStep);
+//    }
 
 
     /**
      * Used to set each of WinFT's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("windowType")) {
-            windowType = value;
+            windowType = (String) value;
         }
         if (name.equals("windowSize")) {
-            windowSize = strToInt(value);
+            windowSize = Str.strToInt((String) value);
         }
         if (name.equals("windowStep")) {
-            windowStep = strToInt(value);
+            windowStep = Str.strToInt((String) value);
         }
     }
 
@@ -299,16 +288,25 @@ public class WinFT extends OldUnit {
      * @return a string containing the names of the types allowed to be input to WinFT, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+//    public String inputTypes() {
+//        return "SampleSet";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from WinFT, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "TimeFrequency";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from WinFT, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "TimeFrequency";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.TimeFrequency"};
     }
+
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when

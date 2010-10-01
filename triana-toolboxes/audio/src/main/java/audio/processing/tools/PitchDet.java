@@ -1,34 +1,8 @@
 package audio.processing.tools;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
-
+import triana.types.util.Str;
 
 /**
  * A PitchDet unit to ..
@@ -36,7 +10,7 @@ import triana.types.SampleSet;
  * @author ian
  * @version 2.0 09 Nov 2000
  */
-public class PitchDet extends OldUnit {
+public class PitchDet extends Unit {
     int filterSize = 100;
     int filterDet = 200;
     int thresh = 50;
@@ -47,7 +21,7 @@ public class PitchDet extends OldUnit {
      * *********************************************
      */
     public void process() throws Exception {
-        SampleSet input = (SampleSet) getInputNode(0);
+        SampleSet input = (SampleSet) getInputAtNode(0);
 
         double dataIn[] = input.data;
         double dataOut[] = new double[dataIn.length];
@@ -95,22 +69,31 @@ public class PitchDet extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(1);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        String guilines = "";
+        guilines += "Enter Size Of Pitch Template (samples) $title filterSize IntScroller 0 200 100\n";
+        guilines += "Enter Number of Samples to apply pitch template to $title filterDet IntScroller 0 500 200\n";
+        guilines += "Enter Threshold $title thresh IntScroller 0 200 50\n";
+        guilines += "Mute $title mute Checkbox false\n";
+        setGUIBuilderV2Info(guilines);
     }
-
-    /**
-     * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
-     *         Such lines must in the specified GUI text format.
-     */
-    public void setGUIInformation() {
-        addGUILine("Enter Size Of Pitch Template (samples) $title filterSize IntScroller 0 200 100");
-        addGUILine("Enter Number of Samples to apply pitch template to $title filterDet IntScroller 0 500 200");
-        addGUILine("Enter Threshold $title thresh IntScroller 0 200 50");
-        addGUILine("Mute $title mute Checkbox false");
-    }
+//
+//    /**
+//     * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
+//     *         Such lines must in the specified GUI text format.
+//     */
+//    public void setGUIInformation() {
+//        addGUILine("Enter Size Of Pitch Template (samples) $title filterSize IntScroller 0 200 100");
+//        addGUILine("Enter Number of Samples to apply pitch template to $title filterDet IntScroller 0 500 200");
+//        addGUILine("Enter Threshold $title thresh IntScroller 0 200 50");
+//        addGUILine("Mute $title mute Checkbox false");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -126,41 +109,19 @@ public class PitchDet extends OldUnit {
         super.stopping();
     }
 
-    /**
-     * Called when the start button is pressed within the MainTriana Window
-     */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves PitchDet's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("filterSize", filterSize);
-        saveParameter("filterDet", filterSize);
-        saveParameter("thresh", thresh);
-        saveParameter("mute", mute);
-    }
-
-
-    /**
-     * Used to set each of PitchDet's parameters.
-     */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
-
+    public void parameterUpdate(String name, String value) {
+        // Code to update local variables
         if (name.equals("filterSize")) {
-            filterSize = strToInt(value);
+            filterSize = Str.strToInt(value);
         }
         if (name.equals("filterDet")) {
-            filterSize = strToInt(value);
+            filterSize = Str.strToInt(value);
         }
         if (name.equals("thresh")) {
-            thresh = strToInt(value);
+            thresh = Str.strToInt(value);
         }
         if (name.equals("mute")) {
-            mute = strToBoolean(value);
+            mute = Str.strToBoolean(value);
         }
     }
 
@@ -174,17 +135,16 @@ public class PitchDet extends OldUnit {
      * @return a string containing the names of the types allowed to be input to PitchDet, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
-
     /**
-     * @return a string containing the names of the types output from PitchDet, each separated by a white space.
+     * @return a string containing the names of the types output from MatchFilter, each separated by a white space.
      */
-    public String outputTypes() {
-        return "SampleSet";
-    }
 
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
+    }
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when
      * the user puts the mouse over the unit icon for more than a second.

@@ -1,33 +1,7 @@
 package signalproc.dataparam;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
+import org.trianacode.taskgraph.Unit;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.SampleSet;
 
 
@@ -37,7 +11,7 @@ import triana.types.SampleSet;
  * @author David Churches
  * @version 1.1 06 Nov 2003
  */
-public class SetLabels extends OldUnit {
+public class SetLabels extends Unit {
 
     String xlabel = "";
     String ylabel = "";
@@ -49,7 +23,7 @@ public class SetLabels extends OldUnit {
      */
     public void process() throws Exception {
 
-        GraphType input = (SampleSet) getInputNode(0);
+        GraphType input = (SampleSet) getInputAtNode(0);
 
         if (!xlabel.equals("")) {
             input.setIndependentLabels(0, xlabel);
@@ -59,7 +33,6 @@ public class SetLabels extends OldUnit {
         }
 
         output(input);
-
     }
 
 
@@ -69,10 +42,10 @@ public class SetLabels extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
-
-        setRequireDoubleInputs(false);
-        setCanProcessDoubleArrays(false);
+//        setUseGUIBuilder(true);
+//
+//        setRequireDoubleInputs(false);
+//        setCanProcessDoubleArrays(false);
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
@@ -81,17 +54,20 @@ public class SetLabels extends OldUnit {
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(0);
         setMaximumOutputNodes(Integer.MAX_VALUE);
-
+        String guilines = "";
+        guilines += "New x-axis label: $title xlabel TextField\n";
+        guilines += "New y-axis label: $title ylabel TextField\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("New x-axis label: $title xlabel TextField");
-        addGUILine("New y-axis label: $title ylabel TextField");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("New x-axis label: $title xlabel TextField");
+//        addGUILine("New y-axis label: $title ylabel TextField");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -110,30 +86,29 @@ public class SetLabels extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves SetLabels's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("xlabel", xlabel);
-        saveParameter("ylabel", ylabel);
-    }
-
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves SetLabels's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("xlabel", xlabel);
+//        saveParameter("ylabel", ylabel);
+//    }
 
     /**
      * Used to set each of SetLabels's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("xlabel")) {
-            xlabel = value;
+            xlabel = (String) value;
         }
         if (name.equals("ylabel")) {
-            ylabel = value;
+            ylabel = (String) value;
         }
     }
 
@@ -147,17 +122,25 @@ public class SetLabels extends OldUnit {
      * @return a string containing the names of the types allowed to be input to SetLabels, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+//    public String inputTypes() {
+//        return "SampleSet";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from SetLabels, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "SampleSet";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from SetLabels, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
-
+    
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when
      * the user puts the mouse over the unit icon for more than a second.

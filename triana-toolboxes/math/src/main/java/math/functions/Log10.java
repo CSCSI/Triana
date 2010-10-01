@@ -10,7 +10,6 @@ import triana.types.SampleSet;
 import triana.types.Spectrum;
 import triana.types.util.FlatArray;
 
-
 /**
  * Computes logarithm to base 10
  *

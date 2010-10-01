@@ -1,32 +1,6 @@
 package common.logic;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.Parameter;
 import triana.types.util.Str;
 
@@ -36,7 +10,7 @@ import triana.types.util.Str;
  * @author ian
  * @version 2.0 09 Jan 2001
  */
-public class ForNext extends OldUnit {
+public class ForNext extends Unit {
 
     String start = "0";
     String stop = "10";
@@ -58,30 +32,25 @@ public class ForNext extends OldUnit {
         }
     }
 
-
     /**
      * Initialses information specific to ForNext.
      */
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
 
-        setRequireDoubleInputs(false);
-        setCanProcessDoubleArrays(false);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
-    }
-
-    /**
-     * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
-     *         Such lines must in the specified GUI text format.
-     */
-    public void setGUIInformation() {
-        addGUILine("Start Value $title start TextField 0");
-        addGUILine("Stop Value $title stop TextField 10");
-        addGUILine("Step Size $title step TextField 1");
+        String guilines = "";
+        guilines += "Start Value $title start TextField 0\n";
+        guilines += "Stop Value $title stop TextField 10\n";
+        guilines += "Step Size $title step TextField 1\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
@@ -91,36 +60,20 @@ public class ForNext extends OldUnit {
         super.reset();
     }
 
-    /**
-     * Called when the stop button is pressed within the MainTriana Window
-     */
-    public void stopping() {
-        super.stopping();
-    }
-
-    /**
-     * Called when the start button is pressed within the MainTriana Window
-     */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves ForNext's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("start", start);
-        saveParameter("stop", stop);
-        saveParameter("step", step);
-    }
+//    /**
+//     * Saves ForNext's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("start", start);
+//        saveParameter("stop", stop);
+//        saveParameter("step", step);
+//    }
 
 
     /**
      * Used to set each of ForNext's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
-
+    public void parameterUpdate(String name, String value) {        
         if (name.equals("start")) {
             start = value;
         }
@@ -138,19 +91,15 @@ public class ForNext extends OldUnit {
     public void updateWidgetFor(String name) {
     }
 
-    /**
-     * @return a string containing the names of the types allowed to be input to ForNext, each separated by a white
-     *         space.
-     */
-    public String inputTypes() {
-        return "none";
+    public String[] getInputTypes() {
+        return new String[]{};
     }
 
     /**
-     * @return a string containing the names of the types output from ForNext, each separated by a white space.
+     * @return a string containing the names of the types output from Compare, each separated by a white space.
      */
-    public String outputTypes() {
-        return "Parameter";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.Parameter"};
     }
 
     /**
@@ -169,7 +118,3 @@ public class ForNext extends OldUnit {
         return "ForNext.html";
     }
 }
-
-
-
-

@@ -1,9 +1,7 @@
 package math.functions;
 
-
 import org.trianacode.taskgraph.Unit;
 import triana.types.Const;
-
 
 /**
  * Generates a random number
@@ -34,7 +32,6 @@ public class Random extends Unit {
             output(new Const(val));
         }
     }
-
 
     /**
      * Called when the unit is created. Initialises the unit's properties and parameters.

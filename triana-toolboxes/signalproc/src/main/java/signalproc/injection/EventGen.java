@@ -1,36 +1,11 @@
 package signalproc.injection;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.util.Date;
 import java.util.Random;
 
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.SampleSet;
+import triana.types.util.Str;
 import triana.types.util.TrianaSort;
 
 
@@ -41,7 +16,7 @@ import triana.types.util.TrianaSort;
  * @author Bernard Schutz
  * @version 1.0 Final 25 Jun 2000
  */
-public class EventGen extends OldUnit {
+public class EventGen extends Unit {
 
     String type = "Gaussian_noise";
     double amplitude = 1;
@@ -67,7 +42,7 @@ public class EventGen extends OldUnit {
         int j;
         boolean tryDuplicateEventTimes;
 
-        input = (SampleSet) getInputNode(0);
+        input = (SampleSet) getInputAtNode(0);
         if (firstSet) {
             setup();
             firstSet = false;
@@ -155,7 +130,7 @@ public class EventGen extends OldUnit {
     public void init() {
         super.init();
         firstSet = true;
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
@@ -165,21 +140,29 @@ public class EventGen extends OldUnit {
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        String guilines = "";
+        guilines += "Choose event type $title type Choice Gaussian_noise Uniform_noise Linear_chirp Ring\n";
+        guilines += "Amplitude $title amplitude Scroller 0 10 1\n";
+        guilines += "Mean duration (sec) $title duration Scroller 0 1 0.01\n";
+        guilines += "Mean interval between events (sec) $title interval Scroller 0 10 1\n";
+        guilines += "Scale: noise mean, chirp freq (Hz), ring freq (Hz) $title scale Scroller 0 10000 0\n";
+        setGUIBuilderV2Info(guilines);
+
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Choose event type $title type Choice Gaussian_noise Uniform_noise Linear_chirp Ring");
-        addGUILine("Amplitude $title amplitude Scroller 0 10 1");
-        addGUILine("Mean duration (sec) $title duration Scroller 0 1 0.01");
-        addGUILine("Mean interval between events (sec) $title interval Scroller 0 10 1");
-        addGUILine("Scale: noise mean, chirp freq (Hz), ring freq (Hz) $title scale Scroller 0 10000 0");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Choose event type $title type Choice Gaussian_noise Uniform_noise Linear_chirp Ring");
+//        addGUILine("Amplitude $title amplitude Scroller 0 10 1");
+//        addGUILine("Mean duration (sec) $title duration Scroller 0 1 0.01");
+//        addGUILine("Mean interval between events (sec) $title interval Scroller 0 10 1");
+//        addGUILine("Scale: noise mean, chirp freq (Hz), ring freq (Hz) $title scale Scroller 0 10000 0");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -198,41 +181,41 @@ public class EventGen extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves EventGen's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("type", type);
-        saveParameter("amplitude", amplitude);
-        saveParameter("duration", duration);
-        saveParameter("interval", interval);
-        saveParameter("scale", scale);
-    }
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves EventGen's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("type", type);
+//        saveParameter("amplitude", amplitude);
+//        saveParameter("duration", duration);
+//        saveParameter("interval", interval);
+//        saveParameter("scale", scale);
+//    }
 
     /**
      * Used to set each of EventGen's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("type")) {
-            type = value;
+            type = (String) value;
         }
         if (name.equals("amplitude")) {
-            amplitude = strToDouble(value);
+            amplitude = Str.strToDouble((String) value);
         }
         if (name.equals("duration")) {
-            duration = strToDouble(value);
+            duration = Str.strToDouble((String) value);
         }
         if (name.equals("interval")) {
-            interval = strToDouble(value);
+            interval = Str.strToDouble((String) value);
         }
         if (name.equals("scale")) {
-            scale = strToDouble(value);
+            scale = Str.strToDouble((String) value);
         }
     }
 
@@ -240,16 +223,25 @@ public class EventGen extends OldUnit {
      * @return a string containing the names of the types allowed to be input to EventGen, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "SampleSet";
+//    public String inputTypes() {
+//        return "SampleSet";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from EventGen, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "SampleSet";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
 
-    /**
-     * @return a string containing the names of the types output from EventGen, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "SampleSet";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.SampleSet"};
     }
+    
 
     /**
      * This returns a <b>brief!</b> description of what the unit does. The text here is shown in a pop up window when

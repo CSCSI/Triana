@@ -10,12 +10,12 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.event.ParameterUpdateEvent;
 import org.trianacode.taskgraph.event.TaskDisposedEvent;
 import org.trianacode.taskgraph.event.TaskListener;
 import org.trianacode.taskgraph.event.TaskNodeEvent;
 import org.trianacode.taskgraph.event.TaskPropertyEvent;
-import triana.types.OldUnit;
 import triana.types.VectorType;
 
 
@@ -27,7 +27,7 @@ import triana.types.VectorType;
  */
 
 
-public class TableImporter extends OldUnit implements TaskListener {
+public class TableImporter extends Unit implements TaskListener {
 
     public static final String COLUMNS = "Columns";
     public static final String ROWS = "Rows";

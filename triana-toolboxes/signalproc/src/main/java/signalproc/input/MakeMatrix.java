@@ -1,36 +1,10 @@
 package signalproc.input;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.util.Random;
 
+import org.trianacode.taskgraph.Unit;
 import triana.types.MatrixType;
-import triana.types.OldUnit;
-
+import triana.types.util.Str;
 
 /**
  * A MakeMatrix unit to create a MatrixType data object containing a matrix with given paramters.
@@ -38,7 +12,7 @@ import triana.types.OldUnit;
  * @author B Schutz
  * @version 1.0 30 Dec 2000
  */
-public class MakeMatrix extends OldUnit {
+public class MakeMatrix extends Unit {
 
     int columns = 2;
     int rows = 2;
@@ -178,26 +152,33 @@ public class MakeMatrix extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+//        setUseGUIBuilder(true);
 
         setMinimumInputNodes(0);
         setMaximumInputNodes(0);
         setDefaultInputNodes(0);
-        setResizableInputs(false);
-        setResizableOutputs(true);
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+
+        String guilines = "";
+        guilines += "Number of columns $title columns IntScroller 1 100 2\n";
+        guilines += "Number of rows $title rows IntScroller 1 100 2\n";
+        guilines += "Fill matrix with: $title fill Choice zeros randoms IntegersByRow IntegersByColumn\n";
+        guilines += "For square matrices, give symmetry: $title symmetry Choice (none) symmetric antisymmetric diagonal\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Number of columns $title columns IntScroller 1 100 2");
-        addGUILine("Number of rows $title rows IntScroller 1 100 2");
-        addGUILine("Fill matrix with: $title fill Choice zeros randoms IntegersByRow IntegersByColumn");
-        addGUILine(
-                "For square matrices, give symmetry: $title symmetry Choice (none) symmetric antisymmetric diagonal");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Number of columns $title columns IntScroller 1 100 2");
+//        addGUILine("Number of rows $title rows IntScroller 1 100 2");
+//        addGUILine("Fill matrix with: $title fill Choice zeros randoms IntegersByRow IntegersByColumn");
+//        addGUILine(
+//                "For square matrices, give symmetry: $title symmetry Choice (none) symmetric antisymmetric diagonal");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -216,38 +197,37 @@ public class MakeMatrix extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves MakeMatrix's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("columns", columns);
-        saveParameter("rows", rows);
-        saveParameter("fill", fill);
-        saveParameter("symmetry", symmetry);
-    }
-
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves MakeMatrix's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("columns", columns);
+//        saveParameter("rows", rows);
+//        saveParameter("fill", fill);
+//        saveParameter("symmetry", symmetry);
+//    }
 
     /**
      * Used to set each of MakeMatrix's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("columns")) {
-            columns = strToInt(value);
+            columns = Str.strToInt((String) value);
         }
         if (name.equals("rows")) {
-            rows = strToInt(value);
+            rows = Str.strToInt((String) value);
         }
         if (name.equals("fill")) {
-            fill = value;
+            fill = (String) value;
         }
         if (name.equals("symmetry")) {
-            symmetry = value;
+            symmetry = (String) value;
         }
     }
 
@@ -261,15 +241,23 @@ public class MakeMatrix extends OldUnit {
      * @return a string containing the names of the types allowed to be input to MakeMatrix, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "none";
+//    public String inputTypes() {
+//        return "none";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from MakeMatrix, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "MatrixType";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{};
     }
 
-    /**
-     * @return a string containing the names of the types output from MakeMatrix, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "MatrixType";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.MatrixType"};
     }
 
     /**

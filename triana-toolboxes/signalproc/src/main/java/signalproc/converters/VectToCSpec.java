@@ -1,36 +1,10 @@
 package signalproc.converters;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.awt.event.ActionEvent;
 
 import org.trianacode.gui.panels.UnitPanel;
+import org.trianacode.taskgraph.Unit;
 import triana.types.ComplexSpectrum;
-import triana.types.OldUnit;
 import triana.types.VectorType;
 import triana.types.util.Str;
 
@@ -40,7 +14,7 @@ import triana.types.util.Str;
  * @author Ian Taylor
  * @version 1.0 alpha 07 May 1997
  */
-public class VectToCSpec extends OldUnit {
+public class VectToCSpec extends Unit {
     String sampFreq = "1024";
     String time = "0";
     String description = "Data from VectToCSpec";
@@ -67,7 +41,7 @@ public class VectToCSpec extends OldUnit {
      * *********************************************
      */
     public void process() {
-        VectorType raw = (VectorType) getInputNode(0);
+        VectorType raw = (VectorType) getInputAtNode(0);
 
         double sf = Str.strToDouble(sampFreq);
         String desc = description;
@@ -81,7 +55,7 @@ public class VectToCSpec extends OldUnit {
         }
 
         ComplexSpectrum s = convert(raw, sf, order);
-        addDescription(desc);
+        //addDescription(desc);
 
         // s.setTimeStamp(myPanel.getDate()); 
 
@@ -132,8 +106,15 @@ public class VectToCSpec extends OldUnit {
      */
     public void init() {
         super.init();
-        setResizableInputs(false);
-        setResizableOutputs(true);
+//        setResizableInputs(false);
+//        setResizableOutputs(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
         myPanel = new VectToGenPanel();
 //        myPanel.setObject(this, VectToGenPanel.CSPEC);
@@ -146,31 +127,31 @@ public class VectToCSpec extends OldUnit {
         super.reset();
     }
 
-    public void saveParameters() {
-        saveParameter("sampFreq", sampFreq);
-        saveParameter("time", time);
-        saveParameter("description", description);
-        saveParameter("complex", complexOrder);
-    }
+//    public void saveParameters() {
+//        saveParameter("sampFreq", sampFreq);
+//        saveParameter("time", time);
+//        saveParameter("description", description);
+//        saveParameter("complex", complexOrder);
+//    }
 
     /**
      * Sets parameters
      */
-    public void setParameter(String name, String value) {
+    public void parameterUpdate(String name, Object value) {
         if (name.equals("sampFreq")) {
-            sampFreq = value;
+            sampFreq = (String) value;
         }
 
         if (name.equals("time")) {
-            time = value;
+            time = (String) value;
         }
 
         if (name.equals("description")) {
-            description = value;
+            description = (String) value;
         }
 
         if (name.equals("complex")) {
-            complexOrder = value;
+            complexOrder = (String) value;
         }
     }
 
@@ -196,15 +177,23 @@ public class VectToCSpec extends OldUnit {
      * @return a string containing the names of the types allowed to be input to VectToCSpec, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "VectorType";
+//    public String inputTypes() {
+//        return "VectorType";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from VectToCSpec, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "ComplexSpectrum";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.VectorType"};
     }
 
-    /**
-     * @return a string containing the names of the types output from VectToCSpec, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "ComplexSpectrum";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum"};
     }
 
     /**
@@ -227,9 +216,9 @@ public class VectToCSpec extends OldUnit {
     /**
      * Captures the events thrown out by VectToGenPanel.
      */
-    public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);   // we need this
-    }
+//    public void actionPerformed(ActionEvent e) {
+//        super.actionPerformed(e);   // we need this
+//    }
 
 }
 

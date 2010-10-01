@@ -1,33 +1,8 @@
 package common.parameter;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-import triana.types.OldUnit;
+import org.trianacode.taskgraph.Unit;
 import triana.types.Parameter;
+import triana.types.util.Str;
 
 /**
  * A IntScroller unit to ..
@@ -35,7 +10,7 @@ import triana.types.Parameter;
  * @author Ian Taylor
  * @version 1.0 Final 27 Jul 2000
  */
-public class IntScroller extends OldUnit {
+public class IntScroller extends Unit {
 
     int value = 1;
 
@@ -55,19 +30,26 @@ public class IntScroller extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
+        setDefaultInputNodes(1);
+        setMinimumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(1);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Change the Value using the Scrollbar $title value IntScroller 0 100 1\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Change the Value using the Scrollbar $title value IntScroller 0 100 1");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Change the Value using the Scrollbar $title value IntScroller 0 100 1");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -86,26 +68,26 @@ public class IntScroller extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves IntScroller's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("value", value);
-    }
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves IntScroller's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("value", value);
+//    }
 
 
     /**
      * Used to set each of IntScroller's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("value")) {
-            this.value = strToInt(value);
+            this.value = Str.strToInt((String) value);
         }
     }
 
@@ -119,15 +101,15 @@ public class IntScroller extends OldUnit {
      * @return a string containing the names of the types allowed to be input to IntScroller, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "none";
+    public String[] getInputTypes() {
+        return new String[]{};
     }
 
     /**
-     * @return a string containing the names of the types output from IntScroller, each separated by a white space.
+     * @return a string containing the names of the types output from Compare, each separated by a white space.
      */
-    public String outputTypes() {
-        return "Parameter";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.Parameter"};
     }
 
     /**

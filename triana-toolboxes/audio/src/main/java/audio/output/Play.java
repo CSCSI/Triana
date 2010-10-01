@@ -120,7 +120,7 @@ public class Play extends Unit {
 
     public void setUpPlayer(AudioFormat audioFormat) {
 
-        System.out.println("Setting Uppppppppp Player ..");
+        System.out.println("Setting Up Player ..");
 
         // If source dataline is null, then close the channel
         if (outputChannel != null) {

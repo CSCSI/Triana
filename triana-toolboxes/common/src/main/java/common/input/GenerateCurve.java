@@ -1,40 +1,14 @@
 package common.input;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Vector;
 
 import org.trianacode.gui.panels.UnitPanel;
 import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.Curve;
-import triana.types.OldUnit;
 import triana.types.util.Str;
 
 /**
@@ -44,7 +18,7 @@ import triana.types.util.Str;
  * @author Ian Taylor, Bernard Schutz
  * @version 2.0 20 August 2000
  */
-public class GenerateCurve extends OldUnit {
+public class GenerateCurve extends Unit {
 
     String xlabel = "X Data";
     String ylabel = "Y Data";
@@ -69,7 +43,7 @@ public class GenerateCurve extends OldUnit {
 
         if (br == null) {
             ErrorDialog.show("Couldn't create a reader for 2-D data");
-            stop();
+            getRunnableInterface().notifyError(null);
         }
 
         double x[] = new double[count];
@@ -100,7 +74,7 @@ public class GenerateCurve extends OldUnit {
 
         if (br == null) {
             ErrorDialog.show("Couldn't create a reader for 2-D data");
-            stop();
+            getRunnableInterface().notifyError(null); // Used to be 'stop'
         }
 
         // count number of pairs
@@ -123,8 +97,13 @@ public class GenerateCurve extends OldUnit {
     public void init() {
         super.init();
 
-        setResizableInputs(false);
-        setResizableOutputs(true);
+        setDefaultInputNodes(0);
+        setMinimumInputNodes(0);
+        setMaximumInputNodes(0);
+
+        setDefaultOutputNodes(1);
+        setMinimumOutputNodes(0);
+        setMaximumOutputNodes(Integer.MAX_VALUE);
 
         myWindow = new TwoDWindow();
         myWindow.setObject(this);
@@ -137,14 +116,14 @@ public class GenerateCurve extends OldUnit {
         super.reset();
     }
 
-    /**
-     * Saves GenerateCurve's parameters to the parameter file.
-     */
-    public void saveParameters() {
-        saveParameter("data", data);
-        saveParameter("xlabel", xlabel);
-        saveParameter("ylabel", ylabel);
-    }
+//    /**
+//     * Saves GenerateCurve's parameters to the parameter file.
+//     */
+//    public void saveParameters() {
+//        saveParameter("data", data);
+//        saveParameter("xlabel", xlabel);
+//        saveParameter("ylabel", ylabel);
+//    }
 
     /**
      * Sets GenerateCurve's parameters.
@@ -178,18 +157,17 @@ public class GenerateCurve extends OldUnit {
     }
 
     /**
-     * @return a string containing the names of the types allowed to be input to GenerateCurve, each separated by a
-     *         white space.
+     * @return an array of the input types accepted by nodes not covered by getNodeInputTypes().
      */
-    public String inputTypes() {
-        return "none";
+    public String[] getInputTypes() {
+        return new String[]{};
     }
 
     /**
      * @return a string containing the names of the types output from GenerateCurve, each separated by a white space.
      */
-    public String outputTypes() {
-        return "Curve";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.Curve"};
     }
 
     /**

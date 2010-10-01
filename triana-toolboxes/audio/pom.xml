@@ -34,6 +34,11 @@
     <dependencies>
         <dependency>
             <groupId>org.trianacode</groupId>
+            <artifactId>triana-types</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.trianacode</groupId>
             <artifactId>audio-tritonus_aos</artifactId>
             <version>0.1</version>
             <scope>system</scope>

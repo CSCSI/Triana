@@ -1,38 +1,12 @@
 package signalproc.filtering.freqdomain;
 
-/*
- * Copyright (c) 1995 onwards, University of Wales College of Cardiff
- *
- * Permission to use and modify this software and its documentation for
- * any purpose is hereby granted without fee provided a written agreement
- * exists between the recipients and the University.
- *
- * Further conditions of use are that (i) the above copyright notice and
- * this permission notice appear in all copies of the software and
- * related documentation, and (ii) the recipients of the software and
- * documentation undertake not to copy or redistribute the software and
- * documentation to any other party.
- *
- * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
- * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF WALES COLLEGE OF CARDIFF BE LIABLE
- * FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
- * KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
- * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.Unit;
 import triana.types.GraphType;
-import triana.types.OldUnit;
 import triana.types.Spectral;
 import triana.types.util.SigAnalWindows;
-
+import triana.types.util.Str;
 
 /**
  * A MultiBand unit to split an input spectrum into a number of consecutive narrow bands of uniform width. The unit
@@ -43,7 +17,7 @@ import triana.types.util.SigAnalWindows;
  * @author B F Schutz
  * @version 2.0 05 Mar 2001
  */
-public class MultiBand extends OldUnit {
+public class MultiBand extends Unit {
 
     double lowLimit = 50;
     double highLimit = 1000;
@@ -61,7 +35,7 @@ public class MultiBand extends OldUnit {
         GraphType input;
         GraphType output;
 
-        input = (GraphType) getInputNode(0);
+        input = (GraphType) getInputAtNode(0);
 
         double maxFreq = ((Spectral) input).getFrequencyResolution(0) * ((Spectral) input).getOriginalN(0) / 2.0;
         if (highLimit > maxFreq) {
@@ -99,10 +73,10 @@ public class MultiBand extends OldUnit {
     public void init() {
         super.init();
 
-        setUseGUIBuilder(true);
-
-        setRequireDoubleInputs(false);
-        setCanProcessDoubleArrays(false);
+//        setUseGUIBuilder(true);
+//
+//        setRequireDoubleInputs(false);
+//        setCanProcessDoubleArrays(false);
 
         setDefaultInputNodes(1);
         setMinimumInputNodes(1);
@@ -112,22 +86,31 @@ public class MultiBand extends OldUnit {
         setDefaultOutputNodes(2);
         setMinimumOutputNodes(2);
         setMaximumOutputNodes(Integer.MAX_VALUE);
+
+        String guilines = "";
+        guilines += "Lowest frequency (Hz): $title lowLimit Scroller 0 1000 50\n";
+        guilines += "Highest frequency (Hz): $title highLimit Scroller 0 4000 1000\n";
+        guilines += "Number of bands between these frequencies: $title nBands IntScroller 0 10 2\n";
+        guilines += "Output narrow-band? (Do not check if you want full-band output with zeros.) $title noZeros Checkbox false\n";
+        guilines += "Choose window for smoothing filter edges in frequency-domain $title window Choice " + SigAnalWindows.listOfWindows() + " \n";
+        guilines += "Reduce Nyquist frequency of each band to its upper band limit? $title nyquist Checkbox false\n";
+        setGUIBuilderV2Info(guilines);
     }
 
     /**
      * @return the GUI information for this unit. It uses the addGUILine function to add lines to the GUI interface.
      *         Such lines must in the specified GUI text format.
      */
-    public void setGUIInformation() {
-        addGUILine("Lowest frequency (Hz): $title lowLimit Scroller 0 1000 50");
-        addGUILine("Highest frequency (Hz): $title highLimit Scroller 0 4000 1000");
-        addGUILine("Number of bands between these frequencies: $title nBands IntScroller 0 10 2");
-        addGUILine(
-                "Output narrow-band? (Do not check if you want full-band output with zeros.) $title noZeros Checkbox false");
-        addGUILine("Choose window for smoothing filter edges in frequency-domain $title window Choice " + SigAnalWindows
-                .listOfWindows());
-        addGUILine("Reduce Nyquist frequency of each band to its upper band limit? $title nyquist Checkbox false");
-    }
+//    public void setGUIInformation() {
+//        addGUILine("Lowest frequency (Hz): $title lowLimit Scroller 0 1000 50");
+//        addGUILine("Highest frequency (Hz): $title highLimit Scroller 0 4000 1000");
+//        addGUILine("Number of bands between these frequencies: $title nBands IntScroller 0 10 2");
+//        addGUILine(
+//                "Output narrow-band? (Do not check if you want full-band output with zeros.) $title noZeros Checkbox false");
+//        addGUILine("Choose window for smoothing filter edges in frequency-domain $title window Choice " + SigAnalWindows
+//                .listOfWindows());
+//        addGUILine("Reduce Nyquist frequency of each band to its upper band limit? $title nyquist Checkbox false");
+//    }
 
     /**
      * Called when the reset button is pressed within the MainTriana Window
@@ -146,37 +129,36 @@ public class MultiBand extends OldUnit {
     /**
      * Called when the start button is pressed within the MainTriana Window
      */
-    public void starting() {
-        super.starting();
-    }
-
-    /**
-     * Saves MultiBand's parameters.
-     */
-    public void saveParameters() {
-        saveParameter("lowLimit", lowLimit);
-        saveParameter("highLimit", highLimit);
-        saveParameter("nBands", nBands);
-        saveParameter("noZeros", noZeros);
-        saveParameter("window", window);
-        saveParameter("nyquist", nyquist);
-    }
-
+//    public void starting() {
+//        super.starting();
+//    }
+//
+//    /**
+//     * Saves MultiBand's parameters.
+//     */
+//    public void saveParameters() {
+//        saveParameter("lowLimit", lowLimit);
+//        saveParameter("highLimit", highLimit);
+//        saveParameter("nBands", nBands);
+//        saveParameter("noZeros", noZeros);
+//        saveParameter("window", window);
+//        saveParameter("nyquist", nyquist);
+//    }
 
     /**
      * Used to set each of MultiBand's parameters.
      */
-    public void setParameter(String name, String value) {
-        updateGUIParameter(name, value);
+    public void parameterUpdate(String name, Object value) {
+        //updateGUIParameter(name, value);
 
         if (name.equals("lowLimit")) {
-            lowLimit = strToDouble(value);
+            lowLimit = Str.strToDouble((String) value);
         }
         if (name.equals("highLimit")) {
-            highLimit = strToDouble(value);
+            highLimit = Str.strToDouble((String) value);
         }
         if (name.equals("nBands")) {
-            nBands = strToInt(value);
+            nBands = Str.strToInt((String) value);
             Task task = getTask();
 
             try {
@@ -191,13 +173,13 @@ public class MultiBand extends OldUnit {
                 notifyError(except.getMessage());
             }
             if (name.equals("noZeros")) {
-                noZeros = strToBoolean(value);
+                noZeros = Str.strToBoolean((String) value);
             }
             if (name.equals("window")) {
-                window = value;
+                window = (String) value;
             }
             if (name.equals("nyquist")) {
-                nyquist = strToBoolean(value);
+                nyquist = Str.strToBoolean((String) value);
             }
         }
     }
@@ -212,15 +194,23 @@ public class MultiBand extends OldUnit {
      * @return a string containing the names of the types allowed to be input to MultiBand, each separated by a white
      *         space.
      */
-    public String inputTypes() {
-        return "ComplexSpectrum Spectrum TimeFrequency";
+//    public String inputTypes() {
+//        return "ComplexSpectrum Spectrum TimeFrequency";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from MultiBand, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "ComplexSpectrum Spectrum TimeFrequency";
+//    }
+
+    public String[] getInputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.TimeFrequency"};
     }
 
-    /**
-     * @return a string containing the names of the types output from MultiBand, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "ComplexSpectrum Spectrum TimeFrequency";
+    public String[] getOutputTypes() {
+        return new String[]{"triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.TimeFrequency"};
     }
 
     /**
