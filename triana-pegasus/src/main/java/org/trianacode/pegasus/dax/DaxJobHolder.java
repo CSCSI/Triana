@@ -39,6 +39,13 @@ public class DaxJobHolder {
         this.toolname = toolname;
     }
 
+    public HashMap getFilesIn() {
+        return filesIn;
+    }
+
+    public HashMap getFilesOut() {
+        return filesOut;
+    }
 
 
     public int getNumInputNodes() {

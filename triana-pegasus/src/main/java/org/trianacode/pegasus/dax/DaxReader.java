@@ -232,16 +232,54 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         for(Task task : tasks){
             if(task.getDataInputNodeCount() > 3){
                 System.out.println("Task : " + task.getToolName() + " has : " + task.getDataInputNodeCount() + " input nodes.");
-
             }
             if(task.getDataOutputNodeCount() > 3){
                 System.out.println("Task : " + task.getToolName() + " has : " + task.getDataOutputNodeCount() + " output nodes.");
 
             }
         }
-
+        for(DaxJobHolder djh : toolVector){
+            if(djh.getNumInputNodes() > 3){
+                System.out.println("Job : " + djh.getToolname() + " has : " + djh.getNumInputNodes() + " input nodes.");
+                HashMap inHash = djh.getFilesIn();
+                System.out.println("Hash has : " + inHash.toString());
+//                for(int i = 0; i < inHash.size(); i++){
+//                    for(int j = 0; j < inHash.size(); j++){
+//                        System.out.println("******* Found + " + lcs((String)inHash.get(i), (String)inHash.get(j)));
+//                    }
+//                }
+            }
+            if(djh.getNumOutputNodes() > 3){
+                System.out.println("Job : " + djh.getToolname() + " has : " + djh.getNumOutputNodes() + " output nodes.");
+                HashMap outHash = djh.getFilesOut();
+                System.out.println("Hash has : " + outHash.toString());
+//                for(int i = 0; i < outHash.size(); i++){
+//                    for(int j = 0; j < outHash.size(); j++){
+//                        System.out.println(lcs((String)outHash.get(i), (String)outHash.get(j)));
+//                    }
+//                }
+            }
+        }
 
         return tg;
+    }
+
+    public static String lcs(String a, String b){
+
+        System.out.println("s.a : " + a + " s.b : " + b);
+
+        int aLen = a.length();
+        int bLen = b.length();
+        if(aLen == 0 || bLen == 0){
+            return "";
+        }else if(a.charAt(aLen-1) == b.charAt(bLen-1)){
+            return lcs(a.substring(0,aLen-1),b.substring(0,bLen-1))
+                    + a.charAt(aLen-1);
+        }else{
+            String x = lcs(a, b.substring(0,bLen-1));
+            String y = lcs(a.substring(0,aLen-1), b);
+            return (x.length() > y.length()) ? x : y;
+        }
     }
 
     private Task getTaskFromTool(Tool tool){

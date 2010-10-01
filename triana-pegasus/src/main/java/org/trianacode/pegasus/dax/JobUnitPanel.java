@@ -83,7 +83,7 @@ public class JobUnitPanel extends ParameterPanel {
         lowerPanel.add(slide);
         add(lowerPanel);
 
-        //To change body of implemented methods use File | Settings | File Templates.
+        setEnabling(lowerPanel, collection);
     }
 
     private void setParams(){
@@ -134,7 +134,7 @@ public class JobUnitPanel extends ParameterPanel {
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
-        private void log(String s){
+    private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         //System.out.println(s);
