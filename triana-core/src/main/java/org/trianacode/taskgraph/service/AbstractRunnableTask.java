@@ -60,11 +60,11 @@
 package org.trianacode.taskgraph.service;
 
 
-import java.util.ArrayList;
-
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.util.HashSet;
 
 /**
  * An abstract runnable task. Responsible for providing common functionality to runnable tasks, such as execution state
@@ -85,7 +85,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     /**
      * a list of the execution listeners for this task
      */
-    protected ArrayList execlisteners = new ArrayList();
+    protected HashSet execlisteners = new HashSet();
 
     /**
      * The current state of the underlying unit.
@@ -109,23 +109,23 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
 
     public void setParent(TaskGraph taskgraph) {
         super.setParent(taskgraph);
-        addExecutionListener(taskgraph);
+        if (taskgraph != null) {
+            addExecutionListener(taskgraph);
+        }
     }
 
 
     /**
      * Adds a execution listener to this runnable instance
      */
-    public void addExecutionListener(ExecutionListener listener) {
-        if (!execlisteners.contains(listener)) {
-            execlisteners.add(listener);
-        }
+    public synchronized void addExecutionListener(ExecutionListener listener) {
+        boolean added = execlisteners.add(listener);
     }
 
     /**
      * Removes a execution listener from this runnable instance
      */
-    public void removeExecutionListener(ExecutionListener listener) {
+    public synchronized void removeExecutionListener(ExecutionListener listener) {
         execlisteners.remove(listener);
     }
 
@@ -324,7 +324,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     }
 
 
-    private void notifyExecutionRequest() {
+    private synchronized void notifyExecutionRequest() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionState.SCHEDULED, this);
@@ -334,7 +334,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         }
     }
 
-    private void notifyExecutionStarting() {
+    private synchronized void notifyExecutionStarting() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionState.RUNNING, this);
@@ -344,7 +344,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         }
     }
 
-    private void notifyExecutionFinished() {
+    private synchronized void notifyExecutionFinished() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionState.COMPLETE, this);
@@ -354,7 +354,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         }
     }
 
-    private void notifyExecutionReset() {
+    private synchronized void notifyExecutionReset() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(ExecutionState.RESET, this);
@@ -364,7 +364,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
         }
     }
 
-    private void notifyExecutionStateChange(ExecutionState newstate, ExecutionState oldstate) {
+    private synchronized void notifyExecutionStateChange(ExecutionState newstate, ExecutionState oldstate) {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
         ExecutionEvent event = new ExecutionEvent(newstate, oldstate, this);

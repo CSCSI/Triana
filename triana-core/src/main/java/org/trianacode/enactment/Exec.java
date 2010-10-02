@@ -6,6 +6,7 @@ import org.trianacode.config.cl.ArgumentController;
 import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.Option;
 import org.trianacode.config.cl.OptionValues;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.service.ExecutionEvent;
@@ -69,6 +70,16 @@ public class Exec implements ExecutionListener {
                 System.out.println(e.getMessage());
                 System.out.println(parser.usage());
                 System.exit(0);
+            }
+            String logLevel = vals.getOptionValue("l");
+
+            String logger = vals.getOptionValue("i");
+            if (logger != null) {
+                Loggers.isolateLogger(logger, logLevel == null ? "INFO" : logLevel);
+            } else {
+                if (logLevel != null) {
+                    Loggers.setLogLevel(logLevel);
+                }
             }
             String pid = vals.getOptionValue("u");
             List<String> wfs = vals.getOptionValues("w");
@@ -188,6 +199,7 @@ public class Exec implements ExecutionListener {
         runner = new TrianaRun(tool);
         runner.getScheduler().addExecutionListener(this);
         runner.runTaskGraph();
+
         while (!runner.isFinished()) {
             synchronized (this) {
                 try {
@@ -197,13 +209,18 @@ public class Exec implements ExecutionListener {
                 }
             }
         }
-        runner.dispose();
-//        try {
-//            writeFile(FINISHED, pid, false);
-//        } catch (IOException e) {
-//            log(e.getMessage());
-//            e.printStackTrace();
+//        Object out = runner.receiveOutputData(0);
+//        Object data = null;
+//        if(out instanceof WorkflowDataPacket) {
+//            try {
+//                DataBusInterface db = DataBus.getDataBus(((WorkflowDataPacket)out).getProtocol());
+//                data = db.get((WorkflowDataPacket)out);
+//            } catch (DataNotResolvableException e) {
+//                e.printStackTrace();
+//            }
 //        }
+//        System.out.println("Exec.execute output:" + data);
+        runner.dispose();
     }
 
 

@@ -59,18 +59,7 @@
 
 package org.trianacode.enactment;
 
-import org.trianacode.TrianaInstance;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.ExecutionState;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.NodeException;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.TaskLayoutUtils;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.CableImp;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
@@ -107,7 +96,6 @@ public class TrianaRun {
      * Constructs a TrianaExec to execute a clone of the specified taskgraph. Uses a default tool table
      */
     public TrianaRun(TaskGraph taskgraph) throws TaskGraphException {
-        initToolTable();
         init(taskgraph);
     }
 
@@ -115,25 +103,9 @@ public class TrianaRun {
      * Constructs a TrianaExec to execute a clone of the specified tool. Uses a default tool table.
      */
     public TrianaRun(Tool tool) throws TaskGraphException {
-        initToolTable();
         init(tool);
     }
 
-
-    /**
-     * Create and initialise a new tool table
-     *
-     * Ian T - this is as diodgy as hell.... what is this class for?
-     */
-    public static void initToolTable() {
-//        TrianaInstance engine;
-//        try {
-//            engine = new TrianaInstance(null, null);
-//        } catch (Exception e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-
-    }
 
     public SchedulerInterface getScheduler() {
         return scheduler;
@@ -204,6 +176,7 @@ public class TrianaRun {
         outcables = new ExecCable[outnodes.length];
 
         for (int count = 0; count < innodes.length; count++) {
+            System.out.println("TrianaRun.initCables connecting inputs");
             incables[count] = new ExecCable();
             incables[count].connectInput(innodes[count]);
         }
@@ -513,17 +486,12 @@ public class TrianaRun {
             }
 
             this.data = InterceptorChain.interceptSend(getSendingNode(), getReceivingNode(), data);
-
             if (!output) {
                 ((RunnableInstance) node.getTopLevelTask()).wakeUp(node.getTopLevelNode());
             }
         }
 
         public synchronized void sendNonBlocking(Object data) {
-            if (suspended) {
-                return;
-            }
-
             send(data);
         }
 

@@ -215,7 +215,7 @@ public class Scheduler implements SchedulerInterface {
      */
     public void notifyError(RunnableInstance cause) {
         stopTaskGraph(taskgraph);
-        taskgraph.removeExecutionListener(logger);
+        //taskgraph.removeExecutionListener(logger);
     }
 
     @Override
