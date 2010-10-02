@@ -20,13 +20,14 @@ import java.awt.event.ItemListener;
  */
 public class JobUnitPanel extends ParameterPanel {
     private JPanel upperPanel = new JPanel(new GridLayout(3,2,5,5));
-    private JPanel lowerPanel = new JPanel(new GridLayout(2,2,5,5));
+    private JPanel lowerPanel = new JPanel();
     private JTextField nameField = new JTextField("");
     private JTextField argsField = new JTextField("");
-    private int numberOfJobs;
+    private int numberOfJobs = 1;
+    private int fileInputsPerJob = 1;
     private boolean collection = false;
 
-    JLabel collectLabel = new JLabel("Not a collection");
+    JLabel collectLabel = new JLabel("");
 
     //  public boolean isAutoCommitByDefault(){return true;}
 
@@ -63,27 +64,85 @@ public class JobUnitPanel extends ParameterPanel {
             }
         });
         upperPanel.add(collectionBox);
+
+        if(isCollection()){
+            collectLabel.setText("Collection of jobs.");
+        }else{
+            collectLabel.setText("Not a collection");
+        }
         upperPanel.add(collectLabel);
 
         add(upperPanel);
 
+        lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
         lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Collection Options"));
-        //     JPanel lowerPanel1 = new JPanel(new GridLayout(3, 2, 5, 5));
-        final JLabel numberLabel = new JLabel("No. Jobs : 1");
+        JPanel lowerPanel1 = new JPanel(new GridLayout(1, 2, 5, 5));
+        final JPanel lowerPanel2 = new JPanel(new GridLayout(2, 2, 5, 5));
+        final JPanel lowerPanel3 = new JPanel(new GridLayout(2, 2, 5, 5));
 
-        final JSlider slide = new JSlider(1, 999, 1);
-        slide.setMajorTickSpacing(100);
-        slide.addChangeListener(new ChangeListener() {
+        final JCheckBox autoCheck = new JCheckBox("Auto (Fully connect all incoming nodes)", false);
+        final JCheckBox manualCheck = new JCheckBox("Manual", false);
+
+        autoCheck.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (autoCheck.isSelected()) {
+                    setEnabling(lowerPanel2, true);
+                    setEnabling(lowerPanel3, false);
+                    manualCheck.setSelected(false);
+                } else {
+                    setEnabling(lowerPanel2, false);
+                    setEnabling(lowerPanel3, true);
+                    manualCheck.setSelected(true);
+                }
+            }
+        });
+        manualCheck.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (manualCheck.isSelected()) {
+                    setEnabling(lowerPanel2, false);
+                    setEnabling(lowerPanel3, true);
+                    autoCheck.setSelected(false);
+                } else {
+                    setEnabling(lowerPanel2, true);
+                    setEnabling(lowerPanel3, false);
+                    autoCheck.setSelected(true);
+                }
+            }
+        });
+
+        lowerPanel1.add(autoCheck);
+        lowerPanel1.add(manualCheck);
+
+        final JLabel numberLabel = new JLabel("No. Jobs : " + numberOfJobs);
+        final JSlider jobSlide = new JSlider(1, 999, 1);
+        jobSlide.setMajorTickSpacing(100);
+        jobSlide.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent changeEvent) {
-                numberOfJobs = slide.getValue();
+                numberOfJobs = jobSlide.getValue();
                 numberLabel.setText("No. jobs : " + numberOfJobs);
             }
         });
-        lowerPanel.add(numberLabel);
-        lowerPanel.add(slide);
+        lowerPanel2.add(numberLabel);
+        lowerPanel2.add(jobSlide);
+
+        final JLabel numberInputFilesLabel = new JLabel("No. Files/job : " + fileInputsPerJob);
+        final JSlider fileSlide = new JSlider(1, 999, 1);
+        fileSlide.setMajorTickSpacing(100);
+        fileSlide.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent changeEvent) {
+                fileInputsPerJob = fileSlide.getValue();
+                numberLabel.setText("No. Files/job : " + fileInputsPerJob);
+            }
+        });
+        lowerPanel3.add(numberInputFilesLabel);
+        lowerPanel3.add(fileSlide);
+
+        lowerPanel.add(lowerPanel1);
+        lowerPanel.add(lowerPanel2);
+        lowerPanel.add(lowerPanel3);
         add(lowerPanel);
 
-        setEnabling(lowerPanel, collection);
+        setEnabling(lowerPanel, isCollection());
     }
 
     private void setParams(){

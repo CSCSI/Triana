@@ -29,10 +29,10 @@ public class FileUnitPanel extends ParameterPanel {
     private int numberOfFiles = 1;
     private boolean collection = false;
 
-    JLabel collectLabel = new JLabel("Not a collection");
+    JLabel collectLabel = new JLabel("");
     JTextField nameField = new JTextField("");
     JTextArea fileListArea = new JTextArea("Example filenames here..");
-    JPanel upperPanel = new JPanel(new GridLayout(3,2));
+    JPanel upperPanel = new JPanel(new GridLayout(2,2,5,5));
     JPanel lowerPanel = new JPanel(new GridLayout(2,3,5,5));
     JComboBox namingPattern = new JComboBox();
 
@@ -83,7 +83,7 @@ public class FileUnitPanel extends ParameterPanel {
         collection = isCollection();
         numberOfFiles = getFileNumber();
 
-        final JCheckBox collectionBox = new JCheckBox("Collection", collection);
+        final JCheckBox collectionBox = new JCheckBox("Collection", isCollection());
         collectionBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
                 if (collectionBox.isSelected()) {
@@ -98,6 +98,11 @@ public class FileUnitPanel extends ParameterPanel {
             }
         });
         upperPanel.add(collectionBox);
+        if(isCollection()){
+            collectLabel.setText("Collection of files.");
+        }else{
+            collectLabel.setText("Not a collection");
+        }
         upperPanel.add(collectLabel);
 
         add(upperPanel);
@@ -160,7 +165,7 @@ public class FileUnitPanel extends ParameterPanel {
         lowerPanel.add(lowerPanel2, BorderLayout.CENTER);
         add(lowerPanel);
 
-        setEnabling(lowerPanel, collection);
+        setEnabling(lowerPanel, isCollection());
     }
 
     public void returnSomething(String thing){
@@ -174,7 +179,7 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private boolean isCollection(){
-        if(getParameter("collection").equals(true)){
+        if(getParameter("collection").equals("true")){
             return true;
         }else{
             return false;
