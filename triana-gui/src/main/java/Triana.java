@@ -59,6 +59,7 @@
 
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.Locations;
 import org.trianacode.config.cl.ArgumentController;
 import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.Option;
@@ -105,6 +106,7 @@ public class Triana {
 
     public static final String HELP = "h";
 
+
     private static Option[] clOptions = {
             new Option("n", "no-gui", "run with no user interface"),
             new Option("w", "workflow", "workflows", "supply one or more workflows (only a single workflow when used with -n)", true),
@@ -120,7 +122,13 @@ public class Triana {
      */
     public static void main(String[] args) throws Exception {
 
-        ArgumentController parser = new ArgumentController(clOptions);
+        String os = Locations.os();
+        String usage = "./triana.sh";
+        if (os.equals("windows")) {
+            usage = "triana.bat";
+        }
+
+        ArgumentController parser = new ArgumentController(usage, clOptions);
         OptionValues vals = null;
         try {
             vals = parser.parse(args);

@@ -61,7 +61,7 @@ public class Exec implements ExecutionListener {
     public static void exec(String[] args) {
         cleanPids();
         try {
-            ArgumentController parser = new ArgumentController(clOptions);
+            ArgumentController parser = new ArgumentController("Exec", clOptions);
             OptionValues vals = null;
             try {
                 vals = parser.parse(args);

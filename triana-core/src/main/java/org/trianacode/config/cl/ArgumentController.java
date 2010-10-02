@@ -14,10 +14,19 @@ public class ArgumentController {
 
     private ArgumentParser parser;
 
-    public ArgumentController(Option... options) {
+    private String usage = "";
+
+    public ArgumentController(String usage, Option... options) {
+        if (usage != null) {
+            this.usage = usage;
+        }
         for (Option option : options) {
             this.options.add(option);
         }
+    }
+
+    public ArgumentController(Option... options) {
+        this("", options);
     }
 
     public OptionValues parse(String[] args) throws ArgumentParsingException {
@@ -68,7 +77,7 @@ public class ArgumentController {
     }
 
     public String usage() {
-        StringBuilder sb = new StringBuilder("\nUsage:\n\t");
+        StringBuilder sb = new StringBuilder("\nUsage:\t" + usage + " [ options ]\nOptions:\n\t");
         for (Option option : options) {
             String v = "";
             if (option.getValue() != null && option.getValue().length() > 0) {
