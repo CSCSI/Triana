@@ -16,19 +16,16 @@
 
 package org.trianacode.taskgraph.tool;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
+import org.trianacode.taskgraph.tool.creators.type.ClassParser;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
-import org.trianacode.taskgraph.tool.creators.type.ClassParser;
 
 /**
  * Class Description Here...
@@ -38,6 +35,9 @@ import org.trianacode.taskgraph.tool.creators.type.ClassParser;
  */
 
 public class TypesMap {
+
+    private static Log log = Loggers.LOGGER;
+
 
     private static Map<String, ClassHierarchy> allByName = new ConcurrentHashMap<String, ClassHierarchy>();
 
@@ -157,7 +157,7 @@ public class TypesMap {
                     sc = sc.getSuperclass();
                 }
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                log.info("Failed to load unit:" + e.getMessage());
             }
         }
         deadEnds.put(hier, type);

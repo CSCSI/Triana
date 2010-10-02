@@ -66,26 +66,25 @@ package triana.types.audio;
  * to make it convenient for operating on a chunk by chunk basis, and provides
  * a forward memory buffer that can be initialised and use with a time delay
  * based algorithm.
- * <p>
+ * <p/>
  * When new data arrives it is inserted into an array with the previous and
  * forward data memory prepended and appended to it. By default the previous
  * locations are filled with the previous data (i.e. the current data will be
  * copied into it for the next iteration) and the forward data locations can
  * either be added to the next data processed or multiplied to them. The default
  * mode is to add the values to the next data set that arrives.
- * <p>
+ * <p/>
  * The AudioEffect class was modified (with the authors permission) to remove a
  * redundant 'backbuffer' array, and to work using shorts (for 16bit data) instead
  * of doubles.
  *
  * @author Dr Ian Taylor
  * @author Eddie Al-Shakarchi
- * @created 19 Mar 2004 (Revised)
  * @version $Revision: 4048 $
+ * @created 19 Mar 2004 (Revised)
  * @date $Date: 2007-10-08 16:38:22 +0100 (Mon, 08 Oct 2007) $ modified by $Author: spxmss $
  */
 
-import triana.audio.*;
 
 public abstract class AudioEffect16Bit {
     /**

@@ -34,6 +34,7 @@ public class Exec implements ExecutionListener {
 
     private static Option[] clOptions = {
             new Option("n", "no-gui", "run with no user interface"),
+            new Option("s", "server-mode", "run triana services"),
             new Option("l", "log-level", "log level 0 (off) to 7 (all)"),
             new Option("w", "workflow", "workflow", "supply one workflow file. Returns a unique id for a workflow", false),
             new Option("e", "execute", "workflow", "execute workflow"),

@@ -63,6 +63,7 @@ import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
 import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
 import org.trianacode.TrianaInstanceProgressListener;
+import org.trianacode.config.cl.ArgumentParser;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.*;
 import org.trianacode.gui.action.clipboard.CopyAction;
@@ -266,10 +267,17 @@ public class ApplicationFrame extends TrianaWindow
             Env.readStateFiles();
 
             initWindow(super.getTitle());
+            // TODO - NEED SOME GLOBAL OPTIONS IN CORE OR SOMETHING!!!!
             if (args.length > 0) {
-                for (String arg : args) {
+                ArgumentParser parser = new ArgumentParser(args);
+                parser.parse();
+                List<String> workflows = parser.getArgumentValues("-w");
+                if (workflows == null) {
+                    workflows = parser.getArgumentValues("--workflow");
+                }
+                for (String workflow : workflows) {
                     try {
-                        File f = new File(arg);
+                        File f = new File(workflow);
                         XMLReader reader = new XMLReader(new FileReader(f));
                         Tool t = reader.readComponent();
                         if (t instanceof TaskGraph) {

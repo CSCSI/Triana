@@ -7,6 +7,7 @@ import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.http.HTTPServices;
 import org.trianacode.http.RendererRegistry;
 import org.trianacode.http.ToolRenderer;
@@ -81,7 +82,7 @@ public class TrianaInstance {
         if (args != null) {
             parser = new ArgumentParser(args);
         }
-
+        boolean server = parser.isOption("-s");
 
         propertyLoader = new PropertyLoader(this, null);
         props = propertyLoader.getProperties();
@@ -92,17 +93,19 @@ public class TrianaInstance {
         toolResolver = new ToolResolver(props);
         toolTable = new ToolTableImpl(toolResolver);
 
-        httpServices = new HTTPServices();
-        toolResolver.addToolListener(httpServices.getWorkflowServer());
-        httpServices.startServices(toolResolver);
-        discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
-
+        if (server) {
+            httpServices = new HTTPServices();
+            toolResolver.addToolListener(httpServices.getWorkflowServer());
+            httpServices.startServices(toolResolver);
+            discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
+        }
         toolResolver.resolve();
         if (progress != null) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
         }
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
+        TaskGraphManager.initToolTable(toolTable);
         initObjectDeserializers();
         initExtensions(extensions);
 
@@ -221,10 +224,12 @@ public class TrianaInstance {
         }
 
         public void run() {
-            System.out.println("TrianaInstance$ShutdownHook.run ENTER");
+            Loggers.LOGGER.info("TrianaInstance$ShutdownHook.run ENTER");
             try {
                 toolResolver.shutdown();
-                discoveryTools.shutdown();
+                if (discoveryTools != null) {
+                    discoveryTools.shutdown();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -234,7 +239,7 @@ public class TrianaInstance {
                 e.printStackTrace();
             }
 
-            System.out.println("TrianaInstance$ShutdownHook.run EXIT");
+            Loggers.LOGGER.info("TrianaInstance$ShutdownHook.run EXIT");
         }
     }
 

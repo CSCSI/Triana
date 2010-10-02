@@ -176,7 +176,6 @@ public class TrianaRun {
         outcables = new ExecCable[outnodes.length];
 
         for (int count = 0; count < innodes.length; count++) {
-            System.out.println("TrianaRun.initCables connecting inputs");
             incables[count] = new ExecCable();
             incables[count].connectInput(innodes[count]);
         }
