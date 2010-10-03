@@ -109,7 +109,7 @@ public class TrianaInstance {
             discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
         }
         toolResolver.resolve();
-        if (progress != null) {
+        if (progress != null && server) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
         }
         ProxyFactory.initProxyFactory();
