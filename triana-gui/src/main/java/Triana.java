@@ -60,9 +60,9 @@
 
 import org.apache.commons.logging.Log;
 import org.trianacode.config.Locations;
-import org.trianacode.config.cl.ArgumentController;
 import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.OptionValues;
+import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.logging.Loggers;
@@ -116,7 +116,7 @@ public class Triana {
             usage = "triana.bat";
         }
 
-        ArgumentController parser = new ArgumentController(usage, TrianaOptions.TRIANA_OPTIONS);
+        OptionsHandler parser = new OptionsHandler(usage, TrianaOptions.TRIANA_OPTIONS);
         OptionValues vals = null;
         try {
             vals = parser.parse(args);

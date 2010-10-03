@@ -1,5 +1,8 @@
 package org.trianacode.enactment.io;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Andrew Harrison
  * @version 1.0.0 Oct 2, 2010
@@ -9,20 +12,38 @@ public class IoConfiguration {
     private String toolName;
     private String toolVersion;
 
-    private IoMapping[] inputs;
+    private List<IoMapping> inputs = new ArrayList<IoMapping>();
+    private List<IoMapping> outputs = new ArrayList<IoMapping>();
 
-    public IoConfiguration(String toolName, String toolVersion, IoMapping... inputs) {
+    public IoConfiguration(String toolName, String toolVersion, List<IoMapping> inputs, List<IoMapping> outputs) {
         this.toolName = toolName;
         this.toolVersion = toolVersion;
-        this.inputs = inputs;
+        if (inputs != null) {
+            this.inputs = inputs;
+        }
+        if (outputs != null) {
+            this.outputs = outputs;
+        }
     }
 
-    public IoConfiguration(IoMapping... inputs) {
-        this(null, null, inputs);
+    public IoConfiguration(List<IoMapping> inputs, List<IoMapping> outputs) {
+        this(null, null, inputs, outputs);
     }
 
-    public IoConfiguration(String toolName, IoMapping... inputs) {
-        this(toolName, null, inputs);
+    public IoConfiguration() {
+        this(null, null, null, null);
+    }
+
+    public IoConfiguration(String toolName, List<IoMapping> inputs, List<IoMapping> outputs) {
+        this(toolName, null, inputs, outputs);
+    }
+
+    public IoConfiguration(String toolName, String version) {
+        this(toolName, version, null, null);
+    }
+
+    public IoConfiguration(String toolName) {
+        this(toolName, null, null, null);
     }
 
     public String getToolName() {
@@ -33,7 +54,19 @@ public class IoConfiguration {
         return toolVersion;
     }
 
-    public IoMapping[] getInputs() {
+    public List<IoMapping> getInputs() {
         return inputs;
+    }
+
+    public void addOutput(IoMapping mapping) {
+        outputs.add(mapping);
+    }
+
+    public void addInput(IoMapping mapping) {
+        inputs.add(mapping);
+    }
+
+    public List<IoMapping> getOuputs() {
+        return outputs;
     }
 }

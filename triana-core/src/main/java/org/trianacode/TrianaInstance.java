@@ -98,24 +98,27 @@ public class TrianaInstance {
         if (progress != null) {
             progress.showCurrentProgress("Searching for local tools");
         }
+
         toolResolver = new ToolResolver(props);
         toolTable = new ToolTableImpl(toolResolver);
-        httpServices = new HTTPServices();
-        if (server) {
-            toolResolver.addToolListener(httpServices.getWorkflowServer());
-            httpServices.startServices(toolResolver);
-            discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
-        }
-        toolResolver.resolve();
-        if (progress != null && server) {
-            progress.showCurrentProgress("Started Discovery and HTTP Services");
-        }
+
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         TaskGraphManager.initToolTable(toolTable);
         initObjectDeserializers();
         initExtensions(extensions);
 
+        httpServices = new HTTPServices();
+        if (server) {
+            toolResolver.addToolListener(httpServices.getWorkflowServer());
+            httpServices.startServices(toolResolver);
+            discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
+        }
+        boolean reresolve = TrianaOptions.hasOption(parser, TrianaOptions.RESOLVE_THREAD_OPTION);
+        toolResolver.resolve(reresolve);
+        if (progress != null && server) {
+            progress.showCurrentProgress("Started Discovery and HTTP Services");
+        }
         new ShutdownHook().createHook();
         if (progress != null) {
             progress.showCurrentProgress("Triana Initialization complete");

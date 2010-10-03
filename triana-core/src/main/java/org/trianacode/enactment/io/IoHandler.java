@@ -1,17 +1,20 @@
 package org.trianacode.enactment.io;
 
 import org.trianacode.TrianaInstance;
+import org.trianacode.enactment.io.handlers.*;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.service.TypeChecking;
 import org.w3c.dom.Element;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Very much work in progress...
@@ -21,7 +24,31 @@ import java.util.List;
  */
 public class IoHandler {
 
-    public Object[] map(IoConfiguration config, Task task) throws TaskGraphException {
+    private static Map<String, IoTypeHandler> handlers = new HashMap<String, IoTypeHandler>();
+
+    static {
+        registerHandler(new DoubleHandler());
+        registerHandler(new IntegerHandler());
+        registerHandler(new SerializableHandler());
+        registerHandler(new StringHandler());
+        registerHandler(new StreamHandler());
+        registerHandler(new BytesHandler());
+    }
+
+    public static void registerHandler(IoTypeHandler handler) {
+        String[] types = handler.getKnownTypes();
+        for (String type : types) {
+            handlers.put(type, handler);
+        }
+    }
+
+    public static IoTypeHandler getHandler(String type) {
+        return handlers.get(type);
+    }
+
+    private StreamResolver streamResolver = new StreamResolver();
+
+    public NodeMappings map(IoConfiguration config, Task task) throws TaskGraphException {
         String toolname = config.getToolName();
         String ver = config.getToolVersion();
         if (toolname != null) {
@@ -34,38 +61,53 @@ public class IoHandler {
                 throw new TaskGraphException("config tool version " + ver + " does not match tool version " + task.getVersion());
             }
         }
-        IoMapping[] maps = config.getInputs();
+        List<IoMapping> maps = config.getInputs();
         Node[] nodes = task.getDataInputNodes();
-        Object[] ret = new Object[nodes.length];
-        for (IoMapping map : maps) {
-            String name = map.getNodeName();
-            Node curr = null;
-            for (Node node : nodes) {
-                if ((node.getNodeIndex() + "").equals(name)) {
-                    curr = node;
+        NodeMappings ret = new NodeMappings();
+        for (Node node : nodes) {
+            IoMapping curr = null;
+            for (IoMapping map : maps) {
+                String name = map.getNodeName();
+                if (name.equals(node.getNodeIndex() + "")) {
+                    curr = map;
                     break;
                 }
             }
+            if (curr == null && node.isEssential()) {
+                throw new TaskGraphException("No IOMapping defined for essential node:" + node.getNodeIndex());
+            }
             if (curr != null) {
-                boolean compatible = false;
-                String[] intypes = task.getDataInputTypes(curr.getNodeIndex());
-                if (intypes == null) {
-                    intypes = task.getDataInputTypes();
-                }
-                IoType iotype = map.getIoType();
+                IoType iotype = curr.getIoType();
                 String type = iotype.getType();
-                for (String intype : intypes) {
-                    if (type.equals(intype)) {
-                        compatible = true;
-                        break;
+                IoTypeHandler handler = getHandler(type);
+                if (handler == null) {
+                    throw new TaskGraphException("Unsupported type:" + type);
+                }
+                String val = iotype.getValue();
+                if (val != null) {
+                    InputStream in = null;
+                    if (iotype.isReference()) {
+                        in = streamResolver.handle(val);
+                        if (in == null) {
+                            throw new TaskGraphException("Could not resolve io type reference:" + val);
+                        }
+                    } else {
+                        in = new ByteArrayInputStream(val.getBytes());
                     }
+                    Object o = handler.handle(type, in);
+                    String[] intypes = task.getDataInputTypes(node.getNodeIndex());
+                    if (intypes == null) {
+                        intypes = task.getDataInputTypes();
+                    }
+                    String[] clss = new String[]{o.getClass().getName()};
+                    boolean compatible = TypeChecking.isCompatibility(TypeChecking.classForTrianaType(clss),
+                            TypeChecking.classForTrianaType(intypes));
+
+                    if (!compatible) {
+                        throw new TaskGraphException("input types are not compatible:" + type + " is not compatible with " + Arrays.asList(intypes));
+                    }
+                    ret.addMapping(node.getNodeIndex(), o);
                 }
-                if (!compatible) {
-                    throw new TaskGraphException("input types are not compatible:" + type + " is not compatible with " + Arrays.asList(intypes));
-                }
-                ret[curr.getNodeIndex()] = iotype.getValue();
-            } else {
-                throw new TaskGraphException("could not find input node matching name:" + name);
             }
         }
         return ret;
@@ -80,18 +122,34 @@ public class IoHandler {
         if (config.getToolVersion() != null) {
             handler.addAttribute(root, "toolVersion", config.getToolVersion());
         }
-        IoMapping[] mappings = config.getInputs();
+        List<IoMapping> mappings = config.getInputs();
         Element mps = handler.element("inputPorts");
         root.appendChild(mps);
         for (IoMapping mapping : mappings) {
             Element map = handler.element("inputPort");
-            handler.addAttribute(map, "name", mapping.getNodeName());
-            IoType iot = mapping.getIoType();
-            handler.addAttribute(map, "type", iot.getType().toString());
-            map.setTextContent(iot.getValue());
-            mps.appendChild(map);
-
+            mps.appendChild(serializeMapping(handler, mapping, map));
         }
+        mps = handler.element("outputPorts");
+        mappings = config.getOuputs();
+        root.appendChild(mps);
+        for (IoMapping mapping : mappings) {
+            Element map = handler.element("outputPort");
+            mps.appendChild(serializeMapping(handler, mapping, map));
+        }
+    }
+
+    private Element serializeMapping(DocumentHandler handler, IoMapping mapping, Element map) {
+        handler.addAttribute(map, "name", mapping.getNodeName());
+        IoType iot = mapping.getIoType();
+        handler.addAttribute(map, "type", iot.getType());
+        if (iot.getValue() != null) {
+            if (iot.isReference()) {
+                handler.addAttribute(map, "uri", iot.getValue());
+            } else {
+                map.setTextContent(iot.getValue());
+            }
+        }
+        return map;
     }
 
     public IoConfiguration deserialize(InputStream in) throws IOException {
@@ -102,22 +160,51 @@ public class IoHandler {
         }
         String toolname = root.getAttribute("toolName");
         String ver = root.getAttribute("toolVersion");
-
+        if (toolname != null && toolname.length() == 0) {
+            toolname = null;
+        }
+        if (ver != null && ver.length() == 0) {
+            ver = null;
+        }
         Element inports = handler.getChild(root, "inputPorts");
-        List<IoMapping> mappings = new ArrayList<IoMapping>();
+        IoConfiguration conf = new IoConfiguration(toolname, ver);
         if (inports != null) {
             List<Element> ins = handler.getChildren(inports, "inputPort");
             for (Element element : ins) {
-                String node = element.getAttribute("name");
-                String tp = element.getAttribute("type");
-                if (tp != null && node != null) {
-                    IoMapping iom = new IoMapping(new IoType(element.getTextContent().trim(), tp), node);
-                    mappings.add(iom);
-                }
+                deserializeMapping(conf, element, true);
             }
         }
-        IoConfiguration conf = new IoConfiguration(toolname, ver, mappings.toArray(new IoMapping[mappings.size()]));
+        Element outports = handler.getChild(root, "outputPorts");
+        if (outports != null) {
+            List<Element> outs = handler.getChildren(inports, "outputPort");
+            for (Element element : outs) {
+                deserializeMapping(conf, element, false);
+            }
+        }
         return conf;
+    }
+
+    private void deserializeMapping(IoConfiguration conf, Element element, boolean in) {
+        String node = element.getAttribute("name");
+        String tp = element.getAttribute("type");
+        if (tp != null && node != null) {
+            String uri = element.getAttribute("uri");
+            IoMapping iom;
+            if (uri != null && uri.length() > 0) {
+                iom = new IoMapping(new IoType(uri, tp, true), node);
+            } else {
+                if (element.getTextContent() != null && element.getTextContent().length() > 0) {
+                    iom = new IoMapping(new IoType(element.getTextContent().trim(), tp), node);
+                } else {
+                    iom = new IoMapping(new IoType(null, tp), node);
+                }
+            }
+            if (in) {
+                conf.addInput(iom);
+            } else {
+                conf.addOutput(iom);
+            }
+        }
     }
 
     private static void testMappings(IoConfiguration conf, String wf) throws Exception {
@@ -129,19 +216,24 @@ public class IoHandler {
         TrianaInstance engine = new TrianaInstance(new String[0], null);
         XMLReader reader = new XMLReader(new FileReader(f));
         Task tool = (Task) reader.readComponent();
-        Object[] ret = new IoHandler().map(conf, tool);
-        for (Object o : ret) {
-            System.out.println("IoHandler.testMappings: " + o);
+        NodeMappings ret = new IoHandler().map(conf, tool);
+        Map<Integer, Object> map = ret.getMap();
+        System.out.println("Node Mappings index => value");
+        for (Integer integer : map.keySet()) {
+            System.out.println(integer + " => " + map.get(integer));
         }
+
 
     }
 
     public static void main(String[] args) throws Exception {
-        IoMapping in0 = new IoMapping(new IoType("hello x", "java.lang.String"), "0");
-        IoMapping in1 = new IoMapping(new IoType("hello a", "java.lang.String"), "1");
-        IoMapping in2 = new IoMapping(new IoType("hello k", "java.lang.String"), "2");
+        IoMapping in0 = new IoMapping(new IoType("hello x", "string"), "0");
+        IoMapping in1 = new IoMapping(new IoType("hello a", "string"), "1");
+        IoMapping in2 = new IoMapping(new IoType("./hello.txt", "string", true), "2");
 
-        IoConfiguration conf = new IoConfiguration("common.regexTG1", "0.1", in0, in1, in2);
+        IoMapping out0 = new IoMapping(new IoType("string"), "0");
+
+        IoConfiguration conf = new IoConfiguration("common.regexTG1", "0.1", Arrays.asList(in0, in1, in2), Arrays.asList(out0));
         DocumentHandler handler = new DocumentHandler();
         new IoHandler().serialize(handler, conf);
         handler.output(System.out, true);
@@ -151,12 +243,13 @@ public class IoHandler {
         System.out.println("config:");
         System.out.println("  toolname:" + ioc.getToolName());
         System.out.println("  tool version:" + ioc.getToolVersion());
-        IoMapping[] mappings = ioc.getInputs();
+        List<IoMapping> mappings = ioc.getInputs();
         for (IoMapping mapping : mappings) {
             System.out.println("  mapping:");
             System.out.println("    name:" + mapping.getNodeName());
             System.out.println("    type:" + mapping.getIoType().getType());
             System.out.println("    val:" + mapping.getIoType().getValue());
+            System.out.println("    ref:" + mapping.getIoType().isReference());
         }
         testMappings(ioc, "/Users/scmabh/work/projects/triana/code/triana/triana-toolboxes/common/regexTG1.xml");
     }

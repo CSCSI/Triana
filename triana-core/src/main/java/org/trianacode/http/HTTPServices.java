@@ -20,9 +20,7 @@ public class HTTPServices {
     }
 
     public void startServices(ToolResolver resolver) throws IOException {
-
         // start a http server first
-
         workflowServer.start();
 
     }

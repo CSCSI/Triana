@@ -58,13 +58,13 @@
  */
 package org.trianacode.taskgraph.service;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 
 /**
@@ -180,7 +180,7 @@ public final class TypeChecking {
     public static Class classForTrianaType(String name) {
         if (name.equals(Tool.UNKNOWN_DATA_TYPE) || name.equals(Tool.ANY_DATA_TYPE)) {
             try {
-                return Class.forName("java.lang.Object");
+                return ClassLoaders.forName("java.lang.Object");
             } catch (ClassNotFoundException except) {
                 throw (new RuntimeException(except.getMessage()));
             }
@@ -209,7 +209,7 @@ public final class TypeChecking {
             javaType = ClassLoaders.forName(name);
         } catch (ClassNotFoundException cnf) {
             try {
-                javaType = Class.forName("triana.types." + name);
+                javaType = ClassLoaders.forName("triana.types." + name);
             } catch (ClassNotFoundException e) {
                 System.out.println("Type Error: " + name + " class not found!");
                 return null;

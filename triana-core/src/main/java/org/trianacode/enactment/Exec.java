@@ -2,12 +2,20 @@ package org.trianacode.enactment;
 
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
-import org.trianacode.config.cl.ArgumentController;
 import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.OptionValues;
+import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
+import org.trianacode.enactment.io.IoConfiguration;
+import org.trianacode.enactment.io.IoHandler;
+import org.trianacode.enactment.io.NodeMappings;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.ExecutionState;
+import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.databus.DataBus;
+import org.trianacode.taskgraph.databus.DataBusInterface;
+import org.trianacode.taskgraph.databus.DataNotResolvableException;
+import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.service.ExecutionEvent;
 import org.trianacode.taskgraph.service.ExecutionListener;
@@ -17,10 +25,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Andrew Harrison
@@ -53,7 +58,7 @@ public class Exec implements ExecutionListener {
     public static void exec(String[] args) {
         cleanPids();
         try {
-            ArgumentController parser = new ArgumentController("Exec", TrianaOptions.TRIANA_OPTIONS);
+            OptionsHandler parser = new OptionsHandler("Exec", TrianaOptions.TRIANA_OPTIONS);
             OptionValues vals = null;
             try {
                 vals = parser.parse(args);
@@ -73,28 +78,30 @@ public class Exec implements ExecutionListener {
                 }
             }
             String pid = vals.getOptionValue("u");
+            String data = vals.getOptionValue("d");
             List<String> wfs = vals.getOptionValues("w");
             if (wfs != null) {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
                     System.exit(1);
                 }
-                System.out.println(new Exec(pid).executeFile(wfs.get(0)));
+                System.out.println(new Exec(pid).executeFile(wfs.get(0), data));
                 System.exit(0);
             }
-            String com = vals.getOptionValue("c");
-            if (com != null && pid != null) {
-                int i = commandToInt(com);
-                writeFile(i, pid, false);
-                System.exit(0);
-            }
+//            String com = vals.getOptionValue("c");
+//            if (com != null && pid != null) {
+//                int i = commandToInt(com);
+//                writeFile(i, pid, false);
+//                System.exit(0);
+//            }
+
             wfs = vals.getOptionValues("e");
             if (wfs != null) {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
                     System.exit(1);
                 }
-                new Exec(pid).executeWorkflow(wfs.get(0));
+                new Exec(pid).executeWorkflow(wfs.get(0), data);
             } else {
                 if (pid != null) {
                     int val = readFile(pid);
@@ -143,10 +150,16 @@ public class Exec implements ExecutionListener {
         }
     }
 
-    private String executeFile(String wf) throws IOException {
+    private String executeFile(String wf, String data) throws IOException {
         File f = new File(wf);
         if (!f.exists() || f.length() == 0) {
             return "Workflow File cannot be found:" + wf;
+        }
+        if (data != null) {
+            File conf = new File(data);
+            if (conf.exists() && conf.length() > 0) {
+                data = conf.getAbsolutePath();
+            }
         }
         createFile(pid);
         String home = Locations.getHomeProper();
@@ -168,11 +181,16 @@ public class Exec implements ExecutionListener {
         args.add(wf);
         args.add("-u");
         args.add(pid);
+        if (data != null) {
+            args.add("-d");
+            args.add(data);
+        }
         runProcess(args, bin);
         return pid;
     }
 
-    private void executeWorkflow(String wf) throws Exception {
+    private void executeWorkflow(String wf, String data) throws Exception {
+
         File f = new File(wf);
         if (!f.exists() || f.length() == 0) {
             System.out.println("Cannot find workflow file:" + wf);
@@ -181,15 +199,34 @@ public class Exec implements ExecutionListener {
         TrianaInstance engine = new TrianaInstance(new String[0], null);
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent();
-        execute(tool);
+        execute(tool, data);
         System.exit(0);
 
     }
 
-    public void execute(Tool tool) throws Exception {
+    public void execute(Tool tool, String data) throws Exception {
         runner = new TrianaRun(tool);
         runner.getScheduler().addExecutionListener(this);
+        NodeMappings mappings = null;
+        if (data != null) {
+            File conf = new File(data);
+            if (!conf.exists() || conf.length() == 0) {
+                System.out.println("Cannot find data configuration file:" + data);
+                System.exit(1);
+            }
+            IoHandler handler = new IoHandler();
+            IoConfiguration ioc = handler.deserialize(new FileInputStream(conf));
+            mappings = handler.map(ioc, runner.getTaskGraph());
+        }
         runner.runTaskGraph();
+        if (mappings != null) {
+            Iterator<Integer> it = mappings.iterator();
+            while (it.hasNext()) {
+                Integer integer = it.next();
+                Object val = mappings.getValue(integer);
+                runner.sendInputData(integer, val);
+            }
+        }
 
         while (!runner.isFinished()) {
             synchronized (this) {
@@ -200,17 +237,21 @@ public class Exec implements ExecutionListener {
                 }
             }
         }
-//        Object out = runner.receiveOutputData(0);
-//        Object data = null;
-//        if(out instanceof WorkflowDataPacket) {
-//            try {
-//                DataBusInterface db = DataBus.getDataBus(((WorkflowDataPacket)out).getProtocol());
-//                data = db.get((WorkflowDataPacket)out);
-//            } catch (DataNotResolvableException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        System.out.println("Exec.execute output:" + data);
+
+        Node[] nodes = runner.getTaskGraph().getDataOutputNodes();
+        for (Node node : nodes) {
+            Object out = runner.receiveOutputData(0);
+            Object o = null;
+            if (out instanceof WorkflowDataPacket) {
+                try {
+                    DataBusInterface db = DataBus.getDataBus(((WorkflowDataPacket) out).getProtocol());
+                    o = db.get((WorkflowDataPacket) out);
+                } catch (DataNotResolvableException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Exec.execute output:" + o);
+        }
         runner.dispose();
     }
 

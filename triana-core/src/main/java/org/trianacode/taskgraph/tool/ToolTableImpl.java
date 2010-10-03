@@ -42,7 +42,6 @@ public class ToolTableImpl implements ToolTable, ToolListener {
 
     private static Log log = Loggers.TOOL_LOGGER;
 
-
     // The standard tool box types
     public static final String USER_TOOLBOX = "user";
     TrianaProperties properties;

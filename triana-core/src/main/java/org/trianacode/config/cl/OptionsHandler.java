@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Andrew Harrison
  * @version 1.0.0 Oct 1, 2010
  */
-public class ArgumentController {
+public class OptionsHandler {
 
     private List<Option> options = new ArrayList<Option>();
 
@@ -16,7 +16,7 @@ public class ArgumentController {
 
     private String usage = "";
 
-    public ArgumentController(String usage, Option... options) {
+    public OptionsHandler(String usage, Option... options) {
         if (usage != null) {
             this.usage = usage;
         }
@@ -25,11 +25,11 @@ public class ArgumentController {
         }
     }
 
-    public ArgumentController(Option... options) {
+    public OptionsHandler(Option... options) {
         this("", options);
     }
 
-    public ArgumentController() {
+    public OptionsHandler() {
         this("", new Option[0]);
     }
 

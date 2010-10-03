@@ -1,6 +1,8 @@
 package org.trianacode.enactment.io;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -19,5 +21,11 @@ public class NodeMappings {
         return map.get(index);
     }
 
+    public Map<Integer, Object> getMap() {
+        return Collections.unmodifiableMap(map);
+    }
 
+    public Iterator<Integer> iterator() {
+        return map.keySet().iterator();
+    }
 }

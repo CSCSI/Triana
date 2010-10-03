@@ -26,8 +26,6 @@ public class TrianaHttpServer implements Target, ToolListener {
 
     public TrianaHttpServer() {
         this.peer = new HttpPeer();
-
-        peer.addTarget(this);
         pathTree = new PathTree(path);
     }
 
@@ -47,6 +45,7 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     public void start() throws IOException {
+        peer.addTarget(this);
         peer.open();
     }
 

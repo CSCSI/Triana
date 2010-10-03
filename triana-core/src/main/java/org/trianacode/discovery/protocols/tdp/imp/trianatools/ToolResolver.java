@@ -40,14 +40,14 @@ import java.util.zip.ZipInputStream;
  * @version 1.0.0 Aug 9, 2010
  */
 
-public class ToolResolver implements ToolMetadataResolver, Runnable {
+public class ToolResolver implements ToolMetadataResolver {
 
 
     private static Log log = Loggers.TOOL_LOGGER;
 
     private long resolveInterval = 10 * 1000;
 
-    private Timer timer = new Timer();
+    private Timer timer;
 
     public static final String MIME_ZIP = "application/zip";
     public static final String MIME_JAR = "application/java-archive";
@@ -383,17 +383,16 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
      * <p/>
      * Ian T - changed this to run in a thread upon start up so we can see the GUI quicker
      */
-    public void resolve() {
-        new Thread(this).start();
-        // run();
-        timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
-    }
-
-
-    public void run() {
+    public void resolve(boolean reresolve) {
         loadToolboxes();
-        reresolve();
+        if (reresolve) {
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
+        } else {
+            new Thread((new ResolveThread())).start();
+        }
     }
+
 
     private void reresolve() {
         for (String s : toolboxes.keySet()) {
@@ -422,7 +421,6 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
         List<URL> urls = new ArrayList<URL>();
         URL toolboxUrl = UrlUtils.toURL(toolbox.getPath());
         urls.addAll(findLocal(toolboxUrl));
-        //System.out.println("ToolResolver.resolve got back " + urls.size() + " URLs");
         List<Tool> ret = new ArrayList<Tool>();
         for (URL url : urls) {
             try {
@@ -843,7 +841,9 @@ public class ToolResolver implements ToolMetadataResolver, Runnable {
     }
 
     public void shutdown() {
-        timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     private class ResolveThread extends TimerTask {
