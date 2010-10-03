@@ -4,8 +4,8 @@ import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
 import org.trianacode.config.cl.ArgumentController;
 import org.trianacode.config.cl.ArgumentParsingException;
-import org.trianacode.config.cl.Option;
 import org.trianacode.config.cl.OptionValues;
+import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.ser.XMLReader;
@@ -32,16 +32,6 @@ public class Exec implements ExecutionListener {
     public static final String PID_DIR = "pids";
     public static File PIDS_DIR = new File(Locations.getApplicationDataDir(), PID_DIR);
 
-    private static Option[] clOptions = {
-            new Option("n", "no-gui", "run with no user interface"),
-            new Option("s", "server-mode", "run triana services"),
-            new Option("l", "log-level", "log level 0 (off) to 7 (all)"),
-            new Option("w", "workflow", "workflow", "supply one workflow file. Returns a unique id for a workflow", false),
-            new Option("e", "execute", "workflow", "execute workflow"),
-            new Option("u", "uuid", "get status of running workflow."),
-            new Option("h", "help", "prints this message")
-    };
-
     static {
         PIDS_DIR.mkdirs();
     }
@@ -63,7 +53,7 @@ public class Exec implements ExecutionListener {
     public static void exec(String[] args) {
         cleanPids();
         try {
-            ArgumentController parser = new ArgumentController("Exec", clOptions);
+            ArgumentController parser = new ArgumentController("Exec", TrianaOptions.TRIANA_OPTIONS);
             OptionValues vals = null;
             try {
                 vals = parser.parse(args);

@@ -62,8 +62,8 @@ import org.apache.commons.logging.Log;
 import org.trianacode.config.Locations;
 import org.trianacode.config.cl.ArgumentController;
 import org.trianacode.config.cl.ArgumentParsingException;
-import org.trianacode.config.cl.Option;
 import org.trianacode.config.cl.OptionValues;
+import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.ApplicationFrame;
@@ -105,17 +105,6 @@ public class Triana {
     public static final String HELP = "h";
 
 
-    private static Option[] clOptions = {
-            new Option("n", "no-gui", "run with no user interface"),
-            new Option("s", "server", "run triana server services"),
-            new Option("w", "workflow", "workflows", "supply one or more workflows (only a single workflow when used with -n)", true),
-            new Option("l", "log-level", "log level 0 (off) to 7 (all)"),
-            new Option("i", "isolate-logger", "logger", "isolate a particular logger and shut down all others"),
-            new Option("e", "execute", "workflow", "execute workflow (in non-gui mode)"),
-            new Option("u", "uuid", "get status of running workflow (in non-gui mode). The -w option in non-gui mode returns a unique id for a workflow"),
-            new Option("h", "help", "prints this message")
-    };
-
     /**
      * The main program for Triana
      */
@@ -127,7 +116,7 @@ public class Triana {
             usage = "triana.bat";
         }
 
-        ArgumentController parser = new ArgumentController(usage, clOptions);
+        ArgumentController parser = new ArgumentController(usage, TrianaOptions.TRIANA_OPTIONS);
         OptionValues vals = null;
         try {
             vals = parser.parse(args);

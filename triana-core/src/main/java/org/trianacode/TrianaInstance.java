@@ -4,6 +4,7 @@ import org.trianacode.config.PropertyLoader;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.config.cl.ArgumentParser;
 import org.trianacode.config.cl.ArgumentParsingException;
+import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
@@ -89,10 +90,7 @@ public class TrianaInstance {
             }
         }
 
-        boolean server = parser.isOption("-s");
-        if (!server) {
-            server = parser.isOption("--server");
-        }
+        boolean server = TrianaOptions.hasOption(parser, TrianaOptions.SERVER_OPTION);
 
         propertyLoader = new PropertyLoader(this, null);
         props = propertyLoader.getProperties();

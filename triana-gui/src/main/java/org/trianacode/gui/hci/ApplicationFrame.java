@@ -64,6 +64,7 @@ import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
 import org.trianacode.TrianaInstanceProgressListener;
 import org.trianacode.config.cl.ArgumentParser;
+import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.*;
 import org.trianacode.gui.action.clipboard.CopyAction;
@@ -269,14 +270,10 @@ public class ApplicationFrame extends TrianaWindow
             initWindow(super.getTitle());
 
             boolean loadedWorkflows = false;
-            // TODO - NEED SOME GLOBAL OPTIONS IN CORE OR SOMETHING!!!!
             if (args.length > 0) {
                 ArgumentParser parser = new ArgumentParser(args);
                 parser.parse();
-                List<String> workflows = parser.getArgumentValues("-w");
-                if (workflows == null) {
-                    workflows = parser.getArgumentValues("--workflow");
-                }
+                List<String> workflows = TrianaOptions.getOptionValues(parser, TrianaOptions.WORKFLOW_OPTION);
                 if (workflows != null) {
                     for (String workflow : workflows) {
                         try {
