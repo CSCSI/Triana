@@ -267,6 +267,8 @@ public class ApplicationFrame extends TrianaWindow
             Env.readStateFiles();
 
             initWindow(super.getTitle());
+
+            boolean loadedWorkflows = false;
             // TODO - NEED SOME GLOBAL OPTIONS IN CORE OR SOMETHING!!!!
             if (args.length > 0) {
                 ArgumentParser parser = new ArgumentParser(args);
@@ -275,20 +277,23 @@ public class ApplicationFrame extends TrianaWindow
                 if (workflows == null) {
                     workflows = parser.getArgumentValues("--workflow");
                 }
-                for (String workflow : workflows) {
-                    try {
-                        File f = new File(workflow);
-                        XMLReader reader = new XMLReader(new FileReader(f));
-                        Tool t = reader.readComponent();
-                        if (t instanceof TaskGraph) {
-                            addParentTaskGraphPanel((TaskGraph) t);
+                if (workflows != null) {
+                    for (String workflow : workflows) {
+                        try {
+                            File f = new File(workflow);
+                            XMLReader reader = new XMLReader(new FileReader(f));
+                            Tool t = reader.readComponent();
+                            if (t instanceof TaskGraph) {
+                                addParentTaskGraphPanel((TaskGraph) t);
+                                loadedWorkflows = true;
+                            }
+                        } catch (Exception e) {
+                            log.error(e);
                         }
-                    } catch (Exception e) {
-                        log.error(e);
                     }
                 }
-
-            } else {
+            }
+            if (!loadedWorkflows) {
                 addParentTaskGraphPanel();
             }
 

@@ -59,11 +59,9 @@
 
 package com.tomtessier.scrollabledesktop;
 
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyVetoException;
-
-import javax.swing.DefaultDesktopManager;
-import javax.swing.JInternalFrame;
 
 /**
  * This code is from a JavaWorld <a href="http://www.javaworld.com/javaworld/jw-11-2001/jw-1130-jscroll.html">
@@ -116,10 +114,11 @@ public class BaseDesktopManager extends DefaultDesktopManager {
      * @param f the internal frame being activated
      */
     public void activateFrame(JInternalFrame f) {
+        if (f != null) {
 
-        super.activateFrame(f);
-        ((BaseInternalFrame) f).selectFrameAndAssociatedButtons();
-
+            super.activateFrame(f);
+            ((BaseInternalFrame) f).selectFrameAndAssociatedButtons();
+        }
     }
 
 

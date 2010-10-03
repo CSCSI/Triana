@@ -3,6 +3,7 @@ package org.trianacode;
 import org.trianacode.config.PropertyLoader;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.config.cl.ArgumentParser;
+import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
@@ -81,8 +82,17 @@ public class TrianaInstance {
 
         if (args != null) {
             parser = new ArgumentParser(args);
+            try {
+                parser.parse();
+            } catch (ArgumentParsingException e) {
+                throw new RuntimeException("cannot read arguments");
+            }
         }
+
         boolean server = parser.isOption("-s");
+        if (!server) {
+            server = parser.isOption("--server");
+        }
 
         propertyLoader = new PropertyLoader(this, null);
         props = propertyLoader.getProperties();
@@ -92,9 +102,8 @@ public class TrianaInstance {
         }
         toolResolver = new ToolResolver(props);
         toolTable = new ToolTableImpl(toolResolver);
-
+        httpServices = new HTTPServices();
         if (server) {
-            httpServices = new HTTPServices();
             toolResolver.addToolListener(httpServices.getWorkflowServer());
             httpServices.startServices(toolResolver);
             discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);

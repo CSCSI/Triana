@@ -100,7 +100,7 @@ public class Triana {
     /**
      * combined with UUID, retrieves current status
      */
-    public static final String STATUS = "s";
+    public static final String SERVER = "s";
 
     public static final String HELP = "h";
 
@@ -153,9 +153,8 @@ public class Triana {
         }
         boolean runNoGui = vals.hasOption(NOGUI);
         boolean pid = vals.hasOption(UUID);
-        boolean stat = vals.hasOption(STATUS);
         boolean exec = vals.hasOption(EXECUTE);
-        if (runNoGui || pid || stat || exec) {
+        if (runNoGui || pid || exec) {
             Exec.exec(args);
         } else {
             ApplicationFrame.initTriana(args);
