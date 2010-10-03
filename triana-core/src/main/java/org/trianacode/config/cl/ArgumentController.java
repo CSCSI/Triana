@@ -29,6 +29,10 @@ public class ArgumentController {
         this("", options);
     }
 
+    public ArgumentController() {
+        this("", new Option[0]);
+    }
+
     public OptionValues parse(String[] args) throws ArgumentParsingException {
         parser = new ArgumentParser(args);
         parser.parse();
@@ -39,37 +43,49 @@ public class ArgumentController {
         OptionValues ovs = new OptionValues();
         for (String s : args.keySet()) {
             boolean known = false;
-            for (Option option : options) {
+            if (options.size() == 0) {
                 String sub;
                 if (s.startsWith("--")) {
                     sub = s.substring(2, s.length());
-                    if (option.getLongOpt().equals(sub)) {
-                        known = true;
-                    }
+                    ovs.addOptionValue(new OptionValue(sub, args.get(s)));
                 }
                 if (s.startsWith("-")) {
                     sub = s.substring(1, s.length());
-                    if (option.getShortOpt().equals(sub)) {
-                        known = true;
-                    }
+                    ovs.addOptionValue(new OptionValue(sub, args.get(s)));
                 }
-                if (known) {
-                    if (option.getValue() != null && option.getValue().length() > 0) {
-                        if (args.get(s) == null || args.get(s).size() == 0) {
-                            throw new ArgumentParsingException("Option " + s + " requires argument '" + option.getValue() + "'");
+            } else {
+                for (Option option : options) {
+                    String sub;
+                    if (s.startsWith("--")) {
+                        sub = s.substring(2, s.length());
+                        if (option.getLongOpt().equals(sub)) {
+                            known = true;
                         }
                     }
-                    if (args.get(s) != null && args.get(s).size() > 1) {
-                        if (!option.isMultiple()) {
-                            throw new ArgumentParsingException("Option " + s + " can only have one argument. I received: " + args.get(s));
+                    if (s.startsWith("-")) {
+                        sub = s.substring(1, s.length());
+                        if (option.getShortOpt().equals(sub)) {
+                            known = true;
                         }
                     }
-                    ovs.addOptionValue(new OptionValue(option, args.get(s)));
-                    break;
+                    if (known) {
+                        if (option.getValue() != null && option.getValue().length() > 0) {
+                            if (args.get(s) == null || args.get(s).size() == 0) {
+                                throw new ArgumentParsingException("Option " + s + " requires argument '" + option.getValue() + "'");
+                            }
+                        }
+                        if (args.get(s) != null && args.get(s).size() > 1) {
+                            if (!option.isMultiple()) {
+                                throw new ArgumentParsingException("Option " + s + " can only have one argument. I received: " + args.get(s));
+                            }
+                        }
+                        ovs.addOptionValue(new OptionValue(option.getShortOpt(), args.get(s)));
+                        break;
+                    }
                 }
-            }
-            if (!known) {
-                throw new ArgumentParsingException("unknown option:" + s);
+                if (!known) {
+                    throw new ArgumentParsingException("unknown option:" + s);
+                }
             }
         }
         return ovs;

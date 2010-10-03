@@ -16,7 +16,7 @@ public class OptionValues {
     }
 
     public void addOptionValue(OptionValue value) {
-        values.put(value.getOption().getShortOpt(), value);
+        values.put(value.getOption(), value);
     }
 
     public boolean hasOption(String shortOpt) {

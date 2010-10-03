@@ -265,8 +265,8 @@ public abstract class Unit {
 
     public final void parameterUpdated(String paramname, Object value) {
         Object[] existing = definedParams.get(paramname);
-        debug("param:" + paramname + "\n" +
-                "new value:" + value + "\n" +
+        debug("param:" + paramname + "" +
+                "new value:" + value + "" +
                 "existing type for param: " + getTask().getParameterType(paramname));
 
         if (existing != null && existing.length == 2 && existing[0] != null && !existing[0].equals(value)) {

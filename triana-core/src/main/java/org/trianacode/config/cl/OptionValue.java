@@ -8,15 +8,15 @@ import java.util.List;
  */
 public class OptionValue {
 
-    private Option option;
+    private String option;
     private List<String> values;
 
-    public OptionValue(Option option, List<String> values) {
+    public OptionValue(String option, List<String> values) {
         this.option = option;
         this.values = values;
     }
 
-    public Option getOption() {
+    public String getOption() {
         return option;
     }
 
