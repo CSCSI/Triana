@@ -348,6 +348,18 @@ public class Exec implements ExecutionListener {
 //        }
     }
 
+    public InputStream readData(String name) throws FileNotFoundException {
+        File lockDir = new File(RUNS, pid);
+        if (!lockDir.exists()) {
+            return null;
+        }
+        File dataFile = new File(lockDir, name);
+        if (dataFile.exists() && dataFile.length() > 0) {
+            return new FileInputStream(dataFile);
+        }
+        return null;
+    }
+
     private void writeData(Object o, int index) throws IOException, TaskGraphException {
         File lockDir = new File(RUNS, pid);
         if (!lockDir.exists()) {

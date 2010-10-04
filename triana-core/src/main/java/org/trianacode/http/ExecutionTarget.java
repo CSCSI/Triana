@@ -4,6 +4,7 @@ import org.thinginitself.http.*;
 import org.thinginitself.http.util.PathTree;
 import org.thinginitself.http.util.StreamableOptions;
 import org.thinginitself.streamable.Streamable;
+import org.thinginitself.streamable.StreamableStream;
 import org.thinginitself.streamable.StreamableString;
 import org.trianacode.TrianaInstance;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
@@ -12,7 +13,9 @@ import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.taskgraph.tool.Tool;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
@@ -41,24 +44,44 @@ public class ExecutionTarget implements Target {
 
     @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
-        System.out.println("ExecutionTarget.onGet path:" + requestContext.getRequestTarget());
-        String pid = new Path(requestContext.getRequestTarget()).getLast();
-        Resource r = pathTree.getResource(pid);
-        System.out.println("ExecutionTarget.onGet resource path:" + r.getPath());
-        if (r.getPath().equals(getPath())) {
-            requestContext.setResponseEntity(new StreamableString("POST to me to run a workflow. :-)"));
+        Path path = new Path(requestContext.getRequestTarget());
+        String[] comps = path.getComponents();
+        if (comps.length < 2) {
+            requestContext.setResponseEntity(new StreamableString("POST me a workflow to run :-)"));
             return;
         }
+        if (comps.length == 2) {
+            String target = comps[comps.length - 1];
+            Resource r = pathTree.getResource(target);
+            if (r.getPath().equals(getPath())) {
+                requestContext.setResponseCode(404);
+            }
+            try {
+                Exec exec = new Exec(target);
+                String status = exec.readUuidFile();
 
-        System.out.println("ExecutionTarget.onGet PID:" + pid);
-        try {
-            Exec exec = new Exec(pid);
-            String status = exec.readUuidFile();
-            requestContext.setResponseEntity(new StreamableString(status));
-            requestContext.setResponseCode(201);
-        } catch (IOException e) {
-            throw new RequestProcessException("Error getting workflow status for UUID:" + pid, 400);
+                requestContext.setResponseEntity(new StreamableString(status));
+                requestContext.setResponseCode(201);
+            } catch (IOException e) {
+                requestContext.setResponseCode(404);
+            }
+        } else if (comps.length == 3) {
+            String target = comps[comps.length - 2];
+            String data = comps[comps.length - 1];
+            Exec exec = new Exec(target);
+            try {
+                InputStream in = exec.readData(data);
+                if (in != null) {
+                    requestContext.setResponseCode(200);
+                    requestContext.setResponseEntity(new StreamableStream(in));
+                    return;
+                }
+            } catch (FileNotFoundException e) {
+
+            }
+            requestContext.setResponseCode(404);
         }
+
     }
 
     @Override
@@ -84,7 +107,6 @@ public class ExecutionTarget implements Target {
             final Exec exec = new Exec(null);
             exec.createFile();
             String pid = exec.getPid();
-            System.out.println("ExecutionTarget.onPost got exec pid:" + pid);
             pathTree.addResource(new Resource(new Path(pid)));
 
             inst.execute(new Runnable() {
