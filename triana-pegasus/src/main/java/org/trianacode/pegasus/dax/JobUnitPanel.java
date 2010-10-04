@@ -197,7 +197,7 @@ public class JobUnitPanel extends ParameterPanel {
 
     private int getNumberOfJobs(){
         Object o = getParameter("numberOfJobs");
-        System.out.println("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+     //   System.out.println("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o != null){
             int value = (Integer)o;
             if(value > 1 ){

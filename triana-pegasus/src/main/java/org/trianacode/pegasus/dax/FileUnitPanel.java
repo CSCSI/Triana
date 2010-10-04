@@ -199,7 +199,7 @@ public class FileUnitPanel extends ParameterPanel {
 
     private int getNumberOfFiles(){
         Object o = getParameter("numberOfFiles");
-        System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+   //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o != null){
             int value = (Integer)o;
             if(value > 1 ){
@@ -244,7 +244,7 @@ public class FileUnitPanel extends ParameterPanel {
 
     }
 
-    class NamingPanel extends JFrame{
+    class NamingPanel extends JDialog{
         JLabel hi = new JLabel();
         JTextField name = new JTextField("");
         JComboBox separator;

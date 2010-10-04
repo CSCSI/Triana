@@ -86,17 +86,23 @@ public class DaxCreatorUnit {
         ADAG dax = new ADAG();
 
         List<DaxJobChunk> jobChunks = register.getJobChunks();
-
+        int idNumber = 0;
         for(int j = 0; j < jobChunks.size(); j++){
             DaxJobChunk jobChunk = jobChunks.get(j);
 
-            if(jobChunk.isCollection()){
+     //       if(jobChunk.isCollection()){
+            System.out.println("Job " + jobChunk.getJobName() + " has " + jobChunk.getNumberOfJobs() + " jobs.");
                 for(int n = 0; n < jobChunk.getNumberOfJobs(); n++){
                     Job job = new Job();
+                    idNumber ++;
                     job.addArgument(new PseudoText(jobChunk.getJobArgs()));
-                    job.setName(jobChunk.getJobName());
-                    String id = "0000000" + (j+1);
-                    job.setID("ID" + id.substring(id.length() - 7) + "-" + n);
+                    String jobName = jobChunk.getJobName();
+                    if(jobChunk.getNumberOfJobs() > 1){
+                        jobName = (jobName + "-" + n);
+                    }
+                    job.setName(jobName);
+                    String id = "0000000" + (idNumber);
+                    job.setID("ID" + id.substring(id.length() - 7));
 
                     jobChunk.listChunks();
 
@@ -105,7 +111,7 @@ public class DaxCreatorUnit {
                         DaxFileChunk chunk = (DaxFileChunk)inFiles.get(i);
                         if(chunk.isCollection()){
                             for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-                                log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+                                log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + m);
 
                                 if(chunk.getNamePattern() != null){
                                     log("Collection has a naming pattern");
@@ -127,7 +133,7 @@ public class DaxCreatorUnit {
                         DaxFileChunk chunk = (DaxFileChunk)outFiles.get(i);
                         if(chunk.isCollection()){
                             for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-                                log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+                                log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + m);
 
                                 if(chunk.getNamePattern() != null){
                                     log("Collection has a naming pattern");
@@ -144,68 +150,67 @@ public class DaxCreatorUnit {
                         }
                     }
                     dax.addJob(job);
-                    log("Added job : " + jobChunk.getJobName() + " to ADAG.");
+                    log("Added job : " + job.getName() + " to ADAG.");
 
                 }
 
-            }
-            else{
+ //           }
+ //           else{
 
-                Job job = new Job();
-                job.addArgument(new PseudoText(jobChunk.getJobArgs()));
-                job.setName(jobChunk.getJobName());
-                String id = "0000000" + (j+1);
-                job.setID("ID" + id.substring(id.length() - 7));
-
-                jobChunk.listChunks();
-
-                List inFiles = jobChunk.getInFileChunks();
-                for(int i = 0; i < inFiles.size(); i++){
-                    DaxFileChunk chunk = (DaxFileChunk)inFiles.get(i);
-                    if(chunk.isCollection()){
-                        for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-                            log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
-
-                            if(chunk.getNamePattern() != null){
-                                log("Collection has a naming pattern");
-                            }else{
-                                log("Collection has no naming pattern, using *append int*");
-                            }
-
-                            job.addUses(new Filename(chunk.getFilename() + "-" + m, 1));
-                        }
-                    }
-                    else{
-                        log("Job " + job.getID() + " named : " + job.getName() + " has input : " + chunk.getFilename());
-                        job.addUses(new Filename(chunk.getFilename(), 1));
-                    }
-                }
-
-                List outFiles = jobChunk.getOutFileChunks();
-                for(int i = 0; i < outFiles.size(); i++){
-                    DaxFileChunk chunk = (DaxFileChunk)outFiles.get(i);
-                    if(chunk.isCollection()){
-                        for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-                            log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
-
-                            if(chunk.getNamePattern() != null){
-                                log("Collection has a naming pattern");
-                            }else{
-                                log("Collection has no naming pattern, using *append int*");
-                            }
-
-                            job.addUses(new Filename(chunk.getFilename() + "-" + m, 2));
-                        }
-                    }
-                    else{
-                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
-                        job.addUses(new Filename(chunk.getFilename(), 2));
-                    }
-                }
-                dax.addJob(job);
-                log("Added job : " + jobChunk.getJobName() + " to ADAG.");
-
-            }
+//                Job job = new Job();
+//                job.addArgument(new PseudoText(jobChunk.getJobArgs()));
+//                job.setName(jobChunk.getJobName());
+//                String id = "0000000" + (j+1);
+//                job.setID("ID" + id.substring(id.length() - 7));
+//
+//                jobChunk.listChunks();
+//
+//                List inFiles = jobChunk.getInFileChunks();
+//                for(int i = 0; i < inFiles.size(); i++){
+//                    DaxFileChunk chunk = (DaxFileChunk)inFiles.get(i);
+//                    if(chunk.isCollection()){
+//                        for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
+//                            log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+//
+//                            if(chunk.getNamePattern() != null){
+//                                log("Collection has a naming pattern");
+//                            }else{
+//                                log("Collection has no naming pattern, using *append int*");
+//                            }
+//
+//                            job.addUses(new Filename(chunk.getFilename() + "-" + m, 1));
+//                        }
+//                    }
+//                    else{
+//                        log("Job " + job.getID() + " named : " + job.getName() + " has input : " + chunk.getFilename());
+//                        job.addUses(new Filename(chunk.getFilename(), 1));
+//                    }
+//                }
+//
+//                List outFiles = jobChunk.getOutFileChunks();
+//                for(int i = 0; i < outFiles.size(); i++){
+//                    DaxFileChunk chunk = (DaxFileChunk)outFiles.get(i);
+//                    if(chunk.isCollection()){
+//                        for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
+//                            log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + m);
+//
+//                            if(chunk.getNamePattern() != null){
+//                                log("Collection has a naming pattern");
+//                            }else{
+//                                log("Collection has no naming pattern, using *append int*");
+//                            }
+//
+//                            job.addUses(new Filename(chunk.getFilename() + "-" + m, 2));
+//                        }
+//                    }
+//                    else{
+//                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+//                        job.addUses(new Filename(chunk.getFilename(), 2));
+//                    }
+//                }
+//                dax.addJob(job);
+//                log("Added job : " + jobChunk.getJobName() + " to ADAG.");
+//            }
         }
 
         writeDax(dax);

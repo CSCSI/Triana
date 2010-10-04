@@ -30,7 +30,7 @@ public class DaxJobChunk implements Serializable {
     private boolean isCollection = false;
     private DaxFileChunk outputFileChunk;
     private UUID uuid;
-    private int numberOfJobs;
+    private int numberOfJobs = 1;
 
     public String getJobName() {
         return jobName;
