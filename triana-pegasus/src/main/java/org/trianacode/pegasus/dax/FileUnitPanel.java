@@ -53,8 +53,7 @@ public class FileUnitPanel extends ParameterPanel {
     private void apply(){
         changeToolName(nameField.getText());
         fillFileListArea();
-        getTask().setParameter("collection", collection);
-        getTask().setParameter("numberOfFiles", numberOfFiles);
+        setParams();
     }
 
     public void changeToolName(String name){
@@ -64,6 +63,16 @@ public class FileUnitPanel extends ParameterPanel {
         getTask().setToolName(name);
     }
 
+    private void setParams(){
+        getTask().setParameter("numberOfFiles", numberOfFiles);
+        getTask().setParameter("collection", collection);
+    }
+
+    public void getParams(){
+        collection = isCollection();
+        numberOfFiles = getNumberOfFiles();
+    }
+
     @Override
     public void reset() {
         //    nameField.setText((String)getParameter("fileName"));
@@ -71,6 +80,8 @@ public class FileUnitPanel extends ParameterPanel {
 
     @Override
     public void init() {
+        getParams();
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File"));
@@ -81,9 +92,9 @@ public class FileUnitPanel extends ParameterPanel {
         upperPanel.add(nameField);
 
         collection = isCollection();
-        numberOfFiles = getFileNumber();
+        numberOfFiles = getNumberOfFiles();
 
-        final JCheckBox collectionBox = new JCheckBox("Collection", isCollection());
+        final JCheckBox collectionBox = new JCheckBox("Collection", collection);
         collectionBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
                 if (collectionBox.isSelected()) {
@@ -98,7 +109,7 @@ public class FileUnitPanel extends ParameterPanel {
             }
         });
         upperPanel.add(collectionBox);
-        if(isCollection()){
+        if(collection){
             collectLabel.setText("Collection of files.");
         }else{
             collectLabel.setText("Not a collection");
@@ -111,10 +122,11 @@ public class FileUnitPanel extends ParameterPanel {
 
         lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File Collection Options"));
         JPanel lowerPanel1 = new JPanel(new GridLayout(3, 2, 5, 5));
-        final JLabel numberLabel = new JLabel("No. files : 1");
+        final JLabel numberLabel = new JLabel("No. files : " + numberOfFiles);
 
         final JSlider slide = new JSlider(1, 999, numberOfFiles);
         slide.setMajorTickSpacing(100);
+        slide.setValue(numberOfFiles);
         slide.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent changeEvent) {
                 numberOfFiles = slide.getValue();
@@ -165,7 +177,7 @@ public class FileUnitPanel extends ParameterPanel {
         lowerPanel.add(lowerPanel2, BorderLayout.CENTER);
         add(lowerPanel);
 
-        setEnabling(lowerPanel, isCollection());
+        setEnabling(lowerPanel, collection);
     }
 
     public void returnSomething(String thing){
@@ -175,28 +187,27 @@ public class FileUnitPanel extends ParameterPanel {
 
     @Override
     public void dispose() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private boolean isCollection(){
-        if(getParameter("collection").equals("true")){
+        if(getParameter("collection").equals(true)){
             return true;
         }else{
             return false;
         }
     }
 
-    private int getFileNumber(){
+    private int getNumberOfFiles(){
         Object o = getParameter("numberOfFiles");
+        System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o != null){
-            System.out.println("Object from parameter *numberOfFiles : " + o.toString());
-
-            String s = o.toString();
-            return Integer.parseInt(s);
-        }
-        else{
+            int value = (Integer)o;
+            if(value > 1 ){
+                return value;
+            }
             return 1;
         }
+        return 1;
     }
 
     public void setEnabling(Component c,boolean enable) {

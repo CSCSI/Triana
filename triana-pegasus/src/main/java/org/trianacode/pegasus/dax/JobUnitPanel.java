@@ -186,7 +186,9 @@ public class JobUnitPanel extends ParameterPanel {
     }
 
     private boolean isCollection(){
-        if(getParameter("collection").equals("true")){
+        Object o = getParameter("collection");
+     //   System.out.println("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        if(o.equals(true)){
             return true;
         }else{
             return false;
@@ -194,19 +196,16 @@ public class JobUnitPanel extends ParameterPanel {
     }
 
     private int getNumberOfJobs(){
-        try{
-            String param = (String)getParameter("numberOfJobs");
-            if(param != null){
-                int value = Integer.parseInt(param);
-                if(value > 1 ){
-                    return value;
-                }
-                return 1;
+        Object o = getParameter("numberOfJobs");
+        System.out.println("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        if(o != null){
+            int value = (Integer)o;
+            if(value > 1 ){
+                return value;
             }
             return 1;
-        }catch(Exception e){
-            return 1;
         }
+        return 1;
     }
 
     @Override

@@ -58,7 +58,7 @@ public class DaxFileTrianaTask extends MainTrianaTask {
 
     private boolean isCollection(){
         Object o = getTask().getParameter("collection");
-        if(o.equals("true")){
+        if(o.equals(true)){
             return true;
         }else{
             return false;
