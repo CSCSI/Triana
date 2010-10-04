@@ -365,7 +365,7 @@ public class Exec implements ExecutionListener {
         if (!lockDir.exists()) {
             return;
         }
-        File dataFile = new File(lockDir, "out" + index);
+        File dataFile = new File(lockDir, "" + index);
         IoTypeHandler ioth = IoHandler.getHandler(o);
         if (ioth != null) {
             FileOutputStream fout = new FileOutputStream(dataFile);
