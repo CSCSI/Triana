@@ -51,7 +51,7 @@ public class TrianaProperties extends Properties {
     public static final String WEB_TOOL_TEMPLATE_PROPERTY = DOMAIN + ".web.tool.template";
     public static final String TOOL_HELP_TEMPLATE_PROPERTY = DOMAIN + ".tool.help.template";
 
-    TrianaInstance engine;
+    private TrianaInstance engine;
 
     public TrianaProperties(TrianaInstance engine) {
         this(engine, null);
@@ -172,6 +172,8 @@ public class TrianaProperties extends Properties {
         outstream.close();
     }
 
-
+    public TrianaInstance getEngine() {
+        return engine;
+    }
 }
 

@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Starts off the HTTP and discovery services...
  * <p/>
- * User: scmijt Date: Jul 30, 2010 Time: 12:06:44 PM To change this template use File | Settings | File Templates.
+ * User: scmijt Date: Jul 30, 2010 Time: 12:06:44 PM
  */
 public class HTTPServices {
     TrianaHttpServer workflowServer;
@@ -20,8 +20,7 @@ public class HTTPServices {
     }
 
     public void startServices(ToolResolver resolver) throws IOException {
-        // start a http server first
-        workflowServer.start();
+        workflowServer.start(resolver);
 
     }
 

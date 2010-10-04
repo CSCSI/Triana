@@ -29,6 +29,8 @@ import org.trianacode.taskgraph.util.ExtensionFinder;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This class represents an instance of Triana and allows arguments to be passed to it and properties for
@@ -44,6 +46,8 @@ import java.util.*;
  */
 
 public class TrianaInstance {
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 20);
 
     private String args[] = null;
 
@@ -215,6 +219,9 @@ public class TrianaInstance {
         return new ArrayList<Object>();
     }
 
+    public void execute(Runnable runnable) {
+        executorService.execute(runnable);
+    }
 
     private class ShutdownHook extends Thread {
 
@@ -240,6 +247,7 @@ public class TrianaInstance {
                 if (discoveryTools != null) {
                     discoveryTools.shutdown();
                 }
+                executorService.shutdown();
             } catch (Exception e) {
                 e.printStackTrace();
             }

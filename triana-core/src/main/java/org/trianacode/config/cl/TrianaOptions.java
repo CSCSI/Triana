@@ -9,7 +9,7 @@ import java.util.List;
 public class TrianaOptions {
 
     public static final Option NO_GUI_OPTION = new Option("n", "no-gui", "run with no user interface");
-    public static final Option SERVER_OPTION = new Option("s", "server", "run triana server services");
+    public static final Option SERVER_OPTION = new Option("s", "server", "run triana server services (HTTP and mDNS)");
     public static final Option WORKFLOW_OPTION = new Option("w", "workflow", "workflows", "supply one or more workflows. only a single workflow is allowed in non-gui mode (-n)", true);
     public static final Option DATA_OPTION = new Option("d", "data-config", "data-config", "supply a data configuration file to a non-gui workflow");
     public static final Option LOG_LEVEL_OPTION = new Option("l", "log-level", "log-level", "0 (off) to 7 (all)");

@@ -51,6 +51,10 @@ public class Exec implements ExecutionListener {
         }
     }
 
+    public String getPid() {
+        return pid;
+    }
+
     public static void main(String[] args) {
         exec(args);
     }
@@ -258,6 +262,55 @@ public class Exec implements ExecutionListener {
 
     }
 
+    public void execute(final Tool tool, final IoConfiguration ioc) throws Exception {
+
+        runner.getScheduler().addExecutionListener(this);
+
+        runner = new TrianaRun(tool);
+
+        NodeMappings mappings = null;
+        if (ioc != null) {
+            IoHandler handler = new IoHandler();
+            mappings = handler.map(ioc, runner.getTaskGraph());
+        }
+        runner.runTaskGraph();
+        if (mappings != null) {
+            Iterator<Integer> it = mappings.iterator();
+            while (it.hasNext()) {
+                Integer integer = it.next();
+                Object val = mappings.getValue(integer);
+                runner.sendInputData(integer, val);
+            }
+        }
+
+        while (!runner.isFinished()) {
+            synchronized (this) {
+                try {
+                    wait(100);
+                } catch (InterruptedException e) {
+
+                }
+            }
+        }
+
+        Node[] nodes = runner.getTaskGraph().getDataOutputNodes();
+        for (Node node : nodes) {
+            Object out = runner.receiveOutputData(0);
+            Object o = null;
+            if (out instanceof WorkflowDataPacket) {
+                try {
+                    DataBusInterface db = DataBus.getDataBus(((WorkflowDataPacket) out).getProtocol());
+                    o = db.get((WorkflowDataPacket) out);
+                } catch (DataNotResolvableException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Exec.execute output:" + o);
+        }
+        runner.dispose();
+
+    }
+
 
     private void runProcess(List<String> args, File runDir) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(args);
@@ -298,6 +351,11 @@ public class Exec implements ExecutionListener {
 
     private void createFile(String pid) throws IOException {
         writeFile(ExecutionState.NOT_INITIALIZED.ordinal(), pid, true);
+    }
+
+    public static String readUuidFile(String pid) throws IOException {
+        int val = readFile(pid);
+        return statusToString(val);
     }
 
     private static int readFile(String pid) throws IOException {

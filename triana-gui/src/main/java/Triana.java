@@ -99,7 +99,7 @@ public class Triana {
      */
     public static final String UUID = "u";
     /**
-     * combined with UUID, retrieves current status
+     * server mode
      */
     public static final String SERVER = "s";
 
@@ -144,7 +144,7 @@ public class Triana {
         boolean runNoGui = vals.hasOption(NOGUI);
         boolean pid = vals.hasOption(UUID);
         boolean exec = vals.hasOption(EXECUTE);
-        boolean server = vals.hasOptionValue(SERVER);
+        boolean server = vals.hasOption(SERVER);
         boolean workflow = vals.hasOptionValue(WORKFLOW);
         if (runNoGui) {
             if (!server) {

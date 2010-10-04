@@ -3,6 +3,7 @@ package org.trianacode.http;
 import org.thinginitself.http.*;
 import org.thinginitself.http.util.PathTree;
 import org.thinginitself.streamable.Streamable;
+import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
@@ -23,6 +24,7 @@ public class TrianaHttpServer implements Target, ToolListener {
     private HttpPeer peer;
     private PathTree pathTree;
     private String path = "triana";
+    private ToolResolver toolResolver;
 
     public TrianaHttpServer() {
         this.peer = new HttpPeer();
@@ -50,9 +52,9 @@ public class TrianaHttpServer implements Target, ToolListener {
         pathTree.addResource(new DataResource(getPath().append(deploymentURL).toString(), workflowObject));
     }
 
-    public void start() throws IOException {
+    public void start(ToolResolver toolResolver) throws IOException {
         peer.addTarget(this);
-        peer.addTarget(new ExecutionTarget());
+        peer.addTarget(new ExecutionTarget(toolResolver));
         peer.open();
     }
 
