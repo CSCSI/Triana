@@ -19,16 +19,23 @@ import java.awt.event.ItemListener;
  * To change this template use File | Settings | File Templates.
  */
 public class JobUnitPanel extends ParameterPanel {
+    private static final int AUTO_CONNECT = 0;
+    private static final int SCATTER_CONNECT = 1;
+    private static final int ONE2ONE_CONNECT = 2;
+
     private JPanel upperPanel = new JPanel(new GridLayout(3,2,5,5));
     private JPanel lowerPanel = new JPanel();
     private JTextField nameField = new JTextField("");
     private JTextField argsField = new JTextField("");
+    JLabel collectLabel = new JLabel("");
+
     private int numberOfJobs = 1;
     private int fileInputsPerJob = 1;
     private boolean collection = false;
     private boolean autoConnect = true;
+    private int connectPattern = AUTO_CONNECT;
 
-    JLabel collectLabel = new JLabel("");
+
 
     //  public boolean isAutoCommitByDefault(){return true;}
 
@@ -78,42 +85,71 @@ public class JobUnitPanel extends ParameterPanel {
 
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
         lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Collection Options"));
-        JPanel lowerPanel1 = new JPanel(new GridLayout(1, 2, 5, 5));
-        final JPanel lowerPanel2 = new JPanel(new GridLayout(1, 2, 5, 5));
-        final JPanel lowerPanel3 = new JPanel(new GridLayout(1, 2, 5, 5));
+        JPanel lowerPanel1 = new JPanel(new GridLayout(3, 1, 5, 5));
+        final JPanel lowerPanelAuto = new JPanel(new GridLayout(1, 2, 5, 5));
+        final JPanel lowerPanelScatter = new JPanel(new GridLayout(1, 2, 5, 5));
+        final JPanel lowerPanelOne2One = new JPanel(new GridLayout(1, 2, 5, 5));
 
         final JCheckBox autoCheck = new JCheckBox("Auto (Fully connect all incoming nodes)", autoConnect);
-        final JCheckBox manualCheck = new JCheckBox("Manual", !autoConnect);
+        final JCheckBox scatterCheck = new JCheckBox("Scatter jobs between n-jobs", !autoConnect);
+        final JCheckBox one2oneCheck = new JCheckBox("One-2-one (Duplicate job to match number of incoming files)", !autoConnect);
+
 
         autoCheck.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
                 if (autoCheck.isSelected()) {
-                    setEnabling(lowerPanel2, true);
-                    setEnabling(lowerPanel3, false);
-                    manualCheck.setSelected(false);
-                } else {
-                    setEnabling(lowerPanel2, false);
-                    setEnabling(lowerPanel3, true);
-                    manualCheck.setSelected(true);
+                    connectPattern = AUTO_CONNECT;
+                    setEnabling(lowerPanelAuto, true);
+                    setEnabling(lowerPanelScatter, false);
+                    setEnabling(lowerPanelOne2One, false);
+                    scatterCheck.setSelected(false);
+                    one2oneCheck.setSelected(false);
                 }
+//                else {
+//                    setEnabling(lowerPanelAuto, false);
+//                    setEnabling(lowerPanelScatter, true);
+//                    scatterCheck.setSelected(true);
+//                }
             }
         });
-        manualCheck.addItemListener(new ItemListener() {
+        scatterCheck.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
-                if (manualCheck.isSelected()) {
-                    setEnabling(lowerPanel2, false);
-                    setEnabling(lowerPanel3, true);
+                if (scatterCheck.isSelected()) {
+                    connectPattern = SCATTER_CONNECT;
+                    setEnabling(lowerPanelAuto, false);
+                    setEnabling(lowerPanelScatter, true);
+                    setEnabling(lowerPanelOne2One, false);
                     autoCheck.setSelected(false);
-                } else {
-                    setEnabling(lowerPanel2, true);
-                    setEnabling(lowerPanel3, false);
-                    autoCheck.setSelected(true);
+                    one2oneCheck.setSelected(false);
                 }
+//                else {
+//                    setEnabling(lowerPanelAuto, true);
+//                    setEnabling(lowerPanelScatter, false);
+//                    autoCheck.setSelected(true);
+//                }
+            }
+        });
+        one2oneCheck.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (one2oneCheck.isSelected()) {
+                    connectPattern = ONE2ONE_CONNECT;
+                    setEnabling(lowerPanelAuto, false);
+                    setEnabling(lowerPanelScatter, false);
+                    setEnabling(lowerPanelOne2One, true);                                       
+                    autoCheck.setSelected(false);
+                    scatterCheck.setSelected(false);
+                }
+//                else {
+//                    setEnabling(lowerPanelAuto, true);
+//                    setEnabling(lowerPanelScatter, false);
+//                    autoCheck.setSelected(true);
+//                }
             }
         });
 
         lowerPanel1.add(autoCheck);
-        lowerPanel1.add(manualCheck);
+        lowerPanel1.add(scatterCheck);
+        lowerPanel1.add(one2oneCheck);
 
         final JLabel numberLabel = new JLabel();
         final JSlider jobSlide = new JSlider(1, 999, 1);
@@ -126,8 +162,8 @@ public class JobUnitPanel extends ParameterPanel {
             }
         });
         numberLabel.setText("No. Jobs : " + numberOfJobs);
-        lowerPanel2.add(numberLabel);
-        lowerPanel2.add(jobSlide);
+        lowerPanelAuto.add(numberLabel);
+        lowerPanelAuto.add(jobSlide);
 
         final JLabel numberInputFilesLabel = new JLabel("No. Files/job : " + fileInputsPerJob);
         final JSlider fileSlide = new JSlider(1, 999, 1);
@@ -138,28 +174,31 @@ public class JobUnitPanel extends ParameterPanel {
                 numberInputFilesLabel.setText("No. Files/job : " + fileInputsPerJob);
             }
         });
-        lowerPanel3.add(numberInputFilesLabel);
-        lowerPanel3.add(fileSlide);
+        lowerPanelScatter.add(numberInputFilesLabel);
+        lowerPanelScatter.add(fileSlide);
 
         lowerPanel.add(lowerPanel1);
-        lowerPanel.add(lowerPanel2);
-        lowerPanel.add(lowerPanel3);
+        lowerPanel.add(lowerPanelAuto);
+        lowerPanel.add(lowerPanelScatter);
         add(lowerPanel);
 
         setEnabling(lowerPanel, collection);
-        setEnabling(lowerPanel2, autoConnect);
-        setEnabling(lowerPanel3, !autoConnect);
+        setEnabling(lowerPanelAuto, autoConnect);
+        setEnabling(lowerPanelScatter, !autoConnect);
     }
+    
 
     public void getParams(){
         collection = isCollection();
         numberOfJobs = getNumberOfJobs();
+        connectPattern = getConnectPattern();
     }
 
     private void setParams(){
         getTask().setParameter("args", argsField.getText());
         getTask().setParameter("numberOfJobs", numberOfJobs);
         getTask().setParameter("collection", collection);
+        getTask().setParameter("connectPattern", connectPattern);
     }
 
     public void changeToolName(String name){
@@ -187,7 +226,7 @@ public class JobUnitPanel extends ParameterPanel {
 
     private boolean isCollection(){
         Object o = getParameter("collection");
-     //   System.out.println("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        //   System.out.println("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o.equals(true)){
             return true;
         }else{
@@ -197,7 +236,7 @@ public class JobUnitPanel extends ParameterPanel {
 
     private int getNumberOfJobs(){
         Object o = getParameter("numberOfJobs");
-     //   System.out.println("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        //   System.out.println("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o != null){
             int value = (Integer)o;
             if(value > 1 ){
@@ -206,6 +245,19 @@ public class JobUnitPanel extends ParameterPanel {
             return 1;
         }
         return 1;
+    }
+
+    private int getConnectPattern(){
+        Object o = getParameter("connectPattern");
+        if(o != null){
+            int value = (Integer)o;
+            switch(value){
+                case 0 : return AUTO_CONNECT;
+                case 1 : return SCATTER_CONNECT;
+                case 2 : return ONE2ONE_CONNECT;
+            }
+        }
+        return AUTO_CONNECT;
     }
 
     @Override
