@@ -142,11 +142,11 @@ public class Triana {
             }
         }
         boolean runNoGui = vals.hasOption(NOGUI);
-        boolean pid = vals.hasOption(UUID);
-        boolean exec = vals.hasOption(EXECUTE);
+        boolean pid = vals.hasOptionValue(UUID);
+        boolean exec = vals.hasOptionValue(EXECUTE);
         boolean server = vals.hasOption(SERVER);
         boolean workflow = vals.hasOptionValue(WORKFLOW);
-        if (runNoGui) {
+        if (runNoGui || pid) {
             if (!server) {
                 if (pid || exec || workflow) {
                     Exec.exec(args);

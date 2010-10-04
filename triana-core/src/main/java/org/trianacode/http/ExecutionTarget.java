@@ -2,6 +2,7 @@ package org.trianacode.http;
 
 import org.thinginitself.http.*;
 import org.thinginitself.http.util.PathTree;
+import org.thinginitself.http.util.StreamableOptions;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableString;
 import org.trianacode.TrianaInstance;
@@ -35,23 +36,28 @@ public class ExecutionTarget implements Target {
 
     @Override
     public Resource getResource(RequestContext requestContext) {
-        return pathTree.getResource(requestContext.getRequestPath());
+        return pathTree.getResource(requestContext.getRequestTarget());
     }
 
     @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
-        Resource r = pathTree.getResource(requestContext.getRequestPath());
-        String pid = r.getPath().getLast();
-        if (pid != null) {
-            try {
-                String status = Exec.readUuidFile(pid);
-                requestContext.setResponseEntity(new StreamableString(status));
-                requestContext.setResponseCode(201);
-            } catch (IOException e) {
-                throw new RequestProcessException("Error getting workflow status for UUID:" + pid, 400);
-            }
+        System.out.println("ExecutionTarget.onGet path:" + requestContext.getRequestTarget());
+        String pid = new Path(requestContext.getRequestTarget()).getLast();
+        Resource r = pathTree.getResource(pid);
+        System.out.println("ExecutionTarget.onGet resource path:" + r.getPath());
+        if (r.getPath().equals(getPath())) {
+            requestContext.setResponseEntity(new StreamableString("POST to me to run a workflow. :-)"));
         }
 
+        System.out.println("ExecutionTarget.onGet PID:" + pid);
+        try {
+            Exec exec = new Exec(pid);
+            String status = exec.readUuidFile();
+            requestContext.setResponseEntity(new StreamableString(status));
+            requestContext.setResponseCode(201);
+        } catch (IOException e) {
+            throw new RequestProcessException("Error getting workflow status for UUID:" + pid, 400);
+        }
     }
 
     @Override
@@ -75,7 +81,11 @@ public class ExecutionTarget implements Target {
             }
             TrianaInstance inst = toolResolver.getProperties().getEngine();
             final Exec exec = new Exec(null);
+            exec.createFile();
             String pid = exec.getPid();
+            System.out.println("ExecutionTarget.onPost got exec pid:" + pid);
+            pathTree.addResource(new Resource(new Path(pid)));
+
             inst.execute(new Runnable() {
                 public void run() {
                     try {
@@ -87,7 +97,6 @@ public class ExecutionTarget implements Target {
             });
             requestContext.setResponseEntity(new StreamableString(pid));
             requestContext.setResponseCode(201);
-            pathTree.addResource(new Resource(new Path(task.getQualifiedToolName() + "/" + pid)));
         } catch (Exception e) {
             throw new RequestProcessException(e, 400);
         }
@@ -97,10 +106,12 @@ public class ExecutionTarget implements Target {
 
     @Override
     public void onDelete(RequestContext requestContext) throws RequestProcessException {
+        requestContext.setResponseCode(405);
     }
 
     @Override
     public void onOptions(RequestContext requestContext) throws RequestProcessException {
+        requestContext.setResponseEntity(StreamableOptions.newOptions(Http.Method.GET, Http.Method.POST));
     }
 
 }

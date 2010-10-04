@@ -209,9 +209,8 @@ public class Exec implements ExecutionListener {
 
     public void execute(final Tool tool, final String data) throws Exception {
 
-        runner.getScheduler().addExecutionListener(this);
-
         runner = new TrianaRun(tool);
+        runner.getScheduler().addExecutionListener(this);
 
         NodeMappings mappings = null;
         if (data != null) {
@@ -263,10 +262,9 @@ public class Exec implements ExecutionListener {
     }
 
     public void execute(final Tool tool, final IoConfiguration ioc) throws Exception {
-
-        runner.getScheduler().addExecutionListener(this);
-
+        System.out.println("Exec.execute");
         runner = new TrianaRun(tool);
+        runner.getScheduler().addExecutionListener(this);
 
         NodeMappings mappings = null;
         if (ioc != null) {
@@ -348,12 +346,17 @@ public class Exec implements ExecutionListener {
 //        }
     }
 
-
-    private void createFile(String pid) throws IOException {
+    public void createFile() throws IOException {
+        System.out.println("Exec.createFile pid:" + pid);
         writeFile(ExecutionState.NOT_INITIALIZED.ordinal(), pid, true);
     }
 
-    public static String readUuidFile(String pid) throws IOException {
+    private static void createFile(String pid) throws IOException {
+        writeFile(ExecutionState.NOT_INITIALIZED.ordinal(), pid, true);
+    }
+
+    public String readUuidFile() throws IOException {
+        System.out.println("Exec.readUuidFile pid:" + pid);
         int val = readFile(pid);
         return statusToString(val);
     }
@@ -416,11 +419,13 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionStateChanged(ExecutionEvent event) {
+        System.out.println("Exec.executionStateChanged");
 
     }
 
     @Override
     public void executionRequested(ExecutionEvent event) {
+        System.out.println("Exec.executionRequested");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
@@ -430,6 +435,7 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionStarting(ExecutionEvent event) {
+        System.out.println("Exec.executionStarting");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
@@ -439,6 +445,7 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionFinished(ExecutionEvent event) {
+        System.out.println("Exec.executionFinished");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
@@ -449,6 +456,7 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionReset(ExecutionEvent event) {
+        System.out.println("Exec.executionReset");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
