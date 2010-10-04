@@ -19,6 +19,7 @@ package org.trianacode.taskgraph.ser;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,6 +61,7 @@ public class ObjectMarshaller implements XMLConstants {
                 log.warn("Error marshalling object " + javaObject, e);
             }
         }
+        result.setAttribute(TYPE_TAG, javaObject.getClass().getName());
         return result;
     }
 
@@ -75,7 +77,12 @@ public class ObjectMarshaller implements XMLConstants {
                     if (e.getLocalName().equals(VALUE_TAG)) {
                         String encoded = e.getAttribute(BASE64_ENCODED);
                         if (encoded == null || !encoded.equals("true")) {
-                            return e.getTextContent();
+                            String type = e.getAttribute(TYPE_TAG);
+                            if (type == null || type.length() == 0) {
+                                return e.getTextContent();
+                            } else {
+                                return deserSimple(type, e.getTextContent());
+                            }
                         }
                         return marshallStringToJava(e.getTextContent());
                     }
@@ -116,11 +123,53 @@ public class ObjectMarshaller implements XMLConstants {
                 o instanceof Double ||
                 o instanceof Integer ||
                 o instanceof Character ||
-                o instanceof CharSequence ||
                 o instanceof Enum ||
                 o instanceof Float) {
             return o.toString();
         }
         return null;
     }
+
+    private static Object deserSimple(String type, String value) {
+        if (value == null) {
+            return null;
+        }
+        if (type.equals("java.lang.String")) {
+            return value;
+        } else {
+            try {
+                Class cls = ClassLoaders.forName(value);
+                if (cls.isAssignableFrom(StringBuffer.class)) {
+                    return new StringBuffer(value);
+                } else if (cls.isEnum()) {
+                    return Enum.valueOf(cls, value);
+                } else {
+                    return getPrimitive(type, value);
+                }
+            } catch (ClassNotFoundException e) {
+                return value;
+            }
+        }
+    }
+
+    public static Object getPrimitive(String name, String value) {
+        if (name.equals("boolean") || name.equals("java.lang.Boolean")) {
+            return new Boolean(value);
+        } else if (name.equals("int") || name.equals("java.lang.Integer")) {
+            return new Integer(value);
+        } else if (name.equals("short") || name.equals("java.lang.Short")) {
+            return new Short(value);
+        } else if (name.equals("char") || name.equals("java.lang.Character")) {
+            return new Character(value.charAt(0));
+        } else if (name.equals("long") || name.equals("java.lang.Long")) {
+            return new Long(value);
+        } else if (name.equals("double") || name.equals("java.lang.Double")) {
+            return new Double(value);
+        } else if (name.equals("float") || name.equals("java.lang.Float")) {
+            return new Float(value);
+        }
+        return value;
+    }
+
+
 }
