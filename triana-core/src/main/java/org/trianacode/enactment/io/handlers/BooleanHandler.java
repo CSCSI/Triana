@@ -3,7 +3,9 @@ package org.trianacode.enactment.io.handlers;
 import org.trianacode.enactment.io.IoTypeHandler;
 import org.trianacode.taskgraph.TaskGraphException;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Andrew Harrison
@@ -16,7 +18,7 @@ public class BooleanHandler extends IoTypeHandler<Boolean> {
     }
 
     @Override
-    public Boolean handle(String type, InputStream source) throws TaskGraphException {
+    public Boolean read(String type, InputStream source) throws TaskGraphException {
         if (type.equals("boolean")) {
             try {
                 return Boolean.parseBoolean(readAsString(source));
@@ -26,4 +28,15 @@ public class BooleanHandler extends IoTypeHandler<Boolean> {
         }
         return null;
     }
+
+    @Override
+    public void write(Boolean b, OutputStream sink) throws TaskGraphException {
+        try {
+            sink.write(b.toString().getBytes("UTF-8"));
+            sink.flush();
+        } catch (IOException e) {
+            throw new TaskGraphException(e);
+        }
+    }
+
 }

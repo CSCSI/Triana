@@ -5,6 +5,7 @@ import org.trianacode.taskgraph.TaskGraphException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Andrew Harrison
@@ -14,7 +15,9 @@ public abstract class IoTypeHandler<T> {
 
     public abstract String[] getKnownTypes();
 
-    public abstract T handle(String type, InputStream source) throws TaskGraphException;
+    public abstract T read(String type, InputStream source) throws TaskGraphException;
+
+    public abstract void write(T t, OutputStream sink) throws TaskGraphException;
 
     public String readAsString(InputStream in) throws TaskGraphException {
         try {

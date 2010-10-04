@@ -94,7 +94,7 @@ public class IoHandler {
                     } else {
                         in = new ByteArrayInputStream(val.getBytes());
                     }
-                    Object o = handler.handle(type, in);
+                    Object o = handler.read(type, in);
                     String[] intypes = task.getDataInputTypes(node.getNodeIndex());
                     if (intypes == null) {
                         intypes = task.getDataInputTypes();
@@ -205,6 +205,25 @@ public class IoHandler {
                 conf.addOutput(iom);
             }
         }
+    }
+
+    public static IoTypeHandler getHandler(Object value) {
+        if (value instanceof String) {
+            return getHandler("string");
+        } else if (value instanceof Boolean) {
+            return getHandler("boolean");
+        } else if (value instanceof Double) {
+            return getHandler("double");
+        } else if (value instanceof Integer) {
+            return getHandler("integer");
+        } else if (value instanceof byte[]) {
+            return getHandler("bytes");
+        } else if (value instanceof InputStream) {
+            return getHandler("stream");
+        } else if (value instanceof Serializable) {
+            return getHandler("java64");
+        }
+        return null;
     }
 
     private static void testMappings(IoConfiguration conf, String wf) throws Exception {

@@ -5,10 +5,7 @@ import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.Base64;
 import org.trianacode.taskgraph.ser.TrianaObjectInputStream;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.io.*;
 
 /**
  * @author Andrew Harrison
@@ -21,7 +18,7 @@ public class SerializableHandler extends IoTypeHandler<Serializable> {
     }
 
     @Override
-    public Serializable handle(String type, InputStream source) throws TaskGraphException {
+    public Serializable read(String type, InputStream source) throws TaskGraphException {
         if (type.equals("java64")) {
             try {
                 byte[] bytes = Base64.decode(readAsString(source));
@@ -41,5 +38,19 @@ public class SerializableHandler extends IoTypeHandler<Serializable> {
             }
         }
         return null;
+    }
+
+    @Override
+    public void write(Serializable serializable, OutputStream sink) throws TaskGraphException {
+
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            ObjectOutputStream marshall = new ObjectOutputStream(bout);
+            marshall.writeObject(serializable);
+            String ret = Base64.encode(bout.toByteArray());
+            sink.write(ret.getBytes("UTF-8"));
+        } catch (IOException e) {
+            throw new TaskGraphException(e);
+        }
     }
 }

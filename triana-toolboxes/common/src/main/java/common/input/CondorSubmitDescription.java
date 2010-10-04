@@ -25,7 +25,7 @@ public class CondorSubmitDescription extends Unit {
         Object[][] desc = (Object[][]) getParameter("CondorSubmitDescription");
 
         Document doc = new Document();
-        doc.setFile(System.getProperty("java.io.PIDS_DIR")
+        doc.setFile(System.getProperty("java.io.tmpdir")
                 + System.getProperty("file.separator")
                 + "triana-"
                 + new DecimalFormat("00000").format(new Random().nextInt(100000))

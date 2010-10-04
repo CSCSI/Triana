@@ -3,7 +3,9 @@ package org.trianacode.enactment.io.handlers;
 import org.trianacode.enactment.io.IoTypeHandler;
 import org.trianacode.taskgraph.TaskGraphException;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Andrew Harrison
@@ -16,10 +18,20 @@ public class BytesHandler extends IoTypeHandler<byte[]> {
     }
 
     @Override
-    public byte[] handle(String type, InputStream source) throws TaskGraphException {
+    public byte[] read(String type, InputStream source) throws TaskGraphException {
         if (type.equals("bytes")) {
             return readAsBytes(source);
         }
         return null;
+    }
+
+    @Override
+    public void write(byte[] bytes, OutputStream sink) throws TaskGraphException {
+        try {
+            sink.write(bytes);
+            sink.flush();
+        } catch (IOException e) {
+            throw new TaskGraphException(e);
+        }
     }
 }

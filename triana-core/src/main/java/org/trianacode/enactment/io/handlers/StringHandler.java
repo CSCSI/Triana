@@ -3,7 +3,9 @@ package org.trianacode.enactment.io.handlers;
 import org.trianacode.enactment.io.IoTypeHandler;
 import org.trianacode.taskgraph.TaskGraphException;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Andrew Harrison
@@ -16,10 +18,20 @@ public class StringHandler extends IoTypeHandler<String> {
     }
 
     @Override
-    public String handle(String type, InputStream source) throws TaskGraphException {
+    public String read(String type, InputStream source) throws TaskGraphException {
         if (type.equals("string")) {
             return readAsString(source);
         }
         return null;
+    }
+
+    @Override
+    public void write(String s, OutputStream sink) throws TaskGraphException {
+        try {
+            sink.write(s.getBytes("UTF-8"));
+            sink.flush();
+        } catch (IOException e) {
+            throw new TaskGraphException(e);
+        }
     }
 }

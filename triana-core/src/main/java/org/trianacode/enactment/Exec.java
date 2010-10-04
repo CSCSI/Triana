@@ -8,10 +8,12 @@ import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
+import org.trianacode.enactment.io.IoTypeHandler;
 import org.trianacode.enactment.io.NodeMappings;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
 import org.trianacode.taskgraph.databus.DataNotResolvableException;
@@ -34,11 +36,11 @@ import java.util.*;
 public class Exec implements ExecutionListener {
 
 
-    public static final String PID_DIR = "pids";
-    public static File PIDS_DIR = new File(Locations.getApplicationDataDir(), PID_DIR);
+    public static final String RUNS_DIR = "runs";
+    public static File RUNS = new File(Locations.getApplicationDataDir(), RUNS_DIR);
 
     static {
-        PIDS_DIR.mkdirs();
+        RUNS.mkdirs();
     }
 
     private String pid = UUID.randomUUID().toString();
@@ -208,7 +210,6 @@ public class Exec implements ExecutionListener {
     }
 
     public void execute(final Tool tool, final String data) throws Exception {
-
         runner = new TrianaRun(tool);
         runner.getScheduler().addExecutionListener(this);
 
@@ -230,6 +231,7 @@ public class Exec implements ExecutionListener {
                 Integer integer = it.next();
                 Object val = mappings.getValue(integer);
                 runner.sendInputData(integer, val);
+                System.out.println("Exec.execute sent input data");
             }
         }
 
@@ -262,7 +264,6 @@ public class Exec implements ExecutionListener {
     }
 
     public void execute(final Tool tool, final IoConfiguration ioc) throws Exception {
-        System.out.println("Exec.execute");
         runner = new TrianaRun(tool);
         runner.getScheduler().addExecutionListener(this);
 
@@ -292,18 +293,19 @@ public class Exec implements ExecutionListener {
         }
 
         Node[] nodes = runner.getTaskGraph().getDataOutputNodes();
-        for (Node node : nodes) {
-            Object out = runner.receiveOutputData(0);
+        for (int i = 0; i < nodes.length; i++) {
+
+            Object out = runner.receiveOutputData(i);
             Object o = null;
             if (out instanceof WorkflowDataPacket) {
                 try {
                     DataBusInterface db = DataBus.getDataBus(((WorkflowDataPacket) out).getProtocol());
                     o = db.get((WorkflowDataPacket) out);
                 } catch (DataNotResolvableException e) {
-                    e.printStackTrace();
+                    continue;
                 }
             }
-            System.out.println("Exec.execute output:" + o);
+            writeData(o, i);
         }
         runner.dispose();
 
@@ -346,8 +348,20 @@ public class Exec implements ExecutionListener {
 //        }
     }
 
+    private void writeData(Object o, int index) throws IOException, TaskGraphException {
+        File lockDir = new File(RUNS, pid);
+        if (!lockDir.exists()) {
+            return;
+        }
+        File dataFile = new File(lockDir, "out" + index);
+        IoTypeHandler ioth = IoHandler.getHandler(o);
+        if (ioth != null) {
+            FileOutputStream fout = new FileOutputStream(dataFile);
+            ioth.write(o, fout);
+        }
+    }
+
     public void createFile() throws IOException {
-        System.out.println("Exec.createFile pid:" + pid);
         writeFile(ExecutionState.NOT_INITIALIZED.ordinal(), pid, true);
     }
 
@@ -356,31 +370,35 @@ public class Exec implements ExecutionListener {
     }
 
     public String readUuidFile() throws IOException {
-        System.out.println("Exec.readUuidFile pid:" + pid);
         int val = readFile(pid);
         return statusToString(val);
     }
 
     private static int readFile(String pid) throws IOException {
-        File lockfile = new File(PIDS_DIR, pid);
-        if (lockfile.exists() && lockfile.length() > 0) {
-            RandomAccessFile file = new RandomAccessFile(lockfile, "rw");
-            FileChannel f = file.getChannel();
-            FileLock fl = f.lock();
-            ByteBuffer bb = ByteBuffer.allocate(4);
-            f.read(bb);
-            bb.flip();
-            int command = bb.getInt();
-            fl.release();
-            file.close();
-            return command;
+        File lockDir = new File(RUNS, pid);
+        if (lockDir.exists()) {
+            File lockfile = new File(lockDir, pid);
+            if (lockfile.exists() && lockfile.length() > 0) {
+                RandomAccessFile file = new RandomAccessFile(lockfile, "rw");
+                FileChannel f = file.getChannel();
+                FileLock fl = f.lock();
+                ByteBuffer bb = ByteBuffer.allocate(4);
+                f.read(bb);
+                bb.flip();
+                int command = bb.getInt();
+                fl.release();
+                file.close();
+                return command;
+            }
         }
         return -1;
     }
 
     private static void writeFile(int command, String pid, boolean create) throws IOException {
 
-        File lockfile = new File(PIDS_DIR, pid);
+        File lockDir = new File(RUNS, pid);
+        lockDir.mkdirs();
+        File lockfile = new File(lockDir, pid);
         if (!create) {
             if (!lockfile.exists() || lockfile.length() == 0) {
                 return;
@@ -407,7 +425,14 @@ public class Exec implements ExecutionListener {
     }
 
     private static void deleteFile(String pid) throws IOException {
-        File lockfile = new File(PIDS_DIR, pid);
+        File lockDir = new File(RUNS, pid);
+        if (!lockDir.exists()) {
+            return;
+        }
+        File lockfile = new File(lockDir, pid);
+        if (!lockfile.exists()) {
+            return;
+        }
         RandomAccessFile file = new RandomAccessFile(lockfile, "rw");
         FileChannel f = file.getChannel();
         FileLock fl = f.lock();
@@ -419,13 +444,11 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionStateChanged(ExecutionEvent event) {
-        System.out.println("Exec.executionStateChanged");
 
     }
 
     @Override
     public void executionRequested(ExecutionEvent event) {
-        System.out.println("Exec.executionRequested");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
@@ -435,7 +458,6 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionStarting(ExecutionEvent event) {
-        System.out.println("Exec.executionStarting");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
@@ -445,7 +467,6 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionFinished(ExecutionEvent event) {
-        System.out.println("Exec.executionFinished");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
@@ -456,7 +477,6 @@ public class Exec implements ExecutionListener {
 
     @Override
     public void executionReset(ExecutionEvent event) {
-        System.out.println("Exec.executionReset");
         try {
             writeFile(event.getState().ordinal(), pid, false);
         } catch (IOException e) {
@@ -510,17 +530,12 @@ public class Exec implements ExecutionListener {
 //    }
 
     private static void cleanPids() {
-        File[] pids = PIDS_DIR.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".pid") || name.endsWith(".log");
-            }
-        });
+        File[] pids = RUNS.listFiles();
         long now = System.currentTimeMillis();
         for (File file : pids) {
             long mod = file.lastModified();
-            if (mod + (3600000 * 24) < now) {
+            if (mod + (3600000 * 24) < now && file.isDirectory()) {
                 file.delete();
-
             }
         }
 

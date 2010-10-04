@@ -47,6 +47,7 @@ public class ExecutionTarget implements Target {
         System.out.println("ExecutionTarget.onGet resource path:" + r.getPath());
         if (r.getPath().equals(getPath())) {
             requestContext.setResponseEntity(new StreamableString("POST to me to run a workflow. :-)"));
+            return;
         }
 
         System.out.println("ExecutionTarget.onGet PID:" + pid);
