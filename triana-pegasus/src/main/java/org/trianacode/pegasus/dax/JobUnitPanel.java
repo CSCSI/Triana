@@ -26,6 +26,7 @@ public class JobUnitPanel extends ParameterPanel {
     private int numberOfJobs = 1;
     private int fileInputsPerJob = 1;
     private boolean collection = false;
+    private boolean autoConnect = true;
 
     JLabel collectLabel = new JLabel("");
 
@@ -33,6 +34,7 @@ public class JobUnitPanel extends ParameterPanel {
 
     @Override
     public void init() {
+        getParams();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -49,7 +51,7 @@ public class JobUnitPanel extends ParameterPanel {
         argsField.setText((String) getParameter("args"));
         upperPanel.add(argsField);
 
-        final JCheckBox collectionBox = new JCheckBox("Collection", isCollection());
+        final JCheckBox collectionBox = new JCheckBox("Collection", collection);
         collectionBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
                 if (collectionBox.isSelected()) {
@@ -65,7 +67,7 @@ public class JobUnitPanel extends ParameterPanel {
         });
         upperPanel.add(collectionBox);
 
-        if(isCollection()){
+        if(collection){
             collectLabel.setText("Collection of jobs.");
         }else{
             collectLabel.setText("Not a collection");
@@ -80,8 +82,8 @@ public class JobUnitPanel extends ParameterPanel {
         final JPanel lowerPanel2 = new JPanel(new GridLayout(1, 2, 5, 5));
         final JPanel lowerPanel3 = new JPanel(new GridLayout(1, 2, 5, 5));
 
-        final JCheckBox autoCheck = new JCheckBox("Auto (Fully connect all incoming nodes)", false);
-        final JCheckBox manualCheck = new JCheckBox("Manual", false);
+        final JCheckBox autoCheck = new JCheckBox("Auto (Fully connect all incoming nodes)", autoConnect);
+        final JCheckBox manualCheck = new JCheckBox("Manual", !autoConnect);
 
         autoCheck.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
@@ -113,8 +115,9 @@ public class JobUnitPanel extends ParameterPanel {
         lowerPanel1.add(autoCheck);
         lowerPanel1.add(manualCheck);
 
-        final JLabel numberLabel = new JLabel("No. Jobs : " + numberOfJobs);
+        final JLabel numberLabel = new JLabel();
         final JSlider jobSlide = new JSlider(1, 999, 1);
+        jobSlide.setValue(numberOfJobs);
         jobSlide.setMajorTickSpacing(100);
         jobSlide.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent changeEvent) {
@@ -122,6 +125,7 @@ public class JobUnitPanel extends ParameterPanel {
                 numberLabel.setText("No. jobs : " + numberOfJobs);
             }
         });
+        numberLabel.setText("No. Jobs : " + numberOfJobs);
         lowerPanel2.add(numberLabel);
         lowerPanel2.add(jobSlide);
 
@@ -142,14 +146,20 @@ public class JobUnitPanel extends ParameterPanel {
         lowerPanel.add(lowerPanel3);
         add(lowerPanel);
 
-        setEnabling(lowerPanel, isCollection());
+        setEnabling(lowerPanel, collection);
+        setEnabling(lowerPanel2, autoConnect);
+        setEnabling(lowerPanel3, !autoConnect);
+    }
+
+    public void getParams(){
+        collection = isCollection();
+        numberOfJobs = getNumberOfJobs();
     }
 
     private void setParams(){
         getTask().setParameter("args", argsField.getText());
         getTask().setParameter("numberOfJobs", numberOfJobs);
         getTask().setParameter("collection", collection);
-
     }
 
     public void changeToolName(String name){
@@ -159,13 +169,12 @@ public class JobUnitPanel extends ParameterPanel {
         getTask().setToolName(name);
     }
 
+    public void applyClicked(){ apply();}
+    public void okClicked(){ apply();};
     public void apply(){
         changeToolName(nameField.getText());
         setParams();
     }
-
-    public void applyClicked(){ apply();}
-    public void okClicked(){ apply();};
 
     public void setEnabling(Component c,boolean enable) {
         c.setEnabled(enable);
@@ -181,6 +190,22 @@ public class JobUnitPanel extends ParameterPanel {
             return true;
         }else{
             return false;
+        }
+    }
+
+    private int getNumberOfJobs(){
+        try{
+            String param = (String)getParameter("numberOfJobs");
+            if(param != null){
+                int value = Integer.parseInt(param);
+                if(value > 1 ){
+                    return value;
+                }
+                return 1;
+            }
+            return 1;
+        }catch(Exception e){
+            return 1;
         }
     }
 
