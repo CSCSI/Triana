@@ -58,27 +58,19 @@
  */
 package org.trianacode.taskgraph.imp;
 
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.event.*;
+import org.trianacode.taskgraph.service.ExecutionEvent;
+import org.trianacode.taskgraph.service.ExecutionListener;
+import org.trianacode.taskgraph.service.RunnableInstance;
+import org.trianacode.taskgraph.tool.Tool;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.trianacode.taskgraph.*;
-import org.trianacode.taskgraph.event.ControlTaskStateEvent;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskGraphCableEvent;
-import org.trianacode.taskgraph.event.TaskGraphListener;
-import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
-import org.trianacode.taskgraph.service.ExecutionEvent;
-import org.trianacode.taskgraph.service.ExecutionListener;
-import org.trianacode.taskgraph.service.RunnableInstance;
-import org.trianacode.taskgraph.tool.Tool;
 
 
 /**
@@ -1187,7 +1179,7 @@ public class TaskGraphImp extends TaskImp
         while (enumeration.hasMoreElements()) {
             removeTask((Task) enumeration.nextElement());
         }
-
+        execlisteners.clear();
         super.dispose();
     }
 
@@ -1200,7 +1192,7 @@ public class TaskGraphImp extends TaskImp
 
     @Override
     public void executionRequested(ExecutionEvent event) {
-        if(currentState.get() < 0) {
+        if (currentState.get() < 0) {
             currentState.set(0);
             ExecutionEvent evt = new ExecutionEvent(event.getState(), this);
             for (ExecutionListener execlistener : execlisteners) {
@@ -1222,7 +1214,7 @@ public class TaskGraphImp extends TaskImp
 
     @Override
     public void executionFinished(ExecutionEvent event) {
-        if(isFinished(this)) {
+        if (isFinished(this)) {
             ExecutionEvent evt = new ExecutionEvent(event.getState(), this);
             for (ExecutionListener execlistener : execlisteners) {
                 execlistener.executionFinished(evt);
@@ -1232,7 +1224,7 @@ public class TaskGraphImp extends TaskImp
     }
 
     @Override
-    public void executionReset(ExecutionEvent event) { 
+    public void executionReset(ExecutionEvent event) {
     }
 
     private boolean isFinished(TaskGraph taskgraph) {

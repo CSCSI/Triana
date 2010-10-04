@@ -1,18 +1,15 @@
 package org.trianacode.http;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
-
-import org.thinginitself.http.Http;
-import org.thinginitself.http.HttpPeer;
-import org.thinginitself.http.Path;
-import org.thinginitself.http.RequestContext;
-import org.thinginitself.http.RequestProcessException;
-import org.thinginitself.http.Resource;
+import org.apache.commons.logging.Log;
+import org.thinginitself.http.*;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.interceptor.execution.ExecutionControlListener;
 import org.trianacode.taskgraph.interceptor.execution.ExecutionController;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * @author Andrew Harrison
@@ -21,11 +18,14 @@ import org.trianacode.taskgraph.tool.Tool;
 
 public class TaskResource extends Resource implements ExecutionControlListener {
 
+    private static Log log = Loggers.TOOL_LOGGER;
+
     private Task task;
     private ExecutionController controller;
     private BlockingQueue<RenderInfo> nextTask = new SynchronousQueue<RenderInfo>();
     private boolean started = false;
     private HttpPeer peer;
+    private Task currentTask = null;
 
 
     public TaskResource(Task task, String path, HttpPeer peer) {
@@ -41,8 +41,8 @@ public class TaskResource extends Resource implements ExecutionControlListener {
     }
 
     public Resource getResource(RequestContext context) throws RequestProcessException {
-        System.out.println("TaskResource.getResource " + context.getRequestTarget());
-        System.out.println("TaskResource.getResource me " + getPath().toString());
+        log.debug("TaskResource.getResource " + context.getRequestTarget());
+        log.debug("TaskResource.getResource me " + getPath().toString());
         if (context.getRequestTarget().startsWith(getPath().toString())) {
             return this;
         }
@@ -51,8 +51,10 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
-        System.out.println("TaskResource.onPost ENTER " + requestContext.getRequestTarget());
-
+        log.debug("TaskResource.onPost ENTER " + requestContext.getRequestTarget());
+        if (currentTask != null) {
+            // get the POST data here I think and set the parameters.
+        }
         if (!started) {
             started = true;
             controller.begin();
@@ -85,11 +87,12 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
     @Override
     public void executionSuspended(Task task) {
-        System.out.println("TaskResource.executionSuspended for task " + task.getToolName());
+        log.debug("TaskResource.executionSuspended for task " + task.getToolName());
         if (isDisplayTask(task)) {
             try {
                 ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_PARAMETER_TEMPLATE);
                 r.init(task, task.getToolName());
+                currentTask = task;
                 nextTask.put(new RenderInfo(r, ToolRenderer.TOOL_PARAMETER_TEMPLATE));
             } catch (InterruptedException e) {
                 e.printStackTrace();

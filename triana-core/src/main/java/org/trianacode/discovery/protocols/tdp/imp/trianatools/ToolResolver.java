@@ -47,7 +47,9 @@ public class ToolResolver implements ToolMetadataResolver {
 
     private long resolveInterval = 10 * 1000;
 
-    private Timer timer;
+    private Timer timer = new Timer();
+
+    private boolean initialResolved = false;
 
     public static final String MIME_ZIP = "application/zip";
     public static final String MIME_JAR = "application/java-archive";
@@ -384,12 +386,18 @@ public class ToolResolver implements ToolMetadataResolver {
      * Ian T - changed this to run in a thread upon start up so we can see the GUI quicker
      */
     public void resolve(boolean reresolve) {
-        loadToolboxes();
+        if (initialResolved) {
+            return;
+        }
+        new Thread(new Runnable() {
+            public void run() {
+                loadToolboxes();
+                reresolve();
+            }
+        }).start();
+        initialResolved = true;
         if (reresolve) {
-            timer = new Timer();
             timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
-        } else {
-            new Thread((new ResolveThread())).start();
         }
     }
 

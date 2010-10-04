@@ -1,7 +1,6 @@
 package org.trianacode.taskgraph.interceptor.execution;
 
 import org.trianacode.TrianaInstance;
-import org.trianacode.http.HTTPServices;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -14,11 +13,11 @@ public class ResourceSpawnTest {
 
     public static void main(String[] args) throws Exception {
 
-        TrianaInstance engine=null;
+        TrianaInstance engine = null;
         try {
             engine = new TrianaInstance(args, null);
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
             System.exit(1);
         }
 
@@ -32,6 +31,6 @@ public class ResourceSpawnTest {
             System.out.println("Tool is not a Task:" + args[0] + ". I need a Task.");
             System.exit(0);
         }
-        engine.getHttpServices().getWorkflowServer().addExecutableTask("spawn", (Task) tool);
+        engine.getHttpServices().getWorkflowServer().addWebViewTask("spawn", (Task) tool);
     }
 }

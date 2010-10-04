@@ -45,19 +45,19 @@ import java.util.*;
 
 public class TrianaInstance {
 
-    String args[] = null;
+    private String args[] = null;
 
     private HTTPServices httpServices;
     private ToolResolver toolResolver;
 
     private Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
-    TrianaProperties props;
-    PropertyLoader propertyLoader;
-    DiscoverTools discoveryTools;
+    private TrianaProperties props;
+    private PropertyLoader propertyLoader;
+    private DiscoverTools discoveryTools;
 
-    ToolTable toolTable;
+    private ToolTable toolTable;
 
-    ArgumentParser parser;
+    private ArgumentParser parser;
 
 
     public TrianaInstance(String[] args, Class... extensions) throws IOException {

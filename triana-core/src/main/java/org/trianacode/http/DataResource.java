@@ -1,14 +1,14 @@
 package org.trianacode.http;
 
-import java.io.Serializable;
-
 import org.thinginitself.http.Http;
 import org.thinginitself.http.Resource;
+
+import java.io.Serializable;
 
 /**
  * Make a Java object available via restless.
  * <p/>
- * User: scmijt Date: Jul 24, 2010 Time: 1:39:46 PM To change this template use File | Settings | File Templates.
+ * User: scmijt Date: Jul 24, 2010 Time: 1:39:46 PM
  */
 public class DataResource extends Resource {
 

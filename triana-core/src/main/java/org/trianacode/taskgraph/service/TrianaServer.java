@@ -59,7 +59,6 @@
 package org.trianacode.taskgraph.service;
 
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.tool.ToolTable;
 
 
 /**
@@ -71,12 +70,6 @@ import org.trianacode.taskgraph.tool.ToolTable;
  * @version $Revision: 4048 $
  */
 public interface TrianaServer {
-
-    /**
-     * @return a table of the currently loaded tools
-     */
-    public ToolTable getToolTable();
-
 
     /**
      * Called by a control task to run the specified task within a running taskgraph

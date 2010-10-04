@@ -59,6 +59,7 @@
 
 
 import org.apache.commons.logging.Log;
+import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
 import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.OptionValues;
@@ -143,49 +144,23 @@ public class Triana {
         boolean runNoGui = vals.hasOption(NOGUI);
         boolean pid = vals.hasOption(UUID);
         boolean exec = vals.hasOption(EXECUTE);
-        if (runNoGui || pid || exec) {
-            Exec.exec(args);
+        boolean server = vals.hasOptionValue(SERVER);
+        boolean workflow = vals.hasOptionValue(WORKFLOW);
+        if (runNoGui) {
+            if (!server) {
+                if (pid || exec || workflow) {
+                    Exec.exec(args);
+                } else {
+                    System.out.println("Non-gui mode combined with non-server mode requires either a uuid, or a workflow");
+                    System.out.println(parser.usage());
+                    System.exit(0);
+                }
+            } else {
+                new TrianaInstance(args, null);
+            }
         } else {
             ApplicationFrame.initTriana(args);
         }
-
-
-        // ToDo: should have factory code to put OS specifics in
-        /*String myOSName = Env.os();
-          if (myOSName.equals("osx")) {
-              UIManager.setLookAndFeel(QuaquaManager.getLookAndFeelClassName());
-          }
-          else if(myOSName.equals("Windows XP") || myOSName.equals("Windows 2000")
-                  || myOSName.equals("Windows NT") || myOSName.equals("windows") )
-
-          {
-              //XP Look and feel
-              try
-              {
-                UIManager.setLookAndFeel(
-                    "net.java.plaf.windows.WindowsLookAndFeel"
-                );
-              }
-              catch ( Exception e )
-              {
-                  //this error is non critical
-                  e.printStackTrace();
-              }
-          }
-          else
-          {
-              //assume linux / unix
-              try
-              {
-                  UIManager.setLookAndFeel(new MetouiaLookAndFeel());
-              }
-              catch(Exception e)
-              {
-                  //this error is non critical
-                  e.printStackTrace();
-              }
-          }*/
-
 
     }
 

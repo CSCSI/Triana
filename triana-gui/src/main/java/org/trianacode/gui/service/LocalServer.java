@@ -16,19 +16,14 @@
 
 package org.trianacode.gui.service;
 
-import java.util.Vector;
-
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
-import org.trianacode.taskgraph.service.ClientException;
-import org.trianacode.taskgraph.service.RunnableInstance;
-import org.trianacode.taskgraph.service.Scheduler;
-import org.trianacode.taskgraph.service.SchedulerException;
-import org.trianacode.taskgraph.service.SchedulerInterface;
-import org.trianacode.taskgraph.service.TrianaClient;
-import org.trianacode.taskgraph.service.TrianaServer;
-import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.service.*;
+
+import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Class Description Here...
@@ -39,6 +34,8 @@ import org.trianacode.taskgraph.tool.ToolTable;
 
 public class LocalServer implements TrianaClient, TrianaServer {
 
+
+    private static ExecutorService exec = Executors.newFixedThreadPool(10);
     /**
      * the taskgraph this client handles
      */
@@ -55,18 +52,16 @@ public class LocalServer implements TrianaClient, TrianaServer {
     private Vector processWaiting = new Vector();
 
     /**
-     * the local tool table
-     */
-    private ToolTable tools;
-
-
-    /**
      * Constructs a local server.
      */
-    public LocalServer(TaskGraph taskgraph, ToolTable tools) {
+    public LocalServer(TaskGraph taskgraph) {
         this.taskgraph = taskgraph;
-        this.tools = tools;
         this.scheduler = new Scheduler(taskgraph);
+    }
+
+    public LocalServer(TaskGraph taskgraph, SchedulerInterface scheduler) {
+        this.taskgraph = taskgraph;
+        this.scheduler = scheduler;
     }
 
 
@@ -82,7 +77,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Sends a message to the sever to run the taskgraph.
      */
     public void run() throws ClientException {
-        Thread thread = new Thread() {
+        exec.execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 
@@ -104,18 +99,14 @@ public class LocalServer implements TrianaClient, TrianaServer {
                     except.printStackTrace();
                 }
             }
-        };
-
-        thread.setName("RunTaskGraphThread");
-        thread.setPriority(Thread.NORM_PRIORITY);
-        thread.start();
+        });
     }
 
     /**
      * Sends a message to the sever to run the taskgraph. The specfied history clip-ins is attached to every input task
      */
     public void run(final HistoryClipIn history) throws ClientException {
-        Thread thread = new Thread() {
+        exec.execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 
@@ -136,11 +127,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
                     except.printStackTrace();
                 }
             }
-        };
-
-        thread.setName("RunTaskGraphThread");
-        thread.setPriority(Thread.NORM_PRIORITY);
-        thread.start();
+        });
     }
 
 
@@ -156,7 +143,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Sends a message to the server to stop running the taskgraph.
      */
     public void pause() throws ClientException {
-        Thread thread = new Thread() {
+        exec.execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 
@@ -177,18 +164,14 @@ public class LocalServer implements TrianaClient, TrianaServer {
                     except.printStackTrace();
                 }
             }
-        };
-
-        thread.setName("PauseTaskGraphThread");
-        thread.setPriority(Thread.NORM_PRIORITY);
-        thread.start();
+        });
     }
 
     /**
      * Sends a message to the server to reset the taskgraph.
      */
     public void reset() throws ClientException {
-        Thread thread = new Thread() {
+        exec.execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 
@@ -209,11 +192,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
                     except.printStackTrace();
                 }
             }
-        };
-
-        thread.setName("ResetTaskGraphThread");
-        thread.setPriority(Thread.NORM_PRIORITY);
-        thread.start();
+        });
     }
 
     /**
@@ -297,14 +276,6 @@ public class LocalServer implements TrianaClient, TrianaServer {
         } catch (SchedulerException except) {
             throw (new ClientException(except));
         }
-    }
-
-
-    /**
-     * @return the a table of the currently loaded tools
-     */
-    public ToolTable getToolTable() {
-        return tools;
     }
 
 

@@ -67,7 +67,6 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.service.*;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
 
 
 /**
@@ -132,7 +131,7 @@ public class TrianaRun {
         }
 
         this.scheduler = new Scheduler(taskgraph);
-        TaskGraphManager.setTrianaServer(taskgraph, new ExecServer(TaskGraphManager.getToolTable()));
+        TaskGraphManager.setTrianaServer(taskgraph, new ExecServer());
 
         initCables();
     }
@@ -340,6 +339,7 @@ public class TrianaRun {
      * Clean up after a run execution.
      */
     public void dispose() {
+
         scheduler.resetTaskGraph();
         taskgraph.dispose();
     }
@@ -347,19 +347,11 @@ public class TrianaRun {
 
     private class ExecServer implements TrianaServer {
 
-        private ToolTable tools;
-
-        public ExecServer(ToolTable tools) {
-            this.tools = tools;
+        public ExecServer() {
         }
-
-        public ToolTable getToolTable() {
-            return tools;
-        }
-
 
         public void notifyError(RunnableInstance runnable, String message) {
-            System.err.println("Error: " + message);
+            scheduler.notifyError(runnable);
         }
 
         /**

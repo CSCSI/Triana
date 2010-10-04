@@ -1,19 +1,6 @@
 package org.trianacode.http;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.thinginitself.http.Http;
-import org.thinginitself.http.Path;
-import org.thinginitself.http.RequestContext;
-import org.thinginitself.http.RequestProcessException;
-import org.thinginitself.http.Resource;
+import org.thinginitself.http.*;
 import org.thinginitself.http.util.MimeHandler;
 import org.thinginitself.http.util.StreamableFileHandler;
 import org.thinginitself.streamable.StreamableData;
@@ -22,7 +9,13 @@ import org.thinginitself.streamable.StreamableString;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.Tool;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * This is all still messy - but just about works.
+ *
  * @author Andrew Harrison
  * @version 1.0.0 Aug 11, 2010
  */

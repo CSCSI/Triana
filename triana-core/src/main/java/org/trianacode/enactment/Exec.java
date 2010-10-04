@@ -200,13 +200,15 @@ public class Exec implements ExecutionListener {
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent();
         execute(tool, data);
-        System.exit(0);
 
     }
 
-    public void execute(Tool tool, String data) throws Exception {
-        runner = new TrianaRun(tool);
+    public void execute(final Tool tool, final String data) throws Exception {
+
         runner.getScheduler().addExecutionListener(this);
+
+        runner = new TrianaRun(tool);
+
         NodeMappings mappings = null;
         if (data != null) {
             File conf = new File(data);
@@ -253,6 +255,7 @@ public class Exec implements ExecutionListener {
             System.out.println("Exec.execute output:" + o);
         }
         runner.dispose();
+
     }
 
 

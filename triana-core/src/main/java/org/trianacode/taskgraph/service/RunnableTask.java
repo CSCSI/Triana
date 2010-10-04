@@ -833,7 +833,9 @@ public class RunnableTask extends AbstractRunnableTask
     }
 
     /**
-     * Tries running the process() method. If it succeeds then this function returns true, otherwise it returns false
+     * Tries running the process() method.
+     * <p/>
+     * TODO: Better error handling
      */
     public void process() {
         try {
@@ -844,7 +846,7 @@ public class RunnableTask extends AbstractRunnableTask
                 unit.process();
             }
             catch (Exception except) {
-                except.printStackTrace();
+                log.warn("Exception thrown invoking process() on Unit:", except);
             }
 
             if (!getExecutionState().equals(ExecutionState.ERROR)) {
@@ -855,32 +857,31 @@ public class RunnableTask extends AbstractRunnableTask
             }
         }
         catch (OutOfRangeException ore) {
-            System.err.println("Out Of Range : " + getQualifiedTaskName());
-            //ErrorDialog.show(ore);
+            notifyError(ore);
         }
         catch (EmptyingException ee) {
         }
         catch (NotCompatibleException nce) {
-            System.err.println("Not Compatible : " + getQualifiedTaskName());
-            //ErrorDialog.show(nce);
+            notifyError(nce);
         }
         catch (OutOfMemoryError ep) {
-            System.err.println("Out Of Memory : " + getQualifiedTaskName());
-            notifyError("Ran out of memory whilst executing "
-                    + getToolName() +
-                    "\nPlease choose a smaller sized data set");
+            notifyError(ep);
             System.runFinalization();
             System.gc();
         }
-        catch (Exception e) {
-            System.err.println("Other Exception : " + getQualifiedTaskName());
-            StringWriter s = new StringWriter();
-            PrintWriter p = new PrintWriter(s);
-            e.printStackTrace(p);
-            p.flush();
-
-            notifyError(s.toString());
+        catch (Throwable e) {
+            notifyError(e);
         }
+    }
+
+    private void notifyError(Throwable e) {
+        StringWriter s = new StringWriter();
+        s.write("Error in:" + getQualifiedTaskName() + "\n");
+        PrintWriter p = new PrintWriter(s);
+        e.printStackTrace(p);
+        p.flush();
+        notifyError(s.toString());
+
     }
 
     private void receiveTriggerParameters() {

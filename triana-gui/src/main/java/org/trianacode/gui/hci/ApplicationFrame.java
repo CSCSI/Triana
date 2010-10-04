@@ -710,7 +710,7 @@ public class ApplicationFrame extends TrianaWindow
     private TaskGraph addParentTaskGraphPanel(TaskGraph initgraph, String factoryType) throws TaskException {
         TaskGraph taskgraph = (TaskGraph) TaskGraphManager.createTask(initgraph, factoryType, false);
 
-        LocalServer server = new LocalServer(taskgraph, tools);
+        LocalServer server = new LocalServer(taskgraph);
         TaskGraphManager.setTrianaServer(taskgraph, server);
 
         if ((taskgraph.getToolName() == null) || taskgraph.getToolName().equals("")) {

@@ -1,13 +1,15 @@
 package org.trianacode.http;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
+import org.apache.commons.logging.Log;
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.RequestProcessException;
 import org.thinginitself.http.Resource;
 import org.thinginitself.http.target.MemoryTarget;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Andrew Harrison
@@ -15,6 +17,9 @@ import org.trianacode.taskgraph.Task;
  */
 
 public class ResourceSpawn extends MemoryTarget {
+
+    private static Log log = Loggers.TOOL_LOGGER;
+
 
     private Task task;
     private AtomicInteger count = new AtomicInteger(0);
@@ -33,7 +38,7 @@ public class ResourceSpawn extends MemoryTarget {
 
 
     public void onPost(RequestContext context) throws RequestProcessException {
-        System.out.println("ResourceSpawn.onPost ENTER " + context.getRequestTarget());
+        log.debug("ResourceSpawn.onPost ENTER " + context.getRequestTarget());
         String path = task.getToolName() + "/" + count.incrementAndGet() + "/";
         TaskResource res = new TaskResource(task, getPath().append(path).toString(), peer);
         peer.addTarget(res);
@@ -45,8 +50,8 @@ public class ResourceSpawn extends MemoryTarget {
     public org.thinginitself.http.Resource getResource(
             org.thinginitself.http.RequestContext context) {
 
-        System.out.println("ResourceSpawn.getResource path:" + context.getRequestPath());
-        System.out.println("ResourceSpawn.getResource target:" + context.getRequestTarget());
+        log.debug("ResourceSpawn.getResource path:" + context.getRequestPath());
+        log.debug("ResourceSpawn.getResource target:" + context.getRequestTarget());
         return super.getResource(context);
     }
 

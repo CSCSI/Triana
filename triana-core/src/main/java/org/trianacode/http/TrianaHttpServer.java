@@ -26,10 +26,16 @@ public class TrianaHttpServer implements Target, ToolListener {
 
     public TrianaHttpServer() {
         this.peer = new HttpPeer();
-        pathTree = new PathTree(path);
+        this.pathTree = new PathTree(path);
     }
 
-    public void addExecutableTask(String path, Task task) {
+    /**
+     * adds a task that can be invoked via HTML forms.
+     *
+     * @param path
+     * @param task
+     */
+    public void addWebViewTask(String path, Task task) {
         peer.addTarget(new ResourceSpawn(path, task, peer));
     }
 
@@ -46,6 +52,7 @@ public class TrianaHttpServer implements Target, ToolListener {
 
     public void start() throws IOException {
         peer.addTarget(this);
+        peer.addTarget(new ExecutionTarget());
         peer.open();
     }
 
@@ -81,7 +88,6 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     private void process(RequestContext requestContext) {
-        System.out.println("TrianaHttpServer.process ENTER");
         Resource r = requestContext.getResource();
         if (r.methodIsAllowed(requestContext.getMethod())) {
             Streamable s = r.getStreamable();

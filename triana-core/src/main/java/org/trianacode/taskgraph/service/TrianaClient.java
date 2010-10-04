@@ -17,7 +17,6 @@
 package org.trianacode.taskgraph.service;
 
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
-import org.trianacode.taskgraph.tool.ToolTable;
 
 /**
  * Class Description Here...
@@ -58,11 +57,6 @@ public interface TrianaClient {
      * Dispose of the client, cleaning up server connections
      */
     public void dispose() throws ClientException;
-
-    /**
-     * @return a table of the available tools
-     */
-    public ToolTable getToolTable();
 
 
 }
