@@ -77,8 +77,8 @@ public class JobUnitPanel extends ParameterPanel {
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
         lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Collection Options"));
         JPanel lowerPanel1 = new JPanel(new GridLayout(1, 2, 5, 5));
-        final JPanel lowerPanel2 = new JPanel(new GridLayout(2, 2, 5, 5));
-        final JPanel lowerPanel3 = new JPanel(new GridLayout(2, 2, 5, 5));
+        final JPanel lowerPanel2 = new JPanel(new GridLayout(1, 2, 5, 5));
+        final JPanel lowerPanel3 = new JPanel(new GridLayout(1, 2, 5, 5));
 
         final JCheckBox autoCheck = new JCheckBox("Auto (Fully connect all incoming nodes)", false);
         final JCheckBox manualCheck = new JCheckBox("Manual", false);
@@ -131,7 +131,7 @@ public class JobUnitPanel extends ParameterPanel {
         fileSlide.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent changeEvent) {
                 fileInputsPerJob = fileSlide.getValue();
-                numberLabel.setText("No. Files/job : " + fileInputsPerJob);
+                numberInputFilesLabel.setText("No. Files/job : " + fileInputsPerJob);
             }
         });
         lowerPanel3.add(numberInputFilesLabel);
