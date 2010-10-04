@@ -138,7 +138,7 @@ public class ObjectMarshaller implements XMLConstants {
             return value;
         } else {
             try {
-                Class cls = ClassLoaders.forName(value);
+                Class cls = ClassLoaders.forName(type);
                 if (cls.isAssignableFrom(StringBuffer.class)) {
                     return new StringBuffer(value);
                 } else if (cls.isEnum()) {
