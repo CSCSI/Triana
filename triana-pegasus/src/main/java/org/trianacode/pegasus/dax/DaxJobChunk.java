@@ -32,6 +32,7 @@ public class DaxJobChunk implements Serializable {
     private UUID uuid;
     private int numberOfJobs = 1;
     private int connectPattern = 0;
+    private int fileInputsPerJob = 1;
 
     public String getJobName() {
         return jobName;
@@ -167,5 +168,12 @@ public class DaxJobChunk implements Serializable {
     public int getConnectPattern() {
         return connectPattern;
     }
-    
+
+    public int getFileInputsPerJob() {
+        return fileInputsPerJob;
+    }
+
+    public void setFileInputsPerJob(int fileInputsPerJob) {
+        this.fileInputsPerJob = fileInputsPerJob;
+    }
 }

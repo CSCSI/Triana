@@ -98,6 +98,9 @@ public class DaxCreatorUnit {
             if(pattern == AUTO_CONNECT){
                 autoConnect(dax, jobChunk);
             }
+            if(pattern == SCATTER_CONNECT){
+                scatterConnect(dax, jobChunk);
+            }
             if(pattern == ONE2ONE_CONNECT){
                 one2oneConnect(dax, jobChunk);
             }
@@ -170,6 +173,38 @@ public class DaxCreatorUnit {
             log("Added job : " + job.getName() + " to ADAG.");
 
         }
+    }
+
+    private void scatterConnect(ADAG dax, DaxJobChunk jobChunk){
+        int n = 0;
+        int numberJobs = 0;
+        int numberInputsPerJob = jobChunk.getFileInputsPerJob();
+        int numberInputFiles = 0;
+        for(DaxFileChunk fc : jobChunk.getInFileChunks()){
+            numberInputFiles += fc.getNumberOfFiles();
+        }
+
+        numberJobs = (int)Math.ceil(numberInputFiles / numberInputsPerJob);
+        System.out.println("Files : " + numberInputFiles +
+                " Files/job : " + numberInputsPerJob + ". "
+                + numberJobs + " duplicates of " + jobChunk.getJobName());
+
+//        for(DaxFileChunk fc : jobChunk.getInFileChunks()){        
+//            for(int i = 0; i < fc.getNumberOfFiles(); i++){
+//                Job job = new Job();
+//                idNumber ++;
+//                job.addArgument(new PseudoText(jobChunk.getJobArgs()));
+//
+//                String jobName = jobChunk.getJobName();
+//                if(jobChunk.getNumberOfJobs() > 1){
+//                    jobName = (jobName + "-" + n);
+//                    n++;
+//                }
+//                job.setName(jobName);
+//                String id = "0000000" + (idNumber);
+//                job.setID("ID" + id.substring(id.length() - 7));
+//            }
+//        }
     }
 
     private void one2oneConnect(ADAG dax, DaxJobChunk jobChunk){

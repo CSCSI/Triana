@@ -26,6 +26,8 @@ public class JobUnit{
     @Parameter
     private int numberOfJobs = 1;
     @Parameter
+    private int fileInputsPerJob = 1;
+    @Parameter
     private int connectPattern = 0;
 
     @TextFieldParameter
@@ -53,6 +55,7 @@ public class JobUnit{
         thisJob.setUuid(UUID.randomUUID());
         thisJob.setCollection(collection);
         thisJob.setNumberOfJobs(numberOfJobs);
+        thisJob.setFileInputsPerJob(fileInputsPerJob);
         thisJob.setConnectPattern(connectPattern);
 
         DaxRegister register = DaxRegister.getDaxRegister();

@@ -91,7 +91,7 @@ public class JobUnitPanel extends ParameterPanel {
         final JPanel lowerPanelOne2One = new JPanel(new GridLayout(1, 2, 5, 5));
 
         final JCheckBox autoCheck = new JCheckBox("Auto (Fully connect all incoming nodes)", autoConnect);
-        final JCheckBox scatterCheck = new JCheckBox("Scatter jobs between n-jobs", !autoConnect);
+        final JCheckBox scatterCheck = new JCheckBox("Scatter (Each job takes n-files as input) ", !autoConnect);
         final JCheckBox one2oneCheck = new JCheckBox("One-2-one (Duplicate job to match number of incoming files)", !autoConnect);
 
 
@@ -192,11 +192,13 @@ public class JobUnitPanel extends ParameterPanel {
         collection = isCollection();
         numberOfJobs = getNumberOfJobs();
         connectPattern = getConnectPattern();
+        fileInputsPerJob = getFileInputsPerJob();
     }
 
     private void setParams(){
         getTask().setParameter("args", argsField.getText());
         getTask().setParameter("numberOfJobs", numberOfJobs);
+        getTask().setParameter("fileInputsPerJob", fileInputsPerJob);
         getTask().setParameter("collection", collection);
         getTask().setParameter("connectPattern", connectPattern);
     }
@@ -246,7 +248,18 @@ public class JobUnitPanel extends ParameterPanel {
         }
         return 1;
     }
-
+        private int getFileInputsPerJob(){
+        Object o = getParameter("fileInputsPerJob");
+        //   System.out.println("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        if(o != null){
+            int value = (Integer)o;
+            if(value > 1 ){
+                return value;
+            }
+            return 1;
+        }
+        return 1;
+    }
     private int getConnectPattern(){
         Object o = getParameter("connectPattern");
         if(o != null){

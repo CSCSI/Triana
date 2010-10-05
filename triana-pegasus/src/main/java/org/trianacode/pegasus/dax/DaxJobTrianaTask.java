@@ -48,11 +48,11 @@ public class DaxJobTrianaTask extends MainTrianaTask {
             g.fillRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
 
             g.setColor(Color.black);
-            String subtitle = (String)getTool().getParameter("name");
-            if(subtitle == null){
-                subtitle = "";
-            }
-            g.drawString(subtitle, (int)(getSize().width *0.15), (int)(getSize().height * 0.9));
+//            String subtitle = (String)getTool().getParameter("name");
+//            if(subtitle == null){
+//                subtitle = "";
+//            }
+//            g.drawString(subtitle, (int)(getSize().width *0.15), (int)(getSize().height * 0.9));
 
 
             g.setColor(Color.black);

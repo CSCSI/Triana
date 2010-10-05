@@ -196,6 +196,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
             try {
                 Task task = tg.createTask(tool);
+
                 JavaProxy jp = (JavaProxy)tool.getProxy();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -462,6 +463,8 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         String toolname = getNodeAttributeValue(node, "id");
         tool.setParameter("name", getNodeAttributeValue(node, "name"));
         tool.setToolName(toolname);
+                        tool.setSubTitle((String)tool.getParameter("name"));
+                System.out.println("Subtitle set to : " + tool.getSubTitle());
 
 
         int inputNodes = 0;
