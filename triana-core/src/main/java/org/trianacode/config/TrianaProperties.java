@@ -102,6 +102,7 @@ public class TrianaProperties extends Properties {
         properties.put(TOOLBOX_SEARCH_PATH_PROPERTY, homeDir + "triana-toolboxes, " + homeDir + "triana-pegasus");
 
         // should we do this???
+        // ANDREW: No - these will be on the classpath if classes/ is used or is in a jar
 
         properties.put(TEMPLATE_SEARCH_PATH_PROPERTY, homeDir + "triana-velocity" + File.separator +
                 "src" + File.separator + "main" + File.separator + "resources");

@@ -58,13 +58,13 @@
  */
 package org.trianacode.taskgraph.tool;
 
-import java.net.URL;
-
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.proxy.Proxy;
+
+import java.net.URL;
 
 
 /**
@@ -186,6 +186,8 @@ public interface Tool {
 
     public String getDefinitionType();
 
+    public String getSubTitle();
+
     /**
      * @return a Java style package name for this tool in the form [package].[package]. i.e. Common.Input
      */
@@ -210,7 +212,7 @@ public interface Tool {
 
     /**
      * Returns the current Triana properties
-     * 
+     *
      * @return
      */
     public TrianaProperties getProperties();

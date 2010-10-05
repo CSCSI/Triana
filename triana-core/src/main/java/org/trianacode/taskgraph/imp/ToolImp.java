@@ -99,6 +99,8 @@ public class ToolImp implements Tool {
 
     private String displayPackage = "";
 
+    private String subTitle = null;
+
     /**
      * Number of input nodes
      */
@@ -963,6 +965,15 @@ public class ToolImp implements Tool {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public void setSubTitle(String subtext) {
+        this.subTitle = subtext;
+
+    }
+
+    public String getSubTitle() {
+        return subTitle;
     }
 
 

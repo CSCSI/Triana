@@ -58,29 +58,14 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import java.util.ArrayList;
-
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.ExecutionState;
-import org.trianacode.taskgraph.InstanceIDManager;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.NodeException;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphContext;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.util.ArrayList;
 
 /**
  * A task within a taskgraph.
@@ -152,6 +137,7 @@ public class TaskImp extends ToolImp implements Task {
             this.setToolName(tool.getToolName());
             this.setToolPackage(tool.getToolPackage());
             this.setDefinitionType(tool.getDefinitionType());
+
             if (tool.getProxy() != null)
 
             {
@@ -1065,15 +1051,11 @@ public class TaskImp extends ToolImp implements Task {
     }
 
     public void setSubTitle(String subtext) {
-        String old = this.subtext;
-        this.subtext = subtext;
-        if (!this.subtext.equals(old)) {
-            notifyPropertyUpdate(TaskPropertyEvent.TASK_SUBNAME_UPDATE, old, this.subtext);
-        }
+        super.setSubTitle(subtext);
+//        if (!this.subtext.equals(old)) {
+//            notifyPropertyUpdate(TaskPropertyEvent.TASK_SUBNAME_UPDATE, old, this.subtext);
+//        }
     }
 
-    public String getSubTitle() {
-        return subtext;
-    }
 
 }

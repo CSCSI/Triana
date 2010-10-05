@@ -370,8 +370,5 @@ public interface Task extends Tool {
 
     public void setContextProperty(String name, Object value);
 
-    public void setSubTitle(String subtext);
-
-    public String getSubTitle();
 
 }
