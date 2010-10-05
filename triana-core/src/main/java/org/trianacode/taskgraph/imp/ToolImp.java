@@ -216,6 +216,7 @@ public class ToolImp implements Tool {
             setDefinitionType(tool.getDefinitionType());
             setToolName(tool.getToolName());
             setToolPackage(tool.getToolPackage());
+            setSubTitle(tool.getSubTitle());
             setDisplayName(tool.getDisplayName());
             setDisplayPackage(tool.getDisplayPackage());
             setProxy(ProxyFactory.cloneProxy(tool.getProxy()));

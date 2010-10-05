@@ -137,6 +137,7 @@ public class TaskImp extends ToolImp implements Task {
             this.setToolName(tool.getToolName());
             this.setToolPackage(tool.getToolPackage());
             this.setDefinitionType(tool.getDefinitionType());
+            this.setSubTitle(tool.getSubTitle());
 
             if (tool.getProxy() != null)
 
