@@ -125,8 +125,6 @@ public class TaskImp extends ToolImp implements Task {
      */
     private boolean runcontin = false;
 
-    private String subtext = "";
-
     private TaskGraphContext context = new TaskGraphContext();
 
 

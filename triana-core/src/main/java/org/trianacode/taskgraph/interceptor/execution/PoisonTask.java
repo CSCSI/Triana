@@ -1,20 +1,12 @@
 package org.trianacode.taskgraph.interceptor.execution;
 
-import java.net.URL;
-
 import org.trianacode.config.TrianaProperties;
-import org.trianacode.taskgraph.ExecutionState;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.NodeException;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphContext;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.event.TaskListener;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.tool.Toolbox;
+
+import java.net.URL;
 
 /**
  * @author Andrew Harrison
@@ -31,6 +23,7 @@ public class PoisonTask implements Task {
 
     /**
      * Not sure what this does - how is this created etc ?
+     *
      * @return
      */
     public TrianaProperties getProperties() {
@@ -272,9 +265,6 @@ public class PoisonTask implements Task {
     public void setContextProperty(String name, Object value) {
     }
 
-    @Override
-    public void setSubTitle(String subtext) {
-    }
 
     @Override
     public String getSubTitle() {
