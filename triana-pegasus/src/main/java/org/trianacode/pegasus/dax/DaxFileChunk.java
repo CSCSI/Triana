@@ -24,9 +24,24 @@ public class DaxFileChunk implements Serializable {
     private Vector<DaxJobChunk> outJobChunks = new Vector();
     private int numberOfFiles = 1;
     private PatternCollection namePattern = null;
+    private int counter = 0;
 
     public String getFilename() {
         return filename;
+    }
+
+    public String getNextFilename(){
+        if(counter < numberOfFiles){
+            counter++;            
+            return filename + "-" + counter;
+        }
+        else{
+            return null;
+        }
+    }
+
+    public void resetNextCounter(){
+        counter = 0;
     }
 
     public void setFilename(String filename) {
