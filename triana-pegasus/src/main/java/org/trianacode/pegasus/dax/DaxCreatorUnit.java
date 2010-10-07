@@ -229,16 +229,17 @@ public class DaxCreatorUnit {
             }
         }
 
-        sortSpread(fcs.size(), jobChunk.getNumberOfJobs());
+        int[] filesPerJob = sortSpread(fcs.size(), jobChunk.getNumberOfJobs());
 
-        double numberInputFiles = fcs.size();
-        double filesPerJob = numberInputFiles/numberJobs;
-        System.out.println("Files : " + numberInputFiles +
-                " Jobs : " + numberJobs + ". "
-                + filesPerJob + " files / job ");
+   //     double numberInputFiles = fcs.size();
+   //     double filesPerJob = numberInputFiles/numberJobs;
+   //     System.out.println("Files : " + numberInputFiles +
+   //             " Jobs : " + numberJobs + ". "
+   //             + filesPerJob + " files / job ");
+
         for (int i = 0; i< numberJobs; i++){
 
-            System.out.println("Sorting out job : " + i);
+          //  System.out.println("Sorting out job : " + i);
             Job job = new Job();
             idNumber ++;
             job.addArgument(new PseudoText(jobChunk.getJobArgs()));
@@ -254,15 +255,15 @@ public class DaxCreatorUnit {
             job.setID("ID" + id.substring(id.length() - 7));
 
 
-            for(int j = 0; j < filesPerJob ; j++){
+            for(int j = 0; j < filesPerJob[i] ; j++){
                 if(fcs.size() > 0){
                     java.util.Random rand = new java.util.Random();
                     int r = rand.nextInt(fcs.size());
 
-                    System.out.println("Files left : " + fcs.size() + " Getting file : " + r);
+              //      System.out.println("Files left : " + fcs.size() + " Getting file : " + r);
                     DaxFileChunk fc = fcs.get(r);
                     fcs.remove(r);
-                    System.out.println("Got : " + r + " filename : " + fc.getFilename());
+                //    System.out.println("Got : " + r + " filename : " + fc.getFilename());
                     job.addUses(new Filename(fc.getNextFilename(), 1));
                 }
             }
