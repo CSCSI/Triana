@@ -40,11 +40,16 @@ public class DaxCreatorUnit {
 
         DaxRegister register = DaxRegister.getDaxRegister();
 
-        //  daxFromInList(in);
-        daxFromRegister(register);
-
-        register.clear();
-
+        try{
+            //  daxFromInList(in);
+            daxFromRegister(register);
+        }catch(Exception e){
+            System.out.println("Failed at something : " + e + "\n\n");
+            e.printStackTrace();
+        }finally{
+            register.clear();
+            System.out.println("Cleared register");
+        }
     }
 
     private void daxFromInList(List in){
@@ -98,15 +103,23 @@ public class DaxCreatorUnit {
             int pattern = jobChunk.getConnectPattern();
 
             if(pattern == AUTO_CONNECT){
+                System.out.println("auto_connect");
+
                 autoConnect(dax, jobChunk);
             }
             if(pattern == SCATTER_CONNECT){
+                System.out.println("scatter_connect");
+
                 scatterConnect(dax, jobChunk);
             }
             if(pattern == ONE2ONE_CONNECT){
+                System.out.println("one2one_connect");
+
                 one2oneConnect(dax, jobChunk);
             }
             if(pattern == SPREAD_CONNECT){
+                System.out.println("spread_connect");
+
                 spreadConnect(dax, jobChunk);
             }
 
@@ -180,6 +193,32 @@ public class DaxCreatorUnit {
         }
     }
 
+    private int[] sortSpread(int files, int jobs){
+        double numberOfFiles = (double)files;
+        double numberOfJobs = (double)jobs;
+
+        double filesLeft = numberOfFiles;
+        double jobsLeft = numberOfJobs;
+
+        int[] filesPerJob = new int[(int)jobs];
+        for(int i = 0; i < jobs; i++){
+            double num =  Math.floor(filesLeft / jobsLeft);
+            filesPerJob[i] = (int)num;
+            filesLeft = filesLeft - num;
+            jobsLeft = jobsLeft -1;
+        }
+
+        int count = 0;
+        for(int j = 0; j < filesPerJob.length; j++){
+            count = count + filesPerJob[j];
+            System.out.println("Job : " + j + " will have : " + filesPerJob[j] + " connected.");
+        }
+        System.out.println("Should be total : " + files + " files. Assigned : " + count);
+
+        return filesPerJob;
+    }
+
+
     public void spreadConnect(ADAG dax, DaxJobChunk jobChunk){
         int n = 0;
         int numberJobs = jobChunk.getNumberOfJobs();
@@ -189,9 +228,14 @@ public class DaxCreatorUnit {
                 fcs.add(fc);
             }
         }
+
+        sortSpread(fcs.size(), jobChunk.getNumberOfJobs());
+
         double numberInputFiles = fcs.size();
         double filesPerJob = numberInputFiles/numberJobs;
-
+        System.out.println("Files : " + numberInputFiles +
+                " Jobs : " + numberJobs + ". "
+                + filesPerJob + " files / job ");
         for (int i = 0; i< numberJobs; i++){
 
             System.out.println("Sorting out job : " + i);
@@ -211,11 +255,16 @@ public class DaxCreatorUnit {
 
 
             for(int j = 0; j < filesPerJob ; j++){
-                int r = (int)(Math.random() * fcs.size());
-                DaxFileChunk fc = fcs.get(r);
-                fcs.remove(r);
-                System.out.println("Got : " + r + " filename : " + fc.getFilename());
-                job.addUses(new Filename(fc.getNextFilename(), 1));
+                if(fcs.size() > 0){
+                    java.util.Random rand = new java.util.Random();
+                    int r = rand.nextInt(fcs.size());
+
+                    System.out.println("Files left : " + fcs.size() + " Getting file : " + r);
+                    DaxFileChunk fc = fcs.get(r);
+                    fcs.remove(r);
+                    System.out.println("Got : " + r + " filename : " + fc.getFilename());
+                    job.addUses(new Filename(fc.getNextFilename(), 1));
+                }
             }
 
             List outFiles = jobChunk.getOutFileChunks();
@@ -239,7 +288,7 @@ public class DaxCreatorUnit {
                     job.addUses(new Filename(chunk.getFilename(), 2));
                 }
             }
-
+            System.out.println("Adding job : " + job.getName() + " to dax");
             dax.addJob(job);
         }
 
