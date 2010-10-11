@@ -32,8 +32,11 @@ public class DaxJobTrianaTask extends MainTrianaTask {
     }
 
     public void paintComponent(Graphics g){
+        super.paintComponent(g);
         Color c = g.getColor();
 
+        g.setColor(getBackground());
+        g.fillRect(0, 0, getSize().width, getSize().height);
 
         if(isCollection()){
             g.setColor(Color.red.darker());
@@ -42,7 +45,7 @@ public class DaxJobTrianaTask extends MainTrianaTask {
             g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
             g.setColor(Color.black);
             g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
-            
+
         }else{
             g.setColor(Color.red);
             g.fillRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);

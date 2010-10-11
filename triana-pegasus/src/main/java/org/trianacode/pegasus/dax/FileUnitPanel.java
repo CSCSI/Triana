@@ -200,7 +200,7 @@ public class FileUnitPanel extends ParameterPanel {
 
     private int getNumberOfFiles(){
         Object o = getParameter("numberOfFiles");
-   //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o != null){
             int value = (Integer)o;
             if(value > 1 ){
@@ -254,7 +254,7 @@ public class FileUnitPanel extends ParameterPanel {
         String[] nameParts;
         String[] patternOptions = {"0001", "dd-MMM-yy", "A", "ABC"};
         String[] numberArray = {"1", "01", "001", "0001"};
-        String[] dateArray = {"dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
+        String[] dateArray = {"", "dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
         String[] letterArray = {"A", "AA", "AAA", "AAAA", "AAAAA"};
 
         public NamingPanel(int p){
@@ -327,7 +327,7 @@ public class FileUnitPanel extends ParameterPanel {
                     PatternCollection pc = new PatternCollection(separator);
                     for(int i = 0; i < parts; i++){
                         if(nameParts[i].equals("")){
-                            
+
                         }
                     }
                     dispose();
@@ -367,6 +367,7 @@ public class FileUnitPanel extends ParameterPanel {
             }
             if(patternSelection == patternOptions[1]){
                 addArrayToCombo(detail, dateArray);
+                detail.setEditable(true);
             }
             if(patternSelection == patternOptions[2]){
                 String[] array = {""};
@@ -436,9 +437,9 @@ public class FileUnitPanel extends ParameterPanel {
 
             String[] headings = {"Symbol", "Meaning", "Type", "Example"};
             String[][] data = {{"G", "Era", "Text", "GG -> AD"},
-                {"y", "Year", "Number", "yy -> 03, yyyy -> 2003"},
-                {"M", "Month", "Text or Number", "M -> 7, M -> 12, MM -> 07, MMM -> Jul, MMMM -> December"},
-                {"d", "Day in month", "Number", "d -> 3, dd -> 03"},
+                    {"y", "Year", "Number", "yy -> 03, yyyy -> 2003"},
+                    {"M", "Month", "Text or Number", "M -> 7, M -> 12, MM -> 07, MMM -> Jul, MMMM -> December"},
+                    {"d", "Day in month", "Number", "d -> 3, dd -> 03"},
                     {"h", "Hour (1-12, AM/PM", "Number", "h -> 3, hh -> 03"},
                     {"H", "Hour (0-24)", "Number", "H -> 15, HH -> 15"},
                     {"k", "Hour (1-24)", "Number", "k -> 3, kk -> 03"},
@@ -447,8 +448,14 @@ public class FileUnitPanel extends ParameterPanel {
                     {"s", "Second", "Number", "s -> 15, kk -> 15"},
                     {"S", "Millisecond (0-999)", "Number", "SSS -> 007"},
                     {"E", "Day in week", "Text", "EEE -> Tue, EEEE -> Tuesday"},
-
-
+                    {"D", "Day in year (1-365 or 1-364", "Number", "D -> 65, DDD -> 065"},
+                    {"F", "Day of week in month (1-5)", "Number", "F -> 1"},
+                    {"w", "Week in year (1-53)", "Number", "w -> 7"},
+                    {"W", "Week in month (1-5)", "Number", "W -> 3"},
+                    {"a", "AM/PM", "Text", "a -> AM, aa -> AM"},
+                    {"z", "Time zone", "Text", "z -> EST, zzz -> EST, zzzzz -> Eastern Standard Time"},
+                    {"'", "Escape for text", "Delimiter", "'hour' h -> hour 9"},
+                    {"\"", "Single quote", "Literal", "ss\"SSS -> 45'876"}
             };
             JTable table = new JTable(data, headings);
             JScrollPane scrollPane = new JScrollPane(table);
@@ -464,7 +471,7 @@ public class FileUnitPanel extends ParameterPanel {
             });
             panel.add(ok);
             this.add(panel);
-            this.setSize(400,600);
+            this.setSize(600,400);
             this.setVisible(true);
             this.setTitle("Help");
         }
