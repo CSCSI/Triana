@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA.
@@ -247,11 +248,14 @@ public class FileUnitPanel extends ParameterPanel {
     class NamingPanel extends JDialog{
         JLabel hi = new JLabel();
         JTextField name = new JTextField("");
-        JComboBox separator;
+        JComboBox separatorBox;
+        String separator;
         int parts = 1;
         String[] nameParts;
         String[] patternOptions = {"0001", "dd-MMM-yy", "A", "ABC"};
-
+        String[] numberArray = {"1", "01", "001", "0001"};
+        String[] dateArray = {"dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
+        String[] letterArray = {"A", "AA", "AAA", "AAAA", "AAAAA"};
 
         public NamingPanel(int p){
             this.parts = p;
@@ -271,15 +275,16 @@ public class FileUnitPanel extends ParameterPanel {
             JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
             JLabel l1 = new JLabel("Seperator : ");
             String[] seperatorOptions = {"- (hyphen)", " (space)", "_ (underscore)", ". (period)", "(no seperator)"};
-            separator = new JComboBox(seperatorOptions);
-            separator.setEditable(true);
-            separator.addActionListener(new ActionListener(){
+            separatorBox = new JComboBox(seperatorOptions);
+            separatorBox.setEditable(true);
+            separatorBox.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent actionEvent){
+                    separator = getSeparator();
                     setNameLabel(buildName(getSeparator(), parts));
                 }
             });
             midPanel.add(l1);
-            midPanel.add(separator);
+            midPanel.add(separatorBox);
             mainPanel.add(midPanel);
 
             JPanel lowerPanel = new JPanel(new GridLayout(parts, 3, 5, 5));
@@ -319,10 +324,25 @@ public class FileUnitPanel extends ParameterPanel {
             ok.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
                     returnSomething("words");
+                    PatternCollection pc = new PatternCollection(separator);
+                    for(int i = 0; i < parts; i++){
+                        if(nameParts[i].equals("")){
+                            
+                        }
+                    }
                     dispose();
                 }
             });
             mainPanel.add(ok);
+
+            JButton helpButton = new JButton("Help");
+            helpButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    new helpFrame();
+                }
+            });
+            mainPanel.add(helpButton);
+
             add(mainPanel);
             this.setTitle("File naming pattern");
             this.pack();
@@ -330,17 +350,23 @@ public class FileUnitPanel extends ParameterPanel {
 
         }
 
+        public String[] fillDateArray(){
+            Date now = new Date();
+
+            String array[] = {""};
+
+            return array;
+        }
+
         private void fillDetailCombo(JComboBox detail, Object patternSelection){
             detail.removeAllItems();
             detail.setEditable(false);
 
             if(patternSelection == patternOptions[0]){
-                String[] array = {"1", "01", "001", "0001"};
-                addArrayToCombo(detail, array);
+                addArrayToCombo(detail, numberArray);
             }
             if(patternSelection == patternOptions[1]){
-                String[] array = {"dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
-                addArrayToCombo(detail, array);
+                addArrayToCombo(detail, dateArray);
             }
             if(patternSelection == patternOptions[2]){
                 String[] array = {""};
@@ -348,8 +374,7 @@ public class FileUnitPanel extends ParameterPanel {
                 detail.setEditable(true);
             }
             if(patternSelection == patternOptions[3]){
-                String[] array = {"A", "AA", "AAA", "AAAA", "AAAAA"};
-                addArrayToCombo(detail, array);
+                addArrayToCombo(detail, letterArray);
             }
         }
 
@@ -371,7 +396,7 @@ public class FileUnitPanel extends ParameterPanel {
         }
 
         private String getSeparator(){
-            String s = (String)separator.getSelectedItem();
+            String s = (String)separatorBox.getSelectedItem();
             s = s.substring(0,1);
             if(s.equals("(")){ s = "";}
             return s;
@@ -399,6 +424,49 @@ public class FileUnitPanel extends ParameterPanel {
 
         public String getName(){
             return name.getText();
+        }
+    }
+
+    class helpFrame extends JFrame{
+        public helpFrame(){
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+            JLabel helpLabel = new JLabel("This is helpful");
+
+            String[] headings = {"Symbol", "Meaning", "Type", "Example"};
+            String[][] data = {{"G", "Era", "Text", "GG -> AD"},
+                {"y", "Year", "Number", "yy -> 03, yyyy -> 2003"},
+                {"M", "Month", "Text or Number", "M -> 7, M -> 12, MM -> 07, MMM -> Jul, MMMM -> December"},
+                {"d", "Day in month", "Number", "d -> 3, dd -> 03"},
+                    {"h", "Hour (1-12, AM/PM", "Number", "h -> 3, hh -> 03"},
+                    {"H", "Hour (0-24)", "Number", "H -> 15, HH -> 15"},
+                    {"k", "Hour (1-24)", "Number", "k -> 3, kk -> 03"},
+                    {"K", "Hour (1-11 AM/PM)", "Number", "K -> 15, KK -> 15"},
+                    {"m", "Minute", "Number", "m -> 7, m -> 15, mm -> 15"},
+                    {"s", "Second", "Number", "s -> 15, kk -> 15"},
+                    {"S", "Millisecond (0-999)", "Number", "SSS -> 007"},
+                    {"E", "Day in week", "Text", "EEE -> Tue, EEEE -> Tuesday"},
+
+
+            };
+            JTable table = new JTable(data, headings);
+            JScrollPane scrollPane = new JScrollPane(table);
+            table.setFillsViewportHeight(true);
+            panel.add(scrollPane);
+
+            panel.add(helpLabel);
+            JButton ok = new JButton("Ok");
+            ok.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    dispose();
+                }
+            });
+            panel.add(ok);
+            this.add(panel);
+            this.setSize(400,600);
+            this.setVisible(true);
+            this.setTitle("Help");
         }
     }
 }

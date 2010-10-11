@@ -103,22 +103,22 @@ public class DaxCreatorUnit {
             int pattern = jobChunk.getConnectPattern();
 
             if(pattern == AUTO_CONNECT){
-                System.out.println("auto_connect");
+                System.out.println("\nauto_connect");
 
                 autoConnect(dax, jobChunk);
             }
             if(pattern == SCATTER_CONNECT){
-                System.out.println("scatter_connect");
+                System.out.println("\nscatter_connect");
 
                 scatterConnect(dax, jobChunk);
             }
             if(pattern == ONE2ONE_CONNECT){
-                System.out.println("one2one_connect");
+                System.out.println("\none2one_connect");
 
                 one2oneConnect(dax, jobChunk);
             }
             if(pattern == SPREAD_CONNECT){
-                System.out.println("spread_connect");
+                System.out.println("\nspread_connect");
 
                 spreadConnect(dax, jobChunk);
             }
