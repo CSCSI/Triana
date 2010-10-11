@@ -36,31 +36,60 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Color c = g.getColor();
-        g.setColor(getBackground());
-        g.fillRect(0, 0, getSize().width, getSize().height);
+//        g.setColor(getBackground());
+//        g.fillRect(0, 0, getSize().width, getSize().height);
 
-        if(isCollection()){
-            Border shadow = BorderFactory.createEmptyBorder();
-            TitledBorder title = BorderFactory.createTitledBorder(shadow, "" + getNumberOfFiles());
-            title.setTitleJustification(TitledBorder.RIGHT);
-            title.setTitlePosition(TitledBorder.ABOVE_TOP);
-            this.setBorder(title);
+        this.setOpaque(false);
 
-            g.setColor(Color.cyan.darker());
-            g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
-            g.setColor(Color.cyan);
-            g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
+        if(this.isSelected()){
+            if(isCollection()){
+                Border shadow = BorderFactory.createEmptyBorder();
+                TitledBorder title = BorderFactory.createTitledBorder(shadow, "" + getNumberOfFiles());
+                title.setTitleJustification(TitledBorder.RIGHT);
+                title.setTitlePosition(TitledBorder.ABOVE_TOP);
+                this.setBorder(title);
 
-            g.setColor(Color.black);
-            g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
-        }else{
-            Border shadow = BorderFactory.createEmptyBorder();
-            this.setBorder(shadow);
-            g.setColor(Color.cyan);
-            g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
+                g.setColor(Color.cyan.darker().darker());
+                g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
+                g.setColor(Color.cyan.darker());
+                g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
 
-            g.setColor(Color.black);
-            g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
+                g.setColor(Color.black);
+                g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
+            }else{
+                Border shadow = BorderFactory.createEmptyBorder();
+                this.setBorder(shadow);
+                g.setColor(Color.cyan.darker());
+                g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
+
+                g.setColor(Color.black);
+                g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
+            }
+        }
+        else{
+            if(isCollection()){
+                Border shadow = BorderFactory.createEmptyBorder();
+                TitledBorder title = BorderFactory.createTitledBorder(shadow, "" + getNumberOfFiles());
+                title.setTitleJustification(TitledBorder.RIGHT);
+                title.setTitlePosition(TitledBorder.ABOVE_TOP);
+                this.setBorder(title);
+
+                g.setColor(Color.cyan.darker());
+                g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
+                g.setColor(Color.cyan);
+                g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
+
+                g.setColor(Color.black);
+                g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
+            }else{
+                Border shadow = BorderFactory.createEmptyBorder();
+                this.setBorder(shadow);
+                g.setColor(Color.cyan);
+                g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
+
+                g.setColor(Color.black);
+                g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
+            }
         }
 
 
