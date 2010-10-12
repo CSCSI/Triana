@@ -193,6 +193,10 @@ public class DaxCreatorUnit {
         }
     }
 
+    private void one2oneOutput(ADAG dax, DaxJobChunk jobChunk){
+
+    }
+
     private int[] sortSpread(int files, int jobs){
         double numberOfFiles = (double)files;
         double numberOfJobs = (double)jobs;
@@ -227,9 +231,11 @@ public class DaxCreatorUnit {
             for(int i = 0; i < fc.getNumberOfFiles() ; i++){
                 fcs.add(fc);
             }
+            fc.resetNextCounter();
         }
 
         int[] filesPerJob = sortSpread(fcs.size(), jobChunk.getNumberOfJobs());
+
 
    //     double numberInputFiles = fcs.size();
    //     double filesPerJob = numberInputFiles/numberJobs;
@@ -305,6 +311,7 @@ public class DaxCreatorUnit {
             for(int i = 0; i < fc.getNumberOfFiles() ; i++){
                 fcs.add(fc);
             }
+            fc.resetNextCounter();            
         }
         double numberInputFiles = fcs.size();
 
@@ -375,6 +382,7 @@ public class DaxCreatorUnit {
         int n = 0;
         int m = 0;
         for(DaxFileChunk fc : jobChunk.getInFileChunks()){
+            fc.resetNextCounter();
             for(int i = 0; i < fc.getNumberOfFiles(); i++){
                 Job job = new Job();
                 idNumber ++;
@@ -394,6 +402,7 @@ public class DaxCreatorUnit {
                     fileName = (fileName + "-" + m);
                     m++;
                 }
+                fileName = fc.getNextFilename();
 
                 job.addUses(new Filename(fileName, 1));
 

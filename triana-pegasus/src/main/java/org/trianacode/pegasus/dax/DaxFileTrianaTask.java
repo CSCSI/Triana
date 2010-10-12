@@ -19,6 +19,8 @@ public class DaxFileTrianaTask extends MainTrianaTask {
 
     //  private FileTrianaTaskDecoration docView = new FileTrianaTaskDecoration();
     Task task;
+    Color color = Color.cyan;
+
     /**
      * Constructs a new MainTrianaTask for viewing the specified task
      */
@@ -41,57 +43,37 @@ public class DaxFileTrianaTask extends MainTrianaTask {
 
         this.setOpaque(false);
 
+        Color fileUnitColor = color;
+        Color shadow = color.darker();
+        Color fileUnitShadow = shadow;
         if(this.isSelected()){
-            if(isCollection()){
-                Border shadow = BorderFactory.createEmptyBorder();
-                TitledBorder title = BorderFactory.createTitledBorder(shadow, "" + getNumberOfFiles());
-                title.setTitleJustification(TitledBorder.RIGHT);
-                title.setTitlePosition(TitledBorder.ABOVE_TOP);
-                this.setBorder(title);
-
-                g.setColor(Color.cyan.darker().darker());
-                g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
-                g.setColor(Color.cyan.darker());
-                g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
-
-                g.setColor(Color.black);
-                g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
-            }else{
-                Border shadow = BorderFactory.createEmptyBorder();
-                this.setBorder(shadow);
-                g.setColor(Color.cyan.darker());
-                g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
-
-                g.setColor(Color.black);
-                g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
-            }
-        }
-        else{
-            if(isCollection()){
-                Border shadow = BorderFactory.createEmptyBorder();
-                TitledBorder title = BorderFactory.createTitledBorder(shadow, "" + getNumberOfFiles());
-                title.setTitleJustification(TitledBorder.RIGHT);
-                title.setTitlePosition(TitledBorder.ABOVE_TOP);
-                this.setBorder(title);
-
-                g.setColor(Color.cyan.darker());
-                g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
-                g.setColor(Color.cyan);
-                g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
-
-                g.setColor(Color.black);
-                g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
-            }else{
-                Border shadow = BorderFactory.createEmptyBorder();
-                this.setBorder(shadow);
-                g.setColor(Color.cyan);
-                g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
-
-                g.setColor(Color.black);
-                g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
-            }
+            fileUnitColor = color.darker();
+            fileUnitShadow = shadow.darker();
         }
 
+        if(isCollection()){
+            Border shadowBorder = BorderFactory.createEmptyBorder();
+            TitledBorder title = BorderFactory.createTitledBorder(shadowBorder, "" + getNumberOfFiles());
+            title.setTitleJustification(TitledBorder.CENTER);
+            title.setTitlePosition(TitledBorder.BELOW_BOTTOM);
+            this.setBorder(title);
+
+            g.setColor(fileUnitShadow);
+            g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
+            g.setColor(fileUnitColor);
+            g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
+
+            g.setColor(Color.black);
+            g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
+        }else{
+            Border shadowBorder = BorderFactory.createEmptyBorder();
+            this.setBorder(shadowBorder);
+            g.setColor(fileUnitColor);
+            g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
+
+            g.setColor(Color.black);
+            g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
+        }
 
         g.setColor(c);
         paintProcessProgress(g);

@@ -19,6 +19,7 @@ public class DaxJobTrianaTask extends MainTrianaTask {
 
     Task task;
     DaxJobSubtitle sub = new DaxJobSubtitle();
+    Color color = Color.red;
 
     public DaxJobTrianaTask(Task task) {
         super(task);
@@ -41,71 +42,46 @@ public class DaxJobTrianaTask extends MainTrianaTask {
 //        g.fillRect(0, 0, getSize().width, getSize().height);
 
         this.setOpaque(false);
+        Color jobUnitColor = color;
+        Color shadow = color.darker();
+        Color jobUnitShadow = shadow;
+        if(this.isSelected()){
+            jobUnitColor = color.darker();
+            jobUnitShadow = shadow.darker();
+        }
 
-        if(isSelected()){
-            if(isCollection()){
-                Border shadow = BorderFactory.createEmptyBorder();
-                TitledBorder title = BorderFactory.createTitledBorder(shadow, "" + getNumberOfFiles());
-                title.setTitleJustification(TitledBorder.RIGHT);
-                title.setTitlePosition(TitledBorder.ABOVE_TOP);
-                this.setBorder(title);
 
-                g.setColor(Color.red.darker().darker());
-                g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
-                g.setColor(Color.red.darker());
-                g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
-                g.setColor(Color.black);
-                g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
+        if(isCollection()){
+            Border shadowBorder = BorderFactory.createEmptyBorder();
+            TitledBorder title = BorderFactory.createTitledBorder(shadowBorder, "" + getNumberOfJobs());
+            title.setTitleJustification(TitledBorder.CENTER);
+            title.setTitlePosition(TitledBorder.BELOW_BOTTOM);
+            this.setBorder(title);
 
-            }else{
-                Border shadow = BorderFactory.createEmptyBorder();
-                this.setBorder(shadow);
+            g.setColor(jobUnitShadow);
+            g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
+            g.setColor(jobUnitColor);
+            g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
 
-                g.setColor(Color.red.darker());
-                g.fillRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
+            g.setColor(Color.black);
+            g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
+        }else{
+            Border shadowBorder = BorderFactory.createEmptyBorder();
+            this.setBorder(shadowBorder);
+            g.setColor(jobUnitColor);
+            g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
 
-                g.setColor(Color.black);
+            g.setColor(Color.black);
+            g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
+        }
+
 //            String subtitle = (String)getTool().getParameter("name");
 //            if(subtitle == null){
 //                subtitle = "";
 //            }
 //            g.drawString(subtitle, (int)(getSize().width *0.15), (int)(getSize().height * 0.9));
 
-                g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
-            }
-        }
-        else{
-            if(isCollection()){
-                Border shadow = BorderFactory.createEmptyBorder();
-                TitledBorder title = BorderFactory.createTitledBorder(shadow, "" + getNumberOfFiles());
-                title.setTitleJustification(TitledBorder.RIGHT);
-                title.setTitlePosition(TitledBorder.ABOVE_TOP);
-                this.setBorder(title);
 
-                g.setColor(Color.red.darker());
-                g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
-                g.setColor(Color.red);
-                g.fillRoundRect(0, 5, getSize().width - 5, getSize().height - 5, 5, 10);
-                g.setColor(Color.black);
-                g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
-
-            }else{
-                Border shadow = BorderFactory.createEmptyBorder();
-                this.setBorder(shadow);
-
-                g.setColor(Color.red);
-                g.fillRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
-
-                g.setColor(Color.black);
-//            String subtitle = (String)getTool().getParameter("name");
-//            if(subtitle == null){
-//                subtitle = "";
-//            }
-//            g.drawString(subtitle, (int)(getSize().width *0.15), (int)(getSize().height * 0.9));
-
-                g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
-            }
-        }
 
         g.setColor(c);
         paintProcessProgress(g);
@@ -123,7 +99,7 @@ public class DaxJobTrianaTask extends MainTrianaTask {
         }
     }
 
-    private int getNumberOfFiles(){
+    private int getNumberOfJobs(){
         Object o = getTask().getParameter("numberOfJobs");
         //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o != null){
