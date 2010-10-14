@@ -5,8 +5,10 @@ package org.trianacode.pegasus.string;
  * @version 1.0.0 Jul 15, 2010
  */
 
-public interface StringPattern {
+public interface StringPattern{
 
     
     public String next();
+
+    public void resetCount();
 }

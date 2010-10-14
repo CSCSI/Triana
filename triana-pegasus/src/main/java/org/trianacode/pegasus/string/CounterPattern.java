@@ -38,6 +38,10 @@ public class CounterPattern implements StringPattern {
         this(0, 4, 1, 1);
     }
 
+    public void resetCount(){
+        count = 0;
+    }
+
     public String next() {
         String cs = Integer.toString(count);
         currCount++;

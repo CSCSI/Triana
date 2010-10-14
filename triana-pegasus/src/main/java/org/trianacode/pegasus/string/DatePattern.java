@@ -25,4 +25,10 @@ public class DatePattern implements StringPattern {
     public String next() {
         return formatter.format(date);
     }
+
+    @Override
+    public void resetCount() {
+
+    }
+
 }

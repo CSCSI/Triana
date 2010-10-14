@@ -46,5 +46,8 @@ public class AlphabetPattern implements StringPattern {
         return ret;
     }
 
-    
+    @Override
+    public void resetCount() {
+        
+    }
 }

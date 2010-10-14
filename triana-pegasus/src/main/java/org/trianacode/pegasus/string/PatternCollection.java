@@ -1,5 +1,6 @@
 package org.trianacode.pegasus.string;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * @version 1.0.0 Jul 15, 2010
  */
 
-public class PatternCollection implements StringPattern {
+public class PatternCollection implements StringPattern, Serializable {
 
     private String link = "";
     private List<StringPattern> patterns = new ArrayList<StringPattern>();
@@ -21,6 +22,10 @@ public class PatternCollection implements StringPattern {
         patterns.add(pattern);
     }
 
+    public List getStringPatternList(){
+        return patterns;
+    }
+
     public String next() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < patterns.size(); i++) {
@@ -31,5 +36,14 @@ public class PatternCollection implements StringPattern {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public void resetCount() {
+        
+    }
+
+    public String toString(){
+        return patterns.toString();
     }
 }
