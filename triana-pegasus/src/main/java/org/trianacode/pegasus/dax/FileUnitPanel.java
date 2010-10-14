@@ -3,10 +3,7 @@ package org.trianacode.pegasus.dax;
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.panels.ParameterPanel;
-import org.trianacode.pegasus.string.AlphabetPattern;
-import org.trianacode.pegasus.string.CounterPattern;
-import org.trianacode.pegasus.string.DatePattern;
-import org.trianacode.pegasus.string.PatternCollection;
+import org.trianacode.pegasus.string.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -16,7 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,7 +33,8 @@ public class FileUnitPanel extends ParameterPanel {
     JTextArea fileListArea = new JTextArea("Example filenames here..");
     JPanel upperPanel = new JPanel(new GridLayout(2,2,5,5));
     JPanel lowerPanel = new JPanel(new GridLayout(2,3,5,5));
-    JComboBox namingPattern = new JComboBox();
+    JComboBox namingPatternBox = new JComboBox();
+    PatternCollection namingPattern = null;
 
 
 
@@ -48,7 +47,7 @@ public class FileUnitPanel extends ParameterPanel {
     private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 
     private void apply(){
@@ -67,11 +66,13 @@ public class FileUnitPanel extends ParameterPanel {
     private void setParams(){
         getTask().setParameter("numberOfFiles", numberOfFiles);
         getTask().setParameter("collection", collection);
+        getTask().setParameter("namingPattern", namingPattern);
     }
 
     public void getParams(){
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
+        namingPattern = getNamingPattern();
     }
 
     @Override
@@ -140,14 +141,14 @@ public class FileUnitPanel extends ParameterPanel {
 
         JLabel namingLabel = new JLabel("Naming Pattern :");
         String[] options = {"0001", "yyyy-MMM-dd", "-A"};
-        namingPattern = new JComboBox(options);
-        namingPattern.addActionListener(new ActionListener(){
+        namingPatternBox = new JComboBox(options);
+        namingPatternBox.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent) {
                 fillFileListArea();
             }
         });
         lowerPanel1.add(namingLabel);
-        lowerPanel1.add(namingPattern);
+        lowerPanel1.add(namingPatternBox);
 
         JLabel custom = new JLabel("Or create custom name..");
         JButton namingButton = new JButton("Custom pattern");
@@ -162,7 +163,9 @@ public class FileUnitPanel extends ParameterPanel {
                 if (!segments.equals("-1") && segments != null){
                     log("Selected number : " + segments);
                     int parts = Integer.parseInt(segments);
-                    NamingPanel np = new NamingPanel(parts);
+                    namingPattern = (PatternCollection)NamingPanel.getValue(parts);
+
+                    log("ChosenNamingPattern : " + namingPattern.toString());
                 }
             }
         });
@@ -181,13 +184,17 @@ public class FileUnitPanel extends ParameterPanel {
         setEnabling(lowerPanel, collection);
     }
 
-    public void returnSomething(String thing){
-        log("Returned : " + thing);
-    }
-
-
     @Override
     public void dispose() {
+    }
+
+    private PatternCollection getNamingPattern(){
+        Object o = getParameter("namingPattern");
+        //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        if(o instanceof PatternCollection){
+            return (PatternCollection)o;
+        }
+        return null;
     }
 
     private boolean isCollection(){
@@ -221,7 +228,7 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private void fillFileListArea(){
-        String selected = (String)namingPattern.getSelectedItem();
+        String selected = (String)namingPatternBox.getSelectedItem();
         PatternCollection pc = new PatternCollection("-");
 
         if(selected.equals("0001")){
@@ -244,96 +251,92 @@ public class FileUnitPanel extends ParameterPanel {
         }
 
     }
+}
 
-    class NamingPanel extends JDialog{
-        JLabel hi = new JLabel();
-        JTextField name = new JTextField("");
-        JComboBox separatorBox;
-        String separator;
-        int parts = 1;
-        String[] nameParts;
-        String[] patternOptions = {"0001", "dd-MMM-yy", "A", "ABC"};
-        String[] numberArray = {"1", "01", "001", "0001"};
-        String[] dateArray = {"", "dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
-        String[] letterArray = {"A", "AA", "AAA", "AAAA", "AAAAA"};
+class NamingPanel extends JDialog{
+    JLabel hi = new JLabel();
+    JTextField name = new JTextField("");
+    JComboBox separatorBox;
+    String separator;
+    int parts = 1;
+    String[] nameParts;
+    String[] patternOptions = {"words", "numbers", "dates", "letters"};
+    String[] numberArray = {"1", "01", "001", "0001"};
+    String[] dateArray = {"", "dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
+    String[] letterArray = {"A", "AA", "AAA", "AAAA", "AAAAA"};
+    PatternCollection chosenNamingPattern = null;
 
-        public NamingPanel(int p){
-            this.parts = p;
-            nameParts = new String[parts];
-            JPanel mainPanel = new JPanel();
+    public static Object getValue(int p){
+        NamingPanel np = new NamingPanel(p);
+        return np.getReturnValue();
+    }
 
-            mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-            mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File name pattern"));
+    private Object getReturnValue(){
+        return chosenNamingPattern;
+    }
 
-            JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-            hi.setText("Filename will have " + parts + " parts.");
-            topPanel.add(hi);
-            name.setText(buildName("-", parts));
-            topPanel.add(name);
-            mainPanel.add(topPanel);
 
-            JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-            JLabel l1 = new JLabel("Seperator : ");
-            String[] seperatorOptions = {"- (hyphen)", " (space)", "_ (underscore)", ". (period)", "(no seperator)"};
-            separatorBox = new JComboBox(seperatorOptions);
-            separatorBox.setEditable(true);
-            separatorBox.addActionListener(new ActionListener(){
+    public NamingPanel(int p){
+        this.setModal(true);
+        this.parts = p;
+        nameParts = new String[parts];
+        JPanel mainPanel = new JPanel();
+
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File name pattern"));
+
+        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        hi.setText("Filename will have " + parts + " parts.");
+        topPanel.add(hi);
+        name.setText(buildName("-", parts));
+        topPanel.add(name);
+        mainPanel.add(topPanel);
+
+        JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+        JLabel l1 = new JLabel("Seperator : ");
+        String[] seperatorOptions = {"- (hyphen)", " (space)", "_ (underscore)", ". (period)", "(no seperator)"};
+        separatorBox = new JComboBox(seperatorOptions);
+        separatorBox.setSelectedIndex(0);
+        separatorBox.setEditable(true);
+        separatorBox.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent actionEvent){
+                separator = getSeparator();
+                setNameLabel(buildName(getSeparator(), parts));
+            }
+        });
+        midPanel.add(l1);
+        midPanel.add(separatorBox);
+        mainPanel.add(midPanel);
+
+        JPanel lowerPanel = new JPanel(new GridLayout(parts, 4, 5, 5));
+
+        for(int i = 0; i < parts; i++){
+            final int finalI = i;
+
+            final JComboBox section = new JComboBox(patternOptions);
+            section.setEditable(true);
+
+            String[] patternDetail = {""};
+            final JComboBox detailChooser = new JComboBox(patternDetail);
+
+            section.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent actionEvent){
-                    separator = getSeparator();
+                    Object selected = section.getSelectedItem();
+                    setSection(finalI, (String)selected);
+                    setNameLabel(buildName(getSeparator(), parts));
+                    fillDetailCombo(detailChooser, selected);
+                }
+            });
+
+            detailChooser.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent actionEvent){
+                    setSection(finalI, (String)detailChooser.getSelectedItem());
                     setNameLabel(buildName(getSeparator(), parts));
                 }
             });
-            midPanel.add(l1);
-            midPanel.add(separatorBox);
-            mainPanel.add(midPanel);
 
-            JPanel lowerPanel = new JPanel(new GridLayout(parts, 3, 5, 5));
+            JLabel lx = new JLabel("Pattern " + (i+1) + " : ");
 
-            for(int i = 0; i < parts; i++){
-                final int finalI = i;
-
-                final JComboBox section = new JComboBox(patternOptions);
-                section.setEditable(true);
-
-                String[] patternDetail = {""};
-                final JComboBox detailChooser = new JComboBox(patternDetail);
-
-                section.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent actionEvent){
-                        Object selected = section.getSelectedItem();
-                        setSection(finalI, (String)selected);
-                        setNameLabel(buildName(getSeparator(), parts));
-                        fillDetailCombo(detailChooser, selected);
-                    }
-                });
-
-                detailChooser.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent actionEvent){
-                        setSection(finalI, (String)detailChooser.getSelectedItem());
-                        setNameLabel(buildName(getSeparator(), parts));
-                    }
-                });
-
-                JLabel lx = new JLabel("Pattern " + (i+1) + " : ");
-                lowerPanel.add(lx);
-                lowerPanel.add(section);
-                lowerPanel.add(detailChooser);
-            }
-            mainPanel.add(lowerPanel);
-            JButton ok = new JButton("Ok");
-            ok.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    returnSomething("words");
-                    PatternCollection pc = new PatternCollection(separator);
-                    for(int i = 0; i < parts; i++){
-                        if(nameParts[i].equals("")){
-
-                        }
-                    }
-                    dispose();
-                }
-            });
-            mainPanel.add(ok);
 
             JButton helpButton = new JButton("Help");
             helpButton.addActionListener(new ActionListener(){
@@ -341,139 +344,179 @@ public class FileUnitPanel extends ParameterPanel {
                     new helpFrame();
                 }
             });
-            mainPanel.add(helpButton);
 
-            add(mainPanel);
-            this.setTitle("File naming pattern");
-            this.pack();
-            this.setVisible(true);
+            lowerPanel.add(lx);
+            lowerPanel.add(section);
+            lowerPanel.add(detailChooser);
+            lowerPanel.add(helpButton);
 
         }
-
-        public String[] fillDateArray(){
-            Date now = new Date();
-
-            String array[] = {""};
-
-            return array;
-        }
-
-        private void fillDetailCombo(JComboBox detail, Object patternSelection){
-            detail.removeAllItems();
-            detail.setEditable(false);
-
-            if(patternSelection == patternOptions[0]){
-                addArrayToCombo(detail, numberArray);
-            }
-            if(patternSelection == patternOptions[1]){
-                addArrayToCombo(detail, dateArray);
-                detail.setEditable(true);
-            }
-            if(patternSelection == patternOptions[2]){
-                String[] array = {""};
-                addArrayToCombo(detail, array);
-                detail.setEditable(true);
-            }
-            if(patternSelection == patternOptions[3]){
-                addArrayToCombo(detail, letterArray);
-            }
-        }
-
-        private void addArrayToCombo(JComboBox box, String[] array){
-            for(int i = 0; i < array.length ; i++){
-                box.addItem(array[i]);
-            }
-        }
-
-
-        private void setNameLabel(String n){
-            name.setText(n);
-        }
-
-
-        private void setSection(int i, String s){
-            nameParts[i] = s;
-            log("Setting namePart " + i + " as : "+ s);
-        }
-
-        private String getSeparator(){
-            String s = (String)separatorBox.getSelectedItem();
-            s = s.substring(0,1);
-            if(s.equals("(")){ s = "";}
-            return s;
-        }
-
-        public String buildName(String s, int parts){
-            String name = "";
-
-            for (int i = 0; i < (parts -1); i++){
-                String bit = "XXX";
-                if(nameParts[i] != null){
-                    bit = nameParts[i];
+        mainPanel.add(lowerPanel);
+        JButton ok = new JButton("Ok");
+        ok.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                PatternCollection pc = new PatternCollection(getSeparator());
+                for(int i = 0; i < parts; i++){
+                    pc.add(new CharSequencePattern(nameParts[i]));
+                }
+                for (int i = 0; i < 100; i++) {
+                    System.out.println(pc.next());
                 }
 
-                name += bit + s;
-            }
-            if(nameParts[parts-1] != null){
-                name += nameParts[parts-1];
-            }else{
-                name += "XXX";
-            }
+                log(checkNameVaries(pc) ? "Name iterates ok." :  "Name does not iterate");
 
-            return name;
+                setNamingPattern(pc);
+                dispose();
+            }
+        });
+        mainPanel.add(ok);
+
+        add(mainPanel);
+        this.setTitle("File naming pattern");
+        this.pack();
+        this.setVisible(true);
+
+    }
+
+    private void setNamingPattern(PatternCollection pc){
+        log("chosenNamingPattern : " + pc.toString());
+        chosenNamingPattern = pc;
+    }
+
+    private boolean checkNameVaries(PatternCollection pc){
+        boolean varies = false;
+        List l = pc.getStringPatternList();
+        for(Iterator i = l.iterator(); i.hasNext();){
+            Object o = i.next();
+            if(!(o instanceof CharSequencePattern)){
+                varies = true;
+            }
         }
+        return varies;
+    }
 
-        public String getName(){
-            return name.getText();
+    private void fillDetailCombo(JComboBox detail, Object patternSelection){
+        detail.removeAllItems();
+        detail.setEditable(false);
+
+        if(patternSelection == "numbers"){
+            addArrayToCombo(detail, numberArray);
+        }
+        if(patternSelection == "dates"){
+            addArrayToCombo(detail, dateArray);
+            detail.setEditable(true);
+        }
+        if(patternSelection == "words"){
+            String[] array = {""};
+            addArrayToCombo(detail, array);
+            detail.setEditable(true);
+        }
+        if(patternSelection == "letters"){
+            addArrayToCombo(detail, letterArray);
         }
     }
 
-    class helpFrame extends JFrame{
-        public helpFrame(){
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-            JLabel helpLabel = new JLabel("This is helpful");
-
-            String[] headings = {"Symbol", "Meaning", "Type", "Example"};
-            String[][] data = {{"G", "Era", "Text", "GG -> AD"},
-                    {"y", "Year", "Number", "yy -> 03, yyyy -> 2003"},
-                    {"M", "Month", "Text or Number", "M -> 7, M -> 12, MM -> 07, MMM -> Jul, MMMM -> December"},
-                    {"d", "Day in month", "Number", "d -> 3, dd -> 03"},
-                    {"h", "Hour (1-12, AM/PM", "Number", "h -> 3, hh -> 03"},
-                    {"H", "Hour (0-24)", "Number", "H -> 15, HH -> 15"},
-                    {"k", "Hour (1-24)", "Number", "k -> 3, kk -> 03"},
-                    {"K", "Hour (1-11 AM/PM)", "Number", "K -> 15, KK -> 15"},
-                    {"m", "Minute", "Number", "m -> 7, m -> 15, mm -> 15"},
-                    {"s", "Second", "Number", "s -> 15, kk -> 15"},
-                    {"S", "Millisecond (0-999)", "Number", "SSS -> 007"},
-                    {"E", "Day in week", "Text", "EEE -> Tue, EEEE -> Tuesday"},
-                    {"D", "Day in year (1-365 or 1-364", "Number", "D -> 65, DDD -> 065"},
-                    {"F", "Day of week in month (1-5)", "Number", "F -> 1"},
-                    {"w", "Week in year (1-53)", "Number", "w -> 7"},
-                    {"W", "Week in month (1-5)", "Number", "W -> 3"},
-                    {"a", "AM/PM", "Text", "a -> AM, aa -> AM"},
-                    {"z", "Time zone", "Text", "z -> EST, zzz -> EST, zzzzz -> Eastern Standard Time"},
-                    {"'", "Escape for text", "Delimiter", "'hour' h -> hour 9"},
-                    {"\"", "Single quote", "Literal", "ss\"SSS -> 45'876"}
-            };
-            JTable table = new JTable(data, headings);
-            JScrollPane scrollPane = new JScrollPane(table);
-            table.setFillsViewportHeight(true);
-            panel.add(scrollPane);
-
-            panel.add(helpLabel);
-            JButton ok = new JButton("Ok");
-            ok.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    dispose();
-                }
-            });
-            panel.add(ok);
-            this.add(panel);
-            this.setSize(600,400);
-            this.setVisible(true);
-            this.setTitle("Help");
+    private void addArrayToCombo(JComboBox box, String[] array){
+        for(int i = 0; i < array.length ; i++){
+            box.addItem(array[i]);
         }
+    }
+
+
+    private void setNameLabel(String n){
+        name.setText(n);
+    }
+
+
+    private void setSection(int i, String s){
+        nameParts[i] = s;
+        log("Setting namePart " + i + " as : "+ s);
+    }
+
+    private String getSeparator(){
+        String s = (String)separatorBox.getSelectedItem();
+        s = s.substring(0,1);
+        if(s.equals("(")){ s = "";}
+        return s;
+    }
+
+    public String buildName(String s, int parts){
+        String name = "";
+
+        for (int i = 0; i < (parts -1); i++){
+            String bit = "XXX";
+            if(nameParts[i] != null){
+                bit = nameParts[i];
+            }
+
+            name += bit + s;
+        }
+        if(nameParts[parts-1] != null){
+            name += nameParts[parts-1];
+        }else{
+            name += "XXX";
+        }
+
+        return name;
+    }
+
+    public String getName(){
+        return name.getText();
+    }
+
+    private void log(String s){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(s);
+        System.out.println(s);
     }
 }
+
+class helpFrame extends JFrame{
+    public helpFrame(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel helpLabel = new JLabel("This is helpful");
+
+        String[] headings = {"Symbol", "Meaning", "Type", "Example"};
+        String[][] data = {{"G", "Era", "Text", "GG -> AD"},
+                {"y", "Year", "Number", "yy -> 03, yyyy -> 2003"},
+                {"M", "Month", "Text or Number", "M -> 7, M -> 12, MM -> 07, MMM -> Jul, MMMM -> December"},
+                {"d", "Day in month", "Number", "d -> 3, dd -> 03"},
+                {"h", "Hour (1-12, AM/PM", "Number", "h -> 3, hh -> 03"},
+                {"H", "Hour (0-24)", "Number", "H -> 15, HH -> 15"},
+                {"k", "Hour (1-24)", "Number", "k -> 3, kk -> 03"},
+                {"K", "Hour (1-11 AM/PM)", "Number", "K -> 15, KK -> 15"},
+                {"m", "Minute", "Number", "m -> 7, m -> 15, mm -> 15"},
+                {"s", "Second", "Number", "s -> 15, kk -> 15"},
+                {"S", "Millisecond (0-999)", "Number", "SSS -> 007"},
+                {"E", "Day in week", "Text", "EEE -> Tue, EEEE -> Tuesday"},
+                {"D", "Day in year (1-365 or 1-364", "Number", "D -> 65, DDD -> 065"},
+                {"F", "Day of week in month (1-5)", "Number", "F -> 1"},
+                {"w", "Week in year (1-53)", "Number", "w -> 7"},
+                {"W", "Week in month (1-5)", "Number", "W -> 3"},
+                {"a", "AM/PM", "Text", "a -> AM, aa -> AM"},
+                {"z", "Time zone", "Text", "z -> EST, zzz -> EST, zzzzz -> Eastern Standard Time"},
+                {"'", "Escape for text", "Delimiter", "'hour' h -> hour 9"},
+                {"\"", "Single quote", "Literal", "ss\"SSS -> 45'876"}
+        };
+        JTable table = new JTable(data, headings);
+        JScrollPane scrollPane = new JScrollPane(table);
+        table.setFillsViewportHeight(true);
+        panel.add(scrollPane);
+
+        panel.add(helpLabel);
+        JButton ok = new JButton("Ok");
+        ok.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                dispose();
+            }
+        });
+        panel.add(ok);
+        this.add(panel);
+        this.setSize(600,400);
+        this.setVisible(true);
+        this.setTitle("Help");
+    }
+}
+

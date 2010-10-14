@@ -147,6 +147,7 @@ public class DaxCreatorUnit {
             List inFiles = jobChunk.getInFileChunks();
             for(int i = 0; i < inFiles.size(); i++){
                 DaxFileChunk chunk = (DaxFileChunk)inFiles.get(i);
+                chunk.resetNextCounter();
                 if(chunk.isCollection()){
                     for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
                         log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + m);
@@ -157,7 +158,9 @@ public class DaxCreatorUnit {
                             log("Collection has no naming pattern, using *append int*");
                         }
 
-                        job.addUses(new Filename(chunk.getFilename() + "-" + m, 1));
+                        String filename = chunk.getFilename() + "-" + m;
+                        filename = chunk.getNextFilename();
+                        job.addUses(new Filename(filename, 1));
                     }
                 }
                 else{

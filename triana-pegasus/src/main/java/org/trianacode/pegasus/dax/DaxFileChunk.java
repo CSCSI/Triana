@@ -27,13 +27,22 @@ public class DaxFileChunk implements Serializable {
     private int counter = 0;
 
     public String getFilename() {
-        return filename;
+        if(namePattern == null){
+            log("returning filename");
+            return filename;
+        }
+        else{
+            log("returning next patterned name");
+            return namePattern.next();
+        }
     }
 
     public String getNextFilename(){
         if(counter < numberOfFiles){
-            counter++;            
-            return filename + "-" + counter;
+            String returnName = getFilename() + "-" + counter;
+            counter++;
+            return returnName;
+
         }
         else{
             return null;
@@ -109,12 +118,13 @@ public class DaxFileChunk implements Serializable {
     }
 
     public void setNamePattern(PatternCollection namePattern) {
+        log("Pattern = " + namePattern);
         this.namePattern = namePattern;
     }
 
     private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 }
