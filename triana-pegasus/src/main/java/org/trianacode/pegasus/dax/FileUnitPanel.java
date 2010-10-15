@@ -34,7 +34,7 @@ public class FileUnitPanel extends ParameterPanel {
     JPanel upperPanel = new JPanel(new GridLayout(2,2,5,5));
     JPanel lowerPanel = new JPanel(new GridLayout(2,3,5,5));
     JComboBox namingPatternBox = new JComboBox();
-    PatternCollection namingPattern = null;
+    private PatternCollection namingPattern = null;
 
 
 
@@ -66,7 +66,9 @@ public class FileUnitPanel extends ParameterPanel {
     private void setParams(){
         getTask().setParameter("numberOfFiles", numberOfFiles);
         getTask().setParameter("collection", collection);
+        log("Setting param namingPattern : " + namingPattern.toString());
         getTask().setParameter("namingPattern", namingPattern);
+        log("Checking namingPattern param : " + getNamingPattern().toString());
     }
 
     public void getParams(){
@@ -166,6 +168,7 @@ public class FileUnitPanel extends ParameterPanel {
                     namingPattern = (PatternCollection)NamingPanel.getValue(parts);
 
                     log("ChosenNamingPattern : " + namingPattern.toString());
+                    log("Does this appear too soon?");
                 }
             }
         });
@@ -359,7 +362,7 @@ class NamingPanel extends JDialog{
                 for(int i = 0; i < parts; i++){
                     pc.add(new CharSequencePattern(nameParts[i]));
                 }
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < 5; i++) {
                     System.out.println(pc.next());
                 }
 
@@ -399,19 +402,19 @@ class NamingPanel extends JDialog{
         detail.removeAllItems();
         detail.setEditable(false);
 
-        if(patternSelection == "numbers"){
+        if(patternSelection.equals("numbers")){
             addArrayToCombo(detail, numberArray);
         }
-        if(patternSelection == "dates"){
+        if(patternSelection.equals("dates")){
             addArrayToCombo(detail, dateArray);
             detail.setEditable(true);
         }
-        if(patternSelection == "words"){
+        if(patternSelection.equals("words")){
             String[] array = {""};
             addArrayToCombo(detail, array);
             detail.setEditable(true);
         }
-        if(patternSelection == "letters"){
+        if(patternSelection.equals("letters")){
             addArrayToCombo(detail, letterArray);
         }
     }

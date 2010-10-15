@@ -118,7 +118,7 @@ public class DaxFileChunk implements Serializable {
     }
 
     public void setNamePattern(PatternCollection namePattern) {
-        log("Pattern = " + namePattern);
+        log("Setting pattern in fileChunk to : " + namePattern);
         this.namePattern = namePattern;
     }
 

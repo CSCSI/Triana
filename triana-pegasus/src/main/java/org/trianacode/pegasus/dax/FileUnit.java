@@ -25,7 +25,7 @@ public class FileUnit {
     @Parameter
     private int numberOfFiles = 1;
     @Parameter
-    private PatternCollection namePattern = null;
+    private PatternCollection namingPattern = null;
 
     @TextFieldParameter
     private String fileName = "a.txt";
@@ -43,7 +43,7 @@ public class FileUnit {
         thisFile.setUuid(UUID.randomUUID());
         thisFile.setCollection(collection);
         thisFile.setNumberOfFiles(numberOfFiles);
-        thisFile.setNamePattern(namePattern);
+        thisFile.setNamePattern(namingPattern);
 
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
