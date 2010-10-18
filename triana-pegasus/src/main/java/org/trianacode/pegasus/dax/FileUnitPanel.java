@@ -15,6 +15,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -257,12 +258,13 @@ public class FileUnitPanel extends ParameterPanel {
 }
 
 class NamingPanel extends JDialog{
+    JPanel mainPanel = new JPanel();
     JLabel hi = new JLabel();
     JTextField name = new JTextField("");
     JComboBox separatorBox;
     String separator;
     int parts = 1;
-    String[] nameParts;
+    Vector<String> nameParts;
     String[] patternOptions = {"words", "numbers", "dates", "letters"};
     String[] numberArray = {"1", "01", "001", "0001"};
     String[] dateArray = {"", "dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
@@ -278,24 +280,63 @@ class NamingPanel extends JDialog{
         return chosenNamingPattern;
     }
 
+    private void prepNameParts(){
+        for(int i = 0; i < parts; i++){
+            nameParts.add("");
+        }
+    }
+
+    private void refresh(){
+        mainPanel.revalidate();
+        this.pack();
+    }
 
     public NamingPanel(int p){
         this.setModal(true);
+        this.setLocationRelativeTo(this.getOwner());
         this.parts = p;
-        nameParts = new String[parts];
-        JPanel mainPanel = new JPanel();
+        nameParts = new Vector<String>();
+        prepNameParts();
 
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File name pattern"));
 
-        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-        hi.setText("Filename will have " + parts + " parts.");
+        JPanel setNumParts = new JPanel(new GridLayout(1, 3, 5, 5));
+        setNumParts.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        JPanel topPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+        midPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        final JPanel lowerPanel = new JPanel();
+        lowerPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+
+        JLabel label = new JLabel("Change number of parts");
+        setNumParts.add(label);
+        String numbers[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+        final JComboBox numsBox = new JComboBox(numbers);
+        numsBox.setSelectedItem((String)"" + p);
+        setNumParts.add(numsBox);
+
+        JButton setButton = new JButton("Set");
+        setButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent ae) {
+                parts = Integer.parseInt(numsBox.getSelectedItem().toString());
+                hi.setText("Filename will have " + parts + " part" + ((parts > 1) ? "s." : "."));
+                addChoosers(lowerPanel);
+                refresh();
+            }
+        });
+        setNumParts.add(setButton);
+        mainPanel.add(setNumParts);
+
+
+        hi.setText("Filename will have " + parts + " part" + ((parts > 1) ? "s." : "."));
         topPanel.add(hi);
-        name.setText(buildName("-", parts));
+        name.setText(buildName("-"));
         topPanel.add(name);
         mainPanel.add(topPanel);
 
-        JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
         JLabel l1 = new JLabel("Seperator : ");
         String[] seperatorOptions = {"- (hyphen)", " (space)", "_ (underscore)", ". (period)", "(no seperator)"};
         separatorBox = new JComboBox(seperatorOptions);
@@ -304,14 +345,49 @@ class NamingPanel extends JDialog{
         separatorBox.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent){
                 separator = getSeparator();
-                setNameLabel(buildName(getSeparator(), parts));
+                setNameLabel(buildName(getSeparator()));
             }
         });
         midPanel.add(l1);
         midPanel.add(separatorBox);
         mainPanel.add(midPanel);
 
-        JPanel lowerPanel = new JPanel(new GridLayout(parts, 4, 5, 5));
+        addChoosers(lowerPanel);
+
+        mainPanel.add(lowerPanel);
+        JButton ok = new JButton("Ok");
+        ok.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                try{
+                    PatternCollection pc = new PatternCollection(getSeparator());
+                    for(int i = 0; i < parts; i++){
+                        pc.add(new CharSequencePattern(nameParts.get(i)));
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        System.out.println(pc.next());
+                    }
+
+                    log(checkNameVaries(pc) ? "Name iterates ok." :  "Name does not iterate");
+
+                    setNamingPattern(pc);
+                }catch(Exception ex){}
+                finally{
+                    dispose();
+                }
+            }
+        });
+        mainPanel.add(ok);
+
+        add(mainPanel);
+        this.setTitle("File naming pattern");
+        this.pack();
+        this.setVisible(true);
+
+    }
+
+    private void addChoosers(JPanel lowerPanel){
+        lowerPanel.removeAll();
+        lowerPanel.setLayout(new GridLayout(parts, 4, 5, 5));
 
         for(int i = 0; i < parts; i++){
             final int finalI = i;
@@ -326,7 +402,7 @@ class NamingPanel extends JDialog{
                 public void actionPerformed(ActionEvent actionEvent){
                     Object selected = section.getSelectedItem();
                     setSection(finalI, (String)selected);
-                    setNameLabel(buildName(getSeparator(), parts));
+                    setNameLabel(buildName(getSeparator()));
                     fillDetailCombo(detailChooser, selected);
                 }
             });
@@ -334,9 +410,11 @@ class NamingPanel extends JDialog{
             detailChooser.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent actionEvent){
                     setSection(finalI, (String)detailChooser.getSelectedItem());
-                    setNameLabel(buildName(getSeparator(), parts));
+                    setNameLabel(buildName(getSeparator()));
                 }
             });
+
+            fillDetailCombo(detailChooser, section.getSelectedItem());
 
             JLabel lx = new JLabel("Pattern " + (i+1) + " : ");
 
@@ -352,33 +430,8 @@ class NamingPanel extends JDialog{
             lowerPanel.add(section);
             lowerPanel.add(detailChooser);
             lowerPanel.add(helpButton);
-
         }
-        mainPanel.add(lowerPanel);
-        JButton ok = new JButton("Ok");
-        ok.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                PatternCollection pc = new PatternCollection(getSeparator());
-                for(int i = 0; i < parts; i++){
-                    pc.add(new CharSequencePattern(nameParts[i]));
-                }
-                for (int i = 0; i < 5; i++) {
-                    System.out.println(pc.next());
-                }
-
-                log(checkNameVaries(pc) ? "Name iterates ok." :  "Name does not iterate");
-
-                setNamingPattern(pc);
-                dispose();
-            }
-        });
-        mainPanel.add(ok);
-
-        add(mainPanel);
-        this.setTitle("File naming pattern");
-        this.pack();
-        this.setVisible(true);
-
+     //   lowerPanel.revalidate();
     }
 
     private void setNamingPattern(PatternCollection pc){
@@ -432,8 +485,15 @@ class NamingPanel extends JDialog{
 
 
     private void setSection(int i, String s){
-        nameParts[i] = s;
-        log("Setting namePart " + i + " as : "+ s);
+        if(i >= nameParts.size()){
+            log("trying to set " + i + " nameParts is : " + nameParts.size());
+            for(int j = nameParts.size(); j < (i+1); j++){
+                nameParts.add("");
+            }
+            log("nameParts is now : " + nameParts.size());
+        }
+        log("Setting namePart " + i + " as : "+ s);        
+        nameParts.setElementAt(s,i);
     }
 
     private String getSeparator(){
@@ -443,19 +503,20 @@ class NamingPanel extends JDialog{
         return s;
     }
 
-    public String buildName(String s, int parts){
+    public String buildName(String sep){
         String name = "";
-
-        for (int i = 0; i < (parts -1); i++){
-            String bit = "XXX";
-            if(nameParts[i] != null){
-                bit = nameParts[i];
+        int size = nameParts.size();
+        if(size > 1){
+            for (int i = 0; i < (size - 1); i++){
+                String bit = "XXX";
+                if(nameParts.get(i) != null){
+                    bit = nameParts.get(i);
+                }
+                name += bit + sep;
             }
-
-            name += bit + s;
         }
-        if(nameParts[parts-1] != null){
-            name += nameParts[parts-1];
+        if(nameParts.get(size - 1) != null){
+            name += nameParts.get(size - 1);
         }else{
             name += "XXX";
         }
