@@ -126,51 +126,72 @@ public class FileUnitPanel extends ParameterPanel {
         //Lower Panel
 
         lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File Collection Options"));
-        JPanel lowerPanel1 = new JPanel(new GridLayout(3, 2, 5, 5));
+        JPanel lowerPanel1 = new JPanel(new GridLayout(2, 2, 5, 5));
         final JLabel numberLabel = new JLabel("No. files : " + numberOfFiles);
+        lowerPanel1.add(numberLabel);
 
-        final JSlider slide = new JSlider(1, 999, numberOfFiles);
-        slide.setMajorTickSpacing(100);
-        slide.setValue(numberOfFiles);
-        slide.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent changeEvent) {
-                numberOfFiles = slide.getValue();
+
+        final String[] numbers = new String[100];
+        for(int i = 1; i < 100; i++){
+            numbers[i] = "" + i;
+        }
+
+        final JComboBox numbersCombo = new JComboBox(numbers);
+        numbersCombo.setSelectedItem("" + numberOfFiles);
+        numbersCombo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                numberOfFiles = Integer.parseInt((String)numbersCombo.getSelectedItem());
                 numberLabel.setText("No. files : " + numberOfFiles);
                 fillFileListArea();
             }
         });
-        lowerPanel1.add(numberLabel);
-        lowerPanel1.add(slide);
+        lowerPanel1.add(numbersCombo);
 
-        JLabel namingLabel = new JLabel("Naming Pattern :");
-        String[] options = {"0001", "yyyy-MMM-dd", "-A"};
-        namingPatternBox = new JComboBox(options);
-        namingPatternBox.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent actionEvent) {
-                fillFileListArea();
-            }
-        });
-        lowerPanel1.add(namingLabel);
-        lowerPanel1.add(namingPatternBox);
 
-        JLabel custom = new JLabel("Or create custom name..");
-        JButton namingButton = new JButton("Custom pattern");
+//        final JSlider slide = new JSlider(1, 999, numberOfFiles);
+//        slide.setMajorTickSpacing(100);
+//        slide.setValue(numberOfFiles);
+//        slide.addChangeListener(new ChangeListener() {
+//            public void stateChanged(ChangeEvent changeEvent) {
+//                numberOfFiles = slide.getValue();
+//                numberLabel.setText("No. files : " + numberOfFiles);
+//                fillFileListArea();
+//            }
+//        });
+//        lowerPanel1.add(slide);
+
+
+
+//        JLabel namingLabel = new JLabel("Naming Pattern :");
+//        String[] options = {"0001", "yyyy-MMM-dd", "-A"};
+//        namingPatternBox = new JComboBox(options);
+//        namingPatternBox.addActionListener(new ActionListener(){
+//            public void actionPerformed(ActionEvent actionEvent) {
+//                fillFileListArea();
+//            }
+//        });
+//        lowerPanel1.add(namingLabel);
+//        lowerPanel1.add(namingPatternBox);
+
+        JLabel custom = new JLabel("Or create custom name :");
+        JButton namingButton = new JButton("Custom pattern...");
         namingButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent) {
-                String numbers[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-                String segments = "" + JOptionPane.showInputDialog(
-                        lowerPanel, "How many parts is the name of the file split into?\ne.g. xxx-xxx-xxx = 3", "How many segments?",
-                        JOptionPane.DEFAULT_OPTION, null, numbers, numbers[0]
-                );
+//                String numbers[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+//                String segments = "" + JOptionPane.showInputDialog(
+//                        lowerPanel, "How many parts is the name of the file split into?\ne.g. xxx-xxx-xxx = 3", "How many segments?",
+//                        JOptionPane.DEFAULT_OPTION, null, numbers, numbers[0]
+//                );
+//
+//                if (!segments.equals("-1") && segments != null){
+//                    log("Selected number : " + segments);
+//                    int parts = Integer.parseInt(segments);
+                int parts = 3;
+                namingPattern = (PatternCollection)NamingPanel.getValue(parts);
+                fillFileListArea();
 
-                if (!segments.equals("-1") && segments != null){
-                    log("Selected number : " + segments);
-                    int parts = Integer.parseInt(segments);
-                    namingPattern = (PatternCollection)NamingPanel.getValue(parts);
-
-                    log("ChosenNamingPattern : " + namingPattern.toString());
-                    log("Does this appear too soon?");
-                }
+                log("ChosenNamingPattern : " + namingPattern.toString());
+//                }
             }
         });
         lowerPanel1.add(custom);
@@ -178,13 +199,17 @@ public class FileUnitPanel extends ParameterPanel {
 
         lowerPanel.add(lowerPanel1);
 
-        JPanel lowerPanel2 = new JPanel(new BorderLayout());
+        JPanel lowerPanel2 = new JPanel();
+        lowerPanel2.setLayout(new BoxLayout(lowerPanel2, BoxLayout.Y_AXIS));
         fileListArea.setRows(6);
         JScrollPane sp = new JScrollPane(fileListArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         lowerPanel2.add(sp);
         lowerPanel.add(lowerPanel2, BorderLayout.CENTER);
-        add(lowerPanel);
 
+        JLabel iterLabel = new JLabel("...");
+        lowerPanel2.add(iterLabel);
+
+        add(lowerPanel);
         setEnabling(lowerPanel, collection);
     }
 
@@ -232,26 +257,36 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private void fillFileListArea(){
-        String selected = (String)namingPatternBox.getSelectedItem();
-        PatternCollection pc = new PatternCollection("-");
+        if(namingPattern != null){
+            fileListArea.setText("Files will be named : \n");
+            for(int i = 0 ; i< numberOfFiles; i++){
+                fileListArea.append(namingPattern.next() + "\n");
+            }
 
-        if(selected.equals("0001")){
-            pc.add(new CounterPattern(1, 5, 1,1));
         }
+        else{
 
-        if(selected.equals("yyyy-MMM-dd")){
-            pc.add(new DatePattern("yyyy-MMM-dd"));
-        }
+            String selected = (String)namingPatternBox.getSelectedItem();
+            PatternCollection pc = new PatternCollection("-");
 
-        if(selected.equals("-A")){
-            pc.add(new AlphabetPattern(true, 1));
-        }
+            if(selected.equals("0001")){
+                pc.add(new CounterPattern(1, 5, 1,1));
+            }
+
+            if(selected.equals("yyyy-MMM-dd")){
+                pc.add(new DatePattern("yyyy-MMM-dd"));
+            }
+
+            if(selected.equals("-A")){
+                pc.add(new AlphabetPattern(true, 1));
+            }
 
 
-        fileListArea.setText("Files will be named : \n");
-        String name = (String)getParameter("fileName");
-        for(int i = 0 ; i< numberOfFiles; i++){
-            fileListArea.append(name + "-" + pc.next() + "\n");
+            fileListArea.setText("Files will be named : \n");
+            String name = (String)getParameter("fileName");
+            for(int i = 0 ; i< numberOfFiles; i++){
+                fileListArea.append(name + "-" + pc.next() + "\n");
+            }
         }
 
     }
@@ -376,7 +411,26 @@ class NamingPanel extends JDialog{
                 }
             }
         });
-        mainPanel.add(ok);
+
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                dispose();
+            }
+        });
+
+        JButton helpButton = new JButton("Help");
+        helpButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                new helpFrame();
+            }
+        });
+
+        JPanel endPanel = new JPanel();
+        endPanel.add(ok);
+        endPanel.add(cancelButton);
+        endPanel.add(helpButton);
+        mainPanel.add(endPanel);
 
         add(mainPanel);
         this.setTitle("File naming pattern");
@@ -387,7 +441,7 @@ class NamingPanel extends JDialog{
 
     private void addChoosers(JPanel lowerPanel){
         lowerPanel.removeAll();
-        lowerPanel.setLayout(new GridLayout(parts, 4, 5, 5));
+        lowerPanel.setLayout(new GridLayout(parts, 3, 5, 5));
 
         for(int i = 0; i < parts; i++){
             final int finalI = i;
@@ -418,20 +472,11 @@ class NamingPanel extends JDialog{
 
             JLabel lx = new JLabel("Pattern " + (i+1) + " : ");
 
-
-            JButton helpButton = new JButton("Help");
-            helpButton.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    new helpFrame();
-                }
-            });
-
             lowerPanel.add(lx);
             lowerPanel.add(section);
             lowerPanel.add(detailChooser);
-            lowerPanel.add(helpButton);
         }
-     //   lowerPanel.revalidate();
+        //   lowerPanel.revalidate();
     }
 
     private void setNamingPattern(PatternCollection pc){
@@ -492,7 +537,7 @@ class NamingPanel extends JDialog{
             }
             log("nameParts is now : " + nameParts.size());
         }
-        log("Setting namePart " + i + " as : "+ s);        
+        log("Setting namePart " + i + " as : "+ s);
         nameParts.setElementAt(s,i);
     }
 
