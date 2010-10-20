@@ -40,7 +40,6 @@
         <module>triana-core</module>
         <module>triana-gui</module>
         <module>triana-types</module>
-        <module>triana-interceptors</module>
         <module>triana-pegasus</module>
         <module>triana-toolboxes</module>
         <module>triana-app</module>
