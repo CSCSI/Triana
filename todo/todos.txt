@@ -19,6 +19,8 @@ update: I found the "Resolve Group Nodes" option in one of the right-click menus
 
 
 
+take Tool resolver out of thread and put in GUI code. 
+
 FEATURE REQUESTS
 ================
 

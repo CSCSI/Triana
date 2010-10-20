@@ -391,6 +391,7 @@ public class ToolResolver implements ToolMetadataResolver {
         }
         new Thread(new Runnable() {
             public void run() {
+
                 loadToolboxes();
                 reresolve();
             }

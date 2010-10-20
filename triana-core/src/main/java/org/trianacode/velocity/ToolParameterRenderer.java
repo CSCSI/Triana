@@ -1,13 +1,13 @@
 package org.trianacode.velocity;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.thinginitself.streamable.Streamable;
 import org.trianacode.http.ToolRenderer;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Andrew Harrison

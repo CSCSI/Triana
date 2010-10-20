@@ -60,9 +60,9 @@ public class Form extends FormComponent {
     }
 
     public static void main(String[] args) {
-        Properties props =TrianaProperties.getDefaultConfiguration();
+        Properties props = TrianaProperties.getDefaultConfiguration();
         Form form = new Form("myform", "cgi-bin", "post", props);
-        form.addComponent(new Checkbox("skiing", true, props,"myClass", "myOtherClass"));
+        form.addComponent(new Checkbox("skiing", true, props, "myClass", "myOtherClass"));
         form.addComponent(new Checkbox("snowboarding", "snow boarding", props));
         form.addComponent(new Checkbox("surfing", props));
         form.addClass("cls1");

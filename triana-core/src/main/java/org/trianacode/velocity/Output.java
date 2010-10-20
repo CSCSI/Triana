@@ -54,14 +54,14 @@ public class Output {
 
     /**
      * Uses the resource management now to find the file rather than using the classpath ...
-     * 
+     *
      * @param path
      * @return
      * @throws IOException
      */
     private static String getTemplate(String path) throws IOException {
         InputStream inStream = ResourceManagement.getInputStreamFor(path, ResourceManagement.Type.TEMPLATE);
-        
+
         StringBuilder stringBuilder = new StringBuilder();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
         String line;
@@ -73,7 +73,6 @@ public class Output {
 
 
     /**
-     *
      * @param parameters
      * @param templateType
      * @return
