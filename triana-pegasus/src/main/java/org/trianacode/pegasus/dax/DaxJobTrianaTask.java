@@ -3,9 +3,6 @@ package org.trianacode.pegasus.dax;
 import org.trianacode.gui.main.imp.MainTrianaTask;
 import org.trianacode.taskgraph.Task;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
@@ -20,6 +17,11 @@ public class DaxJobTrianaTask extends MainTrianaTask {
     Task task;
     DaxJobSubtitle sub = new DaxJobSubtitle();
     Color color = Color.red;
+    Color shadow = color.darker();
+    Color selectedColor = color.darker();
+    Color selectedShadow = shadow.darker();
+    Color jobUnitColor;
+    Color jobUnitShadow;
 
     public DaxJobTrianaTask(Task task) {
         super(task);
@@ -42,21 +44,22 @@ public class DaxJobTrianaTask extends MainTrianaTask {
 //        g.fillRect(0, 0, getSize().width, getSize().height);
 
         this.setOpaque(false);
-        Color jobUnitColor = color;
-        Color shadow = color.darker();
-        Color jobUnitShadow = shadow;
+
         if(this.isSelected()){
-            jobUnitColor = color.darker();
-            jobUnitShadow = shadow.darker();
+            jobUnitColor = selectedColor;
+            jobUnitShadow = selectedShadow;
+        }else{
+            jobUnitColor = color;
+            jobUnitShadow = shadow;
         }
 
 
         if(isCollection()){
-            Border shadowBorder = BorderFactory.createEmptyBorder();
-            TitledBorder title = BorderFactory.createTitledBorder(shadowBorder, "" + getNumberOfJobs());
-            title.setTitleJustification(TitledBorder.CENTER);
-            title.setTitlePosition(TitledBorder.BELOW_BOTTOM);
-            this.setBorder(title);
+//            Border shadowBorder = BorderFactory.createEmptyBorder();
+//            TitledBorder title = BorderFactory.createTitledBorder(shadowBorder, "" + getNumberOfJobs());
+//            title.setTitleJustification(TitledBorder.CENTER);
+//            title.setTitlePosition(TitledBorder.BELOW_BOTTOM);
+//            this.setBorder(title);
 
             g.setColor(jobUnitShadow);
             g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
@@ -66,8 +69,8 @@ public class DaxJobTrianaTask extends MainTrianaTask {
             g.setColor(Color.black);
             g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
         }else{
-            Border shadowBorder = BorderFactory.createEmptyBorder();
-            this.setBorder(shadowBorder);
+//            Border shadowBorder = BorderFactory.createEmptyBorder();
+//            this.setBorder(shadowBorder);
             g.setColor(jobUnitColor);
             g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
 

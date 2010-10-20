@@ -65,9 +65,11 @@ public class FileUnitPanel extends ParameterPanel {
     private void setParams(){
         getTask().setParameter("numberOfFiles", numberOfFiles);
         getTask().setParameter("collection", collection);
-        log("Setting param namingPattern : " + namingPattern.toString());
-        getTask().setParameter("namingPattern", namingPattern);
-        log("Checking namingPattern param : " + getNamingPattern().toString());
+        if(namingPattern != null){
+            log("Setting param namingPattern : " + namingPattern.toString());
+            getTask().setParameter("namingPattern", namingPattern);
+            log("Checking namingPattern param : " + getNamingPattern().toString());
+        }
     }
 
     public void getParams(){
@@ -158,8 +160,10 @@ public class FileUnitPanel extends ParameterPanel {
                 }
                 namingPattern = (PatternCollection)NamingPanel.getValue(parts);
                 fillFileListArea();
+                if(namingPattern != null){
+                    log("ChosenNamingPattern : " + namingPattern.toString());
 
-                log("ChosenNamingPattern : " + namingPattern.toString());
+                }
             }
         });
         lowerPanel1.add(custom);

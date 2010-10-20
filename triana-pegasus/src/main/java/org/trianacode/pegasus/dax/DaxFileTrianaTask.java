@@ -3,9 +3,6 @@ package org.trianacode.pegasus.dax;
 import org.trianacode.gui.main.imp.MainTrianaTask;
 import org.trianacode.taskgraph.Task;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
@@ -20,6 +17,11 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     //  private FileTrianaTaskDecoration docView = new FileTrianaTaskDecoration();
     Task task;
     Color color = Color.cyan;
+    Color shadow = color.darker();
+    Color selectedColor = color.darker();
+    Color selectedShadow = shadow.darker();
+    Color fileUnitColor = color;
+    Color fileUnitShadow = shadow;
 
     /**
      * Constructs a new MainTrianaTask for viewing the specified task
@@ -43,20 +45,21 @@ public class DaxFileTrianaTask extends MainTrianaTask {
 
         this.setOpaque(false);
 
-        Color fileUnitColor = color;
-        Color shadow = color.darker();
-        Color fileUnitShadow = shadow;
+
         if(this.isSelected()){
-            fileUnitColor = color.darker();
-            fileUnitShadow = shadow.darker();
+            fileUnitColor = selectedColor;
+            fileUnitShadow = selectedShadow;
+        }else{
+            fileUnitColor = color;
+            fileUnitShadow = shadow;
         }
 
         if(isCollection()){
-            Border shadowBorder = BorderFactory.createEmptyBorder();
-            TitledBorder title = BorderFactory.createTitledBorder(shadowBorder, "" + getNumberOfFiles());
-            title.setTitleJustification(TitledBorder.CENTER);
-            title.setTitlePosition(TitledBorder.BELOW_BOTTOM);
-            this.setBorder(title);
+//            Border shadowBorder = BorderFactory.createEmptyBorder();
+//            TitledBorder title = BorderFactory.createTitledBorder(shadowBorder, "" + getNumberOfFiles());
+//            title.setTitleJustification(TitledBorder.CENTER);
+//            title.setTitlePosition(TitledBorder.BELOW_BOTTOM);
+//            this.setBorder(title);
 
             g.setColor(fileUnitShadow);
             g.fillRoundRect(5, 0, getSize().width - 5, getSize().height - 5, 5, 10);
@@ -66,10 +69,10 @@ public class DaxFileTrianaTask extends MainTrianaTask {
             g.setColor(Color.black);
             g.drawRoundRect(0, 5, getSize().width - 5, getSize().height - 6, 5, 10);
         }else{
-            Border shadowBorder = BorderFactory.createEmptyBorder();
-            this.setBorder(shadowBorder);
+//            Border shadowBorder = BorderFactory.createEmptyBorder();
+//            this.setBorder(shadowBorder);
             g.setColor(fileUnitColor);
-            g.fillRoundRect(0, 0, getSize().width, getSize().height, 5, 10);
+            g.fill3DRect(0, 0, getSize().width, getSize().height, !isSelected());
 
             g.setColor(Color.black);
             g.drawRoundRect(0, 0, getSize().width-1, getSize().height-1, 5, 10);
