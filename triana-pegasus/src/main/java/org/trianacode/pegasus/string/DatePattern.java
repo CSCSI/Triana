@@ -1,5 +1,6 @@
 package org.trianacode.pegasus.string;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -8,7 +9,9 @@ import java.util.Date;
  * @version 1.0.0 Jul 15, 2010
  */
 
-public class DatePattern implements StringPattern {
+public class DatePattern implements StringPattern, Serializable {
+
+    private static long serialVersionUID = -1;    
 
     private Date date;
     private SimpleDateFormat formatter;

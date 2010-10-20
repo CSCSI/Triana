@@ -12,6 +12,9 @@ import java.util.List;
 
 public class PatternCollection implements StringPattern, Serializable {
 
+    private static long serialVersionUID = -1;
+    
+
     private String link = "";
     private List<StringPattern> patterns = new ArrayList<StringPattern>();
 

@@ -232,6 +232,7 @@ public class FileUnitPanel extends ParameterPanel {
             namingPattern.resetCount();
             fileListArea.setText("Files will be named : \n");
             for(int i = 0 ; i< numberOfFiles; i++){
+                log("adding a filename to fileListArea");
                 fileListArea.append(namingPattern.next() + ext +"\n");
             }
         }
@@ -239,6 +240,7 @@ public class FileUnitPanel extends ParameterPanel {
             fileListArea.setText("Files will be named : \n");
             String name = (String)getParameter("fileName");
             for(int i = 0 ; i< numberOfFiles; i++){
+                log("adding a name to fileListArea");
                 fileListArea.append(name + "." + ext +"\n");
             }
         }
@@ -422,6 +424,7 @@ class NamingPanel extends JDialog{
         lowerPanel.setLayout(new GridLayout(parts, 3, 5, 5));
 
         for(int i = 0; i < parts; i++){
+            log("adding a line of choosers");
             final int finalI = i;
 
             final JComboBox section = new JComboBox(patternOptions);
@@ -490,6 +493,7 @@ class NamingPanel extends JDialog{
 
     private void addArrayToCombo(JComboBox box, String[] array){
         for(int i = 0; i < array.length ; i++){
+            log("adding array to combobox");
             box.addItem(array[i]);
         }
     }
@@ -504,6 +508,7 @@ class NamingPanel extends JDialog{
         if(i >= nameParts.size()){
             log("trying to set " + i + " nameParts is : " + nameParts.size());
             for(int j = nameParts.size(); j < (i+1); j++){
+
                 nameParts.add("");
             }
             log("nameParts is now : " + nameParts.size());

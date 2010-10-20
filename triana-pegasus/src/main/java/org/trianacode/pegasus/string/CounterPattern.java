@@ -1,11 +1,15 @@
 package org.trianacode.pegasus.string;
 
+import java.io.Serializable;
+
 /**
  * @author Andrew Harrison
  * @version 1.0.0 Jul 15, 2010
  */
 
-public class CounterPattern implements StringPattern {
+public class CounterPattern implements StringPattern, Serializable {
+    private static long serialVersionUID = -1;
+    
 
     private int count;
     private String pad = "";

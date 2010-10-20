@@ -9,6 +9,10 @@ import java.io.Serializable;
 
 public class CharSequencePattern implements StringPattern, Serializable {
 
+    private static long serialVersionUID = -1;
+
+
+
     private CharSequence sequence;
 
     public CharSequencePattern(CharSequence sequence) {
