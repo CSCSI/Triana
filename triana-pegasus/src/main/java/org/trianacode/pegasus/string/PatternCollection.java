@@ -2,6 +2,7 @@ package org.trianacode.pegasus.string;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,6 +27,10 @@ public class PatternCollection implements StringPattern, Serializable {
         return patterns;
     }
 
+    public int getPatternCollectionSize(){
+        return patterns.size();
+    }
+
     public String next() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < patterns.size(); i++) {
@@ -40,10 +45,21 @@ public class PatternCollection implements StringPattern, Serializable {
 
     @Override
     public void resetCount() {
-        
+
     }
 
     public String toString(){
         return patterns.toString();
+    }
+
+    public boolean varies(){
+        boolean varies = false;
+        for(Iterator i = patterns.iterator(); i.hasNext();){
+            Object o = i.next();
+            if(!(o instanceof CharSequencePattern)){
+                varies = true;
+            }
+        }
+        return varies;
     }
 }
