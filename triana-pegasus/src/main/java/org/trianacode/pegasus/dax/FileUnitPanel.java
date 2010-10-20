@@ -6,15 +6,11 @@ import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.pegasus.string.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -30,9 +26,11 @@ public class FileUnitPanel extends ParameterPanel {
     private boolean collection = false;
 
     JLabel collectLabel = new JLabel("");
+    JLabel iterLabel = new JLabel("");
     JTextField nameField = new JTextField("");
+    JTextField extensionField = new JTextField("");
     JTextArea fileListArea = new JTextArea("Example filenames here..");
-    JPanel upperPanel = new JPanel(new GridLayout(2,2,5,5));
+    JPanel upperPanel = new JPanel(new GridLayout(3,2,5,5));
     JPanel lowerPanel = new JPanel(new GridLayout(2,3,5,5));
     JComboBox namingPatternBox = new JComboBox();
     private PatternCollection namingPattern = null;
@@ -95,6 +93,9 @@ public class FileUnitPanel extends ParameterPanel {
 
         changeToolName(getTask().getToolName());
         upperPanel.add(nameField);
+        JLabel extLabel = new JLabel("File extension : *. ");
+        upperPanel.add(extLabel);
+        upperPanel.add(extensionField);
 
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
@@ -147,68 +148,34 @@ public class FileUnitPanel extends ParameterPanel {
         });
         lowerPanel1.add(numbersCombo);
 
-
-//        final JSlider slide = new JSlider(1, 999, numberOfFiles);
-//        slide.setMajorTickSpacing(100);
-//        slide.setValue(numberOfFiles);
-//        slide.addChangeListener(new ChangeListener() {
-//            public void stateChanged(ChangeEvent changeEvent) {
-//                numberOfFiles = slide.getValue();
-//                numberLabel.setText("No. files : " + numberOfFiles);
-//                fillFileListArea();
-//            }
-//        });
-//        lowerPanel1.add(slide);
-
-
-
-//        JLabel namingLabel = new JLabel("Naming Pattern :");
-//        String[] options = {"0001", "yyyy-MMM-dd", "-A"};
-//        namingPatternBox = new JComboBox(options);
-//        namingPatternBox.addActionListener(new ActionListener(){
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                fillFileListArea();
-//            }
-//        });
-//        lowerPanel1.add(namingLabel);
-//        lowerPanel1.add(namingPatternBox);
-
         JLabel custom = new JLabel("Or create custom name :");
         JButton namingButton = new JButton("Custom pattern...");
         namingButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent) {
-//                String numbers[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-//                String segments = "" + JOptionPane.showInputDialog(
-//                        lowerPanel, "How many parts is the name of the file split into?\ne.g. xxx-xxx-xxx = 3", "How many segments?",
-//                        JOptionPane.DEFAULT_OPTION, null, numbers, numbers[0]
-//                );
-//
-//                if (!segments.equals("-1") && segments != null){
-//                    log("Selected number : " + segments);
-//                    int parts = Integer.parseInt(segments);
                 int parts = 3;
+                if(namingPattern != null){
+                    parts = namingPattern.getPatternCollectionSize();
+                }
                 namingPattern = (PatternCollection)NamingPanel.getValue(parts);
                 fillFileListArea();
 
                 log("ChosenNamingPattern : " + namingPattern.toString());
-//                }
             }
         });
         lowerPanel1.add(custom);
         lowerPanel1.add(namingButton);
 
-        lowerPanel.add(lowerPanel1);
-
         JPanel lowerPanel2 = new JPanel();
         lowerPanel2.setLayout(new BoxLayout(lowerPanel2, BoxLayout.Y_AXIS));
         fileListArea.setRows(6);
+        fileListArea.setEditable(false);
         JScrollPane sp = new JScrollPane(fileListArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         lowerPanel2.add(sp);
-        lowerPanel.add(lowerPanel2, BorderLayout.CENTER);
 
-        JLabel iterLabel = new JLabel("...");
         lowerPanel2.add(iterLabel);
 
+        lowerPanel.add(lowerPanel1);
+        lowerPanel.add(lowerPanel2);
         add(lowerPanel);
         setEnabling(lowerPanel, collection);
     }
@@ -221,6 +188,7 @@ public class FileUnitPanel extends ParameterPanel {
         Object o = getParameter("namingPattern");
         //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if(o instanceof PatternCollection){
+            log("Found : " + o.toString());
             return (PatternCollection)o;
         }
         return null;
@@ -257,35 +225,21 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private void fillFileListArea(){
+        String ext = extensionField.getText();
         if(namingPattern != null){
+            iterLabel.setText("Filename " + (namingPattern.varies() ? "iterates well" : "does not vary, will +\"01\""));
+            nameField.setText(namingPattern.next() + ext);
+            namingPattern.resetCount();
             fileListArea.setText("Files will be named : \n");
             for(int i = 0 ; i< numberOfFiles; i++){
-                fileListArea.append(namingPattern.next() + "\n");
+                fileListArea.append(namingPattern.next() + ext +"\n");
             }
-
         }
         else{
-
-            String selected = (String)namingPatternBox.getSelectedItem();
-            PatternCollection pc = new PatternCollection("-");
-
-            if(selected.equals("0001")){
-                pc.add(new CounterPattern(1, 5, 1,1));
-            }
-
-            if(selected.equals("yyyy-MMM-dd")){
-                pc.add(new DatePattern("yyyy-MMM-dd"));
-            }
-
-            if(selected.equals("-A")){
-                pc.add(new AlphabetPattern(true, 1));
-            }
-
-
             fileListArea.setText("Files will be named : \n");
             String name = (String)getParameter("fileName");
             for(int i = 0 ; i< numberOfFiles; i++){
-                fileListArea.append(name + "-" + pc.next() + "\n");
+                fileListArea.append(name + "." + ext +"\n");
             }
         }
 
@@ -300,6 +254,7 @@ class NamingPanel extends JDialog{
     String separator;
     int parts = 1;
     Vector<String> nameParts;
+    Vector<JComboBox> patternDetailVector = new Vector<JComboBox>();
     String[] patternOptions = {"words", "numbers", "dates", "letters"};
     String[] numberArray = {"1", "01", "001", "0001"};
     String[] dateArray = {"", "dd-mm-yy", "yy-mm-dd", "hh-mm-ss"};
@@ -337,14 +292,16 @@ class NamingPanel extends JDialog{
         mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File name pattern"));
 
         JPanel setNumParts = new JPanel(new GridLayout(1, 3, 5, 5));
-        setNumParts.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        setNumParts.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel topPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-        midPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        midPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         final JPanel lowerPanel = new JPanel();
-        lowerPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        lowerPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
+        JLabel exampleLabel = new JLabel("XXX-XXX-XXX");
+        mainPanel.add(exampleLabel);
 
         JLabel label = new JLabel("Change number of parts");
         setNumParts.add(label);
@@ -393,22 +350,7 @@ class NamingPanel extends JDialog{
         JButton ok = new JButton("Ok");
         ok.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                try{
-                    PatternCollection pc = new PatternCollection(getSeparator());
-                    for(int i = 0; i < parts; i++){
-                        pc.add(new CharSequencePattern(nameParts.get(i)));
-                    }
-                    for (int i = 0; i < 5; i++) {
-                        System.out.println(pc.next());
-                    }
-
-                    log(checkNameVaries(pc) ? "Name iterates ok." :  "Name does not iterate");
-
-                    setNamingPattern(pc);
-                }catch(Exception ex){}
-                finally{
-                    dispose();
-                }
+                okPressed();
             }
         });
 
@@ -439,8 +381,44 @@ class NamingPanel extends JDialog{
 
     }
 
+    private void okPressed(){
+        boolean completeName = true;
+        for(JComboBox jcb : patternDetailVector){
+            if(jcb.getSelectedItem().equals("")){
+                completeName = false;
+            }
+        }
+        if(completeName){
+            try{
+                PatternCollection pc = new PatternCollection(getSeparator());
+                for(int i = 0; i < parts; i++){
+                    pc.add(new CharSequencePattern(nameParts.get(i)));
+                }
+                for (int i = 0; i < 5; i++) {
+                    System.out.println(pc.next());
+                }
+
+                log((pc.varies()) ? "Name iterates ok." :  "Name does not iterate");
+
+                setNamingPattern(pc);
+            }catch(Exception ex){}
+            finally{
+                dispose();
+            }
+        }
+        else{
+            log("name not complete");
+            JOptionPane.showMessageDialog(mainPanel,
+                    "Name not complete.\nFill or remove empty part(s).",
+                    "Name Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void addChoosers(JPanel lowerPanel){
         lowerPanel.removeAll();
+        if(patternDetailVector.size() > 0){
+            patternDetailVector.removeAllElements();
+        }
         lowerPanel.setLayout(new GridLayout(parts, 3, 5, 5));
 
         for(int i = 0; i < parts; i++){
@@ -451,6 +429,7 @@ class NamingPanel extends JDialog{
 
             String[] patternDetail = {""};
             final JComboBox detailChooser = new JComboBox(patternDetail);
+            patternDetailVector.add(detailChooser);
 
             section.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent actionEvent){
@@ -461,13 +440,6 @@ class NamingPanel extends JDialog{
                 }
             });
 
-            detailChooser.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent actionEvent){
-                    setSection(finalI, (String)detailChooser.getSelectedItem());
-                    setNameLabel(buildName(getSeparator()));
-                }
-            });
-
             fillDetailCombo(detailChooser, section.getSelectedItem());
 
             JLabel lx = new JLabel("Pattern " + (i+1) + " : ");
@@ -475,6 +447,15 @@ class NamingPanel extends JDialog{
             lowerPanel.add(lx);
             lowerPanel.add(section);
             lowerPanel.add(detailChooser);
+
+            JButton setButton = new JButton("Set");
+            setButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent ae) {
+                    setSection(finalI, (String)detailChooser.getSelectedItem());
+                    setNameLabel(buildName(getSeparator()));
+                }
+            });
+            lowerPanel.add(setButton);
         }
         //   lowerPanel.revalidate();
     }
@@ -484,17 +465,7 @@ class NamingPanel extends JDialog{
         chosenNamingPattern = pc;
     }
 
-    private boolean checkNameVaries(PatternCollection pc){
-        boolean varies = false;
-        List l = pc.getStringPatternList();
-        for(Iterator i = l.iterator(); i.hasNext();){
-            Object o = i.next();
-            if(!(o instanceof CharSequencePattern)){
-                varies = true;
-            }
-        }
-        return varies;
-    }
+
 
     private void fillDetailCombo(JComboBox detail, Object patternSelection){
         detail.removeAllItems();
