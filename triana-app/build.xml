@@ -9,7 +9,6 @@
     <property name="core-classes" value="../triana-core/target/classes"/>
     <property name="gui-classes" value="../triana-gui/target/classes"/>
     <property name="types-classes" value="../triana-types/target/classes"/>
-    <property name="velocity-classes" value="../triana-velocity/target/classes"/>
     <property name="pegasus-classes" value="../triana-pegasus/target/classes"/>
     <property name="toolboxes" value="../triana-toolboxes"/>
 
@@ -29,9 +28,6 @@
         </copy>
         <copy todir="dist/classes" overwrite="yes">
             <fileset dir="${types-classes}" includes="**/**" excludes=".svn"/>
-        </copy>
-        <copy todir="dist/classes" overwrite="yes">
-            <fileset dir="${velocity-classes}" includes="**/**" excludes=".svn"/>
         </copy>
         <copy todir="dist/classes" overwrite="yes">
             <fileset dir="${pegasus-classes}" includes="**/**" excludes=".svn"/>
