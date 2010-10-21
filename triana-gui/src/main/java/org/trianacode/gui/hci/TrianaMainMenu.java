@@ -58,13 +58,6 @@
  */
 package org.trianacode.gui.hci;
 
-import java.util.Vector;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
@@ -76,6 +69,9 @@ import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.util.Vector;
 
 /**
  * This is the main Triana menu that sits at the top of the main Application Frame. It almagamates code from
@@ -180,6 +176,9 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         editMenu.add(new JMenuItem(ActionTable.getAction(SELECT_ALL_ACTION)));
         editMenu.add(new JMenuItem(ActionTable.getAction(DELETE_ACTION)));
         editMenu.add(new JMenuItem(ActionTable.getAction(CLEAR_ACTION)));
+        
+        editMenu.add(new JMenuItem(ActionTable.getAction(ORGANIZE_ACTION)));
+
         MenuUtils.assignMnemonics(editMenu);
 
         toolsMenu = MenuMnemonics.getInstance().createMenu(Env.getString("tools"));
