@@ -13,15 +13,10 @@ import java.awt.*;
  */
 public class DaxJobTrianaTask extends DaxFileTrianaTask {
 
-    private DaxJobSubtitle sub = new DaxJobSubtitle();
-    private Color color = Color.pink.darker();
+    private Color color = new Color(255, 102, 102);
 
     public DaxJobTrianaTask(Task task) {
         super(task);
-        //sub.setVisible(true);
-        //add(sub);
-        //invalidateSize();
-        //validate();
     }
 
     public Color getToolColor() {
@@ -30,7 +25,6 @@ public class DaxJobTrianaTask extends DaxFileTrianaTask {
 
     private int getNumberOfJobs() {
         Object o = getTask().getParameter("numberOfJobs");
-        //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if (o != null) {
             int value = (Integer) o;
             if (value > 1) {

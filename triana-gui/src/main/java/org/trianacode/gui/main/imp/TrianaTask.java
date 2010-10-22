@@ -434,7 +434,6 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
 
     }
 
-
     /**
      * Called before the task is disposed
      */

@@ -20,7 +20,6 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     private Task task;
     private Color color = Color.cyan.darker();
     private JLabel collectionComponent = null;
-    private int files = 0;
 
     /**
      * Constructs a new MainTrianaTask for viewing the specified task
@@ -28,6 +27,9 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     public DaxFileTrianaTask(Task task) {
         super(task);
         this.task = task;
+        if (isCollection()) {
+            setCollection();
+        }
     }
 
     public Task getTask() {
@@ -38,13 +40,7 @@ public class DaxFileTrianaTask extends MainTrianaTask {
         if (evt.getTask() == this.task && evt.getParameterName().equals("collection")) {
             Boolean b = (Boolean) evt.getNewValue();
             if (b) {
-                if (collectionComponent == null) {
-                    collectionComponent = new JLabel();
-                    collectionComponent.setPreferredSize(new Dimension(getWidth(), 3));
-                    add(collectionComponent, TrianaToolLayout.TOP);
-                    invalidateSize();
-
-                }
+                setCollection();
             } else {
                 if (collectionComponent != null) {
                     remove(collectionComponent);
@@ -52,6 +48,16 @@ public class DaxFileTrianaTask extends MainTrianaTask {
                     invalidateSize();
                 }
             }
+        }
+    }
+
+    protected void setCollection() {
+
+        if (collectionComponent == null) {
+            collectionComponent = new JLabel();
+            collectionComponent.setPreferredSize(new Dimension(getWidth(), 3));
+            add(collectionComponent, TrianaToolLayout.TOP);
+            invalidateSize();
         }
     }
 
@@ -78,7 +84,6 @@ public class DaxFileTrianaTask extends MainTrianaTask {
 
     private int getNumberOfFiles() {
         Object o = getTask().getParameter("numberOfFiles");
-        //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if (o != null) {
             int value = (Integer) o;
             if (value > 1) {
@@ -87,5 +92,14 @@ public class DaxFileTrianaTask extends MainTrianaTask {
             return 1;
         }
         return 1;
+    }
+
+    private boolean isCollection() {
+        Object o = getTask().getParameter("collection");
+        if (o != null) {
+            boolean value = (Boolean) o;
+            return value;
+        }
+        return false;
     }
 }
