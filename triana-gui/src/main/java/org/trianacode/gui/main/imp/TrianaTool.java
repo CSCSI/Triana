@@ -129,7 +129,7 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
 
     public TrianaTool(Tool tool, LayoutManager layout) {
         super();
-
+        setOpaque(false);
         this.tool = tool;
         setLayout(layout);
     }
@@ -330,7 +330,7 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
      */
     protected void drawRectangle(Graphics graphs, Color color, Color orig) {
         graphs.setColor(color);
-        graphs.fill3DRect(0, 0, getSize().width, getSize().height, !isSelected());
+        graphs.fill3DRect(0, 0, getWidth(), getHeight(), !isSelected());
         graphs.setColor(orig);
     }
 

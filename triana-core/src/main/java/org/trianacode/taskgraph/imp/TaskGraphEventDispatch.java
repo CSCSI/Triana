@@ -79,7 +79,11 @@ public class TaskGraphEventDispatch {
      * Invokes the specified event using the main TaskGraphEventDispatch
      */
     public static void invokeLater(Runnable event) {
-        exec.execute(event);
+        try {
+            exec.execute(event);
+        } catch (Exception e) {
+
+        }
     }
 
 

@@ -58,12 +58,6 @@
  */
 package org.trianacode.gui.main.imp;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
-import javax.swing.SwingUtilities;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
@@ -72,11 +66,10 @@ import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.event.*;
+
+import javax.swing.*;
+import java.awt.*;
 
 
 /**
@@ -412,7 +405,13 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
             ParameterPanelManager.showParameterWindowFor(getTaskInterface(), this);
         } else if (paramname.equals(Task.PARAM_PANEL_HIDE)) {
             ParameterPanelManager.hideParameterWindowFor(getTaskInterface());
+        } else {
+            processParameterUpdate(evt);
         }
+    }
+
+    protected void processParameterUpdate(final ParameterUpdateEvent evt) {
+
     }
 
 
