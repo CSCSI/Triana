@@ -12,4 +12,4 @@ set JAVA=%JAVA_HOME%
 
 :run
 
-%JAVA% -Djava.util.logging.config.file=logging.properties -jar triana-app-@version@.jar
+%JAVA% -Djava.util.logging.config.file=logging.properties -jar triana-app-@version@.jar %*

@@ -18,6 +18,7 @@ package org.trianacode.config;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.tool.ClassLoaders;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,10 +129,10 @@ public class Locations {
         if (runHome != null) {
             return runHome;
         }
-        logger.debug("calculating Triana run hom...");
+        logger.debug("calculating Triana run home...");
         String fileSubPath = "triana-core/target/classes/org/trianacode/config/Locations.class";
         try {
-            URL url = Class.forName("org.trianacode.config.Locations").getResource("Locations.class");
+            URL url = ClassLoaders.getResource("org/trianacode/config/Locations.class");
             String fullPath = url.toURI().toASCIIString();
             if (fullPath.startsWith("jar:")) {
                 int entryStart = fullPath.indexOf("!/");
