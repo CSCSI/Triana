@@ -17,6 +17,7 @@ public class TrianaOptions {
     public static final Option EXECUTE_OPTION = new Option("e", "execute", "workflow", "execute workflow (in non-gui mode)");
     public static final Option UUID_OPTION = new Option("u", "uuid", "uuid", "get status of running workflow (in non-gui mode). The -w option in non-gui mode returns a unique id for a workflow");
     public static final Option RESOLVE_THREAD_OPTION = new Option("t", "tool-thread", "periodically re-resolve tools");
+    public static final Option EXTRA_TOOLBOXES_OPTION = new Option("x", "extra-toolboxes", "add toolboxes to resolved");
     public static final Option HELP_OPTION = new Option("h", "help", "prints this message");
 
     public static Option[] TRIANA_OPTIONS = {
@@ -29,6 +30,7 @@ public class TrianaOptions {
             EXECUTE_OPTION,
             UUID_OPTION,
             RESOLVE_THREAD_OPTION,
+            EXTRA_TOOLBOXES_OPTION,
             HELP_OPTION
     };
 

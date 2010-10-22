@@ -119,7 +119,8 @@ public class TrianaInstance {
             discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
         }
         boolean reresolve = TrianaOptions.hasOption(parser, TrianaOptions.RESOLVE_THREAD_OPTION);
-        toolResolver.resolve(reresolve);
+        List<String> toolboxes = TrianaOptions.getOptionValues(parser, TrianaOptions.EXTRA_TOOLBOXES_OPTION);
+        toolResolver.resolve(reresolve, toolboxes);
         if (progress != null && server) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
         }

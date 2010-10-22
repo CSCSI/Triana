@@ -385,14 +385,14 @@ public class ToolResolver implements ToolMetadataResolver {
      * <p/>
      * Ian T - changed this to run in a thread upon start up so we can see the GUI quicker
      */
-    public void resolve(boolean reresolve) {
+    public void resolve(boolean reresolve, final List<String> extraToolboxes) {
         if (initialResolved) {
             return;
         }
         new Thread(new Runnable() {
             public void run() {
 
-                loadToolboxes();
+                loadToolboxes(extraToolboxes);
                 reresolve();
             }
         }).start();
@@ -828,7 +828,7 @@ public class ToolResolver implements ToolMetadataResolver {
     /**
      * load the toolboxes using the TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY
      */
-    public void loadToolboxes() {
+    public void loadToolboxes(List<String> extras) {
         BufferedReader br = null;
 
         String[] toolboxPaths;
@@ -846,6 +846,12 @@ public class ToolResolver implements ToolMetadataResolver {
 
             Toolbox intern = new Toolbox(toolboxPath, "internal", "default-toolboxes", false, properties);
             addNewToolBox(intern);
+        }
+        if (extras != null) {
+            for (String extra : extras) {
+                Toolbox intern = new Toolbox(extra, "extra", "default-toolboxes", false, properties);
+                addNewToolBox(intern);
+            }
         }
     }
 
