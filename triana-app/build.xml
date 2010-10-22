@@ -66,6 +66,9 @@
         <antcall target="toolbox">
             <param name="toolbox" value="imageproc"/>
         </antcall>
+        <antcall target="toolbox">
+            <param name="toolbox" value="gftgu"/>
+        </antcall>
     </target>
 
 
@@ -99,6 +102,9 @@
         </antcall>
         <antcall target="dev-toolbox">
             <param name="toolbox" value="imageproc"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolbox" value="gftgu"/>
         </antcall>
     </target>
 

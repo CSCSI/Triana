@@ -1,0 +1,791 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template"
+          content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR"
+          content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+    <meta name="Author" content="Bernard F Schutz">
+    <title>Random</title>
+</head>
+<body text="#000000" bgcolor="#fdf5e6" link="#808080" vlink="#808080"
+      alink="#ff0000" background="BH-posneg.negative.watermark.png">
+<center>
+    <large><b><a href="license.html"><img src="HelpfileBanner.png"
+                                          title="Click to view license information." alt=""
+                                          style="border: 0px solid ; width: 375px; height: 362px;" align="right"></a>
+        <br>
+        <br>
+    </b></large>
+    <table cellpadding="2" cellspacing="2" border="3"
+           style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
+        <tbody>
+        <tr>
+            <td
+                    style="vertical-align: top; background-color: rgb(204, 204, 204);">
+                <h3
+                        style="color: rgb(102, 255, 153); font-family: monospace; font-weight: bold; text-align: center;">
+                    <big><big><big><big><span
+                            style="color: rgb(255, 0, 0);">Random</span></big></big></big></big></h3>
+
+                <div style="text-align: center;"><big><font size="+2"><big><span
+                        style="color: rgb(255, 0, 0);"><small><span style="font-weight: bold;"><small><span
+                        style="color: rgb(0, 0, 0);">version 1.0<br>
+      </span></small></span></small></span></big></font><big><big><span
+                        lang="EN-GB"
+                        style="font-size: 12pt; font-family: &quot;Times New Roman&quot;; font-weight: bold;">&copy;
+                    2003 Bernard Schutz</span></big></big></big><br>
+                </div>
+                <h3
+                        style="font-family: helvetica,arial,sans-serif; text-align: center;">
+                    <large><b><span
+                            style="color: rgb(0, 0, 0);">Study random walks: compute the mean
+distance traveled. This simulates the way a photon moves outwards from
+the energy-generating center of a star to its surface.<br>
+      </span></b></large>
+                </h3>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <large><br>
+    </large>
+</center>
+<p><br>
+</p>
+
+<h2><a name="contents"></a>Contents</h2>
+<ul>
+    <li>
+        <a href="#description">Description of <tt><font size="+1">Random</font></tt></a></li>
+    <li>
+        <a href="#using">Using <tt><font size="+1">Random</font></tt></a></li>
+    <li>
+        <a href="#understanding">Understanding <tt><font size="+1">Random</font></tt></a></li>
+    <li>
+        <a href="#suggestions">Suggested modifications of <tt><font
+                size="+1">Random</font></tt></a></li>
+    <li>
+        <a href="#listing">Listing of the Java code for <tt><font size="+1">Random</font></tt></a></li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="description"></a>Description of <tt><font size="+3">Random</font></tt></h2>
+The unit called <tt><font size="+1">Random</font></tt> implements the
+Java
+program for computing a random walk, as described in Investigation 8.7.
+A random walk is defined, at least in this program, as a walk
+consisting
+of steps that all have the same length but in which successive steps
+are
+taken in random directions. The next result is a walk that gradually
+moves
+away from the origin.
+<p>The result of this program is used in the discussion of the way
+    photons
+    randomly walk outwards from the center of the Sun. But the mathematics
+    of ransom walks apply to many other situations. The basic result, that
+    adding together a lot of random values produces an expected result that
+    increases as the squre toot of the number of items, is widely
+    applicatble.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="using"></a>Using <tt><font size="+3">Random</font></tt></h2>
+Simply drag the <tt><font size="+1">Random</font></tt> icon from the
+toolbox
+into the working area, drag the <tt><font size="+1">SGTGrapher</font></tt>
+unit into the area, and connect the two if Triana has not already done
+so. If you press the <tt><font size="+1">Start</font></tt> button then
+the
+program will execute with its default settings, producing a curve
+giving
+the expected distance of a random walk against the number of steps.
+Since
+the resulting curve will be a parabola, it will be hard to tell if the
+results match the predictions if you look at the curve with linear
+axes.
+But if you set both axes to logarithmic, then the curve will be a
+straight
+line of slope 1/2. Set the axes to be logarithmic in the <tt><font
+        size="+1">Plot</font></tt>
+menu of the <tt><font size="+1">SGTGrapher</font></tt> graph window.
+<p><img src="imageHKN.JPG" height="125" width="527" align="left">The
+    parameter
+    window of <tt><font size="+1">Random</font></tt> (shown here) allows
+    the
+    user to choose just two parameters. One is the maximum number of steps
+    in a random walk. The graph will give the mean distance gone in a
+    number
+    of steps for walks up to and including this number. The second is the
+    number
+    of times each walk is performed, in order to get the average length.
+    There
+    is a trade-off here: the larger the user sets this number, the more
+    accurate
+    will be the average result obtained, but the longer will be the
+    computer
+    run-time.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="understanding"></a>Understanding <tt><font size="+3">Random</font></tt></h2>
+<tt><font size="+1">Random</font></tt> introduces a number of
+interesting
+adn important computer techniques. We will treat them one by one. The
+main
+part of the program is structured as three nested loops. By "nested" is
+meant that, for each iteration of the outer loop, the inner loop runs
+through
+all its iterations completely. The loops do different things. The
+innermost
+loop is the random walk itself: we take random steps (described below)
+and find out how far we have gone. This is inside a loop whose job is
+to
+repeat this walk a certain number of times (as given by the user) so
+that
+we can get a fair average value of the net distance gone. These two
+loops
+are inside a third loop that determines how many steps are taken in the
+random walk. This iterates through a succession of walks of different
+length
+so that we can get a plot of the average length versus the number of
+steps.
+<p>The main work is done by the innermost loop. Here we make use of the
+    Java function <tt><font size="+1">Math.Random()</font></tt> to
+    generate the
+    random numbers. Every time it is called it returns a value that is
+    randomly
+    distributed in a random way between 0 and 1. (Of course, no computer
+    can
+    do perfectly random things, but the way these numbers are generated
+    makes
+    them random enough for our purposes. They are technically called
+    pseudo-random
+    numbers.) The idea is to allow the computer to generate a "step" (a
+    displacement
+    vector) from the current location to the next one that is random in all
+    three coordinates. Each coordinate component of the step should be
+    randomly
+    chosen in a uniform way between -1 and +1, so that the step can go
+    backwards
+    or forwards. To get this we do not need a different random number
+    generator:
+    the expression <tt><font size="+1">2 * Math.random() - 1</font></tt>
+    produces
+    a number with the desired distribution. (If this is not obvious to you,
+    consider that <tt><font size="+1">2 * Math.random()</font></tt> is
+    randomly
+    distributed between 0 and 2, and then if we subtract 1 from it the
+    range
+    of the distribution goes from -1 to +1.). The code for the loop that
+    generates
+    the random walk is
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( m = 0; m &lt; nSteps; m++) {</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dx = 2 * Math.random() - 1;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dy = 2 * Math.random() - 1;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dz = 2 * Math.random() - 1;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        stepSize += Math.sqrt(dx*dx + dy*dy + dz*dz);</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x += dx;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        y += dy;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        z += dz;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</font></tt>
+    <br>
+    This uses a loop index m, which runs from 0 to <tt><font size="+1">nSteps-1</font></tt>.
+    Now, the value of <tt><font size="+1">nSteps</font></tt> is set in the
+    outermost
+    loop, which we will describe below. But for now, it is just the total
+    number
+    of steps in the random walk. Each step has components dx, dy, and dz.
+    Although
+    the code for each of these is the same, remember that each time
+    Math.random()
+    is invoked, it produces a different (randomly different) number. Then
+    we
+    do two things with these components. The first is to compute the total
+    length of the step and add it to the variable <tt><font size="+1">stepSize</font></tt>,
+    which keeps track of the total distance that the walk achieves. The
+    second
+    is that we add the individual step components to the variables <tt><font
+            size="+1">x</font></tt>,
+    <tt><font size="+1">y</font></tt>,
+    and <tt><font size="+1">z</font></tt>, respectively, which are the
+    components
+    of the net displacement vector for all the steps so far. All the
+    variables
+    <tt><font size="+1">stepSize</font></tt>,
+    <tt><font size="+1">x</font></tt>,
+    <tt><font size="+1">y</font></tt>,
+    and <tt><font size="+1">z</font></tt> are initialized to zero before
+    the
+    loop begins.
+</p>
+
+<p>This loop is nested in another loop that executes this walk over and
+    over again and averages the results. It begins with
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( k = 0; k &lt; nTrials; k++) {</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x = 0.;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        y = 0.;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        z = 0.;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        stepSize = 0;</font></tt>
+    <br>
+    in which we see that there will be <tt><font size="+1">nTrials</font></tt>
+    iterations, so that the walk described by the innermost loop will be
+    repeated
+    <tt><font size="+1">nTrials</font></tt>
+    times. The value of <tt><font size="+1">nTrials</font></tt> was set by
+    the
+    user in the parameter window. The remaining lines here simply
+    initialize
+    variables to zero, as described above. This code is immediately
+    followed
+    by the innermost loop above, and after that there are the lines
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        avgDist[j] += Math.sqrt(x*x + y*y + z*z)/(stepSize/nSteps);</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</font></tt>
+    <br>
+    which finish the loop (at the closing "<tt><font size="+1">}</font></tt>").
+    The important line here is the computation of the average of the net
+    distance
+    of the walks. The expression on the right-hand-side of this assignment
+    statement is the total net distance travelled (the length of the net
+    displacement
+    vector whose components are <tt><font size="+1">x</font></tt>, <tt><font
+            size="+1">y</font></tt>,
+    and <tt><font size="+1">z</font></tt>) divided by the average size of
+    an
+    individual step (which is the value of <tt><font size="+1">stepSize/nSteps</font></tt>
+    because <tt><font size="+1">stepSize</font></tt> has accumulated the
+    total
+    distance travelled in all the steps and therefore dividing it by <tt><font
+            size="+1">nSteps</font></tt>
+    produces the average size of the steps in this walk).&nbsp; This is our
+    measure of the length of the walk: the net distance travelled for a
+    given
+    stepsize. This value is then added to a variable called <tt><font
+            size="+1">avgDist[j]</font></tt>,
+    which is an array element that will eventually hold the average of the
+    lengths of all the walks containing <tt><font size="+1">nSteps</font></tt>
+    steps. For now, it accumulates the total length; it will be divided by
+    the number of trials <tt><font size="+1">nTrials</font></tt> later to
+    get
+    the average.
+</p>
+
+<p>The outermost loop controls the number of steps in each experiment.
+    Since we want to investigate how the net distance travelled depends on
+    the number of steps, we need to have many experiments with different
+    numbers
+    of steps. The loop to control this begins with the code
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (j
+        = nWalks-1; j &gt;= 0; j-- ) {</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        lengths[j] = nSteps;</font></tt>
+    <br>
+    We can see that there will be <tt><font size="+1">nWalks</font></tt>
+    experiments; the value of this variable is set before the loops begin,
+    using the value <tt><font size="+1">maxSteps</font></tt> that the user
+    specifies
+    in the parameter window. (Exactly how this is done is described below.)
+    The unusual thing about this loop is that it runs "backwards": the
+    counter
+    <tt><font size="+1">j</font></tt>
+    starts with its maximum value and runs down to zero. The reason for
+    this
+    will become clear below. Also before this loop begins the program has
+    already
+    defined the two arrays <tt><font size="+1">lengths[]</font></tt> and <tt><font
+            size="+1">avgDist[]</font></tt>
+    to have <tt><font size="+1">nWalks</font></tt> elements each. The
+    first line
+    of this loop then sets the current (<tt><font size="+1">j</font></tt>'th)
+    element of the array <tt><font size="+1">lengths</font></tt> to <tt><font
+            size="+1">nSteps</font></tt>.
+    This will be the independent variable of our output: the number of
+    steps
+    in the random walks of the current experiment.
+</p>
+
+<p>These lines are immediately followed by the two nested loops
+    described
+    above, and they are then followed by
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        avgDist[j] /= nTrials;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        nSteps /= 2;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        if ( nSteps &lt;= 1 ) break;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</font></tt>
+    <br>
+    which closes this outer loop. The first line does the division the
+    converts the value of <tt><font size="+1">avgDist[j]</font></tt> into
+    a true
+    average. This will be the dependent variable in the output from this
+    unit:
+    the average net distance travelled in a random walk with <tt><font
+            size="+1">nSteps</font></tt>
+    steps. The second line then reduces the number of steps by a factor of
+    two so that the next iteration of the outer loop tests random walks
+    with
+    just half as many steps as the current one. This reduction in the
+    number
+    of steps is the reason that the counter <tt><font size="+1">j</font></tt>
+    runs backwards. That ensures that small <tt><font size="+1">j</font></tt>
+    corresponds to small numbers of steps and large <tt><font size="+1">j</font></tt>
+    to large numbers of steps. The final line is a safety measure, to
+    ensure
+    that if we reach trials with just one step, or even fewer than 1, we
+    don't
+    attempt to execute the experiment!
+</p>
+
+<p>To complete our understanding of the program we must show how the
+    total
+    number of walks <tt><font size="+1">nWalks</font></tt>.&nbsp; The user
+    fixes
+    the maximum number of steps in a random walk in the parameter window,
+    and
+    this is stored by the program in the variable <tt><font size="+1">maxSteps</font></tt>.
+    We want to perform walks with this number of steps (at least
+    approximately)
+    and then keep dividing the number of steps in half to get other
+    experiments.
+    The number of times we can divide this number in half and still get a
+    value
+    greater than 1 is given by the logarithm of this number to the base 2.
+    If the logarithm is not an integer (and it is usually not an integer)
+    then
+    we round it down to the nearest integer to get the number of times we
+    can
+    divide the number by 2 for our experiments. Now, Java does not have a
+    base-2
+    logarithm function, but one can compute the base-2 log from Java's
+    natural
+    logarithm function <tt><font size="+1">Math.log()</font></tt> by
+    dividing
+    by the natural logarithm of 2. This leads to the follwing line in the
+    program
+    before the loops begin:
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int
+        nWalks
+        = (int)Math.floor( Math.log(maxSteps)/Math.log(2.) );</font></tt>
+    <br>
+    In it we construct the logarithm to the base 2 of <tt><font size="+1">maxSteps</font></tt>
+    and then round it down with the Java function <tt><font size="+1">Math.floor</font></tt>,
+    which produces the "floor" of its argument, which is the largest
+    integer
+    smaller than its argument. But this Java function returns its value as
+    a double, not an integer, so we place "<tt><font size="+1">(int)</font></tt>"
+    in front of it to convert it into an integer value, and then we assign
+    it to <tt><font size="+1">nWalks</font></tt>. (The code "<tt><font
+            size="+1">(int)</font></tt>"
+    is called a <i>cast</i>. It performs a conversion from one type of
+    data
+    to another.)
+</p>
+
+<p>This describes the basic idea of this random-number code.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="suggestions"></a>Suggested modifications of <tt><font
+        size="+3">Random</font></tt></h2>
+There is nothing special about our definition of the "length" of a
+random
+walk being the length of the net displacement vector divided by the
+average
+step-length. The same relationship, that length is proportional to the
+square root of the number of steps, will be found if you change to any
+other reasonable definition, such as leaving out the division by the
+average
+step-length. You could also change the random number distribution from
+uniform to Gaussian and run the program again; you should still see the
+same square-root behavior. (You will have to use the Java function
+Random.nextGaussian()
+to generate your Gaussian numbers.)
+<p>If you want to change the program you will have to re-compile it, as
+    explained by the help file <a href="UsingTriana.html">Using Triana for
+        <i>Gravity
+            from the ground up</i></a>.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="listing"></a>Listing of the Java code for <tt><font
+        size="+3">Random</font></tt></h2>
+
+<h3>
+    Preliminary definitions of parameters and constants</h3>
+<tt>&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nTrials is the number of times each
+    random walk is performed. The</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; distance achieved by the walk will
+    be averaged over this number of</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; walks. This is set by the user in
+    the user interface window.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; private int nTrials;</tt>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; maxSteps is the maximum number of
+        steps in any of the random walks.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The program will perform walks of
+        this length and shorter ones to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; find the trend in the distance as
+        a function of the number of steps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is set by the user in the user
+        interface window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private int maxSteps;</tt>
+    <br>
+    &nbsp;
+</p>
+
+<h3>Program code</h3>
+<tt>&nbsp;&nbsp;&nbsp; public void process() throws Exception {</tt>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Variables
+        that we need each time the code is executed.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - nWalks
+        is the number of lengths of random walks that we will</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        experiment with. The largest length is given by maxSteps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Smaller walks are obtained by dividing the number of steps</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of the previous walk by 2, rounding down to an integer</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        if necessary. Thus, if maxSteps is 9 then there will be a</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        walk of 4 steps and one of 2 as well. (We do not perform</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        walks of length 1!). To find nWalks we take the logarithm</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of maxSteps to the base 2 and round it down to the nearest</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        integer. The compuation below uses Java's logarithm method,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        which computes the natural logarithm. To get the logarithm</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        to the base 2, we divide by the natural logarithm of 2.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - arrays
+        avgDist and lengths hold the data that will be</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        output. For each length of walk, array lengths holds the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        length (number of steps), and array avgDist holds the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        average distance achieved by all nTrials walks of that number</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of steps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - j and
+        k are integers needed for loops.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - nSteps
+        will be used to keep track of the number of steps</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in the current type of walk.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - x, y,
+        and z will accumulate the distances moved in the three</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        directions.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - dx, dy,
+        and dz will hold the distances moved in a single step.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - stepSize
+        will be used to find the average step size.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int nWalks =
+        (int)Math.floor(
+        Math.log(maxSteps)/Math.log(2.) );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] avgDist = new
+        double[nWalks];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] lengths = new
+        double[nWalks];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int j, k, m;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int nSteps = maxSteps;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double x, y, z, dx,
+        dy, dz;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double stepSize;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now start
+        the main loop over the types of walks. Each type</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has a fixed
+        number of steps. Within this loop we will perform</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; each type
+        of walk nTrials times and take the average of the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; resulting
+        distances. This loop runs backwards, because we</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start with
+        the maximum number of steps and keep reducing it</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unitl we
+        get to walks with just 2 or 3 steps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (j = nWalks-1; j
+        &gt;= 0; j-- ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        lengths[j] = nSteps;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        /*</tt>
+    <br>
+    <code><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Here we begin the independent trials for this number of</tt>
+        <br>
+    </code><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        steps. Each trial begins at the origin. Use stepSize to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        accumulate the total of the step-lengths and later</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        divide it by nSteps to get an average step-length.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( k = 0; k &lt; nTrials; k++) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x = 0.;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        y = 0.;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        z = 0.;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        stepSize = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        We perform the random walk here. We generate step-lengths</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in each direction using the Java random-number generator,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Math.random(), which returns a pseudo-random number</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        uniformly distributed between 0 and 1. We multiply it by 2</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        and subtract 1 to get a number uniformly distributed</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        between -1 and 1.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( m = 0; m &lt; nSteps; m++) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dx = 2 * Math.random() - 1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dy = 2 * Math.random() - 1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dz = 2 * Math.random() - 1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        stepSize += Math.sqrt(dx*dx + dy*dy + dz*dz);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x += dx;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        y += dy;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        z += dz;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Compute the scaled distance achieved by the walk by taking</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the total distance from the origin and dividing by the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        average step-length, which is stepSize/nSteps. Use the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        array avgDist[j] to accumulate the sum of these scaled</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        distances.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        avgDist[j] += Math.sqrt(x*x + y*y + z*z)/(stepSize/nSteps);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Divide the accumulated total distance by the number of trials</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        to get the average distance in units of the step-length</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        avgDist[j] /= nTrials;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        nSteps /= 2; // integer division leaves no remainder</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        if ( nSteps &lt;= 1 ) break;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curve out = new
+    Curve(
+    lengths, avgDist);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; out.setTitle("Random
+        walk");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out.setIndependentLabels(0,"number
+        of steps");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out.setDependentLabels(0,"average
+        net distance");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; output( out );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; }</tt>
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<br>
+<b><font size="-1">Return to <a href="index.html">index</a> of all
+    computer
+    programs.</font></b>
+</body>
+</html>

@@ -58,58 +58,6 @@
 package signalproc.output;
 
 
-import java.awt.BorderLayout;
-import java.awt.Checkbox;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.print.StreamPrintService;
-import javax.print.StreamPrintServiceFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JTextField;
-import javax.swing.RepaintManager;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.panels.ParameterPanel;
-import org.trianacode.gui.panels.ParameterPanelImp;
-import org.trianacode.gui.windows.ParameterWindow;
-import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import gov.noaa.pmel.sgt.AbstractPane;
 import gov.noaa.pmel.sgt.LineAttribute;
 import gov.noaa.pmel.sgt.LineCartesianRenderer;
@@ -120,14 +68,29 @@ import gov.noaa.pmel.sgt.dm.SimpleLine;
 import gov.noaa.pmel.sgt.swing.JClassTree;
 import gov.noaa.pmel.sgt.swing.JPlotLayout;
 import gov.noaa.pmel.sgt.swing.prop.LineAttributeDialog;
-import gov.noaa.pmel.util.Domain;
-import gov.noaa.pmel.util.Point2D;
-import gov.noaa.pmel.util.Range2D;
-import gov.noaa.pmel.util.SoTRange;
-import gov.noaa.pmel.util.SoTValue;
+import gov.noaa.pmel.util.*;
+import org.trianacode.gui.panels.ParameterPanel;
+import org.trianacode.gui.panels.ParameterPanelImp;
+import org.trianacode.gui.windows.ParameterWindow;
+import org.trianacode.gui.windows.WindowButtonConstants;
+import org.trianacode.taskgraph.event.ParameterUpdateEvent;
+import org.trianacode.taskgraph.event.TaskListener;
+import org.trianacode.taskgraph.event.TaskNodeEvent;
+import org.trianacode.taskgraph.event.TaskPropertyEvent;
 import triana.types.GraphType;
 import triana.types.Histogram;
 import triana.types.util.TrianaSort;
+
+import javax.print.StreamPrintService;
+import javax.print.StreamPrintServiceFactory;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.*;
+import java.util.ArrayList;
 
 
 /**
@@ -159,7 +122,8 @@ public class SGTGrapherPanel extends ParameterPanel
     boolean logYPrevious = false;
     boolean equalXAndYRanges = false;
     String clipInExists = "false";
-    private JPlotLayout layout;
+    private JPlotLayout layout = new JPlotLayout(false, false, false, "f", null, false);
+
 
     private JTextField keytitleField;
     private int numberOfInputs;
@@ -387,7 +351,7 @@ public class SGTGrapherPanel extends ParameterPanel
 
 
     private void initPanel() {
-        layout = new JPlotLayout(false, false, false, "f", null, false);
+        System.out.println("SGTGrapherPanel.initPanel INITIED PANEL!!!");
         layout.setTitles("", "", "");
         //layout.setKeyLocationP(new Point2D.Double(3.5, 5.0));
 
@@ -1255,13 +1219,13 @@ public class SGTGrapherPanel extends ParameterPanel
         if (paramname.equals("finished")) {
             System.out.println("Panel recieved finished");
             layout.setBatch(false);
-            if (!xtitle.equals("")) {
-                layout.setXTitle(xtitle);
-            }
-            if (!ytitle.equals("")) {
-                layout.setYTitle(ytitle);
-            }
-            layout.setTitles(mainTitle, "", "");
+//            if (xtitle != null && !xtitle.equals("")) {
+//                layout.setXTitle(xtitle);
+//            }
+//            if (ytitle != null && !ytitle.equals("")) {
+//                layout.setYTitle(ytitle);
+//            }
+            layout.setTitles(mainTitle, xtitle, ytitle);
         }
 
         if (paramname.equals("mainTitle")) {

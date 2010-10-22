@@ -1,0 +1,953 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template"
+          content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR"
+          content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+    <meta name="Author" content="Bernard F Schutz">
+    <title>Star</title>
+</head>
+<body text="#000000" bgcolor="#fdf5e6" link="#808080" vlink="#808080"
+      alink="#ff0000" background="BH-posneg.negative.watermark.png">
+<center><font size="+2"><a href="index.html"></a></font></center>
+<a
+        href="file:///C:/Java/Gravity/GravityFromTheGroundUp/help/license.html"><img
+        src="file:///C:/Java/Gravity/GravityFromTheGroundUp/help/HelpfileBanner.png"
+        title="Click to view license information." alt=""
+        style="border: 0px solid ; width: 375px; height: 362px;" align="right"></a>
+
+<p><br>
+</p>
+<table cellpadding="2" cellspacing="2" border="3"
+       style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
+    <tbody>
+    <tr>
+        <td
+                style="vertical-align: top; background-color: rgb(204, 204, 204);">
+            <h3
+                    style="color: rgb(102, 255, 153); font-family: monospace; font-weight: bold; text-align: center;">
+                <big><big><big><big><span
+                        style="color: rgb(255, 0, 0);">Star</span></big></big></big></big></h3>
+            <big><font size="+2"><big><span style="color: rgb(255, 0, 0);"><small><span
+                    style="font-weight: bold;"><small><span style="color: rgb(0, 0, 0);"></span></small></span></small></span></big></font></big>
+
+            <div style="text-align: center;"><big><font size="+2"><big><span
+                    style="color: rgb(255, 0, 0);"><small><span style="font-weight: bold;"><small><span
+                    style="color: rgb(0, 0, 0);">version 1.0<br>
+      </span></small></span></small></span></big></font><big><big><span
+                    lang="EN-GB"
+                    style="font-size: 12pt; font-family: &quot;Times New Roman&quot;; font-weight: bold;">&copy;
+                2003 Bernard Schutz</span></big></big></big><br>
+            </div>
+            <h3
+                    style="font-family: helvetica,arial,sans-serif; text-align: center;">
+                <large><b><span
+                        style="color: rgb(0, 0, 0);">Compute the structure of a star.</span></b></large>
+            </h3>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p>
+</p>
+
+<h2><a name="contents"></a>Contents</h2>
+<ul>
+    <li>
+        <a href="#description">Description of <tt><font size="+1">Star</font></tt></a></li>
+    <li>
+        <a href="#using">Using <tt><font size="+1">Star</font></tt></a></li>
+    <li>
+        <a href="#playing">Suggestions for playing with <tt><font size="+1">Star</font></tt></a></li>
+    <li>
+        <a href="#understanding">Understanding <tt><font size="+1">Star</font></tt></a></li>
+    <li>
+        <a href="#suggestions">Suggested modifications of <tt><font
+                size="+1">Star</font></tt></a></li>
+    <li>
+        <a href="#listing">Listing of the Java code for <tt><font size="+1">Star</font></tt></a></li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="description"></a>Description of <tt><font size="+3">Star</font></tt></h2>
+The unit called <tt><font size="+1">Star</font></tt> implements the
+Java
+program for computing the structure of a star. It uses the simplest
+possible
+assumptions: the star is spherically symmetric and composed of a
+perfect
+fluid with a polytropic equation of state, which means that the
+pressure
+and density are related by a power law: <i>p</i> = <i>k <font
+        face="SymbolPS">r<sup>g</sup></font></i>,
+for a fixed proportionality constant <i>k</i> and a fixed exponent <i><font
+        face="SymbolPS">g</font></i>.
+The program does not explicitly treat energy generation (nuclear
+reactions)
+and energy transport (convection or radiation), but it nevertheless can
+give a good representation of many stars, including the Sun, if the
+constants
+<i>k</i>
+and <i><font face="SymbolPS">g</font></i> are chosen correctly. The
+details
+of how to construct the program are examined in Investigations 8.5 and
+8.6.
+<p>The program is easy to use and shows many important aspects of
+    stars:
+    the great contrast in pressure, density, and temperature between the
+    interior
+    and surface layers; the way that size, composition and mass are related
+    in a given family of stars; how high the central pressure and
+    temperature
+    must be in order to support a star of a given mass. This program
+    illustrates
+    how professional astronomers study stars in detail. By building models
+    like these, but with more realistic physics, astronomers can infer the
+    mass and interior structure of a star from observed properties, like
+    its
+    spectrum. These conclusions can then be tested on systems that provide
+    more information, such as in binary stars where the mass can be
+    inferred
+    from the orbital dynamics. Other astronomers then use such models to
+    study
+    the long-term evolution of stars by allowing for changes in their
+    central
+    conditions and composition as a result of nuclear reactions. Without
+    such
+    interaction between observation and computer-based theory, our
+    understanding
+    of the Universe would be much poorer.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="using"></a>Using <tt><font size="+3">Star</font></tt></h2>
+Simply drag the <tt><font size="+1">Star</font></tt> icon from the
+toolbox
+into the working area, drag the <tt><font size="+1">SGTGrapher</font></tt>
+unit into the area, and connect the two if Triana has not already done
+so. If you press the <tt><font size="+1">Start</font></tt> button then
+the
+program will execute with its default settings, producing a model of
+the
+Sun as given by its pressure as a function of radius. Because the
+pressure
+falls off quickly with radius, you will get a better plot if you use a
+logarithmic scale for the vertical axis. Choose this from the "<tt><font
+        size="+1">Plot</font></tt>"
+menu of <tt><font size="+1">SGTGrapher</font></tt>.
+<p><img src="imageKLT.JPG" border="0" height="199" width="549"
+        align="left">The
+    parameter window shown here allows the user to determine what kind of
+    star
+    is being modelled. The first parameter is the polytropic exponent <i><font
+            face="SymbolPS">g</font></i>.
+    The default value is the one that gives the best model for the Sun.
+    Recall
+    that stars are unstable if this number is smaller than 4/3. Giant stars
+    have polytropic indices that closely approach 4/3, while most white
+    dwarfs
+    are better modelled with <i><font face="SymbolPS">g</font></i>&nbsp; =
+    5/3. The second parameter is the central pressure of the star, in
+    pascals.
+    The third is its central temperature, in kelvins. The fourth parameter
+    is the mean molecular weight of gas in the star, which allows the user
+    to adjust the composition. The given value is appropriate for the
+    Sun.The
+    central temperature,&nbsp; pressure, and mean molecular weight together
+    determine the constant <i>k</i> in the polytropic equation of state
+    that
+    is used for the program. Once it is fixed at the center it is assumed
+    the
+    same everywhere.
+</p>
+
+<p><img src="image527.JPG" height="100" width="101" align="left">The
+    final parameter
+    is a drop-down window (choice box) where the user can choose what data
+    to output. Besides the choices available in the program <tt><font
+            size="+1"><a href="Atmosphere.html#using">Atmosphere</a></font></tt>
+    (pressure, density, and temperature), the program also allows the user
+    to look at the distribution of mass in the star. This is given by the
+    function
+    <i>m(r)</i>,
+    the total mass interior to radius <i>r</i>.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="playing"></a>Suggestions for playing with <tt><font
+        size="+3">Star</font></tt></h2>
+For the default values construct the model of the Sun and compare the
+way
+the density, mass, and temperature behave as functions of radius with
+the
+standard model of the Sun given in Chapter 8. Modify the data in the
+parameter
+window slightly to see if you can improve the fit to this model. Change
+the central temperature by, say, 10% and see how much the overall mass
+of the Sun changes. Since we know what the mass of the Sun really is,
+what
+change in the central pressure would compensate this change in the
+temperature
+and bring the mass of the model back to the true mass of the Sun? We
+also
+can measure the radius of the Sun. How has your 10% change affected the
+radius of the model even when you have managed to get the mass back to
+the right value? (Infer the radius from the graph of pressure against
+radius:
+the surface of the star is where the pressure falls to zero.) This will
+give you an idea of how tightly the observed properties of the Sun
+constrain
+its interior model.
+<p>When the Sun evolves into a red giant star, it will have a much more
+    extended structure. Try to build a model of a star with the same
+    overall
+    mass as the Sun, the same composition, a value of <i><font
+            face="SymbolPS">g</font></i>
+    equal to 1.335, but a radius 100 times larger. Other giant stars have
+    masses
+    ten times the mass of the Sun. Build models of their structure, using
+    the
+    same composition and polytropic exponent as for the solar giant model.
+</p>
+
+<p>Model a neutron star in Newtonian gravity by taking <i><font
+        face="SymbolPS">g</font></i>
+    equal to 2. Build a model whose radius is 10 km and whose mass is 1.4
+    solar
+    masses, using a mean molecular weight of 1. What values of the central
+    pressure and temperature do you need? We will build fully relativistic
+    models using the program <tt><font size="+1"><a href="Neutron.html">Neutron</a></font></tt>.
+</p>
+
+<p>In Investigation 8.6 we derive several scaling relations, which are
+    proportionalities among several quantities like the central pressure,
+    the
+    radius, and the mass of the star. Build several models for a given
+    fixed
+    equation of state and see if they do in fact obey these scalings.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="understanding"></a>Understanding <tt><font size="+3">Star</font></tt></h2>
+<tt><font size="+1">Star</font></tt> is a modification of the program <tt><font
+        size="+1"><a href="Atmosphere.html#understanding">Atmosphere</a></font></tt>,
+so you should first make sure you understand how that program works.
+Then
+you should read Investigations 8.5 and 8.6. There are two important
+differences
+for modelling stars:
+<ol>
+    <li>
+        Gravity cannot be taken to be a constant inside a star. At its center
+        the
+        gravitational acceleration is zero, whereas at its surface the whole
+        star
+        is pulling down and creating a large acceleration. Therefore the
+        program
+        replaces the simple constant <tt><font size="+1">g</font></tt> used in
+        <tt><font size="+1"><a href="Atmosphere.html#understanding">Atmosphere</a></font></tt>
+        with the expression <i>Gm(r)/r<sup>2</sup></i>, where <i>m(r)</i> is
+        the
+        mass interior to the position <i>r</i> where the acceleration is being
+        calculated. Only the mass interior to <i>r</i> is needed, because as
+        we
+        learned from the program <tt><font size="+1"><a
+            href="SphereGravity.html">SphereGravity</a></font></tt>,
+        any spherical distribution of mass outside <i>r</i> exerts no net
+        gravitational
+        force on material at <i>r</i>.<br>
+        <br>
+        To implement this, the program has to keep track of the mass interior
+        by
+        adding it up as it marches outwards. Each step outwards of length <i>dr</i>
+        adds a shell of volume 4<i><font face="SymbolPS">p</font>r<sup>2</sup>dr</i>
+        to the volume of the star, and this adds a mass of 4<i><font
+            face="SymbolPS">pr</font>r<sup>2</sup>dr
+    </i>if
+        the local density is <i><font face="SymbolPS">r</font></i>. In the
+        loop
+        stepping outwards, you will find that the equation of hydrostatic
+        equilibrium
+        is now written
+    </li>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p[j] =
+        p[j-1] - G * rho[j-1] * mass[j-1] * dr / (radius[j-1] * radius[j-1]);</font></tt>
+    <br>
+    and a bit later the mass is updated with the line
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        mass[j]
+        =&nbsp; mass[j-1] + 4 * Math.PI * radius[j-1] * radius[j-1] * rho[j-1]
+        * dr;</font></tt>
+    <li>The second major change is that we do not specify the temperature
+        structure
+        ahead of time, as we did in <tt><font size="+1">Atmosphere</font></tt>.
+        For
+        the Earth's atmosphere, we can measure the temperature directly. But we
+        cannot do that for stars, so we have to infer it from the computer
+        program.
+        In the program <tt><font size="+1">Atmosphere</font></tt>, the
+        temperature
+        was needed so that we could compute the density from the pressure,
+        using
+        the ideal gas equation of state.&nbsp; Here, we make a simple
+        assumption
+        that the pressure and density are related by a polytropic law (a power
+        law). We use the composition and the central temperature (a parameter)
+        to infer what the proportionality constant is in the polytropic law,
+        and
+        then we use this for the remainder of the structure calculation. Thus,
+        in the preliminary part of the code, before the loop which steps
+        outwards,
+        we find the lines
+    </li>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double
+        q = mp * mu / k;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double
+        rhoC = pC * q / TC; //use ideal gas law to get density</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double
+        gammaRecip = 1.0 / gamma;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double
+        D = rhoC / Math.pow(pC, gammaRecip);</font></tt>
+    <br>
+    These result in the value of a constant <tt><font size="+1">D</font></tt>
+    which is the proportionality constant when the polytropic law is solved
+    for density, i.e. <i><font face="SymbolPS">r</font></i> = <i>Dp<sup>(1/<font
+        face="SymbolPS">g</font>)</sup></i>.
+    Then in the loop one finds the calculation of the density from the
+    pressure
+    using <tt><font size="+1">D</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rho[j]
+        = D * Math.pow(p[j], gammaRecip);</font></tt>
+    <br>
+    :where <tt><font size="+1">gammaRecip</font></tt> is simply <i>1/<font
+        face="SymbolPS">g.</font></i>
+</ol>
+The remaining aspects of this program are similar to <tt><font
+        size="+1">Atmosphere</font></tt>,
+or are straightforward modifications of it.
+<br>
+&nbsp;
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="suggestions"></a>Suggested modifications of <tt><font
+        size="+3">Star</font></tt></h2>
+We will generalize this program to relativistic stars in Neutron. A
+very
+useful modification of the present program would be to allow the
+equation
+of state to change from region to region. The Sun, for example, has a
+convection
+region where <i><font face="SymbolPS">g</font></i> = 4/3 essentially
+exactly,
+whereas inside that region the exponent is higher. One would get a more
+accurate model by allowing for two or three regions with different
+equations
+of state. If you attempt this modification, be sure to insure that the
+pressure is continuous from one layer to the next!
+<p>If you want to change the program you will have to re-compile it, as
+    explained by the help file <a href="UsingTriana.html">Using Triana for
+        <i>Gravity
+            from the ground up</i></a>.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="listing"></a>Listing of the Java code for <tt><font
+        size="+3">Star</font></tt></h2>
+
+<h3>
+    Preliminary definitions of parameters and constants</h3>
+<tt>&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pC is the central pressure of the
+    star, in pascals. It is given by</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the user in the user interface
+    window.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; private double pC;</tt>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TC is the central temperature of
+        the star, in kelvins. It is given by</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the user in the user interface
+        window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double TC;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mu is the mean molecular weight
+        of the stellar gas, which is defined</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; as the average mass, in units of
+        the proton mass, of all the atoms,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; molecules, ions, electrons, etc
+        that move freely in the star. We assume</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that this is constant through the
+        star, which will not be true for</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; older stars which have created heavy
+        elements near their centers.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is given by the user in the user
+        interface window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double mu;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gamma is the polytropic exponent
+        in the equation of state relating</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pressure and density: pressure is
+        proportional to (density)^(gamma).</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is given by the user in the user
+        interface window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double gamma;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outputType is a String which governs
+        what kind of data will be</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; output. All data is output as a
+        Curve with x-values being the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; radial distance and y-values being
+        one of four choices: pressure,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; density, temperature, or mass. In
+        this case, "mass" means "mass</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interior to the given radius". The
+        user chooses one of these four</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in the user interface window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private String outputType;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Three constants: k is Boltzmann's
+        constant; mp is the mass of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the proton; and G is Newton's
+        gravitational
+        constant. Values of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; all three are given in SI units.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double k = 1.38e-23;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double mp = 1.67e-27;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double G = 6.672e-11;</tt>
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+</p>
+
+<h3>Program code</h3>
+
+<p><br>
+    <tt>&nbsp;&nbsp;&nbsp; public void process() throws Exception {</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Define
+        variables
+        needed for the calculation:</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - q is a
+        combination of constants in the ideal gas law, used often.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - rhoC is
+        the density at the center of the star.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - gammaRecip
+        is the reciprocal of gamma, 1/gamma.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - D is the
+        proportionality factor in the polytropic equation of state</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        written to give the density as a function of the pressure,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        rho = D * (pressure)^(1/gamma). This is determined by demanding that</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the polytropic law give the same central density (depending on D and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the central pressure) as the ideal gas law (depending on the central</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        pressure and temperature). Thus, D is determined by the central values</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of the pressure and temperature, and by the exponent gamma.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - scale
+        is the scale-height of the pressure, roughly the distance</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        over which the pressure will fall by a factor of 2.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - dr is
+        the size of the step in radius that the program will make.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - arrays
+        radius, p (pressure), rho (density), Temp (temperature),</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        and mass (mass inside the radius value of the same index)</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        hold the values of the associated physical quantities at the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        successive radial steps. The arrays are initially given 2000</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        elements. The choice of radial step dr is designed to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ensure that the surface of the star (where p = 0) is reached</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in fewer than 2000 steps. Then give the values of the first</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        elements of the arrays.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - lastStep
+        is an int that will hold the value of the array index</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        associated with the surface of the star. Set it to zero and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        use it as a test of whether the surface has been reached (see below).</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - j is a
+        loop counter.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double q = mp * mu /
+        k;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double rhoC = pC * q
+        / TC; //use ideal gas law to get density</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double gammaRecip =
+        1.0 / gamma;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double D = rhoC /
+        Math.pow(pC,
+        gammaRecip);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double scale =
+        Math.sqrt(pC
+        / G) / rhoC;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double dr = scale /
+        400.;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] radius = new
+        double[2000];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] p = new
+        double[2000];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] rho = new
+        double[2000];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] Temp = new
+        double[2000];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] mass = new
+        double[2000];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; radius[0] = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p[0] = pC;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Temp[0] = TC;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rho[0] = rhoC;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mass[0] = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int lastStep = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int j;</tt>
+    <br>
+    &nbsp;
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Do the
+        calculation
+        as long as the top has not been reached.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while ( lastStep ==
+        0 ) {</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        As described in the text, we cannot start the loop accurately with the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        first points. Instead we compute the values of pressure etc at the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        first non-zero radial step (radius[1] = dr) by the approximations given</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in the text.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        radius[1] = dr;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        p[1] = pC;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        rho[1] = rhoC;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        mass[1] = 4.0 * Math.PI * dr * dr * dr * rhoC/ 3.0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Temp[1] = q * pC / rhoC; // use ideal gas law to get temperature</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Do calculation step by step, using the equation of hydrostatic</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        equilibrium (in the second line of the loop).</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( j = 2; j &lt; 2000; j++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        radius[j] =&nbsp; radius[j-1] + dr;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        p[j] = p[j-1] - G * rho[j-1] * mass[j-1] * dr / (radius[j-1] *
+        radius[j-1]);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        if ( p[j] &lt; 0 ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        lastStep = j; //stop when the pressure goes negative</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        break;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        mass[j] =&nbsp; mass[j-1] + 4 * Math.PI * radius[j-1] * radius[j-1] *
+        rho[j-1]
+        * dr;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        rho[j] = D * Math.pow(p[j], gammaRecip);&nbsp; //polytropic equation of
+        state</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Temp[j] = q * p[j] / rho[j]; // ideal gas law</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        If we reach this point and lastStep is still zero, then we have</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        used 2000 steps and not yet reached the surface. We must start the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        loop again with a larger step dr so that we can reach the surface in</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        2000 steps. The next line of the code resets the value of dr, and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        then when we reach the end-bracket of the "while"-loop the test</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in the loop will evaluate to true and the "for"-loop will be</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        done again with this step-size.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        If we reach this point and lastStep is no longer zero, then we</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        have finished the calculation. The next step (changing dr) will be</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        executed but we will leave the "while"-loop and so the new value</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of dr will not be used.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dr *= 2.;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now prepare
+        output arrays depending on what output data type has</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; been
+        selected
+        by the user. The arrays are only long enough to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; contain
+        the number of points to the surface of the star. Since</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the value
+        of the variable lastStep is the step where the pressure</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; first went
+        negative, if we create arrays of length lastStep then</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this value
+        will be excluded, since such arrays start at index 0</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and finish
+        at index lastStep-1.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] finalR = new
+    double[lastStep];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curve outData =&nbsp;
+        null;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String unitLabel = "";</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if
+    (outputType.equals("Pressure"))
+    {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        double[] finalP = new double[lastStep];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( j = 0; j &lt; lastStep; j++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalR[j] = radius[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalP[j] = p[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        outData =&nbsp; new Curve( finalR, finalP );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        unitLabel = " (Pa)";</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if
+        (outputType.equals("Density"))
+        {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        double[] finalRho = new double[lastStep];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( j = 0; j &lt; lastStep; j++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalR[j] = radius[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalRho[j] = rho[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        outData = new Curve( finalR, finalRho );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        unitLabel = " (kg/m^3)";</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if
+        (outputType.equals("Temperature"))
+        {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        double[] finalT = new double[lastStep];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( j = 0; j &lt; lastStep; j++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalR[j] = radius[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalT[j] = Temp[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        outData = new Curve( finalR, finalT );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        unitLabel = " (K)";</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if
+        (outputType.equals("Mass"))
+        {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        double[] finalM = new double[lastStep];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( j = 0; j &lt; lastStep; j++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalR[j] = radius[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalM[j] = mass[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        outData = new Curve( finalR, finalM );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        unitLabel = " (kg)";</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        outData.setTitle(outputType);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        outData.setIndependentLabels(0,"altitude
+        (m)");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        outData.setDependentLabels(0,outputType
+        + unitLabel);</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; output( outData );</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<br>
+<b><font size="-1">Return to <a href="index.html">index</a> of all
+    computer
+    programs.</font></b>
+</body>
+</html>

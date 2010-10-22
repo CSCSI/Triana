@@ -1,0 +1,2223 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template"
+          content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR"
+          content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+    <meta name="Author" content="Bernard F Schutz">
+    <meta name="Description"
+          content="Help file for Triana unit Multiple, part of the toolbox for the book Gravity from the Ground Up.This unit simulates the orbits of n bodies under the effect of their mutual gravitational attraction.">
+    <meta name="KeyWords"
+          content="Gravity from the ground up, Triana, help file">
+    <title>Multiple</title>
+</head>
+<body text="#000000" bgcolor="#fdf5e6" link="#808080" vlink="#808080"
+      alink="#ff0000" background="BH-posneg.negative.watermark.png">
+<span style="font-weight: bold;"><br>
+<a href="license.html"><img src="HelpfileBanner.png"
+                            title="Click to view license information." alt=""
+                            style="border: 0px solid ; width: 375px; height: 362px;" align="right"></a></span><br>
+<table cellpadding="2" cellspacing="2" border="3"
+       style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
+    <tbody>
+    <tr>
+        <td
+                style="vertical-align: top; background-color: rgb(204, 204, 204);">
+            <h3
+                    style="color: rgb(102, 255, 153); font-family: monospace; font-weight: bold; text-align: center;">
+                <big><big><big><big><span
+                        style="color: rgb(255, 0, 0);">Multiple</span></big></big></big></big></h3>
+
+            <div style="text-align: center;"><big><font size="+2"><big><span
+                    style="color: rgb(255, 0, 0);"><small><span style="font-weight: bold;"><small><span
+                    style="color: rgb(0, 0, 0);">version 1.0<br>
+      </span></small></span></small></span></big></font><big><big><span
+                    lang="EN-GB"
+                    style="font-size: 12pt; font-family: &quot;Times New Roman&quot;; font-weight: bold;">&copy;
+                2003 Bernard Schutz</span></big></big></big><br>
+            </div>
+            <h3
+                    style="font-family: helvetica,arial,sans-serif; text-align: center;">
+                <large><b><span
+                        style="color: rgb(0, 0, 0);">A program to simulate the motions of any
+number of bodies that interact with one another gravitationally, within
+Newton's theory of gravity. The user can set up fully three-dimensional
+initial conditions and masses for any number of objects, and the output
+can be a drawing of all the trajectories or a continuously running
+movie of the locations of the bodies.<br>
+      </span></b></large>
+            </h3>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p><br>
+</p>
+
+<h2><a name="contents"></a>Contents</h2>
+<ul>
+    <li><a href="#description">Description of <tt><font size="+1">Multiple</font></tt></a></li>
+    <li><a href="#using">Using <tt><font size="+1">Multiple</font></tt></a></li>
+    <li><a href="#playing">Suggestions for playing with <tt><font
+            size="+1">Multiple</font></tt></a></li>
+    <li><a href="#understanding">Understanding <tt><font size="+1">Multiple</font></tt></a></li>
+    <li><a href="#suggestions">Suggested modifications of <tt><font
+            size="+1">Multiple</font></tt></a></li>
+    <li><a href="#listing">Listing of the Java code for <tt><font
+            size="+1">Multiple</font></tt></a></li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="description"></a>Description of <tt><font size="+3">Multiple</font></tt></h2>
+The unit called <tt><font size="+1">Multiple</font></tt> implements
+the Java
+program for computing the motion of any number of bodies under their
+mutual
+gravitational interactions. The gravitational fields of all bodies are
+taken into account. The user can specify the number of bodies, their
+masses,
+their starting positions and velocities, and various program-control
+parameters
+that are the same as for <tt><font size="+1"><a href="MercPert.html">MercPert</a></font></tt>.
+The simulation is done in the full three dimensions, rather than
+restricting
+dynamics to a plane, as in <tt><font size="+1"><a href="MercPert.html">MercPert</a></font></tt>.
+<p>As discussed in Chapter 13, <tt><font size="+1">Multiple</font></tt>
+    is
+    an extremely powerful tool that allows the user to investigate a huge
+    variety
+    of self-gravitating systems, limited only by the speed and memory
+    capacity
+    of the computer on which it runs. This includes full three-body
+    systems,
+    where the user can see how a three-body encounter can form or harden a
+    binary and expel the third body; several-body systems where the user
+    can
+    watch systems share energy among the components and move toward
+    equilibrium;
+    and galaxy collisions, where the user can see how galaxies merge and
+    redistribute
+    their material.
+</p>
+
+<p>In order to allow simulations to run for longer periods of time,
+    this
+    program incorporates a new feature, which allows the user to choose the
+    number of time-steps between output events. This can be considerably
+    less
+    than the total number of steps, so that intermediate results can be
+    output,
+    and the grapher window will look like a movie of the simulation. This
+    device
+    reduces memory consumption, since the program only has to store data
+    for
+    the number of steps between output events, not for the whole
+    simulation.
+    The user can also choose whether to see the entire trajectory of all
+    the
+    particles since the last output step, or just their current positions
+    at
+    the time of output.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="using"></a>Using <tt><font size="+3">Multiple</font></tt></h2>
+As in previous programs, drag the <tt><font size="+1">Multiple</font></tt>
+icon from the toolbox into the working area, drag the <tt><font
+        size="+1">SGTGrapher</font></tt>
+unit into the area, and connect the two. MercPert will open up with
+three
+output nodes, since its default simulation uses three bodies. You will
+therefore need to create two more input nodes on <tt><font size="+1">SGTGrapher</font></tt>.
+Do this by hovering your mouse near the input node and clicking on the
+"+" that appears. Do this twiceand then connect up the nodes.
+(Alternatively,
+you can use the right mouse button on the <tt><font size="+1">SGTGrapher</font></tt>
+icon and select "Node Editor" to add nodes.)
+<p>The simulation takes place in three dimensions, and the output data
+    contain all three position coordinates of the bodies. The grapher, of
+    course,
+    shows only a two-dimensional view of the data. If you connect <tt><font
+            size="+1">Multiple</font></tt>
+    directly to <tt><font size="+1">SGTGrapher</font></tt> as above, then <tt><font
+            size="+1">SGTGrapher</font></tt>
+    will by default display the x- and y-coordinates of all the points,
+    which
+    amounts to projecting all the trajectories onto the x-y plane. If you
+    want
+    to view the data with a different projection, use the unit called <tt><font
+            size="+1">ViewPoint</font></tt>.
+    Drag this into the working area and give it as many input and output
+    nodes
+    as there are particles. Connect the output from <tt><font size="+1">Multiple</font></tt>
+    to the input to <tt><font size="+1">ViewPoint</font></tt>, and connect
+    the
+    output from <tt><font size="+1">ViewPoint</font></tt> to the input of <tt><font
+            size="+1">SGTGrapher</font></tt>.
+    Then use the parameter window of <tt><font size="+1">ViewPoint</font></tt>
+    to define the viewing location, by giving the spherical coordinates (in
+    degrees) of the viewer's location relative to the simulation's
+    coordinate
+    axes. The data will be projected onto a plane perpendicular to the line
+    of sight of this observer. Every time you change the viewing position,
+    <tt><font size="+1">ViewPoint</font></tt>
+    will output a new view of the existing data. You don't need to re-run
+    the
+    simulation if all you want to do is to view it from a different angle.
+</p>
+
+<p><img src="image601.JPG" height="314" width="699" align="left">To set
+    parameters,
+    open the parameter window, shown here. The default parameter values
+    describe
+    a simulation in which three bodies approach one another, and their
+    interaction
+    produces a binary pair and a runaway third body. The parameter format
+    in
+    this program is somewhat different from previous ones, because we do
+    not
+    know ahead of time how many bodies there are. Therefore we cannot have
+    a separate parameter for each body. Instead, the mass, initial
+    position,
+    and initial velocity parameters must contain the information for all
+    bodies
+    at once.
+</p>
+
+<p>The first parameter is the number of bodies. The second is their
+    masses,
+    in solar masses. These should be entered as a list of numbers with
+    spaces
+    between. It should of course have as many numbers in it as the number
+    of
+    bodies given in the first parameter line. The third parameter is the
+    list
+    of initial positions of all the bodies, in three dimensions. Each
+    body's
+    initial position is given in the form <tt><font size="+1">(x,y,z)</font></tt>,
+    containing the three position coordinates, separated by commas,
+    contained
+    in parentheses. Spaces inside are optional. This parameter must give
+    all
+    the bodies in the same list, so it should contain the positions of all
+    the bodies, separated by spaces (not commas) between the positions of
+    the
+    bodies. The default list reads
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (4.6e10,
+        0, 0) (-4.6e10, 0, 0) (0, 4.6e10, 0)</font></tt>.
+    <br>
+    The fourth parameter is a list of the initial velocities of all bodies,
+    again in three dimensions. It has the same format as the position list.
+    Make sure that both lists have the same number of entries as the number
+    of bodies given in the first line.
+</p>
+
+<p>The fifth parameter is the time-step in seconds, which has the same
+    meaning as in previous programs. The sixth parameter is the number of
+    steps
+    in the program. The program will halt only when it reaches this number
+    of steps. The seventh parameter is something new: it is the number of
+    steps
+    between output events. This allows the user to decide whether to output
+    all the data at once (as in previous programs) or in intermediate
+    steps.
+    The default value equals the total number of steps, so that there will
+    only be one output event, at the very end. If you have a large number
+    of
+    bodies and you want to run for many time-steps, you may exceed your
+    computer's
+    storage capacity; if so you will get a warning message. To avoid this,
+    choose the number of steps for output to be small enough that all the
+    data
+    for these steps will fit in memory. Then you can see how the simulation
+    progresses by viewing the successive output sets.
+</p>
+
+<p><img src="imagePBJ.JPG" height="62" width="125" align="left">The
+    eighth parameter
+    is a choice box, shown at the left. It allows the user to choose the
+    style
+    of output. The first option, "<tt><font size="+1">trajectories</font></tt>",
+    will produce output like we have seen in previous programs: curves of
+    the
+    positions of the bodies. The second option, "<tt><font size="+1">current
+        positions</font></tt>", produces output consisting of a single point
+    for
+    each body, representing the position of that body at the time-step at
+    which
+    output is performed. This enables you to get a video effect,
+    particularly
+    if the output steps parameter is chosen small enough. To see the
+    positions
+    of the body, you will need to modify the way <tt><font size="+1">SGTGrapher</font></tt>
+    displays the data. From the <tt><font size="+1">Plot</font></tt> menu
+    of
+    the graph window, choose <tt><font size="+1">Plot Properties</font></tt>.
+    For each of the input data sets (called <tt><font size="+1">Layers</font></tt>)
+    there will be a <tt><font size="+1">LineAttribute</font></tt> entry.
+    Double-clicking
+    on it opens another window, in which you can choose the line-style.
+    Choose
+    <tt><font size="+1">Mark</font></tt>
+    and, if you wish, select the mark to be used in the next line.
+</p>
+
+<p>The final two parameters control the accuracy of the simulation in
+    the
+    same way as in previous programs.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="playing"></a>Suggestions for playing with <tt><font
+        size="+3">Multiple</font></tt></h2>
+The initial data provided by default illustrate a common outcome of a
+three-body
+collision: three bodies come together with comparable speeds: two form
+a binary pair and the third goes off. To form a bound pair, the two
+bodies
+hae typically had to lose energy, so by conservation of energy the
+third
+body has gained the extra energy, which accounts for its rapid
+departure!
+You should play wth variations on this theme: reassign the masses for
+the
+same initial positions and velocities, for example. How fragile is our
+result? Do bound pairs form frequently?<br>
+<br>
+You can also experiment with longer run times. Take the default initial
+data to 600 000 time-steps. Instead of outputting the whole trajectory,
+watch a "movie" of it by selecting "current positions" for output and
+modifying the way <tt><font size="+1">SGTGrapher </font></tt>displays
+the data, as suggested
+above.&nbsp; Ask for output every 100 steps. If your computer is
+reasonably fast, this gives a fairly continuous visualization of the
+interactions of these three stars. You will see that the new binary and
+the third star do not separate indefinitely: they remain bound and
+eventually collide again. The result of this collision is to widen the
+orbit of the binary, which means that energy has been transferred to
+the binary. The consequence is that the binary and the third star are
+even more strongly bound and come together again. This collision
+hardens the binary, making its orbit smaller. The energy thus removed
+from the binary goes into the relative motion of the binary and the
+third star, which now separate slowly. To learn their eventual fate,
+set the time-limit to a much larger amount. (If <tt><font size="+1">SGTGrapher
+</font></tt>is set for
+"xAutoScale" and "yAutoScale" then as the stars separate the scale will
+change to keep them in view. If you find this disturbing, then un-check
+these options and instead press "Reset Zoom" whenever the stars move
+outside the frame, or whenever you want to see more detail if the stars
+are close together.)<br>
+
+<p>In the default example, we chose the stars' initial velocities to
+    lie
+    exactly in the plane defined by the initial positions of the three
+    stars.
+    This is clearly a very special choice that is unlikely to be very
+    realistic.
+    It also makes interactions of the kind we have found much more likely
+    and
+    dramatic. To test how important this assumption is, give one or more of
+    the stars a small component of velocity in the z-direction, out of the
+    plane, and see what happens. Naturally, if you give them a
+    largezx-velocity
+    they will not come close enough to one another to interact. So choose
+    the
+    z-velocity carefully, so that when the stars come near to one another
+    their
+    z-separations are comparable to their separations in the x-y plane.
+</p>
+
+<p>You can use this program to test <tt><font size="+1">MercPert</font></tt>.
+    Set up the same initial data as is described in the <a
+            href="MercPert.html#understanding">help
+        file</a>, and give "Mercury" a small mass. You should of course see the
+    same behavior. Now increase the mass of "Mercury" to make it comparable
+    to that of "Jupiter". What happens? In either case, give "Mercury" a
+    small
+    vertical component of velocity to see what happens in the genuinely
+    3-dimensional
+    problem. How does the subsequent behavior of "Mercury" change if it
+    passes
+    just above "Jupiter" rather than just in front or just behind?
+</p>
+
+<p>There are many other systems that are of interest in astronomy.
+    Stars
+    often form in groups of from ten to ten million members. While it is
+    not
+    practical to use this program with ten million bodies, you might try to
+    set up a star cluster with up to ten members if you have a sufficiently
+    fast computer. Give them random velocities and positions, for example,
+    within some boundaries, such as keeping all stars within 0.1 pc of the
+    center, and keeping all speeds below 10 km/s. See if the cluster
+    disappears
+    ("boils away") or remains bound. Does it grow in size or shrink? Change
+    the initial size and speed limits and do the experiment again. Do it
+    initially
+    for stars of the same mass, say all with the mass of the Sun. Then put
+    in a couple of 10 solar-mass objects (black holes) to see what happens
+    to them. Do they need to have much smaller initial velocities to keep
+    them
+    confined?
+</p>
+
+<p>Finally, you can even explore galaxy collisions. Start again with
+    your
+    10 particles, but let two of them be very massive, say 10<sup>11</sup>
+    solar masses. Let them have an initial separation of 50 kpc and let
+    them
+    approach one another with a speed of 100 km/s. Surround each galaxy
+    with
+    four smaller bodies, which represent the stars attached to it. Let them
+    have initial positions and velocities relative to their galaxy that are
+    typical of our Galaxy, for example positions 10 kpc from the galaxy and
+    rotational velocities of 300 km/s. You will have to do some elaborate
+    arithmetic
+    to get the correct initial configuration, but once you have done that
+    it
+    will be easy to change it for other configurations. You may have to
+    tune
+    these numbers to get a collision that seems realistic. Note that if the
+    small bodies really have negligible masses, then the two galaxies will
+    conserve energy and will not come to rest. But if you give the smaller
+    bodies masses of, say, 10<sup>10</sup> solar masses, then the galaxies
+    can exchange energy with them and this dissipation might result in a
+    "merger"
+    of the two galaxies. Of course, such large masses are unrealistic as
+    single
+    objects, but they represent the free stars in the whole galaxy.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="understanding"></a>Understanding <tt><font size="+3">Multiple</font></tt></h2>
+<tt><font size="+1">Multiple</font></tt> is an extension of <tt><font
+        size="+1">Binary</font></tt>
+whose main innovation is that it can handle an arbitrary number of
+bodies.
+It does this by introducing arrays for each of the quantities that
+relates
+to a body in the simulation. Thus, where <tt><font size="+1">Binary</font></tt>
+had a variable xA for the x-position of body A, <tt><font size="+1">Multiple</font></tt>
+defines
+<br>
+<tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[]
+    x = new double[nBodies];</font></tt>
+<br>
+where <tt><font size="+1">nBodies</font></tt> is the variable that
+holds
+the number of bodies that the user has specified. Then the x-position
+of
+body <tt><font size="+1">A</font></tt> (where <tt><font size="+1">A</font></tt>
+is a variable that can take any value between 0 and <tt><font size="+1">nBodies-1</font></tt>)
+is <tt><font size="+1">x[A]</font></tt>. In the program, there are
+loops
+using <tt><font size="+1">A</font></tt> as the loop variable, which do
+whatever
+has to be done for each body in turn.
+<p>To compute the accelerations, the program must add up the
+    acceleration
+    produced by each body in every other body. We only have to treat pairs
+    of bodies: having got the acceleration produced by body 1 on body 2, it
+    is easy to compute the acceleration produced by body 2 on body 1. This
+    requires a double loop, which begins with the code
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (
+        A = 0; A &lt; nBodies; A++ ) for ( B = A+1; B &lt; nBodies ; B++ ) {</font></tt>
+    <br>
+    This uses two variables <tt><font size="+1">A</font></tt> and <tt><font
+            size="+1">B</font></tt>
+    to represent the two bodies in each pair. Since only pairs of distinct
+    bodies is needed, the second index <tt><font size="+1">B</font></tt>
+    starts
+    with the value <tt><font size="+1">A+1.</font></tt>&nbsp; To see how
+    the
+    acceleration calculation is done, read the comment lines that precede
+    this
+    code in the listing below. Notice that, since the second loop is
+    executed
+    for each value of the first, the steps within the double loop are
+    executed
+    <tt><font size="+1">nBodies*(nBodies-1)/2</font></tt>
+    times, which is the number of pairs of particles. For large numbers of
+    bodies, this increases as the square of the number of bodies. Thus, a
+    simulation
+    involving 10 bodies will take four times longer to execute than one
+    involving
+    5 bodies.
+</p>
+
+<p>The other innovation is the option of producing output at regular
+    intervals
+    during the program. The program introduces a counter stepsSinceOutput
+    that
+    is set to zero after each output event and which is incremented by one
+    at the end of each time-step. When the value of this counter reaches
+    outSteps,
+    the parameter set by the user in the parameter window, then another
+    output
+    occurs. The kind of output is determined by the value of the String
+    variable
+    outputType set by the user in the choice box. The program uses a
+    separate
+    output function for convenience.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="suggestions"></a>Suggested modifications of <tt><font
+        size="+3">Multiple</font></tt></h2>
+Like <tt><font size="+1"><a href="MercPert.html#suggestions">MercPert</a></font></tt>,
+<tt><font size="+1">Multiple</font></tt>
+is vulnerable to close encounters, which reduce the time-step
+drastically
+but then do not let it increase again. If you have modified earlier
+programs
+to change this, then <tt><font size="+1">Multiple</font></tt> will
+benefit
+from this modification.
+<p>Professional computational physicists who perform simulations
+    involving
+    tens of&nbsp; millions of particles introduce many more sophisticated
+    tricks.
+    They cannot afford to live with the scaling mentioned above, where a
+    simulation
+    with 10<sup>6</sup> particles requires 10<sup>12</sup> times more
+    computer time than a
+    simulation with just one particle. Instead, they build a hierarchy of
+    zones
+    containing
+    more and more particles, and when computing the acceleration of a body
+    produced by particles that are far away from it, they use all the
+    particles
+    in a zone as a single particle. This hierarchy is called a "tree", and
+    "tree codes" have made it possible for computers to simulate globular
+    clusters,
+    galaxy collisions, and galaxy formation. These codes also deal with the
+    time-step problem in a clever way, using different time-steps for
+    different
+    particles. That way, a close encounter of two particles does not force
+    a too-precise computation of the trajectories of all the others. These
+    powerful devices require years of development to perfect, so I do not
+    recommend
+    that any readers casually embark on these projects!
+</p>
+
+<p>If you want to change the program you will have to re-compile it, as
+    explained by the help file <a href="UsingTriana.html">Using Triana for
+        <i>Gravity
+            from the ground up</i></a>.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="listing"></a>Listing of the Java code for <tt><font
+        size="+3">Multiple</font></tt></h2>
+
+<h3>
+    Preliminary definitions of parameters and constants</h3>
+
+<p><br>
+    <tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nBodies is the value given in the
+        parameter window for the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; number of bodies whose gravitational
+        interaction is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; being computed.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The variables massLength, posLength,
+        and velLength are set when</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the parameters are read; they give
+        the number of items in each of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the parameter input Strings typed
+        by the user. They should all</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; equal nBodies or there is an
+        inconsistency.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private int nBodies;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private int massLength, posLength, velLength;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; masses is a String defined by the
+        user in the parameter window,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; which holds the masses of all the
+        bodies, in solar masses. It</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; consists of a sequence of numbers
+        separated by spaces.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m is an array that holds the values
+        of the masses, after they</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are extracted from the String masses.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private String masses;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double[] m;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; initPos is a String defined by the
+        user in the parameter window,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; which holds the initial positions
+        of all the bodies. It consists</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of a sequence of pairs of the form
+        (x,y), one for each body. The</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pairs can be separated by spaces
+        or any other symbol, or nothing</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at all. Spaces within the pair are
+        also allowed. The user should</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ensure that the number of pairs
+        equals nBodies.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xInit and yInit are arrays that
+        hold the initial x-positions and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-positions of all the bodies, after
+        they are extracted from initPos.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private String initPos;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double[] xInit, yInit, zInit;</tt>
+    <br>
+    &nbsp;
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; initVel is a String defined by the
+        user in the parameter window,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; which holds the initial velocities
+        of all the bodies. It consists</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of a sequence of pairs of the form
+        (v,u), one for each body. The</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pairs can be separated by spaces
+        or any other symbol, or nothing</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at all. Spaces within the pair are
+        also allowed. The user should</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ensure that the number of pairs
+        equals nBodies.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vInit and uInit are arrays that
+        hold the initial x-component of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the velocity and the initial
+        y-component,
+        for all bodies, after</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; they are extracted from initPos.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private String initVel;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double[] vInit, uInit, wInit;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dt is the time-step in seconds.
+        It is set by the user in the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double dt;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; maxSteps is the maximum number of
+        steps in the calculation.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is used to ensure that the
+        calculation will stop even</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if initial values are chosen so
+        that "Mercury" is expelled</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from the Solar System. It is set
+        by the user in the parameter</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private int maxSteps;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outSteps fixes the number of
+        time-steps
+        between output events.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This allows the program to run for
+        a long time without using up</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; memory storing all steps at once.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outputType allows the user to choose
+        to output a view of the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; trajectories of the bodies since
+        the previous output, or just</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; output the current positions of
+        the bodies. If outSteps is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; chosen to be small, then choosing
+        to view the current positions</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; will produce a kind of video of
+        the simulation.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private int outSteps;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private String outputType;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eps1 sets the accuracy of the
+        time-step.
+        If computed quantities</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; change by a larger fraction than
+        this in a time-step, the time-step</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; will be cut in half, repeatedly
+        if necessary. It is set by the user</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in the parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double eps1;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; eps2 sets the accuracy of the
+        predictor-corrector
+        step. Averaging</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; over the most recent time-step is
+        iterated until it changes by</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; less than this relative amount.
+        It is set by the user in the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double eps2;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; kGravity is Newton's gravitational
+        constant times the mass of the Sun.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is used internally and not set
+        by the user.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double kGravity = 1.327e20;</tt>
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+</p>
+
+<h3>Program code</h3>
+<tt>&nbsp;&nbsp;&nbsp; public void process() throws Exception {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Define and
+    initialize the variables we will need. The position</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and velocity
+    components are referred to an x-y coordinate system</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; whose origin
+    is at the center of mass of the two main bodies. The</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; word Sun
+    in a variable name refers to the more massive central</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; body (the
+    "Sun"); Planet refers to the massive planet ("Jupiter"); and</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Merc refers
+    to the small planet ("Mercury") whose orbit in the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    gravitational
+    field of the other two bodies we wish to compute.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; We need
+    the following variables for the calculation:</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - t is the
+    time since the beginning of the orbit.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - A, B are
+    integers that will always serve as indices that refer to the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    different bodies. Thus, m[A] is the mass of body A, in solar masses.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - dt1 will
+    be used as the "working" value of the time-step, which can</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    be changed during the calculation. Using dt1 for the time-step allows</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    us to keep dt as the original value, as specified by the user. Thus,</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    dt1 is set equal to dt at the beginning of the calculation, but it may
+    be</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    reduced at any time-step, if accuracy requires it.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - x, y and
+    z are arrays containing the x-, y-, and z-coordinates (respectively)</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    of the positions of the bodies, given here their initial values.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - v, u,
+    and w are arrys containing the x-, y-, and z-components (respectively)</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    of the velocities of the bodies, given here their initial values.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ax, ay,
+    and az are arrays containing the x-, y-, and z-components (respectively)</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    of the accelerations of the bodies. Their initial values are computed
+    in
+    the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    double "for" loop described below.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double t = 0;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double dt1 = dt;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int stepsSinceOutput
+    = 1;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int A, B;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] x = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] y = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] z = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] v = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] u = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] w = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( A = 0; A &lt;
+    nBodies; A++ ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    x[A] = xInit[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    y[A] = yInit[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    z[A] = zInit[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    v[A] = vInit[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    u[A] = uInit[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    w[A] = wInit[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ax = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ay = new
+    double[nBodies];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] az = new
+    double[nBodies];</tt>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The next
+    statements define variables that are used in the double "for"</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; loop that
+    starts on the third line, and whose purpose is to compute</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the initial
+    accelerations of the bodies. This double loop is repeated</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in the
+    program
+    below wherever the accelerations have to be computed.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Therefore
+    we describe it in detail here.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Here are
+    the variables that we need. They are defined here and will be</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; re-used
+    with the same meanings wherever we need to compute the accelerations.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - xAB, yAB,
+    zAB are the x-, y-, and z-components (respectively) of the displacement</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    vector from body B to body A.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - rAB is
+    the distance between body A and body B.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - rAB3 is
+    the cube of the distance between body A and body B.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - kxAB,
+    kyAB, and kzAB are variables that hold temporary values used in the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    calculation of the accelerations.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Here is
+    how the double loop works. The acceleration of each body depends on</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; all the
+    others but not on itself. The acceleration of body A is just the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sum of the
+    accelerations produced on it by all the other bodies. The</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; acceleration
+    produced on body A by body B is (as in previous programs</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; like
+    MercPert)
+    the product of the gravitational constant G times the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mass of
+    B (not of A) times the displacement vector from A to B, divided</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by the cube
+    of the total distance between A and B. Since we store the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mass of
+    the bodies in solar masses in the array m[], we have put the mass</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of the Sun
+    into the constant kGravity = G * Msun. Thus, the x-acceleration</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; produced
+    on A by B is -kGravity*m[B]*xAB/rAB3. (The minus sign is needed</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; because
+    we have defined xAB to be the x-component of the displacement vector</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from B to
+    A.)</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Not only
+    does B accelerate A, but also A accelerates B. In fact, the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    x-acceleration
+    produced on body B by body A is +kGravity*m[A]*xAB/rAB3. Here the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sign is
+    different because the acceleration points in the opposite direction.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It follows
+    that to compute all these accelerations efficiently, we should</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; first
+    compute
+    the quantities kGravity*xAB/rAB3 (and similarly for y and z)</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for each
+    PAIR of bodies (A,B), and then multiply them by the appropriate masses</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to get the
+    contributions to the various accelerations. These contributions simply</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; add up for
+    each body to get the result.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The double
+    loop is designed to do the computations for each pair of bodies.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The first
+    index is A and it runs over all the bodies. But for each value of A,</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; there is
+    another loop with the index B that runs from A+1 to the maximum. This</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ensures
+    that each pair (A,B) occurs only once in these loops, and that is where</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the first
+    index is the smaller of the two. Thus, for three bodies with indices</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0, 1, and
+    2, the loops compute only for the values (0,1), (0,2), (1,2).</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For each
+    pair the loop computes:</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - the
+    components
+    xAB, yAB, and zAB;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - the
+    distance
+    rAB and its cube rAB3;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - the
+    quantity
+    kxAB = kGravity*xAB/rAB3 that we noted above was common to the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    accelerations of both A and B, and similarly kyAB and kzAB; and</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - the x-,
+    y-, and x-contributions to the acceleration of A by B and the</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    corresponding contributions to the acceleration of B by A. Note that
+    these</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    are just added to the array variables holding the total accelerations:
+    ax,</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ay, and az. When these variables were defined in the three lines just
+    before</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    this comment, Java automatically initialized their values to zero. So
+    they</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    go into the double loop with zero values, and come out with the sums of
+    all</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    the contributions.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double xAB, yAB, zAB,
+    rAB, rAB3, kxAB, kyAB, kzAB;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( A = 0; A &lt;
+    nBodies; A++ ) for ( B = A+1; B &lt; nBodies ; B++ ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    xAB = x[A] - x[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    yAB = y[A] - y[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    zAB = z[A] - z[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    rAB = Math.sqrt(xAB*xAB + yAB* yAB + zAB*zAB);</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    rAB3 = rAB*rAB*rAB;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    kxAB = -kGravity*xAB/rAB3;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    kyAB = -kGravity*yAB/rAB3;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    kzAB = -kGravity*zAB/rAB3;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ax[A] += kxAB * m[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ax[B] += -kxAB * m[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ay[A] += kyAB * m[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ay[B]
+    += -kyAB * m[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    az[A] += kzAB * m[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    az[B] += -kzAB * m[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - xCoordinate,
+        yCoordinate,
+        and zCoordinate are two-dimensional arrays that are</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; used to
+        store the values of x, y, and z of the different bodies at each
+        timestep.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Their first
+        index is the body, their second the timestep. Thus, xCoordinate[5][2]</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; will hold
+        the value of the x-coordinate of body 5 at timestep 2.</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The size
+    of the arrays depends on the output type chosen by the user. If the user</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; selects
+        to have trajectories output, then the second index takes as many values</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; as will
+        be output at one time, which is the value of the parameter outSteps. If</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the user
+        selects to output current positions, then the second index has only a</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; single value
+        of 0, and the arrays will be filled only at the last step before</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; output.</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Store the
+    initial values of the position components in the appropriate elements</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of these
+        arrays. If current positions are being output, output the initial</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; positions.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[][] xCoordinate,
+        yCoordinate, zCoordinate;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //double[][] yCoordinate
+        = null;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //double[][] zCoordinate
+        = null;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (
+        outputType.equals("trajectories")
+        ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xCoordinate = new double[ nBodies ][ outSteps ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yCoordinate = new double[ nBodies ][ outSteps ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        zCoordinate = new double[ nBodies ][ outSteps ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xCoordinate = new double[ nBodies ][ 1 ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yCoordinate = new double[ nBodies ][ 1 ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        zCoordinate = new double[ nBodies ][ 1 ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( A = 0; A &lt;
+        nBodies; A++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xCoordinate[A][0] = xInit[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yCoordinate[A][0] = yInit[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        zCoordinate[A][0] = zInit[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ( outputType.equals(
+        "current positions" ) ) doOutput( xCoordinate, yCoordinate, zCoordinate
+        );</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now define
+        other variables that will be needed, but without giving</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; initial
+        values. They will be assigned values during the calculation.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - x1, y1,
+        and z1 are temporary arrays holding values of x, y, and z</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (respectively) for each body that are needed during the calculation.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ax1, ay1,
+        and az1 are likewise temporary arrays of the acceleration.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - dv, du,
+        and dw are arrays holding changes in the velocity components</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        that occur during a timestep.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - dx, dy,
+        and dz are arrays that hold part of the changes in the position</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        variables x, y, and z (respectively) for each body, that occur during a
+        time-step.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ddx0,
+        ddy0, ddz0, ddx1, ddy1, ddz1 are arrays that hold other parts of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the changes in x, y, and z of the bodies during a time-step. The reason
+        for having</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        both dx and ddx will be explained in comments on the calculation below.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -
+        testPrediction
+        is an array that will hold a value for each body that is used</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        by the predictor-corrector steps to assess how accurately the
+        calculation
+        is proceeding.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - j and
+        k are integers that will be used as loop counters.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] x1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] y1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] z1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ax1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ay1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] az1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] dv = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] du = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] dw = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] dx = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] dy = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] dz = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ddx0 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ddy0 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ddz0 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ddx1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ddy1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] ddz1 = new
+        double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] testPrediction
+        = new double[nBodies];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int j, k;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now start
+        the loop that computes the two orbits. The loop counter</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is j, which
+        (as in Orbit) starts at 1 and increases by 1 each</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; step. The
+        test for exiting from the loop will be that the number</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of steps
+        exceeds the maximum set by the user.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( j = 1; j &lt;
+        maxSteps ; j++ ) {</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        For each body, labeled by the index A;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        - Set dv[A], du[A], and dw[A] to the changes in x-, y-, and z-speeds</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        that would occur during time dt1 if the acceleration were constant at</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (ax[A], ay[A], az[A]).</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        - Similarly set dx[A], dy[A], and dz[A] to the changes in position that
+        would</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        occur if the velocity components v[A], u[A], and w[A] were constant
+        during
+        the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        time dt1.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        - Set ddx0[A], ddy0[A], and ddz0[A] to the extra changes in x, y, and z
+        that occur</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        because body A's velocity changes during the time dt1. The velocity
+        change
+        that</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        is used is only (dv[A]/2, du[A]/2, dw[A]/2) because the most accurate
+        change</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in position comes from computing the average velocity during dt1. We
+        separate</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the two position changes, dx[A] and ddx0[A], because dx[A] will be
+        unchanged</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        when we do the predictor-corrector below (the change in position due to
+        the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        original speed is always there), while ddx0[A] will be modified when
+        ax[A]
+        and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        hence dv[A] is modified by the predictor-corrector. Similar remarks
+        apply,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of course, to the y- and z-directions.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        - Set ddx1[A], ddy1[A], and ddyz1[A] to ddx0[A], ddy0[A], and ddz0[A]</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        initially. They will change when we enter the predictor-corrector code.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        - Finally advance the positions of the bodies by our initial estimates
+        of the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        position changes, for example dx[A] + ddx0[A], and store that in x1[A].</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( A = 0; A &lt; nBodies; A++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dv[A] = ax[A] * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        du[A] = ay[A] * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dw[A] = az[A] * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dx[A] = v[A] * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dy[A] = u[A] * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dz[A] = w[A] * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ddx0[A] = dv[A] / 2 * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ddy0[A] = du[A] / 2 * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ddz0[A] = dw[A] / 2 * dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ddx1[A] = ddx0[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ddy1[A] = ddy0[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ddz1[A] = ddz0[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x1[A] = x[A] + dx[A] + ddx0[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        y1[A] = y[A] + dy[A] + ddy0[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        z1[A] = z[A] + dz[A] + ddz0[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ax1[A] = 0.0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ay1[A] = 0.0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        az1[A] = 0.0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Now compute the new distances of the bodies from one another and the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        resulting acceleration at the first-guess positions of the bodies at</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the time t1. Store the acceleration components in the arrays ax1, ay1,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        and az1. This is a repeat of the loop used to compute the initial</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        accelerations, above.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( A = 0; A &lt; nBodies; A++ ) for ( B = A+1; B &lt; nBodies ; B++
+        ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xAB = x1[A] - x1[B];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yAB = y1[A] - y1[B];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        zAB = z1[A] - z1[B];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        rAB = Math.sqrt(xAB*xAB + yAB* yAB + zAB*zAB);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        rAB3 = rAB*rAB*rAB;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        kxAB = -kGravity*xAB/rAB3;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        kyAB = -kGravity*yAB/rAB3;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        kzAB = -kGravity*zAB/rAB3;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ax1[A] += kxAB * m[B];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ax1[B] += -kxAB * m[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ay1[A] += kyAB * m[B];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ay1[B] += -kyAB * m[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        az1[A] += kzAB * m[B];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        az1[B] += -kzAB * m[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Time-step check.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        This is the code to check whether the time-step is too large. The idea</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        is to compare the changes in acceleration of each body during the
+        timestep</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        with the acceleration of the body itself. If the change for any body is
+        too</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        large a fraction of the original value, then the step is likely to be</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        too large, and the resulting position too inaccurate. The code below
+        cuts</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the time-step dt1 in half and then goes back to the beginning of the
+        loop.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        The boolean (true-false) variable tooLarge is used to keep track of the
+        result</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of testing all the different bodies. If any one body fails the test,
+        then</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        tooLarge is set to "true" and the calculation is repeated. If the loop
+        over</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the bodies exits with tooLarge still equal to "false" then we go on to
+        the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        predictor-corrector. Notice that the loop over the bodies has a more
+        complicated</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        test for repeating: it repeats only if A is less than nBodies (ie there
+        is another</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        body to test) AND if tooLarge is equal to "false" (so that !tooLarge is
+        equal</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        to "true"). Once any body fails the test and tooLarge is set to "true",
+        there is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        no point in testing the remaining bodies, so the loop exits. The single
+        statement</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        inside the loop sets the value of tooLarge equal to a boolean
+        expression:
+        the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        statement inside the outer () is a comparison, so it evalues either to
+        "true" or</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        to "false", and this value is assigned to tooLarge.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        boolean tooLarge = false;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( A = 0; (A &lt; nBodies) &amp;&amp; !tooLarge; A++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        tooLarge = ( Math.abs(ax1[A]-ax[A]) + Math.abs(ay1[A]-ay[A])+
+        Math.abs(az1[A]-az[A])
+        &gt; eps1*(Math.abs(ax[A]) + Math.abs(ay[A])) + Math.abs(az[A]) );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        if ( tooLarge ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dt1 /= 2;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        j--;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        else {</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Predictor-corrector step. This is explained in program Orbit.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    for ( A = 0; A &lt; nBodies; A++ ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    testPrediction[A] = Math.abs(ddx0[A]) + Math.abs(ddy0[A]) +
+    Math.abs(ddz0[A]);</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    }</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    for ( k = 0; k &lt; 10; k++ ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    for ( A = 0; A &lt; nBodies; A++ ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /* compute dv[A], du[A], and dw[A] by averaging the acceleration over
+    dt1
+    */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    dv[A] = (ax[A] + ax1[A])/2*dt1;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    du[A] = (ay[A] + ay1[A])/2*dt1;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    dw[A] = (az[A] + az1[A])/2*dt1;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /* compute ddx1[A], ddy1[A], and ddz1[A] by averaging the velocity
+    change
+    */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ddx1[A] = dv[A]/2*dt1;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ddy1[A] = du[A]/2*dt1;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ddz1[A] = dw[A]/2*dt1;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    }</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Test the changes in ddx, ddy, and ddz since the last iteration for each
+    .</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    body A. If it is more than a fraction eps2 of the original, then</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    set the variable tooLarge to "true", as in the test for the time-step
+    above.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Then, after all bodies are examined, if tooLarge is "true", the values
+    of</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ddx, ddy, and ddz for each body have to be re-computed by finding the
+    acceleration</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    components at the refined positions.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    On the other hand, if tooLarge is still false after examining all the
+    bodies,</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    then the position change is small enough, and the "else:" clause is</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    executed, which exits from the for loop using the statement</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    "break". This finishes the iteration and goes on to wrap up</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    the calculation.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    tooLarge = false;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    for ( A = 0; (A &lt; nBodies) &amp;&amp; !tooLarge; A++ ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    tooLarge = ( Math.abs(ddx1[A]-ddx0[A]) + Math.abs(ddy1[A]-ddy0[A])+
+    Math.abs(ddz1[A]-ddz0[A])
+    &gt; eps2*testPrediction[A] );</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    }</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    if ( tooLarge ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Re-define ddx0[A], ddy0[A] and ddz0[A] to hold the values</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    from the last iteration. Then get the acceleration values again.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    for ( A = 0; A &lt; nBodies; A++ ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ddx0[A] = ddx1[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ddy0[A] = ddy1[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ddz0[A] = ddz1[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    x1[A] = x[A] + dx[A] + ddx0[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    y1[A] = y[A] + dy[A] + ddy0[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    z1[A] = z[A] + dz[A] + ddz0[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ax1[A] = 0.0;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ay1[A] = 0.0;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    az1[A] = 0.0;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    }</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    for ( A = 0; A &lt; nBodies; A++ ) for ( B = A+1; B &lt; nBodies ; B++
+    ) {</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    xAB = x1[A] - x1[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    yAB = y1[A] - y1[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    zAB = z1[A] - z1[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    rAB = Math.sqrt(xAB*xAB + yAB* yAB + zAB*zAB);</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    rAB3 = rAB*rAB*rAB;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    kxAB = -kGravity*xAB/rAB3;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    kyAB = -kGravity*yAB/rAB3;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    kzAB = -kGravity*zAB/rAB3;</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ax1[A] += kxAB * m[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ax1[B] += -kxAB * m[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ay1[A] += kyAB * m[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ay1[B] += -kyAB * m[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    az1[A] += kzAB * m[B];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    az1[B] += -kzAB * m[A];</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        We now have the "best" acceleration values, using the most</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        recent estimates of the position at the end of the loop on k.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        The next statement to be executed will be the first statement</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of the "for" loop, finding better values of dv, du, dw, ddx1,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ddy1, and ddz1 for each body.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        else break;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        The iteration has finished, and we have sufficiently accurate</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        values of the position change in arrays ddx1, ddy1, and ddz1.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Use them to get final values of arrays x, y and z at the end of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the time-step dt1, ready for the next time-step. Compute all the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        rest of the variables needed for the next time-step and for</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        data output.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        t += dt1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( A = 0; A &lt; nBodies; A++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x[A] += dx[A] + ddx1[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        y[A] += dy[A] + ddy1[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        z[A] += dz[A] + ddz1[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ax[A] = ax1[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ay[A] = ay1[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        az[A] = az1[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        v[A] += dv[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        u[A] += du[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        w[A] += dw[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Now fill the output arrays if appropriate.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        if ( outputType.equals( "trajectories" ) ) for ( A = 0; A &lt; nBodies;
+        A++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xCoordinate[A][stepsSinceOutput] = x[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yCoordinate[A][stepsSinceOutput] = y[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        zCoordinate[A][stepsSinceOutput] = z[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        else if ( stepsSinceOutput == outSteps - 1 ) for ( A = 0; A &lt;
+        nBodies;
+        A++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xCoordinate[A][0] = x[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yCoordinate[A][0] = y[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        zCoordinate[A][0] = z[A];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        If the number of steps since the last output equals outSteps, then we do</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the output and reset the value of the counter stepsSinceOutput. If not,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        then increment the counter and go on to the next time-step.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        if ( stepsSinceOutput == outSteps - 1 ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        doOutput( xCoordinate, yCoordinate, zCoordinate );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        stepsSinceOutput = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        else stepsSinceOutput++;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt></tt>&nbsp;
+    <br>
+    &nbsp;
+</p>
+
+<h3>Output code (not contained in program code)</h3>
+<tt><br>
+</tt><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; /*</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+This method outputs the position data for</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+all the bodies. See the remarks in MercPert about multiple output</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+nodes. Here we output one Curve for each body, so we need the number of
+</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+nodes to equal the number of bodies. The unit should have adjusted the </span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of nodes automatically when nBodies was defined.</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In
+order to understand the following statements, you need to understand</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the way Java stores arrays with more than one index. It treats them as</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+collections of one-dimensional arrays. In the case of a 2D array, the
+first</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+index says which one-dimensional array one is dealing with, and the
+second</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+index runs along that array. In this case we are dealing with the array</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x[][]. Because the first index is the body index A and the second</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is
+the time-step index, this array is stored as nBodies separate
+one-dimensional</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+arrays, each of length maxSteps. (If you are familiar with the computer
+language</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; C,
+then you may already know about this: it is the same in C as in Java.)</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Now, we don't normally need to know about this, since when we write</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x[5][2] Java takes care of finding out where the value of this is
+located</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in
+the computer's memory. However, there is one circumstance where knowing
+how Java</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+stores such arrays is useful. That is because Java permits us to refer
+to each of</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the one-dimensional arrays by its index. Thus, x[5] refers to the</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+one-dimensional array of length either outSteps or 1 (depending on the
+output type</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+that the user had chosen) that gives the values of the x-coordinates</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of
+body 5 at the appropriate time-steps. This makes copying from the
+internal</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+storage (x,y,z) to the output arrays (xout, yout, zout) simple, using
+the </span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+efficient System.arraycopy utility supplied by Java.</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; */</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; private void
+doOutput( double[][] x, double[][] y, double[][] z) {</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Curve out;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+int len = x[0].length;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+double[] xout, yout, zout;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+for ( int A = 0; A &lt; nBodies; A++ ) {</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+xout = new double[len];</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+yout = new double[len];</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+zout = new double[len];</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.arraycopy(x[A], 0, xout, 0, len);</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.arraycopy(y[A], 0, yout, 0, len);</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.arraycopy(z[A], 0, zout, 0, len);</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+out = new Curve( xout, yout, zout );</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+out.setTitle("Body " + String.valueOf(A));</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if ( A == 0 ) {&nbsp; // the grapher reads the axis labels from the
+first input</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+out.setIndependentLabels(0,"x (m)");</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+out.setDependentLabels(0,"y (m)");</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+outputAtNode( A, out );</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; }</span><br
+        style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp; </span><br
+        style="font-family: monospace;">
+<br>
+&nbsp;
+<br>
+&nbsp;
+<p></p>
+<hr width="15%" size="4">
+<br>
+<b><font size="-1">Return to <a href="index.html">index</a> of all
+    computer
+    programs.</font></b>
+</body>
+</html>

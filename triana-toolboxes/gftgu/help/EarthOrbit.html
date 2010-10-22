@@ -1,0 +1,831 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template"
+          content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR"
+          content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+    <meta name="Author" content="Bernard F Schutz">
+    <meta name="Description"
+          content="Help file for Triana unit EarthOrbit, part of the toolbox for the book Gravity from the Ground Up.This unit calculates trajectories of projectiles attempting to acheive Earth orbit.">
+    <meta name="KeyWords"
+          content="Gravity from the ground up, Triana, help file">
+    <title>EarthOrbit</title>
+</head>
+<body text="#000000" bgcolor="#fdf5e6" link="#808080" vlink="#808080"
+      alink="#ff0000" background="BH-posneg.negative.watermark.png">
+<span style="font-weight: bold;"><br>
+<a href="license.html"><img src="HelpfileBanner.png"
+                            title="Click to view license information." alt=""
+                            style="border: 0px solid ; width: 375px; height: 362px;" align="right"></a></span><br>
+<table cellpadding="2" cellspacing="2" border="3"
+       style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
+    <tbody>
+    <tr>
+        <td
+                style="vertical-align: top; background-color: rgb(204, 204, 204);">
+            <h3
+                    style="color: rgb(102, 255, 153); font-family: monospace; font-weight: bold; text-align: center;">
+                <big><big><big><big><span
+                        style="color: rgb(255, 0, 0);">EarthOrbit<br>
+      </span></big></big></big></big></h3>
+
+            <div style="text-align: center;"><big><font size="+2"><big><span
+                    style="color: rgb(255, 0, 0);"><small><span style="font-weight: bold;"><small><span
+                    style="color: rgb(0, 0, 0);">version 1.0<br>
+      </span></small></span></small></span></big></font><big><big><span
+                    lang="EN-GB"
+                    style="font-size: 12pt; font-family: &quot;Times New Roman&quot;; font-weight: bold;">&copy;
+                2003 Bernard Schutz</span></big></big></big><br>
+            </div>
+            <h3
+                    style="font-family: helvetica,arial,sans-serif; text-align: center;">
+                <large><b><span
+                        style="color: rgb(0, 0, 0);">Find out how to launch a projectile from
+near the Earth's surface and get it into orbit around the Earth. The
+program shows how sensitive the trajectory is to the initial speed of
+the projectile.<br>
+      </span></b></large>
+            </h3>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p><br>
+</p>
+
+<h2><a name="contents"></a>Contents</h2>
+<ul>
+    <li>
+        <a href="#description">Description of <tt><font size="+1">EarthOrbit</font></tt></a></li>
+    <li>
+        <a href="#using">Using <tt><font size="+1">EarthOrbit</font></tt></a></li>
+    <li>
+        <a href="#understanding">Understanding <tt><font size="+1">EarthOrbit</font></tt></a></li>
+    <li>
+        <a href="#suggestions">Suggested modifications of <tt><font
+                size="+1">EarthOrbit</font></tt></a></li>
+    <li>
+        <a href="#listing">Listing of the Java code for <tt><font size="+1">EarthOrbit</font></tt></a></li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="description"></a>Description of <tt><font size="+3">EarthOrbit</font></tt></h2>
+The unit called <tt><font size="+1">EarthOrbit</font></tt> implements
+the
+Java program for testing the attempts of a projectile to reach orbital
+velocity instead of falling back to the Earth. It allows the user to
+choose
+how high above the Earth's surface and with what horizontal velocity
+the
+projectile is launched. Users can experiment to find the velocity with
+which it will stay in orbit.
+<p>This program is similar to <tt><font size="+1">CannonTrajectory</font></tt>,
+    but it goes beyond that calculation by allowing the direction of the
+    acceleration
+    of gravity to depend on position: the acceleration always points toward
+    the center of the Earth. The mathematics for this extension is
+    developed
+    in Investigations 4.1 and 4.2.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="using"></a>Using <tt><font size="+3">EarthOrbit</font></tt></h2>
+
+<p><br>
+    Simply drag the <tt><font size="+1">EarthOrbit</font></tt> icon from
+    the toolbox into the working area, drag the <tt><font size="+1">SGTGrapher</font></tt>
+    unit into the area, and connect the two if Triana has not already done
+    so. Since <tt><font size="+1">EarthOrbit</font></tt> has two output
+    nodes, you need two input nodes on <tt><font size="+1">SGTGrapher</font></tt>.
+    Hover over the icon for the grapher until a "+" sign appears on it near
+    the input nodes, and then click on the "+" sign to add an extra
+    node.&nbsp; If you press the Start button then the program will execute
+    with its
+    default settings, namely with an initial height of 300 m above the
+    Earth's
+    surface, an initial launch velocity of&nbsp; speed of 7900 ms<sup>-1</sup>
+    horizontally, a time-step for the simulation of 0.4 s, and a maximum
+    number
+    of steps equal to 15000. A graph window will pop up showing the
+    trajectory.
+</p>
+
+<p><img src="image3JV.JPG" border="0" height="413" width="390"
+        align="left">Initially
+    the grapher window will not necessarily use the same scale for
+    distances
+    in the horizontal and vertical direction, since it is set by default to
+    adjust the scales to show the most information about the curve.&nbsp;
+    Go to the "Plot" menu of the <tt><font size="+1">SGTGrapher </font></tt>display,
+    and select "force equal ranges on both axes", then press "Reset
+    Zoom".&nbsp;&nbsp;
+</p>
+
+<p>The graph window will contain two plots, one being the surface of
+    the
+    Earth and the other being the trajectory. Since the trajectory
+    initially
+    skims the surface, it may be hard to see the trajectory. Go to the plot
+    menu of the graph window and select "Plot properties". Then look for
+    the
+    item "Layer: Layer 2" and its sub-item "CartesianGraph: Graph2". Under
+    this is "LineAttribute". Double-click on "LineAttribute" to bring up a
+    dialog within which you can change the way <tt><font size="+1">SGTGrapher
+    </font></tt>displays the trajectory
+    (which is graph 2 if you have connected the second output node of the
+    EarthOrbit
+    unit to the second input of the grapher). This dialog is illustrated to
+    the left. You might try changing the Line Style to "HEAVY". You could
+    experiment
+    with changing the color or other aspects of the display, as well.
+    Moreover,
+    if you go to the similar option for Graph 1 (the curve of the Earth's
+    surface)
+    you can choose a dashed line, which will make it even easier to see the
+    trajectory. Do this after your first run and then you will find it
+    easier
+    to see the results of subsequent trials.
+</p>
+
+<p><img src="imageTGD.JPG" border="0" height="200" width="570"
+        align="left">As
+    with other units, you can experiment with different trajectories by
+    changing
+    the values set in the parameter window. These include the initial
+    height,
+    velocity components, time-step, and maximum number of time-steps. The
+    parameter
+    window is illustrated below. Double-click on the <tt><font size="+1">EarthOrbit</font></tt>
+    unit in the working area to get this window. Type a new value into any
+    of the boxes, followed by the "Apply" key. Experiment with the launch
+    velocity
+    to see what speed gives the an orbit that goes all around the Earth.
+    Make
+    the time-step longer to see what effect this has.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="understanding"></a>Understanding <tt><font size="+3">EarthOrbit</font></tt></h2>
+The Java program for <tt><font size="+1">EarthOrbit</font></tt> is
+given
+in the <a href="#listing">last</a> section. For general remarks about
+how
+to read and understand Java programs see the <a
+        href="Introduction.html">Introduction
+    to Programming in Java</a>. As in our first program, <tt><font
+        size="+1"><a href="CannonTrajectory.html">CannonTrajectory</a></font></tt>,
+the present program is based on a <a href="Introduction.html#loops">loop</a>
+that repeatedly moves the orbiting projectile around the Earth. There
+are
+many features of <tt><font size="+1">EarthOrbit</font></tt> that are
+essentially
+the same as features in <tt><font size="+1">CannonTrajectory</font></tt>,
+so they do not need to be discussed here. The main differences are:
+<ol>
+    <li>
+        The acceleration is no longer a constant as it was in <tt><font
+            size="+1">CannonTrajectory</font></tt>
+        (where it was called <tt><font size="+1">g</font></tt>). The
+        acceleration
+        always points to the center of the Earth, so its values in the x- and
+        y-directions
+        depend on where the projectile is. In this program we take the
+        magnitude
+        of the acceleration to be 9.8 ms<sup>-2</sup>, just as on the surface
+        of
+        the Earth, which is a good approximation as long as the initial launch
+        location is not too high (less than a few kilometers). But its
+        components
+        in the x- and y-directions, called <tt><font size="+1">ax</font></tt>
+        and
+        <tt><font size="+1">ay</font></tt>
+        in the program, depend on the values of
+        <tt><font size="+1">x</font></tt>
+        and <tt><font size="+1">y</font></tt>. If we define <tt><font
+            size="+1">r</font></tt>
+        to be the radial distance from the point under consideration to the
+        center,
+        then we have to keep adjusting
+        <tt><font size="+1">ax</font></tt> and <tt><font size="+1">ay</font></tt>.
+        From Equation 4.4 in the text we see that g = k/r<sup>2</sup> = GM/r<sup>2</sup>,
+        and then if we use g, Equations 4.5 and 4.6 become the following code
+        from
+        <tt><font size="+1">EarthOrbit</font></tt>:
+    </li>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">ax = -g*x/r;</font></tt>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">ay = -g*y/r;</font></tt>
+    <li>The test for the loop to continue to the next step is, of course,
+        different.
+        Here we have
+    </li>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">( r &gt;= rEarth ) &amp;&amp; ( j &lt; maxSteps )</font></tt>
+    <br>
+    which we need to analyze. The first sub-expression says the calculation
+    continues if the location <tt><font size="+1">r</font></tt> of the
+    trajectory
+    is outside the Earth (<tt><font size="+1">r</font></tt> larger than the
+    radius
+    of the Earth). The second sub-expression stops the calculation if we
+    reach
+    the maximum number of steps.
+    <p>The maximum number is needed here because it is possible to choose
+        initial
+        conditions such that the trajectory leaves the Earth and never returns,
+        so the first test is not enough.
+    </p>
+    <li>Since there is acceleration in both the x- and y-directions, we
+        need to
+        keep velocity information in temporary storage variables, so the loop
+        contains
+        variables called <tt><font size="+1">u0</font></tt>, <tt><font
+                size="+1">u1</font></tt>,
+        <tt><font size="+1">v0</font></tt>,
+        and <tt><font size="+1">v1</font></tt>. The change in position of the
+        trajectory
+        is calculated, as in <tt><font size="+1">CannonTrajectory</font></tt>,
+        by
+        averaging the velocity over the current time-interval.
+    </li>
+    <li>
+        On output, the data is again copied into a smaller array. To show the
+        relation
+        of the orbit to the Earth, an additional output is created containing
+        the
+        curve of the Earth's surface. Titles and labels are added. This part of
+        the code is specific to Triana and can safely be ignored by programmers
+        wishing only to focus on the physics.
+    </li>
+</ol>
+<p><br>
+</p>
+<hr width="15%" size="4">
+<h2><a name="suggestions"></a>Suggested modifications of <tt><font
+        size="+3">EarthOrbit</font></tt></h2>
+As for <tt><font size="+1">CannonTrajectory</font></tt>, you might
+consider
+changing the termination condition: instead of stopping only when the
+orbit
+is already a short distance <i>inside</i> the Earth, reconstruct more
+precisely
+the location of the place where impact actually occurs.
+<p>If you want to change the program you will have to re-compile it, as
+    explained by the help file <a href="UsingTriana.html">Using Triana for
+        <i>Gravity
+            from the ground up</i></a>.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="listing"></a>Listing of the Java code for <tt><font
+        size="+3">EarthOrbit</font></tt></h2>
+
+<h3>
+    Preliminary definitions of parameters and constants</h3>
+<tt>&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g is the acceleration of gravity
+    near the surface of the Earth.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In this program we do not take
+    account
+    of the fact that gravity</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gets weaker as one goes further
+    from the Earth, so the program</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; will only accurately simulate orbits
+    that are near the surface.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; private double g = 9.8;</tt>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rEarth is the radius of the Earth
+        in meters.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double rEarth = 6378200;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h0 is the initial height of the
+        projectile above the surface of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the Earth, in meters. This is its
+        starting position. Is value for</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; any run is set by the user in the
+        parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double h0;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vInit is the initial
+        horizontal
+        speed of the projectile, in meters</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; per second. Its default value
+        is 7900, which is slightly smaller</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; than is required to achieve
+        orbit. Use the parameter window to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set it to 7906 to get into
+        orbit.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double vInit;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uInit is the initial vertical
+        speed of the projectile, in meters</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; per second. Its value for
+        any run is set by the user in the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double uInit;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dt is the time-step in seconds.
+        Its value for any run is set by the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user in the parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private double dt;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; maxSteps is the maximum number of
+        steps in the calculation. This is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; used to ensure that the calculation
+        will stop even if initial values</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are chosen so that the projectile
+        goes far away. Its value for any</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; run is set by the user in the
+        parameter
+        window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; private int maxSteps;</tt>
+    <br>
+    &nbsp;
+</p>
+
+<h3>Program code</h3>
+<tt>&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Begin the program.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; */</tt>
+
+<p><tt>&nbsp;&nbsp;&nbsp; public void process() throws Exception {</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Define and
+        initialize the variables we will need. The position</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and velocity
+        components are referred to an x-y coordinate system</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; whose origin
+        is at the center of the Earth. The initial starting</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; position
+        is taken to be on the y-axis, so that the initial value</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of the
+        y-position
+        is the radius of the Earth added to the intial</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; height of
+        the starting position, i.e. rEarth + h0. The initial</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-speed
+        is the initial horizontal speed; the initial y-speed is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the initial
+        vertical speed. We need the following variables for</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the
+        calculation:</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - u0 and
+        u1 are the x-speeds used in the loop; as in</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the program CannonTrajectory, we keep track of the speed</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in the previous loop step separately from the current one.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        u1 is the current position, u0 the previous one.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - v0 and
+        v1 are the y-speeds analogous to u0 and u1.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - x and
+        y are the x-coordinate position and y-coordinate</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        position, respectively.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ax and
+        ay are the x-acceleration and y-acceleration, respectively.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - r is the
+        radial distance of the current position from the center</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of the Earth.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -
+        xCoordinate
+        and yCoordinate are used to store the values of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x and y at each timestep. They are arrays of length maxSteps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - j is an
+        integer counter for the loop steps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double u0 = uInit;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double u1 = u0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double v0 = vInit;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double v1 = v0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double x = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double y = rEarth +
+        h0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double ax, ay;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double r = Math.sqrt(
+        x*x + y*y );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] xCoordinate
+        = new double[ maxSteps ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] yCoordinate
+        = new double[ maxSteps ];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xCoordinate[0] = x;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; yCoordinate[0] = y;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int j;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now start
+        the loop that computes the trajectory. The loop counter</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is j, which
+        starts at 1 and increases by 1 each step. The test for</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exiting
+        from the loop will be either that the number of steps is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; too large
+        or that the orbital radius r is less that the radius</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of the Earth
+        rEarth, so the condition for continuing the loop is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ( r &gt;= rEarth ) &amp;&amp; ( j &lt; maxSteps )</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( j = 1; (( r
+    &gt;=
+    rEarth ) &amp;&amp; ( j &lt; maxSteps )); j++ ) {</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        First calculate the components of the acceleration of gravity</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        at the last computed position.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ax = -g*x/r;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ay = -g*y/r;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        The velocity components change according to the acceleration.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        As in program CannonTrajectory, we keep track of the previous</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        and current values of the velocity components separately.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        u1 = u0 + ax*dt;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        v1 = v0 + ay*dt;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        The position components change according to the average of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the velocity during the last time-interval, as in</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        CannonTrajectory. Calculate the new radial distance from these.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Store the data in the position arrays.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x = x + (u0 + u1)/2*dt;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        y = y + (v0 + v1)/2*dt;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        r = Math.sqrt(x*x + y*y);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xCoordinate[j] = x;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yCoordinate[j] = y;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Now update the values of velocities to get ready for next</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        time-step.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        u0 = u1;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        v0 = v1;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The closing
+        bracket above is the end of the group of statements</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that form
+        the loop. The computer increases j here and tests to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; see if it
+        should do another step in the loop. If so it goes</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; back to
+        the first statement after the opening bracket at the end</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of the "for"
+        statement above. If not it goes to the next statement.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; We have
+        now exited from the loop. That means that either the radius</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is inside
+        the Earth (the projectile has hit the ground), or the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; loop has
+        run through maxSteps steps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the
+        latter
+        case, the user will see from the output that the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; trajectory
+        is not ended. The whole thing can be run again</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with a
+        larger
+        choice of time-step or a larger value of maxSteps,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; but most
+        likely it is better to choose different initial conditions</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; so that
+        the orbit behaves better.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In order
+        to display the resulting orbit in a way that shows the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; relationship
+        of the orbit to the Earth, we draw the circle representing</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the Earth
+        as well as drawing the orbit. The coordinates of the Earth</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; are put
+        into the arrays xEarth and yEarth and are also output. This</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; means that
+        the unit will have two output nodes that have to be</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connected
+        to the grapher. The first node (numbered 0) has the shape</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of the Earth
+        and the second (numbered 1) has the trajectory.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The ouput
+        data sets are defined as objects of type Curve, which is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a Triana
+        data type. The data are assigned to each Curve when it is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; created
+        by the "new" statement. In addition, a graph title is added</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to each
+        Curve and axis labels are added to the Curve for the Earth's</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shape. This
+        helps the graphing unit to display the information</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; intelligibly.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int k;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] finalX = new
+        double[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] finalY = new
+        double[j];</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( k = 0; k &lt;
+    j;
+    k++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalX[k] = xCoordinate[k];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalY[k] = yCoordinate[k];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curve out1 = new
+    Curve(
+    finalX, finalY );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; out1.setTitle("Orbit
+        of the projectile");</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double angleStep =
+    Math.PI/200;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] xEarth = new
+        double[400];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] yEarth = new
+        double[400];</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( k = 0; k &lt;
+    400;
+    k++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        xEarth[k] = rEarth * Math.cos(angleStep * k);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        yEarth[k] = rEarth * Math.sin(angleStep * k);</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xEarth[400] =
+        xEarth[0];&nbsp;
+        // This ensures that the curve describing the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; yEarth[400] =
+        yEarth[0];&nbsp;
+        // Earth is closed.</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curve out0 = new
+    Curve(
+    xEarth, yEarth );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; out0.setTitle("Surface
+        of the Earth");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out0.setIndependentLabels(0,"horizontal
+        distance (m)");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out0.setDependentLabels(0,"vertical
+        distance (m)");</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outputAtNode( 0, out0
+    );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outputAtNode( 1, out1
+        );</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; }</tt>
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<br>
+<b><font size="-1">Return to <a href="index.html">index</a> of all
+    computer
+    programs.</font></b>
+</body>
+</html>

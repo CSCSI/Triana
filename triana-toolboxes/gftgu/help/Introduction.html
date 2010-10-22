@@ -1,0 +1,1244 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template"
+          content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR"
+          content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+    <meta name="Author" content="Bernard F Schutz">
+    <title>Introduction to Java</title>
+</head>
+<body text="#000000" bgcolor="#fdf5e6" link="#808080" vlink="#808080"
+      alink="#ff0000" background="BH-posneg.negative.watermark.png">
+<span style="font-weight: bold;"><a href="license.html"><img
+        src="HelpfileBanner.png" title="Click to view license information."
+        alt="" style="border: 0px solid ; width: 375px; height: 362px;"
+        align="right"></a></span>
+<table cellpadding="2" cellspacing="2" border="3"
+       style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
+    <tbody>
+    <tr>
+        <td
+                style="vertical-align: top; background-color: rgb(204, 204, 204);">
+            <h3
+                    style="color: rgb(102, 255, 153); font-family: monospace; font-weight: bold; text-align: center;">
+                <big><big><big><big><span
+                        style="color: rgb(255, 0, 0);">Introduction to Programming in Java<br>
+      </span></big></big></big></big></h3>
+
+            <div style="text-align: center;"><big><font size="+2"><big><span
+                    style="color: rgb(255, 0, 0);"><small><span style="font-weight: bold;"><small><span
+                    style="color: rgb(0, 0, 0);">version 1.0<br>
+      </span></small></span></small></span></big></font><big><big><span
+                    lang="EN-GB"
+                    style="font-size: 12pt; font-family: &quot;Times New Roman&quot;; font-weight: bold;">&copy;
+                2003 Bernard Schutz</span></big></big></big><br>
+            </div>
+            <h3
+                    style="font-family: helvetica,arial,sans-serif; text-align: center;">
+                <large><b><span
+                        style="color: rgb(0, 0, 0);">The computer programs for <span
+                        style="font-style: italic;">Gravity from the ground up</span> are
+written in Java, a versatile and powerful computer language that is
+available for most computer platforms free of charge. If you have never
+written a computer program, or if you want to learn how Java differs
+from the language you are used to, start with this tutorial.<br>
+      </span></b></large>
+            </h3>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p><br>
+</p>
+
+<h2><a name="contents"></a>Contents</h2>
+<ul>
+    <li>
+        <a href="#introduction">Java and your computer</a></li>
+    <li>
+        <a href="#data">Data types, and defining variables and arrays</a></li>
+    <li>
+        <a href="#arithmetic">Arithmetic and operators</a></li>
+    <li>
+        <a href="#assignment">Assigning values to variables</a></li>
+    <li>
+        <a href="#functions">Mathematical functions</a></li>
+    <li>
+        <a href="#if"><tt><font size="+1">If</font></tt> statements</a></li>
+    <li>
+        <a href="#loops">Loops</a></li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="introduction"></a>Java and your computer</h2>
+There are dozens of programming languages in use today, but most are
+similar
+in their basic features. Therefore, studying one of them, like Java,
+opens
+the door to most of the others.What is more, Java is free and comes
+with
+many pre-programmed tools, so once you learn it you have a powerful
+programming
+system at your fingertips.
+<p>A Java program consists of a series of instructions called <i>statements</i>.
+    Statements are built out of mathematical expressions and words that
+    Java
+    understands. Each statement ends in a semicolon, and statements can be
+    grouped together within curly brackets <tt><font size="+1">{}</font></tt>.
+    The computer will execute the statements one after another, unless the
+    statements themselves change the order of execution.
+</p>
+
+<p>You write a computer program using an ordinary text editor. Once it
+    is finished, it has to be translated into a form that the computer can
+    understand. This is the job of the <i>compiler</i>. This happens in
+    different
+    ways for different languages. The present document does not deal with
+    compiling
+    and running Java programs. The Triana programming environment is being
+    supplied with the programs to take care of those details. See the
+    document
+    on <a href="UsingTriana.html">Using Triana for <i>Gravity from the
+        ground
+        up</i></a>.
+</p>
+
+<p>Here we deal with the way to write the programs. This will allow you
+    to read and understand the programs that are supplied with Triana. It
+    will
+    also allow you to modify them or create totally new ones. This is not a
+    complete introduction to the Java language; there are many books and
+    tutorials
+    on the web that are more complete than the present one. Here we just
+    develop
+    the foundations of the language to the extent that you will need it for
+    the book <i>Gravity from the ground up</i>. We will use examples from
+    some
+    of the book's programs, especially the first one,&nbsp; <tt><font
+            size="+1"><a href="CannonTrajectory.html">CannonTrajectory</a></font></tt>,
+    in order to illustrate the lessons here.
+</p>
+
+<p>When reading these programs, you will see that they contain
+    extensive
+    comments to explain the reasons for the statements. Java permits the
+    insertion
+    of comments to improve the understandability of programs. There are two
+    ways to put comments into Java. The first way is to follow a statement
+    with <tt><font size="+1">//</font></tt> on the same line. The result
+    is that
+    Java will ignore everything else on that line, until the next line
+    begins.
+    The second, and more powerful, way to insert comments is to use a <i>comment
+        block</i>. Java ignores any block of text that begins with <tt><font
+            size="+1">/*</font></tt>
+    and ends with <tt><font size="+1">*/</font></tt>. If it encounters a <tt><font
+            size="+1">/*</font></tt>
+    on processing a program, it begins to ignore the subsequent characters
+    until it encounters a <tt><font size="+1">*/</font></tt>, which it
+    takes
+    to be the end of the comment block.
+</p>
+
+<p>One advanced aspect of Java is that it is an <i>object-oriented</i>
+    language. This is important for more sophisticated programmers, but it
+    does not affect what we need to know for the computer programs in the
+    book,
+    so we do not address object-oriented issues here. Java was originally
+    based
+    on the computer language called C and it resembles it closely when
+    dealing
+    with simple expressions, as in this introduction. If you are familiar
+    with
+    C you will have little more to learn in order to understand our
+    programs.
+</p>
+
+<p>Java was developed by <a href="http://www.sun.com/index.xml">Sun
+    Microsystems</a>, and its tools are still under
+    development. Although it is copyright, it is available free of charge
+    from
+    <a href="http://java.sun.com/">Sun</a>, and there are even other
+    versions created by other
+    companies that obey the same rules. Any Java system should be able to
+    execute
+    Triana and the programs of this book. The download pages from the <a
+            href="http://www.gravityfromthegroundup.org">website</a> for this book
+    contain the necessary links for you to obtain Java, but you are also
+    encouraged to go onto the web and look for other links: there is plenty
+    of Java information and resource around!<br>
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="data"></a>Data types, and defining variables and arrays</h2>
+Java distinguishes between several kinds of data: we will show how to
+use
+<i>integers</i>,
+<i>floating-point
+    numbers</i>, and logical (<i>boolean</i>) values, for example. The
+differences
+between them relate to what values they are allowed to represent. As
+the
+name implies, an integer can have only values drawn from the set (...,
+-2, -1, 0, 1, 2, ...). Since integers in Java are stored using two
+bytes,
+or 16 bits, there are 2<sup>16</sup> different possible values. Given
+that
+there are positive and negative values, the largest absolute value is 2<sup>15</sup>
+= 32768. Floating-point numbers are numbers that, in standard
+arithmetic,
+would be written like 2.168 x 10<sup>-19</sup> ; in Java this would be
+written as <tt><font size="+1">2.168e-19</font></tt>. The ones that
+Java
+uses by default are called <i>doubles</i>, and use 8 bytes for each
+number.
+This allows 15 bits to be used for the exponent alone, so numbers can
+be
+represented between 10<sup>-16382</sup> and 10<sup>+16383</sup>.&nbsp;
+Of course, the mantissa can be represented only as accurately as the
+remaining
+64-15 = 49 bits allow. (The word <i>double</i> is short-hand for
+"double-precision
+floating point number". Java and most other languages also offer <i>floats</i>,
+which use only 4 bytes of storage and are therefore <i>single-precision</i>
+numbers, but in Java -- unlike most other languages -- double-precision
+is the default.)
+<p>Computer calculations therefore do not in general arrive at exact
+    results,
+    but rather they should produce the floating-point number that is
+    closest
+    to the true result. This means every calculation is affected by
+    round-off
+    error, and the programmer needs to be sure that this error is
+    tolerable.
+    In our programs, this will never be an issue.
+</p>
+
+<p>The third data type that we will use in our programs is the logical
+    type, which has only two values: "<tt><font size="+1">true</font></tt>"
+    or
+    "<tt><font size="+1">false</font></tt>".In Java this is called a <i>boolean</i>
+    data type. Booleans are used for logical tests, wherever in a program a
+    decision has to be made that may depend on values of some other
+    numbers.
+    We shall encounter such decisions when, for example, we use <a
+            href="#loops">loops</a>,
+    which are groups of statements that are repeated a number of times.
+    They
+    continue to be repeated until a certain boolean value evaluates to "<tt><font
+            size="+1">false</font></tt>".
+</p>
+
+<p>You can store data in the computer's memory by defining a <i>variable</i>,
+    which is a name that the computer associates with a storage location.
+    You
+    have to tell the computer what kind of data will be stored in the
+    location.
+    For example, to store an integer under the name "<tt><font size="+1">j</font></tt>",
+    you first have to tell Java about it by writing:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">int j;</font></tt>
+    <br>
+    This is our first example of a <i>statement</i>. It uses the Java
+    keyword
+    "<tt><font size="+1">int</font></tt>" that tells Java that what follows
+    will
+    be the name of a variable that holds an integer. This statement is
+    called
+    a <i>declaration</i>. You could include a list of variables, separated
+    by commas:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">int j, k, myInteger;</font></tt>
+    <br>
+    This list contains an example of a longer name, following a Java
+    convention
+    (not required by the language, just practiced by programmers) that
+    compound
+    variable names begin with lower case, and further words begin with an
+    upper-case
+    letter. This illustrates another Java rule, that names of variables are
+    case-sensitive. The variable names <tt><font size="+1">myinteger</font></tt>,
+    <tt><font size="+1">myInteger</font></tt>,
+    <tt><font size="+1">MyInteger</font></tt>,
+    <tt><font size="+1">myinTeger</font></tt>,
+    and <tt><font size="+1">MYINTEGER</font></tt> all could be used in the
+    same
+    program for different variables. (But don't do this unless you have a
+    good
+    reason to: it will make your program hard to read and understand!)
+</p>
+
+<p>All variables <i>must</i> be declared before they are used.
+    Declaration
+    statements can appear anywhere in the program before their variables
+    are
+    first used. The declarations for doubles and booleans are similar to
+    those
+    for ints:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">double xPosition;</font></tt>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">boolean decider;</font></tt>
+</p>
+
+<p>In many cases it is desirable to store several numbers of the same
+    type
+    together. This is done by using an <i>array</i>. An array is the
+    computer
+    equivalent of what in mathematics are called vectors and matrices. A
+    vector
+    consists of a sequence of components, all having the same name,
+    distinguished
+    from one another by a label. Thus, the velocity of a particle is given
+    by the vector <b>v</b> with components v<sub>x</sub>, v<sub>y</sub>,
+    and
+    v<sub>z</sub>. Alternatively, we could number the labels and call the
+    components
+    v<sub>1</sub>, v<sub>2</sub>, and v<sub>3</sub>. In Java, the
+    components
+    could be stored as three doubles with the same name, and with the index
+    held in square brackets: <tt><font size="+1">v[1]</font></tt>, <tt><font
+            size="+1">v[2]</font></tt>,
+    and <tt><font size="+1">v[3]</font></tt>. This is called a
+    one-dimensional
+    array. To declare that a variable is a one-dimensional double array,
+    one
+    would use the statement:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">double[] doubleArray;</font></tt>
+    <br>
+    This does not say how many components it has. We will learn how to
+    do that below.
+</p>
+
+<p>An important feature of Java is that the numbering of indices for
+    arrays
+    starts at zero. The first three components of <tt><font size="+1">doubleArray</font></tt>
+    are, therefore, <tt><font size="+1">doubleArray[0]</font></tt>, <tt><font
+            size="+1">doubleArray[1]</font></tt>,
+    and <tt><font size="+1">doubleArray[2]</font></tt>.
+</p>
+
+<p>Arrays can have more than one index. A <i>two-dimensional array</i>
+    is the computer analog of a <i>matrix</i>, which requires two indices.
+    In Java the indices are placed in separate brackets. Thus a
+    two-dimensional
+    array of integers could be declared as
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">int[][] population;</font></tt>
+    <br>
+    and its elements accessed as <tt><font size="+1">population[0][2]</font></tt>
+    or <tt><font size="+1">population[3][5]</font></tt>, etc. Again, each
+    index
+    begins numbering at 0.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<br>
+&nbsp;
+<h2><a name="arithmetic"></a>Arithmetic and operators</h2>
+In Java you write arithmetic expressions in fairly standard notation.
+The
+standard operators are "<tt><font size="+1">+</font></tt>" for
+addition,
+"<tt><font size="+1">-</font></tt>" for subtraction, "<tt><font
+        size="+2">*</font></tt>"
+for multiplication, and "<tt><font size="+1">/</font></tt>" for
+division.
+You write in the usual algebraic way, and can group terms together with
+round brackets <tt><font size="+1">(..)</font></tt> to force the
+interior
+to be evaluated before the result is used. As in standard algebra, some
+operations have a higher priority and are executed first. Thus, the
+expression
+<tt><font size="+1">5
+    + 8 * 4</font></tt> requires that 8 and 4 be multiplied first and the
+result
+added to 5; the operator "<tt><font size="+1">*</font></tt>" has a
+higher
+precedence than "<tt>+</tt>". If you want 5 and 8 to be added before
+multiplying
+by 4 you have to write <tt><font size="+1">(5 + 8) * 4</font></tt>.
+There
+is no operator in Java for "raising to a power"; we will see how to do
+that later.
+<p>Java has many more operators that do specialized things. For our
+    programs,
+    here are the most important ones.
+</p>
+<ul>
+    <li>
+        The minus sign can also be used, as in arithmetic, as a prefix operator
+        to change the sign of a number: negative numbers are written, e.g., <tt><font
+            size="+1">-1.234e40</font></tt>,
+        and this could also be expressed as <tt><font size="+1">-(1.234e40)</font></tt>.
+        If we write <tt><font size="+1">-(-1.234e40)</font></tt> we produce
+        the postive
+        number <tt><font size="+1">1.234e40</font></tt>. The plus sign can be
+        used
+        as a prefix, as well, but of course it changes nothing.
+    </li>
+    <li>
+        Logical values (<tt><font size="+1">true</font></tt> and <tt><font
+            size="+1">false</font></tt>)
+        can be combined with the logical operators <tt><font size="+1">&amp;&amp;</font></tt>
+        (which means "AND"), <tt><font size="+1">||</font></tt> (which means
+        "OR"),
+        and <tt>!</tt> (meaning "NOT"). Thus, "<tt><font size="+1">!(true)</font></tt>"
+        evaluates to <tt><font size="+1">false</font></tt>, "<tt><font
+            size="+1">(true)&amp;&amp;(true)</font></tt>"
+        evaluates to <tt><font size="+1">true</font></tt> but "<tt><font
+            size="+1">(true)&amp;&amp;(false)</font></tt>"
+        is <tt><u><font size="+1">false</font></u></tt>. Similarly, "<tt><font
+            size="+1">(true)||(false)</font></tt>"
+        is <tt><font size="+1">true</font></tt> but "<tt><font size="+1">(false)||(false)</font></tt>"
+        is <tt><font size="+1">false</font></tt>. In the program <a
+            href="Orbit.html">Orbit</a>
+        there is a logical test that reads
+    </li>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt><font
+        size="+1">!fullOrbit
+    &amp;&amp; ( j &lt; maxSteps )</font></tt>
+    <br>
+    This is true if <tt><font size="+1">fullOrbit</font></tt> is <tt><font
+        size="+1">false</font></tt>
+    (in the program, if the orbit is incomplete) <i>and</i> if the
+    variable
+    <tt><font size="+1">j</font></tt>
+    has a value less than that of the variable
+    <tt><font size="+1">maxSteps</font></tt>
+    (which, in the program, is set to the maximum number of steps the
+    program
+    is allowed to make to move the satellite along its orbit).
+    <li>Java uses the <tt><font size="+1">++</font></tt> and <tt><font
+            size="+1">--</font></tt>
+        operators that are part of the C language. These are increment
+        operators
+        that add or subtract 1 from a number. They are normally used only for
+        variables.
+        Thus, if <tt><font size="+1">j</font></tt> is an int, then <tt><font
+                size="+1">++j</font></tt>
+        is an instruction to add 1 to the value of j and store the result in j.
+        The operator <tt><font size="+1">--</font></tt> decreases by 1: <tt><font
+                size="+1">--j</font></tt>
+        results in the value stored in <tt><font size="+1">j</font></tt> being
+        decreased
+        by 1. The <tt><font size="+1">++</font></tt> could also be written
+        after
+        the <tt><font size="+1">j</font></tt>, ie as <tt><font size="+1">j++</font></tt>.
+        This would also change j by adding 1 to it. The difference between
+        using
+        the <tt><font size="+1">++</font></tt> before or after the variable
+        name
+        is subtle and is important only in more complicated expressions. As an
+        example, suppose <tt><font size="+1">j</font></tt> has the value 5.
+        Then
+        the expression <tt><font size="+1">4 * (++j)</font></tt> would
+        increase <tt><font size="+1">j</font></tt>
+        by 1 to 6 and then multiply by 4, giving 24. Afterwards, <tt><font
+                size="+1">j</font></tt>
+        would have the value 6. The expression <tt><font size="+1">4 * (j++)</font></tt>
+        would first use the old value of <tt><font size="+1">j</font></tt> in
+        the
+        arithmetic and then do the increment afterwards; it would give 20 as a
+        result but <tt>j</tt> would still have the value 6 afterwards. We use
+        the
+        <tt><font size="+1">++</font></tt>
+        and <tt><font size="+1">--</font></tt> operators mainly for counting
+        how
+        many times a group of expressions is executed in a loop (see <a
+                href="#loops">below</a>).
+    </li>
+    <li>
+        % is the <i>remainder operator</i> for integer division. It should be
+        used
+        only on integers. For example, <tt><font size="+1">5%2</font></tt>
+        gives
+        the remainder when 5 is divided by 2, i.e. 1.
+    </li>
+    <li>
+        The <i>division operator</i> <tt><font size="+1">/</font></tt>
+        operates in
+        a special way when sandwiched between two ints. For example, <tt><font
+            size="+1">5/2</font></tt>
+        gives the value 2, not 2.5, because the operator / returns an integer
+        value
+        if both arguments are integers. It produces the "integer part" of the
+        arithmetic
+        answer. This is complementary to the action of <tt><font size="+1">%</font></tt>
+        described above.
+    </li>
+    <li>
+        Inequality operators are important for logical tests. They are called <tt><font
+            size="+1">&gt;</font></tt>,
+        <tt><font size="+1">&gt;=</font></tt>,
+        <tt><font size="+1">&lt;</font></tt>,
+        <tt><font size="+1">&lt;=</font></tt>,
+        <tt><font size="+1">==</font></tt>.
+        Expressions involving them evaluate to logical (boolean) values. For
+        example,
+        <tt><font size="+1">(5&gt;2)</font></tt>
+        is an expression that equals "<tt><font size="+1">true</font></tt>",
+        because
+        the number 5 is larger than 2. Similarly <tt>(2&gt;3.14159)</tt>
+        equals "<tt>false</tt>".
+        The operators <tt><font size="+1">&gt;</font></tt> and <tt><font
+            size="+1">&lt;</font></tt>
+        require strict inequality. The operators <tt><font size="+1">&gt;=</font></tt>
+        and <tt><font size="+1">&lt;=</font></tt> ("greater-than-or-equal-to"
+        and
+        "less-than-or-equal-to") return true if the values are equal. And the
+        operator
+        <tt><font size="+1">==</font></tt>
+        tests for strict equality. Thus, <tt><font size="+1">(3.14159==3.141591)</font></tt>
+        evaluates to "<tt><font size="+1">false</font></tt>". In Java it is
+        important
+        to remember that the equality test is with the repeated equal sign <tt><font
+            size="+1">==</font></tt>;
+        do not use just a single <tt><font size="+1">=</font></tt> sign! As an
+        example
+        of boolean arithmetic, consider the following expression taken from <a
+            href="CannonTrajectory.html">CannonTrajectory</a>:
+    </li>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt><font
+        size="+1">((
+    h &gt;= 0.0 ) &amp;&amp; ( j &lt; 1000 )</font></tt>
+    <br>
+    It contains two boolean tests. The first is <tt><font size="+1">( h
+    &gt;=
+    0.0 )</font></tt>, which is true if the value of <tt><font size="+1">h</font></tt>
+    is positive or zero. The second is <tt><font size="+1">( j &lt; 1000 )</font></tt>,
+    which is true if the variable <tt><font size="+1">j</font></tt> is
+    less than
+    1000. These are joined by the operator <tt><font size="+1">&amp;&amp;</font></tt>
+    ("AND"), which requires both tests to return true in order to return an
+    overall value of true. This expression is used to regulate the loop
+    (see
+    below) that calculates the position of the cannonball step-by-step.
+    When
+    this test fails, the computation takes no more steps.
+    <li>The single "<tt><font size="+1">=</font></tt>" sign is the <i>assignment</i>
+        operator. This is described in the next section.
+    </li>
+</ul>
+Since there are different kinds of arithmetic numbers, one should be a
+little sensitive to mixing them in arithmetic expressions. Thus, the
+expression
+<tt><font size="+1">1.0
+    + 3e4</font></tt> is an instruction to add two doubles, while <tt><font
+        size="+1">1
+    + 3e4</font></tt> is an instruction to add an int to a double. Java
+will
+behave correctly in both cases, producing a double with the value
+30001.0
+in each case. But if you wrote <tt><font size="+1">1 + 30000</font></tt>,
+then Java would produce an int with the value 30001. We saw in the list
+above how different the result <tt><font size="+1">5/2</font></tt> and
+<tt><font size="+1">5.0/2</font></tt>
+can be: the first gives 2, the second 2.5. In a mixed expression,
+division
+defaults to floating-point division, so that <tt><font size="+1">5.0/2</font></tt>
+and <tt><font size="+1">5/2.0</font></tt> both give 2.5.
+<p>This is a good place also to comment on how to write statements in
+    Java
+    so that they are readable. In general, Java does not mind if you put in
+    extra spaces or line-breaks in the middle of a statement. It looks for
+    the ending semicolon to determine where the statement ends, and it
+    ignores
+    excess spaces of any kind. So you can write your statements to contain
+    tabs, spaces, and line-returns if that helps make the program readable.
+    Programmers typically make indents before the beginnings of statements
+    in order to line them up.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="assignment"></a>Assigning values to variables</h2>
+To store a number into a variable, one uses an <i>assignment</i>
+statement.
+In Java and most other languages, the assignment is accomplished by an
+operator called "=", which does not mean the same as the symbol "<tt><font
+        size="-1">=</font></tt>"
+would mean in an algebraic equation. Thus, the Java statement
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<tt><font size="+1">weight = 15;</font></tt>
+<br>
+places the value 15 into the storage for the value of "<tt><font
+        size="+1">weight</font></tt>".
+It acts right-to-left, in the sense that the right-hand-side of the
+equals
+sign is evaluated as an arithmetic expression, and then the result is
+assigned
+to the storage location of the variable named on the left-hand side.
+<p>This use of the <tt><font size="+1">=</font></tt> sign is quite
+    different
+    from its use in ordinary algebra. The statement <tt><font size="+1">a
+        = b</font></tt>
+    in an algebraic calculation means that the values in the variables <tt><font
+            size="+1">a</font></tt>
+    and <tt><font size="+1">b</font></tt> are the same. The difference
+    between
+    this and the assignment statement is most vividly illustrated with the
+    perfectly common statement in Java:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">j = j + 2;</font></tt>
+    <br>
+    which instructs Java to evaluate the right-hand-side using the current
+    value of <tt><font size="+1">j</font></tt>, and then assign the result
+    to
+    <tt><font size="+1">j</font></tt>.
+    The effect of this statement, which would be meaningless in arithmetic,
+    is simply to change the value of <tt><font size="+1">j</font></tt> by
+    2.
+    Notice that the expression <tt><font size="+1">j++</font></tt> has the
+    same
+    effect on <tt><font size="+1">j</font></tt> as the expression <tt><font
+            size="+1">j
+        = j + 1</font></tt>. This happens in many programs that repeatedly
+    update
+    the value of a variable. For example, in <tt><font size="+1"><a
+            href="CannonTrajectory.html">CannonTrajectory</a></font></tt>
+    the variable <tt><font size="+1">x</font></tt> holds the horizontal
+    position
+    of a cannonball at any particular time during its flight. To get the
+    value
+    at the next moment of time (an interval <tt><font size="+1">dt</font></tt>
+    later), the program uses the statement:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">x = x + u*dt;</font></tt>
+    <br>
+    This multiplies the time-interval dt by the horizontal speed <tt><font
+            size="+1">u</font></tt>
+    to get the distance increase <tt><font size="+1">u*dt</font></tt>;
+    then it
+    adds this to the current value of the horizontal position to get the
+    new
+    value, which is stored right away in <tt><font size="+1">x</font></tt>,
+    wiping
+    out the old value. After this statement, <tt><font size="+1">x</font></tt>
+    contains the new position.
+</p>
+
+<p>Java, in common with C, has other assignment operators that cover
+    just
+    the situation we have described. For example, the assignment
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">j += 2;</font></tt>
+    <br>
+    has the same effect as <tt><font size="+1">j = j + 2</font></tt>. It
+    is used because it allows Java to instruct the computer to perform this
+    operation more efficiently. There are assignments for other operators:
+    <tt><font size="+1">-=</font></tt>
+    subtracts the right-hand-side from the variable named on the left and
+    then
+    assigns that to the variable; <tt><font size="+1">*=</font></tt>,
+    <tt><font size="+1">/=</font></tt>,
+    and <tt><font size="+1">%=</font></tt> perform analogous tasks.
+</p>
+
+<p>It is possible in Java to make assignments in declaration
+    statements,
+    to initialize variable values. Thus, in <tt><font size="+1"><a
+            href="CannonTrajectory.html">CannonTrajectory</a></font></tt>
+    there is the statement
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">double g = 9.8;</font></tt>
+    <br>
+    to do two things at once: declare that <tt><font size="+1">g</font></tt>
+    is a double variable, and set its value to 9.8. (This constant holds
+    the
+    acceleration of gravity on the Earth.)
+</p>
+
+<p>Now that we have assignment statements, we can also see how to tell
+    Java that an array should have a certain size. In <tt><font size="+1"><a
+            href="CannonTrajectory.html">CannonTrajectory</a></font></tt>
+    the array <tt><font size="+1">horizontalDistance</font></tt> is used
+    to hold
+    some of the position information of a trajectory. It needs to hold 1000
+    numbers, so the declaration is
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">double[] horizontalDistance = new double[1000];</font></tt>
+    <br>
+    This is our first encounter with the Java keyword "<tt><font size="+1">new</font></tt>".
+    It sets up storage in the computer's memory for the array we have
+    defined,
+    and it places default values of zero into the storage locations. The "<tt><font
+            size="+1">[1000]</font></tt>"
+    tells Java to create one thousand locations. Note that these will be
+    accessible
+    by index values ranging from 0 to 999: the first element of the array
+    is
+    <tt><font size="+1">horizontalDistance[0]</font></tt>
+    and the last is <tt><font size="+1">horizontalDistance[999]</font></tt>.
+    This allocation of storage must be done before the array is used in
+    arithmetic.
+    It is not necessary to combine the allocation with the declaration.
+    Thus
+    it would be possible in CannonTrajectory to declare the array at one
+    point,
+    and then later in the program allocate storage:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">double[] horizontalDistance;</font></tt>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt><font
+            size="+1">
+        ...</font></tt>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">horizontalDistance = new double[1000];</font></tt>
+    <br>
+    Until the second statement is encountered, <tt><font size="+1">horizontalDistance</font></tt>
+    is just an abstract name to Java. After this statement, it is possible
+    to assign values to the array elements.
+</p>
+
+<p>Multidimensional arrays have similar allocation statements. Thus, it
+    is possible to write
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">int[][] population;</font></tt>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">population = new int[10][3];</font></tt>
+    <br>
+    This declares the name population to represent a two-dimensional array,
+    and then sets aside 30 storage locations (10 rows of 3 elements each,
+    equivalent
+    to a non-square matrix with 10 rows and three columns). These
+    statements
+    could be combined of course:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">int[][] population = new int[10][3];</font></tt>
+    <br>
+    would do the same.
+</p>
+
+<p>A name should be declared only once, i.e. the statement <tt><font
+        size="+1">int[][]
+    population</font></tt> should occur only once. But allocation of
+    storage
+    can be done over and over again, each time wiping out what was
+    previously
+    allocated. Thus, later in the program one could write
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">population = new int[7][7];</font></tt>
+    <br>
+    and this would have the effect of losing all the data stored in the
+    previous 10x3 storage locations and creating a different set of 7x7
+    storage
+    locations for the array.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="functions"></a>Mathematical functions</h2>
+We will, of course, go beyond simple arithmetic in these programs and
+use
+some mathematical functions. In Java, the standard functions (such as
+one
+finds on a scientific calculator, like <i>sine</i> and <i>cosine</i>)
+are
+contained in a library called <tt><font size="+1">Math</font></tt>.
+Its name
+must be used as a prefix to the function name, separated by a dot. Thus
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<tt><font size="+1">Math.sin( x )</font></tt>
+<br>
+is the way to get Java to evaluate the sine function on the argument
+<tt><font size="+1">x</font></tt>.
+In Java as in almost all other languages, the trignonometric functions
+expect their arguments to be given in radians, not degrees. Other
+functions
+include the cosine function <tt><font size="+1">Math.cos()</font></tt>,
+the
+exponential function <tt><font size="+1">Math.exp()</font></tt> (so
+that
+e<sup>x</sup> is <tt><font size="+1">Math.exp(x)</font></tt>), the
+tangent
+function <tt><font size="+1">Math.tan()</font></tt>, and the square
+root
+function <tt><font size="+1">Math.sqrt()</font></tt>. The value of the
+important
+constant
+<font face="SymbolPS">p</font> is part of this library, so that
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<tt><font size="+1">Math.PI</font></tt>
+<br>
+is the value of <font face="SymbolPS">p</font> expressed as a double
+(i.e. to about 15 significant figures). The capitalization of the
+letters
+<tt><font size="+1">PI</font></tt>
+is important: there is no constant called
+<tt><font size="+1">Math.pi</font></tt>
+or <tt><font size="+1">Math.Pi</font></tt>. The program <tt><font
+        size="+1"><a href="CannonTrajectory.html">CannonTrajectory</a></font></tt>
+contains the two statements
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<tt><font size="+1">double theta = angle * Math.PI / 180.0;</font></tt>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<tt><font size="+1">double u = speed * Math.cos( theta );</font></tt>
+<br>
+These declare and initialize the two variables. The first line converts
+an angle given in degrees to one given in radians.
+<p>Raising to a <i>power</i> is done in Java by the mathematics
+    library
+    function <tt><font size="+1">Math.pow</font></tt>, which takes two
+    arguments.
+    Thus, we can compute (2.14)<sup>0.25</sup> by evaluating <tt><font
+            size="+1">Math.pow(2.14,
+        0.25)</font></tt>. Note, however, that in Java as in most other
+    languages
+    it is often better (from the point of view of computer execution time)
+    to avoid using <tt><font size="+1">Math.pow</font></tt> if there are
+    simple
+    alternatives. Thus, a computer will compute the square of <tt><font
+            size="+1">x</font></tt>
+    faster if you write <tt><font size="+1">x*x</font></tt> rather than
+    use <tt><font size="+1">Math.pow(x,2)</font></tt>.
+    Even the cube may be faster as <tt><font size="+1">x*x*x</font></tt>.
+    The
+    programs in the book use constructions like this.
+</p>
+
+<p>The arguments of <tt><font size="+1">Math.sin</font></tt>, <tt><font
+        size="+1">Math.cos</font></tt>,
+    <tt><font size="+1">Math.tan</font></tt>,
+    <tt><font size="+1">Math.exp</font></tt>,
+    <tt><font size="+1">Math.sqrt</font></tt>,
+    and <tt><font size="+1">Math.pow</font></tt> should all be doubles.
+    You are
+    allowed to give integer values, however, and Java will convert them to
+    doubles before doing the evaluation. They all return values that are
+    doubles,
+    not ints.
+</p>
+
+<p>Other useful mathematics library functions are <tt><font size="+1">Math.abs</font></tt>
+    (the absolute value), <tt><font size="+1">Math.asin</font></tt> (the
+    arcsine
+    or inverse sine function, which returns its answer as an angle in
+    radians),
+    <tt><font size="+1">Math.acos</font></tt>
+    and <tt><font size="+1">Math.atan</font></tt> (inverse cosine and
+    inverse
+    tangent, respectively), <tt><font size="+1">Math.log</font></tt> (the
+    natural
+    logarithm), <tt><font size="+1">Math.toDegrees</font></tt> (converting
+    radians
+    to degrees), and <tt><font size="+1">Math.toRadians</font></tt>
+    (converting
+    degrees to radians). In <tt><font size="+1">CannonTrajectory</font></tt>
+    we could have replaced the declaration statement for theta given above
+    by
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">double theta = Math.toRadians( angle );</font></tt>
+</p>
+
+<p>There are comparison functions, like <tt><font size="+1">Math.max(a,b)</font></tt>
+    which takes two arguments (called <tt><font size="+1">a</font></tt>
+    and <tt><font size="+1">b</font></tt>
+    here) and returns the larger of the two. Similarly you can use <tt><font
+            size="+1">Math.min</font></tt>
+    to find the smaller of the two arguments. You can round a double to the
+    nearest integer with <tt><font size="+1">Math.rint</font></tt>. You
+    can find
+    the nearest integer less than a double with <tt><font size="+1">Math.floor</font></tt>,
+    and the nearest integer greater than a double with <tt><font size="+1">Math.ceil</font></tt>.
+</p>
+
+<p>Two other functions needs special comment. The first is <tt><font
+        size="+1">Math.atan2</font></tt>.
+    This takes two arguments, say <tt><font size="+1">x</font></tt> and <tt><font
+            size="+1">y</font></tt>.
+    The value of <tt><font size="+1">Math.atan2(y,x)</font></tt> is the
+    angle
+    that a line drawn from the origin of a rectangular coordinate system to
+    the point (x,y) would make with the x-axis. (Notice the order of its
+    arguments.)
+    It thus converts rectangular coordinates to polar, or at least it finds
+    the polar coordinate angle associated with the points. The effect is
+    almost
+    the same as <tt><font size="+1">Math.atan(y/x)</font></tt>, which also
+    returns
+    the angle made by this line, since the tangent of that angle is the
+    ratio
+    y/x. However, <tt><font size="+1">Math.atan</font></tt> cannot tell
+    the difference
+    between the first and third quadrants, since the ratio, say, -1/-1 is
+    the
+    same as +1/+1. Nor will Math.atan work well if y=0, since division by 0
+    is not allowed. But <tt><font size="+1">Math.atan2</font></tt> keeps
+    the
+    <tt><font size="+1">x</font></tt>
+    and <tt><font size="+1">y</font></tt> arguments separated, so it can
+    tell
+    which quadrant the answer is in, and it can handle the case y=0. We use
+    <tt>Math.atan2</tt>
+    extensively in the program <tt><a href="Orbit.html">Orbit</a></tt>.
+</p>
+
+<p>The final function we will need is <tt><font size="+1">Math.random</font></tt>.
+    This takes no argument at all, but it must still be written with empty
+    round brackets:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">Math.random()</font></tt>
+    <br>
+    evaluates to a "random" number between 0 and 1. Each time it is called
+    it evaluates to a different number, so repeated calls to it can produce
+    a list of random numbers that can be used in programs that study
+    probability.
+    The numbers are only "random" (which means pseudo-random) because
+    nothing
+    in a computer is truly random; everything is determined by the program
+    and its environment. Java implements a method that will return numbers
+    that are uniformly distributed in the interval between 0 and 1 and
+    contain
+    with no significant correlations with one another.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="if"></a><tt><font size="+3">If</font></tt> statements</h2>
+Normally Java executes the statements of a program in the order in
+which
+they appear in the program.But there are times when you would like a
+program
+to do different things depending on some numbers that were not known in
+advance, but were only calculated in the program. You might, for
+example,
+want to count how often a particular variable exceeds a certain value.
+You can test it using the <tt><font size="+1">&gt;</font></tt>
+operator, but
+to control the execution of the program as a result of the test, you
+need
+the if statement. For example, to add 1 to a variable <tt><font
+        size="+1">count</font></tt>
+if a variable <tt><font size="+1">x</font></tt> is greater than zero,
+write
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<tt><font size="+1">if ( x &gt; 0 ) count++;</font></tt>
+<br>
+The keyword if is followed by a boolean expression; if this expression
+evaluates to <tt><font size="+1">true</font></tt>, then the statement
+that
+follows it is executed. If not, Java simply goes to the next statement.
+The boolean condition must always be included in round brackets <tt><font
+        size="+1">(..)</font></tt>.
+<p>Often you may have two alternative courses of action. You might like
+    to keep the number of positive values of <tt><font size="+1">x</font></tt>
+    in a variable <tt><font size="+1">countPositive</font></tt> and the
+    number
+    of negative or zero values in <tt><font size="+1">countNegative</font></tt>.
+    Then you can write
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">if ( x &gt; 0 ) countPositive++;</font></tt>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">else countNegative++;</font></tt>
+    <br>
+    The Java keyword "<tt><font size="+1">else</font></tt>" gives the
+    alternative
+    action that is taken only if the test returns <tt><font size="+1">false</font></tt>.
+    This construction will guarantee that something happens each time,
+    either
+    the first statement or the second. Note that, without an <tt><font
+            size="+1">else</font></tt>
+    clause, the statement following <tt><font size="+1">if</font></tt>
+    will be
+    executed regardless of the outcome of the test.
+</p>
+
+<p>In these examples, the individual statements following "<tt><font
+        size="+1">if</font></tt>"
+    or "<tt><font size="+1">else</font></tt>" can be replaced by groups of
+    statements
+    enclosed in curly brackets. This allows quite complicated alternative
+    actions
+    to be chosen. For example one could write
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ( x
+        &gt; 0 ) {</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        countPositive++;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        positiveSum += x;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else {</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        countNegative++;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        negativeSum += x;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</font></tt>
+    <br>
+    where the variables <tt><font size="+1">positiveSum</font></tt> and <tt><font
+            size="+1">negativeSum</font></tt>
+    are assumed to have been declared earlier and will be used to
+    accumulate
+    the sum of all the values of <tt><font size="+1">x</font></tt> when it
+    is
+    positive or negative, respectively. Notice in this expression that
+    there
+    is a line-break after the opening { and indents for the statements
+    until
+    the closing }. This helps readability, and does not affect the program
+    since Java ignores all these extra spaces.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="loops"></a>Loops</h2>
+A very important program construction for our programs is the <i>loop</i>,
+which allows us to execute a group of statements over and over again.
+We
+need loops in order to simulate the motion of projectiles and planets;
+the procedure to advance the position of the planet from one time to
+the
+next is always the same, so we don't want to write the statements out
+again
+and again for each step, particularly if the calculation may require
+thousands
+of steps! Instead, we write out the statements only once, and group
+them
+inside a loop. The loop has a special set of instructions that control
+how often it is executed.
+<p>In <tt><font size="+1">CannonTrajectory</font></tt> the heart of
+    the program
+    is the following set of statements:
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for ( j = 1; (( h &gt;= 0.0 ) &amp;&amp; ( j &lt; 1000 )); j++ ) {</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x = x + u*dt;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        w = v - g*dt;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        h = h + (w + v)/2*dt;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        verticalDistance[j] = h;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        horizontalDistance[j] = x;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        v = w;</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        }</font></tt>
+    <br>
+    (We have removed the comments from the code in order to show the
+    statements
+    only.) The loop is set up by the "<tt><font size="+1">for</font></tt>"
+    statement.
+    this is followed by a group of statements enclosed in curly brackets <tt><font
+            size="+1">{..}</font></tt>.
+    These statements are the ones that will be executed repeatedly. All we
+    need to examine here is how the "<tt><font size="+1">for</font></tt>"
+    statement
+    controls the execution.
+</p>
+
+<p>It will be easier to study this in an example with a simpler test
+    than
+    the one in <tt><a href="CannonTrajectory.html">CannonTrajectory</a></tt>:
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">for( j = 1; ( j &lt; 10 ); j++ ) { ... }</font></tt>
+    <br>
+    This contains three parts, separated by semicolons within the round
+    brackets <tt><font size="+1">(..)</font></tt>.
+</p>
+<ul>
+    <li>
+        The first part contains a statement that will be executed <i>before</i>
+        the loop is run for the first time. It is "<tt><font size="+1">j=1;</font></tt>".
+        The variable <tt><font size="+1">j</font></tt> has earlier been
+        defined to
+        be an <tt><font size="+1">int</font></tt>. This statement says that j
+        will
+        have the value 1 when the first loop begins. You can see from the
+        statements
+        inside the execution group that <tt><font size="+1">j</font></tt> is
+        used
+        as the index of the arrays into which data is written. So the first
+        pass
+        through the loop will store data in array elements with index 1.
+    </li>
+    <li>
+        The second part of the control statement is the test, which in the
+        simple
+        example we have <tt><font size="+1">( j &lt; 0 )</font></tt>, while in
+        the
+        real example from <tt>CannonTrajectory</tt> the test is the boolean
+        expression
+        that we studied above, <tt><font size="+1">(( h &gt;= 0.0 ) &amp;&amp;
+        ( j &lt;
+        1000 ))</font></tt>. This is a test that must be passed for the (next)
+        pass through the loop to occur. If this test returns the value "<tt><font
+            size="+1">false</font></tt>",
+        then the loop will not be executed, and Java will go on to the first
+        statement
+        after the end of the loop block. If the test returns "<tt><font
+            size="+1">true</font></tt>",
+        then the loop will execute. At the beginning, since <tt><font size="+1">j</font></tt>
+        is initialized to 1, the condition <tt><font size="+1">( j &lt; 10 )</font></tt>
+        is automatically satisfied. This is true in the real example as well,
+        since
+        <tt><font size="+1">h</font></tt>
+        starts out with the value 0.
+    </li>
+    <li>
+        The third part of the control statement is a statement that is to be
+        executed
+        at the end of each pass through the loop. Clearly, if the loop begins,
+        so that the test in the second part is passed, then something has to
+        change
+        eventually if the loop is to stop. Loops that do not stop are frequent
+        bugs in computer programs! The most common kind of statement in this
+        third
+        part is the one shown here, where the index variable <tt><font
+            size="+1">j</font></tt>
+        is incremented by the statement "<tt><font size="+1">j++</font></tt>".
+        This
+        guarantees to eventually end the loop, since after 1000 passes through
+        it, <tt><font size="+1">j</font></tt> has the value 1000, and the test
+        in
+        the second part will fail.<br>
+        <br>
+        [Of course, this assumes that no statement within the loop actually
+        changes
+        <tt><font size="+1">j</font></tt> also. The loop could go out of
+        control
+        if, for some reason, you put the statement "<tt><font size="+1">j = 0;</font></tt>"
+        inside the loop. Then the <tt><font size="+1">j++</font></tt>
+        statement would
+        simply cause j to switch between 0 and 1, but it would never reach
+        1000.
+        Naturally, you would not knowingly do this, but it illustrates the
+        pitfalls
+        of loop control. In a complicated loop, there are sometimes hidden ways
+        in which, under certain circumstances, the loop could unexpectedly fail
+        to terminate. It is therefore very important to make sure you know how
+        the loop test will eventually terminate your loop!]
+    </li>
+</ul>
+The loop in our simple example will start with <tt><font size="+1">j =
+    1</font></tt>
+and then execute repeatedly until <tt><font size="+1">j</font></tt>
+reaches
+10. When <tt><font size="+1">j</font></tt> = 10, the loop will not
+execute.
+Therefore it will execute a total of 9 times.
+<p>Writing the contents of the loop block of statements requires
+    attention
+    as well. In the example from <tt><font size="+1"><a
+            href="CannonTrajectory.html">CannonTrajectory</a></font></tt>
+    above, <tt><font size="+1">x</font></tt> is changed by the first
+    statement
+    each time, and <tt><font size="+1">h</font></tt> is changed by the
+    third.
+    The second and 6th statements together result in a change in <tt><font
+            size="+1">v</font></tt>
+    each time, as explained in the help file for the program <tt><font
+            size="+1"><a href="CannonTrajectory.html">CannonTrajectory</a></font></tt>.
+    The changes in <tt><font size="+1">h</font></tt> and <tt><font
+            size="+1">x</font></tt>
+    are saved in the arrays <tt><font size="+1">verticalDistance</font></tt>
+    and <tt><font size="+1">horizontalDistance</font></tt>, each time
+    using a
+    different element of the array for the current value of the variable.
+    In
+    this way, the loop generates a sequence of numbers that are stored and
+    are available in these arrays after the loop finishes. We won't go into
+    the details of why we want the particular values generated here; this
+    is
+    discussed in <tt><font size="+1"><a href="CannonTrajectory.html">CannonTrajectory</a></font></tt>.
+</p>
+
+<p>Normally a loop finishes when the test condition returns <tt><font
+        size="+1">false</font></tt>.
+    But there are times when one wants the loop to finish because some
+    calculation
+    inside the loop has reached a desired result. This often happens if the
+    loop is designed to improve the accuracy of some calculation, and there
+    is a test inside the loop to determine if the accuracy is sufficient.
+    To
+    exit from the loop at any time you can use the Java statement "<tt><font
+            size="+1">break</font></tt>".
+    This transfers the execution to the first statement after the loop.
+    There
+    is an example of this in the program <tt><font size="+1"><a
+            href="Orbit.html">Orbit</a></font></tt>.
+</p>
+
+<p>Other loop constructions are possible in Java, using keywords other
+    than "<tt><font size="+1">for</font></tt>". You can begin a loop with a
+    "<tt><font size="+1">while</font></tt>"
+    keyword, which is followed by a logical test; the loop repeats while
+    the
+    test evaluates to <tt><font size="+1">true</font></tt>. An example of
+    this
+    is found in <tt><font size="+1"><a href="Atmosphere.html#listing">Atmosphere</a></font></tt>
+    and related programs. Alternatively, you can use a "<tt><font size="+1">do-while</font></tt>"
+    construction in which the <tt><font size="+1">while</font></tt>
+    keyword and
+    its test appear at the end of the loop rather than the beginning.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<br>
+&nbsp;
+<br>
+&nbsp;
+<br>
+&nbsp;
+<br>
+&nbsp;
+</body>
+</html>

@@ -1,0 +1,940 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template"
+          content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR"
+          content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+    <meta name="Author" content="Bernard F Schutz">
+    <meta name="Description"
+          content="Help file for Triana unit CannonTrajectory, part of the toolbox for the book Gravity from the Ground Up.This unit calculates trajectories of projectiles fired from the ground.">
+    <meta name="KeyWords"
+          content="Gravity from the ground up, Triana, help file">
+    <title>CannonTrajectory</title>
+</head>
+<body text="#000000" bgcolor="#fdf5e6" link="#808080" vlink="#808080"
+      alink="#ff0000" background="BH-posneg.negative.watermark.png">
+<span style="font-weight: bold;"><a href="license.html"><img
+        src="HelpfileBanner.png" title="Click to view license information."
+        alt="" style="border: 0px solid ; width: 375px; height: 362px;"
+        align="right"></a></span><br>
+<table cellpadding="2" cellspacing="2" border="3"
+       style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
+    <tbody>
+    <tr>
+        <td
+                style="vertical-align: top; background-color: rgb(204, 204, 204);">
+            <h3
+                    style="color: rgb(102, 255, 153); font-family: monospace; font-weight: bold; text-align: center;">
+                <big><big><big><big><span
+                        style="color: rgb(255, 0, 0);">CannonTrajectory<br>
+      </span></big></big></big></big></h3>
+
+            <div style="text-align: center;"><big><font size="+2"><big><span
+                    style="color: rgb(255, 0, 0);"><small><span style="font-weight: bold;"><small><span
+                    style="color: rgb(0, 0, 0);">version 1.0<br>
+      </span></small></span></small></span></big></font><big><big><span
+                    lang="EN-GB"
+                    style="font-size: 12pt; font-family: &quot;Times New Roman&quot;; font-weight: bold;">&copy;
+                2003 Bernard Schutz</span></big></big></big><br>
+            </div>
+            <h3
+                    style="font-family: helvetica,arial,sans-serif; text-align: center;">
+                <large><b><span
+                        style="color: rgb(0, 0, 0);">Investigate the most elementary problem
+of motion in gravity: the trajectory of a cannonball near the surface
+of the Earth.<br>
+      </span></b></large>
+            </h3>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<h2><a name="contents"></a>Contents</h2>
+<ul>
+    <li><font color="#3333ff"><a href="#description">Description of <tt><font
+            size="+1">CannonTrajectory</font></tt></a></font></li>
+    <li><font color="#3333ff"><a href="#using">Using <tt><font
+            size="+1">CannonTrajectory</font></tt></a></font></li>
+    <li><font color="#3333ff"><a href="#understanding">Understanding <tt><font
+            size="+1">CannonTrajectory</font></tt></a></font></li>
+    <li><font color="#3333ff"><a href="#suggestions">Suggested
+        modifications of <tt><font size="+1">CannonTrajectory</font></tt></a></font></li>
+    <li><font color="#3333ff"><a href="#listing">Listing of the Java
+        code
+        for <tt><font size="+1">CannonTrajectory</font></tt></a></font></li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="description"></a>Description of <tt><font size="+3">CannonTrajectory</font></tt></h2>
+The unit called <tt><font size="+1">CannonTrajectory</font></tt>
+implements
+the Java program for computing the trajectory of a cannonball or other
+projectile fired from the surface of the Earth, at an arbitrary angle
+and
+speed. Users can experiment to see what angle gives the greatest range.
+<p>This program is the most elementary one in the book, and many later
+    programs are based on it.It is introduced in Investigation 1.3.&nbsp;
+    It
+    introduces the important programming concept of <a
+            href="Introduction.html#loops">loops</a>.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="using"></a>Using <tt><font size="+3">CannonTrajectory</font></tt></h2>
+If you have not used Triana before, read the <a href="UsingTriana.html">instructions</a>
+first. To use this program, simply drag the <tt><font size="+1">CannonTrajectory</font></tt>
+icon from the toolbox into the working area, drag the <tt><font
+        size="+1">SGTGrapher</font></tt>
+unit into the area, and connect the two if Triana has not already
+connected
+them for you. If you press the Start button then the program will
+execute
+with its default settings, namely with a speed of 100 ms<sup>-1</sup>,
+a firing angle of 45<sup>o</sup> to the horizontal, and a time-step for
+the simulation of 0.1s. A graph window will pop up showing the
+trajectory.
+<p>Initially this window will not necessarily use the same scale for
+    distances
+    in the horizontal and vertical direction, since it is set by default to
+    adjust the scales to show the most information about the curve. Users
+    are
+    recommended to change this so that the vertical and horizontal scales
+    are
+    the same. Go to the "Plot" menu of the <tt><font size="+1">SGTGrapher </font></tt>display,
+    and select
+    "force equal ranges on both axes", then press "Reset Zoom".&nbsp;&nbsp;
+</p>
+
+<p><img src="imageGR8.JPG" height="196" width="422" align="left">You
+    can change
+    the initial speed, angle, and time-step by using the parameter window
+    of
+    the unit, illustrated here. Double-click on the <tt><font size="+1">CannonTrajectory</font></tt>
+    unit in the working area to get this window. Either adjust the slider
+    by
+    dragging it with the mouse, or type a new value into the boxes at the
+    right
+    of each slider, followed by the "Apply" key. Experiment with the angle
+    to see what angle gives the maximum range. Make the time-step longer to
+    see what effect this has. If you choose a speed that makes the curve go
+    off the scales you have chosen for the graph window, use the Zooming
+    window
+    described in the previous paragraph to re-set the scale maximum values
+    to larger ones so that you can see it all.
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="understanding"></a>Understanding <tt><font size="+3">CannonTrajectory</font></tt></h2>
+The Java program for <tt><font size="+1">CannonTrajectory</font></tt>
+is
+given in the <a href="#listing">last</a> section. It is introduced in
+the
+book in Investigation 1.3. For general remarks about how to read and
+understand
+Java programs see the <a href="Introduction.html">Introduction to
+    Programming
+    in Java</a>. The central idea of this program, as for most programs, is
+to get the computer to do a certain set of steps over and over again.
+In
+this case, the steps are to compute how the cannonball moves along its
+trajectory one small step at a time. The program construction that
+repeats
+is called a <b><a href="Introduction.html#loops">loop</a></b>.
+<p>Loops are described in the <a href="Introduction.html#loops">Introduction
+    to Programming in Java</a>. For <tt><font size="+1">CannonTrajectory</font></tt>,
+    the important issues are: 1) what steps to we want to repeat,&nbsp; 2)
+    how do we start the calculation, and 3) how do we decide when to stop
+    the
+    calculation?
+    <br>
+    &nbsp;
+</p>
+<ol>
+    <li>The steps to repeat are contained in the loop that starts with
+        the <tt><font size="+1"><a href="#for">for</a></font></tt>
+        statement in the listing below and finishes at its final closing <a
+                href="#endfor">bracket</a>.
+        Each step assumes that the projectile has a height given by the value
+        of <tt><font size="+1">h</font></tt>,
+        a horizontal position given by the value of <tt><font size="+1">x</font></tt>,&nbsp;
+        a vertical speed given by the value of <tt><font size="+1">v</font></tt>,
+        and a horizontal speed given by the value of <tt><font size="+1">u</font></tt>
+        at the beginning of the step. The first line of code moves the
+        projectile
+        horizontally. Since there is no horizontal acceleration, it just
+        multiplies
+        u by the time-step <tt><font size="+1">dt</font></tt> and adds that to
+        the
+        existing value of <tt><font size="+1">x</font></tt> to get the new
+        value
+        of <tt><font size="+1">x</font></tt>. This line looks like this:
+    </li>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">x = x + u*dt;</font></tt> <br>
+    This statement looks strange if you interpret it as algebra, but it
+    makes sense if you interpret the "=" sign as <i>assignment</i>, i.e.
+    as
+    computing the value of <tt><font size="+1">x + u*dt</font></tt> using
+    the
+    initial value of <tt><font size="+1">x</font></tt> and then placing
+    this
+    new number into the variable <tt><font size="+1">x</font></tt>, wiping
+    out
+    its initial value. This means that, after this statement is executed, <tt><font
+        size="+1">x</font></tt>
+    has the new value equal to the horizontal position at the current
+    time-step.
+    <p>The next step inside the loop is to compute the change in the
+        vertical
+        speed due to the downward acceleration. Since the speed going into this
+        step was <tt><font size="+1">v</font></tt>, the new value of the
+        vertical
+        speed is <tt><font size="+1">v - g*dt</font></tt>, since we are using
+        the
+        variable g to hold the value of the acceleration of gravity. Instead of
+        assigning this to <tt><font size="+1">v</font></tt> in a way analogous
+        to
+        the way we reassigned the new horizontal position value to <tt><font
+                size="+1">x</font></tt>
+        above, we assign this to a <i>different</i> variable <tt><font
+                size="+1">w</font></tt>: <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tt><font size="+1">w = v - g*dt;</font></tt> <br>
+        This is because we still need the old value of <tt><font size="+1">v</font></tt>
+        a little later on, so we <i>temporarily</i> keep its new value in <tt><font
+                size="+1">w</font></tt>. </p>
+
+    <p>Now we can compute the new vertical position of the cannonball. We
+        could
+        simply advance its position by using the new value of the vertical
+        speed, <tt><font size="+1">w</font></tt>.
+        This would give us a statement like <tt><font size="+1">h = h + v*dt</font></tt>.
+        But this is less accurate than what we actually do in the program,
+        which
+        is to use the <i>average</i> value of the vertical speed during the
+        interval
+        of time <tt><font size="+1">dt</font></tt>. The average value is <tt><font
+                size="+1">(v
+            + w)/2</font></tt>, so the actual statement is <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tt><font size="+1">h = h + (w + v)/2*dt;</font></tt> <br>
+        Notice that this is a re-assignment to the variable <tt><font size="+1">h</font></tt>,
+        just as we did for <tt><font size="+1">x</font></tt> above. The need
+        to use
+        the old speed <tt><font size="+1">v</font></tt> in this expression is
+        the
+        reason that we introduced the variable <tt><font size="+1">w</font></tt>
+        above. </p>
+
+    <p>We want to save the values of the position variables so we can
+        plot
+        the graph after the calculation is finished. This means they should be
+        stored in the arrays we defined for this purpose. We execute the
+        statements <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tt><font size="+1">verticalDistance[j] = h;</font></tt> <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tt><font size="+1">horizontalDistance[j] = x;</font></tt> <br>
+        For an explanation of the meaning of the notation "<tt><font size="+1">[j]</font></tt>"
+        see the general remarks on arrays in the <a
+                href="Introduction.html#data">Introduction
+            to Programming in Java</a>. It means that the <tt><font size="+1">j</font></tt>'th
+        element of the vector <tt><font size="+1">verticalDistance</font></tt>
+        will
+        contain the value of <tt><font size="+1">h</font></tt>, and the <tt><font
+                size="+1">j</font></tt>'th
+        value of <tt><font size="+1">horizontalDistance</font></tt> will
+        contain
+        the value of <tt><font size="+1">x</font></tt> for this step. </p>
+
+    <p>Finally, we can dispense with <tt><font size="+1">w</font></tt>,
+        which
+        was just a temporary storage location. We want <tt><font size="+1">v</font></tt>
+        to contain the most recent value of the vertical speed when the loop
+        repeats,
+        so before the repeat we have to execute the statement <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tt><font size="+1">v = w;</font></tt> <br>
+        This ensures that at the next step all the variables have their
+        intended
+        meanings. </p>
+    <li>To start the calculation in the first place, we declare all the
+        variables
+        used to manage the computation and then set up the initial values of <tt><font
+                size="+1">h</font></tt>, <tt><font size="+1">x</font></tt>,
+        and <tt><font size="+1">v</font></tt> before going into the loop. The
+        program
+        defines default values of the speed (using a variable called "<tt><font
+                size="+1">speed</font></tt>"),
+        the angle of firing (called "<tt><font size="+1">angle</font></tt>")
+        and
+        the time-step "<tt><font size="+1">dt</font></tt>". These variables
+        will,
+        however, be set by Triana to whatever values the user gives them in the
+        parameter window. Then the program defines the variable <tt><font
+                size="+1">g</font></tt>
+        to equal the acceleration of gravity, so that it can conveniently be
+        used
+        in later expressions. This is all in the preliminary material. Inside
+        the
+        main program (whose name is <tt><font size="+1">process</font></tt>),
+        we
+        set up <tt><font size="+1">x</font></tt> and <tt><font size="+1">h</font></tt>
+        to be zero, and we ensure that <tt><font size="+1">u</font></tt> and <tt><font
+                size="+1">v</font></tt>
+        hold the components of the speed computed by using the trigonometric
+        functions
+        with the value of <tt><font size="+1">speed</font></tt>. We declare
+        the arrays <tt><font size="+1">verticalDistance</font></tt>
+        and <tt><font size="+1">horizontalDistance</font></tt> to have 1000
+        elements.
+        This is the maximum number of time-steps that we allow the program to
+        execute.
+        We discuss this limitation below.
+    </li>
+    <li>Finally, we have to ensure that the program stops. Infinitely
+        repeating
+        loops, which never stop, are a bane of programmers. We don't want that
+        here! We have to implement two alternative ways of stopping the loop.
+        The
+        first is purely a programming issue: we must not make more than 1000
+        steps,
+        because otherwise we will begin to assign values to non-existent
+        elements
+        of <tt><font size="+1">verticalDistance</font></tt> and <tt><font
+                size="+1">horizontalDistance</font></tt>,
+        which would cause a Java error and the program would be stopped by Java.
+    </li>
+    <p><br>
+        The second way of stopping is more physical: when the cannonball
+        hits the ground again, then we should stop, since our assumption of
+        free
+        fall is no longer correct! Our implementation of this condition is
+        crude.
+        We simply test the value of <tt><font size="+1">h</font></tt> at the
+        end
+        of each step in the loop. If <tt><font size="+1">h</font></tt> is
+        negative,
+        then we do not do any more steps. The <tt><font size="+1"><a
+                href="#for">for</a></font></tt>
+        statement that begins the loop contains the test that must be passed
+        for
+        steps to continue. In our case this is: <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <tt><font size="+1">( h &gt;= 0.0 ) &amp;&amp; ( j &lt; 1000 )</font></tt>
+        <br>
+        This is a logical expression with two sub-expressions. (To learn about
+        logic statements, see the <a href="Introduction.html#arithmetic">Introduction
+            to Programming in Java</a>.) The first sub-expression is <tt><font
+                size="+1">(
+            h &gt;= 0.0 )</font></tt>, which evaluates to the logical value <tt><font
+                size="+1">true</font></tt>
+        if <tt><font size="+1">h</font></tt> is positive or zero. The second
+        sub-expression
+        is <tt><font size="+1">( j &lt; 1000 )</font></tt>, which evaluates to
+        <tt><font size="+1">true</font></tt>
+        if the index j is less than 1000. The two parts are joined by the "<tt><font
+                size="+1">&amp;&amp;</font></tt>"
+        operator, which means logical AND in Java. The resulting overall
+        expression
+        therefore evaluates to <tt>true</tt> only if <i>both</i>
+        sub-expressions
+        are true, and to <tt><font size="+1">false</font></tt> if <i>either</i>
+        of
+        the sub-expressions is false. Thus, the loop repeats if and only if the
+        projectile is still in the air and we have not had too many steps. </p>
+
+    <p>Notice that j must be less than 1000; it is not allowed to equal
+        1000,
+        even though the arrays have been set up to have 1000 elements. This is
+        because in Java array index values begin at 0. So an array with 1000
+        elements
+        has a maximum index value of 999. This is the maximum allowed value for
+        <tt><font size="+1">j</font></tt>.</p>
+</ol>
+The other issue in the program, besides the handling of the loop, is to
+get the data ready for display. This is a technical Triana issue. This
+is taken care of in two steps. The first is to repackage the data into
+arrays that are shorter than 1000 elements if the projectile has
+returned
+to the ground before we executed 1000 steps. We do this repackaging
+into
+<tt><font size="+1">finalHorizontal</font></tt>
+and <tt><font size="+1">finalVertical</font></tt> so that only the
+interesting
+data are sent to the graphing unit. Otherwise the grapher would draw a
+line at zero height to the right of the trajectory, up to the distance
+represented by 1000 steps.
+<p>The second step in creating output is to package it up in a data
+    type
+    that Triana calls a <tt><font size="+1">Curve</font></tt>. This
+    contains
+    the two data arrays plus the name of the data (called its title) and
+    the
+    labels for the horizontal and vertical axes. We define the <tt><font
+            size="+1">Curve</font></tt>
+    to contain the data in the step
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curve
+        out = new Curve( finalHorizontal, finalVertical );</font></tt>
+    <br>
+    We then define its labels with functions built into Triana for this
+    purpose:
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out.setTitle("Trajectory
+        of projectile");</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out.setIndependentLabels(0,"horizontal
+        distance (m)");</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out.setDependentLabels(0,"vertical
+        distance (m)");</font></tt>
+    <br>
+    And finally we output this data set to the output node with the final
+    statement of the program:
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; output(
+        out );</font></tt>
+    <br>
+    When this data arrives at Triana's graphing unit, it knows enough about
+    the <tt><font size="+1">Curve</font></tt> data type to interpret the
+    two
+    arrays as containing the x- and y-coordinates of the points to be
+    plotted.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="suggestions"></a>Suggested modifications of <tt><font
+        size="+3">CannonTrajectory</font></tt></h2>
+The above discussion suggests some ways that you might change the
+program,
+besides simply modifying the parameter values. If you want to change
+the
+program you will have to re-compile it, as explained by the help file <a
+        href="UsingTriana.html">Using
+    Triana for Gravity from the ground up</a>.
+<p>The first change you might experiment with is to make the vertical
+    steps
+    less accurate by replacing
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">h = h + (w + v)/2*dt;</font></tt>
+    <br>
+    with
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <tt><font size="+1">h = h + w*dt;</font></tt>
+    <br>
+    See what the effect of changing the time-step is on the accuracy of
+    the calculation.You should find that it becomes more noticeable if you
+    make the time-step bigger.
+</p>
+
+<p>The second change could be to make the ending of the trajectory more
+    accurate. At present, the first negative value of h ends the loop, but
+    is stored as the value of the height. Really, the trajectory has ended
+    between this last time-step and the previous one. You might try to
+    calculate,
+    from the given data, an approximation to the horizontal distance at
+    which
+    the height went to zero, and use these values as the last values in the
+    stored data array.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="listing"></a>Listing of the Java code for <tt><font
+        size="+3">CannonTrajectory</font></tt></h2>
+&nbsp;
+<h3>Preliminary definitions of parameters and constants</h3>
+<tt>&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g is the acceleration of
+    gravity
+    in meters per second per second</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; */</tt>
+
+<p><tt>&nbsp;&nbsp;&nbsp; private double g = 9.8;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dt is the time-step in seconds.
+        Its value for any run is set by</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the user in the parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; private double dt;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; speed is the launch speed
+        in meters per second. Its value for any</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; run is set by the user in
+        the parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; private double speed;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; angle is the launch angle
+        in degrees, measured from the horizontal.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Its value for any run is set
+        by the user in the parameter window.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; private double angle;</tt>
+    <br>
+    &nbsp;
+</p>
+
+<h3>Program code</h3>
+<tt>&nbsp;&nbsp;&nbsp; /*</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Begin the program.</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; */</tt>
+<br>
+<tt>&nbsp;&nbsp;&nbsp; public void process() throws Exception {</tt>
+<br>
+&nbsp;
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Initialize
+        the calculation:</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Define
+        horizontalDistance and verticalDistance to be arrays</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        holding the horizontal distance and height reached by the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        cannonball at each time-step. Give them length 1000 to allow</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for up to 1000 time-steps in the trajectory.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Define
+        x and h to be the variables used to store these distances</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        temporarily at each time-step of the calculation.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Convert
+        the input angle to radians so we can use trig functions.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Use the Java built-in value of pi, called Math.PI.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Define
+        u and v to be the horizontal and vertical components</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of the velocity; compute their values from the speed and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        angle chosen by the user. Use the trig functions built into</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Java, called Math.cos and Math.sin.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Introduce
+        w, a variable that stores an intermediate value</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        of the vertical speed.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Set the
+        initial values stored for the height</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        and distance to zero.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Define
+        an integer variable j to count steps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[]
+    horizontalDistance
+    = new double[1000];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[]
+        verticalDistance
+        = new double[1000];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double x = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double h = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double theta = angle
+        * Math.PI / 180.0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double u = speed *
+        Math.cos(
+        theta );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double v = speed *
+        Math.sin(
+        theta );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double w;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; horizontalDistance[0]
+        = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; verticalDistance[0]
+        = 0;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int j;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now enter
+        the loop that computes each time step in succession.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The variable
+        j is a counter: it starts at 1 and increases</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by one at
+        each step of the loop.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There should
+        be no more than 1000 time-steps, since that is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the size
+        of the array we have defined to hold the data. But</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the
+        calculation
+        should end when the height is negative,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; meaning
+        that the cannonball has returned to the ground and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; would
+        actually
+        be below it if the ground were not there.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Therefore
+        the condition for continuing the loop is</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ( h &gt;= 0.0 ) &amp;&amp; ( j &lt; 1000 )</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( j = 1; (( h
+    &gt;=
+    0.0 ) &amp;&amp; ( j &lt; 1000 )); j++ ) {</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        At each step in the loop the value of x starts out as</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the horizontal distance at the previous step. Increase</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        it by the distance traveled in time dt so that it now has</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the new value of the distance.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x = x + u*dt;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        At each step in the loop the value of v starts out as</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the vertical speed at the previous one. Since we want to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        use the average of the vertical speeds at two time-steps,</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        keep v unchanged at first, and define w to be the speed</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        at the present time-step. Thus, w equals v diminished by</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the downward acceleration.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        w = v - g*dt;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Now follow the rule described in the text, that the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        change in vertical height depends on the average speed</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        over the time-interval, in other words on the speed</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        (w + v )/2.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Multiply this speed by the interval of time dt and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        increase the height by this amount. Note that the speeds</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        eventually will become negative because of the previous</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        line of code, so that eventually h will begin to decrease.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        h = h + (w + v)/2*dt;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Now store the calculated height and horizontal distance in</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the arrays defined for them. This allows us to re-use h and</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        x for the new values at the next time-step without losing</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        the values we have computed for this time-step.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        verticalDistance[j] = h;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        horizontalDistance[j] = x;</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Finally update the variable v so that it stores the vertical</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        speed for the present time-step. That way, at the next step</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        in the loop it will contain the "old" speed, as required</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        for the averaging of speeds described above.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        */</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        v = w;</tt>
+</p>
+
+<p><a name="endfor"></a><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    }</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The closing
+        bracket above is the end of the group of statements</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that form
+        the loop. The computer increases j here and tests to</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; see if it
+        should do another step in the loop. If so it goes</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; back to
+        the first statement after the opening bracket at the end</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of the "for"
+        statement above. If not it goes to the next statement.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; We have
+        now exited from the loop. That means that either the height</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is negative
+        (the cannonball has returned to the ground), or the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; loop has
+        run through 1000 steps before the cannonball returned.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the
+        latter
+        case, the user will see from the output that the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; trajectory
+        is not ended, and the whole thing should be run again</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with a
+        larger
+        choice of time-step.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For the
+        case where the cannonball returns before we run out of</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the
+        allocated
+        number of steps, the variable j is equal to one</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; more than
+        the number of steps, since it got increased at the end</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of the final
+        loop step, after the last values were stored. So</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; we define
+        two new arrays of exactly the length needed to hold</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the data,
+        copy the values into them, and then output the result</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; so that
+        it can be examined, printed, or graphed. (We have to go</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to the
+        trouble
+        of defining new arrays since, in Java, it is not</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; possible
+        to re-define the length of an array without losing the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data stored
+        in it.) The new arrays should have length j since</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; they contain
+        the initial values as well as the values at all the</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; time-steps.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The output
+        is defined to be an object called a Curve, which is a</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data type
+        defined in Triana. It contains not only the data but</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; also the
+        labels that can be used by the grapher. So we set here</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the title
+        and the horizontal and vertical axis labels.</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[]
+    finalHorizontal
+    = new double[j];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; double[] finalVertical
+        = new double[j] ;</tt><tt></tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( int k = 0; k
+    &lt;
+    j; k++ ) {</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalHorizontal[k] = horizontalDistance[k];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        finalVertical[k] = verticalDistance[k];</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+    <br>
+    <tt>&nbsp;</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curve out = new Curve(
+        finalHorizontal, finalVertical );</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; out.setTitle("Trajectory
+        of projectile");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out.setIndependentLabels(0,"horizontal
+        distance (m)");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        out.setDependentLabels(0,"vertical
+        distance (m)");</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; output( out );</tt>
+</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp; }</tt>
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<br>
+<b><font size="-1">Return to <a href="index.html">index</a> of all
+    computer
+    programs.</font></b>
+</body>
+</html>

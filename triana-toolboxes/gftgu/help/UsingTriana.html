@@ -1,0 +1,1024 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=iso-8859-1">
+    <meta name="Generator" content="Microsoft Word 97">
+    <meta name="Template"
+          content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+    <meta name="GENERATOR"
+          content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+    <meta name="Author" content="Bernard F Schutz">
+    <meta name="Description"
+          content="An introduction to how to use the programs for the book Gravity from the ground up in the Triana programming environment.">
+    <meta name="KeyWords"
+          content="Gravity from the ground up, Triana, help file">
+    <title>Using Triana for Gravity from the ground up</title>
+</head>
+<body text="#000000" bgcolor="#fdf5e6" link="#808080" vlink="#808080"
+      alink="#ff0000" background="BH-posneg.negative.watermark.png">
+<center style="background-color: rgb(255, 255, 255);"><br>
+    <a href="license.html"><img src="HelpfileBanner.png"
+                                title="Click for license information." alt=""
+                                style="border: 0px solid ; width: 375px; height: 362px;" align="right"></a><br>
+</center>
+<table cellpadding="2" cellspacing="2" border="3"
+       style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;">
+    <tbody>
+    <tr>
+        <td
+                style="vertical-align: top; background-color: rgb(204, 204, 204);">
+            <h3
+                    style="color: rgb(102, 255, 153); font-family: monospace; font-weight: bold; text-align: center;">
+                <big><big><big><big><span
+                        style="color: rgb(255, 0, 0);">Using Triana</span></big></big></big></big></h3>
+
+            <div style="text-align: center;"><big><font size="+2"><big><span
+                    style="color: rgb(255, 0, 0);">for <span
+                    style="font-style: italic; font-weight: bold;">Gravity from the ground
+up</span></span></big></font></big><br>
+            </div>
+            <big><font size="+2"><big><span style="color: rgb(255, 0, 0);"><span
+                    style="font-style: italic; font-weight: bold;"></span><small><span
+                    style="font-weight: bold;"><small><span style="color: rgb(0, 0, 0);"><br>
+      </span></small></span></small></span></big></font></big>
+
+            <div style="text-align: center;"><big><font size="+2"><big><span
+                    style="color: rgb(255, 0, 0);"><small><span style="font-weight: bold;"><small><span
+                    style="color: rgb(0, 0, 0);">version 1.0<br>
+      </span></small></span></small></span></big></font><big><big><span
+                    lang="EN-GB"
+                    style="font-size: 12pt; font-family: &quot;Times New Roman&quot;; font-weight: bold;">&copy;
+                2003 Bernard Schutz</span></big></big></big><br>
+            </div>
+            <h3
+                    style="font-family: helvetica,arial,sans-serif; text-align: center;">
+                <large><b><span
+                        style="color: rgb(0, 0, 0);">A brief introduction to the Triana
+programming environment.</span></b></large>
+            </h3>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<h2><br>
+</h2>
+
+<h2><br>
+</h2>
+
+<h2><a name="contents"></a>Contents</h2>
+<ul>
+    <li><a href="#description">What is Triana?</a></li>
+    <li><a href="#using">Using Triana</a></li>
+    <li><a href="#data">Getting data from program units</a></li>
+    <li><a href="#advanced">Advanced use of Triana: changing programs</a></li>
+    <li><a href="#creating">The ultimate: creating new units in Triana</a></li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="description"></a>What is Triana?</h2>
+Triana is a computer program that helps users to develop and run their
+own programs. Triana is called an "environment": users work within it
+to
+accomplish their programming goals because it is easier to do this than
+to program the computer directly to do what they want. Triana has been
+developed by scientists at <a href="http://www.cf.ac.uk/">Cardiff
+    University</a> in Wales, initially as part
+of the <a href="http://www.geo600.uni-hannover.de/">GEO600</a>
+gravitational wave detector software development activities.
+More recently the <a href="http://trianacode.org/">Triana project</a>
+has developed capabilities that serve
+a much wider range of users. Triana is written in the <a
+        href="http://www.java.sun.com/">Java</a> programming
+language, but it can support and run programs written in other
+languages
+as well.
+<p>All the programs for the book <i>Gravity from the ground up</i> are
+    included in the version of Triana that users can download from the
+    book's
+    <a href="http://www.gravityfromthegroundup.org">website</a>.
+    Also included are tools for displaying the results of the programs,
+    either
+    as graphs or as lists of numbers in files Triana supports all readers
+    of
+    the book, from those who do not want to do know how the programs work
+    to
+    those who want to modify and extend the programs or even create new
+    ones.
+    Here are ways in which Triana can help users at different levels:
+</p>
+<ul>
+    <li><span style="font-weight: bold;">Run programs without looking at
+the code.</span> Without knowing any details of the programs, users can
+        run them, look at
+        their results, and even modify what they do in certain ways. For users
+        who do not want to do programming, Triana hides all the details and
+        provides
+        a simple drag-and-drop interface to get things running. Each program
+        has
+        an extensive <a href="index.html">help file</a> that shows how to run
+        it
+        and what control the user has over the way the program works. From the
+        point of view of users of the computer programs for the book <i>Gravity
+            from the ground up</i>, Triana hides all the details of how to run
+        programs
+        in Java and allows the user to concentrate just on the book's computer
+        programs themselves. Triana knows how to run these programs on the
+        user's
+        computer, so all the user needs to do is to push the Start button on
+        the
+        Triana window and wait for the result.
+    </li>
+    <ul>
+        <li>All programs have certain user-specified numbers, which Triana
+            calls <i>parameters</i>.
+            These parameters are shown to the user in a simple window, and the user
+            can modify them and then run the program with the new values. For
+            example,
+            in the help file for the program <tt><font size="+1"><a
+                    href="Orbit.html">Orbit</a></font></tt>,
+            there is a section called "<a href="Orbit.html#using">Using <tt><font
+                    size="+1">Orbit</font></tt></a>"
+            which describes all the parameters in detail, complete with a picture
+            of
+            the window in which users modify the parameters. All the help files for
+            the other programs contain similar sections.
+        </li>
+        <li>This allows the user, for example, to examine orbits of planets
+            around
+            the Sun or of the Moon around the Earth using the <tt><font size="+1">Orbit</font></tt>
+            program, just by changing the parameters for the mass of the central
+            body
+            and the radius of the orbit. In this way, users who do not want to look
+            at the details of the computer programs can still see their results,
+            and
+            indeed use the programs over and over again to discover new results.
+        </li>
+        <li>Some of the programs provided are very powerful and can be used
+            to
+            study
+            rather complex physical systems. The help file for <tt><font size="+1">Orbit</font></tt>,
+            for example, contains a section called "<a href="Orbit.html#playing">Suggestions
+                for playing with <tt><font size="+1">Orbit</font></tt></a>", in which
+            users
+            are guided toward interesting new uses of the program. Most of the help
+            files for other programs have a similar section. By
+            consulting the help files, users need never look at the programs in
+            order
+            to learn a great deal about the gravitational physics they explore.
+        </li>
+    </ul>
+    <li><span style="font-weight: bold;">Understand how programs work.</span>
+        A user who wants to study the way a program works but not to modify it,
+        or to attempt any new programming, should consult two sources:
+    </li>
+    <ul>
+        <li>The document <a href="Introduction.html">Introduction to
+            Programming
+            in
+            Java</a> helps users learn the basic features of the Java programming
+            language,
+            so that they can understand how the programs work. Users who know Java
+            can skip this document. Users who have already done some programming in
+            other languages, like FORTRAN, Basic, or C, will need to read this
+            introduction
+            only to see how to write in Java the things they already know how to do
+            in these other languages.
+        </li>
+        <li>Each program's <a href="index.html">help file</a> contains a
+            discussion
+            of how the program works. In the help file for <tt><font size="+1"><a
+                    href="CannonTrajectory.html">CannonTrajectory</a></font></tt>,
+            for example, there is a section called "<a
+                    href="CannonTrajectory.html#understanding">Understanding <tt><font
+                    size="+1">CannonTrajectory</font></tt></a>",
+            which discusses how the program is built. It refers to the relevant
+            sections
+            of the book that deal with this program, and it links to the <a
+                    href="Introduction.html">Introduction
+                to Programming in Java</a> when the program uses specific features of
+            Java.
+            Further along in the help file is a full <a
+                    href="CannonTrajectory.html#listing">listing</a>
+            of the Java program for <tt><font size="+1">CannonTrajectory</font></tt>
+            and of the definitions of its parameters. The help files for all the
+            other
+            programs have similar sections.
+        </li>
+    </ul>
+    <li><span style="font-weight: bold;">Modify programs or create new
+ones.</span> Ambitious users who want to modify programs will also find
+        Triana a very
+        supportive environment.
+    </li>
+    <ul>
+        <li>As described <a href="#advanced">below</a>, Triana contains a
+            built-in
+            program editor, and it even allows the user to specify an alternative
+            text-processing
+            program for editing the code. Once a program has been changed, Triana
+            has
+            menu options to compile the program and do all the auxilliary things
+            necessary
+            to make it work within Triana. If there are errors in the program,
+            Triana
+            shows the user the error listing and allows the user to try again once
+            corrections have been made. In this way, users do not need to learn any
+            details of how to use Java itself for compiling and running programs:
+            Triana
+            takes care of it all.
+        </li>
+        <li>Users who want to create completely new programs are also
+            supported by
+            Triana. It contains a "wizard" that leads users step-by-step through
+            the
+            process of definng new programs and their parameters, and it then
+            creates
+            a program file containing all the code needed to run the program within
+            Triana. All the user has to do is to create the code for the new
+            program,
+            compile it, and run it. All of this is described <a
+                    href="#The_ultimate:_creating_new_units_in">below</a>.<br>
+        </li>
+    </ul>
+</ul>
+<p><br>
+</p>
+<hr width="15%" size="4">
+<h2><a name="using"></a>Using Triana</h2>
+Triana has a simple drag-and-drop model, in which the user selects an
+icon
+from a list of programs (called <span style="font-style: italic;">units</span>)
+already available in Triana (arranged in groups
+called <span style="font-style: italic;">toolboxes</span>), drags the
+icon into a working space within the Triana
+window, then drags an icon to display the output (as a graph or as a
+text
+file, in the simplest cases), and draws a line from the program icon to
+the display icon. Each of the dragging and drawing operations should be
+done while holding down the left mouse button while moving the mouse.
+Releasing
+the button finishes the operation.
+<p>When an icon is dragged into the working area, it is displayed as a
+    rectangle with the name of the unit written in it. It may be shown with
+    one or more small black squares on its right
+    edge; these are called <span style="font-style: italic;">output nodes</span>
+    and represent the places where data
+    leaves the unit. Similarly, each icon may have black squares on its
+    left
+    edge, which are called <span style="font-style: italic;">input nodes</span>,
+    and they are places where data comes in. For the network
+    to function at least one output must be connected to an input, but not
+    all nodes need to be connected if you do not want to use the data they
+    represent. The number and function of the output nodes for the programs
+    are described in the help files for the programs.
+</p>
+
+<p>To run the network, press the "Play" button (the green triangle on
+    the left in
+    the top row of buttons). Triana executes the program and produces the
+    requested
+    display of information. The steps involved in creating and running the
+    first of the programs for <span style="font-style: italic;">Gravity
+from the ground up </span>are shown in the following succession
+    of screen-shots of the Triana window.<br>
+    <br>
+</p>
+
+<p><img src="UsingTriana1.small.jpg"
+        title="Open the &quot;Gravity&quot; toolbox by double-clicking its icon." alt=""
+        style="width: 429px; height: 308px;"> <img
+        src="UsingTriana2.small.jpg"
+        title="Drag and release &quot;CannonTrajectory&quot;." alt=""
+        style="width: 429px; height: 308px;"> <img
+        src="UsingTriana3.small.jpg"
+        title="Open the &quot;SignalProc.Output&quot; toolbox." alt=""
+        style="width: 429px; height: 308px;"> <img
+        src="UsingTriana4.small.jpg"
+        title="Drag and release &quot;SGTGrapher&quot;. Connect the nodes if they don't connect automatically."
+        alt="" style="width: 429px; height: 308px;"> <img
+        src="UsingTriana5.small.jpg"
+        title="Run the network with the green &quot;Play&quot; button to see the graph of the result."
+        alt="" style="width: 232px; height: 259px;"><br>
+    <br>
+</p>
+
+<p>Once you have a working network of units, you may want to change
+    things.
+    Here are several tips:
+</p>
+<ul>
+    <li>To <span style="font-weight: bold;">open the parameter window</span>
+        for a unit, double-click on the unit in the
+        working area. The parameter windows of all the units are shown and
+        described in the units' help files. Once you change the value of a
+        parameter, click on "Apply"
+        or "OK" in the parameter window to make the change take effect the next
+        time you run the unit. The difference between the two buttons is that
+        "OK"
+        will shut the parameter window while "Apply" keeps it open.
+    </li>
+    <li>The unit <tt><font size="+1">SGTGrapher</font></tt>, which is
+        supplied
+        to
+        display the data from the programs graphically,<span
+                style="font-weight: bold;"> shows the graph</span> when you
+        double-click on it. When you run the network the first time, this graph
+        opens automatically. But later it might get hidden or closed, so to see
+        it again simply double-click on the icon.
+    </li>
+    <li>To<span style="font-weight: bold;"> remove a connection</span>
+        between
+        two units, double-click on either end, or
+        simply draw a new connection from its starting point or to its ending
+        point.
+    </li>
+    <li>Some of the program units have <span style="font-weight: bold;">more
+than one output node</span>, from which they
+        output different data. To graph all the data at once, which is usually
+        what the unit requires, you need to create more input nodes on the
+        grapher.
+        This can be done in two ways. One way is to click with the right mouse
+        button on the icon for the grapher in the working area, and choose the
+        option "Node Editor". This opens a window in which you can determine
+        how
+        many nodes you want. Alternatively, the second way is to hover the
+        mouse
+        over the unit icon, which causes a small "+" to appear near the input
+        nodes.
+        Click on the "+" and the unit will create an additional input.
+        Similarly,
+        to reduce the number of nodes click on the "-" that also appears when
+        you
+        hover. Once you create the new nodes, draw a connection between them.
+    </li>
+</ul>
+Triana has several features that make even these simple procedures a
+little
+easier.
+<ul>
+    <li>You can ask Triana to <span style="font-weight: bold;">make
+connections between units automatically</span> as soon
+        as they are dragged into the working space. In the menu "Options/Triana
+        Options..." click on "Auto Connect". The next time you drag a unit into
+        the
+        working area, Triana will make the best choice it can about where you
+        want
+        to connect this. This feature is very convenient for simple networks
+        like
+        the ones we will use.
+    </li>
+    <li>You can ask Triana to <span style="font-weight: bold;">automatically
+save the current network</span> in the working
+        area when you close Triana and open it again the next time you start
+        Triana.
+        It will do so with the current choices of parameters, so that you can
+        resume
+        working exactly where you finished. You set this up again from the
+        "Options/Triana
+        Options..." menu. This feature is selected by default, so you only need
+        to go to the menu if you want to turn it off.
+    </li>
+    <li>Each unit, including the programs for the book and the grapher,
+        has a <span style="font-weight: bold;">help
+file</span>. You can access these files by clicking the right mouse
+        button on
+        the icon in the toolbox and selecting "Help".
+    </li>
+    <li>Triana offers extensive <span style="font-weight: bold;">tool-tips</span>,
+        which are small boxes containing information
+        that appear when you hover the mouse over a unit or a button. These
+        help
+        you to understand what the unit or button does.
+    </li>
+    <li>To <span style="font-weight: bold;">delete a unit</span> just
+        right-click on it and choose "Delete" from the menu
+        you get by right-clicking on the icon. Alternatively, click once with
+        the
+        left button on the unit to highlight it, and press the "Delete" key on
+        your keyboard.
+    </li>
+    <li>You may have a set of units that you want to use over and over
+        again.
+        You
+        may <span style="font-weight: bold;">save units as a group</span>,
+        move them into a toolbox, and then drag them
+        out again, all together, any time later. Simply click once on the units
+        you want to group so that they are selected (highlighted) and choose
+        the
+        "Edit/Group..." menu option. They will be combined into a single yellow
+        unit,
+        and a separate working area will open showing you the membership of the
+        group. You can then save the group in a toolbox by right-clicking on
+        the
+        yellow icon and choosing "Save...".
+    </li>
+</ul>
+<hr width="15%" size="4">
+<h2><a name="data"></a>Getting data from program units</h2>
+The first time you get data from the units you should display it
+graphically
+using <tt><font size="+1">SGTGrapher</font></tt>. This unit will
+display
+on a single graph all data that it receives from its input node(s). For
+some units, you have a choice of output data: the unit will produce one
+of the choices at any time, but not all. This happens when the data
+have
+different dimensions, and therefore should not be displayed on the same
+graph. However, you can still see them at the same time. Simply create
+two duplicate networks in the same working space, consisting of the
+program unit and the grapher,
+and choose different outputs for the program units. When you run the
+networks,
+you will get two different graphs with the related data.
+<p><tt><font size="+1">SGTGrapher</font></tt> has various options for
+    altering
+    how the data are displayed. These are accessible from its "Plot" menu.
+    You can choose linear or logarithmic scales for either or both axes,
+    and
+    you can choose things like line colors, line styles, or even whether to
+    plot lines or individual points or both. You can force Triana to
+    display the x- and y-axes using the same scale (useful if the graph is
+    giving you a view of a region of space in which particles are
+    orbiting). You can print the graph or (if
+    you have configured a printer on your computer that saves a postscript
+    file) output to a postscript file. If the numbers labeling the axes are
+    hard to read because they are too long and overlap, then <tt><font
+            size="+1">SGTGrapher</font></tt>'s "Plot" menu allows you to tell
+    Triana to take out common factors of ten or subtract a common large
+    value from the scale display values. <br>
+</p>
+
+<p>There are times when you might want to output the numbers output by
+    the program unit rather than look at the graph. You may be interested
+    in
+    the exact values of the data, or you might want to save the data so you
+    can input it to a graphing program that produces better graphs than <tt><font
+            size="+1">SGTGrapher</font></tt>
+    can. To get the numbers, use the unit <tt><font size="+1">CurveToFile</font></tt>
+    instead of <tt><font size="+1">SGTGrapher</font></tt>. Double-click on
+    this
+    and enter the name of the file you want the data to be written into.
+    When
+    you run this network, no graph will appear, but the file will be
+    written
+    with the data in two columns, which represent the x- and y-values of
+    the
+    data points. Use a separate <tt><font size="+1">CurveToFile</font></tt>
+    unit
+    for each of the output nodes if a program unit has more than one.
+    Notice
+    that the icon for <tt><font size="+1">CurveToFile</font></tt> in the
+    toolbox
+    is different from most of the others. That is because it is a group
+    unit,
+    as described above.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="advanced"></a>Advanced use of Triana: changing programs</h2>
+Most of the help files have a section called "Suggested modifications
+..."
+in which users who are more ambitious are pointed in diretions that
+would
+either improve the efficiency of the programs or enlarge the scope of
+the
+physical situations that the program would cover. In this section we
+look
+at how to "open the hood" of the Triana units and change the code that
+makes them work. To do this you need to have the full Java development
+kit (SDK) installed on your computer. See the website for the book to
+find out
+how to obtain this. It is free, but it is a large package and takes
+some
+time to download if you don't have a fast connection. Triana requires
+SDK version 1.4 or later.<br>
+
+<p><span style="font-weight: bold;">Terminology</span>. Let us first
+    establish some Triana terminology. The left-hand pane of
+    the Triana window is the <i>toolbox window</i>. The programs are
+    groups
+    into <i>toolboxes</i>, and the programs themselves are called <i>tools</i>.
+    When you drag a tool into the working space in the main part of the
+    Triana
+    window, we call it a <i>unit</i>. The words <i>tool</i> and <i>unit</i>
+    are used almost interchangably. When you look at the code of a tool you
+    will see that it actually consists of several program units. In Java
+    these
+    are called <i>methods</i>, while in the C programming language they
+    would
+    be called functions and in FORTRAN they would be called subroutines or
+    functions.
+</p>
+
+<p><span style="font-weight: bold;">Editing the code.</span> To change
+    a program, go to the toolbox containing the tool you want
+    to modify, and then right-click on the tool's icon in the toolbox. You
+    will get a menu that includes "Edit Source". Choose this, and Triana
+    will
+    open an editing window. It will either use its built-in editor or one
+    you
+    have previously directed it to use by giving the full path to the
+    editor
+    code under the main menu option "Triana/Triana Options ..." and the tab
+    "External Tools".
+</p>
+
+<p>The first thing you will notice is that the code for the unit
+    contains
+    a lot more methods and other statements than are shown in the listing
+    in
+    the help file for that program. The help file shows you all the code
+    that
+    you need for doing the calculation that the unit is supposed to do. But
+    the code for the unit has also to help do all the things that Triana
+    does
+    for you automatically. These include popping up the parameter window
+    when
+    you want it, initializing the unit so it starts right, coping with
+    situations
+    where you might want to push the "stop",&nbsp; "reset", or "flush"
+    buttons
+    on the Triana main window (which basically are emergency measures that
+    you are unlikely to need unless you program the unit wrongly!),
+    checking
+    the type of data that leaves a unit to make sure that the receiving
+    unit
+    knows what to do with it, and so on.
+</p>
+
+<p><span style="font-weight: bold;">Parts of the code you need to look
+at.</span> You are of course welcome to scan through all these other
+    methods to
+    see what they do, but in the end you will only have to deal with code
+    in
+    a few places. When Triana creates a brand new unit (as described in the
+    <a href="#creating">following
+        section</a>) it even writes almost all the code for you automatically.
+    Here are the key features of the code that you need to deal with:
+</p>
+<ol>
+<li>The method <tt><font size="+1">process</font></tt> contains the
+    main
+    code
+    for the unit. Triana calls this method each time it wants to run the
+    unit.
+    The units containing the programs for <i>Gravity from the ground up</i>
+    do not have input nodes: they all generate their own data without
+    importing
+    data. Therefore they are run only when you press the "Start" button on
+    the main Triana window. Each <tt><font size="+1">process</font></tt>
+    method
+    ends with an output step, where the unit is instructed to send the data
+    to the output node(s), where Triana will ship it off to whatever unit
+    is
+    connected to the node(s). Before that, the code in <tt><font size="+1">process</font></tt>
+    does whatever is needed to generate the data. The help files all show
+    the
+    complete code for <tt><font size="+1">process</font></tt>, and this is
+    the
+    method you will need to modify to implement changes in the way the unit
+    works.
+</li>
+<li>The parameters are an important part of the way the unit works.
+    Modifications
+    of units are far simpler if you do not modify the parameters, because
+    parameter
+    handling in Triana is necessarily somewhat involved. Parameters have to
+    be available to the user in the parameter window, their default values
+    have to be known to the unit in case it is reset (which puts the values
+    of parameters back to their defaults), and the unit needs to learn when
+    the user has modified the parameter values in the parameter window so
+    it
+    can use the new values.<br>
+    <br>
+    The parameters are simply variables within the unit that are defined
+    outside
+    any of the methods in the unit. According to the rules of Java, this
+    means
+    that every method in the unit can access these variables: their names
+    are <i>globally
+        defined</i> within the unit. (Normally, a variable defined in one
+    method
+    is unknown to other methods; by defining variables outside of the
+    methods
+    we create memory that all methods can use if they want.) Parameters can
+    be of any Java type: <tt><font size="+1">int</font></tt>s, <tt><font
+            size="+1">double</font></tt>s,
+    character strings, even more complicated data objects.<br>
+    <br>
+    Outside the unit, however, Triana does not have access to these
+    variables,
+    and in particular it does not know what data type a parameter is.
+    Triana
+    passes information about the values of parameters between the parameter
+    window and the unit's own code using character strings. Thus, if a
+    parameter
+    is a <tt><font size="+1">double</font></tt> that the user defines to
+    have
+    the value 1.0, then Triana actually passes a character string
+    containing
+    the characters "1.0" back to the unit, and the unit has to convert this
+    into a binary number and assign it to the parameter.<br>
+    <br>
+    To facilitate this data passing, each variable has a keyword name,
+    which
+    is a character string that serves to identify it to the unit and to the
+    parameter window and to any other part of Triana that needs to deal
+    with
+    it. Normally, programmers use the same name for the keyword as the
+    internal
+    name in the unit. In <tt><font size="+1">MercPert</font></tt>, for
+    example,
+    there is a <tt><font size="+1">double</font></tt> called <tt><font
+            size="+1">mSun</font></tt>,
+    for example, which is to hold the mass of the Sun. This is known to the
+    parameter window by the character string "mSun". This is sensible, but
+    it could have been defined to be anything else, like "parameter1", and
+    parameter passing would work just as well.<br>
+    <br>
+    So here is how this parameter defining and passing works. If you want
+    to
+    add or modify parameters you need to make changes in each of these
+    places.
+    Examples are drawn from the code for <tt><font size="+1">MercPert</font></tt>.
+</li>
+<ol>
+    <li>Parameters are defined in the code for the unit at the very
+        beginning,
+        in a section that begins with the comment<br>
+    </li>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp; // parameter data type
+        definitions</font></tt> <br>
+    This code is reproduced in the help file for the unit. Parameter values
+    are not given here. The purpose of this code is simply to establish
+    storage
+    locations in the unit's memory where these parameter values can be held
+    and be accessible to all the methods of the unit.
+    <li>The method <tt><font
+            size="+1">init</font></tt> is called by
+        Triana when
+        the unit is first dragged out of the toolbox and into the working area.
+        It sets up the initial values of parameters and defines what will be
+        shown
+        in the parameter window. For intiializing parameters it uses lines like<br>
+    </li>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp; defineParameter("mSun",
+        "1.0",
+        USER_ACCESSIBLE);</font></tt> <br>
+    This is a call to a method <tt><font size="+1">defineParameter</font></tt>
+    that is not part of the unit's code, but is defined in a different part
+    of Triana. It associates the default value of 1.0 as a character string
+    (for passing) with the keyword for the parameter <tt><font size="+1">mSun</font></tt>,
+    which is the character string "mSun". The final argument of this method
+    is <tt><font size="+1">USER_ACCESSIBLE</font></tt>, which tells Triana
+    that
+    users can modify this parameter. (Triana can use parameters in other
+    ways
+    as well, which we do not need to go into. All the parameters in the
+    programs
+    for <i>Gravity from the ground up</i> are accessible to users.)<br>
+    <br>
+    :Later in <tt><font size="+1">init</font></tt> there is the line <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp; guilines += "Give the mass
+        of
+        central body (the Sun) in solar masses $title mSun TextField 1.0\n";</font></tt>
+    <br>
+    which is the code that Triana uses in order to build the parameter
+    window in which users can change the parameter values. It consistes of
+    a single character string that Triana takes apart into several pieces.
+    The first piece is simply the words that are written into the parameter
+    window to guide the user in what the parameter means. These words end
+    with
+    the keyword "$title". What follows that is the keyword name of the
+    parameter
+    for data passing, which in this case is the character string "mSun".
+    This
+    is followed by another keyword "TextField" which tells Triana to allow
+    the user to enter the values in the parameter window simply by typing
+    them
+    into a little text window. (Other parameters in other units have
+    different
+    ways of entering data, such as choice boxes or sliders, and these use
+    different
+    keywords here.) Finally the line ends with a character string giving
+    the
+    default value of the parameter "1.0". This must be consistent with the
+    value defined in the earlier <tt><font size="+1">defineParameter</font></tt>
+    line, shown above. If you redefine the default value make sure you
+    change
+    it in both places.
+    <li>The next place parameters turn up is in the <tt><font
+            size="+1">reset</font></tt>
+        method, which is called in emergencies. It needs to re-initialize the
+        parameters.
+        In <tt><font size="+1">MercPert</font></tt> for example this contains
+        the line<br>
+    </li>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp; mSun = new Double((String)
+        getParameter("mSun")).doubleValue();</font></tt> <br>
+    This line tells Triana to invoke the method getParameter (which is
+    defined elsewhere in Triana) to get the character string "value" of the
+    parameter whose keyword name is "mSun", and convert it into the binary
+    representation of a <tt><font size="+1">double</font></tt>, which is
+    then
+    assigned to the variable <tt><font size="+1">mSun</font></tt>. This
+    rather
+    complicated statement invokes a Java utility function that does the
+    conversion
+    of a character string into a binary.
+    <li>Finally, the unit contains
+        the method that is used to associate
+        the keyword
+        character-string name of the variable with the variable itself within
+        the
+        unit. This happens in the method <tt><font size="+1">parameterUpdate</font></tt>.
+        The statement in <tt><font size="+1">MercPert</font></tt> for the
+        variable <tt><font size="+1">mSun</font></tt>
+        is<br>
+    </li>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp; if (paramname.equals("mSun"))</font></tt>
+    <br>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mSun
+        =
+        new Double((String) value).doubleValue();</font></tt> <br>
+    The variable paramname is a character string that is an argument of <tt><font
+        size="+1">parameterUpdate</font></tt>,
+    so it is passed to this method when Triana calls it, for example after
+    the user changes the value of the parameter in the parameter window.
+    The
+    format of this line is the same as in the <tt><font size="+1">reset</font></tt>
+    method except that the character-string value of the parameter is held
+    here in the variable named <tt><font size="+1">value</font></tt>,
+    which is
+    another argument of this method.
+    <li>In <tt><font size="+1">MercPert</font></tt>
+        we have to do a
+        little work on
+        some of the parameters to get the information out of them that we need.
+        This is done by the method <tt><font size="+1">decodeParameterString</font></tt>,
+        which is not a standard Triana method but is part of the code created
+        specially
+        for this unit and for other units that need to do similar things.
+    </li>
+</ol>
+<li>There are other possible places where you need to understand how
+    Triana
+    works with units.
+</li>
+<ol>
+    <li>In the <tt><font size="+1">init</font></tt> method there are
+        lines
+        that define
+        the maximum and minimum number of output and input nodes. Normally you
+        will not need to change these.
+    </li>
+    <li>When a unit wants to do output, the simplest way is to use the
+        method
+        called <tt><font size="+1">output</font></tt>.
+        This works only if there is only one data set to be output. If, as in <tt><font
+                size="+1">MercPert</font></tt>,
+        there are more than one, then you have to assign them to different
+        output
+        nodes, and this is done with the method <tt><font size="+1">outputAtNode</font></tt>.
+        The code is pretty self-explanatory.
+    </li>
+    <li>The variable that is given to the output methods to pass on to
+        the next
+        unit is not a simple internal variable. Triana uses specific objects
+        that
+        are designed not only to transport data but to tell the grapher units
+        enough
+        information to allow them to be graphed. <i>Gravity from the ground up</i>
+        uses the data type <tt><font size="+1">Curve</font></tt>, which is
+        defined
+        elsewhere in Triana. To create a <tt><font size="+1">Curve</font></tt>
+        for
+        passing data, you use the syntax<br>
+    </li>
+    <tt><font size="+1">&nbsp;&nbsp;&nbsp; new Curve( x, y )</font></tt>
+    <br>
+    in which a new Object of this type is created from two <tt><font
+        size="+1">double[]</font></tt>
+    arrays called <tt><font size="+1">x</font></tt> and <tt><font
+        size="+1">y</font></tt>,
+    which hold the <i>x</i>- and <i>y</i>-coordinate values of the points
+    to
+    be plotted on the curve. When a <tt><font size="+1">Curve</font></tt>
+    Object
+    arrives at, for example, <tt><font size="+1">SGTGrapher</font></tt>,
+    it automatically
+    plots the data in the right way.
+</ol>
+</ol>
+<span style="font-weight: bold;">Re-compiling the code.</span> When you
+have finished modifying the code (and saved it in the file bearing
+the name of the tool and the extension "<tt><font size="+1">.java</font></tt>"),
+then it has to be re-compiled and re-integrated into the Triana
+environment,
+so that all of Triana knows how to work with the unit. A lot of things
+happen behind the scenes, but you don't have to worry about them.
+First,
+in the main menu "Options/Triana Options ...", go to the "external
+Tools"
+tab and fill in the path for the javac compiler, which comes with the
+full
+Java development kit. You go to the directory where you put the kit, go
+to the "bin" directory, and find the file called "javac" or
+"javac.exe",
+depending on what operating system you are using. Write the full path
+to
+this file into the options window.
+<p><span style="font-weight: bold;">The compile wizard. </span>Next,
+    go to Triana's main menu bar, select the "Tools" menu, choose
+    "Compile Unit/Generate Tool XML ...", and look at the window (called
+    the
+    <i>compile
+        wizard</i>) that pops up. It seems rather complicated, but it will
+    largely
+    fill itself in if you do the right things. First, make sure that the
+    third
+    line shows the path to the toolboxes you are using, which is generally
+    the default value that comes up. Then in the second line click on the
+    little
+    square window containing "...", which opens a file browser where you
+    select
+    the source file for the tool you are modifying. You will have to follow
+    the path from the toolbox name through the directory "<tt><font
+            size="+1">src</font></tt>"
+    to the list of files of type "<tt><font size="+1">.java</font></tt>".
+    Select
+    the one you have modified and press "<tt><font size="+1">OK</font></tt>".
+    This fills in all the relevant lines of the compile wizard. Just press
+    "<tt><font size="+1">OK</font></tt>" again at the bottom of the compile
+    wizard.
+    Triana will invoke your javac compiler. If you have not made any errors
+    in coding the changes, Triana will show you a window confirming that
+    the
+    compilation has gone well. You are done!
+</p>
+
+<p><span style="font-weight: bold;">Coping with errors.</span> If you
+    are unlucky enough to have had errors, Triana will keep the compile
+    wizard window open and also show you a window containing the error
+    messages
+    from the javac compiler. Make the corrections required and then hit "<tt><font
+            size="+1">OK</font></tt>"
+    again in the wizard window. You may have to go through this cycle
+    several
+    times if you have made complicated changes or if you are a novice
+    programmer
+    and need to learn from your mistakes!!
+</p>
+
+<p>When the compiling is finishes, you should be able to pull the unit
+    out of the toolbox and use it with the grapher or other output units.
+    It
+    is possible that, when you start the network, you will get further
+    error
+    messages. These are called "run-time errors", and represent things that
+    go wrong, not because you have made a mistake in using the Java
+    language,
+    but because you have made a mistake in the way different parts of the
+    program
+    interact with one another so that the normal execution could not
+    proceed.
+    The javac compile cannot anticipate all such possibilities. Sometimes
+    Triana
+    pops up an error message, other times the program stops and you have to
+    look at the command window within which Triana is running for the error
+    message output. These generally are very helpful, pointing you to
+    exactly
+    the line in your code where the problem was encountered. You need to
+    change
+    your code, re-compile, and re-run in order to fix such problems.
+    <br>
+    &nbsp;
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<h2><a name="The_ultimate:_creating_new_units_in"></a><a name="creating"></a>The
+    ultimate: creating new units in Triana</h2>
+Programmers who have gained confidence with Triana by modifying code,
+as
+in the last section, may want to go further and create programs to do
+different
+things from the ones provided for <i>Gravity from the ground up</i>.
+Triana
+provides tools to help with this process too. Not only does it provide
+an extra unit-creation wizard, but it provides extensive help
+documentation
+for all aspects of the process.
+<p><span style="font-weight: bold;">The unit creation wizard</span>.
+    The main additional tool is the <i>unit creation wizard</i>. This is
+    a more elaborate affair than the compile wizard. Go to the main Triana
+    menu bar, select "Tools", and select "New Unit". This opens the wizard
+    in a separate window. As with the compile wizard, first go to the third
+    line and choose the main toolbox path that you want the unit to be in.
+    You can add units to the standard Triana toolboxes, but you may want to
+    create your own toolbox for tools you created. You do this in the main
+    "Tools/Edit Toolbox Path" menu. Having set up a directory, which can be
+    anywhere on your disk, for new tools, select this in the third line of
+    the first window of the wizard. Then, again as for compiling, select
+    the
+    box "..." in the second line, and within the file browser find the
+    toolbox
+    name in which you will store the new tool. Then enter the name of the
+    new
+    unit into the first line of this window. Fill in other other lines,
+    like
+    the author name, the popup description (which will appear when you
+    hover
+    the mouse over the unit), the date, and the name of the help file
+    (which
+    you should always write). Then choose options regarding the number of
+    input
+    and output nodes, which depends on what you want the unit to do. Then
+    press
+    "Next".
+</p>
+
+<p>The window changes into one that allows you to define the data types
+    the new unit will input and output. If you want to deviate from the
+    pattern
+    of this book (no input, Curve output) then you should read the
+    documentation
+    that comes with Triana to see what data types are available. After
+    selecting
+    the types, press "Next" again.
+</p>
+
+<p>The next window allows you to define the parameters you will use in
+    the new unit. All the properties of the parameters are decided here.
+    You
+    may add parameter, remove mistaken ones, and change their properties at
+    any time, even coming back to this screen from later ones by using the
+    "Back" button. Of course you do not need to define any parameters if
+    you
+    do not need them.
+</p>
+
+<p>The next window allows you to set up the way the parameter window of
+    your unit will work. Select "GUI Builder Interface". For each of the
+    parameters
+    you have defined to be user accessible, Triana will allow you to
+    specify
+    the text that appears in the window near the parameter (enter this in
+    the
+    "Title" field), to enter the default value of the parameter, and to
+    select
+    how changes in this value are to be made in the parameter window (a
+    text
+    entry, a slider, a choice box, etc.). When you have entered the
+    information
+    for all parameters, select "Preview GUI" to make sure the window looks
+    as you want it. Then press "Next". You will get a final confirmation
+    screen.
+</p>
+
+<p><span style="font-weight: bold;">What happens next.</span> When you
+    finish this wizard, Triana will create several files for you,
+    including the "<tt><font size="+1">.java"</font></tt> file containing
+    the
+    source code. It will have all the code for parameter handling that was
+    described in the <a href="#advanced">previous section</a>, and all the
+    other auxilliary code you need. It will contain a <tt><font size="+1">process</font></tt>
+    method, but it will be essentially empty. This is where you have to
+    write
+    the code for what you want the unit to do. The toolbox will contain the
+    icon of your unit, but you will not be able to drag it into the working
+    space yet because you have not compiled it.
+</p>
+
+<p>The remaining work is just like the work for changing a unit,
+    described
+    in the <a href="#advanced">previous section</a>. You go to the icon of
+    your new unit in the toolbox, and open the editor. Then you create the
+    code for your unit, not forgetting the final output step! Then compile
+    it and run it!
+</p>
+
+<p><span style="font-weight: bold; font-style: italic;">Congratulations!</span>
+    If you have succeeded in this task, then you are a real Triana
+    programmer.
+    You might want to go to the Triana website and download the full
+    version,
+    which contains a wealth of tools that are not part of the distribution
+    for this book. These do image processing, text processing, signal
+    processing,
+    sound processing, and other jobs. Welcome to the Triana developer
+    community!
+</p>
+
+<p></p>
+<hr width="15%" size="4">
+<br>
+&nbsp;
+<br>
+&nbsp;
+</body>
+</html>

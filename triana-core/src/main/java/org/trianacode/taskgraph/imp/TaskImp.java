@@ -178,6 +178,9 @@ public class TaskImp extends ToolImp implements Task {
             this.setDataInputNodeCount(tool.getDataInputNodeCount());
             this.setDataOutputNodeCount(tool.getDataOutputNodeCount());
 
+            this.setDefaultDataInputNodes(tool.getDefaultDataInputNodes());
+            this.setDefaultDataOutputNodes(tool.getDefaultDataOutputNodes());
+
             int paramin = tool.getParameterInputNodeCount();
             ParameterNode paramnode;
             for (count = 0; count < paramin; count++) {
@@ -211,6 +214,7 @@ public class TaskImp extends ToolImp implements Task {
                     this.setParameterType(params[count], paramtype);
                 }
             }
+
 
         } catch (NodeException except) {
             throw (new TaskException(except));

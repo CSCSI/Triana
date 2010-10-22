@@ -59,19 +59,6 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Point;
-import java.awt.Window;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.builder.GUICreaterPanel;
 import org.trianacode.gui.hci.GUIEnv;
@@ -79,19 +66,20 @@ import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.event.ControlTaskStateEvent;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskGraphCableEvent;
-import org.trianacode.taskgraph.event.TaskGraphListener;
-import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * The parameter panel manager keeps a hashtable of parameter panels for each task. It monitors all open taskgraphs, and
@@ -341,10 +329,10 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
             e.printStackTrace();
             throw (new Exception(Env.getString("panelInstantiationError") + ": " + classname));
         }
-        if (panel instanceof ParameterPanel) {
-            return (ParameterPanel) panel;
+        if (!(panel instanceof ParameterPanel)) {
+            panel = new PanelHolder(panel);
         }
-        return new PanelHolder(panel);
+        return (ParameterPanel) panel;
     }
 
 
