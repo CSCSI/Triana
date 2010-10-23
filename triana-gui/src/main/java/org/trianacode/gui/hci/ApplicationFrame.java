@@ -63,6 +63,7 @@ import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
 import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
 import org.trianacode.TrianaInstanceProgressListener;
+import org.trianacode.config.Locations;
 import org.trianacode.config.cl.ArgumentParser;
 import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.logging.Loggers;
@@ -115,6 +116,7 @@ import javax.swing.event.InternalFrameListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -215,6 +217,25 @@ public class ApplicationFrame extends TrianaWindow
                 uiDefaults.put(key, font);
             }
         }
+
+        String myOSName = Locations.os();
+        if (myOSName.equals("windows")) {
+            try {
+                UIManager.setLookAndFeel("net.java.plaf.windows.WindowsLookAndFeel");
+            }
+            catch (Exception e) {
+            }
+        } else {
+            if (!myOSName.equals("osx")) {
+                try {
+                    UIManager.setLookAndFeel(new MetalLookAndFeel());
+                }
+                catch (Exception e) {
+                }
+            }
+
+        }
+
 
         ApplicationFrame app = new ApplicationFrame("Triana");
         app.init(args);
