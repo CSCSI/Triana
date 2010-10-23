@@ -156,7 +156,7 @@ public class Triana {
                     System.exit(0);
                 }
             } else {
-                new TrianaInstance(args, null);
+                new TrianaInstance(args).init();
             }
         } else {
             ApplicationFrame.initTriana(args);

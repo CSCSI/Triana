@@ -1,11 +1,11 @@
 package org.trianacode.taskgraph.interceptor.execution;
 
-import java.io.File;
-import java.io.FileReader;
-
 import org.trianacode.TrianaInstance;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.ser.XMLReader;
+
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * @author Andrew Harrison
@@ -26,14 +26,15 @@ public class ExecutionControlTest implements ExecutionControlListener {
 
         File file = new File(args[0]);
 
-        TrianaInstance engine=null;
+        TrianaInstance engine = null;
         try {
-            engine = new TrianaInstance(args, null);
+            engine = new TrianaInstance(args);
+            engine.init();
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             System.exit(1);
         }
-        
+
         XMLReader reader = new XMLReader(new FileReader(file));
         ExecutionControlTest test = new ExecutionControlTest((Task) reader.readComponent());
         test.start();

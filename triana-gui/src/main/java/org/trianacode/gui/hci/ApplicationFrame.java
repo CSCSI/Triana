@@ -268,12 +268,13 @@ public class ApplicationFrame extends TrianaWindow
         try {
             log.info("Initialising");
 
-            engine = new TrianaInstance(this, args, Extension.class,
+            engine = new TrianaInstance(args);
+            engine.addExtensionClasses(Extension.class,
                     TaskGraphExporterInterface.class,
                     TaskGraphImporterInterface.class,
                     ToolImporterInterface.class,
                     RegisterableToolComponentModel.class);
-
+            engine.init(this);
             tools = engine.getToolTable();
 
             initTools();

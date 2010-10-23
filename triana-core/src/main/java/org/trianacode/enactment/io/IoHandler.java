@@ -232,7 +232,8 @@ public class IoHandler {
             System.out.println("Cannot find workflow file:" + wf);
             System.exit(1);
         }
-        TrianaInstance engine = new TrianaInstance(new String[0], null);
+        TrianaInstance engine = new TrianaInstance();
+        engine.init();
         XMLReader reader = new XMLReader(new FileReader(f));
         Task tool = (Task) reader.readComponent();
         NodeMappings ret = new IoHandler().map(conf, tool);

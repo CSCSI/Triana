@@ -59,14 +59,6 @@
 
 package org.trianacode.enactment;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-
 import org.trianacode.TrianaInstance;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
@@ -74,6 +66,14 @@ import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.service.SchedulerException;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 
 /**
@@ -565,9 +565,10 @@ public class CommandLineExec extends TrianaExec {
             return;
         }
         try {
-            TrianaInstance engine=null;
+            TrianaInstance engine = null;
             try {
-                engine = new TrianaInstance(args, null);
+                engine = new TrianaInstance(args);
+                engine.init();
             } catch (Exception e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 System.exit(1);

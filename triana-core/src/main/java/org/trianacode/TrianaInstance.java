@@ -48,9 +48,6 @@ import java.util.concurrent.Executors;
 public class TrianaInstance {
 
     private ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 20);
-
-    private String args[] = null;
-
     private HTTPServices httpServices;
     private ToolResolver toolResolver;
 
@@ -62,42 +59,49 @@ public class TrianaInstance {
     private ToolTable toolTable;
 
     private ArgumentParser parser;
+    private List<Class> extensionClasses = new ArrayList<Class>();
+    private List<String> extraToolboxes = new ArrayList<String>();
+    private boolean runServer = false;
+    private boolean reresolve = false;
 
 
-    public TrianaInstance(String[] args, Class... extensions) throws IOException {
-        this(null, args, extensions);
+    public TrianaInstance() throws IOException {
+        this(null);
     }
 
 
     /**
      * Creates am instance of Triana.
      *
-     * @param progress   a notifier to notify upon the progress of the initialization
-     * @param args       command line arguments
-     * @param extensions list of extensions to load
+     * @param args command line arguments
      * @throws Exception
      */
-    public TrianaInstance(TrianaInstanceProgressListener progress, String[] args, Class... extensions) throws IOException {
+    public TrianaInstance(String[] args) throws IOException {
+        if (args == null) {
+            args = new String[0];
+        }
+        this.parser = new ArgumentParser(args);
+        try {
+            parser.parse();
+        } catch (ArgumentParsingException e) {
+            throw new RuntimeException("cannot read arguments");
+        }
+        this.runServer = TrianaOptions.hasOption(parser, TrianaOptions.SERVER_OPTION);
+        this.reresolve = TrianaOptions.hasOption(parser, TrianaOptions.RESOLVE_THREAD_OPTION);
+        List<String> toolboxes = TrianaOptions.getOptionValues(parser, TrianaOptions.EXTRA_TOOLBOXES_OPTION);
+        if (toolboxes != null) {
+            this.extraToolboxes.addAll(toolboxes);
+        }
+        propertyLoader = new PropertyLoader(this, null);
+        props = propertyLoader.getProperties();
+    }
 
+    public void init(TrianaInstanceProgressListener progress) throws IOException {
         if (progress != null) {
             progress.setProgressSteps(4);
             progress.showCurrentProgress("Initializing Engine");
         }
-        this.args = args;
 
-        if (args != null) {
-            parser = new ArgumentParser(args);
-            try {
-                parser.parse();
-            } catch (ArgumentParsingException e) {
-                throw new RuntimeException("cannot read arguments");
-            }
-        }
-
-        boolean server = TrianaOptions.hasOption(parser, TrianaOptions.SERVER_OPTION);
-
-        propertyLoader = new PropertyLoader(this, null);
-        props = propertyLoader.getProperties();
 
         if (progress != null) {
             progress.showCurrentProgress("Searching for local tools");
@@ -110,24 +114,26 @@ public class TrianaInstance {
         TaskGraphManager.initTaskGraphManager();
         TaskGraphManager.initToolTable(toolTable);
         initObjectDeserializers();
-        initExtensions(extensions);
+        initExtensions(extensionClasses);
 
         httpServices = new HTTPServices();
-        if (server) {
+        if (runServer) {
             toolResolver.addToolListener(httpServices.getWorkflowServer());
             httpServices.startServices(toolResolver);
             discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
         }
-        boolean reresolve = TrianaOptions.hasOption(parser, TrianaOptions.RESOLVE_THREAD_OPTION);
-        List<String> toolboxes = TrianaOptions.getOptionValues(parser, TrianaOptions.EXTRA_TOOLBOXES_OPTION);
-        toolResolver.resolve(reresolve, toolboxes);
-        if (progress != null && server) {
+        toolResolver.resolve(reresolve, extraToolboxes);
+        if (progress != null && runServer) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
         }
         new ShutdownHook().createHook();
         if (progress != null) {
             progress.showCurrentProgress("Triana Initialization complete");
         }
+    }
+
+    public void init() throws IOException {
+        init(null);
     }
 
 
@@ -151,7 +157,43 @@ public class TrianaInstance {
         return toolTable;
     }
 
-    private void initExtensions(Class... exten) {
+    public void addExtensionClass(Class cls) {
+        this.extensionClasses.add(cls);
+    }
+
+    public void addExtensionClasses(Class... clss) {
+        for (Class cls : clss) {
+            this.extensionClasses.add(cls);
+        }
+    }
+
+    public void addExtraToolbox(String toolbox) {
+        extraToolboxes.add(toolbox);
+    }
+
+    public void addExtraToolboxes(String... toolboxes) {
+        for (String toolbox : toolboxes) {
+            extraToolboxes.add(toolbox);
+        }
+    }
+
+    public boolean isRunServer() {
+        return runServer;
+    }
+
+    public void setRunServer(boolean runServer) {
+        this.runServer = runServer;
+    }
+
+    public boolean isReresolve() {
+        return reresolve;
+    }
+
+    public void setReresolve(boolean reresolve) {
+        this.reresolve = reresolve;
+    }
+
+    private void initExtensions(List<Class> exten) {
 
         List ext = new ArrayList<Class>();
         ext.add(Interceptor.class);

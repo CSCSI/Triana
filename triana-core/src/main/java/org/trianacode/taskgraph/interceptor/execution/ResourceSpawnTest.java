@@ -15,7 +15,8 @@ public class ResourceSpawnTest {
 
         TrianaInstance engine = null;
         try {
-            engine = new TrianaInstance(args, null);
+            engine = new TrianaInstance(args);
+            engine.init();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
