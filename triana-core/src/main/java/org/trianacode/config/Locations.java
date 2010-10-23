@@ -148,6 +148,31 @@ public class Locations {
         }
     }
 
+    public static String getDefaultToolboxRoot() {
+        File f = Locations.runHome();
+        if (isJarred()) {
+            File p = new File(f.getParentFile(), "toolboxes");
+            return p.getAbsolutePath();
+        } else {
+            File p = new File(f, "toolboxes");
+            return p.getAbsolutePath();
+        }
+
+    }
+
+    public static String getDefaultTemplateRoot() {
+        File f = Locations.runHome();
+
+        if (Locations.isJarred()) {
+            return f.getAbsolutePath();
+        } else {
+            File p = new File(f, "triana-core");
+            p = new File(p, "target");
+            p = new File(f, "classes");
+            return p.getAbsolutePath();
+        }
+    }
+
     public static String[] getInternalToolboxes() {
         String paths = System.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
 

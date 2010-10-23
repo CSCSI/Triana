@@ -97,15 +97,14 @@ public class TrianaProperties extends Properties {
         properties.put(Locations.DEFAULT_PROPERTY_FILE, Locations.getApplicationDataDir() + File.separator + DOMAIN + ".properties");
         // PROPERTY_FILE_LIST is null
 
-        String homeDir = Locations.getHomeProper() + File.separator;
 
-        properties.put(TOOLBOX_SEARCH_PATH_PROPERTY, homeDir + "triana-toolboxes, " + homeDir + "triana-pegasus");
+        properties.put(TOOLBOX_SEARCH_PATH_PROPERTY, Locations.getDefaultToolboxRoot());
 
         // should we do this???
         // ANDREW: No - these will be on the classpath if classes/ is used or is in a jar
-
-        properties.put(TEMPLATE_SEARCH_PATH_PROPERTY, homeDir + "triana-velocity" + File.separator +
-                "src" + File.separator + "main" + File.separator + "resources");
+        // ANDREW: CHANGED THIS AND TOOLBOX SEARCH. THEY WERE MESSED UP AND CREATED DEPENDENCIES ON THE BUILD
+        // STRUCTURE - NO GOOD FOR DISTRIBUTION.
+        properties.put(TEMPLATE_SEARCH_PATH_PROPERTY, Locations.getDefaultTemplateRoot());
 
         properties.put(TOOL_PARAMETER_WINDOW_TEMPLATE_PROPERTY, "/templates/tool-params.tpl");
 
