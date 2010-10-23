@@ -1,4 +1,4 @@
 @ECHO OFF
 
-cd ../triana-app/dist
+cd ..\triana-app\dist
 triana.bat %*
