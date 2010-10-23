@@ -49,6 +49,7 @@
                 <filter token="version" value="${version}"/>
             </filterset>
         </copy>
+        <delete dir="dist/classes"/>
         <chmod dir="dist" perm="775" includes="**/*.sh,**/*.bat"/>
         <mkdir dir="dist/toolboxes"/>
         <antcall target="toolbox">
