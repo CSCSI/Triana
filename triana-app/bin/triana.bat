@@ -2,13 +2,13 @@
 
 set JAVA=java
 
-if "%JAVA_HOME%" NOT == "" goto setjava
+if NOT "%JAVA_HOME%" == "" goto setjava
 
 goto run
 
 :setjava
 
-set JAVA=%JAVA_HOME%
+set JAVA="%JAVA_HOME%\bin\java"
 
 :run
 
