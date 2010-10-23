@@ -158,7 +158,7 @@ public class Exec implements ExecutionListener {
 
     private String executeFile(String wf, String data) throws IOException {
         File f = new File(wf);
-        if (!f.exists() || f.length() == 0) {
+        if (!f.exists()) {
             return "Workflow File cannot be found:" + wf;
         }
         if (data != null) {
@@ -198,7 +198,7 @@ public class Exec implements ExecutionListener {
     private void executeWorkflow(String wf, String data) throws Exception {
 
         File f = new File(wf);
-        if (!f.exists() || f.length() == 0) {
+        if (!f.exists()) {
             System.out.println("Cannot find workflow file:" + wf);
             System.exit(1);
         }
@@ -216,7 +216,7 @@ public class Exec implements ExecutionListener {
         NodeMappings mappings = null;
         if (data != null) {
             File conf = new File(data);
-            if (!conf.exists() || conf.length() == 0) {
+            if (!conf.exists()) {
                 System.out.println("Cannot find data configuration file:" + data);
                 System.exit(1);
             }

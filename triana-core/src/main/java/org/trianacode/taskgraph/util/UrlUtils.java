@@ -1,11 +1,11 @@
 package org.trianacode.taskgraph.util;
 
+import org.trianacode.taskgraph.tool.Tool;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-
-import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * @author Andrew Harrison
@@ -36,7 +36,7 @@ public class UrlUtils {
         if (isFile(url)) {
             try {
                 File f = new File(url.toURI());
-                if (f.exists() && f.length() > 0) {
+                if (f.exists()) {
                     return f;
                 }
                 return null;

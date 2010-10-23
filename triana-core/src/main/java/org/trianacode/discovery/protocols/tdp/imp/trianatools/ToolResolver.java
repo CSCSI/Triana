@@ -364,7 +364,7 @@ public class ToolResolver implements ToolMetadataResolver {
     protected Streamable getToolStream(URL url) throws Exception {
         if (UrlUtils.isFile(url)) {
             File f = new File(url.toURI());
-            if (!f.exists() || f.length() == 0) {
+            if (!f.exists()) {
                 return null;
             }
             return new StreamableFile(f, MimeHandler.getMime(f.getName()));
@@ -745,7 +745,7 @@ public class ToolResolver implements ToolMetadataResolver {
             ToolStatus ok = new ToolStatus(tool, ToolStatus.Status.OK);
             if (UrlUtils.isFile(url)) {
                 File f = new File(url.toURI());
-                if (!f.exists() || f.length() == 0) {
+                if (!f.exists()) {
                     return new ToolStatus(tool, ToolStatus.Status.NON_EXISTENT);
                 }
                 long lm = f.lastModified();

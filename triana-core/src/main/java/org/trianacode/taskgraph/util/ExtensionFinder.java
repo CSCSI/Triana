@@ -51,7 +51,7 @@ public class ExtensionFinder {
             for (String path : paths) {
 
                 File f = new File(path);
-                if (f.exists() && f.length() > 0) {
+                if (f.exists()) {
                     log.debug("adding search path:" + f.getAbsolutePath());
                     searchDirs.add(f);
                 }

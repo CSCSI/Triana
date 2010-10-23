@@ -67,7 +67,7 @@ public class ToolClassLoader extends URLClassLoader {
 
             try {
                 File box = new File(toolbox.toURI());
-                if (!box.exists() || box.length() == 0 || box.getName().startsWith(".")) {
+                if (!box.exists() || box.getName().startsWith(".")) {
                     return;
                 }
                 if (first) {

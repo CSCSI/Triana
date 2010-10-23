@@ -840,7 +840,7 @@ public final class Env {
             return lastdir;
         } else {
             File f = new File(dirtype);
-            if (f.exists() && f.length() > 0) {
+            if (f.exists()) {
                 return dirtype;
             }
             return userHome();

@@ -20,8 +20,6 @@ import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.discovery.protocols.thirdparty.ServiceTypesAndProtocols;
 import org.trianacode.discovery.toolinfo.ToolMetadata;
 import org.trianacode.enactment.logging.Loggers;
-import sun.misc.Timeable;
-import sun.misc.Timer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -32,7 +30,7 @@ import java.util.List;
  * Created by IntelliJ IDEA. User: scmijt Date: Jul 30, 2010 Time: 2:37:49 PM To change this template use File |
  * Settings | File Templates.
  */
-public class DiscoverTools extends Thread implements Timeable {
+public class DiscoverTools extends Thread {
 
     private static Log log = Loggers.TOOL_LOGGER;
 
@@ -42,7 +40,6 @@ public class DiscoverTools extends Thread implements Timeable {
     private DiscoveredTools discoveredServices;
     private ToolResolver toolResolver;
 
-    private Timer timer;
     private HttpPeer httpEngine;
     private TrianaProperties properties;
 
