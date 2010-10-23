@@ -78,6 +78,40 @@ public class Locations {
     }
 
 
+    public static String getToolboxForClass(Class cls) {
+        String fullname = cls.getName();
+        String pathName = fullname.replace('.', '/') + ".class";
+        try {
+            URL url = ClassLoaders.getResource(pathName);
+            String fullPath = url.toURI().toASCIIString();
+            if (fullPath.startsWith("jar:")) {
+                int entryStart = fullPath.indexOf("!/");
+                if (entryStart == -1) {
+                    entryStart = fullPath.length();
+                }
+                String file = fullPath.substring(4, entryStart);
+                return new File(new URI(file)).getAbsolutePath();
+            } else { // presume file
+                if (fullPath.indexOf(pathName) > -1) {
+                    fullPath = fullPath.substring(0, fullPath.indexOf(pathName));
+                }
+                return new File(new URI(fullPath)).getAbsolutePath();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getToolboxForClass(String cls) {
+        try {
+            return getToolboxForClass(ClassLoaders.forName(cls));
+        } catch (ClassNotFoundException e) {
+            logger.warn(e);
+        }
+        return null;
+    }
+
     /*
      * Gets the config file.
      *
