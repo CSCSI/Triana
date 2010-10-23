@@ -117,6 +117,7 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.OceanTheme;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -221,13 +222,14 @@ public class ApplicationFrame extends TrianaWindow
         String myOSName = Locations.os();
         if (myOSName.equals("windows")) {
             try {
-                UIManager.setLookAndFeel("net.java.plaf.windows.WindowsLookAndFeel");
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             }
             catch (Exception e) {
             }
         } else {
             if (!myOSName.equals("osx")) {
                 try {
+                    MetalLookAndFeel.setCurrentTheme(new OceanTheme());
                     UIManager.setLookAndFeel(new MetalLookAndFeel());
                 }
                 catch (Exception e) {
