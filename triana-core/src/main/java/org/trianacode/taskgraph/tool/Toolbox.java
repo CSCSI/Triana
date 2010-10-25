@@ -77,7 +77,7 @@ public interface Toolbox {
     public Tool getTool(String name);
 
     /**
-     * could be called registerTool
+     * could be called deregisterTool
      *
      * @param name
      * @return
