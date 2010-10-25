@@ -33,8 +33,9 @@ public class BeanUnit extends Unit {
     private boolean isList = false;
 
     public BeanUnit(Class beanClass) throws Exception {
+        log("class name:" + beanClass.getName());
         this.beanClass = wrapPrimitiveClass(beanClass);
-        if (beanClass.isInterface() || Modifier.isAbstract(beanClass.getModifiers())) {
+        if (!isArray(beanClass) && (beanClass.isInterface() || Modifier.isAbstract(beanClass.getModifiers()))) {
             throw new IllegalArgumentException("Class cannot be be an interface or abstract");
         }
         if (isArrayOrCollection(this.beanClass)) {
@@ -45,7 +46,6 @@ public class BeanUnit extends Unit {
             }
             if (isArray(beanClass)) {
                 currentInputs = new String[]{beanClass.getComponentType().getName()};
-
             } else {
                 currentInputs = new String[]{Object.class.getName()};
             }
@@ -340,6 +340,9 @@ public class BeanUnit extends Unit {
      *         by getNodeInputTypes().
      */
     public String[] getInputTypes() {
+        for (String s : currentInputs) {
+            log("input type:" + s);
+        }
         return currentInputs;
     }
 
@@ -349,6 +352,9 @@ public class BeanUnit extends Unit {
      *         by getNodeOutputTypes().
      */
     public String[] getOutputTypes() {
+        for (String s : currentOutputs) {
+            log("output type:" + s);
+        }
         return currentOutputs;
     }
 
