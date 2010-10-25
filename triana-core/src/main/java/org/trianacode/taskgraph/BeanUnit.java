@@ -33,32 +33,37 @@ public class BeanUnit extends Unit {
     private boolean isList = false;
 
     public BeanUnit(Class beanClass) throws Exception {
-        this.beanClass = beanClass;
-        if (isPrimitive(beanClass)) {
-            bean = wrapPrimitive(beanClass.getName());
+        this.beanClass = wrapPrimitiveClass(beanClass);
+        if (beanClass.isInterface() || Modifier.isAbstract(beanClass.getModifiers())) {
+            throw new IllegalArgumentException("Class cannot be be an interface or abstract");
         }
-        if (isArrayOrCollection(beanClass)) {
-            if (isCollection(beanClass)) {
-                bean = beanClass.newInstance();
+        if (isArrayOrCollection(this.beanClass)) {
+            if (isCollection(this.beanClass)) {
+                bean = this.beanClass.newInstance();
             } else {
                 bean = Array.newInstance(Object.class, 0);
             }
-            // todo - could get component type but we allow either an array as input, or multiple inputs
-            currentInputs = new String[]{"java.lang.Object"};
-            currentOutputs = new String[]{"java.lang.Object"};
+            if (isArray(beanClass)) {
+                currentInputs = new String[]{beanClass.getComponentType().getName()};
+
+            } else {
+                currentInputs = new String[]{Object.class.getName()};
+                //currentOutputs = new String[]{Collection.class.getName()};
+            }
+            currentOutputs = new String[]{beanClass.getName()};
             isList = true;
-        } else if (!isPrimitiveOrWrapperOrEnum(beanClass)) {
-            this.bean = beanClass.newInstance();
-            List<Method>[] arr = extractMethods(beanClass);
+        } else if (!isPrimitiveOrWrapperOrEnum(this.beanClass)) {
+            this.bean = this.beanClass.newInstance();
+            List<Method>[] arr = extractMethods(this.beanClass);
             this.setters = arr[0];
             this.getters = arr[1];
             if (setters.size() > 0 && getters.size() > 0) {
                 this.selectedMethod = setters.get(0);
+                setIOTypes(selectedMethod);
             }
-            setIOTypes(selectedMethod);
         } else {
-            currentInputs = new String[]{beanClass.getName()};
-            currentOutputs = new String[]{beanClass.getName()};
+            currentInputs = new String[]{this.beanClass.getName()};
+            currentOutputs = new String[]{this.beanClass.getName()};
         }
     }
 
@@ -89,27 +94,23 @@ public class BeanUnit extends Unit {
                 setValue(primitiveValue);
             } else {
                 if (isList) {
-                    if (getTask().getDataOutputNodes().length > 1) {
-                        List<Object> params = new ArrayList<Object>();
-                        for (int count = 0; count < getInputNodeCount(); count++) {
-                            Object obj = getInputAtNode(count);
-                            params.add(obj);
-                        }
-                        if (isArray(beanClass)) {
-                            bean = Array.newInstance(Object.class, params.size());
-                            for (int i = 0; i < params.size(); i++) {
-                                Object o = params.get(i);
-                                Array.set(bean, i, o);
-                            }
-                        } else {
-                            for (Object param : params) {
-                                ((Collection) bean).add(param);
-                            }
+                    List<Object> params = new ArrayList<Object>();
+                    for (int count = 0; count < getInputNodeCount(); count++) {
+                        Object obj = getInputAtNode(count);
+                        params.add(obj);
+                    }
+                    if (isArray(beanClass)) {
+                        bean = Array.newInstance(Object.class, params.size());
+                        for (int i = 0; i < params.size(); i++) {
+                            Object o = params.get(i);
+                            Array.set(bean, i, o);
                         }
                     } else {
-                        Object obj = getInputAtNode(0);
-                        this.bean = obj;
+                        for (Object param : params) {
+                            ((Collection) bean).add(param);
+                        }
                     }
+
                 } else {
                     Object obj = getInputAtNode(0);
                     this.bean = obj;
@@ -189,7 +190,7 @@ public class BeanUnit extends Unit {
         setPopUpDescription("Takes a bean object and invokes the chosen method on it.");
         setHelpFileLocation("BeanUnit.html");
         if (selectedMethod != null) {
-            defineParameter("selectedMethod", USER_ACCESSIBLE, selectedMethod.getName());
+            defineParameter("selectedMethod", selectedMethod.getName(), USER_ACCESSIBLE);
             StringBuilder sb = new StringBuilder();
             sb.append("Method").append(" $title ").append("selectedMethod").append(" Choice");
             for (Method value : setters) {
@@ -205,7 +206,7 @@ public class BeanUnit extends Unit {
             }
         } else {
             if (!isList) {
-                defineParameter("value", USER_ACCESSIBLE, "");
+                defineParameter("value", "", USER_ACCESSIBLE);
                 setGUIBuilderV2Info("Value $title value TextField\n");
             }
         }
@@ -375,24 +376,24 @@ public class BeanUnit extends Unit {
     }
 
     public void setValue(String value) {
-        if (isWrapper(bean.getClass())) {
+        if (isWrapper(beanClass)) {
             try {
-                Constructor c = bean.getClass().getConstructor(String.class);
+                Constructor c = beanClass.getConstructor(String.class);
                 bean = c.newInstance(value);
             } catch (Exception e) {
                 e.printStackTrace();
                 try {
-                    Constructor c = bean.getClass().getConstructor(char.class);
+                    Constructor c = beanClass.getConstructor(char.class);
                     bean = c.newInstance(value.charAt(0));
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
             }
         } else {
-            if (bean instanceof String) {
+            if (beanClass.equals(String.class)) {
                 bean = value;
-            } else if (bean instanceof Enum) {
-                bean = Enum.valueOf(((Enum) bean).getClass(), value);
+            } else if (Enum.class.isAssignableFrom(beanClass)) {
+                bean = Enum.valueOf(beanClass, value);
             }
         }
     }
@@ -462,6 +463,26 @@ public class BeanUnit extends Unit {
         } else {
             int x = 0;
             return wrapPrimitive(x);
+        }
+    }
+
+    public static Class wrapPrimitiveClass(Class cls) {
+        if (cls.equals(boolean.class)) {
+            return Boolean.class;
+        } else if (cls.equals(byte.class)) {
+            return Byte.class;
+        } else if (cls.equals(int.class)) {
+            return Integer.class;
+        } else if (cls.equals(char.class)) {
+            return Character.class;
+        } else if (cls.equals(long.class)) {
+            return Long.class;
+        } else if (cls.equals(double.class)) {
+            return Double.class;
+        } else if (cls.equals(short.class)) {
+            return Short.class;
+        } else {
+            return cls;
         }
     }
 

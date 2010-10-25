@@ -343,6 +343,7 @@ public final class Env {
             }
             catch (Exception e) {
                 logger.warning("Corrupt config file, restoring from backup");
+                e.printStackTrace();
                 try {
                     Env.readConfig(configBakFile);
                 }
@@ -1594,7 +1595,7 @@ public final class Env {
             }
 
             // fix an old bug in some old util files
-            if (getUserProperty(HELP_VIEWER_STR).equals(Env.getString("defaultEditor"))) {
+            if (getUserProperty(HELP_VIEWER_STR) != null && getUserProperty(HELP_VIEWER_STR).equals(Env.getString("defaultEditor"))) {
                 setUserProperty(HELP_VIEWER_STR, Env.getString("defaultViewer"));
             }
 
