@@ -32,7 +32,7 @@
         <repository>
             <id>trianacode-maven-repos</id>
             <name>Triana Maven Repository</name>
-            <url>scp://trianacode.org/home/www/static/triana/html/maven</url>
+            <url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>
         </repository>
     </distributionManagement>
 
