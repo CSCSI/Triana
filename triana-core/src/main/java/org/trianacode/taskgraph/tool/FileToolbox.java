@@ -16,16 +16,7 @@
 
 package org.trianacode.taskgraph.tool;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import org.apache.commons.logging.Log;
-import org.thinginitself.http.RequestContext;
-import org.thinginitself.http.Response;
 import org.thinginitself.http.util.MimeHandler;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableFile;
@@ -40,6 +31,13 @@ import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
+
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Class Description Here...
@@ -103,7 +101,7 @@ public class FileToolbox implements Toolbox {
 
     public FileToolbox(String path, String type, String name, TrianaProperties properties) {
         this.path = path;
-        this.properties=properties;
+        this.properties = properties;
         this.type = type;
         this.name = name;
     }
@@ -191,8 +189,41 @@ public class FileToolbox implements Toolbox {
     }
 
     @Override
+    public List<Tool> getTools(URL url) {
+        List<Tool> t = new ArrayList<Tool>();
+        List<Tool> tools = getTools();
+        for (Tool tool : tools) {
+            if (tool.getDefinitionPath().equals(url)) {
+                t.add(tool);
+            }
+        }
+        return t;
+    }
+
+    @Override
     public List<Tool> getTools() {
         return new ArrayList(tools.values());
+    }
+
+    @Override
+    public Tool getTool(String name) {
+        return tools.get(name);
+    }
+
+    @Override
+    public Tool removeTool(String name) {
+        return tools.remove(name);
+    }
+
+    @Override
+    public Tool deleteTool(String name) {
+        Tool tool = removeTool(name);
+        if (tool != null) {
+            deleteLocalTool(tool);
+            return tool;
+        }
+        return null;
+
     }
 
     public String getPath() {
@@ -205,6 +236,16 @@ public class FileToolbox implements Toolbox {
 
     public String getName() {
         return name;
+    }
+
+
+    private boolean deleteLocalTool(Tool tool) {
+        File f = UrlUtils.getExistingFile(tool.getDefinitionPath());
+        if (f != null && !f.getName().endsWith(".jar")) {
+            f.delete();
+            return true;
+        }
+        return false;
     }
 
 
