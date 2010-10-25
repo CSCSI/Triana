@@ -271,7 +271,6 @@ public class BeanUnit extends Unit {
     public void parameterUpdate(String paramname, Object value) {
         if (paramname.equals("selectedMethod")) {
             String val = (String) value;
-            System.out.println("BeanUnit.parameterUpdate value:" + val);
             for (Method setter : setters) {
                 if (setter.getName().equals(val)) {
                     selectedMethod = setter;
