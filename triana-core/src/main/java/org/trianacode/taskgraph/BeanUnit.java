@@ -48,7 +48,6 @@ public class BeanUnit extends Unit {
 
             } else {
                 currentInputs = new String[]{Object.class.getName()};
-                //currentOutputs = new String[]{Collection.class.getName()};
             }
             currentOutputs = new String[]{beanClass.getName()};
             isList = true;
@@ -206,8 +205,22 @@ public class BeanUnit extends Unit {
             }
         } else {
             if (!isList) {
-                defineParameter("value", "", USER_ACCESSIBLE);
-                setGUIBuilderV2Info("Value $title value TextField\n");
+
+                if (isEnum(beanClass)) {
+                    Object[] consts = beanClass.getEnumConstants();
+                    if (consts.length > 0) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Constant").append(" $title ").append("value").append(" Choice");
+                        for (Object con : consts) {
+                            sb.append(" ").append(con.toString());
+                        }
+                        defineParameter("value", consts[0].toString(), USER_ACCESSIBLE);
+                        setGUIBuilderV2Info(sb.toString() + "\n");
+                    }
+                } else {
+                    defineParameter("value", "", USER_ACCESSIBLE);
+                    setGUIBuilderV2Info("Value $title value TextField\n");
+                }
             }
         }
     }
@@ -392,7 +405,7 @@ public class BeanUnit extends Unit {
         } else {
             if (beanClass.equals(String.class)) {
                 bean = value;
-            } else if (Enum.class.isAssignableFrom(beanClass)) {
+            } else if (isEnum(beanClass)) {
                 bean = Enum.valueOf(beanClass, value);
             }
         }
