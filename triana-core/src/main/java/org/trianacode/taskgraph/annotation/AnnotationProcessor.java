@@ -72,6 +72,9 @@ public class AnnotationProcessor {
                 break;
             }
         }
+        if (wrapper == null) {
+            return null;
+        }
         Field[] fields = annotated.getDeclaredFields();
         for (Field field : fields) {
             boolean hasParam = false;

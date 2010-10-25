@@ -188,7 +188,6 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
      */
     protected void removeNodeComponent(Node node) {
         Component comp = (Component) nodes.remove(node);
-
         if (comp != null) {
             remove(comp);
         }

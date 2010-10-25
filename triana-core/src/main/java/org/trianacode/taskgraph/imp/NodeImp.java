@@ -58,15 +58,11 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import java.util.ArrayList;
-
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.event.NodeEvent;
 import org.trianacode.taskgraph.event.NodeListener;
+
+import java.util.ArrayList;
 
 /**
  * An input/output NodeCable associated with a Task.
@@ -444,16 +440,16 @@ public class NodeImp implements NodeListener, Node {
     protected void notifyNodeConnected() {
         final Node node = this;
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
-                NodeEvent event = new NodeEvent(node);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
+        NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++) {
-                    copy[count].nodeConnected(event);
-                }
-            }
-        });
+        for (int count = 0; count < copy.length; count++) {
+            copy[count].nodeConnected(event);
+        }
+        //    }
+        //});
     }
 
     /**
@@ -462,16 +458,16 @@ public class NodeImp implements NodeListener, Node {
     protected void notifyNodeDisconnected() {
         final Node node = this;
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
-                NodeEvent event = new NodeEvent(node);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
+        NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++) {
-                    copy[count].nodeDisconnected(event);
-                }
-            }
-        });
+        for (int count = 0; count < copy.length; count++) {
+            copy[count].nodeDisconnected(event);
+        }
+        //    }
+        //});
     }
 
     /**
@@ -480,16 +476,16 @@ public class NodeImp implements NodeListener, Node {
     protected void notifyParameterNameSet() {
         final Node node = this;
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
-                NodeEvent event = new NodeEvent(node);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
+        NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++) {
-                    copy[count].parameterNameSet(event);
-                }
-            }
-        });
+        for (int count = 0; count < copy.length; count++) {
+            copy[count].parameterNameSet(event);
+        }
+        //    }
+        //});
     }
 
     /**
@@ -498,16 +494,16 @@ public class NodeImp implements NodeListener, Node {
     protected void notifyParentNodeChanged() {
         final Node node = this;
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
-                NodeEvent event = new NodeEvent(node);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
+        NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++) {
-                    copy[count].nodeParentChanged(event);
-                }
-            }
-        });
+        for (int count = 0; count < copy.length; count++) {
+            copy[count].nodeParentChanged(event);
+        }
+        //    }
+        // });
     }
 
     /**
@@ -516,16 +512,16 @@ public class NodeImp implements NodeListener, Node {
     protected void notifyChildNodeChanged() {
         final Node node = this;
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
-                NodeEvent event = new NodeEvent(node);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        NodeListener[] copy = (NodeListener[]) listeners.toArray(new NodeListener[listeners.size()]);
+        NodeEvent event = new NodeEvent(node);
 
-                for (int count = 0; count < copy.length; count++) {
-                    copy[count].nodeChildChanged(event);
-                }
-            }
-        });
+        for (int count = 0; count < copy.length; count++) {
+            copy[count].nodeChildChanged(event);
+        }
+        //    }
+        //});
     }
 
 

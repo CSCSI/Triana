@@ -80,7 +80,7 @@ public class TaskGraphEventDispatch {
      */
     public static void invokeLater(Runnable event) {
         try {
-            exec.execute(event);
+            event.run();
         } catch (Exception e) {
 
         }

@@ -60,14 +60,15 @@
 package org.trianacode.taskgraph.proxy.java;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.trianacode.taskgraph.BeanUnit;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.annotation.AnnotationProcessor;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.ClassLoaders;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The proxy for java units
@@ -138,6 +139,9 @@ public class JavaProxy implements Proxy {
                 unit = (Unit) o;
             } else {
                 unit = AnnotationProcessor.createUnit(o);
+                if (unit == null) {
+                    unit = new BeanUnit(cls);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

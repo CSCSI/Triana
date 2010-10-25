@@ -811,12 +811,16 @@ public class ToolResolver implements ToolMetadataResolver {
      */
     public String[] csvToStringArray(String csv) {
         String[] paths = csv.split(",");
-        String[] trimmed = new String[paths.length];
+        List<String> l = new ArrayList<String>();
         int i = 0;
         for (String path : paths) {
-            trimmed[i++] = path.trim();
+            path = path.trim();
+            if (path.length() > 0) {
+                l.add(path);
+            }
+
         }
-        return trimmed;
+        return l.toArray(new String[l.size()]);
     }
 
 
@@ -829,7 +833,7 @@ public class ToolResolver implements ToolMetadataResolver {
      * load the toolboxes using the TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY
      */
     public void loadToolboxes(List<String> extras) {
-        BufferedReader br = null;
+
 
         String[] toolboxPaths;
 
@@ -843,7 +847,6 @@ public class ToolResolver implements ToolMetadataResolver {
 
         for (String toolboxPath : toolboxPaths) {
             // need test for remote ones here - todo with bonjour stuff ....  for now assume local
-
             Toolbox intern = new Toolbox(toolboxPath, "internal", "default-toolboxes", false, properties);
             addNewToolBox(intern);
         }

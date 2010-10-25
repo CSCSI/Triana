@@ -188,6 +188,8 @@ public interface Tool {
 
     public String getSubTitle();
 
+    public void setSubTitle(String title);
+
     /**
      * @return a Java style package name for this tool in the form [package].[package]. i.e. Common.Input
      */

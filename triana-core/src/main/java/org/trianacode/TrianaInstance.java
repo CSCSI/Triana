@@ -1,5 +1,6 @@
 package org.trianacode;
 
+import org.trianacode.config.Locations;
 import org.trianacode.config.PropertyLoader;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.config.cl.ArgumentParser;
@@ -26,6 +27,8 @@ import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImpl;
 import org.trianacode.taskgraph.util.ExtensionFinder;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -92,7 +95,19 @@ public class TrianaInstance {
         if (toolboxes != null) {
             this.extraToolboxes.addAll(toolboxes);
         }
-        propertyLoader = new PropertyLoader(this, null);
+        String existing = Locations.getDefaultConfigFile();
+        File f = new File(existing);
+        if (!f.exists()) {
+            propertyLoader = new PropertyLoader(this, null);
+        } else {
+            Properties p = new Properties();
+            FileInputStream fin = new FileInputStream(f);
+            p.load(fin);
+            fin.close();
+            propertyLoader = new PropertyLoader(this, p);
+        }
+
+
         props = propertyLoader.getProperties();
     }
 

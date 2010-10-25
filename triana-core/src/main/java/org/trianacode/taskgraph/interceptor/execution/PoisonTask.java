@@ -272,6 +272,10 @@ public class PoisonTask implements Task {
     }
 
     @Override
+    public void setSubTitle(String title) {
+    }
+
+    @Override
     public String getVersion() {
         return null;
     }

@@ -908,15 +908,15 @@ public class TaskImp extends ToolImp implements Task {
     protected void notifyPropertyUpdate(final int property, final Object oldval, final Object newval) {
         final Task task = this;
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                TaskPropertyEvent event = new TaskPropertyEvent(task, property, oldval, newval);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        TaskPropertyEvent event = new TaskPropertyEvent(task, property, oldval, newval);
 
-                for (int count = 0; count < listenerarray.length; count++) {
-                    listenerarray[count].taskPropertyUpdate(event);
-                }
-            }
-        });
+        for (int count = 0; count < listenerarray.length; count++) {
+            listenerarray[count].taskPropertyUpdate(event);
+        }
+        //    }
+        //});
     }
 
     /**
@@ -927,15 +927,15 @@ public class TaskImp extends ToolImp implements Task {
         final int index = node.getNodeIndex();
         final int absindex = node.getAbsoluteNodeIndex();
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                TaskNodeEvent event = new TaskNodeEvent(TaskNodeEvent.NODE_ADDED, task, node, index, absindex);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        TaskNodeEvent event = new TaskNodeEvent(TaskNodeEvent.NODE_ADDED, task, node, index, absindex);
 
-                for (int count = 0; count < listenerarray.length; count++) {
-                    listenerarray[count].nodeAdded(event);
-                }
-            }
-        });
+        for (int count = 0; count < listenerarray.length; count++) {
+            listenerarray[count].nodeAdded(event);
+        }
+        //    }
+        //});
     }
 
     /**
@@ -946,15 +946,15 @@ public class TaskImp extends ToolImp implements Task {
         final int index = node.getNodeIndex();
         final int absindex = node.getAbsoluteNodeIndex();
 
-        TaskGraphEventDispatch.invokeLater(new Runnable() {
-            public void run() {
-                TaskNodeEvent event = new TaskNodeEvent(TaskNodeEvent.NODE_REMOVED, task, node, index, absindex);
+        //TaskGraphEventDispatch.invokeLater(new Runnable() {
+        //    public void run() {
+        TaskNodeEvent event = new TaskNodeEvent(TaskNodeEvent.NODE_REMOVED, task, node, index, absindex);
 
-                for (int count = 0; count < listenerarray.length; count++) {
-                    listenerarray[count].nodeRemoved(event);
-                }
-            }
-        });
+        for (int count = 0; count < listenerarray.length; count++) {
+            listenerarray[count].nodeRemoved(event);
+        }
+        //    }
+        //});
     }
 
     /**
@@ -963,21 +963,21 @@ public class TaskImp extends ToolImp implements Task {
     protected void notifyParameterSet(final String name, final String type, final Object oldval, final Object newval) {
         final Task task = this;
 
-        Runnable event = new Runnable() {
-            public void run() {
-                ParameterUpdateEvent event = new ParameterUpdateEvent(task, name, type, oldval, newval);
+        //Runnable event = new Runnable() {
+        //    public void run() {
+        ParameterUpdateEvent event = new ParameterUpdateEvent(task, name, type, oldval, newval);
 
-                for (int count = 0; count < listenerarray.length; count++) {
-                    listenerarray[count].parameterUpdated(event);
-                }
-            }
-        };
-
-        if (GUI.equals(type)) {
-            event.run();
-        } else {
-            TaskGraphEventDispatch.invokeLater(event);
+        for (int count = 0; count < listenerarray.length; count++) {
+            listenerarray[count].parameterUpdated(event);
         }
+        //    }
+        //};
+
+        //if (GUI.equals(type)) {
+        //    event.run();
+        //} else {
+        //    TaskGraphEventDispatch.invokeLater(event);
+        //}
     }
 
 
@@ -1054,10 +1054,14 @@ public class TaskImp extends ToolImp implements Task {
     }
 
     public void setSubTitle(String subtext) {
+        if (subtext == null) {
+            return;
+        }
+        String curr = getSubTitle();
         super.setSubTitle(subtext);
-//        if (!this.subtext.equals(old)) {
-//            notifyPropertyUpdate(TaskPropertyEvent.TASK_SUBNAME_UPDATE, old, this.subtext);
-//        }
+        if (!subtext.equals(curr)) {
+            notifyPropertyUpdate(TaskPropertyEvent.TASK_SUBNAME_UPDATE, curr, subtext);
+        }
     }
 
 
