@@ -65,9 +65,7 @@ import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.panels.ParameterPanelManager;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.event.*;
 
 import javax.swing.*;
@@ -133,22 +131,22 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
      */
     protected void initNodes() {
         Task task = getTaskInterface();
-//        if (TaskGraphUtils.getConnectedCables(task).length == 0) {
-//            try {
-//                int minIn = task.getMinDataInputNodes();
-//                int diff = minIn - task.getDataInputNodeCount();
-//                for (int i = 0; i < diff; i++) {
-//                    task.addDataInputNode();
-//                }
-//                int minOut = task.getMinDataOutputNodes();
-//                diff = minOut - task.getDataOutputNodeCount();
-//                for (int i = 0; i < diff; i++) {
-//                    task.addDataOutputNode();
-//                }
-//            } catch (NodeException e) {
-//                log.warn(e);
-//            }
-//        }
+        if (TaskGraphUtils.getConnectedCables(task).length == 0) {
+            try {
+                int minIn = task.getMinDataInputNodes();
+                int diff = minIn - task.getDataInputNodeCount();
+                for (int i = 0; i < diff; i++) {
+                    task.addDataInputNode();
+                }
+                int minOut = task.getMinDataOutputNodes();
+                diff = minOut - task.getDataOutputNodeCount();
+                for (int i = 0; i < diff; i++) {
+                    task.addDataOutputNode();
+                }
+            } catch (NodeException e) {
+                log.warn(e);
+            }
+        }
 
         Node[] nodes = task.getInputNodes();
 

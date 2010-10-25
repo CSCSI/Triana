@@ -91,7 +91,7 @@ public class AnnotatedUnitWrapper extends Unit {
 
     public void init() {
         setDefaultInputNodes(inputs.length);
-        setMinimumInputNodes(inputs.length);
+        setMinimumInputNodes(0);
         if (aggregate) {
             setMaximumInputNodes(Integer.MAX_VALUE);
         } else {
