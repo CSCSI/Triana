@@ -51,16 +51,6 @@ public class ToolResolver implements ToolMetadataResolver {
 
     private boolean initialResolved = false;
 
-    public static final String MIME_ZIP = "application/zip";
-    public static final String MIME_JAR = "application/java-archive";
-    public static final String EXT_TASKGRAPH = ".xml";
-    public static final String EXT_JAVA_CLASS = ".class";
-
-    public static String[] excludedDirectories = {"CVS", "src", "lib"};
-    public static String[] extensions = {".xml", ".class", ".jar"};
-    private Map<URL, Object> resolved = new ConcurrentHashMap<URL, Object>();
-
-
     private HttpPeer peer = new HttpPeer();
 
     private Map<String, ToolboxTools> tools = new ConcurrentHashMap<String, ToolboxTools>();
@@ -218,6 +208,7 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     public boolean isModifiable(Tool tool) {
+
         URL url = tool.getDefinitionPath();
         File f = UrlUtils.getExistingFile(url);
         if (f != null && !f.getName().endsWith(".jar")) {
@@ -315,7 +306,7 @@ public class ToolResolver implements ToolMetadataResolver {
         try {
             Toolbox box = toolboxes.get(toolbox);
             if (box != null) {
-                resolveTools(url, box);
+                box.refresh(url);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -338,7 +329,7 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     public List<ToolMetadata> resolve(Toolbox toolbox) {
-        List<Tool> tools = resolveToolbox(toolbox);
+        List<Tool> tools = toolbox.getTools();
         notifyToolsAdded(tools);
         List<ToolMetadata> ret = new ArrayList<ToolMetadata>();
         for (Tool tool : tools) {
@@ -353,32 +344,6 @@ public class ToolResolver implements ToolMetadataResolver {
         }
     }
 
-
-    /**
-     * get a streamable from a tool URL
-     *
-     * @param url
-     * @return
-     * @throws Exception
-     */
-    protected Streamable getToolStream(URL url) throws Exception {
-        if (UrlUtils.isFile(url)) {
-            File f = new File(url.toURI());
-            if (!f.exists()) {
-                return null;
-            }
-            return new StreamableFile(f, MimeHandler.getMime(f.getName()));
-        } else if (UrlUtils.isHttp(url)) {
-            RequestContext context = new RequestContext(url.toString());
-            Response resp = peer.get(context);
-            int status = resp.getContext().getResponseCode();
-            if (status != 200) {
-                return null;
-            }
-            return resp.getResource().getStreamable();
-        }
-        return null;
-    }
 
     /**
      * primary method of this class. It loads the toolboxes, resolves the tools and notifies listeners.
@@ -421,26 +386,6 @@ public class ToolResolver implements ToolMetadataResolver {
         }
     }
 
-    /**
-     * TODO - resolve remote tools
-     *
-     * @param toolbox
-     */
-    protected List<Tool> resolveToolbox(Toolbox toolbox) {
-        List<URL> urls = new ArrayList<URL>();
-        URL toolboxUrl = UrlUtils.toURL(toolbox.getPath());
-        urls.addAll(findLocal(toolboxUrl));
-        List<Tool> ret = new ArrayList<Tool>();
-        for (URL url : urls) {
-            try {
-                List<Tool> tools = resolveTools(url, toolbox);
-                ret.addAll(tools);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return ret;
-    }
 
     /**
      * Will this work for taskgraph???
@@ -475,6 +420,29 @@ public class ToolResolver implements ToolMetadataResolver {
         }
     }
 
+
+    private String getPackageName(String fullname) {
+        if (fullname.endsWith(".class")) {
+            fullname = fullname.substring(0, fullname.length() - 6);
+        }
+        int index = fullname.indexOf(".");
+        if (index > 0) {
+            return fullname.substring(0, fullname.lastIndexOf("."));
+        }
+        return "unknown";
+    }
+
+    private String getClassName(String fullname) {
+        if (fullname.endsWith(".class")) {
+            fullname = fullname.substring(0, fullname.length() - 6);
+        }
+        int index = fullname.indexOf(".");
+        if (index > 0) {
+            return fullname.substring(fullname.lastIndexOf(".") + 1, fullname.length());
+        }
+        return fullname;
+    }
+
     private ToolMetadata createMetadata(Tool tool) {
         Proxy proxy = tool.getProxy();
         String cls = null;
@@ -492,247 +460,17 @@ public class ToolResolver implements ToolMetadataResolver {
 
     protected void addNewToolBox(Toolbox... box) {
         for (Toolbox toolbox : box) {
-            if (!toolbox.isVirtual()) {
-                try {
-                    if (toolboxes.get(toolbox.getPath()) == null) {
-                        toolbox.loadTools();
-                        toolboxes.put(toolbox.getPath(), toolbox);
-                    }
-                } catch (Exception e) {
-                    log.warn("Error adding toolbox:" + toolbox.getPath(), e);
-                }
-            }
-        }
-    }
-
-    /**
-     * resolve tools from a particular URL. A single URL can contain more than one tool for example if it's a jar.
-     *
-     * @param url
-     * @param toolbox
-     * @return
-     * @throws Exception
-     */
-    protected List<Tool> resolveTools(URL url, Toolbox toolbox) throws Exception {
-        Streamable streamable = getToolStream(url);
-        if (streamable == null || !streamable.hasInputStream()) {
-            return null;
-        }
-        String mime = streamable.getMimeType();
-        List<Tool> tools = new ArrayList<Tool>();
-        if (url.getPath().endsWith(EXT_TASKGRAPH)) {
-            tools = processXml(streamable);
-        } else if (url.getPath().endsWith(".jar")) {
-            tools = processJar(url, streamable);
-        } else if (url.getPath().endsWith(EXT_JAVA_CLASS)) {
-            tools = processClass(url);
-        }
-        if (tools != null) {
-            for (Tool tool : tools) {
-                tool.setDefinitionPath(url);
-                tool.setToolBox(toolbox);
-            }
-            ToolboxTools dated = this.tools.get(toolbox.getPath());
-            if (dated == null) {
-                dated = new ToolboxTools(toolbox.getPath(), tools);
-            } else {
-                dated.addTools(tools);
-            }
-            this.tools.put(toolbox.getPath(), dated);
-        }
-        return tools;
-    }
-
-
-    /**
-     * find tools on the local file system
-     *
-     * @param url
-     * @return
-     */
-    private List<URL> findLocal(URL url) {
-        ArrayList<URL> files = new ArrayList<URL>();
-        File f = UrlUtils.getExistingFile(url);
-        if (f == null) {
-            return files;
-        }
-        if (f.getName().startsWith(".")) {
-            return files;
-        }
-        for (String extDir : excludedDirectories) {
-            if (f.getName().equals(extDir)) {
-                return files;
-            }
-        }
-        if (f.isDirectory()) {
-            File[] fs = f.listFiles(new FilenameFilter() {
-                public boolean accept(File file, String s) {
-                    File child = new File(file, s);
-                    if (child.isDirectory()) {
-                        return true;
-                    } else {
-                        for (String ext : extensions) {
-                            if (child.getName().endsWith(ext)) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-            });
-            for (File file : fs) {
-                URL furl = UrlUtils.fromFile(file);
-                if (furl != null && resolved.get(furl) == null) {
-                    files.addAll(findLocal(furl));
-                    resolved.put(furl, new Object());
-                }
-            }
-        } else {
-            URL furl = UrlUtils.fromFile(f);
-            if (furl != null && resolved.get(furl) == null) {
-                files.add(furl);
-                resolved.put(furl, new Object());
-            }
-        }
-        return files;
-    }
-
-
-    /**
-     * process an XML tool description
-     *
-     * @param streamable
-     * @return
-     * @throws Exception
-     */
-    private List<Tool> processXml(Streamable streamable) throws Exception {
-        XMLReader reader = null;
-        try {
-            reader = new XMLReader(new BufferedReader(new InputStreamReader(streamable.getInputStream())));
-            Tool tool = reader.readComponent();
-            if (tool != null) {
-                return Arrays.asList(tool);
-            }
-            return new ArrayList<Tool>();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.debug("error reading xml file ", e);
-            throw new ToolException("Error reading tool :" + FileUtils.formatThrowable(e));
-        } finally {
             try {
-                if (reader != null) {
-                    reader.close();
-                    reader = null;
+                if (toolboxes.get(toolbox.getPath()) == null) {
+                    toolbox.loadTools();
+                    toolboxes.put(toolbox.getPath(), toolbox);
                 }
-            } catch (Exception e1) {
-                e1.printStackTrace();
+            } catch (Exception e) {
+                log.warn("Error adding toolbox:" + toolbox.getPath(), e);
             }
         }
     }
 
-    /**
-     * process a jar file
-     *
-     * @param url
-     * @param streamable
-     * @return
-     * @throws Exception
-     */
-    private List<Tool> processJar(URL url, Streamable streamable) throws Exception {
-        List<Tool> ret = new ArrayList<Tool>();
-        InputStream in = streamable.getInputStream();
-        if (!(in instanceof ZipInputStream)) {
-            in = new ZipInputStream(in);
-        }
-        ZipInputStream zin = (ZipInputStream) in;
-        ZipEntry entry;
-        while ((entry = zin.getNextEntry()) != null) {
-            if (entry.getName().endsWith(ToolResolver.EXT_TASKGRAPH)) {
-                byte[] buff = new byte[2048];
-                ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                int c;
-                while ((c = zin.read(buff)) != -1) {
-                    bout.write(buff, 0, c);
-                }
-                ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-                List<Tool> xmls = processXml(new StreamableStream(bin));
-                ret.addAll(xmls);
-            } else if (entry.getName().endsWith(ToolResolver.EXT_JAVA_CLASS)) {
-                List<Tool> clss = processClass(new URL("jar:" + url.toString() + "!/" + entry.getName()));
-                ret.addAll(clss);
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * process a java class file
-     *
-     * @param url
-     * @return
-     * @throws Exception
-     */
-    private List<Tool> processClass(URL url) throws Exception {
-        ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
-        log.debug("ToolResolver.add class hierarchy:" + ch);
-        if (ch == null) {
-            ch = TypesMap.getAnnotated(url.toString());
-        }
-        log.debug("ToolResolver.add class hierarchy after trying annotations:" + ch + " for url "
-                + url);
-
-        if (ch != null) {
-            Tool tool = createTool(ch.getName());
-            if (tool != null) {
-                return Arrays.asList(tool);
-            }
-        }
-        return new ArrayList<Tool>();
-    }
-
-
-    /**
-     * instantiate a tool
-     *
-     * @param className
-     * @return
-     */
-    protected Tool createTool(String className) {
-        try {
-            ToolImp tool = new ToolImp();
-            tool.setDefinitionType(Tool.DEFINITION_JAVA_CLASS);
-            tool.setToolName(getClassName(className));
-            tool.setToolPackage(getPackageName(className));
-            tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
-            return tool;
-        } catch (TaskException e) {
-            log.warn("Error creating tool:", e);
-            return null;
-        }
-    }
-
-
-    private String getPackageName(String fullname) {
-        if (fullname.endsWith(EXT_JAVA_CLASS)) {
-            fullname = fullname.substring(0, fullname.length() - 6);
-        }
-        int index = fullname.indexOf(".");
-        if (index > 0) {
-            return fullname.substring(0, fullname.lastIndexOf("."));
-        }
-        return "unknown";
-    }
-
-    private String getClassName(String fullname) {
-        if (fullname.endsWith(EXT_JAVA_CLASS)) {
-            fullname = fullname.substring(0, fullname.length() - 6);
-        }
-        int index = fullname.indexOf(".");
-        if (index > 0) {
-            return fullname.substring(fullname.lastIndexOf(".") + 1, fullname.length());
-        }
-        return fullname;
-    }
 
     protected ToolStatus checkTool(DatedTool datedTool) throws Exception {
         Tool tool = datedTool.getTool();
@@ -847,12 +585,12 @@ public class ToolResolver implements ToolMetadataResolver {
 
         for (String toolboxPath : toolboxPaths) {
             // need test for remote ones here - todo with bonjour stuff ....  for now assume local
-            Toolbox intern = new Toolbox(toolboxPath, "internal", "default-toolboxes", false, properties);
+            Toolbox intern = new FileToolbox(toolboxPath, "local", "default-toolboxes", properties);
             addNewToolBox(intern);
         }
         if (extras != null) {
             for (String extra : extras) {
-                Toolbox intern = new Toolbox(extra, "extra", "default-toolboxes", false, properties);
+                Toolbox intern = new FileToolbox(extra, "local", "default-toolboxes", properties);
                 addNewToolBox(intern);
             }
         }

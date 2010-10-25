@@ -66,10 +66,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.trianacode.gui.hci.ToolFilter;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
 
 /**
  * A model for laying out and updating a tree of tools.

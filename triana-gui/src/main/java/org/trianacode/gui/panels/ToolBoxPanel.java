@@ -74,6 +74,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.tool.FileToolbox;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
@@ -215,7 +216,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
                                 GUIEnv.getTrianaIcon());
                         break;
                     } else {
-                        tools.addToolBox(new Toolbox(current,tools.getProperties()));
+                        tools.addToolBox(new FileToolbox(current,tools.getProperties()));
                         toolBoxItems.add(current);
                     }
                 }
@@ -225,7 +226,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
             String selected = (String) toolboxList.getSelectedValue();
 
             if (!tools.removeToolBox(selected)) {
-                if (tools.getToolBoxType(selected).equals(Toolbox.INTERNAL)) {
+                if (tools.getToolBoxType(selected).equals(FileToolbox.INTERNAL)) {
                     OptionPane.showInformation("Cannot remove toolbox", "Internal Toolbox", this);
                 } else {
                     OptionPane.showError("Cannot remove toolbox", "Error", this);

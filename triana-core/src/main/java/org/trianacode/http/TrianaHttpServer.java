@@ -5,9 +5,9 @@ import org.thinginitself.http.util.PathTree;
 import org.thinginitself.streamable.Streamable;
 import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 import java.io.IOException;

@@ -70,9 +70,10 @@ import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.ParameterWindowListener;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
+import org.trianacode.taskgraph.tool.FileToolbox;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.CompileUtil;
 import org.trianacode.util.CompilerException;
 import org.trianacode.util.Env;
@@ -323,12 +324,13 @@ public class CompileHandler implements ParameterWindowListener {
     public void compile() {
         try {
             Toolbox box = toolTable.getToolResolver().getToolbox(toolBox);
+            if(box instanceof FileToolbox) {
             if (compileSource) {
                 if (!automatedCompile) {
                     compiler = new CompileUtil(sourceFilePath, true);
                     compiler.setCompilerLocation(panel.getCompilerCommand());
                     compiler.setCompilerClasspath(
-                            panel.getCompilerClasspath() + System.getProperty("path.separator") + box.getClassPath());
+                            panel.getCompilerClasspath() + System.getProperty("path.separator") + ((FileToolbox)box).getClassPath());
                     compiler.setCompilerArguments(panel.getCompilerArguments());
                 } else {
                     compiler.setJavaFile(sourceFilePath);
@@ -337,7 +339,7 @@ public class CompileHandler implements ParameterWindowListener {
                 compiler.setSourcepath(sourceDir);
                 compiler.compile();
             }
-
+            }
             if (compileGUI) {
 
                 //compileGUI(tool);
@@ -376,6 +378,7 @@ public class CompileHandler implements ParameterWindowListener {
 
         if (compileGUI && tool.isParameterName(Tool.PARAM_PANEL_CLASS)) {
             Toolbox box = toolTable.getToolResolver().getToolbox(toolBox);
+            if (box instanceof FileToolbox) {
             String panelclass = (String) tool.getParameter(Tool.PARAM_PANEL_CLASS);
             panelclass = panelclass.substring(panelclass.lastIndexOf('.') + 1);
 
@@ -400,12 +403,13 @@ public class CompileHandler implements ParameterWindowListener {
                 compiler.setCompilerLocation(panel.getCompilerCommand());
                 //TODO
                 compiler.setCompilerClasspath(
-                        panel.getCompilerClasspath() + System.getProperty("path.separator") + box.getClassPath());
+                        panel.getCompilerClasspath() + System.getProperty("path.separator") + ((FileToolbox)box).getClassPath());
                 compiler.setCompilerArguments(panel.getCompilerArguments());
             }
             compiler.setDestDir(destFilePath);
             compiler.setSourcepath(sourceDir);
             compiler.compile();
+            }
         }
     }
 

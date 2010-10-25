@@ -145,8 +145,8 @@ public class ToolClassLoader extends URLClassLoader {
     }
 
     private boolean isNative(File file) {
-        if (file.getParent() != null && file.getParent().equals(Toolbox.NATIVE_DIR)) {
-            for (String s : Toolbox.nativeDirs) {
+        if (file.getParent() != null && file.getParent().equals(FileToolbox.NATIVE_DIR)) {
+            for (String s : FileToolbox.nativeDirs) {
                 if (file.getName().equals(s)) {
                     return true;
                 }
@@ -160,8 +160,8 @@ public class ToolClassLoader extends URLClassLoader {
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }
-        for (String s : Toolbox.nativeDirs) {
-            if (path.endsWith(Toolbox.NATIVE_DIR + "/" + s)) {
+        for (String s : FileToolbox.nativeDirs) {
+            if (path.endsWith(FileToolbox.NATIVE_DIR + "/" + s)) {
                 return true;
             }
         }

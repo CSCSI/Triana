@@ -18,9 +18,9 @@ package org.trianacode.gui.windows;
 
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.OptionPane;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
 
 import javax.swing.*;

@@ -66,10 +66,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolListener;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableUtils;
+
+import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.tool.Toolbox;
 
 /**

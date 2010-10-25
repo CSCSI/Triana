@@ -84,6 +84,8 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.trianacode.taskgraph.tool.FileToolbox;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.FileUtils;
@@ -242,7 +244,7 @@ public class ClassPathPanel extends ParameterPanel
         PathListModel pathListModel = ((PathListModel) classpathList.getModel());
 
         for (int i = 0; i < toolBoxes.length; i++) {
-            if (!toolBoxes[i].isVirtual()) {
+            if (toolBoxes[i] instanceof FileToolbox) {
                 File[] classDirs = FileUtils.listEndsWith(toolBoxes[i].getPath(), "classes");
 
                 for (int count = 0; count < classDirs.length; count++) {
