@@ -31,8 +31,14 @@ public class BeanUnit extends Unit {
     private Class beanClass;
     private String primitiveValue = null;
     private boolean isList = false;
+    private boolean showMethodChoice = false;
 
     public BeanUnit(Class beanClass) throws Exception {
+        this(beanClass, null);
+
+    }
+
+    public BeanUnit(Class beanClass, Method defaultMethod) throws Exception {
         log("class name:" + beanClass.getName());
         this.beanClass = wrapPrimitiveClass(beanClass);
         if (!isArray(beanClass) && (beanClass.isInterface() || Modifier.isAbstract(beanClass.getModifiers()))) {
@@ -56,8 +62,15 @@ public class BeanUnit extends Unit {
             List<Method>[] arr = extractMethods(this.beanClass);
             this.setters = arr[0];
             this.getters = arr[1];
-            if (setters.size() > 0 && getters.size() > 0) {
-                this.selectedMethod = setters.get(0);
+            if (defaultMethod == null) {
+                if (setters.size() > 0 && getters.size() > 0) {
+                    showMethodChoice = true;
+                    this.selectedMethod = setters.get(0);
+                    setIOTypes(selectedMethod);
+                }
+            } else {
+                showMethodChoice = true;
+                this.selectedMethod = defaultMethod;
                 setIOTypes(selectedMethod);
             }
         } else {
@@ -189,13 +202,15 @@ public class BeanUnit extends Unit {
         setPopUpDescription("Takes a bean object and invokes the chosen method on it.");
         setHelpFileLocation("BeanUnit.html");
         if (selectedMethod != null) {
-            defineParameter("selectedMethod", selectedMethod.getName(), USER_ACCESSIBLE);
-            StringBuilder sb = new StringBuilder();
-            sb.append("Method").append(" $title ").append("selectedMethod").append(" Choice");
-            for (Method value : setters) {
-                sb.append(" ").append(value.getName());
+            if (showMethodChoice) {
+                defineParameter("selectedMethod", selectedMethod.getName(), USER_ACCESSIBLE);
+                StringBuilder sb = new StringBuilder();
+                sb.append("Method").append(" $title ").append("selectedMethod").append(" Choice");
+                for (Method value : setters) {
+                    sb.append(" ").append(value.getName());
+                }
+                setGUIBuilderV2Info(sb.toString() + "\n");
             }
-            setGUIBuilderV2Info(sb.toString() + "\n");
             try {
                 getTask().setSubTitle(selectedMethod.getName());
                 updateInputNodes();
@@ -255,6 +270,7 @@ public class BeanUnit extends Unit {
      * specified by the parameters.
      */
     public void reset() {
+        // TODO
     }
 
     /**

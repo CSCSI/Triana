@@ -84,6 +84,12 @@ public class JavaProxy implements Proxy {
     private String unitpackage;
     private Unit unit;
 
+    public JavaProxy(Unit unit) {
+        this.unitname = unit.getToolName();
+        this.unitpackage = unit.getToolPackage();
+        this.unit = unit;
+    }
+
 
     public JavaProxy(String unitname) {
         this.unitname = unitname;
@@ -176,11 +182,6 @@ public class JavaProxy implements Proxy {
         }
         return unit;
     }
-
-    public void setUnit(Unit unit) {
-        this.unit = unit;
-    }
-
 
     /**
      * @return a map of the instance details for this proxy
