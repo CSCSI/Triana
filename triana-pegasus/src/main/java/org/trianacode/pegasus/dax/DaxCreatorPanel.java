@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 /**
@@ -21,6 +23,8 @@ public class DaxCreatorPanel extends ParameterPanel {
     String locationString = "";
     private JTextField nameField;
     private JTextField locationField;
+    private JCheckBox demoCheck;
+    private boolean demo = false;
 
     @Override
     public void init() {
@@ -63,13 +67,37 @@ public class DaxCreatorPanel extends ParameterPanel {
         mainPanel.add(namePanel);
         mainPanel.add(locationPanel);
 
+        JPanel demoPanel = new JPanel();
+        JLabel demoLabel = new JLabel("Demo? : ");
+        demoCheck = new JCheckBox();
+        demoCheck.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (demoCheck.isSelected()) {
+                    demo = true;
+                } else {
+                    demo = false;
+                }
+            }
+        });
+        demoPanel.add(demoLabel);
+        demoPanel.add(demoCheck);
+        mainPanel.add(demoPanel);
+
         add(mainPanel);
     }
 
     private void update(){
-        locationString = locationField.getText() + File.separator + nameField.getText();
+
+        locationString = nameField.getText();
+
+        if (!locationField.getText().equals("")){
+            locationString = locationField.getText() + File.separator + locationString;
+        }
+
         System.out.println("File location : " + locationString);
         this.getTask().setParameter("fileName", locationString);
+        this.getTask().setParameter("demo", demo);
+
     }
 
     public void okClicked(){

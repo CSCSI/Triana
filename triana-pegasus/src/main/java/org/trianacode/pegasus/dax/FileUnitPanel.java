@@ -3,7 +3,9 @@ package org.trianacode.pegasus.dax;
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.panels.ParameterPanel;
-import org.trianacode.pegasus.string.*;
+import org.trianacode.pegasus.string.CharSequencePattern;
+import org.trianacode.pegasus.string.PatternCollection;
+import org.trianacode.taskgraph.tool.Tool;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,6 +88,9 @@ public class FileUnitPanel extends ParameterPanel {
     @Override
     public void init() {
         getParams();
+
+        this.getTask().setParameter(Tool.DEFAULT_INPUT_NODES, 0);
+
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 

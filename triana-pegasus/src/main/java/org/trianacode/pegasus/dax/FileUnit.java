@@ -36,6 +36,8 @@ public class FileUnit {
     @Process(gather = true)
     public UUID fileUnitProcess(List in){
 
+        
+
         log("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
         DaxFileChunk thisFile = new DaxFileChunk();
 
@@ -93,51 +95,51 @@ public class FileUnit {
             log("No jobs enter fileUnit : " + thisFile.getFilename());
         }
 
-        /*
-        List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
-
-
-            List<List> inList = (List<List>)in;
-            for(int i = 0; i < inList.size(); i++){
-                Object o = inList.get(i);
-                if(o instanceof List){
-                    List<DaxJobChunk> innerList = (List)o;
-
-                    for(int j = 0; j < innerList.size(); j++){
-                        Object o2 = innerList.get(j);
-                        if(o2 instanceof DaxJobChunk){
-                            log("Found a DaxJobChunk");
-                            if(j == (innerList.size() - 1)){
-                                ((DaxJobChunk)o2).addOutFile(fileName);
-                                ((DaxJobChunk)o2).addOutFileChunk(thisFile);
-                                log("Added output file to job " + (i+1) + " of " + inList.size() + ".");
-                                ((DaxJobChunk) o2).setOutputFilename(fileName);
-                                ((DaxJobChunk) o2).setOutputFileChunk(thisFile);                                                                 
-                                log("Telling the jobs before and after this fileUnit that this file was in between them");                               
-                            }
-                            jcl.add((DaxJobChunk) o2);
-                        }
-                        else{
-                            log("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
-                        }
-                    }
-
-
-                }
-                else{
-                    log("Incoming list didn't contain a list, contains : " + o.getClass().toString());
-                }
-            }
-            if(in.size() == 0){
-                log("No jobs handed to this one. Creating job stub with this filename");
-                DaxJobChunk jc = new DaxJobChunk();
-                jc.setOutputFilename(fileName);
-                jc.setStub(true);
-                jcl.add(jc);
-            }
-        return jcl;
-
-        */
+//
+//        List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
+//
+//
+//            List<List> inList = (List<List>)in;
+//            for(int i = 0; i < inList.size(); i++){
+//                Object o = inList.get(i);
+//                if(o instanceof List){
+//                    List<DaxJobChunk> innerList = (List)o;
+//
+//                    for(int j = 0; j < innerList.size(); j++){
+//                        Object o2 = innerList.get(j);
+//                        if(o2 instanceof DaxJobChunk){
+//                            log("Found a DaxJobChunk");
+//                            if(j == (innerList.size() - 1)){
+//                                ((DaxJobChunk)o2).addOutFile(fileName);
+//                                ((DaxJobChunk)o2).addOutFileChunk(thisFile);
+//                                log("Added output file to job " + (i+1) + " of " + inList.size() + ".");
+//                                ((DaxJobChunk) o2).setOutputFilename(fileName);
+//                                ((DaxJobChunk) o2).setOutputFileChunk(thisFile);
+//                                log("Telling the jobs before and after this fileUnit that this file was in between them");
+//                            }
+//                            jcl.add((DaxJobChunk) o2);
+//                        }
+//                        else{
+//                            log("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
+//                        }
+//                    }
+//
+//
+//                }
+//                else{
+//                    log("Incoming list didn't contain a list, contains : " + o.getClass().toString());
+//                }
+//            }
+//            if(in.size() == 0){
+//                log("No jobs handed to this one. Creating job stub with this filename");
+//                DaxJobChunk jc = new DaxJobChunk();
+//                jc.setOutputFilename(fileName);
+//                jc.setStub(true);
+//                jcl.add(jc);
+//            }
+//        return jcl;
+//
+//
 
         //     register.listAll();
         return thisFile.getUuid();

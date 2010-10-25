@@ -6,10 +6,15 @@ import org.griphyn.vdl.dax.Filename;
 import org.griphyn.vdl.dax.Job;
 import org.griphyn.vdl.dax.PseudoText;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.annotation.CheckboxParameter;
 import org.trianacode.taskgraph.annotation.Process;
 import org.trianacode.taskgraph.annotation.TextFieldParameter;
 import org.trianacode.taskgraph.annotation.Tool;
 
+import javax.swing.*;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +35,9 @@ public class DaxCreatorUnit {
     private static final int ONE2ONE_CONNECT = 2;
     private static final int SPREAD_CONNECT = 3;
     public int idNumber = 0;
+
+    @CheckboxParameter
+    private boolean demo = false;
 
     @TextFieldParameter
     private String fileName = "output.dax";
@@ -240,15 +248,15 @@ public class DaxCreatorUnit {
         int[] filesPerJob = sortSpread(fcs.size(), jobChunk.getNumberOfJobs());
 
 
-   //     double numberInputFiles = fcs.size();
-   //     double filesPerJob = numberInputFiles/numberJobs;
-   //     System.out.println("Files : " + numberInputFiles +
-   //             " Jobs : " + numberJobs + ". "
-   //             + filesPerJob + " files / job ");
+        //     double numberInputFiles = fcs.size();
+        //     double filesPerJob = numberInputFiles/numberJobs;
+        //     System.out.println("Files : " + numberInputFiles +
+        //             " Jobs : " + numberJobs + ". "
+        //             + filesPerJob + " files / job ");
 
         for (int i = 0; i< numberJobs; i++){
 
-          //  System.out.println("Sorting out job : " + i);
+            //  System.out.println("Sorting out job : " + i);
             Job job = new Job();
             idNumber ++;
             job.addArgument(new PseudoText(jobChunk.getJobArgs()));
@@ -269,10 +277,10 @@ public class DaxCreatorUnit {
                     java.util.Random rand = new java.util.Random();
                     int r = rand.nextInt(fcs.size());
 
-              //      System.out.println("Files left : " + fcs.size() + " Getting file : " + r);
+                    //      System.out.println("Files left : " + fcs.size() + " Getting file : " + r);
                     DaxFileChunk fc = fcs.get(r);
                     fcs.remove(r);
-                //    System.out.println("Got : " + r + " filename : " + fc.getFilename());
+                    //    System.out.println("Got : " + r + " filename : " + fc.getFilename());
                     job.addUses(new Filename(fc.getNextFilename(), 1));
                 }
             }
@@ -314,7 +322,7 @@ public class DaxCreatorUnit {
             for(int i = 0; i < fc.getNumberOfFiles() ; i++){
                 fcs.add(fc);
             }
-            fc.resetNextCounter();            
+            fc.resetNextCounter();
         }
         double numberInputFiles = fcs.size();
 
@@ -442,18 +450,41 @@ public class DaxCreatorUnit {
 
         if(dax.getJobCount() > 0 ){
 
+            FileWriter fw = null;
             try {
-                FileWriter fw = new FileWriter(fileName);
+                fw = new FileWriter(fileName);
                 dax.toXML(fw, "", null );
-                fw.close();
                 log("File " + fileName + " saved.\n");
             } catch (IOException e){
                 e.printStackTrace();
+            } finally{
+                try {
+                    fw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         }else{
             log("No jobs in DAX, will not create file. (Avoids overwrite)");
         }
+
+        if(demo){
+            log("Displaying demo");
+            DaxReader dr = new DaxReader();
+            try {
+                TaskGraph t = dr.importWorkflow(new File(fileName));
+                TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
+            } catch (Exception e) {
+                log("Error opening *" + fileName + "* demo taskgraph : " + e);
+                e.printStackTrace();
+            }
+        }else{
+            log("Not displaying demo");
+        }
+
+        JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Dax saved : " + fileName);
+        
     }
 
 
