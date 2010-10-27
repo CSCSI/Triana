@@ -333,6 +333,7 @@ public class DaxCreatorUnit {
 
         double number = Math.ceil(numberInputFiles / numberInputsPerJob);
         numberJobs = (int)number;
+        jobChunk.setNumberOfJobs(numberJobs);
         System.out.println("Double is : " + number  + " Number is : " + numberJobs);
         System.out.println("Files : " + numberInputFiles +
                 " Files/job : " + numberInputsPerJob + ". "
