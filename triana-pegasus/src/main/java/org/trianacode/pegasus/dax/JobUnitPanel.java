@@ -5,9 +5,9 @@ import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.panels.ParameterPanel;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -93,8 +93,8 @@ public class JobUnitPanel extends ParameterPanel {
 
         final JCheckBox autoCheck = new JCheckBox("Auto (Fully connect all incoming nodes)", autoConnect);
         final JCheckBox scatterCheck = new JCheckBox("Scatter (Each job takes n-files as input) ", !autoConnect);
-        final JCheckBox spreadCheck = new JCheckBox("Spread (Randomly connect incoming files to n-jobs) ", !autoConnect);
-        final JCheckBox one2oneCheck = new JCheckBox("One-2-one (Duplicate job to match number of incoming files)", !autoConnect);
+        final JCheckBox spreadCheck = new JCheckBox("Spread (Connect incoming files to n-jobs) ", !autoConnect);
+        final JCheckBox one2oneCheck = new JCheckBox("One-2-one (Job duplicated to number of input files)", !autoConnect);
 
 
         autoCheck.addItemListener(new ItemListener() {
@@ -155,31 +155,57 @@ public class JobUnitPanel extends ParameterPanel {
         lowerPanel1.add(spreadCheck);
         lowerPanel1.add(one2oneCheck);
 
-        final JLabel numberLabel = new JLabel();
-        final JSlider jobSlide = new JSlider(1, 999, 1);
-        jobSlide.setValue(numberOfJobs);
-        jobSlide.setMajorTickSpacing(100);
-        jobSlide.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent changeEvent) {
-                numberOfJobs = jobSlide.getValue();
-                numberLabel.setText("No. jobs : " + numberOfJobs);
+        final JLabel numberJobsLabel = new JLabel("No. jobs : " + numberOfJobs);
+//        final JSlider jobSlide = new JSlider(1, 999, 1);
+//        jobSlide.setValue(numberOfJobs);
+//        jobSlide.setMajorTickSpacing(100);
+//        jobSlide.addChangeListener(new ChangeListener() {
+//            public void stateChanged(ChangeEvent changeEvent) {
+//                numberOfJobs = jobSlide.getValue();
+//                numberJobsLabel.setText("No. jobs : " + numberOfJobs);
+//            }
+//        });
+//        numberJobsLabel.setText("No. Jobs : " + numberOfJobs);
+//        lowerPanelAuto.add(numberLabel);
+//        lowerPanelAuto.add(jobSlide);
+//
+        final JLabel numberInputFilesLabel = new JLabel("No. Files/job : " + fileInputsPerJob);
+//        final JSlider fileSlide = new JSlider(1, 999, 1);
+//        fileSlide.setMajorTickSpacing(100);
+//        fileSlide.addChangeListener(new ChangeListener() {
+//            public void stateChanged(ChangeEvent changeEvent) {
+//                fileInputsPerJob = fileSlide.getValue();
+//                numberInputFilesLabel.setText("No. Files/job : " + fileInputsPerJob);
+//            }
+//        });
+//        lowerPanelScatter.add(numberInputFilesLabel);
+//        lowerPanelScatter.add(fileSlide);
+        final String[] numbers = new String[100];
+        for(int i = 1; i < 100; i++){
+            numbers[i] = "" + i;
+        }
+
+        final JComboBox jobsCombo = new JComboBox(numbers);
+        jobsCombo.setSelectedItem("" + numberOfJobs);
+        jobsCombo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                numberOfJobs = Integer.parseInt((String)jobsCombo.getSelectedItem());
+                numberJobsLabel.setText("No. files : " + numberOfJobs);
             }
         });
-        numberLabel.setText("No. Jobs : " + numberOfJobs);
-        lowerPanelAuto.add(numberLabel);
-        lowerPanelAuto.add(jobSlide);
+        lowerPanelAuto.add(numberJobsLabel);
+        lowerPanelAuto.add(jobsCombo);
 
-        final JLabel numberInputFilesLabel = new JLabel("No. Files/job : " + fileInputsPerJob);
-        final JSlider fileSlide = new JSlider(1, 999, 1);
-        fileSlide.setMajorTickSpacing(100);
-        fileSlide.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent changeEvent) {
-                fileInputsPerJob = fileSlide.getValue();
-                numberInputFilesLabel.setText("No. Files/job : " + fileInputsPerJob);
+        final JComboBox filesPerJobCombo = new JComboBox(numbers);
+        filesPerJobCombo.setSelectedItem("" + fileInputsPerJob);
+        filesPerJobCombo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                fileInputsPerJob = Integer.parseInt((String)filesPerJobCombo.getSelectedItem());
+                numberInputFilesLabel.setText("No. files : " + fileInputsPerJob);
             }
         });
         lowerPanelScatter.add(numberInputFilesLabel);
-        lowerPanelScatter.add(fileSlide);
+        lowerPanelScatter.add(filesPerJobCombo);
 
         lowerPanel.add(lowerPanel1);
         lowerPanel.add(lowerPanelAuto);
@@ -187,8 +213,10 @@ public class JobUnitPanel extends ParameterPanel {
         add(lowerPanel);
 
         setEnabling(lowerPanel, collection);
-        setEnabling(lowerPanelAuto, autoConnect);
-        setEnabling(lowerPanelScatter, !autoConnect);
+        if(collection){
+            setEnabling(lowerPanelAuto, autoConnect);
+            setEnabling(lowerPanelScatter, !autoConnect);
+        }
     }
 
 

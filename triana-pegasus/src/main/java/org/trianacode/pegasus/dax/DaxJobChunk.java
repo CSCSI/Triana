@@ -148,7 +148,12 @@ public class DaxJobChunk implements Serializable {
     }
 
     public int getNumberOfJobs() {
-        return numberOfJobs;
+        if(isCollection){
+            return numberOfJobs;
+        }
+        else{
+            return 1;
+        }
     }
 
     public void setNumberOfJobs(int numberOfJobs) {

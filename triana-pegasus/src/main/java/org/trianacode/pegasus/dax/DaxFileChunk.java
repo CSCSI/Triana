@@ -110,7 +110,11 @@ public class DaxFileChunk implements Serializable {
     }
 
     public int getNumberOfFiles() {
-        return numberOfFiles;
+        if(isCollection()){
+            return numberOfFiles;
+        }else{
+            return 1;
+        }
     }
 
     public PatternCollection getNamePattern() {
