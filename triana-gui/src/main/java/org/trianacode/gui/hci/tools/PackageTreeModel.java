@@ -58,9 +58,7 @@
  */
 package org.trianacode.gui.hci.tools;
 
-import org.trianacode.gui.hci.ToolFilter;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
 
@@ -77,12 +75,12 @@ import java.util.List;
  * @author Ian Wang
  * @version $Revision: 4048 $
  */
-public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
+public class PackageTreeModel extends DefaultTreeModel {
 
     /**
      * The default tree root text
      */
-    private static final String ROOT_NAME = "Triana Tools";
+    private static final String ROOT_NAME = "Packages";
 
 
     /**
@@ -95,19 +93,10 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
      */
     private Hashtable nodes = new Hashtable();
 
-    /**
-     * The filter used to generate virtual package names for the tools
-     */
-    private ToolFilter filter;
-
-
-    public ToolTreeModel(ToolTable table) {
+    public PackageTreeModel(ToolTable table) {
         super(new DefaultMutableTreeNode(ROOT_NAME));
-
         this.tooltable = table;
-
         repopulate();
-        table.addToolTableListener(this);
     }
 
     /**
@@ -115,85 +104,34 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
      */
     private void repopulate() {
         nodes.clear();
-
-        if (filter == null) {
-            setRoot(new DefaultMutableTreeNode(ROOT_NAME));
-        } else {
-            setRoot(new DefaultMutableTreeNode(filter.getRoot()));
-        }
-
+        setRoot(new DefaultMutableTreeNode(ROOT_NAME));
         nodes.put("", getRoot());
-
-        Tool[] tools = tooltable.getTools();
-
-        for (int toolcount = 0; toolcount < tools.length; toolcount++) {
-            insertTool(tools[toolcount]);
-        }
-    }
-
-
-    /**
-     * @return the current filter being used to generate virtual package names
-     */
-    public ToolFilter getToolFilter() {
-        return filter;
-    }
-
-    /**
-     * Sets the filter to be used to generate virtual package names
-     */
-    public void setToolFilter(ToolFilter filter) {
-        if (this.filter != null) {
-            this.filter.dispose();
+        Toolbox[] tools = tooltable.getToolBoxes();
+        for (Toolbox toolbox : tools) {
+            List<Tool> ts = toolbox.getTools();
+            for (Tool t : ts) {
+                insertTool(t);
+            }
         }
 
-        if (filter != null) {
-            this.filter = filter;
-            filter.init();
-        }
-
-        repopulate();
-    }
-
-    /**
-     * @return the virtual package name for the specfied tool using the current tool filter, null if the tool is being
-     *         ignored
-     */
-    public String[] getFilteredPackages(Tool tool) {
-        if (filter == null) {
-            return new String[]{tool.getToolPackage()};
-        } else {
-            return filter.getFilteredPackage(tool);
-        }
     }
 
     /**
      * Inserts a tool into the tree
      */
     public void insertTool(final Tool tool) {
-        final String[] filtpack = getFilteredPackages(tool);
+        final String toolPackage = tool.getToolPackage();
 
-        if (filtpack != null) {
+        if (toolPackage != null && toolPackage.length() > 0) {
             if (SwingUtilities.isEventDispatchThread()) {
-                insertTool(tool, filtpack);
+                addPackages(toolPackage);
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        insertTool(tool, filtpack);
+                        addPackages(toolPackage);
                     }
                 });
             }
-        }
-    }
-
-    private void insertTool(Tool tool, String[] filtpack) {
-        for (int count = 0; count < filtpack.length; count++) {
-            addPackages(filtpack[count]);
-
-            DefaultMutableTreeNode packnode = (DefaultMutableTreeNode) nodes.get(filtpack[count]);
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(tool);
-
-            insertInto(node, packnode);
         }
     }
 
@@ -213,11 +151,9 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
                 sup = "";
                 sub = pack;
             }
-
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) nodes.get(sup);
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(sub);
             insertInto(node, parent);
-
             nodes.put(pack, node);
         }
     }
@@ -271,109 +207,6 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
         if (!inserted) {
             insertNodeInto(newnode, parent, count);
         }
-
-
     }
 
-    /**
-     * Remove a tool from the tree
-     */
-    public void deleteTool(Tool tool) {
-        String[] filtpack = getFilteredPackages(tool);
-
-        if (filtpack != null) {
-            for (int count = 0; count < filtpack.length; count++) {
-                removeNode(tool, filtpack[count]);
-                removePackages(filtpack[count]);
-            }
-        }
-    }
-
-    /**
-     * Remove the node containing the tool from the tree
-     */
-    private void removeNode(Tool tool, String pack) {
-        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) nodes.get(pack);
-        boolean removed = false;
-
-        for (int count = 0; (count < parent.getChildCount() && (!removed)); count++) {
-
-            try {
-                DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parent.getChildAt(count);
-                if (childNode.getUserObject().toString().equals(tool.toString())) {
-                    removeNodeFromParent(childNode);
-                    removed = true;
-                }
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Here ...");
-                // silently catch this
-            }
-        }
-    }
-
-    /**
-     * Recursively removes empty packages
-     */
-    private void removePackages(String pack) {
-        DefaultMutableTreeNode packnode = (DefaultMutableTreeNode) nodes.get(pack);
-
-        if (packnode.getChildCount() == 0) {
-            removeNodeFromParent(packnode);
-            nodes.remove(pack);
-
-            if (pack.lastIndexOf('.') > -1) {
-                removePackages(pack.substring(0, pack.lastIndexOf('.')));
-            }
-        }
-    }
-
-
-    @Override
-    public void toolsAdded(List<Tool> tools) {
-        for (Tool tool : tools) {
-            insertTool(tool);
-        }
-    }
-
-    @Override
-    public void toolsRemoved(List<Tool> tools) {
-        for (Tool tool : tools) {
-            deleteTool(tool);
-        }
-    }
-
-    /**
-     * Called when a new tool is added
-     */
-    public void toolAdded(Tool tool) {
-        insertTool(tool);
-    }
-
-    /**
-     * Called when a tool is removed
-     */
-    public void toolRemoved(Tool tool) {
-        deleteTool(tool);
-    }
-
-    /**
-     * Called when a Tool Box is added
-     */
-    public void toolBoxAdded(Toolbox toolbox) {
-        List<Tool> tools = toolbox.getTools();
-        for (Tool tool : tools) {
-            insertTool(tool);
-        }
-    }
-
-    /**
-     * Called when a Tool Box is Removed
-     */
-    public void toolBoxRemoved(Toolbox toolbox) {
-        List<Tool> tools = toolbox.getTools();
-        for (Tool tool : tools) {
-            deleteTool(tool);
-        }
-    }
 }

@@ -19,6 +19,7 @@ package org.trianacode.config;
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.tool.ClassLoaders;
+import org.trianacode.taskgraph.tool.FileToolboxLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -152,10 +153,10 @@ public class Locations {
         File f = Locations.runHome();
         if (isJarred()) {
             File p = new File(f.getParentFile(), "toolboxes");
-            return p.getAbsolutePath();
+            return "{" + FileToolboxLoader.LOCAL_TYPE + "}" + p.getAbsolutePath();
         } else {
             File p = new File(f, "toolboxes");
-            return p.getAbsolutePath();
+            return "{" + FileToolboxLoader.LOCAL_TYPE + "}" + p.getAbsolutePath();
         }
 
     }
@@ -173,7 +174,7 @@ public class Locations {
         }
     }
 
-    public static String[] getInternalToolboxes() {
+    public static String[] getToolboxes() {
         String paths = System.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
 
         if (paths != null)
@@ -211,7 +212,7 @@ public class Locations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logger.debug("Triana runHome : " + runHome);
+        logger.info("Triana runHome : " + runHome);
         return runHome;
     }
 

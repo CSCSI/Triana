@@ -59,24 +59,17 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Insets;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 /**
  * A simple panel for specifying a tool name (optional), package and tool box. This can be used in various tool
@@ -171,10 +164,7 @@ public class ToolPanel extends JPanel implements ActionListener, ItemListener {
 
         if (lastToolBox != null) {
             toolbox.setSelectedItem(lastToolBox);
-        } else if (tools.getToolBox(ToolTable.USER_TOOLBOX) != null) {
-            toolbox.setSelectedItem(tools.getToolBox(ToolTable.USER_TOOLBOX));
         }
-
         formpanel.add(new JLabel(Env.getString("toolbox")));
         formpanel.add(toolbox);
 

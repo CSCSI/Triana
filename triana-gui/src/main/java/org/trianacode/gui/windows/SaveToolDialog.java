@@ -17,10 +17,12 @@
 package org.trianacode.gui.windows;
 
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.hci.tools.PackageTree;
 import org.trianacode.gui.panels.OptionPane;
-import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.taskgraph.tool.FileToolboxLoader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
@@ -29,6 +31,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Class Description Here...
@@ -44,6 +47,7 @@ public class SaveToolDialog extends JDialog implements ActionListener {
      * the main list
      */
     private JComboBox combo = new JComboBox(new DefaultComboBoxModel());
+    private ArrayList<String> toolboxItems = new ArrayList<String>();
 
     private boolean go = false;
 
@@ -77,12 +81,19 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         boxes.setLayout(new BorderLayout());
         DefaultComboBoxModel model = (DefaultComboBoxModel) combo.getModel();
         combo.setEditable(false);
-        combo.setPrototypeDisplayValue("01234567890123456789");
-        Toolbox[] toolboxes = tools.getToolBoxes();
+        combo.setPrototypeDisplayValue("012345678901234567890123456789012345678901234567890123456789");
+        Toolbox[] toolboxes = tools.getToolBoxes(FileToolboxLoader.LOCAL_TYPE);
+        Toolbox tb = tool.getToolBox();
+        String sel = null;
         for (int count = 0; count < toolboxes.length; count++) {
-            //if (!toolboxes[count].getType().equals(Toolbox.INTERNAL)) {
-                model.addElement(toolboxes[count].getPath());
-            //}
+            if (tb != null && tb.getPath().equals(toolboxes[count].getPath())) {
+                sel = tb.getPath();
+            }
+            model.addElement(toolboxes[count].getPath());
+            toolboxItems.add(toolboxes[count].getPath());
+        }
+        if (sel != null) {
+            combo.setSelectedItem(sel);
         }
         JPanel listpanel = new JPanel(new BorderLayout(3, 0));
         listpanel.add(new JLabel("Choose a toolbox:"), BorderLayout.WEST);
@@ -107,6 +118,12 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         namePanel.add(new JLabel("Choose a name:"), BorderLayout.WEST);
         namePanel.add(name, BorderLayout.CENTER);
         namePanel.setBorder(new EmptyBorder(3, 3, 3, 3));
+        if (tool.getToolPackage() != null) {
+            pkg.setText(tool.getToolPackage());
+        }
+        if (tool.getToolName() != null) {
+            name.setText(tool.getToolName());
+        }
 
 
         JPanel main = new JPanel(new BorderLayout());
@@ -132,7 +149,6 @@ public class SaveToolDialog extends JDialog implements ActionListener {
 
         getContentPane().add(buttonpanel, BorderLayout.SOUTH);
 
-
         pack();
         setLocationRelativeTo(GUIEnv.getApplicationFrame());
         setVisible(true);
@@ -142,13 +158,12 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         if (pkg == null || pkg.length() == 0) {
             return "";
         }
-        if (pkg.startsWith(File.separator)) {
+        if (pkg.startsWith(".")) {
             pkg = pkg.substring(1);
         }
-        if (pkg.endsWith(File.separator)) {
+        if (pkg.endsWith(".")) {
             pkg = pkg.substring(0, pkg.length() - 1);
         }
-        pkg = pkg.replace(File.separator, ".");
         pkg = pkg.replaceAll(",\\\\/;:?!@£$%^&*()+=-", "");
         return pkg.toLowerCase();
     }
@@ -179,32 +194,15 @@ public class SaveToolDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         String toolbox = (String) combo.getSelectedItem();
+
         if (event.getSource() == pkgButton) {
-
-            JFileChooser chooser = new JFileChooser(toolbox);
-            chooser.setMultiSelectionEnabled(false);
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-            int returnVal = chooser.showOpenDialog(this);
-
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File f = chooser.getSelectedFile();
-                if (f != null) {
-                    String pack = f.getAbsolutePath();
-                    if (pack.startsWith(toolbox)) {
-                        pack = pack.substring(toolbox.length(), pack.length());
-                    } else {
-                        OptionPane.showInformation("The package you have chosen does not exsit yet.\n" +
-                                "It will be created in the selected tool box", "New Package", this);
-                    }
-                    pkg.setText(normalizePackage(pack));
-                } else {
-                    pkg.setText("");
-                }
+            PackageTree packageTree = new PackageTree(this.tools);
+            String returnVal = packageTree.showPackages();
+            if (returnVal != null) {
+                pkg.setText(returnVal);
             } else {
                 pkg.setText("");
             }
-
         } else {
             if (event.getSource() == ok) {
                 pkg.setText(normalizePackage(pkg.getText()));
@@ -231,14 +229,15 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         }
     }
 
+
     public boolean isGo() {
         return go;
     }
 
     private void save(String toolbox, String pkg, String name) {
-        tool.setToolBox(tools.getToolResolver().getToolbox(toolbox));
         tool.setToolPackage(pkg);
         tool.setToolName(name);
+        tools.getToolResolver().addTool(tool, tools.getToolResolver().getToolbox(toolbox));
         go = true;
 
     }

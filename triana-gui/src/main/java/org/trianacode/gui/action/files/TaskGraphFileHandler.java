@@ -58,19 +58,6 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.BorderLayout;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.basic.BasicFileChooserUI;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.TrianaDialog;
 import org.trianacode.gui.action.SelectionManager;
@@ -93,6 +80,14 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.UrlUtils;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicFileChooserUI;
+import java.awt.*;
+import java.io.*;
+import java.net.URL;
+import java.util.StringTokenizer;
 
 /**
  * A class to handle the loading and saving of TaskGraph files.
@@ -459,9 +454,9 @@ public class TaskGraphFileHandler implements SelectionManager {
             SaveToolDialog dialog = new SaveToolDialog(group, tools);
             if (dialog.isGo()) {
                 String toolbox = group.getToolBox().getPath();
-                File dir = new File(toolbox, group.getToolPackage().replace(".", File.separator));
-                dir.mkdirs();
-                definitionPath = UrlUtils.toURL(dir.getAbsolutePath() + File.separator + group.getToolName() + ".xml");
+                File tb = new File(toolbox);
+                File out = getOutputFile(tb, group.getToolPackage());
+                definitionPath = UrlUtils.toURL(out.getAbsolutePath() + File.separator + group.getToolName() + ".xml");
                 group.setDefinitionPath(definitionPath);
                 if (TrianaDialog.isOKtoWriteIfExists(definitionPath.getPath())) {
                     writeFile = true;
@@ -470,10 +465,30 @@ public class TaskGraphFileHandler implements SelectionManager {
                 }
             }
         }
-
         if (writeFile) {
             backGroundSaveTaskGraph(taskgraph, definitionPath.getPath(), tools, true);
         }
+    }
+
+    private static File getOutputFile(File toolbox, String pkg) {
+        String packageRoot = pkg;
+        if (pkg.indexOf(".") > 1) {
+            packageRoot = pkg.substring(0, pkg.indexOf("."));
+        }
+        File root = toolbox;
+        if (!root.getName().equals(packageRoot) && !root.getName().equals("xml")) {
+            root = new File(toolbox, packageRoot);
+        }
+        root.mkdirs();
+        File curr = new File(root, "xml");
+        curr.mkdirs();
+        StringTokenizer st = new StringTokenizer(pkg, ".", false);
+        while (st.hasMoreTokens()) {
+            String tok = st.nextToken();
+            curr = new File(curr, tok);
+            curr.mkdirs();
+        }
+        return curr;
     }
 
 

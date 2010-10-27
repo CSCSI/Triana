@@ -68,6 +68,8 @@ public interface Toolbox {
      */
     public List<Tool> getTools();
 
+    public void addTool(Tool tool);
+
     /**
      * get a tool using tool.getQualifiedToolName()
      *

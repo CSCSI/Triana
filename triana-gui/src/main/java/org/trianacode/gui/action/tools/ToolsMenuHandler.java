@@ -58,17 +58,18 @@
  */
 package org.trianacode.gui.action.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JOptionPane;
 import org.trianacode.gui.appmaker.CommandLineWizard;
 import org.trianacode.gui.hci.CompileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.tool.FileToolboxLoader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Class that handles events and actions for the Tools menu, including New Tool, Compile and Edit Tool Box Paths.
@@ -96,9 +97,11 @@ public class ToolsMenuHandler implements ActionListener {
         } else if (label.equals(Env.getString("compileAll"))) {
             rebuildAllTools();
         } else if (label.equals(Env.getString("editToolBoxPaths"))) {
-            editToolBoxPaths();
+            editToolBoxPaths(FileToolboxLoader.LOCAL_TYPE);
         } else if (label.equals(Env.getString("generateCommandLineApp"))) {
             generateCommandLine();
+        } else {
+            editToolBoxPaths(label);
         }
     }
 
@@ -148,8 +151,8 @@ public class ToolsMenuHandler implements ActionListener {
         }
     }
 
-    public void editToolBoxPaths() {
-        new ToolBoxHandler(tools);
+    public void editToolBoxPaths(String label) {
+        new ToolBoxHandler(tools, label);
     }
 
     /**

@@ -13,10 +13,8 @@ import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.tool.FileToolbox;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolListener;
-import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.taskgraph.tool.*;
+import org.trianacode.taskgraph.util.ToolUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 import java.io.File;
@@ -116,13 +114,35 @@ public class ToolResolver implements ToolMetadataResolver {
         }
     }
 
+    public void addTool(Tool tool, Toolbox toolbox) {
+        if (toolbox == null) {
+            return;
+        }
+        toolbox.addTool(tool);
+        for (ToolListener listener : listeners) {
+            listener.toolAdded(tool);
+        }
+    }
+
+    public void addTools(List<Tool> tools, Toolbox toolbox) {
+        if (toolbox == null) {
+            return;
+        }
+        for (Tool tool : tools) {
+            toolbox.addTool(tool);
+        }
+        for (ToolListener listener : listeners) {
+            listener.toolsAdded(tools);
+        }
+    }
+
     public void deleteTool(Tool tool) {
         Toolbox toolbox = tool.getToolBox();
         if (toolbox == null) {
             return;
         }
 
-        Tool match = toolbox.removeTool(tool.getQualifiedToolName());
+        Tool match = toolbox.deleteTool(tool.getQualifiedToolName());
         if (match != null) {
             for (ToolListener listener : listeners) {
                 listener.toolRemoved(tool);
@@ -254,6 +274,16 @@ public class ToolResolver implements ToolMetadataResolver {
         return ret;
     }
 
+    public List<Toolbox> getToolboxes(String type) {
+        List<Toolbox> ret = new ArrayList<Toolbox>();
+        for (Toolbox toolbox : toolboxes.values()) {
+            if (toolbox.getType().equals(type)) {
+                ret.add(toolbox);
+            }
+        }
+        return ret;
+    }
+
     public void refreshTools(URL url, String toolbox) {
         try {
             Toolbox box = toolboxes.get(toolbox);
@@ -338,20 +368,20 @@ public class ToolResolver implements ToolMetadataResolver {
             if (!metadata.isTaskgraph()) {
                 ToolImp tool = new ToolImp();
                 tool.setDefinitionType(Tool.DEFINITION_METADATA);
-                tool.setToolName(getClassName(metadata.getToolName()));
-                tool.setToolPackage(getPackageName(metadata.getToolName()));
+                tool.setToolName(ToolUtils.getClassName(metadata.getToolName()));
+                tool.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
                 String cls = metadata.getUnitWrapper();
                 if (cls == null) {
                     tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
                 } else {
-                    tool.setProxy(new JavaProxy(getClassName(cls), getPackageName(cls)));
+                    tool.setProxy(new JavaProxy(ToolUtils.getClassName(cls), ToolUtils.getPackageName(cls)));
                 }
                 return tool;
             } else {
                 TaskGraph taskgraph = TaskGraphManager.createTaskGraph();
                 taskgraph.setDefinitionType(Tool.DEFINITION_METADATA);
-                taskgraph.setToolName(getClassName(metadata.getToolName()));
-                taskgraph.setToolPackage(getPackageName(metadata.getToolName()));
+                taskgraph.setToolName(ToolUtils.getClassName(metadata.getToolName()));
+                taskgraph.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
                 return taskgraph;
             }
         } catch (TaskException e) {
@@ -360,28 +390,6 @@ public class ToolResolver implements ToolMetadataResolver {
         }
     }
 
-
-    private String getPackageName(String fullname) {
-        if (fullname.endsWith(".class")) {
-            fullname = fullname.substring(0, fullname.length() - 6);
-        }
-        int index = fullname.indexOf(".");
-        if (index > 0) {
-            return fullname.substring(0, fullname.lastIndexOf("."));
-        }
-        return "unknown";
-    }
-
-    private String getClassName(String fullname) {
-        if (fullname.endsWith(".class")) {
-            fullname = fullname.substring(0, fullname.length() - 6);
-        }
-        int index = fullname.indexOf(".");
-        if (index > 0) {
-            return fullname.substring(fullname.lastIndexOf(".") + 1, fullname.length());
-        }
-        return fullname;
-    }
 
     private ToolMetadata createMetadata(Tool tool) {
         Proxy proxy = tool.getProxy();
@@ -430,14 +438,16 @@ public class ToolResolver implements ToolMetadataResolver {
      * @return
      */
     private String toCSV() {
-        StringBuffer toolboxesstr = new StringBuffer();
+        StringBuilder toolboxesstr = new StringBuilder();
 
         List<Toolbox> toolboxes = getToolboxes();
-        for (int count = 0; count < toolboxes.size(); count++) {
-            toolboxesstr.append(toolboxes.get(count).getPath());
-            toolboxesstr.append(", ");
+        if (toolboxes != null && toolboxes.size() > 0) {
+            for (int count = 0; count < toolboxes.size() - 1; count++) {
+                toolboxesstr.append("{").append(toolboxes.get(count).getType()).append("}").append(toolboxes.get(count).getPath());
+                toolboxesstr.append(", ");
+            }
+            toolboxesstr.append("{").append(toolboxes.get(toolboxes.size() - 1).getType()).append("}").append(toolboxes.get(toolboxes.size() - 1).getPath());
         }
-
         return toolboxesstr.toString();
     }
 
@@ -471,7 +481,6 @@ public class ToolResolver implements ToolMetadataResolver {
      */
     public void loadToolboxes(List<String> extras) {
 
-
         String[] toolboxPaths;
 
         String toolboxPathsCSV = properties.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
@@ -483,17 +492,36 @@ public class ToolResolver implements ToolMetadataResolver {
 
 
         for (String toolboxPath : toolboxPaths) {
-            // need test for remote ones here - todo with bonjour stuff ....  for now assume local
-            Toolbox intern = new FileToolbox(toolboxPath, "local", "default-toolboxes", properties);
-            addNewToolBox(intern);
+            Toolbox t = createToolbox(toolboxPath);
+            if (t != null) {
+                addNewToolBox(t);
+            }
         }
         if (extras != null) {
             for (String extra : extras) {
-                Toolbox intern = new FileToolbox(extra, "local", "default-toolboxes", properties);
-                addNewToolBox(intern);
+                Toolbox t = createToolbox(extra);
+                if (t != null) {
+                    addNewToolBox(t);
+                }
             }
         }
     }
+
+    protected Toolbox createToolbox(String path) {
+        String type = FileToolboxLoader.LOCAL_TYPE;
+        String loc = path;
+        if (path.startsWith("{")) {
+            int curlyEnd = path.indexOf("}");
+            type = path.substring(1, curlyEnd);
+            loc = path.substring(curlyEnd + 1, path.length());
+        }
+        ToolboxLoader loader = ToolboxLoaderRegistry.getLoader(type);
+        if (loader != null) {
+            return loader.loadToolbox(loc, properties);
+        }
+        return null;
+    }
+
 
     public void shutdown() {
         if (timer != null) {

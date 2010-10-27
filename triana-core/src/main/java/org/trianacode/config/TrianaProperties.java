@@ -64,7 +64,7 @@ public class TrianaProperties extends Properties {
      */
     public TrianaProperties(TrianaInstance engine, Properties initValues) {
         this.engine = engine;
-        if (initValues == null) {
+        if (initValues == null || initValues.isEmpty()) {
             // put default values
             this.putAll(getDefaultConfiguration());
         } else {
@@ -84,6 +84,7 @@ public class TrianaProperties extends Properties {
             String value = systemprops.getProperty(prop);
 
             if ((value != null) && (value.contains(DOMAIN))) {
+                System.out.println("TrianaProperties.overrideUsingSystemProperties REMOVING PROERPTY");
                 remove(prop);
                 setProperty(prop, value);
             }

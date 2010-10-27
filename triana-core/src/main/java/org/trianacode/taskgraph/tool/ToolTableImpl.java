@@ -110,9 +110,7 @@ public class ToolTableImpl implements ToolTable, ToolListener {
     public Tool[] getTools() {
         List<Tool> ret = resolver.getTools();
         return ret.toArray(new Tool[ret.size()]);
-
     }
-
 
     /**
      * @return true if a tool with the given name exists
@@ -346,15 +344,10 @@ public class ToolTableImpl implements ToolTable, ToolListener {
     /**
      * @return the tool box path of the specified type (null if no tool box specified for that type)
      */
-    public Toolbox getToolBox(String type) {
+    public Toolbox[] getToolBoxes(String type) {
 
-        List<Toolbox> l = resolver.getToolboxes();
-        for (Toolbox toolbox : l) {
-            if (toolbox.getType().equals(type)) {
-                return toolbox;
-            }
-        }
-        return null;
+        List<Toolbox> ret = resolver.getToolboxes(type);
+        return ret.toArray(new Toolbox[ret.size()]);
     }
 
     /**

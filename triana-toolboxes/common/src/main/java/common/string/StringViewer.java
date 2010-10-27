@@ -3,6 +3,8 @@ package common.string;
 import org.trianacode.taskgraph.Unit;
 import triana.types.TrianaType;
 
+import java.lang.reflect.Array;
+
 /**
  * View any object as a String
  *
@@ -31,6 +33,13 @@ public class StringViewer extends Unit {
             if (!obj.equals(TrianaType.NOT_CONNECTED)) {
                 if (obj instanceof byte[]) {
                     str += new String((byte[]) obj) + "\n";
+                } else if (obj.getClass().isArray()) {
+                    StringBuilder sb = new StringBuilder();
+                    int len = Array.getLength(obj);
+                    for (int i = 0; i < len; i++) {
+                        sb.append(Array.get(obj, i)).append("\n");
+                    }
+                    str = sb.toString();
                 } else {
                     str += obj.toString() + "\n";
                 }

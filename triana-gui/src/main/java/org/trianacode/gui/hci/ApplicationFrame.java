@@ -325,6 +325,9 @@ public class ApplicationFrame extends TrianaWindow
         }
     }
 
+    public TrianaInstance getEngine() {
+        return engine;
+    }
 
     /**
      * @return the cuurently loaded tool table

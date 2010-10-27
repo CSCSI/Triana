@@ -42,9 +42,9 @@ public class DocumentHandler {
 
     private static TransformerFactory tf = TransformerFactory.newInstance();
 
-    static {
-        tf.setAttribute("indent-number", new Integer(2));
-    }
+//    static {
+//        tf.setAttribute("indent-number", new Integer(2));
+//    }
 
     private Document doc;
 
@@ -227,7 +227,7 @@ public class DocumentHandler {
             t = tf.newTransformer();
             if (indent) {
                 t.setOutputProperty(OutputKeys.INDENT, "yes");
-                t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+                //t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             } else {
                 t.setOutputProperty(OutputKeys.INDENT, "no");
             }
@@ -253,7 +253,7 @@ public class DocumentHandler {
             t = tf.newTransformer();
             if (indent) {
                 t.setOutputProperty(OutputKeys.INDENT, "yes");
-                t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+                //t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             } else {
                 t.setOutputProperty(OutputKeys.INDENT, "no");
             }

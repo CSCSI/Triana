@@ -1,21 +1,22 @@
 package common.output;
 
 
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.ser.XMLWriter;
+import org.trianacode.taskgraph.tool.FileToolboxLoader;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
+import org.trianacode.taskgraph.tool.Toolbox;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.Unit;
-import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolListener;
-import org.trianacode.taskgraph.tool.Toolbox;
 
 
 /**
@@ -274,17 +275,11 @@ public class Serialize extends Unit implements ToolListener {
 
 
     private void updateToolBoxes() {
-        Toolbox datatoolbox = getToolTable().getToolBox("data");
-        Toolbox[] toolboxes = getToolTable().getToolBoxes();
+        Toolbox[] toolboxes = getToolTable().getToolBoxes(FileToolboxLoader.LOCAL_TYPE);
 
         ArrayList<String> list = new ArrayList();
         for (int count = 0; count < toolboxes.length; count++) {
             list.add(toolboxes[count].getPath());
-        }
-
-        if (datatoolbox != null) {
-            list.remove(datatoolbox.getPath());
-            list.add(0, datatoolbox.getPath());
         }
 
         setParameter("toolboxes", list.toArray(new String[list.size()]));

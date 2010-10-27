@@ -16,22 +16,17 @@
 
 package org.trianacode.taskgraph.ser;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.proxy.Proxy;
+import org.trianacode.taskgraph.tool.Tool;
+import org.w3c.dom.Element;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.w3c.dom.Element;
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.proxy.Proxy;
-import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * Class Description Here...
@@ -41,6 +36,9 @@ import org.trianacode.taskgraph.tool.Tool;
  */
 
 public class XMLWriter implements XMLConstants {
+
+    private static Log log = Loggers.TOOL_LOGGER;
+
 
     private Writer writer;
     private DocumentHandler handler;
@@ -241,17 +239,17 @@ public class XMLWriter implements XMLConstants {
 
     private void addParams(Tool tool, Element parent, boolean preserveinst) {
         String[] paramNames = tool.getParameterNames();
-        System.out.println("XMLWriter.addParams preserve Inst is " + preserveinst);
+        log.debug("XMLWriter.addParams preserve Inst is " + preserveinst);
         if (paramNames.length > 0) {
             Element param = handler.element(PARAM_LIST_TAG);
             handler.add(param, parent);
 
             for (int i = 0; i < paramNames.length; i++) {
-                System.out.println("XMLWriter.addParams is transient " + tool.getParameterType(paramNames[i])
+                log.debug("XMLWriter.addParams is transient " + tool.getParameterType(paramNames[i])
                         .startsWith(Tool.TRANSIENT));
                 if (preserveinst || (!tool.getParameterType(paramNames[i]).startsWith(Tool.TRANSIENT))) {
                     if (!tool.getParameterType(paramNames[i]).equals(Tool.INTERNAL)) {
-                        System.out.println("XMLWriter.addParams WRITING ATTRIBUTE " + paramNames[i]);
+                        log.debug("XMLWriter.addParams WRITING ATTRIBUTE " + paramNames[i]);
                         Element current = handler.element(PARAM_TAG);
                         current.setAttribute(NAME_TAG, paramNames[i]);
 

@@ -68,6 +68,7 @@ public class BeanUnit extends Unit {
                     this.selectedMethod = setters.get(0);
                     setIOTypes(selectedMethod);
                 }
+
             } else {
                 showMethodChoice = true;
                 this.selectedMethod = defaultMethod;
@@ -202,7 +203,7 @@ public class BeanUnit extends Unit {
         setPopUpDescription("Takes a bean object and invokes the chosen method on it.");
         setHelpFileLocation("BeanUnit.html");
         if (selectedMethod != null) {
-            if (showMethodChoice) {
+            if (showMethodChoice && setters.size() > 1) {
                 defineParameter("selectedMethod", selectedMethod.getName(), USER_ACCESSIBLE);
                 StringBuilder sb = new StringBuilder();
                 sb.append("Method").append(" $title ").append("selectedMethod").append(" Choice");

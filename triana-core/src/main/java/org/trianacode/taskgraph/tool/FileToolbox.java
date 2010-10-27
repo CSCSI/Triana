@@ -30,6 +30,7 @@ import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.creators.type.ClassHierarchy;
 import org.trianacode.taskgraph.util.FileUtils;
+import org.trianacode.taskgraph.util.ToolUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 import java.io.*;
@@ -91,7 +92,6 @@ public class FileToolbox implements Toolbox {
     private String name;
     private Map<String, Tool> tools = new HashMap<String, Tool>();
 
-    public static final String INTERNAL = "internal";
     private ToolClassLoader loader = new ToolClassLoader();
 
     private TrianaProperties properties;
@@ -99,31 +99,23 @@ public class FileToolbox implements Toolbox {
     private Map<URL, Object> resolved = new ConcurrentHashMap<URL, Object>();
 
 
-    public FileToolbox(String path, String type, String name, TrianaProperties properties) {
+    public FileToolbox(String path, String name, TrianaProperties properties) {
         this.path = path;
         this.properties = properties;
-        this.type = type;
+        this.type = FileToolboxLoader.LOCAL_TYPE;
         this.name = name;
     }
 
 
-    public FileToolbox(String path, String name, TrianaProperties properties) {
-        this(path, "No Type", name, properties);
-    }
-
     public FileToolbox(String path, TrianaProperties properties) {
-        this(path, "No Type", UrlUtils.getLastPathComponent(path), properties);
-    }
-
-    public FileToolbox(File file, String type) {
-        file.mkdirs();
-        this.path = file.getAbsolutePath();
-        this.type = type;
-        this.name = file.getName();
+        this(path, UrlUtils.getLastPathComponent(path), properties);
     }
 
     public FileToolbox(File file) {
-        this(file, "No Type");
+        file.mkdirs();
+        this.path = file.getAbsolutePath();
+        this.type = FileToolboxLoader.LOCAL_TYPE;
+        this.name = file.getName();
     }
 
     public TrianaProperties getProperties() {
@@ -203,6 +195,12 @@ public class FileToolbox implements Toolbox {
     @Override
     public List<Tool> getTools() {
         return new ArrayList(tools.values());
+    }
+
+    @Override
+    public void addTool(Tool tool) {
+        tool.setToolBox(this);
+        tools.put(tool.getQualifiedToolName(), tool);
     }
 
     @Override
@@ -477,8 +475,8 @@ public class FileToolbox implements Toolbox {
         try {
             ToolImp tool = new ToolImp();
             tool.setDefinitionType(Tool.DEFINITION_JAVA_CLASS);
-            tool.setToolName(getClassName(className));
-            tool.setToolPackage(getPackageName(className));
+            tool.setToolName(ToolUtils.getClassName(className));
+            tool.setToolPackage(ToolUtils.getPackageName(className));
             tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
             return tool;
         } catch (TaskException e) {
@@ -487,27 +485,5 @@ public class FileToolbox implements Toolbox {
         }
     }
 
-
-    private String getPackageName(String fullname) {
-        if (fullname.endsWith(EXT_JAVA_CLASS)) {
-            fullname = fullname.substring(0, fullname.length() - 6);
-        }
-        int index = fullname.indexOf(".");
-        if (index > 0) {
-            return fullname.substring(0, fullname.lastIndexOf("."));
-        }
-        return "unknown";
-    }
-
-    private String getClassName(String fullname) {
-        if (fullname.endsWith(EXT_JAVA_CLASS)) {
-            fullname = fullname.substring(0, fullname.length() - 6);
-        }
-        int index = fullname.indexOf(".");
-        if (index > 0) {
-            return fullname.substring(fullname.lastIndexOf(".") + 1, fullname.length());
-        }
-        return fullname;
-    }
 
 }

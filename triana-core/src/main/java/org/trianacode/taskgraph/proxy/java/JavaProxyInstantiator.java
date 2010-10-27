@@ -60,11 +60,11 @@
 package org.trianacode.taskgraph.proxy.java;
 
 
-import java.util.Map;
-
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.ProxyInstantiator;
+
+import java.util.Map;
 
 /**
  * The proxy instantiator for java unit proxies.
@@ -85,8 +85,11 @@ public class JavaProxyInstantiator implements ProxyInstantiator {
     public Proxy cloneProxy(Proxy proxy) throws ProxyInstantiationException {
         if (proxy instanceof JavaProxy) {
             JavaProxy jp = (JavaProxy) proxy;
-            JavaProxy clone = new JavaProxy(jp.getUnitName(), jp.getUnitPackage());
-            return clone;
+            if (jp.getUnit() != null) {
+                return new JavaProxy(jp.getUnit());
+            }
+            return new JavaProxy(jp.getUnitName(), jp.getUnitPackage());
+
         }
         throw new ProxyInstantiationException("Could not clone proxy. Wrong type:" + proxy.getType());
     }

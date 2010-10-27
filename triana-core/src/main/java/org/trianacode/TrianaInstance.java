@@ -25,6 +25,8 @@ import org.trianacode.taskgraph.ser.Base64ObjectDeserializer;
 import org.trianacode.taskgraph.ser.ObjectDeserializationManager;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.ToolTableImpl;
+import org.trianacode.taskgraph.tool.ToolboxLoader;
+import org.trianacode.taskgraph.tool.ToolboxLoaderRegistry;
 import org.trianacode.taskgraph.util.ExtensionFinder;
 
 import java.io.File;
@@ -106,8 +108,6 @@ public class TrianaInstance {
             fin.close();
             propertyLoader = new PropertyLoader(this, p);
         }
-
-
         props = propertyLoader.getProperties();
     }
 
@@ -216,6 +216,7 @@ public class TrianaInstance {
         ext.add(ToolboxRenderer.class);
         ext.add(ToolMetadataResolver.class);
         ext.add(DataBusInterface.class);
+        ext.add(ToolboxLoader.class);
         if (exten != null) {
             for (Class aClass : exten) {
                 if (!ext.contains(aClass)) {
@@ -255,6 +256,12 @@ public class TrianaInstance {
                 for (Object o : exts) {
                     DataBusInterface e = (DataBusInterface) o;
                     DataBus.registerDataBus(e);
+                }
+            } else if (key.equals(ToolboxLoader.class)) {
+                List<Object> exts = extensions.get(key);
+                for (Object o : exts) {
+                    ToolboxLoader e = (ToolboxLoader) o;
+                    ToolboxLoaderRegistry.registerLoader(e);
                 }
             }
         }

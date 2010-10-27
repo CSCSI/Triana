@@ -58,8 +58,6 @@
  */
 package org.trianacode.gui.hci;
 
-import java.io.File;
-
 import org.trianacode.gui.TrianaDialog;
 import org.trianacode.gui.panels.PastePanel;
 import org.trianacode.gui.windows.ParameterWindow;
@@ -67,7 +65,10 @@ import org.trianacode.gui.windows.ParameterWindowListener;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
+
+import java.io.File;
 
 /**
  * Handler class responsible for displaying the paste UI and responding to it.
@@ -153,7 +154,9 @@ public class PasteHandler {
                         if (!loc.equals(tools[count].getDefinitionPath())) {
                             if (TrianaDialog.isOKtoWriteIfExists(loc)) {
                                 tools[count].setToolPackage(pack);
-                                tooltable.insertTool(tools[count], pack, toolbox);
+                                Toolbox tb = tooltable.getToolResolver().getToolbox(toolbox);
+                                tooltable.getToolResolver().addTool(tools[count], tb);
+
                             }
                         }
                     }

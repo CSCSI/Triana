@@ -58,17 +58,16 @@
  */
 package org.trianacode.gui.panels;
 
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.tool.*;
-import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.taskgraph.tool.ToolboxLoader;
+import org.trianacode.taskgraph.tool.ToolboxLoaderRegistry;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Vector;
 
 /**
@@ -77,13 +76,15 @@ import java.util.Vector;
  * @author Matthew Shields
  * @version $Revsion:$
  */
-public class ToolBoxPanel extends ParameterPanel implements ActionListener {
+public class UnknownToolBoxTypePanel extends ParameterPanel implements ActionListener {
 
     private ToolTable tools = null;
     private JList toolboxList;
     private Vector toolBoxItems;
     private JButton addBtn;
     private JButton remBtn;
+    private JTextField newField = new JTextField(20);
+    private ToolboxLoader loader;
 
 
     /**
@@ -108,8 +109,10 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
      *
      * @param tools the interface to the current tools manager
      */
-    public ToolBoxPanel(ToolTable tools) {
+    public UnknownToolBoxTypePanel(ToolTable tools, String type) {
         this.tools = tools;
+        this.loader = ToolboxLoaderRegistry.getLoader(type);
+
     }
 
     /**
@@ -118,21 +121,19 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
     public void init() {
         setLayout(new BorderLayout());
 
-        JPanel buttonpanel = new JPanel(new GridLayout(2, 1));
-        buttonpanel.setBorder(new EmptyBorder(3, 3, 3, 3));
-        addBtn = new JButton("Add");
-        addBtn.addActionListener(this);
-        buttonpanel.add(addBtn);
+        JPanel buttonpanel = new JPanel(new BorderLayout());
         remBtn = new JButton("Remove");
         remBtn.addActionListener(this);
-        buttonpanel.add(remBtn);
+        buttonpanel.add(remBtn, BorderLayout.NORTH);
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(buttonpanel, BorderLayout.SOUTH);
-        add(panel, BorderLayout.EAST);
+        panel.add(buttonpanel, BorderLayout.WEST);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
+        topPanel.add(panel, BorderLayout.EAST);
 
-        String prototype = "01234567890123456789012345";
-        Toolbox[] toolBoxes = tools.getToolBoxes();
+        String prototype = "012345678901234567890123456789012345678";
+        Toolbox[] toolBoxes = tools.getToolBoxes(loader.getType());
         toolBoxItems = new Vector();
         String[] namedTypes = new String[toolBoxes.length];
         int x = 0;
@@ -154,7 +155,16 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
 
         JScrollPane scroll = new JScrollPane(toolboxList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(scroll, BorderLayout.CENTER);
+
+        topPanel.add(scroll, BorderLayout.CENTER);
+        JPanel newPanel = new JPanel(new BorderLayout());
+        newPanel.add(Box.createRigidArea(new Dimension(10, 10)), BorderLayout.NORTH);
+        newPanel.add(newField, BorderLayout.CENTER);
+        addBtn = new JButton("Add");
+        addBtn.addActionListener(this);
+        newPanel.add(addBtn, BorderLayout.EAST);
+        add(topPanel, BorderLayout.CENTER);
+        add(newPanel, BorderLayout.SOUTH);
 
     }
 
@@ -178,80 +188,25 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addBtn) {
-            TFileChooser chooser = new TFileChooser(Env.TOOLBOX_DIRECTORY);
-            chooser.setMultiSelectionEnabled(true);
-            chooser.setDialogTitle(Env.getString("selectToolBoxPath"));
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setApproveButtonText(Env.getString("OK"));
-
-            int result = chooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File[] selectedFiles = chooser.getSelectedFiles();
-                for (int i = 0; i < selectedFiles.length; i++) {
-                    String current = selectedFiles[i].getPath();
-
-                    if (toolBoxItems.contains(current)) { //already in list
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathexists"), "Information",
-                                JOptionPane.INFORMATION_MESSAGE,
-                                GUIEnv.getTrianaIcon());
-                        break;
-                    } else if (isSubPath(current)) { //contained as a subpath of item in list
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsub"), "Information",
-                                JOptionPane.INFORMATION_MESSAGE,
-                                GUIEnv.getTrianaIcon());
-                        break;
-                    } else if (isSuperPath(current)) { //is super path of element
-                        JOptionPane.showMessageDialog(this, Env.getString("toolpathsuper"), "Information",
-                                JOptionPane.INFORMATION_MESSAGE,
-                                GUIEnv.getTrianaIcon());
-                        break;
-                    } else {
-                        ToolboxLoader loader = ToolboxLoaderRegistry.getLoader(FileToolboxLoader.LOCAL_TYPE);
-                        Toolbox t = loader.loadToolbox(current, tools.getProperties());
-                        tools.getToolResolver().addToolbox(t);
-                        toolBoxItems.add(current);
-                    }
-                }
+            String text = newField.getText().trim();
+            if (text.isEmpty() || loader == null) {
+                return;
             }
+            Toolbox tb = loader.loadToolbox(text, tools.getProperties());
+            tools.addToolBox(tb);
+            toolBoxItems.add(text);
 
         } else {
             String selected = (String) toolboxList.getSelectedValue();
-            if (selected != null) {
-                Toolbox tb = tools.getToolResolver().getToolbox(selected);
-                if (tb != null) {
-                    tools.getToolResolver().removeToolbox(tb);
-                    toolBoxItems.remove(selected);
-                }
+
+            if (!tools.removeToolBox(selected)) {
+                OptionPane.showError("Cannot remove toolbox", "Error", this);
+            } else {
+                toolBoxItems.remove(selected);
             }
+
         }
         toolboxList.setListData(toolBoxItems);
-    }
-
-    private boolean isSubPath(String child) {
-        for (int i = 0; i < toolBoxItems.size(); i++) {
-            String s = (String) toolBoxItems.elementAt(i);
-            if (FileUtils.isParent(s, child)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isSuperPath(String parent) {
-        Vector toBeRemoved = new Vector();
-        for (int i = 0; i < toolBoxItems.size(); i++) {
-            String s = (String) toolBoxItems.elementAt(i);
-            if (FileUtils.isParent(parent, s)) {
-                toBeRemoved.add(s);
-            }
-        }
-        if (toBeRemoved.size() > 0) {
-            toolBoxItems.removeAll(toBeRemoved);
-            toolBoxItems.add(parent);
-            return true;
-        }
-        return false;
     }
 
 

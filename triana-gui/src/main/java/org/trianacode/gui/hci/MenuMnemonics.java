@@ -59,15 +59,13 @@
 package org.trianacode.gui.hci;
 
 
+import org.trianacode.taskgraph.util.FileUtils;
+
+import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import org.trianacode.taskgraph.util.FileUtils;
 
 /**
  * A utility class that handles setting mnemonics for menu items so that we don't get duplicated items.
@@ -104,6 +102,7 @@ public class MenuMnemonics {
         menuMnemonics.put(name, String.valueOf(name.charAt(0)));
 
         m.setMnemonic(name.charAt(0));
+
         return m;
     }
 
@@ -131,6 +130,7 @@ public class MenuMnemonics {
         assignAMnemonic(m, menu, name);
         m.addActionListener(target);
         menu.add(m);
+
         return m;
     }
 

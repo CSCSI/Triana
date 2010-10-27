@@ -68,9 +68,12 @@ import org.trianacode.gui.action.tools.ToolsMenuHandler;
 import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.ToolboxLoader;
+import org.trianacode.taskgraph.tool.ToolboxLoaderRegistry;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
+import java.util.Collection;
 import java.util.Vector;
 
 /**
@@ -176,7 +179,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         editMenu.add(new JMenuItem(ActionTable.getAction(SELECT_ALL_ACTION)));
         editMenu.add(new JMenuItem(ActionTable.getAction(DELETE_ACTION)));
         editMenu.add(new JMenuItem(ActionTable.getAction(CLEAR_ACTION)));
-        
+
         editMenu.add(new JMenuItem(ActionTable.getAction(ORGANIZE_ACTION)));
 
         MenuUtils.assignMnemonics(editMenu);
@@ -191,7 +194,18 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
                         toolsMenu, tools));
         toolsMenu.add(item);
         toolsMenu.addSeparator();
-        MenuMnemonics.getInstance().createMenuItem(Env.getString("editToolBoxPaths"), toolsMenu, toolsMenuHandler);
+        Collection<ToolboxLoader> loaders = ToolboxLoaderRegistry.getLoaders();
+        if (loaders.size() > 0) {
+            if (loaders.size() < 2) {
+                MenuMnemonics.getInstance().createMenuItem(Env.getString("editToolBoxPaths"), toolsMenu, toolsMenuHandler);
+            } else {
+                JMenu toolboxes = MenuMnemonics.getInstance().createMenu(Env.getString("editToolBoxPaths"));
+                for (ToolboxLoader loader : loaders) {
+                    MenuMnemonics.getInstance().createMenuItem(loader.getType(), toolboxes, toolsMenuHandler);
+                }
+                toolsMenu.add(toolboxes);
+            }
+        }
         toolsMenu.addSeparator();
         MenuMnemonics.getInstance()
                 .createMenuItem(Env.getString("generateCommandLineApp"), toolsMenu, toolsMenuHandler);

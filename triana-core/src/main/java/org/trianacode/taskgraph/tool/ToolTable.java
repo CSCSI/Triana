@@ -88,7 +88,7 @@ public interface ToolTable {
     /**
      * @return the tool box path of the specified type (null if no tool box specified for that type)
      */
-    public Toolbox getToolBox(String type);
+    public Toolbox[] getToolBoxes(String type);
 
     /**
      * @return the type for the specified tool box path (null if no type specified for the tool box path)
@@ -200,7 +200,6 @@ public interface ToolTable {
 
     /**
      * Gets the tool resolver for this tool table -- added by Ian T to fix the static loading of tool resolvers.
-     *
      */
     public ToolResolver getToolResolver();
 }
