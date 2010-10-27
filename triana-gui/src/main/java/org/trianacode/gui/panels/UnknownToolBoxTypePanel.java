@@ -193,14 +193,14 @@ public class UnknownToolBoxTypePanel extends ParameterPanel implements ActionLis
                 return;
             }
             Toolbox tb = loader.loadToolbox(text, tools.getProperties());
-            tools.addToolBox(tb);
+            tools.getToolResolver().addToolbox(tb);
             toolBoxItems.add(text);
 
         } else {
             String selected = (String) toolboxList.getSelectedValue();
-
-            if (!tools.removeToolBox(selected)) {
-                OptionPane.showError("Cannot remove toolbox", "Error", this);
+            Toolbox tb = tools.getToolResolver().getToolbox(selected);
+            if (tb != null) {
+                tools.getToolResolver().removeToolbox(tb);
             } else {
                 toolBoxItems.remove(selected);
             }
