@@ -19,6 +19,7 @@ import java.util.Vector;
 public class DaxFileChunk implements Serializable {
     private String filename = "";
     private boolean isCollection = false;
+    private boolean one2one = false;
     private UUID uuid = null;
     private Vector<DaxJobChunk> inJobChunks = new Vector();
     private Vector<DaxJobChunk> outJobChunks = new Vector();
@@ -130,5 +131,13 @@ public class DaxFileChunk implements Serializable {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
+    }
+
+    public boolean isOne2one() {
+        return one2one;
+    }
+
+    public void setOne2one(boolean one2one) {
+        this.one2one = one2one;
     }
 }

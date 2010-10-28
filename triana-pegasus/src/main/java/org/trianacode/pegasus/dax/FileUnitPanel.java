@@ -26,6 +26,7 @@ public class FileUnitPanel extends ParameterPanel {
 
     private int numberOfFiles = 1;
     private boolean collection = false;
+    private boolean one2one = false;
 
     JLabel collectLabel = new JLabel("");
     JLabel iterLabel = new JLabel("");
@@ -134,16 +135,32 @@ public class FileUnitPanel extends ParameterPanel {
         //Lower Panel
 
         lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File Collection Options"));
-        JPanel lowerPanel1 = new JPanel(new GridLayout(2, 2, 5, 5));
+        JPanel lowerPanel1 = new JPanel(new GridLayout(3, 1, 5, 5));
+
+        JPanel lowerPanel1a = new JPanel(new GridLayout(1, 2, 5, 5));
+        final JPanel lowerPanel1b = new JPanel(new GridLayout(1, 2, 5, 5));
+
+        final JLabel one2oneLabel = new JLabel("One2one with previous jobs : ");
+        final JCheckBox one2oneBox = new JCheckBox("one2one", one2one);
+        one2oneBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (one2oneBox.isSelected()) {
+                    one2one = true;
+                    setEnabling(lowerPanel1b, false);
+                } else {
+                    one2one = false;
+                    setEnabling(lowerPanel1b, true);
+                }
+            }
+        });
+        lowerPanel1a.add(one2oneLabel);
+        lowerPanel1a.add(one2oneBox);
+
         final JLabel numberLabel = new JLabel("No. files : " + numberOfFiles);
-        lowerPanel1.add(numberLabel);
-
-
         final String[] numbers = new String[100];
         for(int i = 1; i < 100; i++){
             numbers[i] = "" + i;
         }
-
         final JComboBox numbersCombo = new JComboBox(numbers);
         numbersCombo.setSelectedItem("" + numberOfFiles);
         numbersCombo.addActionListener(new ActionListener(){
@@ -153,8 +170,12 @@ public class FileUnitPanel extends ParameterPanel {
                 fillFileListArea();
             }
         });
-        lowerPanel1.add(numbersCombo);
+        lowerPanel1b.add(numberLabel);        
+        lowerPanel1b.add(numbersCombo);
+        lowerPanel1.add(lowerPanel1a);
+        lowerPanel1.add(lowerPanel1b);
 
+        final JPanel lowerPanel1c = new JPanel(new GridLayout(1, 2, 5, 5));
         JLabel custom = new JLabel("Or create custom name :");
         JButton namingButton = new JButton("Custom pattern...");
         namingButton.addActionListener(new ActionListener(){
@@ -171,8 +192,9 @@ public class FileUnitPanel extends ParameterPanel {
                 }
             }
         });
-        lowerPanel1.add(custom);
-        lowerPanel1.add(namingButton);
+        lowerPanel1c.add(custom);
+        lowerPanel1c.add(namingButton);
+        lowerPanel1.add(lowerPanel1c);
 
         JPanel lowerPanel2 = new JPanel();
         lowerPanel2.setLayout(new BoxLayout(lowerPanel2, BoxLayout.Y_AXIS));

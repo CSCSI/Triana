@@ -131,6 +131,13 @@ public class DaxCreatorUnit {
                 spreadConnect(dax, jobChunk);
             }
 
+            for(DaxFileChunk fc : jobChunk.getOutFileChunks()){
+                fc.resetNextCounter();
+            }
+            for(DaxFileChunk fc : jobChunk.getInFileChunks()){
+                fc.resetNextCounter();
+            }
+            
         }
         writeDax(dax);
 
@@ -459,18 +466,34 @@ public class DaxCreatorUnit {
         for(int j = 0; j < outFiles.size(); j++){
             DaxFileChunk chunk = (DaxFileChunk)outFiles.get(j);
             if(chunk.isCollection()){
-                chunk.setNumberOfFiles(jobChunk.getNumberOfJobs());
-        //        for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
-                    log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+                if(chunk.getNumberOfFiles() > 1 && !chunk.isOne2one()){
+                    for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
+
+                        if(chunk.getNamePattern() != null){
+                            log("Collection has a naming pattern");
+                        }else{
+                            log("Collection has no naming pattern, using *append int*");
+                        }
+                        String filename = chunk.getNextFilename();
+                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + filename);
+
+                        job.addUses(new Filename(filename, 2));
+                    }
+                }
+                else{
+                    chunk.setOne2one(true);
+                    chunk.setNumberOfFiles(jobChunk.getNumberOfJobs());
 
                     if(chunk.getNamePattern() != null){
                         log("Collection has a naming pattern");
                     }else{
                         log("Collection has no naming pattern, using *append int*");
                     }
-
-                    job.addUses(new Filename(chunk.getNextFilename(), 2));
-       //         }
+                    
+                    String filename = chunk.getNextFilename();
+                    log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + filename);
+                    job.addUses(new Filename(filename, 2));
+                }
             }
             else{
                 log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
