@@ -85,7 +85,7 @@ public class JavaProxyInstantiator implements ProxyInstantiator {
     public Proxy cloneProxy(Proxy proxy) throws ProxyInstantiationException {
         if (proxy instanceof JavaProxy) {
             JavaProxy jp = (JavaProxy) proxy;
-            if (jp.getUnit() != null) {
+            if (jp.hasUnit()) {
                 return new JavaProxy(jp.getUnit());
             }
             return new JavaProxy(jp.getUnitName(), jp.getUnitPackage());

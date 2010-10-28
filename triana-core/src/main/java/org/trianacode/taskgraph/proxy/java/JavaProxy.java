@@ -186,6 +186,10 @@ public class JavaProxy implements Proxy {
         return unitname;
     }
 
+    public boolean hasUnit() {
+        return unit != null;
+    }
+
     public Unit getUnit() {
         if (unit == null) {
             createUnit();
