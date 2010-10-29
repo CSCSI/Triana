@@ -61,10 +61,7 @@ package org.trianacode.gui.action.tools;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ToolBoxPanel;
-import org.trianacode.gui.panels.UnknownToolBoxTypePanel;
 import org.trianacode.gui.windows.ParameterWindow;
-import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.tool.FileToolboxLoader;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
@@ -81,7 +78,7 @@ import java.awt.event.WindowListener;
 public class ToolBoxHandler implements WindowListener {
 
     private ParameterWindow paramwin;
-    private String type;
+    private ToolTable tools;
 
 
     /**
@@ -136,26 +133,19 @@ public class ToolBoxHandler implements WindowListener {
     public void windowDeactivated(WindowEvent e) {
     }
 
-    public ToolBoxHandler(ToolTable tools, String type) {
-        ParameterPanel panel;
-        if (type.equals(FileToolboxLoader.LOCAL_TYPE)) {
-            panel = new ToolBoxPanel(tools);
-        } else {
-            panel = new UnknownToolBoxTypePanel(tools, type);
-        }
-        panel.init();
+    public ToolBoxHandler(ToolTable tools) {
+        this.tools = tools;
+    }
 
-        paramwin = new ParameterWindow(GUIEnv.getApplicationFrame(), WindowButtonConstants.OK_BUTTON, false);
+    public void init() {
+        ParameterPanel panel = new ToolBoxPanel(tools);
+        panel.init();
+        paramwin = new ParameterWindow(GUIEnv.getApplicationFrame(), panel.getPreferredButtons(), true);
         paramwin.setTitle(Env.getString("editToolBoxPaths"));
         paramwin.setParameterPanel(panel);
         paramwin.addWindowListener(this);
-
-
-        paramwin.setLocation((paramwin.getToolkit().getScreenSize().width / 2) - (paramwin.getSize().width / 2),
-                (paramwin.getToolkit().getScreenSize().height / 2) - (paramwin.getSize().height / 2));
-
+        paramwin.setLocationRelativeTo(GUIEnv.getApplicationFrame());
         paramwin.setVisible(true);
-
     }
 
 }

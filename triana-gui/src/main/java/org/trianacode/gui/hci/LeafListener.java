@@ -308,7 +308,9 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         if (source instanceof JTree) {
             JTree jt = (JTree) source;
             TreePath t = jt.getClosestPathForLocation(e.getX(), e.getY());
-            return ((DefaultMutableTreeNode) t.getLastPathComponent());
+            if (t != null && t.getPathCount() > 0) {
+                return ((DefaultMutableTreeNode) t.getLastPathComponent());
+            }
         }
         return null;
     }

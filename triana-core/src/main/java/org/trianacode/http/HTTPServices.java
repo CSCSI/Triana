@@ -1,7 +1,7 @@
 package org.trianacode.http;
 
 import org.thinginitself.http.HttpPeer;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
+import org.trianacode.taskgraph.tool.ToolResolver;
 
 import java.io.IOException;
 
@@ -11,8 +11,9 @@ import java.io.IOException;
  * User: scmijt Date: Jul 30, 2010 Time: 12:06:44 PM
  */
 public class HTTPServices {
-    TrianaHttpServer workflowServer;
-    HttpPeer httpEngine;
+
+    private TrianaHttpServer workflowServer;
+    private HttpPeer httpEngine;
 
     public HTTPServices() {
         workflowServer = new TrianaHttpServer();

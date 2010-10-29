@@ -58,21 +58,6 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
-import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -82,18 +67,21 @@ import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.TaskLayoutUtils;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.constants.ControlToolConstants;
 import org.trianacode.taskgraph.service.TrianaClient;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.List;
 
 /**
  * Action class to handle all "select all" actions.
@@ -340,6 +328,14 @@ public class GroupAction extends AbstractAction implements ActionDisplayOptions 
          * Called when a Tool Box is Removed
          */
         public void toolBoxRemoved(Toolbox toolbox) {
+        }
+
+        @Override
+        public void toolboxNameChanging(Toolbox toolbox, String newName) {
+        }
+
+        @Override
+        public void toolboxNameChanged(Toolbox toolbox, String newName) {
         }
 
 

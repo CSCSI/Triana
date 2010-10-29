@@ -62,7 +62,6 @@ import org.trianacode.gui.appmaker.CommandLineWizard;
 import org.trianacode.gui.hci.CompileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.tool.FileToolboxLoader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
@@ -97,11 +96,9 @@ public class ToolsMenuHandler implements ActionListener {
         } else if (label.equals(Env.getString("compileAll"))) {
             rebuildAllTools();
         } else if (label.equals(Env.getString("editToolBoxPaths"))) {
-            editToolBoxPaths(FileToolboxLoader.LOCAL_TYPE);
+            editToolBoxPaths();
         } else if (label.equals(Env.getString("generateCommandLineApp"))) {
             generateCommandLine();
-        } else {
-            editToolBoxPaths(label);
         }
     }
 
@@ -151,8 +148,8 @@ public class ToolsMenuHandler implements ActionListener {
         }
     }
 
-    public void editToolBoxPaths(String label) {
-        new ToolBoxHandler(tools, label);
+    public void editToolBoxPaths() {
+        new ToolBoxHandler(tools).init();
     }
 
     /**

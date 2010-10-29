@@ -2,12 +2,15 @@ package org.trianacode.http;
 
 import org.apache.commons.logging.Log;
 import org.thinginitself.http.*;
+import org.thinginitself.http.target.TargetResource;
+import org.thinginitself.streamable.Streamable;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.interceptor.execution.ExecutionControlListener;
 import org.trianacode.taskgraph.interceptor.execution.ExecutionController;
 import org.trianacode.taskgraph.tool.Tool;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
@@ -16,7 +19,7 @@ import java.util.concurrent.SynchronousQueue;
  * @version 1.0.0 Jul 20, 2010
  */
 
-public class TaskResource extends Resource implements ExecutionControlListener {
+public class TaskResource extends TargetResource implements ExecutionControlListener {
 
     private static Log log = Loggers.TOOL_LOGGER;
 
@@ -29,7 +32,7 @@ public class TaskResource extends Resource implements ExecutionControlListener {
 
 
     public TaskResource(Task task, String path, HttpPeer peer) {
-        super(new Path(path), new Http.Method[]{Http.Method.POST});
+        super(path);
         this.task = task;
         this.peer = peer;
         controller = new ExecutionController(task, this);
@@ -43,7 +46,7 @@ public class TaskResource extends Resource implements ExecutionControlListener {
     public Resource getResource(RequestContext context) throws RequestProcessException {
         log.debug("TaskResource.getResource " + context.getRequestTarget());
         log.debug("TaskResource.getResource me " + getPath().toString());
-        if (context.getRequestTarget().startsWith(getPath().toString())) {
+        if (context.getRequestTarget().toString().startsWith(getPath().toString())) {
             return this;
         }
         return null;
@@ -68,6 +71,26 @@ public class TaskResource extends Resource implements ExecutionControlListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Streamable get(Path path, List<MimeType> mimeTypes) {
+        return null;
+    }
+
+    @Override
+    public Streamable put(Path path, List<MimeType> mimeTypes, Streamable streamable) {
+        return null;
+    }
+
+    @Override
+    public Streamable post(Path path, List<MimeType> mimeTypes, Streamable streamable) {
+        return null;
+    }
+
+    @Override
+    public Streamable delete(Path path, List<MimeType> mimeTypes) {
+        return null;
     }
 
     private boolean isDisplayTask(Task t) {

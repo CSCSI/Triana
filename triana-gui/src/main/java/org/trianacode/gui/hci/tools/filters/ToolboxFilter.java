@@ -56,46 +56,80 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.taskgraph.tool;
+package org.trianacode.gui.hci.tools.filters;
 
-import java.util.List;
-
+import org.trianacode.gui.hci.ToolFilter;
+import org.trianacode.taskgraph.tool.Tool;
 
 /**
- * An interface implemented by classes that wish to be notified when tools are added or removed.
+ * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes Input.SignalProc
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
  */
-public interface ToolListener {
+public class ToolboxFilter implements ToolFilter {
 
-    public void toolsAdded(List<Tool> tools);
-
-    public void toolsRemoved(List<Tool> tools);
 
     /**
-     * Called when a new tool is added
+     * @return the name of this filter
      */
-    public void toolAdded(Tool tool);
+    public String getName() {
+        return "Toolboxes";
+    }
 
     /**
-     * Called when a tool is removed
+     * @return the root for the tool tree
      */
-    public void toolRemoved(Tool tool);
+    public String getRoot() {
+        return getName();
+    }
 
     /**
-     * Called when a Tool Box is added
+     * @return the name of this filter
      */
-    public void toolBoxAdded(Toolbox toolbox);
+    public String toString() {
+        return getName();
+    }
+
 
     /**
-     * Called when a Tool Box is Removed
+     * @return the filtered packages for the tool, empty array if the tool is ignored. (e.g. a tool in SignalPro.Input
+     *         could become Input.SignalProc)
      */
-    public void toolBoxRemoved(Toolbox toolbox);
+    public String[] getFilteredPackage(Tool tool) {
+        String pkg = tool.getToolPackage();
+        /*String[] names = pkg.split("\\.");
+        List<String> good = new ArrayList<String>();
+        for (String name : names) {
+            if (name.length() > 0) {
+                good.add(name);
+            }
+        }
+        if (good.size() > 2) {
+            good = good.subList(good.size() - 2, good.size());
+        }
+        pkg = "";
+        for (int i = 0; i < good.size(); i++) {
+            pkg += good.get(i);
+            if (i < good.size() - 1) {
+                pkg += ".";
+            }
 
-    public void toolboxNameChanging(Toolbox toolbox, String newName);
+        }*/
 
+        return new String[]{tool.getToolBox().getName() + "." + pkg};
+    }
 
-    public void toolboxNameChanged(Toolbox toolbox, String newName);
+    /**
+     * This method is called when the filter is choosen. The initialisation of the filter should be implemented here
+     */
+    public void init() {
+    }
 
+    /**
+     * This method is called when the filter is unchoosen. Any disposal related to the filter should be implemented
+     * here
+     */
+    public void dispose() {
+    }
 }

@@ -118,6 +118,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -550,6 +551,7 @@ public class ApplicationFrame extends TrianaWindow
 
         toolboxTree.addMouseListener(leaflistener);
         toolboxTree.addMouseMotionListener(leaflistener);
+        //toolboxTree.setRootVisible(false);
         JPanel toolPanel = new JPanel(new BorderLayout());
 
         SearchToolBar searchtoolbar = new SearchToolBar("Search", toolboxTree, treemodel);
@@ -1174,13 +1176,17 @@ public class ApplicationFrame extends TrianaWindow
     public void treeNodesChanged(TreeModelEvent event) {
     }
 
+
     public void treeNodesInserted(TreeModelEvent event) {
-        if (!toolboxTree.isExpanded(0)) {
-            toolboxTree.expandRow(0);
+        TreePath path = event.getTreePath();
+        if (path.getPathCount() >= 2) {
+            toolboxTree.scrollPathToVisible(event.getTreePath());
+            toolboxTree.getModel().removeTreeModelListener(this);
         }
     }
 
     public void treeNodesRemoved(TreeModelEvent event) {
+
     }
 
     public void treeStructureChanged(TreeModelEvent event) {

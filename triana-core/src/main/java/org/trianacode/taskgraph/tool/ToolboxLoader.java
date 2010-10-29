@@ -10,5 +10,5 @@ public interface ToolboxLoader {
 
     public String getType();
 
-    public Toolbox loadToolbox(String location, TrianaProperties properties);
+    public Toolbox loadToolbox(String location, String name, TrianaProperties properties);
 }

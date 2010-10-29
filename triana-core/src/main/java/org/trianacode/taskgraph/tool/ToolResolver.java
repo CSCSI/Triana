@@ -1,4 +1,4 @@
-package org.trianacode.discovery.protocols.tdp.imp.trianatools;
+package org.trianacode.taskgraph.tool;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.config.Locations;
@@ -13,7 +13,6 @@ import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.util.ToolUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
 
@@ -67,11 +66,18 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
     public void addToolbox(Toolbox toolbox) {
-        addNewToolBox(toolbox);
-        resolve(toolbox);
-        saveToolboxes();
-        for (ToolListener listener : listeners) {
-            listener.toolBoxAdded(toolbox);
+        if (toolbox == null) {
+            return;
+        }
+        try {
+            addNewToolBox(toolbox);
+            resolve(toolbox);
+            saveToolboxes();
+            for (ToolListener listener : listeners) {
+                listener.toolBoxAdded(toolbox);
+            }
+        } catch (Exception e) {
+            log.warn("error adding toolbox", e);
         }
     }
 
@@ -274,6 +280,19 @@ public class ToolResolver implements ToolMetadataResolver {
         return ret;
     }
 
+    public void setToolboxName(Toolbox toolbox, String name) {
+        if (name != null && name.length() > 0 && !name.equals(toolbox.getName())) {
+            for (ToolListener listener : listeners) {
+                listener.toolboxNameChanging(toolbox, name);
+            }
+            toolbox.setName(name);
+            saveToolboxes();
+            for (ToolListener listener : listeners) {
+                listener.toolboxNameChanged(toolbox, name);
+            }
+        }
+    }
+
     public List<Toolbox> getToolboxes(String type) {
         List<Toolbox> ret = new ArrayList<Toolbox>();
         for (Toolbox toolbox : toolboxes.values()) {
@@ -327,7 +346,11 @@ public class ToolResolver implements ToolMetadataResolver {
         }
         new Thread(new Runnable() {
             public void run() {
-                loadToolboxes(extraToolboxes);
+                try {
+                    loadToolboxes(extraToolboxes);
+                } catch (Exception e) {
+                    log.warn("error loading toolbox", e);
+                }
                 reresolve();
             }
         }).start();
@@ -406,19 +429,16 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
 
-    protected void addNewToolBox(Toolbox... box) {
+    protected void addNewToolBox(Toolbox... box) throws Exception {
         for (Toolbox toolbox : box) {
-            try {
-                if (toolboxes.get(toolbox.getPath()) == null) {
-                    if (toolbox.getProperties() == null) {
-                        toolbox.setProperties(getProperties());
-                    }
-                    toolbox.loadTools();
-                    toolboxes.put(toolbox.getPath(), toolbox);
+            if (toolboxes.get(toolbox.getPath()) == null) {
+                if (toolbox.getProperties() == null) {
+                    toolbox.setProperties(getProperties());
                 }
-            } catch (Exception e) {
-                log.warn("Error adding toolbox:" + toolbox.getPath(), e);
+                toolbox.loadTools();
+                toolboxes.put(toolbox.getPath(), toolbox);
             }
+
         }
     }
 
@@ -443,10 +463,18 @@ public class ToolResolver implements ToolMetadataResolver {
         List<Toolbox> toolboxes = getToolboxes();
         if (toolboxes != null && toolboxes.size() > 0) {
             for (int count = 0; count < toolboxes.size() - 1; count++) {
-                toolboxesstr.append("{").append(toolboxes.get(count).getType()).append("}").append(toolboxes.get(count).getPath());
+                toolboxesstr.append("{").append(toolboxes.get(count).getType()).append("}");
+                if (toolboxes.get(count).getName() != null) {
+                    toolboxesstr.append("{").append(toolboxes.get(count).getName()).append("}");
+                }
+                toolboxesstr.append(toolboxes.get(count).getPath());
                 toolboxesstr.append(", ");
             }
-            toolboxesstr.append("{").append(toolboxes.get(toolboxes.size() - 1).getType()).append("}").append(toolboxes.get(toolboxes.size() - 1).getPath());
+            toolboxesstr.append("{").append(toolboxes.get(toolboxes.size() - 1).getType()).append("}");
+            if (toolboxes.get(toolboxes.size() - 1).getName() != null) {
+                toolboxesstr.append("{").append(toolboxes.get(toolboxes.size() - 1).getName()).append("}");
+            }
+            toolboxesstr.append(toolboxes.get(toolboxes.size() - 1).getPath());
         }
         return toolboxesstr.toString();
     }
@@ -479,7 +507,7 @@ public class ToolResolver implements ToolMetadataResolver {
     /**
      * load the toolboxes using the TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY
      */
-    public void loadToolboxes(List<String> extras) {
+    public void loadToolboxes(List<String> extras) throws Exception {
 
         String[] toolboxPaths;
 
@@ -510,14 +538,23 @@ public class ToolResolver implements ToolMetadataResolver {
     protected Toolbox createToolbox(String path) {
         String type = FileToolboxLoader.LOCAL_TYPE;
         String loc = path;
+        String name = null;
         if (path.startsWith("{")) {
             int curlyEnd = path.indexOf("}");
-            type = path.substring(1, curlyEnd);
-            loc = path.substring(curlyEnd + 1, path.length());
+            type = path.substring(1, curlyEnd).trim();
+            loc = path.substring(curlyEnd + 1, path.length()).trim();
+            if (loc.startsWith("{")) {
+                int nameCurlyEnd = loc.indexOf("}");
+                if (nameCurlyEnd > -1) {
+                    name = loc.substring(1, nameCurlyEnd).trim();
+                    loc = loc.substring(nameCurlyEnd + 1, loc.length());
+                }
+            }
         }
+
         ToolboxLoader loader = ToolboxLoaderRegistry.getLoader(type);
         if (loader != null) {
-            return loader.loadToolbox(loc, properties);
+            return loader.loadToolbox(loc, name, properties);
         }
         return null;
     }

@@ -108,7 +108,7 @@ public class FileToolbox implements Toolbox {
 
 
     public FileToolbox(String path, TrianaProperties properties) {
-        this(path, UrlUtils.getLastPathComponent(path), properties);
+        this(path, UrlUtils.getLastFilePathComponent(path), properties);
     }
 
     public FileToolbox(File file) {
@@ -234,6 +234,11 @@ public class FileToolbox implements Toolbox {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
 

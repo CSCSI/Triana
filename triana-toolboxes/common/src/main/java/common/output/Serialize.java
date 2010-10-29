@@ -374,6 +374,14 @@ public class Serialize extends Unit implements ToolListener {
     public void toolBoxRemoved(Toolbox toolbox) {
     }
 
+    @Override
+    public void toolboxNameChanging(Toolbox toolbox, String newName) {
+    }
+
+    @Override
+    public void toolboxNameChanged(Toolbox toolbox, String newName) {
+    }
+
 }
 
 

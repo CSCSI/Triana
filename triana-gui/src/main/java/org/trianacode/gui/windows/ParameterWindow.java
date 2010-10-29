@@ -58,27 +58,17 @@
  */
 package org.trianacode.gui.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Frame;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ParameterWindowInterface;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 /**
@@ -348,31 +338,36 @@ public class ParameterWindow extends JDialog
      * Invoked when an action occurs i.e. either a help or a OldUnit Properties menu option may have been chosen.
      */
     public void actionPerformed(ActionEvent e) {
-        String label = e.getActionCommand();
+        try {
+            String label = e.getActionCommand();
 
-        if (label.equals(Env.getString("Help"))) {
-            showHelp();
-        } else if (label.equals(Env.getString("OK"))) {
-            accepted = true;
-            parameterPanel.okClicked();
+            if (label.equals(Env.getString("Help"))) {
+                showHelp();
+            } else if (label.equals(Env.getString("OK"))) {
+                accepted = true;
+                parameterPanel.okClicked();
 
-            setVisible(false);
-            notifyWindowHidden();
+                setVisible(false);
+                notifyWindowHidden();
 
-            if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE) {
-                dispose();
+                if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE) {
+                    dispose();
+                }
+            } else if (label.equals(Env.getString("Cancel"))) {
+                parameterPanel.cancelClicked();
+
+                setVisible(false);
+                notifyWindowHidden();
+
+                if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE) {
+                    dispose();
+                }
+            } else if (label.equals(Env.getString("Apply"))) {
+                parameterPanel.applyClicked();
             }
-        } else if (label.equals(Env.getString("Cancel"))) {
-            parameterPanel.cancelClicked();
-
-            setVisible(false);
-            notifyWindowHidden();
-
-            if (getDefaultCloseOperation() == DISPOSE_ON_CLOSE) {
-                dispose();
-            }
-        } else if (label.equals(Env.getString("Apply"))) {
-            parameterPanel.applyClicked();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            OptionPane.showError(e1.getMessage(), "Error", this);
         }
     }
 

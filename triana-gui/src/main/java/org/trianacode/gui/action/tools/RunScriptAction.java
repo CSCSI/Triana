@@ -58,29 +58,6 @@
  */
 package org.trianacode.gui.action.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 import org.trianacode.enactment.TrianaRun;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
@@ -93,19 +70,24 @@ import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskLayoutUtils;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.constants.ScriptConstants;
 import org.trianacode.taskgraph.service.NonRunnableClient;
 import org.trianacode.taskgraph.service.SchedulerException;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
 /**
  * Action class to handle running Triana scripts.
@@ -563,6 +545,14 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
          * Called when a Tool Box is Removed
          */
         public void toolBoxRemoved(Toolbox toolbox) {
+        }
+
+        @Override
+        public void toolboxNameChanging(Toolbox toolbox, String newName) {
+        }
+
+        @Override
+        public void toolboxNameChanged(Toolbox toolbox, String newName) {
         }
 
 

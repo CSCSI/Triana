@@ -59,7 +59,6 @@
 package org.trianacode.taskgraph.tool;
 
 import org.trianacode.config.TrianaProperties;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 
 import java.net.URL;
 

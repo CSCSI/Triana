@@ -2,6 +2,8 @@ package org.trianacode.taskgraph.tool;
 
 import org.trianacode.config.TrianaProperties;
 
+import java.io.File;
+
 /**
  * @author Andrew Harrison
  * @version 1.0.0 Oct 26, 2010
@@ -16,7 +18,15 @@ public class FileToolboxLoader implements ToolboxLoader {
     }
 
     @Override
-    public Toolbox loadToolbox(String location, TrianaProperties properties) {
-        return new FileToolbox(location, "Local Toolbox", properties);
+    public Toolbox loadToolbox(String location, String name, TrianaProperties properties) {
+        File f = new File(location);
+        if (!f.exists()) {
+            return null;
+        }
+        if (name == null) {
+            return new FileToolbox(location, properties);
+        } else {
+            return new FileToolbox(location, name, properties);
+        }
     }
 }

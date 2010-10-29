@@ -12,11 +12,13 @@ import java.util.List;
 public interface Toolbox {
 
     /**
-     * a name for the toolbox
+     * a name for the toolbox.
      *
      * @return
      */
     public String getName();
+
+    public void setName(String name);
 
     /**
      * a path for the toolbox. This should be unique among all loaded toolboxes
@@ -26,8 +28,8 @@ public interface Toolbox {
     public String getPath();
 
     /**
-     * a type for the toolbox. There is no strict taxonomy for this at the moment, but local, remote, virtual
-     * are typical values
+     * a type for the toolbox. The type determines which ToolboxLoader can load this Toolbox. It should
+     * share its type with the ToolboxLoader that loaded it.
      *
      * @return
      */

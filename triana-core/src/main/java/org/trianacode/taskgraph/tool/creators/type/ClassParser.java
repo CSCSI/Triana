@@ -17,23 +17,15 @@
 
 package org.trianacode.taskgraph.tool.creators.type;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
+import org.trianacode.taskgraph.util.UrlUtils;
+
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.trianacode.taskgraph.util.UrlUtils;
 
 public class ClassParser {
 
@@ -78,7 +70,7 @@ public class ClassParser {
             try {
                 return readFile(new File(url.toURI()));
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 return map;
             }
         }

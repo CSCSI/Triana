@@ -18,7 +18,6 @@ package org.trianacode.taskgraph.tool;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.config.TrianaProperties;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.util.UrlUtils;
@@ -328,6 +327,22 @@ public class ToolTableImpl implements ToolTable, ToolListener {
         }
     }
 
+    protected void notifyToolboxRenamed(Toolbox toolbox, String name) {
+        ToolListener[] lists = listeners.toArray(new ToolListener[listeners.size()]);
+
+        for (int count = 0; count < lists.length; count++) {
+            lists[count].toolboxNameChanged(toolbox, name);
+        }
+    }
+
+    protected void notifyToolboxRenaming(Toolbox toolbox, String name) {
+        ToolListener[] lists = listeners.toArray(new ToolListener[listeners.size()]);
+
+        for (int count = 0; count < lists.length; count++) {
+            lists[count].toolboxNameChanging(toolbox, name);
+        }
+    }
+
     /**
      * @return a list of the current tool box paths
      */
@@ -453,5 +468,15 @@ public class ToolTableImpl implements ToolTable, ToolListener {
 
     public void toolBoxRemoved(Toolbox toolbox) {
         notifyToolboxRemoved(toolbox);
+    }
+
+    @Override
+    public void toolboxNameChanging(Toolbox toolbox, String newName) {
+        notifyToolboxRenaming(toolbox, newName);
+    }
+
+    @Override
+    public void toolboxNameChanged(Toolbox toolbox, String newName) {
+        notifyToolboxRenamed(toolbox, newName);
     }
 }

@@ -151,12 +151,25 @@ public class Locations {
 
     public static String getDefaultToolboxRoot() {
         File f = Locations.runHome();
+        File p;
         if (isJarred()) {
-            File p = new File(f.getParentFile(), "toolboxes");
-            return "{" + FileToolboxLoader.LOCAL_TYPE + "}" + p.getAbsolutePath();
+            p = new File(f.getParentFile(), "toolboxes");
         } else {
-            File p = new File(f, "toolboxes");
-            return "{" + FileToolboxLoader.LOCAL_TYPE + "}" + p.getAbsolutePath();
+            p = new File(f, "toolboxes");
+        }
+        if (p != null) {
+            File[] boxes = p.listFiles();
+            StringBuilder sb = new StringBuilder();
+            for (File box : boxes) {
+                if (box.isDirectory()) {
+                    sb.append(
+                            "{" + FileToolboxLoader.LOCAL_TYPE + "}{" + box.getName() + "}" + box.getAbsolutePath() + ", ");
+                }
+            }
+            String all = sb.toString();
+            return all.substring(0, all.lastIndexOf(","));
+        } else {
+            return "";
         }
 
     }

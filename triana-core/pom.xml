@@ -32,7 +32,7 @@
     <url>http://www.trianacode.org</url>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>jmdns</groupId>
             <artifactId>jmdns</artifactId>
             <version>3.1.6</version>
@@ -51,7 +51,7 @@
             <groupId>flexjson</groupId>
             <artifactId>flexjson</artifactId>
             <version>1.9.2</version>
-        </dependency>
+        </dependency>  -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -66,6 +66,11 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thinginitself</groupId>
+            <artifactId>restless</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

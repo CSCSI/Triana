@@ -471,14 +471,7 @@ public class TaskGraphFileHandler implements SelectionManager {
     }
 
     private static File getOutputFile(File toolbox, String pkg) {
-        String packageRoot = pkg;
-        if (pkg.indexOf(".") > 1) {
-            packageRoot = pkg.substring(0, pkg.indexOf("."));
-        }
         File root = toolbox;
-        if (!root.getName().equals(packageRoot) && !root.getName().equals("xml")) {
-            root = new File(toolbox, packageRoot);
-        }
         root.mkdirs();
         File curr = new File(root, "xml");
         curr.mkdirs();

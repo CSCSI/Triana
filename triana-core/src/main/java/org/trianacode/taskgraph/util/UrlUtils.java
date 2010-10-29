@@ -121,4 +121,11 @@ public class UrlUtils {
         }
         return path;
     }
+
+    public static String getLastFilePathComponent(String path) {
+        if (path.indexOf(File.separator) > -1) {
+            return path.substring(path.lastIndexOf(File.separator) + 1, path.length());
+        }
+        return path;
+    }
 }

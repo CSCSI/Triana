@@ -2,7 +2,6 @@ package org.trianacode.http;
 
 import org.thinginitself.http.*;
 import org.thinginitself.http.util.MimeHandler;
-import org.thinginitself.http.util.StreamableFileHandler;
 import org.thinginitself.streamable.StreamableData;
 import org.thinginitself.streamable.StreamableStream;
 import org.thinginitself.streamable.StreamableString;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * NOTE: THIS CLASS IS CURRENTLY BROKEN
  * This is all still messy - but just about works.
  *
  * @author Andrew Harrison
@@ -37,13 +35,13 @@ public class ToolResource extends Resource {
 
     public ToolResource(Path path, Tool tool) {
         super(path, Http.Method.GET);
-        if(!(tool.getToolBox() instanceof FileToolbox)) {
+        if (!(tool.getToolBox() instanceof FileToolbox)) {
             throw new IllegalArgumentException("Can only be a resource for local file tools");
         }
         this.tool = tool;
         noHelp = new NoHelp(tool);
         helpFile = tool.getToolName() + ".html";
-        List<String> libs = ((FileToolbox)tool.getToolBox()).getLibPaths();
+        List<String> libs = ((FileToolbox) tool.getToolBox()).getLibPaths();
         List<String> ammended = new ArrayList<String>();
         for (String lib : libs) {
             if (lib.startsWith("/")) {
@@ -57,7 +55,6 @@ public class ToolResource extends Resource {
     }
 
 
-    @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
         String path = requestContext.getRequestPath();
         System.out.println("ToolResource.onGet request path:" + path);
@@ -73,7 +70,7 @@ public class ToolResource extends Resource {
         }
         if (path.endsWith(HELP)) {
             if (helpFile != null) {
-                InputStream in = ((FileToolbox)tool.getToolBox()).getClassLoader().getResourceAsStream(helpFile);
+                InputStream in = ((FileToolbox) tool.getToolBox()).getClassLoader().getResourceAsStream(helpFile);
                 if (in != null) {
                     StreamableStream ss = new StreamableStream(in, "text/html");
                     requestContext.setResponseEntity(ss);
@@ -102,15 +99,15 @@ public class ToolResource extends Resource {
         } else if (res.startsWith(CLASSPATH)) {
             String sub = res.substring(CLASSPATH.length(), res.length());
             // TODO
-            File f = ((FileToolbox)tool.getToolBox()).getFile(sub);
+            File f = ((FileToolbox) tool.getToolBox()).getFile(sub);
             if (f != null && f.exists() && f.length() > 0) {
-                requestContext.setResponseEntity(
-                        new StreamableFileHandler(f, ((FileToolbox)tool.getToolBox()).getVisibleRoots()).getStreamable());
+                //requestContext.setResponseEntity(
+                //        new StreamableFileHandler(f, ((FileToolbox)tool.getToolBox()).getVisibleRoots()).getStreamable());
             } else {
                 requestContext.setResponseCode(404);
             }
         } else {
-            InputStream in = ((FileToolbox)tool.getToolBox()).getClassLoader().getResourceAsStream(res);
+            InputStream in = ((FileToolbox) tool.getToolBox()).getClassLoader().getResourceAsStream(res);
             if (in != null) {
                 StreamableStream ss = new StreamableStream(in, MimeHandler.getMime(res));
                 requestContext.setResponseEntity(ss);
@@ -118,21 +115,6 @@ public class ToolResource extends Resource {
                 requestContext.setResponseCode(404);
             }
         }
-    }
-
-    @Override
-    public void onPut(RequestContext requestContext) throws RequestProcessException {
-        requestContext.setResponseCode(405);
-    }
-
-    @Override
-    public void onPost(RequestContext requestContext) throws RequestProcessException {
-        requestContext.setResponseCode(405);
-    }
-
-    @Override
-    public void onDelete(RequestContext requestContext) throws RequestProcessException {
-        requestContext.setResponseCode(405);
     }
 
 }

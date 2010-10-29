@@ -1,35 +1,36 @@
 package org.trianacode.http;
 
 import org.thinginitself.http.*;
+import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.http.util.PathTree;
-import org.thinginitself.http.util.StreamableOptions;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableStream;
 import org.thinginitself.streamable.StreamableString;
 import org.trianacode.TrianaInstance;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolResolver;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 
 /**
  * @author Andrew Harrison
  * @version 1.0.0 Oct 4, 2010
  */
-public class ExecutionTarget implements Target {
+public class ExecutionTarget extends TargetResource {
 
     private ToolResolver toolResolver;
     private PathTree pathTree;
 
     public ExecutionTarget(ToolResolver toolResolver) {
+        super("exec");
         this.toolResolver = toolResolver;
-        this.pathTree = new PathTree(getPath().toString());
     }
 
     @Override
@@ -39,12 +40,12 @@ public class ExecutionTarget implements Target {
 
     @Override
     public Resource getResource(RequestContext requestContext) {
-        return pathTree.getResource(requestContext.getRequestTarget());
+        return getPathTree().getLocatable(requestContext.getRequestTarget());
     }
 
     @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
-        Path path = new Path(requestContext.getRequestTarget());
+        Path path = requestContext.getRequestTarget();
         String[] comps = path.getComponents();
         if (comps.length < 2) {
             requestContext.setResponseEntity(new StreamableString("POST me a workflow to run :-)"));
@@ -52,7 +53,7 @@ public class ExecutionTarget implements Target {
         }
         if (comps.length == 2) {
             String target = comps[comps.length - 1];
-            Resource r = pathTree.getResource(target);
+            Resource r = getPathTree().getLocatable(target);
             if (r.getPath().equals(getPath())) {
                 requestContext.setResponseCode(404);
             }
@@ -107,7 +108,7 @@ public class ExecutionTarget implements Target {
             final Exec exec = new Exec(null);
             exec.createFile();
             String pid = exec.getPid();
-            pathTree.addResource(new Resource(new Path(pid)));
+            getPathTree().addLocatable(new Resource(new Path(pid)));
 
             inst.execute(new Runnable() {
                 public void run() {
@@ -134,7 +135,27 @@ public class ExecutionTarget implements Target {
 
     @Override
     public void onOptions(RequestContext requestContext) throws RequestProcessException {
-        requestContext.setResponseEntity(StreamableOptions.newOptions(Http.Method.GET, Http.Method.POST));
+        //requestContext.setResponseEntity(StreamableOptions.newOptions(Http.Method.GET, Http.Method.POST));
+    }
+
+    @Override
+    public Streamable get(Path path, List<MimeType> mimeTypes) {
+        return null;
+    }
+
+    @Override
+    public Streamable put(Path path, List<MimeType> mimeTypes, Streamable streamable) {
+        return null;
+    }
+
+    @Override
+    public Streamable post(Path path, List<MimeType> mimeTypes, Streamable streamable) {
+        return null;
+    }
+
+    @Override
+    public Streamable delete(Path path, List<MimeType> mimeTypes) {
+        return null;
     }
 
 }

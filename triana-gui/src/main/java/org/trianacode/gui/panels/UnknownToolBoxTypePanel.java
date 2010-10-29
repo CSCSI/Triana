@@ -58,17 +58,11 @@
  */
 package org.trianacode.gui.panels;
 
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.taskgraph.tool.ToolboxLoader;
-import org.trianacode.taskgraph.tool.ToolboxLoaderRegistry;
+import org.trianacode.gui.windows.WindowButtonConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Vector;
 
 /**
  * Panel for displaying, adding and removing local toolbox paths
@@ -76,15 +70,14 @@ import java.util.Vector;
  * @author Matthew Shields
  * @version $Revsion:$
  */
-public class UnknownToolBoxTypePanel extends ParameterPanel implements ActionListener {
+public class UnknownToolBoxTypePanel extends ParameterPanel {
 
-    private ToolTable tools = null;
-    private JList toolboxList;
-    private Vector toolBoxItems;
-    private JButton addBtn;
-    private JButton remBtn;
-    private JTextField newField = new JTextField(20);
-    private ToolboxLoader loader;
+    private JTextField nameField = new NormalizedField(20, new char[]{'_', '-'});
+    private JTextField pathField = new JTextField(20);
+    private JTextField typeField = new JTextField(20);
+    private String type;
+    private String path;
+    private String name;
 
 
     /**
@@ -96,22 +89,40 @@ public class UnknownToolBoxTypePanel extends ParameterPanel implements ActionLis
     }
 
 
+    public byte getPreferredButtons() {
+        return WindowButtonConstants.OK_CANCEL_BUTTONS;
+    }
+
+
     /**
      * Called when the ok button is clicked on the parameter window. Calls applyClicked by default to commit any
      * parameter changes.
      */
     public void okClicked() {
+        this.type = typeField.getText();
+        this.name = nameField.getText();
+        this.path = pathField.getText().trim();
         super.okClicked();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
      * Constructor
-     *
-     * @param tools the interface to the current tools manager
      */
-    public UnknownToolBoxTypePanel(ToolTable tools, String type) {
-        this.tools = tools;
-        this.loader = ToolboxLoaderRegistry.getLoader(type);
+    public UnknownToolBoxTypePanel(String type) {
+        this.type = type;
+
 
     }
 
@@ -120,51 +131,11 @@ public class UnknownToolBoxTypePanel extends ParameterPanel implements ActionLis
      */
     public void init() {
         setLayout(new BorderLayout());
-
-        JPanel buttonpanel = new JPanel(new BorderLayout());
-        remBtn = new JButton("Remove");
-        remBtn.addActionListener(this);
-        buttonpanel.add(remBtn, BorderLayout.NORTH);
-
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(buttonpanel, BorderLayout.WEST);
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
-        topPanel.add(panel, BorderLayout.EAST);
-
-        String prototype = "012345678901234567890123456789012345678";
-        Toolbox[] toolBoxes = tools.getToolBoxes(loader.getType());
-        toolBoxItems = new Vector();
-        String[] namedTypes = new String[toolBoxes.length];
-        int x = 0;
-        for (Toolbox toolBox : toolBoxes) {
-            toolBoxItems.add(toolBox.getPath());
-            namedTypes[x++] = toolBox.getType();
-        }
-
-        for (int count = 0; count < toolBoxItems.size(); count++) {
-            if (((String) toolBoxItems.elementAt(count)).length() > prototype.length()) {
-                prototype = ((String) toolBoxItems.elementAt(count));
-            }
-        }
-
-        toolboxList = new JList(toolBoxItems);
-        toolboxList.setVisibleRowCount(6);
-        toolboxList.setPrototypeCellValue(prototype);
-        toolboxList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        JScrollPane scroll = new JScrollPane(toolboxList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        topPanel.add(scroll, BorderLayout.CENTER);
-        JPanel newPanel = new JPanel(new BorderLayout());
-        newPanel.add(Box.createRigidArea(new Dimension(10, 10)), BorderLayout.NORTH);
-        newPanel.add(newField, BorderLayout.CENTER);
-        addBtn = new JButton("Add");
-        addBtn.addActionListener(this);
-        newPanel.add(addBtn, BorderLayout.EAST);
-        add(topPanel, BorderLayout.CENTER);
-        add(newPanel, BorderLayout.SOUTH);
+        JPanel details = new LabelledTextFieldPanel(new String[]{"Location", "Name", "Type"}, new JTextField[]{pathField, nameField, typeField});
+        details.setBorder(new EmptyBorder(3, 3, 3, 3));
+        add(details, BorderLayout.CENTER);
+        typeField.setText(type);
+        typeField.setEditable(false);
 
     }
 
@@ -181,32 +152,6 @@ public class UnknownToolBoxTypePanel extends ParameterPanel implements ActionLis
      * the panel.
      */
     public void dispose() {
-    }
-
-    /**
-     * Invoked when an action occurs.
-     */
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addBtn) {
-            String text = newField.getText().trim();
-            if (text.isEmpty() || loader == null) {
-                return;
-            }
-            Toolbox tb = loader.loadToolbox(text, tools.getProperties());
-            tools.getToolResolver().addToolbox(tb);
-            toolBoxItems.add(text);
-
-        } else {
-            String selected = (String) toolboxList.getSelectedValue();
-            Toolbox tb = tools.getToolResolver().getToolbox(selected);
-            if (tb != null) {
-                tools.getToolResolver().removeToolbox(tb);
-            } else {
-                toolBoxItems.remove(selected);
-            }
-
-        }
-        toolboxList.setListData(toolBoxItems);
     }
 
 

@@ -6,10 +6,8 @@ import org.trianacode.config.TrianaProperties;
 import org.trianacode.config.cl.ArgumentParser;
 import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.TrianaOptions;
-import org.trianacode.discovery.DiscoverTools;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.http.HTTPServices;
 import org.trianacode.http.RendererRegistry;
@@ -23,10 +21,7 @@ import org.trianacode.taskgraph.interceptor.InterceptorChain;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.ser.Base64ObjectDeserializer;
 import org.trianacode.taskgraph.ser.ObjectDeserializationManager;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.ToolTableImpl;
-import org.trianacode.taskgraph.tool.ToolboxLoader;
-import org.trianacode.taskgraph.tool.ToolboxLoaderRegistry;
+import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.util.ExtensionFinder;
 
 import java.io.File;
@@ -59,7 +54,7 @@ public class TrianaInstance {
     private Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
     private TrianaProperties props;
     private PropertyLoader propertyLoader;
-    private DiscoverTools discoveryTools;
+    //private DiscoverTools discoveryTools;
 
     private ToolTable toolTable;
 
@@ -135,7 +130,7 @@ public class TrianaInstance {
         if (runServer) {
             toolResolver.addToolListener(httpServices.getWorkflowServer());
             httpServices.startServices(toolResolver);
-            discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
+            //discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
         }
         toolResolver.resolve(reresolve, extraToolboxes);
         if (progress != null && runServer) {
@@ -164,9 +159,9 @@ public class TrianaInstance {
         return props;
     }
 
-    public DiscoverTools getDiscoveryTools() {
-        return discoveryTools;
-    }
+//    public DiscoverTools getDiscoveryTools() {
+//        return discoveryTools;
+//    }
 
     public ToolTable getToolTable() {
         return toolTable;
@@ -309,9 +304,9 @@ public class TrianaInstance {
             Loggers.LOGGER.info("TrianaInstance$ShutdownHook.run ENTER");
             try {
                 toolResolver.shutdown();
-                if (discoveryTools != null) {
-                    discoveryTools.shutdown();
-                }
+//                if (discoveryTools != null) {
+//                    discoveryTools.shutdown();
+//                }
                 executorService.shutdown();
             } catch (Exception e) {
                 e.printStackTrace();

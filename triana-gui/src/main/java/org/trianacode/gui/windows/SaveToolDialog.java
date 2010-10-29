@@ -18,6 +18,7 @@ package org.trianacode.gui.windows;
 
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.tools.PackageTree;
+import org.trianacode.gui.panels.NormalizedField;
 import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.taskgraph.tool.FileToolboxLoader;
 import org.trianacode.taskgraph.tool.Tool;
@@ -62,8 +63,8 @@ public class SaveToolDialog extends JDialog implements ActionListener {
     private ToolTable tools;
 
     private JButton pkgButton = new JButton(GUIEnv.getIcon("dots.png"));
-    private JTextField pkg = new JTextField(25);
-    private JTextField name = new JTextField(25);
+    private JTextField pkg = new NormalizedField(25, new char[]{'_', '.'});
+    private JTextField name = new NormalizedField(25, 100, new char[]{'_'}, false);
 
 
     public SaveToolDialog(Tool tool, ToolTable tools) throws HeadlessException {
@@ -164,7 +165,6 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         if (pkg.endsWith(".")) {
             pkg = pkg.substring(0, pkg.length() - 1);
         }
-        pkg = pkg.replaceAll(",\\\\/;:?!@£$%^&*()+=-", "");
         return pkg.toLowerCase();
     }
 
@@ -173,7 +173,6 @@ public class SaveToolDialog extends JDialog implements ActionListener {
             return "";
         }
         name = name.replace(File.separator, ".");
-        name = name.replaceAll(",\\\\/;:?!@£$%^&*()+=-", "");
         return name;
     }
 

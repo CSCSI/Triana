@@ -58,40 +58,25 @@
  */
 package org.trianacode.gui.toolmaker;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.panels.FormLayout;
+import org.trianacode.gui.windows.WizardInterface;
+import org.trianacode.gui.windows.WizardPanel;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolListener;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.panels.FormLayout;
-import org.trianacode.gui.windows.WizardInterface;
-import org.trianacode.gui.windows.WizardPanel;
-import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolListener;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 /**
  * The tool wizard panel for editing the general properties of a tool, including the number of input/outpur nodes
@@ -731,6 +716,14 @@ public class UnitPanel extends JPanel
      */
     public void toolBoxRemoved(Toolbox toolbox) {
         toolboxpath.removeItem(toolbox.getPath());
+    }
+
+    @Override
+    public void toolboxNameChanging(Toolbox toolbox, String newName) {
+    }
+
+    @Override
+    public void toolboxNameChanged(Toolbox toolbox, String newName) {
     }
 
 

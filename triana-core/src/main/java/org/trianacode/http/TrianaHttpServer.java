@@ -1,17 +1,16 @@
 package org.trianacode.http;
 
 import org.thinginitself.http.*;
-import org.thinginitself.http.util.PathTree;
+import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.streamable.Streamable;
-import org.trianacode.discovery.protocols.tdp.imp.trianatools.ToolResolver;
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
+import org.trianacode.taskgraph.tool.ToolResolver;
+import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.util.UrlUtils;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,16 +18,15 @@ import java.util.List;
  * @version 1.0.0 Jul 20, 2010
  */
 
-public class TrianaHttpServer implements Target, ToolListener {
+public class TrianaHttpServer extends TargetResource implements ToolListener {
 
     private HttpPeer peer;
-    private PathTree pathTree;
     private String path = "triana";
     private ToolResolver toolResolver;
 
     public TrianaHttpServer() {
+        super("triana");
         this.peer = new HttpPeer();
-        this.pathTree = new PathTree(path);
     }
 
     /**
@@ -39,17 +37,6 @@ public class TrianaHttpServer implements Target, ToolListener {
      */
     public void addWebViewTask(String path, Task task) {
         peer.addTarget(new ResourceSpawn(path, task, peer));
-    }
-
-
-    /**
-     * Adds a blob of data (Java object) and makes it available via restless as a resource
-     *
-     * @param deploymentURL
-     * @param workflowObject
-     */
-    public void addDataResource(String deploymentURL, Serializable workflowObject) {
-        pathTree.addResource(new DataResource(getPath().append(deploymentURL).toString(), workflowObject));
     }
 
     public void start(ToolResolver toolResolver) throws IOException {
@@ -64,20 +51,20 @@ public class TrianaHttpServer implements Target, ToolListener {
 
     public void addToolbox(Toolbox toolbox) {
         Path toolboxPath = getPath().append(UrlUtils.createPath(toolbox.getName()));
-        pathTree.addResource(new ToolboxResource(toolboxPath, toolbox));
+        getPathTree().addLocatable(new ToolboxResource(toolboxPath, toolbox));
     }
 
     public void addTool(Tool tool) {
         Path path = getPath().append(UrlUtils.createPath(tool.getToolBox().getName()))
                 .append((UrlUtils.createPath(tool.getQualifiedToolName())));
-        pathTree.addResource(new ToolResource(path, tool));
+        getPathTree().addLocatable(new ToolResource(path, tool));
 
     }
 
     public void removeTool(Tool tool) {
         Path path = getPath().append(UrlUtils.createPath(tool.getToolBox().getName()))
                 .append((UrlUtils.createPath(tool.getQualifiedToolName())));
-        pathTree.removeResource(path.toString());
+        getPathTree().removeLocatable(path.toString());
 
     }
 
@@ -104,7 +91,7 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     public Resource getResource(RequestContext requestContext) throws RequestProcessException {
-        Resource r = pathTree.getResource(requestContext.getRequestPath());
+        Resource r = getPathTree().getLocatable(requestContext.getRequestPath());
         return r;
     }
 
@@ -125,6 +112,26 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     public void onOptions(RequestContext requestContext) throws RequestProcessException {
+    }
+
+    @Override
+    public Streamable get(Path path, List<MimeType> mimeTypes) {
+        return null;
+    }
+
+    @Override
+    public Streamable put(Path path, List<MimeType> mimeTypes, Streamable streamable) {
+        return null;
+    }
+
+    @Override
+    public Streamable post(Path path, List<MimeType> mimeTypes, Streamable streamable) {
+        return null;
+    }
+
+    @Override
+    public Streamable delete(Path path, List<MimeType> mimeTypes) {
+        return null;
     }
 
     public void toolsAdded(List<Tool> tools) {
@@ -151,6 +158,14 @@ public class TrianaHttpServer implements Target, ToolListener {
     }
 
     public void toolBoxRemoved(Toolbox toolbox) {
+    }
+
+    @Override
+    public void toolboxNameChanging(Toolbox toolbox, String newName) {
+    }
+
+    @Override
+    public void toolboxNameChanged(Toolbox toolbox, String newName) {
     }
 
 

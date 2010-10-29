@@ -16,10 +16,10 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.Component;
-
-import javax.swing.JOptionPane;
 import org.trianacode.gui.hci.GUIEnv;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Class Description Here...
@@ -37,6 +37,15 @@ public class OptionPane {
 
     public static void showError(String msg, String title, Component parent) {
         JOptionPane.showMessageDialog(parent, msg, title, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
+    }
+
+    public static void showErrorLater(final String msg, final String title, final Component parent) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JOptionPane.showMessageDialog(parent, msg, title, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
+            }
+        });
+
     }
 
     public static boolean showOkCancel(String msg, String title, Component parent) {

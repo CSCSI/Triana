@@ -278,13 +278,24 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
     /**
      * Remove a tool from the tree
      */
-    public void deleteTool(Tool tool) {
-        String[] filtpack = getFilteredPackages(tool);
+    public void deleteTool(final Tool tool) {
+        final String[] filtpack = getFilteredPackages(tool);
 
         if (filtpack != null) {
-            for (int count = 0; count < filtpack.length; count++) {
-                removeNode(tool, filtpack[count]);
-                removePackages(filtpack[count]);
+            if (SwingUtilities.isEventDispatchThread()) {
+                for (int count = 0; count < filtpack.length; count++) {
+                    removeNode(tool, filtpack[count]);
+                    removePackages(filtpack[count]);
+                }
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        for (int count = 0; count < filtpack.length; count++) {
+                            removeNode(tool, filtpack[count]);
+                            removePackages(filtpack[count]);
+                        }
+                    }
+                });
             }
         }
     }
@@ -294,6 +305,9 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
      */
     private void removeNode(Tool tool, String pack) {
         DefaultMutableTreeNode parent = (DefaultMutableTreeNode) nodes.get(pack);
+        if (parent == null) {
+            return;
+        }
         boolean removed = false;
 
         for (int count = 0; (count < parent.getChildCount() && (!removed)); count++) {
@@ -302,11 +316,12 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
                 DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parent.getChildAt(count);
                 if (childNode.getUserObject().toString().equals(tool.toString())) {
                     removeNodeFromParent(childNode);
+
                     removed = true;
                 }
             }
             catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Here ...");
+                e.printStackTrace();
                 // silently catch this
             }
         }
@@ -317,13 +332,14 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
      */
     private void removePackages(String pack) {
         DefaultMutableTreeNode packnode = (DefaultMutableTreeNode) nodes.get(pack);
+        if (packnode != null) {
+            if (packnode.getChildCount() == 0) {
+                removeNodeFromParent(packnode);
+                nodes.remove(pack);
 
-        if (packnode.getChildCount() == 0) {
-            removeNodeFromParent(packnode);
-            nodes.remove(pack);
-
-            if (pack.lastIndexOf('.') > -1) {
-                removePackages(pack.substring(0, pack.lastIndexOf('.')));
+                if (pack.lastIndexOf('.') > -1) {
+                    removePackages(pack.substring(0, pack.lastIndexOf('.')));
+                }
             }
         }
     }
@@ -375,5 +391,16 @@ public class ToolTreeModel extends DefaultTreeModel implements ToolListener {
         for (Tool tool : tools) {
             deleteTool(tool);
         }
+    }
+
+    @Override
+    public void toolboxNameChanging(Toolbox toolbox, String newName) {
+        toolBoxRemoved(toolbox);
+    }
+
+    @Override
+    public void toolboxNameChanged(Toolbox toolbox, String newName) {
+        toolBoxAdded(toolbox);
+
     }
 }

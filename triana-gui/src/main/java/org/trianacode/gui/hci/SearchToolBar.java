@@ -58,26 +58,16 @@
  */
 package org.trianacode.gui.hci;
 
-import java.awt.BorderLayout;
-import java.awt.Insets;
+import org.trianacode.gui.hci.tools.ToolTreeModel;
+import org.trianacode.gui.hci.tools.filters.*;
+
+import javax.swing.*;
+import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-import org.trianacode.gui.hci.tools.ToolTreeModel;
-import org.trianacode.gui.hci.tools.filters.AllPackagesFilter;
-import org.trianacode.gui.hci.tools.filters.AllToolsFilter;
-import org.trianacode.gui.hci.tools.filters.DataTypeFilter;
-import org.trianacode.gui.hci.tools.filters.InputToolsFilter;
-import org.trianacode.gui.hci.tools.filters.OutputToolsFilter;
-import org.trianacode.gui.hci.tools.filters.SearchFilter;
-import org.trianacode.gui.hci.tools.filters.SubPackageFilter;
 
 /**
  * A ToolBar for searching and filtering of units in the unit tree view
@@ -92,7 +82,8 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
     /**
      * An array of the filters in the toolbar
      */
-    public static ToolFilter[] filters = {new AllPackagesFilter(),
+    public static ToolFilter[] filters = {new ToolboxFilter(),
+            new AllPackagesFilter(),
             new SubPackageFilter(),
             new AllToolsFilter(),
             new InputToolsFilter(),

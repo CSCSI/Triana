@@ -60,15 +60,13 @@
 package org.trianacode.gui.hci.tools;
 
 
+import org.trianacode.taskgraph.tool.*;
+
+import javax.swing.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JTree;
-
-import org.trianacode.taskgraph.tool.*;
-import org.trianacode.taskgraph.tool.Toolbox;
 
 /**
  * A background thread that constantly checks whether any tools have been broken/ unbroken, repainting the tool tree
@@ -227,6 +225,14 @@ public class BrokenToolMonitor extends Thread implements ToolListener {
      * Called when a Tool Box is Removed
      */
     public void toolBoxRemoved(Toolbox toolbox) {
+    }
+
+    @Override
+    public void toolboxNameChanging(Toolbox toolbox, String newName) {
+    }
+
+    @Override
+    public void toolboxNameChanged(Toolbox toolbox, String newName) {
     }
 
 }
