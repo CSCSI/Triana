@@ -88,6 +88,7 @@ public class SearchToolBar extends JToolBar implements ActionListener, FocusList
             new AllToolsFilter(),
             new InputToolsFilter(),
             new OutputToolsFilter(),
+            new WorkflowFilter(),
             new DataTypeFilter()};
 
 
