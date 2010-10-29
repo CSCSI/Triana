@@ -59,7 +59,6 @@
 package org.trianacode.gui.hci.tools;
 
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
 
 import javax.swing.*;
@@ -86,16 +85,16 @@ public class PackageTreeModel extends DefaultTreeModel {
     /**
      * The currently loaded tools
      */
-    private ToolTable tooltable;
+    private Toolbox box;
 
     /**
      * A hashtable of package nodes, keyed by package name
      */
     private Hashtable nodes = new Hashtable();
 
-    public PackageTreeModel(ToolTable table) {
+    public PackageTreeModel(Toolbox box) {
         super(new DefaultMutableTreeNode(ROOT_NAME));
-        this.tooltable = table;
+        this.box = box;
         repopulate();
     }
 
@@ -106,14 +105,10 @@ public class PackageTreeModel extends DefaultTreeModel {
         nodes.clear();
         setRoot(new DefaultMutableTreeNode(ROOT_NAME));
         nodes.put("", getRoot());
-        Toolbox[] tools = tooltable.getToolBoxes();
-        for (Toolbox toolbox : tools) {
-            List<Tool> ts = toolbox.getTools();
-            for (Tool t : ts) {
-                insertTool(t);
-            }
+        List<Tool> ts = box.getTools();
+        for (Tool t : ts) {
+            insertTool(t);
         }
-
     }
 
     /**

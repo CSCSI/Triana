@@ -192,7 +192,7 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener, List
         }
 
         toolboxList = new JList(toolBoxItems);
-        toolboxList.setVisibleRowCount(6);
+        toolboxList.setVisibleRowCount(10);
         toolboxList.setPrototypeCellValue(prototype);
         toolboxList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         toolboxList.addListSelectionListener(this);

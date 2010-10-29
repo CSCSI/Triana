@@ -20,7 +20,6 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.tools.PackageTree;
 import org.trianacode.gui.panels.NormalizedField;
 import org.trianacode.gui.panels.OptionPane;
-import org.trianacode.taskgraph.tool.FileToolboxLoader;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
@@ -83,7 +82,7 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         DefaultComboBoxModel model = (DefaultComboBoxModel) combo.getModel();
         combo.setEditable(false);
         combo.setPrototypeDisplayValue("012345678901234567890123456789012345678901234567890123456789");
-        Toolbox[] toolboxes = tools.getToolBoxes(FileToolboxLoader.LOCAL_TYPE);
+        Toolbox[] toolboxes = tools.getToolBoxes();
         Toolbox tb = tool.getToolBox();
         String sel = null;
         for (int count = 0; count < toolboxes.length; count++) {
@@ -195,7 +194,8 @@ public class SaveToolDialog extends JDialog implements ActionListener {
         String toolbox = (String) combo.getSelectedItem();
 
         if (event.getSource() == pkgButton) {
-            PackageTree packageTree = new PackageTree(this.tools);
+            Toolbox box = tools.getToolResolver().getToolbox(toolbox);
+            PackageTree packageTree = new PackageTree(box);
             String returnVal = packageTree.showPackages();
             if (returnVal != null) {
                 pkg.setText(returnVal);

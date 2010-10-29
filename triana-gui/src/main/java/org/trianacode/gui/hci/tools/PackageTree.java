@@ -1,7 +1,7 @@
 package org.trianacode.gui.hci.tools;
 
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,7 +17,6 @@ import java.awt.event.ActionListener;
  */
 public class PackageTree extends JDialog implements ActionListener {
 
-    private ToolTable tools;
     private JTree tree;
     private PackageTreeModel model;
     private JButton okBut;
@@ -25,11 +24,10 @@ public class PackageTree extends JDialog implements ActionListener {
 
     private String pkge = null;
 
-    public PackageTree(ToolTable tools) {
+    public PackageTree(Toolbox box) {
         super(GUIEnv.getApplicationFrame(), "Choose A Package", true);
         setResizable(false);
-        this.tools = tools;
-        this.model = new PackageTreeModel(tools);
+        this.model = new PackageTreeModel(box);
 
         init();
     }
