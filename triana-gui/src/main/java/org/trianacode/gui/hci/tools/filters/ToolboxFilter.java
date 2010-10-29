@@ -116,7 +116,13 @@ public class ToolboxFilter implements ToolFilter {
             }
 
         }*/
-
+        String toolboxName = tool.getToolBox().getName();
+        if (toolboxName == null) {
+            return new String[]{pkg};
+        }
+        if (pkg.startsWith(toolboxName)) {
+            return new String[]{pkg};
+        }
         return new String[]{tool.getToolBox().getName() + "." + pkg};
     }
 
