@@ -36,6 +36,9 @@ public class TrianaProperties extends Properties {
 
     public static final String PROPERTY_FILE_LIST_PROPERTY = DOMAIN + ".property.file.list";
 
+    public static final String TOOLBOXES_DESCRIPTION_TEMPLATE_PROPERTY = DOMAIN + ".toolboxes.description.template";
+    public static final String TOOLS_DESCRIPTION_TEMPLATE_PROPERTY = DOMAIN + ".tools.description.template";
+
     public static final String TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY = DOMAIN + ".toolbox.description.template";
     public static final String TOOL_DESCRIPTION_TEMPLATE_PROPERTY = DOMAIN + ".tool.description.template";
     public static final String CREATE_TOOL_INSTANCE_PROPERTY = DOMAIN + ".create.tool.instance";
@@ -44,6 +47,7 @@ public class TrianaProperties extends Properties {
     public static final String FORM_TEMPLATE_PROPERTY = DOMAIN + ".form.template";
     public static final String CHECKBOX_TEMPLATE_PROPERTY = DOMAIN + ".checkbox.template";
     public static final String TOOL_COMPLETED_TEMPLATE_PROPERTY = DOMAIN + ".tool.completed.template";
+    public static final String TRIANA_TEMPLATE_PROPERTY = DOMAIN + ".triana.template";
 
     // NOT USED at present:
 
@@ -114,8 +118,11 @@ public class TrianaProperties extends Properties {
         properties.put(TOOL_COMPLETED_TEMPLATE_PROPERTY, "/templates/tool-complete.tpl");
         properties.put(TOOL_INSTANCE_PROPERTY, "/templates/tool-instance.tpl");
         properties.put(TOOL_DESCRIPTION_TEMPLATE_PROPERTY, "/templates/tool-description.tpl");
+        properties.put(TOOLS_DESCRIPTION_TEMPLATE_PROPERTY, "/templates/tools-description.tpl");
 
         properties.put(TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY, "/templates/toolbox-description.tpl");
+        properties.put(TOOLBOXES_DESCRIPTION_TEMPLATE_PROPERTY, "/templates/toolboxes-description.tpl");
+        properties.put(TRIANA_TEMPLATE_PROPERTY, "/templates/triana.tpl");
 
         properties.put(FORM_TEMPLATE_PROPERTY, "/templates/form.tpl");
         properties.put(CHECKBOX_TEMPLATE_PROPERTY, "/templates/checkbox.tpl");

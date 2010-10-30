@@ -34,16 +34,6 @@ public class ExecutionTarget extends TargetResource {
     }
 
     @Override
-    public Path getPath() {
-        return new Path("run");
-    }
-
-    @Override
-    public Resource getResource(RequestContext requestContext) {
-        return getPathTree().getLocatable(requestContext.getRequestTarget());
-    }
-
-    @Override
     public void onGet(RequestContext requestContext) throws RequestProcessException {
         Path path = requestContext.getRequestTarget();
         String[] comps = path.getComponents();

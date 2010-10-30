@@ -113,10 +113,10 @@ public class TaskResource extends TargetResource implements ExecutionControlList
         log.debug("TaskResource.executionSuspended for task " + task.getToolName());
         if (isDisplayTask(task)) {
             try {
-                ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_PARAMETER_TEMPLATE);
+                ToolRenderer r = new ToolRenderer();
                 r.init(task, task.getToolName());
                 currentTask = task;
-                nextTask.put(new RenderInfo(r, ToolRenderer.TOOL_PARAMETER_TEMPLATE));
+                nextTask.put(new RenderInfo(r, ToolParameterRenderer.TOOL_PARAMETER_TEMPLATE));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -128,7 +128,7 @@ public class TaskResource extends TargetResource implements ExecutionControlList
     @Override
     public void executionComplete(Task task) {
         try {
-            ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_COMPLETED_TEMPLATE);
+            ToolRenderer r = new ToolRenderer();
             r.init(task, task.getToolName());
             nextTask.put(new RenderInfo(r, ToolRenderer.TOOL_COMPLETED_TEMPLATE));
             peer.removeTarget(this);

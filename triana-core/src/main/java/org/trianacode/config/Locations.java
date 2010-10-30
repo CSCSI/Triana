@@ -182,7 +182,7 @@ public class Locations {
         } else {
             File p = new File(f, "triana-core");
             p = new File(p, "target");
-            p = new File(f, "classes");
+            p = new File(p, "classes");
             return p.getAbsolutePath();
         }
     }

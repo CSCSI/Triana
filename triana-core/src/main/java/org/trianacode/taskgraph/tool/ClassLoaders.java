@@ -19,6 +19,8 @@ package org.trianacode.taskgraph.tool;
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.security.AccessController;
@@ -265,6 +267,7 @@ public class ClassLoaders {
                         // Try the context class loader
                         classLoader =
                                 Thread.currentThread().getContextClassLoader();
+                        log.debug("next class loader:" + classLoader);
                         URL url = classLoader.getResource(className);
                         if (url != null) {
                             return url;
@@ -273,12 +276,15 @@ public class ClassLoaders {
                         // Try the classloader that loaded this class.
                         classLoader =
                                 ClassLoaders.class.getClassLoader();
+                        log.debug("next class loader:" + classLoader);
                         url = classLoader.getResource(className);
                         if (url != null) {
                             return url;
                         }
 
-                        return ClassLoader.getSystemClassLoader().getResource(className);
+                        classLoader = ClassLoader.getSystemClassLoader();
+                        log.debug("next class loader:" + classLoader);
+                        return classLoader.getResource(className);
 
                     }
 
@@ -288,6 +294,18 @@ public class ClassLoaders {
         }
         return null;
 
+    }
+
+    public static InputStream getResourceAsStream(String name) {
+        URL url = getResource(name);
+        if (url != null) {
+            try {
+                return url.openStream();
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return null;
     }
 
 

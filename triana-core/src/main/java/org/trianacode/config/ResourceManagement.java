@@ -23,8 +23,6 @@ public class ResourceManagement {
         TEMPLATE, PROPERTY, TOOL
     }
 
-    ;
-
 
     /**
      * Gets an input stream for the given filename and searches in locations specified for that type of
@@ -52,17 +50,17 @@ public class ResourceManagement {
                 throw new IOException("Type for file " + filen + " Not Found!");
         }
 
+        if (filelist != null) {
+            String dirlistarr[];
 
-        String dirlistarr[];
-
-        dirlistarr = filelist.split(",");
-        for (String dir : dirlistarr) {
-            String file = dir.trim() + File.separator + filen;
-            stream = getInputStreamFor(file);
-            if (stream != null)
-                return stream; // if we find a valid stream then return
+            dirlistarr = filelist.split(",");
+            for (String dir : dirlistarr) {
+                String file = dir.trim() + File.separator + filen;
+                stream = getInputStreamFor(file);
+                if (stream != null)
+                    return stream; // if we find a valid stream then return
+            }
         }
-
         return getInputStreamFor(filen); // lastly try the filename itself
     }
 
@@ -83,14 +81,17 @@ public class ResourceManagement {
 
         File filen = new File(file);
         // try load the file from the filesystem and if not, search for it in a jar.
-
         if (filen.exists()) {
             stream = new FileInputStream(filen);
         } else {
             // ANDREW: always use ClassLoaders
             URL fileURL = ClassLoaders.getResource(file);
-            if (fileURL != null)
+            if (fileURL != null) {
                 stream = fileURL.openStream();
+            }
+        }
+        if (stream == null && file.startsWith("/")) {
+            return getInputStreamFor(file.substring(1));
         }
         return stream;
     }

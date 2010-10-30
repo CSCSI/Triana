@@ -28,7 +28,7 @@ public class ResourceSpawn extends MemoryTarget {
     public ResourceSpawn(String path, Task task, HttpPeer peer) {
         super(path);
         this.task = task;
-        ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE);
+        ToolRenderer r = new ToolRenderer();
         r.init(task, task.getToolName());
         Resource res = new Resource(getPath().append(task.getToolName()),
                 r.render(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE));
@@ -42,7 +42,7 @@ public class ResourceSpawn extends MemoryTarget {
         String path = task.getToolName() + "/" + count.incrementAndGet() + "/";
         TaskResource res = new TaskResource(task, getPath().append(path).toString(), peer);
         peer.addTarget(res);
-        ToolRenderer r = RendererRegistry.getToolRenderer(ToolRenderer.TOOL_INSTANCE_TEMPLATE);
+        ToolRenderer r = new ToolRenderer();
         r.init(task, path);
         context.setResponseEntity(r.render(ToolRenderer.TOOL_INSTANCE_TEMPLATE));
     }

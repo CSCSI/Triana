@@ -10,9 +10,6 @@ import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.http.HTTPServices;
-import org.trianacode.http.RendererRegistry;
-import org.trianacode.http.ToolRenderer;
-import org.trianacode.http.ToolboxRenderer;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -128,7 +125,7 @@ public class TrianaInstance {
 
         httpServices = new HTTPServices();
         if (runServer) {
-            toolResolver.addToolListener(httpServices.getWorkflowServer());
+            //toolResolver.addToolListener(httpServices.getWorkflowServer());
             httpServices.startServices(toolResolver);
             //discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
         }
@@ -207,8 +204,6 @@ public class TrianaInstance {
 
         List ext = new ArrayList<Class>();
         ext.add(Interceptor.class);
-        ext.add(ToolRenderer.class);
-        ext.add(ToolboxRenderer.class);
         ext.add(ToolMetadataResolver.class);
         ext.add(DataBusInterface.class);
         ext.add(ToolboxLoader.class);
@@ -227,18 +222,6 @@ public class TrianaInstance {
                 for (Object o : exts) {
                     Interceptor e = (Interceptor) o;
                     InterceptorChain.register(e);
-                }
-            } else if (key.equals(ToolRenderer.class)) {
-                List<Object> exts = extensions.get(key);
-                for (Object o : exts) {
-                    ToolRenderer e = (ToolRenderer) o;
-                    RendererRegistry.registerToolRenderer(e);
-                }
-            } else if (key.equals(ToolboxRenderer.class)) {
-                List<Object> exts = extensions.get(key);
-                for (Object o : exts) {
-                    ToolboxRenderer e = (ToolboxRenderer) o;
-                    RendererRegistry.registerToolboxRenderer(e);
                 }
             } else if (key.equals(ToolMetadataResolver.class)) {
                 List<Object> exts = extensions.get(key);

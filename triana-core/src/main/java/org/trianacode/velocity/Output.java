@@ -61,14 +61,16 @@ public class Output {
      */
     private static String getTemplate(String path) throws IOException {
         InputStream inStream = ResourceManagement.getInputStreamFor(path, ResourceManagement.Type.TEMPLATE);
-
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line);
+        if (inStream != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            return stringBuilder.toString();
         }
-        return stringBuilder.toString();
+        return null;
     }
 
 
