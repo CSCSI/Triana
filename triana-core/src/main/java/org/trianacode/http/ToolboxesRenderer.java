@@ -64,7 +64,7 @@ public class ToolboxesRenderer implements Renderer {
         StringBuilder sb = new StringBuilder();
         int depth = 0;
         ToolboxTree.TreeNode last = null;
-        ser.begin();
+        sb.append(ser.begin());
         while (it.hasNext()) {
             ToolboxTree.TreeNode node = it.next();
             int newDepth = node.getDepth();
@@ -98,7 +98,7 @@ public class ToolboxesRenderer implements Renderer {
             sb.append(space(i));
             sb.append(ser.endBranch());
         }
-        ser.end();
+        sb.append(ser.end());
         String ret = sb.toString();
         return ret;
     }

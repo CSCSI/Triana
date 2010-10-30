@@ -11,6 +11,7 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableData;
 import org.trianacode.config.ResourceManagement;
+import org.trianacode.http.PathController;
 
 import java.io.*;
 import java.util.Map;
@@ -80,6 +81,9 @@ public class Output {
      * @return
      */
     public static Streamable output(Map<String, Object> parameters, String templateType) {
+        if (parameters.get("pathController") == null || !(parameters.get("pathController") instanceof PathController)) {
+            parameters.put("pathController", PathController.getInstance());
+        }
         VelocityContext context = new VelocityContext();
         for (String s : parameters.keySet()) {
             context.put(s, parameters.get(s));

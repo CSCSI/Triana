@@ -1,6 +1,9 @@
 package org.trianacode.http;
 
-import org.thinginitself.http.*;
+import org.thinginitself.http.Path;
+import org.thinginitself.http.RequestContext;
+import org.thinginitself.http.RequestProcessException;
+import org.thinginitself.http.Resource;
 import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.http.util.PathTree;
 import org.thinginitself.streamable.Streamable;
@@ -16,7 +19,6 @@ import org.trianacode.taskgraph.tool.ToolResolver;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 
 /**
@@ -75,9 +77,6 @@ public class ExecutionTarget extends TargetResource {
 
     }
 
-    @Override
-    public void onPut(RequestContext requestContext) throws RequestProcessException {
-    }
 
     @Override
     public void onPost(RequestContext requestContext) throws RequestProcessException {
@@ -128,24 +127,5 @@ public class ExecutionTarget extends TargetResource {
         //requestContext.setResponseEntity(StreamableOptions.newOptions(Http.Method.GET, Http.Method.POST));
     }
 
-    @Override
-    public Streamable get(Path path, List<MimeType> mimeTypes) {
-        return null;
-    }
-
-    @Override
-    public Streamable put(Path path, List<MimeType> mimeTypes, Streamable streamable) {
-        return null;
-    }
-
-    @Override
-    public Streamable post(Path path, List<MimeType> mimeTypes, Streamable streamable) {
-        return null;
-    }
-
-    @Override
-    public Streamable delete(Path path, List<MimeType> mimeTypes) {
-        return null;
-    }
 
 }

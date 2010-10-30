@@ -10,33 +10,43 @@ import org.trianacode.taskgraph.tool.Toolbox;
  */
 public class PathController {
 
-    public static String getToolboxes() {
+    private static PathController pathController = new PathController();
+
+    private PathController() {
+    }
+
+    public static PathController getInstance() {
+        return pathController;
+    }
+
+
+    public String getToolboxes() {
         return "toolboxes/";
     }
 
-    public static String getResources() {
+    public String getResources() {
         return "files/";
     }
 
 
-    public static String getRoot() {
+    public String getRoot() {
         return "/triana/";
     }
 
-    public static String getToolboxesRoot() {
+    public String getToolboxesRoot() {
         return getRoot() + getToolboxes();
     }
 
-    public static String getResourcesRoot() {
+    public String getResourcesRoot() {
         return getRoot() + getResources();
     }
 
 
-    public static String getPath(Toolbox toolbox) {
+    public String getPath(Toolbox toolbox) {
         return getToolboxesRoot() + Coder.encodeUTF8(toolbox.getName()) + "/";
     }
 
-    public static String getPath(Tool tool) {
+    public String getPath(Tool tool) {
         Toolbox tb = tool.getToolBox();
         StringBuilder sb = new StringBuilder();
         String[] comps = tool.getQualifiedToolName().split("\\.");

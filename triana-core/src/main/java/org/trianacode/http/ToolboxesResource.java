@@ -1,7 +1,7 @@
 package org.trianacode.http;
 
 import org.thinginitself.http.MimeType;
-import org.thinginitself.http.target.TargetResourceAdapter;
+import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.streamable.Streamable;
 import org.trianacode.taskgraph.tool.ToolResolver;
 
@@ -11,12 +11,12 @@ import java.util.List;
  * @author Andrew Harrison
  * @version 1.0.0 Oct 29, 2010
  */
-public class ToolboxesResource extends TargetResourceAdapter {
+public class ToolboxesResource extends TargetResource {
 
     private ToolResolver resolver;
 
     public ToolboxesResource(ToolResolver resolver) {
-        super(PathController.getToolboxesRoot());
+        super(PathController.getInstance().getToolboxesRoot());
         this.resolver = resolver;
     }
 

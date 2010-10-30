@@ -3,7 +3,7 @@ package org.trianacode.http;
 import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.MimeType;
 import org.thinginitself.http.Resource;
-import org.thinginitself.http.target.TargetResourceAdapter;
+import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.http.target.UrlTarget;
 import org.thinginitself.streamable.Streamable;
 import org.trianacode.taskgraph.Task;
@@ -17,13 +17,13 @@ import java.util.List;
  * @version 1.0.0 Jul 20, 2010
  */
 
-public class TrianaHttpServer extends TargetResourceAdapter {
+public class TrianaHttpServer extends TargetResource {
 
     private HttpPeer peer;
     private ToolResolver toolResolver;
 
     public TrianaHttpServer() {
-        super(PathController.getRoot());
+        super(PathController.getInstance().getRoot());
         this.peer = new HttpPeer();
 
     }
@@ -43,8 +43,8 @@ public class TrianaHttpServer extends TargetResourceAdapter {
         //getPathTree().addLocatable(new ExecutionTarget(toolResolver));
         getPathTree().addLocatable(new Home(getPath().toString(), toolResolver));
         getPathTree().addLocatable(new ToolboxesResource(toolResolver));
+        getPathTree().addLocatable(new UrlTarget(PathController.getInstance().getResourcesRoot(), getClass().getResource("/me.txt")));
         peer.addTarget(this);
-        peer.addTarget(new UrlTarget(PathController.getResourcesRoot(), getClass().getResource("/me.txt")));
         peer.open();
     }
 
@@ -63,7 +63,6 @@ public class TrianaHttpServer extends TargetResourceAdapter {
         public Home(String path, ToolResolver resolver) {
             super(path);
             this.resolver = resolver;
-
         }
 
         public Streamable getStreamable(List<MimeType> mimes) {

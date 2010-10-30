@@ -1,16 +1,17 @@
 package org.trianacode.http;
 
 import org.apache.commons.logging.Log;
-import org.thinginitself.http.*;
+import org.thinginitself.http.HttpPeer;
+import org.thinginitself.http.RequestContext;
+import org.thinginitself.http.RequestProcessException;
+import org.thinginitself.http.Resource;
 import org.thinginitself.http.target.TargetResource;
-import org.thinginitself.streamable.Streamable;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.interceptor.execution.ExecutionControlListener;
 import org.trianacode.taskgraph.interceptor.execution.ExecutionController;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
@@ -71,26 +72,6 @@ public class TaskResource extends TargetResource implements ExecutionControlList
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public Streamable get(Path path, List<MimeType> mimeTypes) {
-        return null;
-    }
-
-    @Override
-    public Streamable put(Path path, List<MimeType> mimeTypes, Streamable streamable) {
-        return null;
-    }
-
-    @Override
-    public Streamable post(Path path, List<MimeType> mimeTypes, Streamable streamable) {
-        return null;
-    }
-
-    @Override
-    public Streamable delete(Path path, List<MimeType> mimeTypes) {
-        return null;
     }
 
     private boolean isDisplayTask(Task t) {
