@@ -39,7 +39,7 @@ public class HtmlListSerializer implements TreeSerializer {
             if (tool == null) {
                 return "<li><span class=\"file\">" + node.getName() + "</span>";
             } else {
-                return "<li><a href=\"" + PathController.getInstance().getPath(tool) + "\"><span class=\"file\">" + node.getName() + "</span></a>";
+                return "<li><a href=\"" + PathController.getInstance().getToolPath(tool) + "\"><span class=\"file\">" + node.getName() + "</span></a>";
             }
         }
     }

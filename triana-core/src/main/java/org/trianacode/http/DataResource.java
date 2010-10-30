@@ -16,7 +16,6 @@ public class DataResource extends Resource {
 
     public DataResource(String urlName, Serializable object) {
         super(urlName, Http.Method.GET);
-        System.out.println("Deploying an object with identifier " + urlName);
         this.object = object;
     }
 

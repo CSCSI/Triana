@@ -8,7 +8,6 @@ import org.trianacode.velocity.Output;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author Andrew Harrison
@@ -29,8 +28,10 @@ public class ToolRenderer implements Renderer {
     public void init(Tool tool, String path) {
         this.tool = tool;
         this.path = path;
-        Properties props = tool.getProperties();
+        TrianaProperties props = tool.getProperties();
         try {
+            Output.registerDefaults(props);
+
             Output.registerTemplate(TOOL_CREATE_INSTANCE_TEMPLATE, props.getProperty(TrianaProperties.CREATE_TOOL_INSTANCE_PROPERTY));
             Output.registerTemplate(TOOL_COMPLETED_TEMPLATE, props.getProperty(TrianaProperties.TOOL_COMPLETED_TEMPLATE_PROPERTY));
             Output.registerTemplate(TOOL_DESCRIPTION_TEMPLATE, props.getProperty(TrianaProperties.TOOL_DESCRIPTION_TEMPLATE_PROPERTY));

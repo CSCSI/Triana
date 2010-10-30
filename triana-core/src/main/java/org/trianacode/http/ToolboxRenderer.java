@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class ToolboxRenderer implements Renderer {
 
-    String TOOLBOX_DESCRIPTION_TEMPLATE = "toolbox.description.template";
-    String TOOLBOX_CLASSPATH_TEMPLATE = "toolbox.classpath.template";
+    public static String TOOLBOX_DESCRIPTION_TEMPLATE = "toolbox.description.template";
+    public static String TOOLBOX_CLASSPATH_TEMPLATE = "toolbox.classpath.template";
 
 
     private Toolbox toolbox;
@@ -27,6 +27,7 @@ public class ToolboxRenderer implements Renderer {
         this.toolbox = toolbox;
         this.path = path;
         try {
+            Output.registerDefaults(toolbox.getProperties());
             Output.registerTemplate(TOOLBOX_DESCRIPTION_TEMPLATE, toolbox.getProperties().getProperty(TrianaProperties.TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY));
         } catch (IOException e) {
             e.printStackTrace();

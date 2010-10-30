@@ -36,6 +36,7 @@ public class ToolParameterRenderer implements Renderer {
         templatePath = tool.getProperties().getProperty(TrianaProperties.TOOL_PARAMETER_WINDOW_TEMPLATE_PROPERTY);
 
         try {
+            Output.registerDefaults(tool.getProperties());
             Output.registerTemplate(TOOL_PARAMETER_TEMPLATE, templatePath);
         } catch (IOException e) {
             e.printStackTrace();

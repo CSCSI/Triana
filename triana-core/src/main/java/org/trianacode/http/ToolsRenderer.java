@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author Andrew Harrison
@@ -28,8 +27,9 @@ public class ToolsRenderer implements Renderer {
         this.tools = tools;
         this.path = path;
         if (tools.size() > 0) {
-            Properties props = tools.get(0).getProperties();
+            TrianaProperties props = tools.get(0).getProperties();
             try {
+                Output.registerDefaults(props);
                 Output.registerTemplate(TOOLS_DESCRIPTION_TEMPLATE, props.getProperty(TrianaProperties.TOOLS_DESCRIPTION_TEMPLATE_PROPERTY));
             } catch (IOException e) {
                 e.printStackTrace();

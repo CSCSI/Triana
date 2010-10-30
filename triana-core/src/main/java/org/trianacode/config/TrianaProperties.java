@@ -48,6 +48,9 @@ public class TrianaProperties extends Properties {
     public static final String CHECKBOX_TEMPLATE_PROPERTY = DOMAIN + ".checkbox.template";
     public static final String TOOL_COMPLETED_TEMPLATE_PROPERTY = DOMAIN + ".tool.completed.template";
     public static final String TRIANA_TEMPLATE_PROPERTY = DOMAIN + ".triana.template";
+    public static final String HEADER_TEMPLATE_PROPERTY = DOMAIN + ".header.template";
+    public static final String FOOTER_TEMPLATE_PROPERTY = DOMAIN + ".footer.template";
+
 
     // NOT USED at present:
 
@@ -126,6 +129,8 @@ public class TrianaProperties extends Properties {
 
         properties.put(FORM_TEMPLATE_PROPERTY, "/templates/form.tpl");
         properties.put(CHECKBOX_TEMPLATE_PROPERTY, "/templates/checkbox.tpl");
+        properties.put(HEADER_TEMPLATE_PROPERTY, "/templates/header.tpl");
+        properties.put(FOOTER_TEMPLATE_PROPERTY, "/templates/footer.tpl");
 
 
         return properties;

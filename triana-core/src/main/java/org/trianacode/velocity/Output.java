@@ -11,6 +11,7 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableData;
 import org.trianacode.config.ResourceManagement;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.http.PathController;
 
 import java.io.*;
@@ -26,6 +27,7 @@ public class Output {
 
     private static StringResourceRepository repository;
     private static VelocityEngine engine;
+    private static boolean defaultRegistered = false;
 
     static {
         try {
@@ -40,6 +42,14 @@ public class Output {
         if (existing == null) {
             repository.putStringResource(name, getTemplate(path));
         }
+    }
+
+    public static synchronized void registerDefaults(TrianaProperties props) throws IOException {
+        if (!defaultRegistered) {
+            Output.registerTemplate("header.template", props.getProperty(TrianaProperties.HEADER_TEMPLATE_PROPERTY));
+            Output.registerTemplate("footer.template", props.getProperty(TrianaProperties.FOOTER_TEMPLATE_PROPERTY));
+        }
+        defaultRegistered = true;
     }
 
 
@@ -81,9 +91,7 @@ public class Output {
      * @return
      */
     public static Streamable output(Map<String, Object> parameters, String templateType) {
-        if (parameters.get("pathController") == null || !(parameters.get("pathController") instanceof PathController)) {
-            parameters.put("pathController", PathController.getInstance());
-        }
+        parameters = initParameters(parameters);
         VelocityContext context = new VelocityContext();
         for (String s : parameters.keySet()) {
             context.put(s, parameters.get(s));
@@ -108,6 +116,8 @@ public class Output {
     }
 
     public static String outputString(Map<String, Object> parameters, String templateType) {
+        parameters = initParameters(parameters);
+
         VelocityContext context = new VelocityContext();
         for (String s : parameters.keySet()) {
             context.put(s, parameters.get(s));
@@ -128,5 +138,15 @@ public class Output {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static Map<String, Object> initParameters(Map<String, Object> parameters) {
+        if (parameters.get("pathController") == null || !(parameters.get("pathController") instanceof PathController)) {
+            parameters.put("pathController", PathController.getInstance());
+        }
+        if (parameters.get("title") == null) {
+            parameters.put("title", "Triana");
+        }
+        return parameters;
     }
 }

@@ -42,11 +42,11 @@ public class PathController {
     }
 
 
-    public String getPath(Toolbox toolbox) {
+    public String getToolboxPath(Toolbox toolbox) {
         return getToolboxesRoot() + Coder.encodeUTF8(toolbox.getName()) + "/";
     }
 
-    public String getPath(Tool tool) {
+    public String getToolPath(Tool tool) {
         Toolbox tb = tool.getToolBox();
         StringBuilder sb = new StringBuilder();
         String[] comps = tool.getQualifiedToolName().split("\\.");
@@ -54,7 +54,7 @@ public class PathController {
             sb.append(Coder.encodeUTF8(comp)).append("/");
         }
         if (tb != null) {
-            return getPath(tb) + sb.toString();
+            return getToolboxPath(tb) + sb.toString();
         }
         return getRoot() + sb.toString();
     }

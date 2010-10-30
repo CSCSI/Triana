@@ -28,6 +28,7 @@ public class TrianaRenderer implements Renderer {
         templatePath = instance.getProps().getProperty(TrianaProperties.TRIANA_TEMPLATE_PROPERTY);
 
         try {
+            Output.registerDefaults(instance.getProps());
             Output.registerTemplate(TRIANA_TEMPLATE, templatePath);
         } catch (IOException e) {
             e.printStackTrace();

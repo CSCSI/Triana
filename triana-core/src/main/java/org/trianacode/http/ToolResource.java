@@ -1,6 +1,9 @@
 package org.trianacode.http;
 
-import org.thinginitself.http.*;
+import org.thinginitself.http.Http;
+import org.thinginitself.http.RequestContext;
+import org.thinginitself.http.RequestProcessException;
+import org.thinginitself.http.Resource;
 import org.thinginitself.http.util.MimeHandler;
 import org.thinginitself.streamable.StreamableData;
 import org.thinginitself.streamable.StreamableStream;
@@ -33,7 +36,7 @@ public class ToolResource extends Resource {
     private ToolboxClasspath cp = null;
 
 
-    public ToolResource(Path path, Tool tool) {
+    public ToolResource(String path, Tool tool) {
         super(path, Http.Method.GET);
         if (!(tool.getToolBox() instanceof FileToolbox)) {
             throw new IllegalArgumentException("Can only be a resource for local file tools");

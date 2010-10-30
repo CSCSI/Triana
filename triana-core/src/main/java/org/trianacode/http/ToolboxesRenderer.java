@@ -30,6 +30,7 @@ public class ToolboxesRenderer implements Renderer {
         this.path = path;
         try {
             if (toolboxes.size() > 0) {
+                Output.registerDefaults(toolboxes.get(0).getProperties());
                 Output.registerTemplate(TOOLBOXES_DESCRIPTION_TEMPLATE, toolboxes.get(0).getProperties().getProperty(TrianaProperties.TOOLBOXES_DESCRIPTION_TEMPLATE_PROPERTY));
             }
         } catch (IOException e) {

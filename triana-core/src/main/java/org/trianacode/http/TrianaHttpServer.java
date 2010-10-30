@@ -20,7 +20,6 @@ import java.util.List;
 public class TrianaHttpServer extends TargetResource {
 
     private HttpPeer peer;
-    private ToolResolver toolResolver;
 
     public TrianaHttpServer() {
         super(PathController.getInstance().getRoot());
