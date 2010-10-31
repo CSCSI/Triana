@@ -60,7 +60,7 @@ public class PathController {
         return null;
     }
 
-    public String getTooloxPart(String path) {
+    public String getToolboxPart(String path) {
         if (path.startsWith(getToolboxesRoot())) {
             String tool = path.substring(getToolboxesRoot().length());
             while (tool.startsWith("/")) {
