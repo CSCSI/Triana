@@ -7,50 +7,57 @@ import org.trianacode.taskgraph.tool.ToolboxTree;
  * @author Andrew Harrison
  * @version 1.0.0 Oct 30, 2010
  */
-public class HtmlListSerializer implements TreeSerializer {
+public class XmlSerializer implements TreeSerializer {
 
     @Override
     public String begin() {
-        return "<ul id=\"toolboxes\" class=\"filetree\">";
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
     }
 
     @Override
     public String end() {
-        return "</ul>";
+        return "";
     }
 
     @Override
     public String endBranch(boolean toolbox) {
-        return "</ul></li>";
+        if (toolbox) {
+            return "</toolbox>";
+        }
+        return "</package>";
     }
 
     @Override
     public String endLeaf() {
-        return "</li>";
+        return "";
     }
 
     @Override
     public String startNode(ToolboxTree.TreeNode node) {
+
         boolean leaf = node.isLeaf();
         if (!leaf) {
-            return "<li><span class=\"folder\">" + node.getName() + "</span><ul>";
+            if (node.isToolbox()) {
+                return "<toolbox name=\"" + node.getName() + "\">";
+            }
+            return "<package name=\"" + node.getName() + "\">";
         } else {
             Tool tool = node.getTool();
             if (tool == null) {
-                return "<li><span class=\"file\">" + node.getName() + "</span>";
+                return "<tool name=\"" + node.getName() + "\"/>";
             } else {
-                return "<li><a href=\"" + PathController.getInstance().getToolPath(tool) + "\"><span class=\"file\">" + node.getName() + "</span></a>";
+                return "<tool name=\"" + node.getName() + "\" href=\"" + PathController.getInstance().getToolPath(tool) + "\"/>";
             }
         }
     }
 
     @Override
     public String startRoot(ToolboxTree.TreeNode node) {
-        return startNode(node);
+        return "<toolboxes>";
     }
 
     @Override
     public String endRoot() {
-        return endBranch(false);
+        return "</toolboxes>";
     }
 }

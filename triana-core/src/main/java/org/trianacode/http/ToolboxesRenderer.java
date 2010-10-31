@@ -46,7 +46,7 @@ public class ToolboxesRenderer implements Renderer {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("path", path);
         ToolboxTree tree = createToolboxTree(toolboxes);
-        String ss = treesToString(tree, new HtmlListSerializer());
+        String ss = treesToString(tree, new XmlSerializer());
         properties.put("toolboxes", ss);
         return Output.output(properties, type);
     }
@@ -67,6 +67,7 @@ public class ToolboxesRenderer implements Renderer {
         ToolboxTree.TreeNode last = null;
         sb.append(ser.begin());
         while (it.hasNext()) {
+
             ToolboxTree.TreeNode node = it.next();
             int newDepth = node.getDepth();
             int diff = newDepth - depth;
@@ -76,29 +77,38 @@ public class ToolboxesRenderer implements Renderer {
                     sb.append(ser.endLeaf());
                     sb.append(space(newDepth));
                 }
-                for (int i = diff; i < 0; i++) {
-                    sb.append(ser.endBranch());
+                for (int i = diff; i < -1; i++) {
+                    sb.append(ser.endBranch(false));
                     sb.append(space(newDepth - i));
                 }
+                sb.append(ser.endBranch(newDepth == 1));
+                sb.append(space(newDepth));
             } else if (diff == 0) {
                 if (last != null) {
                     if (!last.isLeaf()) {
-                        sb.append(ser.endBranch());
+                        sb.append(ser.endBranch(newDepth == 1));
                     } else {
                         sb.append(ser.endLeaf());
                     }
                 }
             }
             sb.append(space(newDepth));
-            sb.append(ser.startNode(node));
+            if (last == null) {
+                sb.append(ser.startRoot(node));
+            } else {
+                sb.append(ser.startNode(node));
+            }
             depth = newDepth;
             last = node;
         }
         sb.append(ser.endLeaf());
-        for (int i = depth; i > 0; i--) {
+        for (int i = depth; i > 2; i--) {
             sb.append(space(i));
-            sb.append(ser.endBranch());
+            sb.append(ser.endBranch(false));
         }
+        sb.append(space(1));
+        sb.append(ser.endBranch(true));
+        sb.append(ser.endRoot());
         sb.append(ser.end());
         String ret = sb.toString();
         return ret;
