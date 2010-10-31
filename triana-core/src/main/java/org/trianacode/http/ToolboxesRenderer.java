@@ -46,7 +46,7 @@ public class ToolboxesRenderer implements Renderer {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("path", path);
         ToolboxTree tree = createToolboxTree(toolboxes);
-        String ss = treesToString(tree, new XmlSerializer());
+        String ss = treesToString(tree, new HtmlListSerializer());
         properties.put("toolboxes", ss);
         return Output.output(properties, type);
     }
