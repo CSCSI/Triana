@@ -58,11 +58,6 @@
  */
 package org.trianacode.taskgraph;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Vector;
-
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskGraphImp;
 import org.trianacode.taskgraph.imp.TaskImp;
@@ -70,6 +65,11 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Vector;
 
 
 /**
@@ -148,6 +148,7 @@ public class TaskGraphUtils {
             placeholder.setDataInputNodeCount(tool.getDataInputNodeCount());
             placeholder.setDataOutputNodeCount(tool.getDataOutputNodeCount());
             placeholder.setProxy(ProxyFactory.cloneProxy(tool.getProxy()));
+            placeholder.setProperties(tool.getProperties());
 
             RenderingHint[] hints = tool.getRenderingHints();
             for (int count = 0; count < hints.length; count++) {
@@ -250,7 +251,7 @@ public class TaskGraphUtils {
      * Creates a clone of the specified tool
      */
     private static Tool toolClone(Tool tool) throws TaskException {
-        return new ToolImp(tool, tool.getProperties());
+        return new ToolImp(tool);
     }
 
     /**

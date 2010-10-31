@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<div>
+	<div id="container">
 		<p>This is a tool parameter page for: $subtoolname which is part of the $toolname workflow</p>
 		<form action="$path" METHOD="POST">
 		<input type="text" name="username" value="yes!">

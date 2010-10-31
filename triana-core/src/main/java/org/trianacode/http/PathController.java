@@ -46,6 +46,35 @@ public class PathController {
         return getToolboxesRoot() + Coder.encodeUTF8(toolbox.getName()) + "/";
     }
 
+    public String getToolPart(String path) {
+        if (path.startsWith(getToolboxesRoot())) {
+            String toolbox = path.substring(getToolboxesRoot().length());
+            if (toolbox.indexOf("/") > -1) {
+                String tool = toolbox.substring(toolbox.indexOf("/") + 1, toolbox.length());
+                while (tool.startsWith("/")) {
+                    tool = tool.substring(1);
+                }
+                return tool;
+            }
+        }
+        return null;
+    }
+
+    public String getTooloxPart(String path) {
+        if (path.startsWith(getToolboxesRoot())) {
+            String tool = path.substring(getToolboxesRoot().length());
+            while (tool.startsWith("/")) {
+                tool = tool.substring(1);
+            }
+            while (tool.endsWith("/")) {
+                tool = tool.substring(0, tool.length() - 1);
+            }
+            return tool;
+        }
+        return null;
+    }
+
+
     public String getToolPath(Tool tool) {
         Toolbox tb = tool.getToolBox();
         StringBuilder sb = new StringBuilder();

@@ -103,15 +103,10 @@ public class TrianaInstance {
         props = propertyLoader.getProperties();
     }
 
-    public void init(TrianaInstanceProgressListener progress) throws IOException {
+    public void init(TrianaInstanceProgressListener progress, boolean resolve) throws IOException {
         if (progress != null) {
             progress.setProgressSteps(4);
             progress.showCurrentProgress("Initializing Engine");
-        }
-
-
-        if (progress != null) {
-            progress.showCurrentProgress("Searching for local tools");
         }
 
         toolResolver = new ToolResolver(props);
@@ -125,22 +120,36 @@ public class TrianaInstance {
 
         httpServices = new HTTPServices();
         if (runServer) {
-            //toolResolver.addToolListener(httpServices.getWorkflowServer());
+            toolResolver.addToolListener(httpServices.getWorkflowServer());
             httpServices.startServices(toolResolver);
             //discoveryTools = new DiscoverTools(toolResolver, httpServices.getHttpEngine(), props);
         }
-        toolResolver.resolve(reresolve, extraToolboxes);
+        if (resolve) {
+            if (progress != null) {
+                progress.showCurrentProgress("Searching for local tools");
+            }
+            toolResolver.resolve(reresolve, extraToolboxes);
+        }
         if (progress != null && runServer) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
         }
+
         new ShutdownHook().createHook();
         if (progress != null) {
             progress.showCurrentProgress("Triana Initialization complete");
         }
     }
 
+    public void init(boolean resolve) throws IOException {
+        init(null, resolve);
+    }
+
     public void init() throws IOException {
-        init(null);
+        init(null, true);
+    }
+
+    public void resolve() {
+        toolResolver.resolve(reresolve, extraToolboxes);
     }
 
 

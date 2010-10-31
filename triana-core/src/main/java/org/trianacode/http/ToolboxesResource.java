@@ -3,8 +3,9 @@ package org.trianacode.http;
 import org.thinginitself.http.MimeType;
 import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.streamable.Streamable;
-import org.trianacode.taskgraph.tool.ToolResolver;
+import org.trianacode.taskgraph.tool.Toolbox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,19 +14,28 @@ import java.util.List;
  */
 public class ToolboxesResource extends TargetResource {
 
-    private ToolResolver resolver;
+    private List<Toolbox> toolboxes = new ArrayList<Toolbox>();
 
-    public ToolboxesResource(ToolResolver resolver) {
+    public ToolboxesResource() {
         super(PathController.getInstance().getToolboxesRoot());
-        this.resolver = resolver;
     }
 
     public Streamable getStreamable(List<MimeType> mimes) {
-        System.out.println("ToolboxesResource$ListToolboxesResource.getStreamable CALLED");
         ToolboxesRenderer r = new ToolboxesRenderer();
-        r.init(resolver.getToolboxes(), getPath().toString());
+        r.init(toolboxes, getPath().toString());
         Streamable s = r.render(ToolboxesRenderer.TOOLBOXES_DESCRIPTION_TEMPLATE);
-        System.out.println("ToolboxesResource$ListToolboxesResource.getStreamable:" + s);
         return s;
+    }
+
+    public void toolboxAdded(Toolbox toolbox) {
+        toolboxes.add(toolbox);
+        getPathTree().addLocatable(new ToolFinder(toolbox));
+
+    }
+
+    public void toolboxRemoved(Toolbox toolbox) {
+        toolboxes.remove(toolbox);
+        getPathTree().removeLocatable(PathController.getInstance().getToolboxPath(toolbox));
+
     }
 }

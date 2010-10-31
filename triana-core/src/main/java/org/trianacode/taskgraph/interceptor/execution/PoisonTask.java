@@ -31,6 +31,10 @@ public class PoisonTask implements Task {
     }
 
     @Override
+    public void setProperties(TrianaProperties properties) {
+    }
+
+    @Override
     public String getQualifiedTaskName() {
         return "Poison";
     }

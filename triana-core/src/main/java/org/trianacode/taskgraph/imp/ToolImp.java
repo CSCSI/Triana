@@ -196,11 +196,14 @@ public class ToolImp implements Tool {
 
     /**
      * Current Triana properties configuration
+     * <p/>
+     * ADDED PRIVATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      */
-    TrianaProperties properties;
+    private TrianaProperties properties;
 
     /**
      * Default constructor
+     * Which blows everything up. Where do the proerpties come from ???????????????????????
      */
     public ToolImp() {
 
@@ -209,10 +212,9 @@ public class ToolImp implements Tool {
     /**
      * Creates a clone of the specified tool
      */
-    public ToolImp(Tool tool, TrianaProperties properties) throws TaskException {
-        this.properties = properties;
-
+    public ToolImp(Tool tool) throws TaskException {
         try {
+            setProperties(tool.getProperties());
             setDefinitionType(tool.getDefinitionType());
             setToolName(tool.getToolName());
             setToolPackage(tool.getToolPackage());
@@ -312,6 +314,10 @@ public class ToolImp implements Tool {
 
     public TrianaProperties getProperties() {
         return properties;
+    }
+
+    public void setProperties(TrianaProperties properties) {
+        this.properties = properties;
     }
 
     public void setDisplayName(String displayName) {

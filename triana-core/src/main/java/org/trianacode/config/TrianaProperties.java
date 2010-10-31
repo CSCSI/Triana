@@ -50,6 +50,9 @@ public class TrianaProperties extends Properties {
     public static final String TRIANA_TEMPLATE_PROPERTY = DOMAIN + ".triana.template";
     public static final String HEADER_TEMPLATE_PROPERTY = DOMAIN + ".header.template";
     public static final String FOOTER_TEMPLATE_PROPERTY = DOMAIN + ".footer.template";
+    public static final String NOHELP_TEMPLATE_PROPERTY = DOMAIN + ".nohelp.template";
+    public static final String TOOL_CP_XML_TEMPLATE_PROPERTY = DOMAIN + ".tool.cp.xml.template";
+    public static final String TOOL_CP_HTML_TEMPLATE_PROPERTY = DOMAIN + ".tool.cp.html.template";
 
 
     // NOT USED at present:
@@ -131,6 +134,9 @@ public class TrianaProperties extends Properties {
         properties.put(CHECKBOX_TEMPLATE_PROPERTY, "/templates/checkbox.tpl");
         properties.put(HEADER_TEMPLATE_PROPERTY, "/templates/header.tpl");
         properties.put(FOOTER_TEMPLATE_PROPERTY, "/templates/footer.tpl");
+        properties.put(NOHELP_TEMPLATE_PROPERTY, "/templates/nohelp.tpl");
+        properties.put(TOOL_CP_XML_TEMPLATE_PROPERTY, "/templates/cp.xml.tpl");
+        properties.put(TOOL_CP_HTML_TEMPLATE_PROPERTY, "/templates/cp.html.tpl");
 
 
         return properties;

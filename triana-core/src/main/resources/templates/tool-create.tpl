@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<div>
+	<div id="container">
 		<p>This is a cool tool: $toolname</p>
 		<form action="$path" METHOD="POST">
 		<input type="hidden" name="please" value="yes!">

@@ -839,7 +839,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     }
 
     private Tool copyTool(Tool tool, String newName) throws TaskException {
-        ToolImp newTool = new ToolImp(tool, toolTable.getProperties());
+        ToolImp newTool = new ToolImp(tool);
         URL path = tool.getDefinitionPath();
         if (UrlUtils.isFile(tool)) {
             File f = UrlUtils.getFile(path);

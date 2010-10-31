@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<div>
+	<div id="container">
 		<p>This is a tool complete page for: $toolname</p>
 		<p>Goodbye</p>
 	</div>

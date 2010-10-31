@@ -9,7 +9,7 @@
 </head>
 
 <body>
-	<div>
+	<div id="container">
 		<p>This is a toolbox complete page for: $toolboxpath</p>
 		<p>Goodbye</p>
 	</div>

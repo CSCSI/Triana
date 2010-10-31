@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<div>
+	<div id="container">
 		<p>This is a tool instance page for the $toolname workflow. It creates a new instance of a task</p>
 		<form action="$path" METHOD="POST">
 		<input type="hidden" name="$toolname" value="yes!">

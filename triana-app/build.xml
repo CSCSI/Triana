@@ -77,6 +77,7 @@
         <mkdir dir="dist/toolboxes/${toolbox}"/>
         <copy todir="dist/toolboxes/${toolbox}" overwrite="yes">
             <fileset dir="${toolboxes}/${toolbox}" includes="lib/**"/>
+            <fileset dir="${toolboxes}/${toolbox}" includes="help/**"/>
         </copy>
         <copy todir="dist/toolboxes/${toolbox}" overwrite="yes">
             <fileset dir="${toolboxes}/${toolbox}" includes="xml/**"/>
@@ -114,6 +115,7 @@
         <mkdir dir="../toolboxes/${toolbox}"/>
         <copy todir="../toolboxes/${toolbox}" overwrite="yes">
             <fileset dir="${toolboxes}/${toolbox}" includes="lib/**"/>
+            <fileset dir="${toolboxes}/${toolbox}" includes="help/**"/>
         </copy>
         <copy todir="../toolboxes/${toolbox}" overwrite="yes">
             <fileset dir="${toolboxes}/${toolbox}" includes="xml/**"/>

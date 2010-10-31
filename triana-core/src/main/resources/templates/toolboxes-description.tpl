@@ -13,7 +13,7 @@
 </head>
 
 <body>
-	<div>
+	<div id="container">
 		<p>This is a toolboxes listing page</p>
 	</div>
 	<div>

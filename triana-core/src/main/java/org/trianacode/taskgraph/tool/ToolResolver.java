@@ -1,7 +1,6 @@
 package org.trianacode.taskgraph.tool;
 
 import org.apache.commons.logging.Log;
-import org.trianacode.config.Locations;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
@@ -344,16 +343,13 @@ public class ToolResolver implements ToolMetadataResolver {
         if (initialResolved) {
             return;
         }
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    loadToolboxes(extraToolboxes);
-                } catch (Exception e) {
-                    log.warn("error loading toolbox", e);
-                }
-                reresolve();
-            }
-        }).start();
+        try {
+            loadToolboxes(extraToolboxes);
+            reresolve();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         initialResolved = true;
         if (reresolve) {
             timer.scheduleAtFixedRate(new ResolveThread(), getResolveInterval(), getResolveInterval());
@@ -393,6 +389,7 @@ public class ToolResolver implements ToolMetadataResolver {
                 tool.setDefinitionType(Tool.DEFINITION_METADATA);
                 tool.setToolName(ToolUtils.getClassName(metadata.getToolName()));
                 tool.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
+                tool.setProperties(getProperties());
                 String cls = metadata.getUnitWrapper();
                 if (cls == null) {
                     tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
@@ -405,6 +402,7 @@ public class ToolResolver implements ToolMetadataResolver {
                 taskgraph.setDefinitionType(Tool.DEFINITION_METADATA);
                 taskgraph.setToolName(ToolUtils.getClassName(metadata.getToolName()));
                 taskgraph.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
+
                 return taskgraph;
             }
         } catch (TaskException e) {
@@ -447,7 +445,6 @@ public class ToolResolver implements ToolMetadataResolver {
         try {
             properties.saveProperties();
         } catch (IOException e) {
-            System.err.println("WARNING: properties could not be saved to " + Locations.getDefaultConfigFile());
             e.printStackTrace();
         }
     }
@@ -522,7 +519,7 @@ public class ToolResolver implements ToolMetadataResolver {
         for (String toolboxPath : toolboxPaths) {
             Toolbox t = createToolbox(toolboxPath);
             if (t != null) {
-                addNewToolBox(t);
+                addToolbox(t);
             }
         }
         if (extras != null) {

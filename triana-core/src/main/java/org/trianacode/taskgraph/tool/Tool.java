@@ -219,6 +219,8 @@ public interface Tool {
      */
     public TrianaProperties getProperties();
 
+    public void setProperties(TrianaProperties properties);
+
 
     /**
      * @return the proxies represented by this tool

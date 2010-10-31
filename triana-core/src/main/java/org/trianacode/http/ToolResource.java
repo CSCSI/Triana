@@ -1,123 +1,86 @@
 package org.trianacode.http;
 
-import org.thinginitself.http.Http;
-import org.thinginitself.http.RequestContext;
-import org.thinginitself.http.RequestProcessException;
 import org.thinginitself.http.Resource;
-import org.thinginitself.http.util.MimeHandler;
+import org.thinginitself.http.target.DirectoryTarget;
+import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.streamable.StreamableData;
-import org.thinginitself.streamable.StreamableStream;
-import org.thinginitself.streamable.StreamableString;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.FileToolbox;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.net.URL;
 import java.util.List;
 
 /**
- * This is all still messy - but just about works.
- *
  * @author Andrew Harrison
  * @version 1.0.0 Aug 11, 2010
  */
 
-public class ToolResource extends Resource {
-
-    public static final String HELP = "help.html";
-    public static final String DEFINITION = "definition.xml";
-    public static final String CLASSPATH = "classpath";
-    public static final String EXEC = "exec";
-
-    private Tool tool;
-    private String helpFile = null;
-    private NoHelp noHelp = null;
-    private ToolboxClasspath cp = null;
-
+public class ToolResource extends TargetResource {
 
     public ToolResource(String path, Tool tool) {
-        super(path, Http.Method.GET);
+        super(path);
         if (!(tool.getToolBox() instanceof FileToolbox)) {
             throw new IllegalArgumentException("Can only be a resource for local file tools");
         }
-        this.tool = tool;
-        noHelp = new NoHelp(tool);
-        helpFile = tool.getToolName() + ".html";
+        ToolFileRenderer rend = new ToolFileRenderer();
         List<String> libs = ((FileToolbox) tool.getToolBox()).getLibPaths();
-        List<String> ammended = new ArrayList<String>();
-        for (String lib : libs) {
-            if (lib.startsWith("/")) {
-                lib = "classpath" + lib;
+        rend.init(tool, libs);
+        String helpFile = tool.getToolName() + ".html";
+        URL url = ((FileToolbox) tool.getToolBox()).getClassLoader().getResource(helpFile);
+        if (url != null) {
+            File help = ((FileToolbox) tool.getToolBox()).getFile("help");
+            if (help != null) {
+                getPathTree().addLocatable(new DirectoryTarget(PathController.getInstance().getToolPath(tool) + "help/", getRealHelpPath(help, tool)));
             } else {
-                lib = "classpath/" + lib;
-            }
-            ammended.add(lib);
-        }
-        cp = new ToolboxClasspath(tool.getToolBox().getName(), tool.getQualifiedToolName(), ammended);
-    }
-
-
-    public void onGet(RequestContext requestContext) throws RequestProcessException {
-        String path = requestContext.getRequestPath();
-        System.out.println("ToolResource.onGet request path:" + path);
-
-        String me = getPath().toString();
-        String res = path.substring(path.indexOf(me) + me.length(),
-                path.length());
-        if (res.startsWith("/")) {
-            res = res.substring(1, res.length());
-        }
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
-        if (path.endsWith(HELP)) {
-            if (helpFile != null) {
-                InputStream in = ((FileToolbox) tool.getToolBox()).getClassLoader().getResourceAsStream(helpFile);
-                if (in != null) {
-                    StreamableStream ss = new StreamableStream(in, "text/html");
-                    requestContext.setResponseEntity(ss);
-                } else {
-                    requestContext.setResponseEntity(noHelp.getStreamable());
-                }
-            } else {
-                requestContext.setResponseEntity(noHelp.getStreamable());
-            }
-        } else if (path.endsWith(DEFINITION)) {
-            try {
-                ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                XMLWriter writer = new XMLWriter(new BufferedWriter(new OutputStreamWriter(bout)));
-                writer.writeComponent(tool);
-                writer.close();
-                requestContext.setResponseEntity(new StreamableData(bout.toByteArray(), "text/xml"));
-            } catch (IOException e) {
-                requestContext.setResponseCode(500);
-            }
-        } else if (path.endsWith(CLASSPATH + ".html")) {
-            requestContext.setResponseEntity(cp.getStreamable("text/html"));
-        } else if (path.endsWith(CLASSPATH + ".xml")) {
-            requestContext.setResponseEntity(cp.getStreamable("text/xml"));
-        } else if (path.endsWith(getPath().getLast())) {
-            requestContext.setResponseEntity(new StreamableString("Tool", "text/plain")); // TODO
-        } else if (res.startsWith(CLASSPATH)) {
-            String sub = res.substring(CLASSPATH.length(), res.length());
-            // TODO
-            File f = ((FileToolbox) tool.getToolBox()).getFile(sub);
-            if (f != null && f.exists() && f.length() > 0) {
-                //requestContext.setResponseEntity(
-                //        new StreamableFileHandler(f, ((FileToolbox)tool.getToolBox()).getVisibleRoots()).getStreamable());
-            } else {
-                requestContext.setResponseCode(404);
+                getPathTree().addLocatable(new Resource(PathController.getInstance().getToolPath(tool) + "help/" + tool.getToolName() + ".html", rend.render(TrianaProperties.NOHELP_TEMPLATE_PROPERTY)));
             }
         } else {
-            InputStream in = ((FileToolbox) tool.getToolBox()).getClassLoader().getResourceAsStream(res);
-            if (in != null) {
-                StreamableStream ss = new StreamableStream(in, MimeHandler.getMime(res));
-                requestContext.setResponseEntity(ss);
-            } else {
-                requestContext.setResponseCode(404);
-            }
+            getPathTree().addLocatable(new Resource(PathController.getInstance().getToolPath(tool) + "help/" + tool.getToolName() + ".html", rend.render(TrianaProperties.NOHELP_TEMPLATE_PROPERTY)));
         }
+        getPathTree().addLocatable(new Resource(PathController.getInstance().getToolPath(tool) + "classpath.html", rend.render(TrianaProperties.TOOL_CP_HTML_TEMPLATE_PROPERTY)));
+        getPathTree().addLocatable(new Resource(PathController.getInstance().getToolPath(tool), rend.render(TrianaProperties.TOOL_DESCRIPTION_TEMPLATE_PROPERTY)));
+        File classes = ((FileToolbox) tool.getToolBox()).getFile("classes");
+
+        if (classes != null) {
+            getPathTree().addLocatable(new DirectoryTarget(PathController.getInstance().getToolPath(tool) + "classes/", classes));
+        }
+        File lib = ((FileToolbox) tool.getToolBox()).getFile("lib");
+        if (lib != null) {
+            getPathTree().addLocatable(new DirectoryTarget(PathController.getInstance().getToolPath(tool) + "lib/", lib));
+        }
+
+
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            XMLWriter writer = new XMLWriter(new BufferedWriter(new OutputStreamWriter(bout)));
+            writer.writeComponent(tool);
+            writer.close();
+            getPathTree().addLocatable(new Resource(PathController.getInstance().getToolPath(tool) + "definition.xml", new StreamableData(bout.toByteArray(), "text/xml")));
+        } catch (IOException e) {
+            e.printStackTrace();
+            // todo
+        }
+
     }
+
+    private File getRealHelpPath(File help, Tool tool) {
+        String pkg = tool.getToolPackage();
+        if (pkg.indexOf(".") > -1) {
+            pkg = pkg.substring(pkg.indexOf(".") + 1);
+        } else {
+            return help;
+        }
+        pkg = pkg.replace('.', File.separatorChar);
+        String ret = help.getAbsolutePath();
+        if (!ret.endsWith(File.separator)) {
+            ret += File.separator;
+        }
+        ret += pkg;
+        return new File(ret);
+    }
+
 
 }

@@ -275,7 +275,7 @@ public class ApplicationFrame extends TrianaWindow
                     TaskGraphImporterInterface.class,
                     ToolImporterInterface.class,
                     RegisterableToolComponentModel.class);
-            engine.init(this);
+            engine.init(this, false);
             tools = engine.getToolTable();
 
             initTools();
@@ -294,11 +294,29 @@ public class ApplicationFrame extends TrianaWindow
 
             initWindow(super.getTitle());
 
-            boolean loadedWorkflows = false;
+            List<String> workflows = null;
             if (args.length > 0) {
                 ArgumentParser parser = new ArgumentParser(args);
                 parser.parse();
-                List<String> workflows = TrianaOptions.getOptionValues(parser, TrianaOptions.WORKFLOW_OPTION);
+                workflows = TrianaOptions.getOptionValues(parser, TrianaOptions.WORKFLOW_OPTION);
+            }
+            loadTools(workflows);
+            if (workflows != null && workflows.size() > 0) {
+                addParentTaskGraphPanel();
+            }
+
+            splash.setSplashProgress("");
+            splash.hideSplashScreen();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadTools(final List<String> workflows) {
+        new Thread() {
+            public void run() {
+                engine.resolve();
                 if (workflows != null) {
                     for (String workflow : workflows) {
                         try {
@@ -307,7 +325,6 @@ public class ApplicationFrame extends TrianaWindow
                             Tool t = reader.readComponent();
                             if (t instanceof TaskGraph) {
                                 addParentTaskGraphPanel((TaskGraph) t);
-                                loadedWorkflows = true;
                             }
                         } catch (Exception e) {
                             log.error(e);
@@ -315,15 +332,8 @@ public class ApplicationFrame extends TrianaWindow
                     }
                 }
             }
-            if (!loadedWorkflows) {
-                addParentTaskGraphPanel();
-            }
+        }.start();
 
-            splash.setSplashProgress("");
-            splash.hideSplashScreen();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public TrianaInstance getEngine() {
