@@ -1,7 +1,7 @@
 package org.trianacode.velocity.form;
 
 import org.trianacode.config.TrianaProperties;
-import org.trianacode.velocity.Output;
+import org.trianacode.http.Output;
 
 import java.io.IOException;
 import java.util.HashMap;

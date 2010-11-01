@@ -3,7 +3,7 @@
 
 <body>
 	<div id="container">
-		<p>Class path for $tool in Toolbox $toolbox:</p>
+		<p>Class path for Toolbox $toolbox:</p>
 		<ul>
 		#foreach( $path in $paths)
             <li><a href="$path">$path</a></li>

@@ -1,12 +1,9 @@
 package org.trianacode.http;
 
 import org.thinginitself.streamable.Streamable;
-import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.ToolboxTree;
-import org.trianacode.velocity.Output;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +16,6 @@ import java.util.Map;
 
 public class ToolboxesRenderer implements Renderer {
 
-    public static String TOOLBOXES_DESCRIPTION_TEMPLATE = "toolboxes.description.template";
-
 
     private List<Toolbox> toolboxes;
     private String path;
@@ -28,27 +23,16 @@ public class ToolboxesRenderer implements Renderer {
     public void init(List<Toolbox> toolboxes, String path) {
         this.toolboxes = toolboxes;
         this.path = path;
-        try {
-            if (toolboxes.size() > 0) {
-                Output.registerDefaults(toolboxes.get(0).getProperties());
-                Output.registerTemplate(TOOLBOXES_DESCRIPTION_TEMPLATE, toolboxes.get(0).getProperties().getProperty(TrianaProperties.TOOLBOXES_DESCRIPTION_TEMPLATE_PROPERTY));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
-    public String[] getRenderTypes() {
-        return new String[]{TOOLBOXES_DESCRIPTION_TEMPLATE};
-    }
-
-    public Streamable render(String type) {
+    public Streamable render(String type, String mime) {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("path", path);
         ToolboxTree tree = createToolboxTree(toolboxes);
         String ss = treesToString(tree, new HtmlListSerializer());
         properties.put("toolboxes", ss);
-        return Output.output(properties, type);
+        return Output.output(properties, type, mime);
     }
 
     protected ToolboxTree createToolboxTree(List<Toolbox> toolboxes) {

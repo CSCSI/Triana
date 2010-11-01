@@ -1,12 +1,10 @@
 package org.trianacode.http;
 
 import org.thinginitself.streamable.Streamable;
-import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.velocity.Output;
 
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,33 +14,22 @@ import java.util.Map;
 
 public class ToolboxRenderer implements Renderer {
 
-    public static String TOOLBOX_DESCRIPTION_TEMPLATE = "toolbox.description.template";
-    public static String TOOLBOX_CLASSPATH_TEMPLATE = "toolbox.classpath.template";
-
-
     private Toolbox toolbox;
-    private String path;
+    private List<String> libs;
 
-    public void init(Toolbox toolbox, String path) {
+    public void init(Toolbox toolbox, List<String> libs) {
         this.toolbox = toolbox;
-        this.path = path;
-        try {
-            Output.registerDefaults(toolbox.getProperties());
-            Output.registerTemplate(TOOLBOX_DESCRIPTION_TEMPLATE, toolbox.getProperties().getProperty(TrianaProperties.TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.libs = libs;
+
     }
 
-    public String[] getRenderTypes() {
-        return new String[]{TOOLBOX_DESCRIPTION_TEMPLATE};
-    }
-
-    public Streamable render(String type) {
+    public Streamable render(String type, String mime) {
         Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put("path", path);
-        properties.put("toolboxpath", toolbox.getPath());
-        return Output.output(properties, type);
+        properties.put("paths", libs);
+        properties.put("toolbox", toolbox.getName());
+        properties.put("toolboxpath", PathController.getInstance().getToolboxPath(toolbox));
+
+        return Output.output(properties, type, mime);
     }
 
 }

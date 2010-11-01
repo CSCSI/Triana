@@ -6,6 +6,7 @@ import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.RequestProcessException;
 import org.thinginitself.http.Resource;
 import org.thinginitself.http.target.TargetResource;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.interceptor.execution.ExecutionControlListener;
@@ -67,7 +68,7 @@ public class TaskResource extends TargetResource implements ExecutionControlList
         }
         try {
             RenderInfo info = nextTask.take();
-            requestContext.setResponseEntity(info.getRenderer().render(info.getTemplate()));
+            requestContext.setResponseEntity(info.getRenderer().render(info.getTemplate(), "text/html"));
             requestContext.setSendBody(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -97,7 +98,7 @@ public class TaskResource extends TargetResource implements ExecutionControlList
                 ToolRenderer r = new ToolRenderer();
                 r.init(task, task.getToolName());
                 currentTask = task;
-                nextTask.put(new RenderInfo(r, ToolParameterRenderer.TOOL_PARAMETER_TEMPLATE));
+                nextTask.put(new RenderInfo(r, TrianaProperties.TOOL_PARAMETER_WINDOW_TEMPLATE_PROPERTY));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -111,7 +112,7 @@ public class TaskResource extends TargetResource implements ExecutionControlList
         try {
             ToolRenderer r = new ToolRenderer();
             r.init(task, task.getToolName());
-            nextTask.put(new RenderInfo(r, ToolRenderer.TOOL_COMPLETED_TEMPLATE));
+            nextTask.put(new RenderInfo(r, TrianaProperties.TOOL_COMPLETED_TEMPLATE_PROPERTY));
             peer.removeTarget(this);
         } catch (InterruptedException e) {
             e.printStackTrace();

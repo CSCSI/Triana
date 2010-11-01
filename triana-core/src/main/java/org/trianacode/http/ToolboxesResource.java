@@ -3,6 +3,7 @@ package org.trianacode.http;
 import org.thinginitself.http.MimeType;
 import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.streamable.Streamable;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.tool.Toolbox;
 
 import java.util.ArrayList;
@@ -23,13 +24,13 @@ public class ToolboxesResource extends TargetResource {
     public Streamable getStreamable(List<MimeType> mimes) {
         ToolboxesRenderer r = new ToolboxesRenderer();
         r.init(toolboxes, getPath().toString());
-        Streamable s = r.render(ToolboxesRenderer.TOOLBOXES_DESCRIPTION_TEMPLATE);
+        Streamable s = r.render(TrianaProperties.TOOLBOXES_DESCRIPTION_TEMPLATE_PROPERTY, "text/html");
         return s;
     }
 
     public void toolboxAdded(Toolbox toolbox) {
         toolboxes.add(toolbox);
-        getPathTree().addLocatable(new ToolFinder(toolbox));
+        getPathTree().addLocatable(new ToolboxResource(toolbox));
 
     }
 

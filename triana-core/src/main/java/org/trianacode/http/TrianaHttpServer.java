@@ -6,6 +6,7 @@ import org.thinginitself.http.Resource;
 import org.thinginitself.http.target.TargetResource;
 import org.thinginitself.http.target.UrlTarget;
 import org.thinginitself.streamable.Streamable;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
@@ -43,6 +44,8 @@ public class TrianaHttpServer extends TargetResource implements ToolListener {
     }
 
     public void start(ToolResolver toolResolver) throws IOException {
+        Output.registerTemplates(toolResolver.getProperties());
+
         //getPathTree().addLocatable(new ExecutionTarget(toolResolver));
         getPathTree().addLocatable(new Home(getPath().toString(), toolResolver));
         getPathTree().addLocatable(toolboxesResource);
@@ -105,7 +108,7 @@ public class TrianaHttpServer extends TargetResource implements ToolListener {
         public Streamable getStreamable(List<MimeType> mimes) {
             TrianaRenderer r = new TrianaRenderer();
             r.init(resolver.getProperties().getEngine(), getPath().toString());
-            return r.render(TrianaRenderer.TRIANA_TEMPLATE);
+            return r.render(TrianaProperties.TRIANA_TEMPLATE_PROPERTY, "text/html");
         }
     }
 

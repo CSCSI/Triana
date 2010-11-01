@@ -301,7 +301,7 @@ public class ApplicationFrame extends TrianaWindow
                 workflows = TrianaOptions.getOptionValues(parser, TrianaOptions.WORKFLOW_OPTION);
             }
             loadTools(workflows);
-            if (workflows != null && workflows.size() > 0) {
+            if (workflows == null || workflows.size() == 0) {
                 addParentTaskGraphPanel();
             }
 

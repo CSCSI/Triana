@@ -5,7 +5,6 @@
 	<div id="container">
 		<p>This is a tool description page for: $tool</p>
 		<p><a href="${toolpath}help/${toolname}.html">Help</a></p>
-		<p><a href="${toolpath}classpath.html">Class Path</a></p>
 		<p><a href="${toolpath}definition.xml">Definition</a></p>
 	</div>
 

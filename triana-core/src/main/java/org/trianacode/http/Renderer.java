@@ -9,9 +9,6 @@ import org.thinginitself.streamable.Streamable;
 
 public interface Renderer {
 
-    public String[] getRenderTypes();
 
-    public Streamable render(String type);
-
-
+    public Streamable render(String type, String mime);
 }

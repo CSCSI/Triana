@@ -6,6 +6,7 @@ import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.RequestProcessException;
 import org.thinginitself.http.Resource;
 import org.thinginitself.http.target.MemoryTarget;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 
@@ -31,7 +32,7 @@ public class ResourceSpawn extends MemoryTarget {
         ToolRenderer r = new ToolRenderer();
         r.init(task, task.getToolName());
         Resource res = new Resource(getPath().append(task.getToolName()),
-                r.render(ToolRenderer.TOOL_CREATE_INSTANCE_TEMPLATE));
+                r.render(TrianaProperties.CREATE_TOOL_INSTANCE_PROPERTY, "text/html"));
         store.put(res);
         this.peer = peer;
     }
@@ -44,7 +45,7 @@ public class ResourceSpawn extends MemoryTarget {
         peer.addTarget(res);
         ToolRenderer r = new ToolRenderer();
         r.init(task, path);
-        context.setResponseEntity(r.render(ToolRenderer.TOOL_INSTANCE_TEMPLATE));
+        context.setResponseEntity(r.render(TrianaProperties.CREATE_TOOL_INSTANCE_PROPERTY, "text/html"));
     }
 
     public org.thinginitself.http.Resource getResource(

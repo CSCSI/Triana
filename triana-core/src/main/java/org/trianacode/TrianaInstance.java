@@ -108,7 +108,6 @@ public class TrianaInstance {
             progress.setProgressSteps(4);
             progress.showCurrentProgress("Initializing Engine");
         }
-
         toolResolver = new ToolResolver(props);
         toolTable = new ToolTableImpl(toolResolver);
 

@@ -1,4 +1,4 @@
-package org.trianacode.velocity;
+package org.trianacode.http;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -12,7 +12,6 @@ import org.thinginitself.streamable.Streamable;
 import org.thinginitself.streamable.StreamableData;
 import org.trianacode.config.ResourceManagement;
 import org.trianacode.config.TrianaProperties;
-import org.trianacode.http.PathController;
 
 import java.io.*;
 import java.util.Map;
@@ -44,10 +43,35 @@ public class Output {
         }
     }
 
+    public static void registerTemplate(String name, TrianaProperties properties) throws IOException {
+        StringResource existing = repository.getStringResource(name);
+        if (existing == null) {
+            repository.putStringResource(name, getTemplate(properties.getProperty(name)));
+        }
+    }
+
+    public static void registerTemplates(TrianaProperties p) throws IOException {
+        registerDefaults(p);
+        registerTemplate(TrianaProperties.TOOL_CP_HTML_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOL_CP_XML_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.NOHELP_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOL_DESCRIPTION_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOL_PARAMETER_WINDOW_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.CREATE_TOOL_INSTANCE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOL_COMPLETED_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOL_DESCRIPTION_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOL_INSTANCE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOLBOX_DESCRIPTION_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TOOLBOXES_DESCRIPTION_TEMPLATE_PROPERTY, p);
+        registerTemplate(TrianaProperties.TRIANA_TEMPLATE_PROPERTY, p);
+
+
+    }
+
     public static synchronized void registerDefaults(TrianaProperties props) throws IOException {
         if (!defaultRegistered) {
-            Output.registerTemplate("header.template", props.getProperty(TrianaProperties.HEADER_TEMPLATE_PROPERTY));
-            Output.registerTemplate("footer.template", props.getProperty(TrianaProperties.FOOTER_TEMPLATE_PROPERTY));
+            registerTemplate("header.template", props.getProperty(TrianaProperties.HEADER_TEMPLATE_PROPERTY));
+            registerTemplate("footer.template", props.getProperty(TrianaProperties.FOOTER_TEMPLATE_PROPERTY));
         }
         defaultRegistered = true;
     }
@@ -90,7 +114,7 @@ public class Output {
      * @param templateType
      * @return
      */
-    public static Streamable output(Map<String, Object> parameters, String templateType) {
+    public static Streamable output(Map<String, Object> parameters, String templateType, String mime) {
         parameters = initParameters(parameters);
         VelocityContext context = new VelocityContext();
         for (String s : parameters.keySet()) {
@@ -102,7 +126,7 @@ public class Output {
             Template template = engine.getTemplate(templateType);
             template.merge(context, writer);
             writer.close();
-            return new StreamableData(bout.toByteArray(), "text/html");
+            return new StreamableData(bout.toByteArray(), mime);
         }
         catch (ResourceNotFoundException rnfe) {
             rnfe.printStackTrace();
@@ -113,6 +137,11 @@ public class Output {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Streamable output(Map<String, Object> parameters, String templateType) {
+        return output(parameters, templateType, "text/html");
+
     }
 
     public static String outputString(Map<String, Object> parameters, String templateType) {
