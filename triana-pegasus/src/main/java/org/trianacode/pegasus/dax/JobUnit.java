@@ -49,6 +49,7 @@ public class JobUnit{
 
     @Process(gather=true)
     public UUID process(List in) {
+        
         DaxJobChunk thisJob = new DaxJobChunk();
 
         thisJob.setJobName(jobName);

@@ -2,16 +2,13 @@ package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.annotation.Process;
 import org.trianacode.taskgraph.annotation.TextFieldParameter;
 import org.trianacode.taskgraph.annotation.Tool;
-import org.trianacode.taskgraph.annotation.Process;
-
-
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,55 +22,24 @@ import java.util.List;
 @Tool
 public class ExecUnit{
 
+    DaxSettingObject dso = new DaxSettingObject();
+
     @TextFieldParameter
     private String executable = "";
     @TextFieldParameter
     private String optionsString = "";
+    @TextFieldParameter
+    private String search_for = "";
 
-    private List<String> options;
     @TextFieldParameter
     private String input = "";
 
-    private String processName = "process.name";
-    private String processOptions = "process.options";
-    private String processInput = "process.input";
-
-    public String getExecutable() {
-        return executable;
-    }
-
-    public void setExecutable(String executable) {
-        this.executable = executable;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
-    public String getInput() {
-        return input;
-    }
-
-    public void setInput(String input) {
-        this.input = input;
-    }
-
-//    @Override
-//    public String[] getInputTypes() {
-//        return new String[]{"java.lang.String", "java.util.List", "java.lang.String"};
-//    }
-//
-//    @Override
-//    public String[] getOutputTypes() {
-//        return new String[]{"java.lang.String"};
-//    }
 
     @Process(gather=true)
-    public String process(List in){
+    public DaxSettingObject process(List in){
+
+        dso.clear();
+
         java.lang.Process process;
         BufferedReader errorreader;
         BufferedReader inreader;
@@ -81,6 +47,11 @@ public class ExecUnit{
         boolean errors = false;
         String errLog = "";
 
+        List<String> options = new ArrayList<String>();
+        String[] optionsStrings = optionsString.split(" ");
+        for(int i = 0; i < optionsStrings.length; i++){
+            options.add(optionsStrings[i]);
+        }
 
         StringBuilder out = new StringBuilder();
         List commmandStrVector = new ArrayList();
@@ -112,6 +83,7 @@ public class ExecUnit{
             str = "";
             while ((str = inreader.readLine()) != null) {
                 out.append(str).append("\n");
+                checkForData(str);
             }
             inreader.close();
 
@@ -125,21 +97,73 @@ public class ExecUnit{
             log("ExecUnit.process err:" + errLog);
         }
 
-        return(out.toString());
+        dso.addFullOutput(out.toString());
+
+        return dso;
 
     }
 
-    public static void main(String[] args) throws Exception {
-        ExecUnit u = new ExecUnit();
-        u.setExecutable("ls");
-        u.setOptions(Arrays.asList("-l", "/Users/scmabh"));
-      //  u.process();
-
+    private void checkForData(String s){
+        if(s.contains(search_for)){
+            log("Found : " + search_for);
+            String found = s.substring(search_for.length());
+            log("Adding : " + found);
+            dso.addObject("files", found);
+        }else{
+            log("String : " + s + " does not contain : " + search_for);
+        }
     }
 
-        private void log(String s){
+    private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 }
+
+//
+//
+//    private String processName = "process.name";
+//    private String processOptions = "process.options";
+//    private String processInput = "process.input";
+//
+//    public String getExecutable() {
+//        return executable;
+//    }
+//
+//    public void setExecutable(String executable) {
+//        this.executable = executable;
+//    }
+//
+//    public List<String> getOptions() {
+//        return options;
+//    }
+//
+//    public void setOptions(List<String> options) {
+//        this.options = options;
+//    }
+//
+//    public String getInput() {
+//        return input;
+//    }
+//
+//    public void setInput(String input) {
+//        this.input = input;
+//    }
+//
+//    @Override
+//    public String[] getInputTypes() {
+//        return new String[]{"java.lang.String", "java.util.List", "java.lang.String"};
+//    }
+//
+//    @Override
+//    public String[] getOutputTypes() {
+//        return new String[]{"java.lang.String"};
+//    }
+//    public static void main(String[] args) throws Exception {
+//        ExecUnit u = new ExecUnit();
+//        u.setExecutable("ls");
+//        u.setOptions(Arrays.asList("-l", "/Users/scmabh"));
+//      //  u.process();
+//
+//    }

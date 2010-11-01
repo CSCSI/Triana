@@ -1,6 +1,7 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.panels.ParameterPanel;
 
@@ -43,6 +44,14 @@ public class JobUnitPanel extends ParameterPanel {
     @Override
     public void init() {
         getParams();
+
+        TrianaProperties p = this.getTask().getProperties();
+        if(p != null){
+            log("Properties before : " + p.toString());
+        }
+//        this.getTask().setProperties(new TrianaProperties(GUIEnv.getApplicationFrame().getEngine()));
+//        p = this.getTask().getProperties();
+//        log("Properties after : " + p.toString());
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -318,6 +327,6 @@ public class JobUnitPanel extends ParameterPanel {
     private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 }

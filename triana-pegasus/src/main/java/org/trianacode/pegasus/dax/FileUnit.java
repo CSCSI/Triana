@@ -53,6 +53,14 @@ public class FileUnit {
         log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         for(Object object : in){
+            if(object instanceof DaxSettingObject){
+                log("Found settings object");
+                DaxSettingObject dso = (DaxSettingObject)object;
+                int number = dso.getNumberFiles();
+                log("Found number of files from settings object : " + number);
+                thisFile.setNumberOfFiles(number);
+            }
+
             if(object instanceof DaxJobChunk){
                 DaxJobChunk jobChunk = (DaxJobChunk)object;
 
