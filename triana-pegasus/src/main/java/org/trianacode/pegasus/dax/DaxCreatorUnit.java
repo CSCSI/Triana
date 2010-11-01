@@ -110,6 +110,7 @@ public class DaxCreatorUnit {
             DaxJobChunk jobChunk = jobChunks.get(j);
             int pattern = jobChunk.getConnectPattern();
 
+            log("Job : " + jobChunk.getJobID());
             if(pattern == AUTO_CONNECT){
                 System.out.println("\nauto_connect");
 
@@ -469,11 +470,11 @@ public class DaxCreatorUnit {
                 if(chunk.getNumberOfFiles() > 1 && !chunk.isOne2one()){
                     for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
 
-                        if(chunk.getNamePattern() != null){
-                            log("Collection has a naming pattern");
-                        }else{
-                            log("Collection has no naming pattern, using *append int*");
-                        }
+//                        if(chunk.getNamePattern() != null){
+//                            log("Collection has a naming pattern");
+//                        }else{
+//                            log("Collection has no naming pattern, using *append int*");
+//                        }
                         String filename = chunk.getNextFilename();
                         log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + filename);
 

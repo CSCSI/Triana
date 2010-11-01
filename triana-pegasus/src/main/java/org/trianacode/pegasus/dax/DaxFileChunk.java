@@ -39,15 +39,15 @@ public class DaxFileChunk implements Serializable {
     }
 
     public String getNextFilename(){
-        if(counter < numberOfFiles){
+ //       if(counter < numberOfFiles){
             String returnName = getFilename() + "-" + counter;
             counter++;
             return returnName;
 
-        }
-        else{
-            return null;
-        }
+//        }
+//        else{
+//            return null;
+//        }
     }
 
     public void resetNextCounter(){

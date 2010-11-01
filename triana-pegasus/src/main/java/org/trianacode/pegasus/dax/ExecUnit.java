@@ -92,7 +92,7 @@ public class ExecUnit{
         }
 
         if (!errors) {
-            log("ExecUnit.process output:" + out.toString());
+    //        log("ExecUnit.process output:" + out.toString());
         } else {
             log("ExecUnit.process err:" + errLog);
         }
@@ -110,7 +110,7 @@ public class ExecUnit{
             log("Adding : " + found);
             dso.addObject("files", found);
         }else{
-            log("String : " + s + " does not contain : " + search_for);
+   //         log("String : *" + s + "* does not contain : " + search_for);
         }
     }
 
@@ -120,50 +120,3 @@ public class ExecUnit{
         System.out.println(s);
     }
 }
-
-//
-//
-//    private String processName = "process.name";
-//    private String processOptions = "process.options";
-//    private String processInput = "process.input";
-//
-//    public String getExecutable() {
-//        return executable;
-//    }
-//
-//    public void setExecutable(String executable) {
-//        this.executable = executable;
-//    }
-//
-//    public List<String> getOptions() {
-//        return options;
-//    }
-//
-//    public void setOptions(List<String> options) {
-//        this.options = options;
-//    }
-//
-//    public String getInput() {
-//        return input;
-//    }
-//
-//    public void setInput(String input) {
-//        this.input = input;
-//    }
-//
-//    @Override
-//    public String[] getInputTypes() {
-//        return new String[]{"java.lang.String", "java.util.List", "java.lang.String"};
-//    }
-//
-//    @Override
-//    public String[] getOutputTypes() {
-//        return new String[]{"java.lang.String"};
-//    }
-//    public static void main(String[] args) throws Exception {
-//        ExecUnit u = new ExecUnit();
-//        u.setExecutable("ls");
-//        u.setOptions(Arrays.asList("-l", "/Users/scmabh"));
-//      //  u.process();
-//
-//    }
