@@ -110,7 +110,7 @@ public class DaxCreatorUnit {
             DaxJobChunk jobChunk = jobChunks.get(j);
             int pattern = jobChunk.getConnectPattern();
 
-            log("Job : " + jobChunk.getJobName());
+            log("\nJob : " + jobChunk.getJobName());
             if(pattern == AUTO_CONNECT){
                 log("auto_connect");
 
@@ -166,7 +166,7 @@ public class DaxCreatorUnit {
                 chunk.resetNextCounter();
                 if(chunk.isCollection()){
                     for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + m);
+                        log("Job " + job.getID() + " named : "  + job.getName() + " has input : " + chunk.getFilename() + "-" + m);
 
                         if(chunk.getNamePattern() != null){
                             log("Collection has a naming pattern");
@@ -410,6 +410,7 @@ public class DaxCreatorUnit {
         int m = 0;
         for(DaxFileChunk fc : jobChunk.getInFileChunks()){
             fc.resetNextCounter();
+            log("Job has " + fc.getNumberOfFiles() + " inputs.");
             for(int i = 0; i < fc.getNumberOfFiles(); i++){
                 Job job = new Job();
                 idNumber ++;
@@ -430,7 +431,7 @@ public class DaxCreatorUnit {
                     m++;
                 }
                 fileName = fc.getNextFilename();
-
+                log("Job has " + fileName + " as an input.");
                 job.addUses(new Filename(fileName, 1));
 
                 addOutputs(job, jobChunk);
@@ -466,6 +467,7 @@ public class DaxCreatorUnit {
         List outFiles = jobChunk.getOutFileChunks();
         for(int j = 0; j < outFiles.size(); j++){
             DaxFileChunk chunk = (DaxFileChunk)outFiles.get(j);
+            log("Job has " + chunk.getNumberOfFiles() + " outputs.");
             if(chunk.isCollection()){
                 if(chunk.getNumberOfFiles() > 1 && !chunk.isOne2one()){
                     for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
@@ -505,7 +507,7 @@ public class DaxCreatorUnit {
 
 
     private void writeDax(ADAG dax){
-        log("ADAG has " + dax.getJobCount() + " jobs in.");
+        log("\nADAG has " + dax.getJobCount() + " jobs in.");
 
         if(dax.getJobCount() > 0 ){
 
