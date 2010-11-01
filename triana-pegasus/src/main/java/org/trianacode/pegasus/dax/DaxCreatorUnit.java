@@ -110,24 +110,24 @@ public class DaxCreatorUnit {
             DaxJobChunk jobChunk = jobChunks.get(j);
             int pattern = jobChunk.getConnectPattern();
 
-            log("Job : " + jobChunk.getJobID());
+            log("Job : " + jobChunk.getJobName());
             if(pattern == AUTO_CONNECT){
-                System.out.println("\nauto_connect");
+                log("auto_connect");
 
                 autoConnect(dax, jobChunk);
             }
             if(pattern == SCATTER_CONNECT){
-                System.out.println("\nscatter_connect");
+                log("scatter_connect");
 
                 scatterConnect(dax, jobChunk);
             }
             if(pattern == ONE2ONE_CONNECT){
-                System.out.println("\none2one_connect");
+                log("one2one_connect");
 
                 one2oneConnect(dax, jobChunk);
             }
             if(pattern == SPREAD_CONNECT){
-                System.out.println("\nspread_connect");
+                log("spread_connect");
 
                 spreadConnect(dax, jobChunk);
             }
