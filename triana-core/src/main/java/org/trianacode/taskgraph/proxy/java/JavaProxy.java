@@ -66,7 +66,6 @@ import org.trianacode.taskgraph.annotation.AnnotationProcessor;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.ClassLoaders;
-import org.trianacode.taskgraph.util.ToolUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,9 +84,9 @@ public class JavaProxy implements Proxy {
     private String unitpackage;
     private Unit unit;
 
-    public JavaProxy(Object unit) {
-        this.unitname = ToolUtils.getClassName(unit.getClass().getName());
-        this.unitpackage = ToolUtils.getPackageName(unit.getClass().getName());
+    public JavaProxy(Object unit, String unitname, String unitpackage) {
+        this.unitname = unitname;
+        this.unitpackage = unitpackage;
         this.unit = createUnit(unit);
     }
 
@@ -155,7 +154,7 @@ public class JavaProxy implements Proxy {
         }
     }
 
-    public Unit createUnit(Object o) {
+    private Unit createUnit(Object o) {
         if (o instanceof Unit) {
             return (Unit) o;
         } else {
