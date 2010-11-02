@@ -49,7 +49,8 @@ public class JobUnit{
 
     @Process(gather=true)
     public UUID process(List in) {
-        
+        log("Job : " + jobName + " Collection = " + collection + " Number of jobs : " + numberOfJobs);
+
         DaxJobChunk thisJob = new DaxJobChunk();
 
         thisJob.setJobName(jobName);
@@ -157,6 +158,6 @@ public class JobUnit{
     private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 }

@@ -68,6 +68,7 @@ public class FileUnitPanel extends ParameterPanel {
     private void setParams(){
         getTask().setParameter("numberOfFiles", numberOfFiles);
         getTask().setParameter("collection", collection);
+        getTask().setParameter("one2one", one2one);
         if(namingPattern != null){
             log("Setting param namingPattern : " + namingPattern.toString());
             getTask().setParameter("namingPattern", namingPattern);
@@ -79,6 +80,7 @@ public class FileUnitPanel extends ParameterPanel {
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
         namingPattern = getNamingPattern();
+        one2one = isOne2one();
     }
 
     @Override
@@ -227,6 +229,14 @@ public class FileUnitPanel extends ParameterPanel {
 
     private boolean isCollection(){
         if(getParameter("collection").equals(true)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean isOne2one(){
+        if(getParameter("one2one").equals(true)){
             return true;
         }else{
             return false;

@@ -32,11 +32,11 @@ public class FileUnit {
 
     @CheckboxParameter
     private boolean collection = false;
+    @CheckboxParameter
+    private boolean one2one = false;
 
     @Process(gather = true)
     public UUID fileUnitProcess(List in){
-
-        
 
         log("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
         DaxFileChunk thisFile = new DaxFileChunk();
@@ -46,6 +46,8 @@ public class FileUnit {
         thisFile.setCollection(collection);
         thisFile.setNumberOfFiles(numberOfFiles);
         thisFile.setNamePattern(namingPattern);
+        log("setting files one2one as " + one2one);
+        thisFile.setOne2one(one2one);
 
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
@@ -61,7 +63,7 @@ public class FileUnit {
                 thisFile.setNumberOfFiles(number);
             }
 
-            if(object instanceof DaxJobChunk){
+            else if(object instanceof DaxJobChunk){
                 DaxJobChunk jobChunk = (DaxJobChunk)object;
 
                 log("Previous job was : " + jobChunk.getJobName());
@@ -156,6 +158,6 @@ public class FileUnit {
     private void log(String s){
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 }
