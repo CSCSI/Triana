@@ -19,7 +19,7 @@ import java.util.List;
  * @version 1.0.0 Jul 27, 2010
  */
 
-@Tool
+@Tool (panelClass = "org.trianacode.pegasus.dax.ExecUnitPanel")
 public class ExecUnit{
 
     DaxSettingObject dso = new DaxSettingObject();
@@ -27,12 +27,12 @@ public class ExecUnit{
     @TextFieldParameter
     private String executable = "";
     @TextFieldParameter
-    private String optionsString = "";
+    private String executable_args = "";
     @TextFieldParameter
     private String search_for = "";
 
-    @TextFieldParameter
-    private String input = "";
+//    @TextFieldParameter
+//    private String input = "";
 
 
     @Process(gather=true)
@@ -48,7 +48,7 @@ public class ExecUnit{
         String errLog = "";
 
         List<String> options = new ArrayList<String>();
-        String[] optionsStrings = optionsString.split(" ");
+        String[] optionsStrings = executable_args.split(" ");
         for(int i = 0; i < optionsStrings.length; i++){
             options.add(optionsStrings[i]);
         }
