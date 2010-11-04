@@ -59,24 +59,6 @@
 package org.trianacode.gui.main.imp;
 
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.MainTrianaKeyMapFactory;
 import org.trianacode.gui.action.ToolSelectionHandler;
@@ -88,35 +70,19 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.hci.tools.UpdateActionConstants;
-import org.trianacode.gui.main.ForShowComponent;
-import org.trianacode.gui.main.IndicationCableInterface;
-import org.trianacode.gui.main.NodeComponent;
-import org.trianacode.gui.main.SelectionBoxInterface;
-import org.trianacode.gui.main.ShowToolPanel;
-import org.trianacode.gui.main.TaskComponent;
-import org.trianacode.gui.main.TaskGraphPanel;
-import org.trianacode.gui.main.TrianaLayoutConstants;
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.TaskLayoutDetails;
-import org.trianacode.taskgraph.event.ControlTaskStateEvent;
-import org.trianacode.taskgraph.event.NodeEvent;
-import org.trianacode.taskgraph.event.NodeListener;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskGraphCableEvent;
-import org.trianacode.taskgraph.event.TaskGraphListener;
-import org.trianacode.taskgraph.event.TaskGraphTaskEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.gui.main.*;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * A MainTriana is an area which contains Triana algorithms.  Here units are placed at certain positions and connected
@@ -486,11 +452,17 @@ public class MainTriana extends JPanel
     /**
      * Paints the selected tools in  front of the other tools
      */
+    long time = System.currentTimeMillis();
     private void paintSelected(Graphics graphs) {
         TaskComponent[] comps = getSelectedComponents();
 
-        for (int count = 0; count < comps.length; count++) {
-            comps[count].getComponent().repaint();
+        long timeNow = System.currentTimeMillis();
+        if(timeNow - time > 5000){
+   //         System.out.println("Painting at : " + timeNow);
+            time = timeNow;
+            for (int count = 0; count < comps.length; count++) {
+                comps[count].getComponent().repaint();
+            }
         }
     }
 
