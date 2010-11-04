@@ -572,10 +572,10 @@ public class ApplicationFrame extends TrianaWindow
 
         toolPanel.add(scroll, BorderLayout.CENTER);
 
-        JScrollPane scrollWork = new JScrollPane(workspace);
+  //      JScrollPane scrollWork = new JScrollPane(workspace);
         JSplitPane verticalSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 toolPanel,
-                scrollWork);
+                workspace);
 
         TrianaToolBar toolbar = new TrianaToolBar("Main ToolBar", this);
         TrianaUnitToolBar unitToolbar = new TrianaUnitToolBar("Unit ToolBar");
