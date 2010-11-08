@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,15 +117,23 @@ public class DocumentHandler {
     }
 
     public void output(OutputStream out, boolean pretty) throws IOException {
-        transform(doc, out, pretty);
+        if (pretty) {
+            prettify(doc, out);
+        } else {
+            transform(doc, out);
+        }
     }
 
     public void output(OutputStream out) throws IOException {
-        transform(doc, out, false);
+        transform(doc, out);
     }
 
     public void output(Writer out, boolean pretty) throws IOException {
-        transform(doc, out, pretty);
+        if (pretty) {
+            prettify(doc, out);
+        } else {
+            transform(doc, out);
+        }
     }
 
     public Element getChild(Element parent, String tag) {
@@ -221,16 +230,60 @@ public class DocumentHandler {
     }
 
 
-    private StreamResult transform(Document doc, Writer out, boolean indent) throws IOException {
+    private static final String prettyPrintStylesheet =
+            "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0' " +
+                    " xmlns:xalan='http://xml.apache.org/xslt' " +
+                    " exclude-result-prefixes='xalan'>" +
+                    "  <xsl:output method='xml' indent='yes' xalan:indent-amount='4'/>" +
+                    "  <xsl:strip-space elements='*'/>" +
+                    "  <xsl:template match='/'>" +
+                    "    <xsl:apply-templates/>" +
+                    "  </xsl:template>" +
+                    "  <xsl:template match='node() | @*'>" +
+                    "        <xsl:copy>" +
+                    "          <xsl:apply-templates select='node() | @*'/>" +
+                    "        </xsl:copy>" +
+                    "  </xsl:template>" +
+                    "</xsl:stylesheet>";
+
+    public void prettify(Node element, OutputStream out) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        transform(element, baos);
+
+        Source stylesheetSource = new StreamSource(new ByteArrayInputStream(prettyPrintStylesheet.getBytes()));
+        Source xmlSource = new StreamSource(new ByteArrayInputStream(baos.toByteArray()));
+
+        try {
+            Templates templates = tf.newTemplates(stylesheetSource);
+            Transformer transformer = templates.newTransformer();
+            transformer.transform(xmlSource, new StreamResult(out));
+        } catch (TransformerException e) {
+            throw new IOException(e);
+        }
+    }
+
+    public void prettify(Node element, Writer out) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        transform(element, baos);
+
+        Source stylesheetSource = new StreamSource(new ByteArrayInputStream(prettyPrintStylesheet.getBytes()));
+        Source xmlSource = new StreamSource(new ByteArrayInputStream(baos.toByteArray()));
+
+        try {
+            Templates templates = tf.newTemplates(stylesheetSource);
+            Transformer transformer = templates.newTransformer();
+            transformer.transform(xmlSource, new StreamResult(out));
+        } catch (TransformerException e) {
+            throw new IOException(e);
+        }
+    }
+
+
+    private StreamResult transform(Node doc, Writer out) throws IOException {
         Transformer t = null;
         try {
             t = tf.newTransformer();
-            if (indent) {
-                t.setOutputProperty(OutputKeys.INDENT, "yes");
-                //t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            } else {
-                t.setOutputProperty(OutputKeys.INDENT, "no");
-            }
+
             t.setOutputProperty(OutputKeys.METHOD, "xml");
             t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         } catch (TransformerConfigurationException tce) {
@@ -240,23 +293,18 @@ public class DocumentHandler {
         StreamResult sr = new StreamResult(out);
         try {
             t.transform(doms, sr);
+
         } catch (TransformerException te) {
             throw new IOException(te.getMessage());
         }
         return sr;
     }
 
-    private StreamResult transform(Document doc, OutputStream out, boolean indent) throws IOException {
+    private StreamResult transform(Node doc, OutputStream out) throws IOException {
 
         Transformer t = null;
         try {
             t = tf.newTransformer();
-            if (indent) {
-                t.setOutputProperty(OutputKeys.INDENT, "yes");
-                //t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            } else {
-                t.setOutputProperty(OutputKeys.INDENT, "no");
-            }
             t.setOutputProperty(OutputKeys.METHOD, "xml");
             t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         } catch (TransformerConfigurationException tce) {
