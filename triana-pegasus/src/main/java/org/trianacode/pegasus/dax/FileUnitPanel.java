@@ -77,6 +77,7 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     public void getParams(){
+        nameField.setText(getTask().getToolName());
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
         namingPattern = getNamingPattern();

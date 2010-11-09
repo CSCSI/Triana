@@ -14,6 +14,7 @@ import org.trianacode.taskgraph.annotation.TextFieldParameter;
 import org.trianacode.taskgraph.annotation.Tool;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -49,6 +50,7 @@ public class DaxCreatorUnit {
         DaxRegister register = DaxRegister.getDaxRegister();
 
         try{
+            GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));            
             //  daxFromInList(in);
             daxFromRegister(register);
         }catch(Exception e){
@@ -57,6 +59,7 @@ public class DaxCreatorUnit {
         }finally{
             register.clear();
             System.out.println("Cleared register");
+            GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -556,7 +559,7 @@ public class DaxCreatorUnit {
         }else{
             log("Not displaying demo");
         }
-
+        GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));        
         JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Dax saved : " + fileName);
 
     }
