@@ -921,6 +921,7 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     public TrianaDesktopViewManager getDesktopViewManager() {
+    //    return TrianaTabManager.getManager();
         return TrianaDesktopManager.getManager();
     }
 

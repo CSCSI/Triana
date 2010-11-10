@@ -59,10 +59,6 @@
 
 package org.trianacode.gui.components.text;
 
-import java.awt.Component;
-
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import org.trianacode.gui.components.common.CircleNode;
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.TaskComponent;
@@ -70,11 +66,10 @@ import org.trianacode.gui.main.imp.TextSubComponent;
 import org.trianacode.gui.main.imp.TrianaToolLayout;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.event.*;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A task component that displays a number on the main triana workspace
@@ -181,7 +176,7 @@ public class TextTaskComponent extends JPanel implements TaskComponent, TaskList
      * Returns true if the particular component is selected
      */
     public boolean isSelected() {
-        return selected;
+        return false; //selected;
     }
 
     /**
