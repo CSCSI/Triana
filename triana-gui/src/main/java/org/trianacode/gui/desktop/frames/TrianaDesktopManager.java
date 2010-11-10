@@ -50,6 +50,7 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
         butpanel.setLayout(new BoxLayout(butpanel, BoxLayout.X_AXIS));
         butpanel.add(Box.createRigidArea(new Dimension(1, 30)));
         this.desktop = new JDesktopPane();
+        this.desktop.setDesktopManager(new RestrictedDesktopManager());
         desktop.addComponentListener(this);
         container.add(butpanel, BorderLayout.NORTH);
         container.add(desktop, BorderLayout.CENTER);
@@ -313,5 +314,25 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
                 }
             }
         }
+    }
+
+    private class RestrictedDesktopManager extends DefaultDesktopManager {
+
+        public void dragFrame(JComponent f, int newX, int newY) {
+            if (newX + f.getWidth() > desktop.getWidth()) {
+                newX = f.getX();
+            }
+            if (newY + f.getHeight() > desktop.getHeight()) {
+                newY = f.getY();
+            }
+            if (newX < 0) {
+                newX = 0;
+            }
+            if (newY < 0) {
+                newY = 0;
+            }
+            super.dragFrame(f, newX, newY);
+        }
+
     }
 }
