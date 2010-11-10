@@ -59,19 +59,8 @@
 package org.trianacode.gui.hci;
 
 
-import java.applet.Applet;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.event.MouseListener;
-import java.util.Hashtable;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import javax.swing.ImageIcon;
-import javax.swing.JInternalFrame;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.color.ColorTableEntry;
-import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.Help;
 import org.trianacode.taskgraph.Task;
@@ -79,6 +68,15 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.applet.Applet;
+import java.awt.*;
+import java.awt.event.MouseListener;
+import java.util.Hashtable;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 /**
  * Class GUIEnv sets stores classes which are accessed from other GUI objects e.g. a number of object need access to the
@@ -126,41 +124,21 @@ public class GUIEnv {
         return app;
     }
 
-    public static TaskGraphPanel getSelectedTaskGraphPanel() {
-        return app.getSelectedTaskGraphPanel();
+    public static TrianaDesktopView getSelectedDesktopView() {
+        return app.getSelectedDesktopView();
     }
 
 
     /**
      * Remove the specified main triana from the workspace
      */
-    public static void removeTaskGraphContainer(TaskGraphPanel cont) {
-        JInternalFrame internal = app.getInternalFrameFor(cont);
-        internal.doDefaultCloseAction();
+    public static void removeTaskGraphContainer(TrianaDesktopView cont) {
+        app.removeDesktopView(cont);
     }
 
 
-    /**
-     * @return an array all the main trianas that are open within the application
-     */
-    public static TaskGraphPanel[] getTaskGraphPanels() {
-        return app.getTaskGraphPanels();
-    }
-
-
-    /**
-     * Gets the MainTriana panel which is conatined within the given JInternalFrame
-     */
-    public static TaskGraphPanel getTaskGraphPanelFor(JInternalFrame fr) {
-        return app.getTaskGraphPanelFor(fr);
-    }
-
-    /**
-     * @return the MainTriana panel which is representing the specified task graph, or null if the task isn't
-     *         represented
-     */
-    public static TaskGraphPanel getTaskGraphPanelFor(TaskGraph group) {
-        return app.getTaskGraphPanelFor(group);
+    public static TrianaDesktopView getDesktopViewFor(TaskGraph group) {
+        return app.getDesktopViewFor(group);
     }
 
     /**

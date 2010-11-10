@@ -58,16 +58,15 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.Toolkit;
+import org.trianacode.gui.action.ActionDisplayOptions;
+import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
-import org.trianacode.gui.action.ActionDisplayOptions;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.main.TaskGraphPanel;
-import org.trianacode.util.Env;
 
 /**
  * Action class to handle all "close" actions.
@@ -89,7 +88,7 @@ public class CloseAction extends AbstractAction implements ActionDisplayOptions 
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        TaskGraphPanel panel = GUIEnv.getApplicationFrame().getSelectedTaskGraphPanel();
+        TrianaDesktopView panel = GUIEnv.getApplicationFrame().getSelectedDesktopView();
 
         if (panel != null) {
             GUIEnv.getApplicationFrame().closeTaskGraphPanel(panel);

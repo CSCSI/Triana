@@ -58,8 +58,6 @@
  */
 package org.trianacode.gui.hci;
 
-import com.tomtessier.scrollabledesktop.BaseInternalFrame;
-import com.tomtessier.scrollabledesktop.JScrollableDesktopPane;
 import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
 import org.trianacode.TrianaInstanceProgressListener;
@@ -82,6 +80,10 @@ import org.trianacode.gui.components.script.ScriptComponentModel;
 import org.trianacode.gui.components.text.TextToolComponentModel;
 import org.trianacode.gui.components.triana.TrianaColorModel;
 import org.trianacode.gui.components.triana.TrianaComponentModel;
+import org.trianacode.gui.desktop.DesktopViewListener;
+import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.desktop.frames.TrianaDesktopManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.*;
@@ -109,10 +111,6 @@ import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.FontUIResource;
@@ -124,10 +122,11 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
 
@@ -136,9 +135,9 @@ import java.util.List;
  * @version $Revision: 4051 $
  */
 public class ApplicationFrame extends TrianaWindow
-        implements TaskListener, TaskGraphListener, InternalFrameListener,
+        implements TaskListener, TaskGraphListener,
         ToolSelectionHandler, SelectionManager, TreeModelListener,
-        ComponentListener, LocalDeployAssistant, FocusListener, TrianaInstanceProgressListener {
+        ComponentListener, LocalDeployAssistant, FocusListener, TrianaInstanceProgressListener, DesktopViewListener {
 
     private static Log log = Loggers.LOGGER;
 
@@ -170,12 +169,12 @@ public class ApplicationFrame extends TrianaWindow
     /**
      * an array list of all the top-level main trianas
      */
-    private ArrayList parents = new ArrayList();
+    private ArrayList<TaskGraphPanel> parents = new ArrayList<TaskGraphPanel>();
 
     /**
      * the main workspace containing the tools panel and the main trianas
      */
-    private JScrollableDesktopPane workspace = null;
+    private Container workspace = null;
 
     /**
      * The leaf listener that handles all mouse events on desktop panes.
@@ -184,7 +183,7 @@ public class ApplicationFrame extends TrianaWindow
 
 
     // a lookup table for MainTriana object and their containers
-    private static Hashtable taskGraphConts = new Hashtable();
+    //private static Hashtable taskGraphConts = new Hashtable();
 
     private TaskGraphFileHandler taskGraphFileHandler = null;
     private JTree toolboxTree;
@@ -523,8 +522,9 @@ public class ApplicationFrame extends TrianaWindow
 
         TrianaShutdownHook shutDownHook = new TrianaShutdownHook();
         Runtime.getRuntime().addShutdownHook(shutDownHook);
+        getDesktopViewManager().addDesktopViewListener(this);
+        this.workspace = getDesktopViewManager().getWorkspace();
 
-        workspace = new JScrollableDesktopPane(trianaMenuBar);
 
         ((TrianaMainMenu) trianaMenuBar).addHelp();
         GUIEnv.setApplicationFrame(this);
@@ -572,7 +572,7 @@ public class ApplicationFrame extends TrianaWindow
 
         toolPanel.add(scroll, BorderLayout.CENTER);
 
-  //      JScrollPane scrollWork = new JScrollPane(workspace);
+        //      JScrollPane scrollWork = new JScrollPane(workspace);
         JSplitPane verticalSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 toolPanel,
                 workspace);
@@ -632,35 +632,47 @@ public class ApplicationFrame extends TrianaWindow
      * TODO add checks for saved or not, finalise and tidy up graph etc.
      */
     void closeSelectedWindow() {
-        closeTaskGraphPanel(getSelectedTaskGraphPanel());
+        closeTaskGraphPanel(getDesktopViewManager().getDesktopViewFor(getSelectedTaskGraphPanel()));
     }
 
     /**
      * Closes the specified main triana and cleans-up the taskgraph if required
      */
-    public void closeTaskGraphPanel(TaskGraphPanel cont) {
-        disposeTaskGraphPanel(cont);
+    public void closeTaskGraphPanel(TrianaDesktopView panel) {
+        disposeTaskGraphPanel(panel);
+    }
+
+    public TrianaDesktopView getDesktopView(TaskGraphPanel panel) {
+        return getDesktopViewManager().getDesktopViewFor(panel);
     }
 
     /**
      * @return an array all the taskgraph panels that are open within the application
      */
-    public static TaskGraphPanel[] getTaskGraphPanels() {
-        return (TaskGraphPanel[]) taskGraphConts.values().toArray(new TaskGraphPanel[taskGraphConts.values().size()]);
+    public TaskGraphPanel[] getTaskGraphPanels() {
+        TrianaDesktopView[] views = getDesktopViewManager().getViews();
+        TaskGraphPanel[] panels = new TaskGraphPanel[views.length];
+        for (int i = 0; i < views.length; i++) {
+            TrianaDesktopView view = views[i];
+            panels[i] = view.getTaskgraphPanel();
+        }
+        return panels;
     }
 
     /**
      * @return an array of all taskgraph panels with no parents
      */
     public TaskGraphPanel[] getRootTaskGraphPanels() {
-        Vector result = new Vector();
-        for (Iterator iterator = taskGraphConts.values().iterator(); iterator.hasNext();) {
-            TaskGraphPanel comp = (TaskGraphPanel) iterator.next();
-            if (comp.getTaskGraph().getParent() == null) {
-                result.add(comp);
+        TrianaDesktopView[] views = getDesktopViewManager().getViews();
+        List<TaskGraphPanel> panels = new ArrayList<TaskGraphPanel>();
+        for (int i = 0; i < views.length; i++) {
+            TrianaDesktopView view = views[i];
+            if (view.getTaskgraphPanel().getTaskGraph().getParent() == null) {
+                panels.add(view.getTaskgraphPanel());
             }
         }
-        return (TaskGraphPanel[]) result.toArray(new TaskGraphPanel[result.size()]);
+        return panels.toArray(new TaskGraphPanel[panels.size()]);
+
     }
 
 
@@ -669,42 +681,33 @@ public class ApplicationFrame extends TrianaWindow
      * @return the child taskgraph panels
      */
     public TaskGraphPanel[] getChildTaskGraphPanels(TaskGraphPanel parent) {
-        Vector result = new Vector();
-        for (Iterator iterator = taskGraphConts.values().iterator(); iterator.hasNext();) {
-            TaskGraphPanel cont = (TaskGraphPanel) iterator.next();
-            if (cont.getTaskGraph().getParent() == parent.getTaskGraph()) {
-                result.add(cont);
+        TrianaDesktopView[] views = getDesktopViewManager().getViews();
+        List<TaskGraphPanel> panels = new ArrayList<TaskGraphPanel>();
+        for (int i = 0; i < views.length; i++) {
+            TrianaDesktopView view = views[i];
+            if (view.getTaskgraphPanel().getTaskGraph().getParent() == parent.getTaskGraph()) {
+                panels.add(view.getTaskgraphPanel());
             }
         }
-        return (TaskGraphPanel[]) result.toArray(new TaskGraphPanel[result.size()]);
+        return panels.toArray(new TaskGraphPanel[panels.size()]);
+
     }
 
     /**
      * @return the taskgraph panel which is representing the specified task graph, or null if the task isn't
      *         represented
      */
-    public static TaskGraphPanel getTaskGraphPanelFor(TaskGraph group) {
-        Enumeration enumeration = taskGraphConts.elements();
-        TaskGraphPanel element = null;
-
-        while (enumeration.hasMoreElements() && ((element == null) || (element.getTaskGraph() != group))) {
-            element = (TaskGraphPanel) enumeration.nextElement();
-        }
-
-        if ((element != null) && (element.getTaskGraph() == group)) {
-            return element;
-        } else {
-            return null;
-        }
+    public TrianaDesktopView getDesktopViewFor(TaskGraph group) {
+        return getDesktopViewManager().getTaskgraphViewFor(group);
     }
 
-    /**
-     * Gets the taskgraph panel which is conatined within the given JInternalFrame
-     */
-    public static TaskGraphPanel getTaskGraphPanelFor(JInternalFrame fr) {
-        return (TaskGraphPanel) taskGraphConts.get(fr);
+    public void removeDesktopView(TrianaDesktopView view) {
+        getDesktopViewManager().remove(view);
     }
 
+    public String getTitle(TrianaDesktopView view) {
+        return getDesktopViewManager().getTitle(view);
+    }
 
     /**
      * Add a blank taskgraph panel
@@ -773,43 +776,14 @@ public class ApplicationFrame extends TrianaWindow
         panelmanager.monitorTaskGraph(taskgraph);
         panel.getContainer().addFocusListener(this);
         new ToolMouseHandler(panel);
-
-        final JPanel fixForScrollBug = new JPanel();
-        JScrollPane scrollerForMainTriana;
-        scrollerForMainTriana = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrollerForMainTriana.setViewportView(panel.getContainer());
-        Border b = new EtchedBorder(EtchedBorder.RAISED, Color.blue, Color.gray);
-        scrollerForMainTriana.setViewportBorder(b);
-        scrollerForMainTriana.doLayout();
-
-        fixForScrollBug.setLayout(new BorderLayout());
-        fixForScrollBug.add(scrollerForMainTriana, BorderLayout.CENTER);
-
         panel.init();
         panel.getTaskGraph().addTaskGraphListener(this);
         panel.getTaskGraph().addTaskListener(this);
 
-        final InternalFrameListener listener = this;
-
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                BaseInternalFrame internalframe;
-                internalframe = (BaseInternalFrame) workspace.add(fixForScrollBug);
-                internalframe.setTitle(panel.getTaskGraph().getToolName());
-                internalframe.getAssociatedButton().setText(panel.getTaskGraph().getToolName());
-                internalframe.getAssociatedMenuButton().setText(panel.getTaskGraph().getToolName());
-                internalframe.addInternalFrameListener(listener);
-                internalframe.selectFrameAndAssociatedButtons();
-                internalframe.pack();
-
+                TrianaDesktopView view = getDesktopViewManager().newDesktopView(panel);
                 selected = panel;
-                taskGraphConts.put(internalframe, panel);
-
-                if (taskgraph.getTasks(false).length == 0) {
-                    Dimension size = Env.getWindowSize();
-                    setTaskGraphPanelSize(panel, (int) (size.width * 0.6), (int) (size.height * 0.6));
-                }
             }
         });
 
@@ -821,10 +795,9 @@ public class ApplicationFrame extends TrianaWindow
      */
     private String getNextUntitledName() {
         int untitledCount = 1;
-        Enumeration enumeration = taskGraphConts.keys();
-        while (enumeration.hasMoreElements()) {
-            JInternalFrame frame = (JInternalFrame) enumeration.nextElement();
-            if (frame.getTitle().indexOf("Untitled") >= 0) {
+        TrianaDesktopView[] views = getDesktopViewManager().getViews();
+        for (TrianaDesktopView view : views) {
+            if (getDesktopViewManager().getTitle(view).startsWith("Untitled")) {
                 untitledCount++;
             }
         }
@@ -857,21 +830,6 @@ public class ApplicationFrame extends TrianaWindow
             return null;
         }
     }
-
-    /**
-     * Sets the size of the internal frame for a main triana
-     */
-    public void setTaskGraphPanelSize(TaskGraphPanel cont, int width, int height) {
-        BaseInternalFrame internalframe = (BaseInternalFrame) getInternalFrameFor(cont);
-        Insets scrollinsets = cont.getContainer().getParent().getParent().getInsets();
-
-        internalframe.setSize(
-                width + scrollinsets.left + scrollinsets.right + internalframe.getInsets().left + internalframe
-                        .getInsets().right,
-                height + scrollinsets.top + scrollinsets.bottom + internalframe.getInsets().top + internalframe
-                        .getInsets().bottom);
-    }
-
 
     /**
      * Handle the local publish (and view if required) of the specified taskgraph
@@ -908,17 +866,17 @@ public class ApplicationFrame extends TrianaWindow
      * Hides of a main triana window and all its sub windows. If the main triana is a parent this also disposes of the
      * whole taskgraph.
      */
-    private void disposeTaskGraphPanel(TaskGraphPanel panel) {
-        TaskGraph taskgraph = panel.getTaskGraph();
+    private void disposeTaskGraphPanel(TrianaDesktopView panel) {
+        TaskGraph taskgraph = panel.getTaskgraphPanel().getTaskGraph();
         cleanUpWindows(taskgraph);
     }
 
 
     private void cleanUpWindows(TaskGraph taskgraph) {
         Task[] tasks = taskgraph.getTasks(false);
-        TaskGraphPanel cont;
+        TrianaDesktopView cont;
 
-        cont = getTaskGraphPanelFor(taskgraph);
+        cont = getDesktopViewManager().getTaskgraphViewFor(taskgraph);
 
         if (cont != null) {
             disposeWindow(cont);
@@ -936,31 +894,30 @@ public class ApplicationFrame extends TrianaWindow
     /**
      * Cleans up a main triana window
      */
-    private void disposeWindow(final TaskGraphPanel comp) {
-        final InternalFrameListener framelist = this;
+    private void disposeWindow(final TrianaDesktopView view) {
         final TaskListener tasklist = this;
         final TaskGraphListener tgraphlist = this;
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JInternalFrame frame = getInternalFrameFor(comp);
-
-                if (frame != null) {
-                    frame.removeInternalFrameListener(framelist);
-                    taskGraphConts.remove(frame);
-                    workspace.remove(frame);
+                if (view != null) {
+                    TaskGraphPanel comp = view.getTaskgraphPanel();
+                    comp.getTaskGraph().removeTaskGraphListener(tgraphlist);
+                    comp.getTaskGraph().removeTaskListener(tasklist);
+                    comp.dispose();
+                    if (parents.contains(comp)) {
+                        parents.remove(comp);
+                        comp.getTaskGraph().dispose();
+                    }
+                    getDesktopViewManager().remove(view);
                 }
 
-                comp.getTaskGraph().removeTaskGraphListener(tgraphlist);
-                comp.getTaskGraph().removeTaskListener(tasklist);
-                comp.dispose();
-
-                if (parents.contains(comp)) {
-                    parents.remove(comp);
-                    comp.getTaskGraph().dispose();
-                }
             }
         });
+    }
+
+    public TrianaDesktopViewManager getDesktopViewManager() {
+        return TrianaDesktopManager.getManager();
     }
 
 
@@ -972,10 +929,10 @@ public class ApplicationFrame extends TrianaWindow
     public void cleanUp() {
         Env.stopConfigWriters();
 
-        TaskGraphPanel[] cont = (TaskGraphPanel[]) parents.toArray(new TaskGraphPanel[parents.size()]);
+        TaskGraphPanel[] cont = parents.toArray(new TaskGraphPanel[parents.size()]);
 
         for (int count = 0; count < cont.length; count++) {
-            closeTaskGraphPanel(cont[count]);
+            closeTaskGraphPanel(getDesktopViewManager().getDesktopViewFor(cont[count]));
         }
     }
 
@@ -991,36 +948,9 @@ public class ApplicationFrame extends TrianaWindow
         }
     }
 
-    /**
-     * Sets the current selected main triana
-     */
-    public void setSelectedTaskGraphContainer(TaskGraphPanel cont) {
-        BaseInternalFrame frame = (BaseInternalFrame) getInternalFrameFor(cont);
-
-        if (frame != null) {
-            if (frame.getAssociatedButton().getParent() == null) {
-                workspace.add(frame);
-            }
-
-            frame.selectFrameAndAssociatedButtons();
-        }
-    }
-
-    /**
-     * @return the MainTriana panel which is conatined within the given JInternalFrame
-     */
-    public JInternalFrame getInternalFrameFor(TaskGraphPanel comp) {
-        Enumeration enumeration = taskGraphConts.keys();
-        JInternalFrame key = null;
-        TaskGraphPanel element = null;
-
-        while (enumeration.hasMoreElements() && (comp != element)) {
-            key = (JInternalFrame) enumeration.nextElement();
-            element = (TaskGraphPanel) taskGraphConts.get(key);
-        }
-
-        if (comp == element) {
-            return key;
+    public TrianaDesktopView getSelectedDesktopView() {
+        if (selected instanceof TaskGraphPanel) {
+            return getDesktopViewManager().getDesktopViewFor((TaskGraphPanel) selected);
         } else {
             return null;
         }
@@ -1105,11 +1035,10 @@ public class ApplicationFrame extends TrianaWindow
         }
 
         if (comps[count].getTaskGraph() == task) {
-            BaseInternalFrame internalframe = (BaseInternalFrame) getInternalFrameFor(comps[count]);
-
-            internalframe.setTitle(comps[count].getTaskGraph().getToolName());
-            internalframe.getAssociatedButton().setText(comps[count].getTaskGraph().getToolName());
-            internalframe.getAssociatedMenuButton().setText(comps[count].getTaskGraph().getToolName());
+            TrianaDesktopView view = getDesktopViewManager().getDesktopViewFor(comps[count]);
+            getDesktopViewManager().setTitle(view, comps[count].getTaskGraph().getToolName());
+            //internalframe.getAssociatedButton().setText(comps[count].getTaskGraph().getToolName());
+            //internalframe.getAssociatedMenuButton().setText(comps[count].getTaskGraph().getToolName());
         }
     }
 
@@ -1150,10 +1079,10 @@ public class ApplicationFrame extends TrianaWindow
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
         if (event.getTask() instanceof TaskGraph) {
-            TaskGraphPanel panel = getTaskGraphPanelFor((TaskGraph) event.getTask());
+            TrianaDesktopView view = getDesktopViewFor((TaskGraph) event.getTask());
 
-            if (panel != null) {
-                closeTaskGraphPanel(panel);
+            if (view != null) {
+                closeTaskGraphPanel(view);
             }
         }
     }
@@ -1228,56 +1157,42 @@ public class ApplicationFrame extends TrianaWindow
         if (event.getSource() == toolboxTree) {
             selected = leaflistener;
         } else {
+
             selected = event.getSource();
+            System.out.println("ApplicationFrame.focusGained " + selected);
         }
     }
 
     /**
      * Invoked when a component loses the keyboard focus.
+     * ANDREW: IS THIS NEEDED NOW?
      */
     public void focusLost(FocusEvent event) {
         // required to fix internal frame focus/selection bug
         if (event.getComponent() instanceof TaskGraphPanel) {
-            try {
-                JInternalFrame frame = getInternalFrameFor((TaskGraphPanel) event.getComponent());
+            TrianaDesktopView frame = getDesktopViewManager().getDesktopViewFor((TaskGraphPanel) event.getComponent());
 
-                if (frame != null) {
-                    frame.setSelected(false);
-                }
-            } catch (PropertyVetoException except) {
+            if (frame != null) {
+                getDesktopViewManager().setSelected(frame, false);
             }
         }
     }
 
-    /**
-     * Clean-up when a internal window is closed
-     */
-    public void internalFrameClosing(InternalFrameEvent event) {
-        TaskGraphPanel comp = getTaskGraphPanelFor(event.getInternalFrame());
-        event.getInternalFrame().removeInternalFrameListener(this);
-        disposeTaskGraphPanel(comp);
+
+    @Override
+    public void ViewClosing(TrianaDesktopView view) {
+        disposeTaskGraphPanel(view);
     }
 
-    public void internalFrameOpened(InternalFrameEvent event) {
+    @Override
+    public void ViewClosed(TrianaDesktopView view) {
+        disposeTaskGraphPanel(view);
     }
 
-    public void internalFrameActivated(InternalFrameEvent event) {
-        selected = getTaskGraphPanelFor(event.getInternalFrame());
-    }
-
-    public void internalFrameClosed(InternalFrameEvent event) {
-        TaskGraphPanel comp = getTaskGraphPanelFor(event.getInternalFrame());
-        event.getInternalFrame().removeInternalFrameListener(this);
-        disposeTaskGraphPanel(comp);
-    }
-
-    public void internalFrameDeactivated(InternalFrameEvent event) {
-    }
-
-    public void internalFrameDeiconified(InternalFrameEvent event) {
-    }
-
-    public void internalFrameIconified(InternalFrameEvent event) {
+    @Override
+    public void ViewOpened(TrianaDesktopView view) {
+        selected = view.getTaskgraphPanel();
+        System.out.println("ApplicationFrame.internalFrameActivated " + selected);
     }
 
 

@@ -58,21 +58,20 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "Ungroup" actions.
@@ -115,13 +114,12 @@ public class UnGroupAction extends AbstractAction implements ActionDisplayOption
      */
     public void unGroup(TaskGraph taskgraph) {
         try {
-            TaskGraphPanel cont = GUIEnv.getTaskGraphPanelFor(taskgraph);
+            TrianaDesktopView view = GUIEnv.getDesktopViewFor(taskgraph);
+            if (view != null) {
+                view.getTaskgraphPanel().dispose();
+                GUIEnv.removeTaskGraphContainer(view);
 
-            if (cont != null) {
-                cont.dispose();
-                GUIEnv.removeTaskGraphContainer(cont);
             }
-
             if (taskgraph.getParent() != null) {
                 taskgraph.getParent().unGroupTask(taskgraph.getToolName());
             }

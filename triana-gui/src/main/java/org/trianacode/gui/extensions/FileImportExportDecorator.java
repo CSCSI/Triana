@@ -58,26 +58,6 @@
  */
 package org.trianacode.gui.extensions;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GraphicsEnvironment;
-import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.basic.BasicFileChooserUI;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.TFileChooser;
@@ -85,6 +65,16 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicFileChooserUI;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Decorator design pattern implementation that adds import and export specific plugin functionality to file dialogs in
@@ -206,10 +196,10 @@ public class FileImportExportDecorator implements ActionListener {
         setOptionsForSelectedFilter();
 
         fc.setDialogType(JFileChooser.CUSTOM_DIALOG);
-        if ((fc.getSelectedFile() == null) && (GUIEnv.getSelectedTaskGraphPanel() != null)) {
+        if ((fc.getSelectedFile() == null) && (GUIEnv.getSelectedDesktopView() != null)) {
             fc.setSelectedFile(new File(
-                    fc.getCurrentDirectory().getPath() + File.separator + GUIEnv.getSelectedTaskGraphPanel()
-                            .getTaskGraph().getToolName()));
+                    fc.getCurrentDirectory().getPath() + File.separator + GUIEnv.getSelectedDesktopView()
+                            .getTaskgraphPanel().getTaskGraph().getToolName()));
         }
 
         Display.centralise(outer);

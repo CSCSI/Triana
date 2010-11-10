@@ -58,20 +58,10 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.ParameterPanel;
@@ -80,6 +70,10 @@ import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
 import org.trianacode.util.PrintUtilities;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action to handle workflow/taskgraph Exporting.
@@ -123,10 +117,17 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
                     Component comp = null;
 
                     if (panel.isPrintSelectedTaskgraph()) {
-                        TaskGraphPanel taskgraphpanel = GUIEnv.getTaskGraphPanelFor(taskgraph);
+                        TrianaDesktopView view = GUIEnv.getDesktopViewFor(taskgraph);
+                        if (view != null) {
+                            TaskGraphPanel taskgraphpanel = view.getTaskgraphPanel();
+                            if (taskgraphpanel != null) {
+                                comp = taskgraphpanel.getContainer();
+                            } else {
+                                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                                        "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE,
+                                        GUIEnv.getTrianaIcon());
 
-                        if (taskgraphpanel != null) {
-                            comp = taskgraphpanel.getContainer();
+                            }
                         } else {
                             JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
                                     "Error: Invalid selected taskgraph", "Print Taskgraph", JOptionPane.ERROR_MESSAGE,

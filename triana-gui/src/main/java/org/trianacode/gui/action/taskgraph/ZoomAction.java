@@ -58,20 +58,19 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.main.ZoomLayout;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "select all" actions.
@@ -116,18 +115,20 @@ public class ZoomAction extends AbstractAction implements ActionDisplayOptions {
      */
     public void actionPerformed(ActionEvent e) {
         if (selhandler.getSelectedTaskgraph() != null) {
-            TaskGraphPanel panel = GUIEnv.getTaskGraphPanelFor(selhandler.getSelectedTaskgraph());
+            TrianaDesktopView view = GUIEnv.getDesktopViewFor(selhandler.getSelectedTaskgraph());
+            if (view != null) {
+                TaskGraphPanel panel = view.getTaskgraphPanel();
+                if ((panel != null) && (panel.getContainer().getLayout() instanceof ZoomLayout)) {
+                    ZoomLayout layout = (ZoomLayout) panel.getContainer().getLayout();
+                    double zoom = layout.getZoom() * ZOOM_FACTOR;
 
-            if ((panel != null) && (panel.getContainer().getLayout() instanceof ZoomLayout)) {
-                ZoomLayout layout = (ZoomLayout) panel.getContainer().getLayout();
-                double zoom = layout.getZoom() * ZOOM_FACTOR;
+                    layout.setZoom(zoom);
+                    Env.setZoomFactor(zoom);
 
-                layout.setZoom(zoom);
-                Env.setZoomFactor(zoom);
-
-                panel.getContainer().invalidate();
-                panel.getContainer().validate();
-                panel.getContainer().repaint();
+                    panel.getContainer().invalidate();
+                    panel.getContainer().validate();
+                    panel.getContainer().repaint();
+                }
             }
         }
     }

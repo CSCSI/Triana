@@ -61,6 +61,8 @@ package org.trianacode.util;
 
 import org.trianacode.config.Locations;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
+import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.TrianaDesktopViewManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
 import org.trianacode.gui.main.TaskGraphPanel;
@@ -1163,8 +1165,8 @@ public final class Env {
     private static void recursivelyOpenChildWindows(OpenTaskGraph toOpen, TaskGraph parent) {
         Task task = parent.getTask(toOpen.getName());
         if ((task != null) && (task instanceof TaskGraph)) {
-            TaskGraphPanel panel = GUIEnv.getTaskGraphPanelFor(parent);
-            GUIEnv.getApplicationFrame().addChildTaskGraphPanel((TaskGraph) task, panel.getTrianaClient());
+            TrianaDesktopView panel = GUIEnv.getDesktopViewFor(parent);
+            GUIEnv.getApplicationFrame().addChildTaskGraphPanel((TaskGraph) task, panel.getTaskgraphPanel().getTrianaClient());
         }
         OpenTaskGraph[] openChildren = toOpen.getChildren();
         for (int i = 0; i < openChildren.length; i++) {
@@ -1232,8 +1234,8 @@ public final class Env {
      * @return The name of the tempory file to save to or null if nothing has been saved.
      */
     private static String saveTaskGraphContainer(TaskGraphPanel cont) {
-        String windowName = GUIEnv.getApplicationFrame().getInternalFrameFor(cont)
-                .getTitle();
+        TrianaDesktopViewManager manager = GUIEnv.getApplicationFrame().getDesktopViewManager();
+        String windowName = manager.getTitle(manager.getDesktopViewFor(cont));
         StringBuffer name = new StringBuffer(windowName);
         name.append("_");
         name.append(System.currentTimeMillis());

@@ -58,20 +58,19 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "select all" actions.
@@ -113,13 +112,14 @@ public class SelectAllAction extends AbstractAction implements ActionDisplayOpti
      */
     public void actionPerformed(ActionEvent e) {
         if (selhandler.getSelectedTaskgraph() != null) {
-            TaskGraphPanel cont = GUIEnv.getTaskGraphPanelFor(selhandler.getSelectedTaskgraph());
-
-            if (cont != null) {
-                TaskComponent[] comps = cont.getTaskComponents();
-
-                for (int count = 0; count < comps.length; count++) {
-                    comps[count].setSelected(true);
+            TrianaDesktopView view = GUIEnv.getDesktopViewFor(selhandler.getSelectedTaskgraph());
+            if (view != null) {
+                if (view != null) {
+                    TaskGraphPanel cont = view.getTaskgraphPanel();
+                    TaskComponent[] comps = cont.getTaskComponents();
+                    for (int count = 0; count < comps.length; count++) {
+                        comps[count].setSelected(true);
+                    }
                 }
             }
         }

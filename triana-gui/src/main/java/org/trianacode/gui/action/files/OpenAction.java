@@ -58,18 +58,17 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "open" actions.
@@ -108,10 +107,9 @@ public class OpenAction extends AbstractAction implements ActionDisplayOptions {
                 .getSelectedTool() instanceof TaskGraph)) {
             TaskGraph taskgraph = (TaskGraph) selectionHandler.getSelectedTool();
 
-            if (GUIEnv.getTaskGraphPanelFor(taskgraph) != null) {
-                TaskGraphPanel panel = GUIEnv.getTaskGraphPanelFor(taskgraph);
-                GUIEnv.getApplicationFrame().getInternalFrameFor(panel).toFront();
-                GUIEnv.getApplicationFrame().getInternalFrameFor(panel).requestFocus();
+            if (GUIEnv.getDesktopViewFor(taskgraph) != null) {
+                TrianaDesktopView panel = GUIEnv.getDesktopViewFor(taskgraph);
+                GUIEnv.getApplicationFrame().getDesktopViewManager().setSelected(panel, true);
             } else if (taskgraph.getParent() == null) {
                 GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskgraph);
             } else {

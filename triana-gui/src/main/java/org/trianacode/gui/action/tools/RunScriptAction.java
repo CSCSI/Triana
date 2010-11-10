@@ -62,8 +62,8 @@ import org.trianacode.enactment.TrianaRun;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.FormLayout;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ParameterPanelManager;
@@ -215,7 +215,7 @@ public class RunScriptAction extends AbstractAction implements ActionDisplayOpti
         receiveOutputData(run, result);
 
         if (view) {
-            TaskGraphPanel panel = GUIEnv.getTaskGraphPanelFor(run.getTaskGraph());
+            TrianaDesktopView panel = GUIEnv.getDesktopViewFor(run.getTaskGraph());
             if (panel != null) {
                 GUIEnv.getApplicationFrame().closeTaskGraphPanel(panel);
             }

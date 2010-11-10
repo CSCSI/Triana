@@ -58,13 +58,13 @@
  */
 package org.trianacode.gui.hci;
 
-import com.tomtessier.scrollabledesktop.BaseInternalFrame;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.action.ToolSelectionListener;
 import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
 import org.trianacode.gui.action.clipboard.ClipboardPasteInterface;
+import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.OptionPane;
@@ -547,12 +547,11 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
 
                 landed = parent.getComponentAt(landingPosX, landingPosY);
             } while ((landed != null) && (landed != parent) &&
-                    (!(landed instanceof BaseInternalFrame)));
+                    (!(landed instanceof JInternalFrame)));
 
-            // Base Internal frmaes are the containers for our MainTriana objects
-            if (landed instanceof BaseInternalFrame) { // ok we have a drop target
+            if (landed instanceof TrianaDesktopView) { // ok we have a drop target
                 // locate the mainTriana panel
-                TaskGraphPanel cont = GUIEnv.getTaskGraphPanelFor((BaseInternalFrame) landed);
+                TaskGraphPanel cont = ((TrianaDesktopView) landed).getTaskgraphPanel();
                 cont.getContainer().requestFocus();
                 // landing position within this frame
                 landingPosX = e.getX() - (cont.getContainer().getLocationOnScreen().x -
@@ -563,7 +562,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                 createTool(cont, DragWindow.DRAG_WINDOW.getTool(),
                         landingPosX - (DragWindow.DRAG_WINDOW.getSize().width / 2),
                         landingPosY - (DragWindow.DRAG_WINDOW.getSize().height / 2));
-                ((BaseInternalFrame) landed).selectFrameAndAssociatedButtons();
+                //((BaseInternalFrame) landed).selectFrameAndAssociatedButtons();
             }
 
 

@@ -127,7 +127,7 @@ public class AnnotatedUnitWrapper extends Unit {
         }
         if (panelClass != null && panelClass.length() > 0) {
             setParameterPanelClass(panelClass);
-            //setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
+            setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
             //setParameterUpdatePolicy(Unit.IMMEDIATE_UPDATE);
         }
         if (renderingHints.length > 0) {

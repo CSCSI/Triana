@@ -46,6 +46,10 @@ public class PathController {
         return getToolboxesRoot() + Coder.encodeUTF8(toolbox.getName()) + "/";
     }
 
+    public String getToolboxPath(String toolbox) {
+        return getToolboxesRoot() + Coder.encodeUTF8(toolbox) + "/";
+    }
+
     public String getToolPart(String toolbox, String path) {
         if (path.startsWith(getToolboxesRoot())) {
             String root = path.substring(getToolboxesRoot().length());

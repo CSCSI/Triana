@@ -11,12 +11,12 @@ public class HtmlListSerializer implements TreeSerializer {
 
     @Override
     public String begin() {
-        return "<ul id=\"toolboxes\" class=\"filetree\">";
+        return "";
     }
 
     @Override
     public String end() {
-        return "</ul>";
+        return "";
     }
 
     @Override
@@ -33,7 +33,11 @@ public class HtmlListSerializer implements TreeSerializer {
     public String startNode(ToolboxTree.TreeNode node) {
         boolean leaf = node.isLeaf();
         if (!leaf) {
-            return "<li><span class=\"folder\">" + node.getName() + "</span><ul>";
+            if (node.isToolbox()) {
+                return "<li><a href=\"" + PathController.getInstance().getToolboxPath(node.getName()) + "\"><span class=\"folder\">" + node.getName() + "</span></a><ul>";
+            } else {
+                return "<li><span class=\"folder\">" + node.getName() + "</span><ul>";
+            }
         } else {
             Tool tool = node.getTool();
             if (tool == null) {

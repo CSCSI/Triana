@@ -17,7 +17,9 @@
 		<p>This is a toolboxes listing page</p>
 	</div>
 	<div>
+	<ul id="toolboxes" class="filetree">
     $toolboxes
+    </ul>
     </div>
 </body>
 </html>
