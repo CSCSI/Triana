@@ -10,10 +10,14 @@ import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Andrew Harrison
@@ -28,20 +32,30 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
 
     private static TrianaDesktopManager manager = new TrianaDesktopManager();
     private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
+    private Map<TrianaDesktopViewFrame, JButton> buttons = new HashMap<TrianaDesktopViewFrame, JButton>();
 
     public static TrianaDesktopManager getManager() {
         return manager;
     }
 
+    private JPanel container;
+    private JPanel butpanel;
+
+
     private JDesktopPane desktop;
 
     public TrianaDesktopManager() {
+        container = new JPanel(new BorderLayout());
+        butpanel = new JPanel();
+        butpanel.setLayout(new BoxLayout(butpanel, BoxLayout.X_AXIS));
+        butpanel.add(Box.createRigidArea(new Dimension(1, 30)));
         this.desktop = new JDesktopPane();
         desktop.addComponentListener(this);
+        container.add(butpanel, BorderLayout.NORTH);
+        container.add(desktop, BorderLayout.CENTER);
     }
 
     public void setSize(TrianaDesktopViewFrame frame) {
-        System.out.println("TrianaDesktopManager.setSize frame size:" + frame.getBounds());
         double dy = ((double) desktop.getSize().height);
         double dx = ((double) desktop.getSize().width);
         setSize(frame, dx, dy, true);
@@ -51,7 +65,7 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
         if (init) {
             TaskGraph taskgraph = frame.getTaskgraphPanel().getTaskGraph();
             if (taskgraph.getTasks(false).length == 0) {
-                frame.setSize(new Dimension((int) Math.max(400, dx * 0.6), (int) Math.max(33, dy * 0.6)));
+                frame.setSize(new Dimension((int) Math.max(100, dx * 0.6), (int) Math.max(100, dy * 0.6)));
             }
         }
         if (frame.getX() + frame.getWidth() >= dx) {
@@ -89,6 +103,11 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
     public void internalFrameClosed(InternalFrameEvent e) {
         JInternalFrame frame = e.getInternalFrame();
         frames.remove(frame);
+        if (frame instanceof TrianaDesktopViewFrame) {
+            JButton b = buttons.remove(frame);
+            butpanel.remove(b);
+            butpanel.repaint();
+        }
         if (frames.size() > 0) {
             try {
                 frames.get(frames.size() - 1).setSelected(true);
@@ -115,6 +134,10 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
         JInternalFrame frame = e.getInternalFrame();
         if (frame instanceof TrianaDesktopViewFrame) {
             selected = (TrianaDesktopViewFrame) frame;
+            JButton b = buttons.get(selected);
+            if (b != null) {
+                b.setSelected(true);
+            }
         }
         for (DesktopViewListener listener : listeners) {
             listener.ViewOpened((TrianaDesktopView) frame);
@@ -123,6 +146,12 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
 
     @Override
     public void internalFrameDeactivated(InternalFrameEvent e) {
+        JInternalFrame frame = e.getInternalFrame();
+        if (frame instanceof TrianaDesktopViewFrame) {
+            selected = (TrianaDesktopViewFrame) frame;
+            JButton b = buttons.get(selected);
+            b.setSelected(false);
+        }
     }
 
     public void componentResized(ComponentEvent e) {
@@ -148,7 +177,7 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
 
     @Override
     public Container getWorkspace() {
-        return desktop;
+        return container;
     }
 
     @Override
@@ -167,6 +196,14 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
         setSize(frame);
         frame.setVisible(true);
         frames.add(frame);
+        String name = panel.getTaskGraph().getToolName();
+        if (name.length() > 16) {
+            name = name.substring(0, 13) + "...";
+        }
+        JButton b = new JButton(name);
+        b.addActionListener(new ButtonListener());
+        buttons.put(frame, b);
+        butpanel.add(b);
         return frame;
     }
 
@@ -175,6 +212,10 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
         if (view instanceof TrianaDesktopViewFrame) {
             ((TrianaDesktopViewFrame) view).doDefaultCloseAction();
             desktop.remove((TrianaDesktopViewFrame) view);
+            JButton b = buttons.remove(view);
+            if (b != null) {
+                butpanel.remove(b);
+            }
         }
     }
 
@@ -253,6 +294,22 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
     public void setTitle(TrianaDesktopView view, String title) {
         if (view instanceof TrianaDesktopViewFrame) {
             ((TrianaDesktopViewFrame) view).setTitle(title);
+        }
+    }
+
+    private class ButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() instanceof JButton) {
+                for (TrianaDesktopViewFrame frame : buttons.keySet()) {
+                    JButton b = buttons.get(frame);
+                    if (b == e.getSource()) {
+                        setSelected(frame, true);
+                        break;
+                    }
+                }
+            }
         }
     }
 }

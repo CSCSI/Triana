@@ -909,7 +909,7 @@ public class ApplicationFrame extends TrianaWindow
                         parents.remove(comp);
                         comp.getTaskGraph().dispose();
                     }
-                    getDesktopViewManager().remove(view);
+                    //getDesktopViewManager().remove(view);
                 }
 
             }
@@ -1159,7 +1159,6 @@ public class ApplicationFrame extends TrianaWindow
         } else {
 
             selected = event.getSource();
-            System.out.println("ApplicationFrame.focusGained " + selected);
         }
     }
 
@@ -1192,7 +1191,6 @@ public class ApplicationFrame extends TrianaWindow
     @Override
     public void ViewOpened(TrianaDesktopView view) {
         selected = view.getTaskgraphPanel();
-        System.out.println("ApplicationFrame.internalFrameActivated " + selected);
     }
 
 
