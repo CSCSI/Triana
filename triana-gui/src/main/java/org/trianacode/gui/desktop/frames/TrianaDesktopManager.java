@@ -334,5 +334,11 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
             super.dragFrame(f, newX, newY);
         }
 
+        public void activateFrame(JInternalFrame f) {
+            if (f == null) {
+                return;
+            }
+        }
+
     }
 }
