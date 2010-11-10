@@ -150,7 +150,9 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
         if (frame instanceof TrianaDesktopViewFrame) {
             selected = (TrianaDesktopViewFrame) frame;
             JButton b = buttons.get(selected);
-            b.setSelected(false);
+            if (b != null) {
+                b.setSelected(false);
+            }
         }
     }
 
