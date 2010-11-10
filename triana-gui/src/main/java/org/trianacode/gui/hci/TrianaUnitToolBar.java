@@ -58,12 +58,11 @@
  */
 package org.trianacode.gui.hci;
 
-import java.awt.Insets;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The Triana Unit toolbar, placed at the top of the Main application window. This is implemented as a tear-off window.
@@ -95,7 +94,7 @@ public class TrianaUnitToolBar extends AbstractToolBar implements Actions {
     public TrianaUnitToolBar(String title) {
         super(title, HORIZONTAL);
 
-        setFloatable(true);
+        setFloatable(false);
         setBorderPainted(true);
         setMargin(new Insets(0, 0, 0, 0));
         createWidgets();

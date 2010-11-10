@@ -572,25 +572,29 @@ public class ApplicationFrame extends TrianaWindow
 
         toolPanel.add(scroll, BorderLayout.CENTER);
 
-        //      JScrollPane scrollWork = new JScrollPane(workspace);
         JSplitPane verticalSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 toolPanel,
                 workspace);
 
         TrianaToolBar toolbar = new TrianaToolBar("Main ToolBar", this);
         TrianaUnitToolBar unitToolbar = new TrianaUnitToolBar("Unit ToolBar");
-
         toolbar.setRollover(true);
         unitToolbar.setRollover(true);
 
-        JPanel innerpanel = new JPanel(new BorderLayout());
-        innerpanel.add(unitToolbar, BorderLayout.PAGE_START);
-        innerpanel.add(verticalSplit, BorderLayout.CENTER);
+        JPanel innerpanel = new JPanel();
+        innerpanel.setLayout(new BoxLayout(innerpanel, BoxLayout.X_AXIS));
+        innerpanel.add(toolbar);
+        innerpanel.add(Box.createHorizontalStrut(10));
+        innerpanel.add(unitToolbar);
+        innerpanel.add(Box.createHorizontalGlue());
+        //innerpanel.add(verticalSplit, BorderLayout.CENTER);
 
         JPanel outerpanel = new JPanel(new BorderLayout());
-        outerpanel.add(toolbar, BorderLayout.PAGE_START);
-        outerpanel.add(innerpanel, BorderLayout.CENTER);
 
+
+        //outerpanel.add(toolbar, BorderLayout.PAGE_START);
+        outerpanel.add(innerpanel, BorderLayout.NORTH);
+        outerpanel.add(verticalSplit, BorderLayout.CENTER);
         getContentPane().add(outerpanel);
     }
 

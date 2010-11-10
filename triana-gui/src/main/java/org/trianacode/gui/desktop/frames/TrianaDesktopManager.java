@@ -25,6 +25,9 @@ import java.util.Map;
  */
 public class TrianaDesktopManager implements InternalFrameListener, ComponentListener, TrianaDesktopViewManager {
 
+    public static final int MIN_WIDTH = 150;
+    public static final int MIN_HEIGHT = 100;
+
     private int offsetX = 20;
     private int offsetY = 20;
     private java.util.List<TrianaDesktopViewFrame> frames = new ArrayList<TrianaDesktopViewFrame>();
@@ -66,21 +69,21 @@ public class TrianaDesktopManager implements InternalFrameListener, ComponentLis
         if (init) {
             TaskGraph taskgraph = frame.getTaskgraphPanel().getTaskGraph();
             if (taskgraph.getTasks(false).length == 0) {
-                frame.setSize(new Dimension((int) Math.max(100, dx * 0.6), (int) Math.max(100, dy * 0.6)));
+                frame.setSize(new Dimension((int) Math.max(MIN_WIDTH, dx * 0.6), (int) Math.max(MIN_HEIGHT, dy * 0.6)));
             }
         }
         if (frame.getX() + frame.getWidth() >= dx) {
             if (frame.getY() + frame.getHeight() >= dy) {
-                frame.setSize(new Dimension((int) Math.max(dx - frame.getX(), 100), (int) Math.max(dy - frame.getY(), 100)));
+                frame.setSize(new Dimension((int) Math.max(dx - frame.getX(), MIN_WIDTH), (int) Math.max(dy - frame.getY(), MIN_HEIGHT)));
             } else {
-                frame.setSize(new Dimension((int) Math.max(dx - frame.getX(), 100), Math.max(frame.getHeight(), 100)));
+                frame.setSize(new Dimension((int) Math.max(dx - frame.getX(), MIN_WIDTH), Math.max(frame.getHeight(), MIN_HEIGHT)));
             }
         } else {
             if (frame.getY() + frame.getHeight() >= dy) {
                 if (frame.getX() + frame.getWidth() >= dx) {
-                    frame.setSize(new Dimension((int) Math.max(dx - frame.getX(), 100), (int) Math.max(100, dy - frame.getY())));
+                    frame.setSize(new Dimension((int) Math.max(dx - frame.getX(), MIN_WIDTH), (int) Math.max(MIN_HEIGHT, dy - frame.getY())));
                 } else {
-                    frame.setSize(new Dimension(Math.max(100, frame.getWidth()), (int) Math.max(100, dy - frame.getY())));
+                    frame.setSize(new Dimension(Math.max(MIN_WIDTH, frame.getWidth()), (int) Math.max(MIN_HEIGHT, dy - frame.getY())));
                 }
             }
         }
