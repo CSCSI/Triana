@@ -83,7 +83,7 @@ import org.trianacode.gui.components.triana.TrianaComponentModel;
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
-import org.trianacode.gui.desktop.frames.TrianaDesktopManager;
+import org.trianacode.gui.desktop.tabbedPane.TrianaTabManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.*;
@@ -921,8 +921,8 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     public TrianaDesktopViewManager getDesktopViewManager() {
-    //    return TrianaTabManager.getManager();
-        return TrianaDesktopManager.getManager();
+        return TrianaTabManager.getManager();
+    //    return TrianaDesktopManager.getManager();
     }
 
 

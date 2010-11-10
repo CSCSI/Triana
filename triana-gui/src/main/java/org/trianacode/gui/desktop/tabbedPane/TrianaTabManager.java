@@ -3,7 +3,6 @@ package org.trianacode.gui.desktop.tabbedPane;
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
-import org.trianacode.gui.desktop.frames.TrianaDesktopViewFrame;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
 
@@ -42,8 +41,8 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public TrianaDesktopView newDesktopView(TaskGraphPanel panel) {
-        TrianaDesktopViewTab tab = new TrianaDesktopViewTab(panel);
+    public TrianaDesktopView newDesktopView(final TaskGraphPanel panel) {
+        final TrianaDesktopViewTab tab = new TrianaDesktopViewTab(panel);
         String name = panel.getTaskGraph().getToolName();
         if(name.equals("")){
             name = "Untitled";
@@ -53,6 +52,9 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
         JButton close = new JButton("x");
         close.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent) {
+                tabs.remove(tab);
+                tab.getTaskgraphPanel().dispose();
+                tabbedPane.remove(tab);
             }
         });
         close.setOpaque(false);
