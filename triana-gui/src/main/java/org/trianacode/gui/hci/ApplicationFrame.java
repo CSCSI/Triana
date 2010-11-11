@@ -999,6 +999,7 @@ public class ApplicationFrame extends TrianaWindow
         if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler)) {
             return ((ToolSelectionHandler) getSelectionHandler()).getSelectedTool();
         } else {
+            System.out.println("Nothing selected");
             return null;
         }
     }
@@ -1180,6 +1181,7 @@ public class ApplicationFrame extends TrianaWindow
         } else {
 
             selected = event.getSource();
+            System.out.println("Object : " + selected.toString() + " selected.");
         }
     }
 

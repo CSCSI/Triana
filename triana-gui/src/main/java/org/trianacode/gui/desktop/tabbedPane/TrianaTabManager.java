@@ -7,6 +7,8 @@ import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,9 +24,11 @@ import java.util.ArrayList;
 public class TrianaTabManager implements TrianaDesktopViewManager {
 
     JTabbedPane tabbedPane;
+    TrianaDesktopView selected;
 
     public static TrianaTabManager manager = new TrianaTabManager();
     private java.util.List<TrianaDesktopViewTab> tabs = new ArrayList<TrianaDesktopViewTab>();
+    private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
 
 
     public static TrianaTabManager getManager(){
@@ -33,6 +37,13 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
 
     public TrianaTabManager(){
         this.tabbedPane = new JTabbedPane();
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                TrianaDesktopViewTab tab = (TrianaDesktopViewTab)tabbedPane.getSelectedComponent();
+                System.out.println("Selected panel is : " + tab.getTitle());
+                selected = getDesktopViewFor(tab.getTaskgraphPanel());
+            }
+        });
     }
 
     @Override
@@ -94,28 +105,30 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
 
     @Override
     public void addDesktopViewListener(DesktopViewListener listener) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
 
     @Override
     public void removeDesktopViewListener(DesktopViewListener listener) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        listeners.remove(listener);
     }
 
     @Override
     public TrianaDesktopView[] getViews() {
-        System.out.println("Views : " + tabs.size() + tabs); 
+        System.out.println("Views : " + tabs.size() + tabs);
         return tabs.toArray(new TrianaDesktopView[tabs.size()]);
     }
 
     @Override
-    public void setSelected(TrianaDesktopView panel, boolean selected) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setSelected(TrianaDesktopView panel, boolean sel) {
+
     }
 
     @Override
     public TrianaDesktopView getSelected() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return selected;
     }
 
     @Override
