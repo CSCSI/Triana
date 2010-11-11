@@ -75,8 +75,10 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public void remove(TrianaDesktopView view) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void remove(TrianaDesktopView tab) {
+        if (tab instanceof TrianaDesktopViewTab) {
+            tabs.remove(tab);
+        }
     }
 
     @Override
@@ -102,6 +104,7 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
 
     @Override
     public TrianaDesktopView[] getViews() {
+        System.out.println("Views : " + tabs.size() + tabs); 
         return tabs.toArray(new TrianaDesktopView[tabs.size()]);
     }
 
@@ -123,6 +126,7 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
                 return view;
             }
         }
+        System.out.println("No view found for panel : " + panel);
         return null;
     }
 

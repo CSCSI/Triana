@@ -919,6 +919,20 @@ public final class Env {
         }
     }
 
+    public final static void setTabbedView(boolean tabbed){
+        setUserProperty("TabbedView", String.valueOf(tabbed));
+    }
+
+    public final static boolean isTabbedView() {
+        Object tabbed = getUserProperty("TabbedView");
+
+        if (tabbed == null) {
+            return false;
+        } else {
+            return new Boolean((String) tabbed).booleanValue();
+        }
+    }
+
     /**
      * Sets the last screen position of the debug console
      */

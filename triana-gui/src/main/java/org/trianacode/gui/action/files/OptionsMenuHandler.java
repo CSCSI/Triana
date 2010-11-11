@@ -58,18 +58,18 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-
-import javax.swing.AbstractButton;
 import org.trianacode.gui.hci.OptionsHandler;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 import org.trianacode.util.UserPropertyEvent;
 import org.trianacode.util.UserPropertyListener;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Class that handles events and actions for the Tools menu, including New Tool, Compile and Edit Tool Box Paths.
@@ -131,6 +131,9 @@ public class OptionsMenuHandler implements ActionListener, ItemListener, UserPro
 
             if (label.equals(Env.getString("DebugWindow"))) {
                 Env.setDebugVisible(e.getStateChange() == ItemEvent.SELECTED);
+            }
+            if(label.equals("Tabbed view")){
+                Env.setTabbedView(e.getStateChange() == ItemEvent.SELECTED);
             }
         }
     }

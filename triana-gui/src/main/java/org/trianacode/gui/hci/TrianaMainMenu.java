@@ -244,6 +244,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         MenuMnemonics.getInstance().createMenuItem(Env.getString("TrianaOptionTitle"), optionsMenu, optionsMenuHandler);
         optionsMenu.addSeparator();
         item = MenuMnemonics.getInstance().createCheckBoxMenuItem("Tabbed view", optionsMenu, optionsMenuHandler);
+        item.setEnabled(Env.isTabbedView());
         optionsMenu.add(item);        
         
 

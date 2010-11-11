@@ -21,6 +21,7 @@ public class TrianaDesktopViewTab extends JPanel implements TrianaDesktopView {
     public TrianaDesktopViewTab(TaskGraphPanel panel){
         super();
         this.panel = panel;
+        setTitle(panel.getTaskGraph().getToolName());
 
         JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);

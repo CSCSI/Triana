@@ -83,6 +83,7 @@ import org.trianacode.gui.components.triana.TrianaComponentModel;
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.desktop.frames.TrianaDesktopManager;
 import org.trianacode.gui.desktop.tabbedPane.TrianaTabManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
@@ -801,8 +802,13 @@ public class ApplicationFrame extends TrianaWindow
         int untitledCount = 1;
         TrianaDesktopView[] views = getDesktopViewManager().getViews();
         for (TrianaDesktopView view : views) {
-            if (getDesktopViewManager().getTitle(view).startsWith("Untitled")) {
-                untitledCount++;
+            String name = getDesktopViewManager().getTitle(view);
+            if (name.startsWith("Untitled")) {
+                String numberString = name.substring(8);
+                int number = Integer.parseInt(numberString);
+                if(number +1 > untitledCount){
+                    untitledCount = number +1;
+                }
             }
         }
         return "Untitled" + untitledCount;
@@ -921,8 +927,18 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     public TrianaDesktopViewManager getDesktopViewManager() {
-        return TrianaTabManager.getManager();
-    //    return TrianaDesktopManager.getManager();
+        TrianaDesktopViewManager tdvm = null;
+
+        boolean tabbedView = Env.isTabbedView();
+        tabbedView = false;
+
+        if(tabbedView){
+            tdvm = TrianaTabManager.getManager();
+        }else{
+            tdvm = TrianaDesktopManager.getManager();
+        }
+
+        return tdvm;
     }
 
 
@@ -937,7 +953,13 @@ public class ApplicationFrame extends TrianaWindow
         TaskGraphPanel[] cont = parents.toArray(new TaskGraphPanel[parents.size()]);
 
         for (int count = 0; count < cont.length; count++) {
-            closeTaskGraphPanel(getDesktopViewManager().getDesktopViewFor(cont[count]));
+            TrianaDesktopView tdv = getDesktopViewManager().getDesktopViewFor(cont[count]);
+            if(tdv != null){
+                closeTaskGraphPanel(tdv);
+            }
+            else{
+                System.out.println("No desktopView found for taskgraphPanel : " + cont[count]);
+            }
         }
     }
 
