@@ -12,11 +12,11 @@ import java.awt.*;
  * @author Andrew Harrison
  * @version 1.0.0 Nov 10, 2010
  */
-public class TrianaDesktopViewFrame extends JInternalFrame implements TrianaDesktopView {
+public class FramesDesktopView extends JInternalFrame implements TrianaDesktopView {
 
     private TaskGraphPanel panel;
 
-    public TrianaDesktopViewFrame(TaskGraphPanel panel) {
+    public FramesDesktopView(TaskGraphPanel panel) {
         super(panel.getTaskGraph().getToolName(),
                 true, true, true, true);
         this.panel = panel;

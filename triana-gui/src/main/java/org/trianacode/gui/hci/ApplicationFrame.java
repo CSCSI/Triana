@@ -83,7 +83,7 @@ import org.trianacode.gui.components.triana.TrianaComponentModel;
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
-import org.trianacode.gui.desktop.frames.TrianaDesktopManager;
+import org.trianacode.gui.desktop.frames.FramesDesktopManager;
 import org.trianacode.gui.desktop.tabbedPane.TrianaTabManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
@@ -552,13 +552,14 @@ public class ApplicationFrame extends TrianaWindow
         this.getRootPane().setActionMap(actMap);
 
         leaflistener = new LeafListener(toolboxTree, workspace, tools);
-//        keymaps = new MainTrianaKeyMapFactory(leaflistener, ActionDisplayOptions.DISPLAY_NAME);
-//        inputMap = keymaps.getInputMap();
-//        inputMap.setParent(toolboxTree.getInputMap());
-//        toolboxTree.setInputMap(JComponent.WHEN_FOCUSED, inputMap);
-//        actMap = keymaps.getActionMap();
-//        actMap.setParent(toolboxTree.getActionMap());
-//        toolboxTree.setActionMap(actMap);
+
+        keymaps = new MainTrianaKeyMapFactory(leaflistener, ActionDisplayOptions.DISPLAY_NAME);
+        inputMap = keymaps.getInputMap();
+        inputMap.setParent(toolboxTree.getInputMap());
+        toolboxTree.setInputMap(JComponent.WHEN_FOCUSED, inputMap);
+        actMap = keymaps.getActionMap();
+        actMap.setParent(toolboxTree.getActionMap());
+        toolboxTree.setActionMap(actMap);
 
         toolboxTree.addMouseListener(leaflistener);
         toolboxTree.addMouseMotionListener(leaflistener);
@@ -588,12 +589,9 @@ public class ApplicationFrame extends TrianaWindow
         innerpanel.add(Box.createHorizontalStrut(10));
         innerpanel.add(unitToolbar);
         innerpanel.add(Box.createHorizontalGlue());
-        //innerpanel.add(verticalSplit, BorderLayout.CENTER);
 
         JPanel outerpanel = new JPanel(new BorderLayout());
 
-
-        //outerpanel.add(toolbar, BorderLayout.PAGE_START);
         outerpanel.add(innerpanel, BorderLayout.NORTH);
         outerpanel.add(verticalSplit, BorderLayout.CENTER);
         getContentPane().add(outerpanel);
@@ -806,8 +804,8 @@ public class ApplicationFrame extends TrianaWindow
             if (name.startsWith("Untitled")) {
                 String numberString = name.substring(8);
                 int number = Integer.parseInt(numberString);
-                if(number +1 > untitledCount){
-                    untitledCount = number +1;
+                if (number + 1 > untitledCount) {
+                    untitledCount = number + 1;
                 }
             }
         }
@@ -932,10 +930,10 @@ public class ApplicationFrame extends TrianaWindow
         boolean tabbedView = Env.isTabbedView();
         tabbedView = false;
 
-        if(tabbedView){
+        if (tabbedView) {
             tdvm = TrianaTabManager.getManager();
-        }else{
-            tdvm = TrianaDesktopManager.getManager();
+        } else {
+            tdvm = FramesDesktopManager.getManager();
         }
 
         return tdvm;
@@ -954,10 +952,9 @@ public class ApplicationFrame extends TrianaWindow
 
         for (int count = 0; count < cont.length; count++) {
             TrianaDesktopView tdv = getDesktopViewManager().getDesktopViewFor(cont[count]);
-            if(tdv != null){
+            if (tdv != null) {
                 closeTaskGraphPanel(tdv);
-            }
-            else{
+            } else {
                 System.out.println("No desktopView found for taskgraphPanel : " + cont[count]);
             }
         }
@@ -1064,8 +1061,6 @@ public class ApplicationFrame extends TrianaWindow
         if (comps[count].getTaskGraph() == task) {
             TrianaDesktopView view = getDesktopViewManager().getDesktopViewFor(comps[count]);
             getDesktopViewManager().setTitle(view, comps[count].getTaskGraph().getToolName());
-            //internalframe.getAssociatedButton().setText(comps[count].getTaskGraph().getToolName());
-            //internalframe.getAssociatedMenuButton().setText(comps[count].getTaskGraph().getToolName());
         }
     }
 
@@ -1107,7 +1102,6 @@ public class ApplicationFrame extends TrianaWindow
     public void taskRemoved(TaskGraphTaskEvent event) {
         if (event.getTask() instanceof TaskGraph) {
             TrianaDesktopView view = getDesktopViewFor((TaskGraph) event.getTask());
-
             if (view != null) {
                 closeTaskGraphPanel(view);
             }
