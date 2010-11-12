@@ -28,6 +28,9 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     public static final int MIN_WIDTH = 150;
     public static final int MIN_HEIGHT = 100;
 
+    public static final int MIN_D_WIDTH = 500;
+    public static final int MIN_D_HEIGHT = 400;
+
     private int offsetX = 20;
     private int offsetY = 20;
     private java.util.List<FramesDesktopView> frames = new ArrayList<FramesDesktopView>();
@@ -45,6 +48,10 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     private JPanel butpanel;
     private JScrollPane scroll;
 
+    private int currMaxX = 0;
+    private int currMaxY = 0;
+    private ComponentListener frameListener = new FrameListener();
+
 
     private JDesktopPane desktop;
 
@@ -58,10 +65,10 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         desktop.addComponentListener(this);
         container.add(butpanel, BorderLayout.NORTH);
         container.add(desktop, BorderLayout.CENTER);
-        //scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        //        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        //scroll.setViewportView(container);
-        //scroll.doLayout();
+        scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setViewportView(container);
+        scroll.doLayout();
     }
 
     public void setSize(FramesDesktopView frame) {
@@ -115,8 +122,10 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         if (frame instanceof FramesDesktopView) {
             JButton b = buttons.remove(frame);
             butpanel.remove(b);
+            butpanel.revalidate();
             butpanel.repaint();
         }
+        resizeDesktop();
         if (frames.size() > 0) {
             try {
                 frames.get(frames.size() - 1).setSelected(true);
@@ -127,6 +136,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         for (DesktopViewListener listener : listeners) {
             listener.ViewClosed((TrianaDesktopView) frame);
         }
+        frame.removeComponentListener(frameListener);
         frame.removeInternalFrameListener(this);
     }
 
@@ -167,12 +177,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     }
 
     public void componentResized(ComponentEvent e) {
-        double dy = ((double) desktop.getSize().height);
-        double dx = ((double) desktop.getSize().width);
-        for (int i = 0; i < frames.size(); i++) {
-            FramesDesktopView frame = frames.get(i);
-            setSize(frame, dx, dy, false);
-        }
+        resizeDesktop();
     }
 
     public void componentMoved(ComponentEvent e) {
@@ -180,16 +185,16 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     }
 
     public void componentShown(ComponentEvent e) {
-
+        resizeDesktop();
     }
 
     public void componentHidden(ComponentEvent e) {
-
+        resizeDesktop();
     }
 
     @Override
     public Container getWorkspace() {
-        return container;
+        return scroll;
     }
 
     @Override
@@ -216,7 +221,24 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         b.addActionListener(new ButtonListener());
         buttons.put(frame, b);
         butpanel.add(b);
+        resizeDesktop();
+        frame.addComponentListener(frameListener);
         return frame;
+    }
+
+    private void resizeDesktop() {
+        currMaxX = MIN_D_WIDTH;
+        currMaxY = MIN_D_HEIGHT;
+        for (FramesDesktopView frame : frames) {
+            if (frame.getX() + frame.getWidth() > currMaxX) {
+                currMaxX = frame.getX() + frame.getWidth();
+            }
+            if (frame.getY() + frame.getHeight() > currMaxY) {
+                currMaxY = frame.getY() + frame.getHeight();
+            }
+        }
+        desktop.setPreferredSize(new Dimension(currMaxX, currMaxY));
+        desktop.revalidate();
     }
 
     @Override
@@ -227,7 +249,9 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
             JButton b = buttons.remove(view);
             if (b != null) {
                 butpanel.remove(b);
+                butpanel.revalidate();
             }
+            resizeDesktop();
         }
     }
 
@@ -350,4 +374,27 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         }
 
     }
+
+    private class FrameListener implements ComponentListener {
+
+        @Override
+        public void componentResized(ComponentEvent e) {
+        }
+
+        @Override
+        public void componentMoved(ComponentEvent e) {
+            resizeDesktop();
+        }
+
+        @Override
+        public void componentShown(ComponentEvent e) {
+            //resizeDesktop();
+        }
+
+        @Override
+        public void componentHidden(ComponentEvent e) {
+            //resizeDesktop();
+        }
+    }
+
 }

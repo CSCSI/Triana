@@ -1179,9 +1179,7 @@ public class ApplicationFrame extends TrianaWindow
         if (event.getSource() == toolboxTree) {
             selected = leaflistener;
         } else {
-
             selected = event.getSource();
-            System.out.println("Object : " + selected.toString() + " selected.");
         }
     }
 
