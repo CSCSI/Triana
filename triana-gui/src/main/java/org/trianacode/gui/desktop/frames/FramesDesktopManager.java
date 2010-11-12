@@ -391,12 +391,10 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
 
         @Override
         public void componentShown(ComponentEvent e) {
-            //resizeDesktop();
         }
 
         @Override
         public void componentHidden(ComponentEvent e) {
-            //resizeDesktop();
         }
     }
 
