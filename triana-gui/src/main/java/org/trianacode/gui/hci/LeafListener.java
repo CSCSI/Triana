@@ -547,7 +547,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
 
                 landed = parent.getComponentAt(landingPosX, landingPosY);
             } while ((landed != null) && (landed != parent) &&
-                    (!(landed instanceof JInternalFrame)));
+                    (!(landed instanceof TrianaDesktopView)));
 
             if (landed instanceof TrianaDesktopView) { // ok we have a drop target
                 // locate the mainTriana panel
@@ -562,7 +562,6 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                 createTool(cont, DragWindow.DRAG_WINDOW.getTool(),
                         landingPosX - (DragWindow.DRAG_WINDOW.getSize().width / 2),
                         landingPosY - (DragWindow.DRAG_WINDOW.getSize().height / 2));
-                //((BaseInternalFrame) landed).selectFrameAndAssociatedButtons();
             }
 
 
