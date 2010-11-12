@@ -62,7 +62,8 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         butpanel.add(Box.createRigidArea(new Dimension(1, 30)));
         this.desktop = new JDesktopPane();
         this.desktop.setDesktopManager(new RestrictedDesktopManager());
-        desktop.addComponentListener(this);
+        this.desktop.addComponentListener(this);
+        this.desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
         container.add(butpanel, BorderLayout.NORTH);
         container.add(desktop, BorderLayout.CENTER);
         scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
