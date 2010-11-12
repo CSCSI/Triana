@@ -356,10 +356,10 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
 
         public void dragFrame(JComponent f, int newX, int newY) {
             if (newX + f.getWidth() > desktop.getWidth()) {
-                newX = f.getX();
+                newX = desktop.getWidth() - f.getWidth();
             }
             if (newY + f.getHeight() > desktop.getHeight()) {
-                newY = f.getY();
+                newY = desktop.getHeight() - f.getHeight();
             }
             if (newX < 0) {
                 newX = 0;
@@ -386,6 +386,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
 
         @Override
         public void componentMoved(ComponentEvent e) {
+            System.out.println("FramesDesktopManager$FrameListener.componentMoved");
             resizeDesktop();
         }
 
