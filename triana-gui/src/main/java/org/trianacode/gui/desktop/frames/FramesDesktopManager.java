@@ -230,11 +230,13 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         currMaxX = MIN_D_WIDTH;
         currMaxY = MIN_D_HEIGHT;
         for (FramesDesktopView frame : frames) {
-            if (frame.getX() + frame.getWidth() > currMaxX) {
-                currMaxX = frame.getX() + frame.getWidth();
-            }
-            if (frame.getY() + frame.getHeight() > currMaxY) {
-                currMaxY = frame.getY() + frame.getHeight();
+            if (!frame.isMaximum()) {
+                if (frame.getX() + frame.getWidth() > currMaxX) {
+                    currMaxX = frame.getX() + frame.getWidth();
+                }
+                if (frame.getY() + frame.getHeight() > currMaxY) {
+                    currMaxY = frame.getY() + frame.getHeight();
+                }
             }
         }
         desktop.setPreferredSize(new Dimension(currMaxX, currMaxY));
