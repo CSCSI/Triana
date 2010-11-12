@@ -386,7 +386,6 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
 
         @Override
         public void componentMoved(ComponentEvent e) {
-            System.out.println("FramesDesktopManager$FrameListener.componentMoved");
             resizeDesktop();
         }
 
