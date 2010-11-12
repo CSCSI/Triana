@@ -84,7 +84,7 @@ import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
 import org.trianacode.gui.desktop.frames.FramesDesktopManager;
-import org.trianacode.gui.desktop.tabbedPane.TrianaTabManager;
+import org.trianacode.gui.desktop.tabbedPane.TabManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.*;
@@ -931,7 +931,7 @@ public class ApplicationFrame extends TrianaWindow
         tabbedView = false;
 
         if (tabbedView) {
-            tdvm = TrianaTabManager.getManager();
+            tdvm = TabManager.getManager();
         } else {
             tdvm = FramesDesktopManager.getManager();
         }

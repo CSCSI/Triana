@@ -13,12 +13,12 @@ import java.awt.*;
  * Time: 5:47:54 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TrianaDesktopViewTab extends JPanel implements TrianaDesktopView {
+public class TabView extends JPanel implements TrianaDesktopView {
 
     private TaskGraphPanel panel;
     private String title = "";
 
-    public TrianaDesktopViewTab(TaskGraphPanel panel){
+    public TabView(TaskGraphPanel panel){
         super();
         this.panel = panel;
         setTitle(panel.getTaskGraph().getToolName());

@@ -21,25 +21,25 @@ import java.util.ArrayList;
  * Time: 5:27:58 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TrianaTabManager implements TrianaDesktopViewManager {
+public class TabManager implements TrianaDesktopViewManager {
 
     JTabbedPane tabbedPane;
     TrianaDesktopView selected;
 
-    public static TrianaTabManager manager = new TrianaTabManager();
-    private java.util.List<TrianaDesktopViewTab> tabs = new ArrayList<TrianaDesktopViewTab>();
+    public static TabManager manager = new TabManager();
+    private java.util.List<TabView> tabs = new ArrayList<TabView>();
     private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
 
 
-    public static TrianaTabManager getManager(){
+    public static TabManager getManager(){
         return manager;
     }
 
-    public TrianaTabManager(){
+    public TabManager(){
         this.tabbedPane = new JTabbedPane();
         tabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
-                TrianaDesktopViewTab tab = (TrianaDesktopViewTab)tabbedPane.getSelectedComponent();
+                TabView tab = (TabView)tabbedPane.getSelectedComponent();
                 System.out.println("Selected panel is : " + tab.getTitle());
                 selected = getDesktopViewFor(tab.getTaskgraphPanel());
             }
@@ -53,7 +53,7 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
 
     @Override
     public TrianaDesktopView newDesktopView(final TaskGraphPanel panel) {
-        final TrianaDesktopViewTab tab = new TrianaDesktopViewTab(panel);
+        final TabView tab = new TabView(panel);
         String name = panel.getTaskGraph().getToolName();
         if(name.equals("")){
             name = "Untitled";
@@ -87,14 +87,14 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
 
     @Override
     public void remove(TrianaDesktopView tab) {
-        if (tab instanceof TrianaDesktopViewTab) {
+        if (tab instanceof TabView) {
             tabs.remove(tab);
         }
     }
 
     @Override
     public TrianaDesktopView getTaskgraphViewFor(TaskGraph taskgraph) {
-        for (TrianaDesktopViewTab tab : tabs) {
+        for (TabView tab : tabs) {
             TaskGraphPanel panel = tab.getTaskgraphPanel();
             if (panel.getTaskGraph() == taskgraph) {
                 return tab;
@@ -145,16 +145,16 @@ public class TrianaTabManager implements TrianaDesktopViewManager {
 
     @Override
     public String getTitle(TrianaDesktopView view) {
-        if (view instanceof TrianaDesktopViewTab) {
-            return ((TrianaDesktopViewTab) view).getTitle();
+        if (view instanceof TabView) {
+            return ((TabView) view).getTitle();
         }
         return null;
     }
 
     @Override
     public void setTitle(TrianaDesktopView view, String title) {
-        if (view instanceof TrianaDesktopViewTab) {
-            ((TrianaDesktopViewTab) view).setTitle(title);
+        if (view instanceof TabView) {
+            ((TabView) view).setTitle(title);
         }
     }
 }
