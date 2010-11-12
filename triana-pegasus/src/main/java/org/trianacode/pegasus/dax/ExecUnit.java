@@ -2,11 +2,14 @@ package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.annotation.Process;
 import org.trianacode.taskgraph.annotation.TextFieldParameter;
 import org.trianacode.taskgraph.annotation.Tool;
 
+import javax.swing.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,13 +30,11 @@ public class ExecUnit{
     @TextFieldParameter
     private String executable = "";
     @TextFieldParameter
+    private String input_file = "";
+    @TextFieldParameter
     private String executable_args = "";
     @TextFieldParameter
     private String search_for = "";
-
-//    @TextFieldParameter
-//    private String input = "";
-
 
     @Process(gather=true)
     public DaxSettingObject process(List in){
@@ -55,52 +56,70 @@ public class ExecUnit{
 
         StringBuilder out = new StringBuilder();
         List commmandStrVector = new ArrayList();
-        commmandStrVector.add(executable);
-        commmandStrVector.addAll(options);
+        if(!executable.equals("")){
+            if(!error()){
+                commmandStrVector.add(executable);
+                commmandStrVector.add(input_file);
+                commmandStrVector.addAll(options);
 
-        StringBuilder buffer = new StringBuilder();
-        for (Iterator iterator = commmandStrVector.iterator(); iterator.hasNext();) {
-            buffer.append((String) iterator.next());
-            buffer.append(" ");
-        }
-        log("ExecUnit.process invocation:" + buffer.toString());
+                StringBuilder buffer = new StringBuilder();
+                for (Iterator iterator = commmandStrVector.iterator(); iterator.hasNext();) {
+                    buffer.append((String) iterator.next());
+                    buffer.append(" ");
+                }
+                log("ExecUnit.process invocation:" + buffer.toString());
 
-        try {
-            String[] cmdarray = (String[]) commmandStrVector.toArray(new String[commmandStrVector.size()]);
+                try {
+                    String[] cmdarray = (String[]) commmandStrVector.toArray(new String[commmandStrVector.size()]);
 
-            Runtime runtime = Runtime.getRuntime();
-            process = runtime.exec(cmdarray);  // execute command
+                    Runtime runtime = Runtime.getRuntime();
+                    process = runtime.exec(cmdarray);  // execute command
 
 
-            errorreader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            while ((str = errorreader.readLine()) != null) {
-                errors = true;
-                errLog += str + "\n";
+                    errorreader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                    while ((str = errorreader.readLine()) != null) {
+                        errors = true;
+                        errLog += str + "\n";
+                    }
+                    errorreader.close();
+
+                    inreader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    str = "";
+                    while ((str = inreader.readLine()) != null) {
+                        out.append(str).append("\n");
+                        checkForData(str);
+                    }
+                    inreader.close();
+
+                } catch (Exception except) {
+                    except.printStackTrace();
+                }
+
+                if (!errors) {
+                    //        log("ExecUnit.process output:" + out.toString());
+                } else {
+                    log("ExecUnit.process err:" + errLog);
+                }
+
+                dso.addFullOutput(out.toString());
             }
-            errorreader.close();
-
-            inreader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            str = "";
-            while ((str = inreader.readLine()) != null) {
-                out.append(str).append("\n");
-                checkForData(str);
-            }
-            inreader.close();
-
-        } catch (Exception except) {
-            except.printStackTrace();
         }
-
-        if (!errors) {
-    //        log("ExecUnit.process output:" + out.toString());
-        } else {
-            log("ExecUnit.process err:" + errLog);
-        }
-
-        dso.addFullOutput(out.toString());
-
         return dso;
 
+    }
+
+    private boolean error(){
+        if(input_file.equals("")){
+            return false;
+        }else{
+            if( new File(input_file).exists()){
+                return false;
+            }else{
+                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Input file (" + input_file +")for ExecUnit does not appear to exist.\n" +
+                        ".dax file will be created, but may contain errors.", "Error", JOptionPane.WARNING_MESSAGE);
+                return true;
+            }
+        }
     }
 
     private void checkForData(String s){
@@ -110,7 +129,7 @@ public class ExecUnit{
             log("Adding : " + found);
             dso.addObject("files", found);
         }else{
-   //         log("String : *" + s + "* does not contain : " + search_for);
+            //         log("String : *" + s + "* does not contain : " + search_for);
         }
     }
 
