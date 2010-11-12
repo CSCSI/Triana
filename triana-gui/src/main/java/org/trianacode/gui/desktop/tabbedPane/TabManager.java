@@ -36,14 +36,8 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     public TabManager(){
-        this.tabbedPane = new JTabbedPane();
-        tabbedPane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                TabView tab = (TabView)tabbedPane.getSelectedComponent();
-                System.out.println("Selected panel is : " + tab.getTitle());
-                selected = getDesktopViewFor(tab.getTaskgraphPanel());
-            }
-        });
+        this.tabbedPane = new TrianaTabbedPane();
+
     }
 
     @Override
@@ -54,6 +48,8 @@ public class TabManager implements TrianaDesktopViewManager {
     @Override
     public TrianaDesktopView newDesktopView(final TaskGraphPanel panel) {
         final TabView tab = new TabView(panel);
+        tabs.add(tab);
+        
         String name = panel.getTaskGraph().getToolName();
         if(name.equals("")){
             name = "Untitled";
@@ -80,7 +76,6 @@ public class TabManager implements TrianaDesktopViewManager {
         tabbedPane.addTab(name, tab);
         tabbedPane.setSelectedComponent(tab);
         tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), tabHeader);
-        tabs.add(tab);
 
         return tab;
     }
@@ -123,6 +118,7 @@ public class TabManager implements TrianaDesktopViewManager {
 
     @Override
     public void setSelected(TrianaDesktopView panel, boolean sel) {
+        selected = panel;
 
     }
 
@@ -155,6 +151,23 @@ public class TabManager implements TrianaDesktopViewManager {
     public void setTitle(TrianaDesktopView view, String title) {
         if (view instanceof TabView) {
             ((TabView) view).setTitle(title);
+        }
+    }
+
+    class TrianaTabbedPane extends JTabbedPane{
+        public TrianaTabbedPane(){
+            this.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent evt) {
+                    TabView tab = (TabView)tabbedPane.getSelectedComponent();
+                    System.out.println("Selected panel is : " + tab.getTitle());
+                    selected = getDesktopViewFor(tab.getTaskgraphPanel());
+                }
+            });
+        }
+        public boolean tabAboutToClose(int tabIndex){
+            TabView tab = (TabView)this.getComponent(tabIndex);
+            System.out.println("Closing" + tab.toString());
+                    return true;
         }
     }
 }

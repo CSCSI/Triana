@@ -928,7 +928,7 @@ public class ApplicationFrame extends TrianaWindow
         TrianaDesktopViewManager tdvm = null;
 
         boolean tabbedView = Env.isTabbedView();
-        tabbedView = false;
+        tabbedView = true;
 
         if (tabbedView) {
             tdvm = TabManager.getManager();
