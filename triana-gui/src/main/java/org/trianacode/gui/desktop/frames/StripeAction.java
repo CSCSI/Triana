@@ -56,6 +56,9 @@ public class StripeAction extends AbstractAction {
                 }
                 f.setBounds(x, y, w, h);
                 y += h;
+                if (i == rows - 1) {
+                    desk.setSelected(f, true);
+                }
             }
         }
     }

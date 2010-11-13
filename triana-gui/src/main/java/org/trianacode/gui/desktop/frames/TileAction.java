@@ -46,7 +46,9 @@ public class TileAction extends AbstractAction {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols && ((i * cols) + j < count); j++) {
-                TrianaDesktopView view = allframes[(i * cols) + j];
+                int next = (i * cols) + j;
+                boolean last = next == count - 1 ? true : false;
+                TrianaDesktopView view = allframes[next];
                 if (view instanceof FramesDesktopView) {
                     FramesDesktopView f = (FramesDesktopView) view;
                     if (!f.isClosed() && f.isIcon()) {
@@ -62,8 +64,13 @@ public class TileAction extends AbstractAction {
 
                         }
                     }
-                    f.setBounds(x, y, w, h);
-                    x += w;
+                    if (last) {
+                        f.setBounds(x, y, size.width - x, h);
+                        desk.setSelected(f, true);
+                    } else {
+                        f.setBounds(x, y, w, h);
+                        x += w;
+                    }
                 }
             }
             y += h;
