@@ -4,8 +4,7 @@ import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.main.TaskGraphPanel;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
+import javax.swing.border.*;
 import java.awt.*;
 
 /**
@@ -29,10 +28,45 @@ public class FramesDesktopView extends JInternalFrame implements TrianaDesktopVi
         scrollerForMainTriana.doLayout();
         setLayout(new BorderLayout());
         getContentPane().add(scrollerForMainTriana);
+        if (getBorder() instanceof CompoundBorder) {
+            // fix for big spaces around frames on mac - not perfect
+            if ("Aqua".equals(UIManager.getLookAndFeel().getID())) {
+                CompoundBorder cb = (CompoundBorder) getBorder();
+                setBorder(new CompoundBorder(new EmptyBorder(0, 0, 1, 1), cb.getInsideBorder()));
+            }
+        }
+
     }
 
     @Override
     public TaskGraphPanel getTaskgraphPanel() {
         return panel;
     }
+
+    private static class ShadowBorder extends AbstractBorder {
+
+        private static final Insets INSETS = new Insets(0, 0, 1, 1);
+
+        public Insets getBorderInsets(Component c) {
+            return INSETS;
+        }
+
+        public void paintBorder(Component c, Graphics g,
+                                int x, int y, int w, int h) {
+
+            Color shadow = UIManager.getColor("controlShadow");
+            if (shadow == null) {
+                shadow = Color.GRAY;
+            }
+            g.translate(x, y);
+            g.setColor(shadow);
+            g.fillRect(w - 1, 3, 1, h - 3);
+            g.fillRect(3, h - 1, w - 2, 1);
+//            g.fillRect(w, 1, 1, h - 1);
+//            g.fillRect(1, h - 1, w, 1);
+
+            g.translate(-x, -y);
+        }
+    }
+
 }

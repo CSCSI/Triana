@@ -9,6 +9,8 @@ import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import java.awt.*;
@@ -77,6 +79,9 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         container.add(topPanel, BorderLayout.NORTH);
         JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        Border b = new EtchedBorder(EtchedBorder.RAISED, Color.lightGray, Color.gray);
+        scroll.setBorder(b);
+
         scroll.setViewportView(desktop);
         scroll.doLayout();
         container.add(scroll, BorderLayout.CENTER);
