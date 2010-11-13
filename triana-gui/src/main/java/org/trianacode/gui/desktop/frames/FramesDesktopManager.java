@@ -73,7 +73,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         popup.add(new JMenuItem(new TileAction(this)));
         popup.add(new JMenuItem(new CascadeAction(this, offsetX, offsetY)));
         popup.add(new JMenuItem(new StripeAction(this)));
-        layout = new DropDownButton(GUIEnv.getIcon("comboarrow.png"), popup);
+        layout = new DropDownButton(GUIEnv.getIcon("layout-dropdown.png"), popup);
         topPanel.add(layout, BorderLayout.WEST);
         topPanel.add(butpanel, BorderLayout.CENTER);
         container.add(topPanel, BorderLayout.NORTH);
