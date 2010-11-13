@@ -147,11 +147,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         }
         resizeDesktop();
         if (frames.size() > 0) {
-            try {
-                frames.get(frames.size() - 1).setSelected(true);
-            } catch (PropertyVetoException e1) {
-                e1.printStackTrace();
-            }
+            setSelected(frames.get(frames.size() - 1), true);
         }
         for (DesktopViewListener listener : listeners) {
             listener.ViewClosed((TrianaDesktopView) frame);
@@ -172,8 +168,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     public void internalFrameActivated(InternalFrameEvent e) {
         JInternalFrame frame = e.getInternalFrame();
         if (frame instanceof FramesDesktopView) {
-            selected = (FramesDesktopView) frame;
-            selected.toFront();
+            setSelected((FramesDesktopView) frame, true);
             JButton b = buttons.get(selected);
             if (b != null) {
                 b.setSelected(true);
@@ -188,8 +183,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     public void internalFrameDeactivated(InternalFrameEvent e) {
         JInternalFrame frame = e.getInternalFrame();
         if (frame instanceof FramesDesktopView) {
-            selected = (FramesDesktopView) frame;
-            JButton b = buttons.get(selected);
+            JButton b = buttons.get(frame);
             if (b != null) {
                 b.setSelected(false);
             }
@@ -221,17 +215,9 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     public TrianaDesktopView newDesktopView(TaskGraphPanel panel) {
         FramesDesktopView frame = new FramesDesktopView(panel);
         frame.addInternalFrameListener(this);
-        desktop.add(frame);
-        try {
-            frame.setSelected(true);
-            frame.setIcon(false);
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
-        }
         frame.setBounds(offsetX * frames.size(), offsetY * frames.size(), 400, 300);
         frame.pack();
         setSize(frame);
-        frame.setVisible(true);
         frames.add(frame);
         String name = panel.getTaskGraph().getToolName();
         if (name.length() > 16) {
@@ -244,6 +230,8 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         butpanel.add(b);
         resizeDesktop();
         frame.addComponentListener(frameListener);
+        desktop.add(frame);
+        frame.setVisible(true);
         return frame;
     }
 
@@ -316,9 +304,9 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
                 if (sel) {
                     ((FramesDesktopView) view).setSelected(true);
                     ((FramesDesktopView) view).toFront();
+                    selected = (FramesDesktopView) view;
                 } else {
                     ((FramesDesktopView) view).setSelected(false);
-
                 }
             } catch (PropertyVetoException e) {
                 e.printStackTrace();
