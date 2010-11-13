@@ -128,6 +128,7 @@ public class ZoomAction extends AbstractAction implements ActionDisplayOptions {
                     panel.getContainer().invalidate();
                     panel.getContainer().validate();
                     panel.getContainer().repaint();
+
                 }
             }
         }

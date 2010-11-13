@@ -3,6 +3,8 @@ package org.trianacode.gui.desktop.frames;
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.hci.DropDownButton;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
 
@@ -46,7 +48,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
 
     private JPanel container;
     private JPanel butpanel;
-    private JScrollPane scroll;
+    private JButton layout;
 
     private int currMaxX = 0;
     private int currMaxY = 0;
@@ -57,19 +59,32 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
 
     public FramesDesktopManager() {
         container = new JPanel(new BorderLayout());
-        butpanel = new JPanel();
-        butpanel.setLayout(new BoxLayout(butpanel, BoxLayout.X_AXIS));
-        butpanel.add(Box.createRigidArea(new Dimension(1, 30)));
         this.desktop = new JDesktopPane();
         this.desktop.setDesktopManager(new RestrictedDesktopManager());
         this.desktop.addComponentListener(this);
         this.desktop.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-        container.add(butpanel, BorderLayout.NORTH);
-        container.add(desktop, BorderLayout.CENTER);
-        scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JPanel topPanel = new JPanel(new BorderLayout());
+
+        butpanel = new JPanel();
+        butpanel.setLayout(new BoxLayout(butpanel, BoxLayout.X_AXIS));
+        JPopupMenu popup = new JPopupMenu();
+        popup.add(new JMenuItem(new TileAction(this)));
+        popup.add(new JMenuItem(new CascadeAction(this, offsetX, offsetY)));
+        popup.add(new JMenuItem(new StripeAction(this)));
+        layout = new DropDownButton(GUIEnv.getIcon("comboarrow.png"), popup);
+        topPanel.add(layout, BorderLayout.WEST);
+        topPanel.add(butpanel, BorderLayout.CENTER);
+        container.add(topPanel, BorderLayout.NORTH);
+        JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroll.setViewportView(container);
+        scroll.setViewportView(desktop);
         scroll.doLayout();
+        container.add(scroll, BorderLayout.CENTER);
+
+    }
+
+    public JDesktopPane getDesktop() {
+        return desktop;
     }
 
     public void setSize(FramesDesktopView frame) {
@@ -101,7 +116,6 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
             }
         }
     }
-
 
     @Override
     public void internalFrameOpened(InternalFrameEvent e) {
@@ -195,7 +209,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
 
     @Override
     public Container getWorkspace() {
-        return scroll;
+        return container;
     }
 
     @Override
@@ -219,6 +233,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
             name = name.substring(0, 13) + "...";
         }
         JButton b = new JButton(name);
+        b.setSelected(true);
         b.addActionListener(new ButtonListener());
         buttons.put(frame, b);
         butpanel.add(b);
@@ -230,6 +245,9 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     private void resizeDesktop() {
         currMaxX = MIN_D_WIDTH;
         currMaxY = MIN_D_HEIGHT;
+        if (currMaxX < butpanel.getPreferredSize().width) {
+            currMaxX = butpanel.getPreferredSize().width;
+        }
         for (FramesDesktopView frame : frames) {
             if (!frame.isMaximum()) {
                 if (frame.getX() + frame.getWidth() > currMaxX) {
@@ -241,7 +259,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
             }
         }
         desktop.setPreferredSize(new Dimension(currMaxX, currMaxY));
-        desktop.revalidate();
+        container.revalidate();
     }
 
     @Override

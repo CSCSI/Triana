@@ -20,6 +20,7 @@ public class FramesDesktopView extends JInternalFrame implements TrianaDesktopVi
         super(panel.getTaskGraph().getToolName(),
                 true, true, true, false);
         this.panel = panel;
+
         JScrollPane scrollerForMainTriana = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollerForMainTriana.setViewportView(panel.getContainer());
