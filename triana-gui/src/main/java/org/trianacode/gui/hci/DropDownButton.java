@@ -12,10 +12,8 @@ import java.awt.event.MouseEvent;
  */
 public class DropDownButton extends JButton {
 
-    public static final String PROP_DROP_DOWN_MENU = "prop.drop.down.menu";
-
     private boolean mouseInButton = false;
-    private boolean mouseInArrowArea = false;
+    private JPopupMenu popup;
 
     private PopupMenuListener menuListener;
 
@@ -25,7 +23,7 @@ public class DropDownButton extends JButton {
     public DropDownButton(Icon icon, JPopupMenu popup) {
         super(icon);
 
-        putClientProperty(PROP_DROP_DOWN_MENU, popup);
+        this.popup = popup;
 
 
         addMouseListener(new MouseAdapter() {
@@ -107,11 +105,7 @@ public class DropDownButton extends JButton {
 
 
     JPopupMenu getPopupMenu() {
-        Object menu = getClientProperty(PROP_DROP_DOWN_MENU);
-        if (menu instanceof JPopupMenu) {
-            return (JPopupMenu) menu;
-        }
-        return null;
+        return popup;
     }
 
 
@@ -119,7 +113,7 @@ public class DropDownButton extends JButton {
         private boolean _pressed = false;
 
         public void setPressed(boolean b) {
-            if (mouseInArrowArea || _pressed)
+            if (_pressed)
                 return;
             super.setPressed(b);
         }
@@ -137,7 +131,6 @@ public class DropDownButton extends JButton {
 
         public void _release() {
             _pressed = false;
-            mouseInArrowArea = false;
             setArmed(false);
             setPressed(false);
             setRollover(false);
