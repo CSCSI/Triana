@@ -928,7 +928,7 @@ public class ApplicationFrame extends TrianaWindow
         TrianaDesktopViewManager tdvm = null;
 
         boolean tabbedView = Env.isTabbedView();
-        tabbedView = false;
+        tabbedView = true;
 
         if (tabbedView) {
             tdvm = TabManager.getManager();
@@ -952,11 +952,7 @@ public class ApplicationFrame extends TrianaWindow
 
         for (int count = 0; count < cont.length; count++) {
             TrianaDesktopView tdv = getDesktopViewManager().getDesktopViewFor(cont[count]);
-            if (tdv != null) {
-                closeTaskGraphPanel(tdv);
-            } else {
-                System.out.println("No desktopView found for taskgraphPanel : " + cont[count]);
-            }
+            closeTaskGraphPanel(tdv);
         }
     }
 
@@ -999,7 +995,6 @@ public class ApplicationFrame extends TrianaWindow
         if ((getSelectionHandler() != this) && (getSelectionHandler() instanceof ToolSelectionHandler)) {
             return ((ToolSelectionHandler) getSelectionHandler()).getSelectedTool();
         } else {
-            System.out.println("Nothing selected");
             return null;
         }
     }
