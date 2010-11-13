@@ -59,12 +59,6 @@
 
 package org.trianacode.gui.components.triana;
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
@@ -88,6 +82,8 @@ import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
 
 /**
  * The default ToolComponentModel for a task
@@ -174,7 +170,7 @@ public class TrianaComponentModel implements
      * Initialises the menu that appears when a tool is right-clicked in the workspace
      */
     private void initToolWorkspacePopup(ToolSelectionHandler selhandler) {
-        JMenuItem properties = new JMenuItem(ActionTable.getAction(Actions.PROERTIES_ACTION));
+        JMenuItem properties = new JMenuItem(ActionTable.getAction(Actions.PROPERTIES_ACTION));
         JMenuItem nodeeditor = new JMenuItem(ActionTable.getAction(Actions.NODE_EDITOR_ACTION));
         JMenuItem historytrack = new JMenuItem(ActionTable.getAction(Actions.HISTORY_TRACKING_ACTION));
         JMenuItem runcont = new RunContinuouslyMenuItem(selhandler);
@@ -212,7 +208,7 @@ public class TrianaComponentModel implements
     private void initGroupWorkspacePopup(ToolSelectionHandler selhandler) {
         JMenuItem open = new JMenuItem(ActionTable.getAction(Actions.OPEN_ACTION));
         open.setText(Env.getString("ViewGroup"));
-        JMenuItem properties = new JMenuItem(ActionTable.getAction(Actions.PROERTIES_ACTION));
+        JMenuItem properties = new JMenuItem(ActionTable.getAction(Actions.PROPERTIES_ACTION));
         JMenuItem control = new JMenuItem(ActionTable.getAction(Actions.CONTROL_PROERTIES_ACTION));
         //JMenuItem publish = new JMenuItem(ActionTable.getAction(Actions.CREATE_SERVICE_ACTION));
         JMenuItem script = new JMenuItem(ActionTable.getAction(Actions.RUN_SCRIPT_ACTION));
@@ -390,7 +386,7 @@ public class TrianaComponentModel implements
      *         default tool action is used; to do nothing return a DoNothingAction.
      */
     public Action getTaskAction(Task task) {
-        return ActionTable.getAction(Actions.PROERTIES_ACTION);
+        return ActionTable.getAction(Actions.PROPERTIES_ACTION);
     }
 
 

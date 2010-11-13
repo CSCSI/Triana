@@ -65,19 +65,26 @@ import org.trianacode.gui.action.files.OpenRecentListener;
 import org.trianacode.gui.action.files.OptionsMenuHandler;
 import org.trianacode.gui.action.tools.ToolImportAction;
 import org.trianacode.gui.action.tools.ToolsMenuHandler;
+import org.trianacode.gui.desktop.DesktopViewController;
+import org.trianacode.gui.desktop.frames.FramesDesktopManager;
+import org.trianacode.gui.desktop.tabbedPane.TabManager;
 import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
  * This is the main Triana menu that sits at the top of the main Application Frame. It almagamates code from
  * TrianaWindow, MainTrianaBaseWindow and ApplicationFrame.
  */
-public class TrianaMainMenu extends JMenuBar implements Actions {
+public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeListener {
 
     /**
      * Reference to the ApplicationFrame that this menu is attached to.
@@ -112,6 +119,8 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
      * The listener for the recent files list.
      */
     private OpenRecentListener openRecentListener;
+
+    private List<JCheckBoxMenuItem> desktopActions = new ArrayList<JCheckBoxMenuItem>();
 
 
     public TrianaMainMenu(ApplicationFrame parentWindow, ToolTable tools) {
@@ -243,10 +252,18 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         optionsMenu.addSeparator();
         MenuMnemonics.getInstance().createMenuItem(Env.getString("TrianaOptionTitle"), optionsMenu, optionsMenuHandler);
         optionsMenu.addSeparator();
-        item = MenuMnemonics.getInstance().createCheckBoxMenuItem("Tabbed view", optionsMenu, optionsMenuHandler);
-        item.setEnabled(Env.isTabbedView());
-        optionsMenu.add(item);        
-        
+
+        JCheckBoxMenuItem tabbedDesktop = new JCheckBoxMenuItem(ActionTable.getAction(Actions.TABBED_DESKTOP_VIEW));
+        tabbedDesktop.setSelected(DesktopViewController.getCurrentView() == TabManager.getManager());
+        ActionTable.getAction(Actions.TABBED_DESKTOP_VIEW).addPropertyChangeListener(this);
+        optionsMenu.add(tabbedDesktop);
+        desktopActions.add(tabbedDesktop);
+        JCheckBoxMenuItem virtualDesktop = new JCheckBoxMenuItem(ActionTable.getAction(Actions.VIRTUAL_DESKTOP_VIEW));
+        virtualDesktop.setSelected(DesktopViewController.getCurrentView() == FramesDesktopManager.getManager());
+        optionsMenu.add(virtualDesktop);
+        desktopActions.add(virtualDesktop);
+        ActionTable.getAction(Actions.VIRTUAL_DESKTOP_VIEW).addPropertyChangeListener(this);
+
 
         runMenu = MenuMnemonics.getInstance().createMenu(Env.getString("Run"));
         runMenu.add(new JMenuItem(ActionTable.getAction(RUN_ACTION)));
@@ -307,4 +324,19 @@ public class TrianaMainMenu extends JMenuBar implements Actions {
         updateRecentMenu();
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getPropertyName().equals(Actions.DESKTOP_CHANGE_PROPERTY)) {
+            for (JCheckBoxMenuItem item : desktopActions) {
+                Action a = item.getAction();
+                if (a != null) {
+                    if (!a.getValue(AbstractAction.NAME).equals(propertyChangeEvent.getNewValue())) {
+                        item.setSelected(false);
+                    }
+                }
+            }
+
+
+        }
+    }
 }

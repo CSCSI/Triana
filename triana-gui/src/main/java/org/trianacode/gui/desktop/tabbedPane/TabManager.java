@@ -3,10 +3,12 @@ package org.trianacode.gui.desktop.tabbedPane;
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -31,11 +33,11 @@ public class TabManager implements TrianaDesktopViewManager {
     private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
 
 
-    public static TabManager getManager(){
+    public static TabManager getManager() {
         return manager;
     }
 
-    public TabManager(){
+    public TabManager() {
         this.tabbedPane = new TrianaTabbedPane();
 
     }
@@ -51,25 +53,27 @@ public class TabManager implements TrianaDesktopViewManager {
         tabs.add(tab);
 
         String name = panel.getTaskGraph().getToolName();
-        if(name.equals("")){
+        if (name.equals("")) {
             name = "Untitled";
         }
         JPanel tabHeader = new JPanel(new BorderLayout());
-        tabHeader.add(new JLabel(name), BorderLayout.CENTER);
-        JButton close = new JButton("x");
-        close.addActionListener(new ActionListener(){
+        JLabel nameLab = new JLabel(name);
+        nameLab.setBorder(new EmptyBorder(0, 0, 0, 0));
+        tabHeader.setOpaque(false);
+        tabHeader.add(nameLab, BorderLayout.CENTER);
+        JButton close = new JButton(GUIEnv.getIcon("close.png"));
+        close.setRolloverEnabled(true);
+        close.setRolloverIcon(GUIEnv.getIcon("closehover.png"));
+        close.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 remove(tab);
                 tabbedPane.remove(tab);
             }
         });
         close.setOpaque(false);
-        close.setPreferredSize(new Dimension(17, 17));
         close.setToolTipText("close this tab");
-        close.setContentAreaFilled(false);
         close.setFocusable(false);
-        close.setBorder(BorderFactory.createEtchedBorder());
-        close.setBorderPainted(false);
+        close.setBorder(new EmptyBorder(0, 10, 0, 0));
 
         tabHeader.add(close, BorderLayout.EAST);
         tabbedPane.addTab(name, tab);
@@ -114,7 +118,6 @@ public class TabManager implements TrianaDesktopViewManager {
 
     @Override
     public TrianaDesktopView[] getViews() {
-        System.out.println("Views : " + tabs.size() + tabs);
         return tabs.toArray(new TrianaDesktopView[tabs.size()]);
     }
 
@@ -155,16 +158,29 @@ public class TabManager implements TrianaDesktopViewManager {
         }
     }
 
-    class TrianaTabbedPane extends JTabbedPane{
-        public TrianaTabbedPane(){
+    @Override
+    public void desktopRemoved() {
+        tabs.clear();
+        listeners.clear();
+        tabbedPane.removeAll();
+        selected = null;
+    }
+
+    @Override
+    public void desktopAdded() {
+        for (DesktopViewListener listener : listeners) {
+            listener.desktopChanged(this);
+        }
+    }
+
+    class TrianaTabbedPane extends JTabbedPane {
+        public TrianaTabbedPane() {
             this.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent evt) {
-                    final TabView tab = (TabView)tabbedPane.getSelectedComponent();
-                    if(tab != null){
-                        System.out.println("Selected panel is : " + tab.getTitle());
+                    final TabView tab = (TabView) tabbedPane.getSelectedComponent();
+                    if (tab != null) {
                         selected = getDesktopViewFor(tab.getTaskgraphPanel());
-                    }else{
-                        System.out.println("No tabs in pane");
+                    } else {
                         selected = null;
                     }
                 }

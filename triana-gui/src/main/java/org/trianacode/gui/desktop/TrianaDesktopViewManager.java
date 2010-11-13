@@ -35,5 +35,9 @@ public interface TrianaDesktopViewManager {
 
     public void setTitle(TrianaDesktopView view, String title);
 
+    public void desktopRemoved();
+
+    public void desktopAdded();
+
 
 }

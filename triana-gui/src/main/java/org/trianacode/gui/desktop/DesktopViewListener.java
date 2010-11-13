@@ -11,4 +11,6 @@ public interface DesktopViewListener {
     public void ViewClosed(TrianaDesktopView view);
 
     public void ViewOpened(TrianaDesktopView view);
+
+    public void desktopChanged(TrianaDesktopViewManager manager);
 }

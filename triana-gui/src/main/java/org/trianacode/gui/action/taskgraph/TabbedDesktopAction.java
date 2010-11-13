@@ -56,106 +56,42 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.gui.action.files;
+package org.trianacode.gui.action.taskgraph;
 
-import org.trianacode.gui.hci.OptionsHandler;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
-import org.trianacode.util.UserPropertyEvent;
-import org.trianacode.util.UserPropertyListener;
+import org.trianacode.gui.action.ActionDisplayOptions;
+import org.trianacode.gui.action.Actions;
+import org.trianacode.gui.desktop.DesktopViewController;
+import org.trianacode.gui.desktop.DesktopViewListener;
+import org.trianacode.gui.desktop.tabbedPane.TabManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
 
 /**
- * Class that handles events and actions for the Tools menu, including New Tool, Compile and Edit Tool Box Paths.
+ * Action class to handle all "clear" actions.
  *
  * @author Matthew Shields
  * @version $Revision: 4048 $
  */
-public class OptionsMenuHandler implements ActionListener, ItemListener, UserPropertyListener {
+public class TabbedDesktopAction extends AbstractAction implements ActionDisplayOptions {
 
-    private ToolTable tools;
+    private DesktopViewListener listener;
 
-    /**
-     * an array of the debug window listener abstract buttons
-     */
-    private ArrayList debuglisteners = new ArrayList();
-
-
-    public OptionsMenuHandler(ToolTable tools) {
-        this.tools = tools;
-        Env.addUserPropertyListener(this);
+    public TabbedDesktopAction(DesktopViewListener listener) {
+        super();
+        this.listener = listener;
+        putValue(SHORT_DESCRIPTION, Actions.TABBED_DESKTOP_VIEW);
+        putValue(ACTION_COMMAND_KEY, Actions.TABBED_DESKTOP_VIEW);
+        putValue(NAME, Actions.TABBED_DESKTOP_VIEW);
     }
-
-
-    /**
-     * Adds a abstract button to monitor the visibility of the debug window
-     */
-    public void addMonitorDebugWindow(AbstractButton button) {
-        if (!debuglisteners.contains(button)) {
-            debuglisteners.add(button);
-            button.setSelected(Env.isDebugVisible());
-        }
-    }
-
-    /**
-     * Adds a abstract button to monitor the visibility of the debug window
-     */
-    public void removeMonitorDebugWindow(AbstractButton button) {
-        debuglisteners.remove(button);
-    }
-
 
     /**
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        String label = e.getActionCommand();
-        if (label.equals(Env.getString("TrianaOptionTitle"))) {
-            handleOptions();
-        }
-    }
-
-    /**
-     * Invoked when an item has been selected or deselected by the user. The code written for this method performs the
-     * operations that need to occur when an item is selected (or deselected).
-     */
-    public void itemStateChanged(ItemEvent e) {
-        if (e.getItem() instanceof AbstractButton) {
-            String label = ((AbstractButton) e.getItem()).getText();
-
-            if (label.equals(Env.getString("DebugWindow"))) {
-                Env.setDebugVisible(e.getStateChange() == ItemEvent.SELECTED);
-            }
-        }
-    }
-
-
-    /**
-     * display the options dialog
-     */
-    private void handleOptions() {
-        new OptionsHandler(tools);
-    }
-
-
-    /**
-     * Notified when a user property changes
-     */
-    public void userPropertyChanged(UserPropertyEvent event) {
-        if (event.getPropertyName().equals(Env.DEBUG_VISIBLE_STR)) {
-            AbstractButton[] copy = (AbstractButton[]) debuglisteners
-                    .toArray(new AbstractButton[debuglisteners.size()]);
-
-            for (int count = 0; count < copy.length; count++) {
-                copy[count].setSelected(Env.isDebugVisible());
-            }
-        }
+        firePropertyChange(Actions.DESKTOP_CHANGE_PROPERTY, null
+                , Actions.TABBED_DESKTOP_VIEW);
+        DesktopViewController.swapView(TabManager.getManager(), listener);
     }
 
 }

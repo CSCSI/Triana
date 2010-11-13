@@ -144,6 +144,7 @@ public class MenuMnemonics {
         assignAMnemonic(m, menu, name);
         m.addItemListener(target);
         menu.add(m);
+
         return m;
     }
 

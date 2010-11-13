@@ -106,7 +106,7 @@ public class TrianaUnitToolBar extends AbstractToolBar implements Actions {
         stop = createButton(ActionTable.getAction(PAUSE_ACTION));
         reset = createButton(ActionTable.getAction(RESET_ACTION));
 
-        properties = createButton(ActionTable.getAction(PROERTIES_ACTION));
+        properties = createButton(ActionTable.getAction(PROPERTIES_ACTION));
 
         group = createButton(ActionTable.getAction(GROUP_ACTION));
         ungroup = createButton(ActionTable.getAction(UNGROUP_ACTION));

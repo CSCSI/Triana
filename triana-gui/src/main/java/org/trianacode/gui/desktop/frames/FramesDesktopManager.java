@@ -60,6 +60,10 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     private JDesktopPane desktop;
 
     public FramesDesktopManager() {
+        init();
+    }
+
+    private void init() {
         container = new JPanel(new BorderLayout());
         this.desktop = new JDesktopPane();
         this.desktop.setDesktopManager(new RestrictedDesktopManager());
@@ -169,7 +173,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         JInternalFrame frame = e.getInternalFrame();
         if (frame instanceof FramesDesktopView) {
             setSelected((FramesDesktopView) frame, true);
-            JButton b = buttons.get(selected);
+            JButton b = buttons.get(frame);
             if (b != null) {
                 b.setSelected(true);
             }
@@ -222,6 +226,9 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         String name = panel.getTaskGraph().getToolName();
         if (name.length() > 16) {
             name = name.substring(0, 13) + "...";
+        }
+        for (JButton button : buttons.values()) {
+            button.setSelected(false);
         }
         JButton b = new JButton(name);
         b.setSelected(true);
@@ -344,6 +351,32 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     public void setTitle(TrianaDesktopView view, String title) {
         if (view instanceof FramesDesktopView) {
             ((FramesDesktopView) view).setTitle(title);
+        }
+    }
+
+    @Override
+    public void desktopRemoved() {
+        selected = null;
+        for (FramesDesktopView frame : frames) {
+            desktop.getDesktopManager().closeFrame(frame);
+            desktop.remove(frame);
+            JButton b = buttons.remove(frame);
+            if (b != null) {
+                butpanel.remove(b);
+                butpanel.revalidate();
+            }
+        }
+        frames.clear();
+        listeners.clear();
+        buttons.clear();
+
+        selected = null;
+    }
+
+    @Override
+    public void desktopAdded() {
+        for (DesktopViewListener listener : listeners) {
+            listener.desktopChanged(this);
         }
     }
 

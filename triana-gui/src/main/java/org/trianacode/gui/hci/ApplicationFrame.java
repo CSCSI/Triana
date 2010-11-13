@@ -80,11 +80,10 @@ import org.trianacode.gui.components.script.ScriptComponentModel;
 import org.trianacode.gui.components.text.TextToolComponentModel;
 import org.trianacode.gui.components.triana.TrianaColorModel;
 import org.trianacode.gui.components.triana.TrianaComponentModel;
+import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
-import org.trianacode.gui.desktop.frames.FramesDesktopManager;
-import org.trianacode.gui.desktop.tabbedPane.TabManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.*;
@@ -175,7 +174,7 @@ public class ApplicationFrame extends TrianaWindow
     /**
      * the main workspace containing the tools panel and the main trianas
      */
-    private Container workspace = null;
+    private Container workspace = new JPanel(new BorderLayout());
 
     /**
      * The leaf listener that handles all mouse events on desktop panes.
@@ -403,7 +402,7 @@ public class ApplicationFrame extends TrianaWindow
         ActionTable.putAction(ActionTable.DELETE_REFERENCES_ACTION, new DeleteRefsAction(this));
         ActionTable.putAction(ActionTable.RENAME_ACTION, new RenameAction(this));
 
-        ActionTable.putAction(ActionTable.PROERTIES_ACTION, new PropertiesAction(this));
+        ActionTable.putAction(ActionTable.PROPERTIES_ACTION, new PropertiesAction(this));
         ActionTable.putAction(ActionTable.CONTROL_PROERTIES_ACTION, new ControlPropertiesAction(this));
         ActionTable.putAction(ActionTable.NODE_EDITOR_ACTION, new NodeEditorAction(this));
         ActionTable.putAction(ActionTable.HISTORY_TRACKING_ACTION, new HistoryTrackingAction(this));
@@ -432,6 +431,10 @@ public class ApplicationFrame extends TrianaWindow
         ActionTable.putAction(ActionTable.ADD_TRIGGER_NODE_ACTION, new AddTriggerAction(this));
         ActionTable.putAction(ActionTable.REMOVE_TRIGGER_NODE_ACTION, new RemoveTriggerAction(this));
         ActionTable.putAction(ActionTable.TOGGLE_ERROR_NODE_ACTION, new ToggerErrorAction(this));
+
+        ActionTable.putAction(Actions.TABBED_DESKTOP_VIEW, new TabbedDesktopAction(this));
+        ActionTable.putAction(Actions.VIRTUAL_DESKTOP_VIEW, new VirtualDesktopAction(this));
+
     }
 
     /**
@@ -497,6 +500,7 @@ public class ApplicationFrame extends TrianaWindow
      */
     private void initLayout() {
 
+        GUIEnv.setApplicationFrame(this);
         ColorManager.setDefaultColorModel(new TrianaColorModel());
         ColorManager.registerColorModel(ScriptConstants.SCRIPT_RENDERING_HINT, new ScriptColorModel());
 
@@ -524,11 +528,11 @@ public class ApplicationFrame extends TrianaWindow
         TrianaShutdownHook shutDownHook = new TrianaShutdownHook();
         Runtime.getRuntime().addShutdownHook(shutDownHook);
         getDesktopViewManager().addDesktopViewListener(this);
-        this.workspace = getDesktopViewManager().getWorkspace();
+        this.workspace.add(getDesktopViewManager().getWorkspace(), BorderLayout.CENTER);
 
 
         ((TrianaMainMenu) trianaMenuBar).addHelp();
-        GUIEnv.setApplicationFrame(this);
+
 
         ToolTreeModel treemodel = new ToolTreeModel(tools);
         toolboxTree = new JTree(treemodel);
@@ -917,26 +921,13 @@ public class ApplicationFrame extends TrianaWindow
                         parents.remove(comp);
                         comp.getTaskGraph().dispose();
                     }
-                    //getDesktopViewManager().remove(view);
                 }
-
             }
         });
     }
 
     public TrianaDesktopViewManager getDesktopViewManager() {
-        TrianaDesktopViewManager tdvm = null;
-
-        boolean tabbedView = Env.isTabbedView();
-        tabbedView = true;
-
-        if (tabbedView) {
-            tdvm = TabManager.getManager();
-        } else {
-            tdvm = FramesDesktopManager.getManager();
-        }
-
-        return tdvm;
+        return DesktopViewController.getCurrentView();
     }
 
 
@@ -1207,6 +1198,17 @@ public class ApplicationFrame extends TrianaWindow
     @Override
     public void ViewOpened(TrianaDesktopView view) {
         selected = view.getTaskgraphPanel();
+    }
+
+    @Override
+    public void desktopChanged(TrianaDesktopViewManager manager) {
+        if (workspace.getComponentCount() > 0) {
+            workspace.remove(0);
+            workspace.add(manager.getWorkspace());
+            workspace.invalidate();
+            workspace.validate();
+            workspace.repaint();
+        }
     }
 
 

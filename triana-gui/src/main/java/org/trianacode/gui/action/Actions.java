@@ -89,7 +89,7 @@ public interface Actions {
     public static final String DELETE_REFERENCES_ACTION = "deleteReferences";
     public static final String RENAME_ACTION = "rename";
 
-    public static final String PROERTIES_ACTION = "properties";
+    public static final String PROPERTIES_ACTION = "properties";
     public static final String CONTROL_PROERTIES_ACTION = "controlProperties";
     public static final String NODE_EDITOR_ACTION = "nodeEditor";
     public static final String HISTORY_TRACKING_ACTION = "historyTracking";
@@ -136,4 +136,8 @@ public interface Actions {
     public static final String REMOVE_TRIGGER_NODE_ACTION = "removeTriggerNode";
     public static final String TOGGLE_ERROR_NODE_ACTION = "toggleErrorNode";
 
+    public static final String TABBED_DESKTOP_VIEW = "Tabbed Desktop";
+    public static final String VIRTUAL_DESKTOP_VIEW = "Virtual Desktop";
+
+    public static final String DESKTOP_CHANGE_PROPERTY = "desktop.change.property";
 }
