@@ -61,6 +61,7 @@ public class FileUnit {
                 int number = dso.getNumberFiles();
                 log("Found number of files from settings object : " + number);
                 thisFile.setNumberOfFiles(number);
+                numberOfFiles = number;
             }
 
             else if(object instanceof DaxJobChunk){
