@@ -937,6 +937,7 @@ public class ApplicationFrame extends TrianaWindow
      * he/she really wants to quit or not.
      */
     public void cleanUp() {
+        Env.writeConfig();
         Env.stopConfigWriters();
 
         TaskGraphPanel[] cont = parents.toArray(new TaskGraphPanel[parents.size()]);
@@ -1209,6 +1210,10 @@ public class ApplicationFrame extends TrianaWindow
             workspace.validate();
             workspace.repaint();
         }
+    }
+
+    public void repaintWorkspace() {
+        workspace.repaint();
     }
 
 

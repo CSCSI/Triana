@@ -59,18 +59,11 @@
 
 package org.trianacode.gui.components.triana;
 
-import java.awt.Color;
-
-import org.trianacode.gui.hci.color.CableColorModel;
-import org.trianacode.gui.hci.color.ColorTable;
-import org.trianacode.gui.hci.color.NodeColorModel;
-import org.trianacode.gui.hci.color.TrianaColorConstants;
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.gui.hci.color.*;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.awt.*;
 
 /**
  * The color model for standard Triana componenets
@@ -78,7 +71,7 @@ import org.trianacode.taskgraph.tool.Tool;
  * @author Ian Wang
  * @version $Revision: 4048 $
  */
-public class TrianaColorModel implements NodeColorModel, CableColorModel, TrianaColorConstants {
+public class TrianaColorModel implements NodeColorModel, CableColorModel, BackgroundColorModel, TrianaColorConstants {
 
     private static final Color DEFAULT_COLOR = new Color(190, 190, 255);
     private static final Color GROUP_COLOR = new Color(220, 220, 90);
@@ -91,7 +84,7 @@ public class TrianaColorModel implements NodeColorModel, CableColorModel, Triana
         ColorTable.instance().initDefaultColor(this, GROUP_TOOL_COLOR, GROUP_COLOR);
         ColorTable.instance().initDefaultColor(this, ERROR_TOOL_COLOR, DEFAULT_ERROR_COLOR);
         ColorTable.instance().initDefaultColor(this, NAME_COLOR, Color.black);
-        ColorTable.instance().initDefaultColor(this, UNCONNECTED_NODE_COLOR, Color.black);
+        ColorTable.instance().initDefaultColor(this, NODE_COLOR, Color.black);
         ColorTable.instance().initDefaultColor(this, TRIGGER_NODE_COLOR, Color.red);
         ColorTable.instance().initDefaultColor(this, ERROR_NODE_COLOR, Color.blue);
         ColorTable.instance().initDefaultColor(this, PROGRESS_COLOR, Color.blue);
@@ -99,6 +92,8 @@ public class TrianaColorModel implements NodeColorModel, CableColorModel, Triana
         ColorTable.instance().initDefaultColor(this, SHOW_TOOL_UNCONNECTED_COLOR, FORSHOW_UNCONNECTED_COLOR);
         ColorTable.instance().initDefaultColor(this, CABLE_COLOR, Color.black);
         ColorTable.instance().initDefaultColor(this, CONTROL_CABLE_COLOR, Color.red);
+        ColorTable.instance().initDefaultColor(this, BACKGROUND_COLOR, Color.lightGray);
+
     }
 
     /**
@@ -113,9 +108,9 @@ public class TrianaColorModel implements NodeColorModel, CableColorModel, Triana
      */
     public String[] getColorNames() {
         return new String[]{TOOL_COLOR, GROUP_TOOL_COLOR, ERROR_TOOL_COLOR, NAME_COLOR,
-                UNCONNECTED_NODE_COLOR, TRIGGER_NODE_COLOR, ERROR_NODE_COLOR,
+                NODE_COLOR, TRIGGER_NODE_COLOR, ERROR_NODE_COLOR,
                 PROGRESS_COLOR, SHOW_TOOL_CONNECTED_COLOR,
-                SHOW_TOOL_UNCONNECTED_COLOR, CABLE_COLOR};
+                SHOW_TOOL_UNCONNECTED_COLOR, CABLE_COLOR, BACKGROUND_COLOR};
     }
 
     /**
@@ -178,7 +173,7 @@ public class TrianaColorModel implements NodeColorModel, CableColorModel, Triana
             }
         }
 
-        return ColorTable.instance().getColor(this, UNCONNECTED_NODE_COLOR);
+        return ColorTable.instance().getColor(this, NODE_COLOR);
     }
 
     @Override
@@ -188,5 +183,10 @@ public class TrianaColorModel implements NodeColorModel, CableColorModel, Triana
             return ColorTable.instance().getColor(this, CONTROL_CABLE_COLOR);
         }
         return ColorTable.instance().getColor(this, CABLE_COLOR);
+    }
+
+    @Override
+    public Color getBackground() {
+        return ColorTable.instance().getColor(this, BACKGROUND_COLOR);
     }
 }

@@ -219,7 +219,7 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
     public TrianaDesktopView newDesktopView(TaskGraphPanel panel) {
         FramesDesktopView frame = new FramesDesktopView(panel);
         frame.addInternalFrameListener(this);
-        frame.setBounds(offsetX * frames.size(), offsetY * frames.size(), 400, 300);
+        frame.setBounds(offsetX * (frames.size() + 1), offsetY * (frames.size() + 1), 400, 300);
         frame.pack();
         setSize(frame);
         frames.add(frame);

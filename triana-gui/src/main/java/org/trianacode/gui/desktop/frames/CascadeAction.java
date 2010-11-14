@@ -43,7 +43,7 @@ public class CascadeAction extends AbstractAction {
                     } catch (PropertyVetoException ignored) {
                     }
                 }
-                f.setBounds(new Rectangle(offX * i, offY * i, f.getWidth(), f.getHeight()));
+                f.setBounds(new Rectangle(offX * (i + 1), offY * (i + 1), f.getWidth(), f.getHeight()));
                 if (i == count - 1) {
                     desk.setSelected(f, true);
                 }

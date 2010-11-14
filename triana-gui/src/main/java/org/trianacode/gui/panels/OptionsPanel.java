@@ -58,34 +58,6 @@
  */
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.util.Hashtable;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpringLayout;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.trianacode.gui.SpringUtilities;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
@@ -95,6 +67,18 @@ import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.util.Hashtable;
 
 /**
  * The main options panel for Triana user settings
@@ -131,6 +115,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     private JPanel externalPanel;
 
     public void okClicked() {
+        GUIEnv.getApplicationFrame().repaintWorkspace();
         super.okClicked();
     }
 
@@ -152,7 +137,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     public void init() {
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("General", getGeneralPanel());
-        tabs.addTab("External Tools", getExternalTools());
+        //tabs.addTab("External Tools", getExternalTools());
         tabs.addTab("Colours", getColourChooser());
 
         this.setLayout(new BorderLayout());
@@ -252,7 +237,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
      */
     public boolean validateChanges() {
         boolean valid = true;
-        Env.setUserProperty(VALIDATE_TOOLS, String.valueOf(validateToolsChk.isSelected()));
+        //Env.setUserProperty(VALIDATE_TOOLS, String.valueOf(validateToolsChk.isSelected()));
         GUIEnv.setAutoConnect(autoconnectChk.isSelected());
         GUIEnv.setRestoreLast(restoreChk.isSelected());
         GUIEnv.setPopUpDescriptions(enableTipsChk.isSelected());
@@ -261,48 +246,64 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
         GUIEnv.setSmoothCables(smoothCables.isSelected());
         Env.setConvertToDouble(convertToDoubleChk.isSelected());
 
-        if (validateToolsChk.isSelected() && !testValidTool(htmlViewerTextField)) {
-            invalidToolName = htmlViewerTextField.getText();
-            htmlViewerTextField.setText(Env.getString("defaultViewer"));
-            htmlViewerTextField.setCaretPosition(0);
-            valid = false;
-        } else {
-            GUIEnv.setHTMLViewerCommand(htmlViewerTextField.getText());
-        }
-
-        if (validateToolsChk.isSelected() && !testValidTool(htmlEditorTextField)) {
-            if (valid) {
-                valid = false;
-                invalidToolName = htmlEditorTextField.getText();
-                htmlEditorTextField.setText(Env.getString("defaultEditor"));
-                htmlEditorTextField.setCaretPosition(0);
-            }
-        } else {
-            GUIEnv.setHTMLEditorCommand(htmlEditorTextField.getText());
-        }
-
-        if (validateToolsChk.isSelected() && !testValidTool(codeEditorTextField)) {
-            if (valid) {
-                valid = false;
-                invalidToolName = codeEditorTextField.getText();
-                codeEditorTextField.setText(Env.getString("defaultEditor"));
-                codeEditorTextField.setCaretPosition(0);
-            }
-        } else {
-            GUIEnv.setJavaEditorCommand(codeEditorTextField.getText());
-        }
-
-        if (validateToolsChk.isSelected() && !testValidTool(javacTextField)) {
-            if (valid) {
-                valid = false;
-                invalidToolName = javacTextField.getText();
-                javacTextField.setText(Env.getCompilerCommand());
-                javacTextField.setCaretPosition(0);
-            }
-        } else {
-            Env.setCompilerCommand(javacTextField.getText());
-        }
-        return valid;
+//        if (validateToolsChk.isSelected() && !testValidTool(htmlViewerTextField)) {
+//            invalidToolName = htmlViewerTextField.getText();
+//            htmlViewerTextField.setText(Env.getString("defaultViewer"));
+//            htmlViewerTextField.setCaretPosition(0);
+//            valid = false;
+//        } else {
+//            if(htmlViewerTextField.getText().trim().length() == 0) {
+//                htmlViewerTextField.setText(Env.getString("defaultViewer"));
+//            } else {
+//                GUIEnv.setHTMLViewerCommand(htmlViewerTextField.getText());
+//            }
+//        }
+//
+//        if (validateToolsChk.isSelected() && !testValidTool(htmlEditorTextField)) {
+//            if (valid) {
+//                valid = false;
+//                invalidToolName = htmlEditorTextField.getText();
+//                htmlEditorTextField.setText(Env.getString("defaultEditor"));
+//                htmlEditorTextField.setCaretPosition(0);
+//            }
+//        } else {
+//            if (htmlEditorTextField.getText().trim().length() == 0) {
+//                htmlEditorTextField.setText(Env.getString("defaultEditor"));
+//            } else {
+//                GUIEnv.setHTMLEditorCommand(htmlEditorTextField.getText());
+//            }
+//        }
+//
+//        if (validateToolsChk.isSelected() && !testValidTool(codeEditorTextField)) {
+//            if (valid) {
+//                valid = false;
+//                invalidToolName = codeEditorTextField.getText();
+//                codeEditorTextField.setText(Env.getString("defaultEditor"));
+//                codeEditorTextField.setCaretPosition(0);
+//            }
+//        } else {
+//            if (codeEditorTextField.getText().trim().length() == 0) {
+//                codeEditorTextField.setText(Env.getString("defaultEditor"));
+//            } else {
+//                GUIEnv.setJavaEditorCommand(codeEditorTextField.getText());
+//            }
+//        }
+//
+//        if (validateToolsChk.isSelected() && !testValidTool(javacTextField)) {
+//            if (valid) {
+//                valid = false;
+//                invalidToolName = javacTextField.getText();
+//                javacTextField.setText(Env.getCompilerCommand());
+//                javacTextField.setCaretPosition(0);
+//            }
+//        } else {
+//            if (javacTextField.getText().trim().length() == 0) {
+//                javacTextField.setText(Env.getCompilerCommand());
+//            } else {
+//                Env.setCompilerCommand(javacTextField.getText());
+//            }
+//        }
+        return true;
     }
 
 
@@ -317,6 +318,9 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
      * @see #validateChanges tester for the individual fields
      */
     private boolean testValidTool(JTextField tool) {
+        if (tool.getText().trim().length() == 0) {
+            return true;
+        }
         if (tool.getText().equals(Env.getString("defaultEditor"))
                 || tool.getText().equals(Env.getString("defaultViewer"))) {
             return true;
@@ -465,35 +469,35 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == classpathButton) {
-            handleClasspath();
-        } else {
-            TFileChooser chooser = new TFileChooser();
-            chooser.setMultiSelectionEnabled(false);
-            chooser.setDialogTitle("Select " + e.getActionCommand());
-            chooser.setApproveButtonText(Env.getString("OK"));
-            int result = chooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                if (e.getActionCommand().equals(Env.getString("helpViewer"))) {
-                    htmlViewerTextField.setText(chooser.getSelectedFile().getAbsolutePath());
-                    htmlViewerTextField.setCaretPosition(0);
-
-                } else if (e.getActionCommand().equals(Env.getString("htmlEditor"))) {
-                    htmlEditorTextField.setText(chooser.getSelectedFile().getAbsolutePath());
-                    htmlEditorTextField.setCaretPosition(0);
-
-                } else if (e.getActionCommand().equals(Env.getString("codeEditor"))) {
-                    codeEditorTextField.setText(chooser.getSelectedFile().getAbsolutePath());
-                    codeEditorTextField.setCaretPosition(0);
-
-                } else if (e.getActionCommand().equals(Env.getString("javaCompiler"))) {
-                    javacTextField.setText(chooser.getSelectedFile().getAbsolutePath());
-                    javacTextField.setCaretPosition(0);
-
-                }
-            }
-        }
+//        if (e.getSource() == classpathButton) {
+//            handleClasspath();
+//        } else {
+//            TFileChooser chooser = new TFileChooser();
+//            chooser.setMultiSelectionEnabled(false);
+//            chooser.setDialogTitle("Select " + e.getActionCommand());
+//            chooser.setApproveButtonText(Env.getString("OK"));
+//            int result = chooser.showOpenDialog(this);
+//
+//            if (result == JFileChooser.APPROVE_OPTION) {
+//                if (e.getActionCommand().equals(Env.getString("helpViewer"))) {
+//                    htmlViewerTextField.setText(chooser.getSelectedFile().getAbsolutePath());
+//                    htmlViewerTextField.setCaretPosition(0);
+//
+//                } else if (e.getActionCommand().equals(Env.getString("htmlEditor"))) {
+//                    htmlEditorTextField.setText(chooser.getSelectedFile().getAbsolutePath());
+//                    htmlEditorTextField.setCaretPosition(0);
+//
+//                } else if (e.getActionCommand().equals(Env.getString("codeEditor"))) {
+//                    codeEditorTextField.setText(chooser.getSelectedFile().getAbsolutePath());
+//                    codeEditorTextField.setCaretPosition(0);
+//
+//                } else if (e.getActionCommand().equals(Env.getString("javaCompiler"))) {
+//                    javacTextField.setText(chooser.getSelectedFile().getAbsolutePath());
+//                    javacTextField.setCaretPosition(0);
+//
+//                }
+//            }
+//        }
     }
 
     private void handleClasspath() {
@@ -530,12 +534,12 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     }
 
     public void windowDeactivated(WindowEvent e) {
-        if (paramwin.isAccepted()) {
-            ClassPathPanel classPathPanel = ((ClassPathPanel) paramwin.getParameterPanel());
-            if (classPathPanel.isRetainCPCheck()) {
-                Env.setClasspath(classPathPanel.getClasspath());
-            }
-        }
+//        if (paramwin.isAccepted()) {
+//            ClassPathPanel classPathPanel = ((ClassPathPanel) paramwin.getParameterPanel());
+//            if (classPathPanel.isRetainCPCheck()) {
+//                Env.setClasspath(classPathPanel.getClasspath());
+//            }
+//        }
     }
 
     private class ColorChangeListener implements ActionListener {

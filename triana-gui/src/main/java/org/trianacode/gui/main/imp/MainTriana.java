@@ -202,7 +202,6 @@ public class MainTriana extends JPanel
     public void init() {
         populateMainTriana();
         initGroupNodes();
-
         invalidate();
         validate();
         repaint();
@@ -439,6 +438,7 @@ public class MainTriana extends JPanel
      * Overrides the default paint() method and just calls the update method.
      */
     public void paintComponent(Graphics graphs) {
+        setBackground(getBackgroundColor());
         super.paintComponent(graphs);
 
         paintSelected(graphs);
@@ -453,12 +453,13 @@ public class MainTriana extends JPanel
      * Paints the selected tools in  front of the other tools
      */
     long time = System.currentTimeMillis();
+
     private void paintSelected(Graphics graphs) {
         TaskComponent[] comps = getSelectedComponents();
 
         long timeNow = System.currentTimeMillis();
-        if(timeNow - time > 5000){
-   //         System.out.println("Painting at : " + timeNow);
+        if (timeNow - time > 5000) {
+            //         System.out.println("Painting at : " + timeNow);
             time = timeNow;
             for (int count = 0; count < comps.length; count++) {
                 comps[count].getComponent().repaint();
@@ -755,19 +756,10 @@ public class MainTriana extends JPanel
      */
     public Color getCableColor(Cable cable) {
         return ColorManager.getColor(cable);
-        /*if ((cable != null) && (cable.isConnected())) {
-            Node source = TaskGraphUtils.getSourceNode(cable.getReceivingNode());
+    }
 
-            if (source == null)
-                return null;
-
-            if (source.getTask().isParameterName(Task.OUTPUT_TYPE + source.getAbsoluteNodeIndex()))
-                return GUIEnv.getCableColour((String) source.getTask().getParameter(Task.OUTPUT_TYPE + source.getAbsoluteNodeIndex()));
-            else if (source.getTask().getDataOutputTypes().length > 0)
-                return GUIEnv.getCableColour(source.getTask().getDataOutputTypes()[0]);
-        }
-
-        return null;*/
+    public Color getBackgroundColor() {
+        return ColorManager.getBackgroundColor();
     }
 
 

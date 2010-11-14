@@ -60,15 +60,15 @@
 package org.trianacode.gui.hci.color;
 
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * The ColorManager maintains a register of ColorModels for different tool class types, and a default ColorModel which
@@ -257,6 +257,19 @@ public class ColorManager {
         }
     }
 
+    public static Color getBackgroundColor() {
+
+        ColorModel model = getBackgroundColorModel();
+
+        if (model instanceof BackgroundColorModel) {
+            return ((BackgroundColorModel) model).getBackground();
+        } else if (getDefaultColorModel() instanceof BackgroundColorModel) {
+            return ((BackgroundColorModel) getDefaultColorModel()).getBackground();
+        } else {
+            return Color.lightGray;
+        }
+    }
+
 
     /**
      * @return the color model used for the specified tool
@@ -382,6 +395,11 @@ public class ColorManager {
             }
         }
 
+        return model;
+    }
+
+    private static ColorModel getBackgroundColorModel() {
+        ColorModel model = getDefaultColorModel();
         return model;
     }
 

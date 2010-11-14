@@ -59,7 +59,7 @@
 
 package org.trianacode.gui.hci.color;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Constants for color names and graphical elements used by standard Triana components
@@ -89,7 +89,7 @@ public interface TrianaColorConstants {
     public static final String GROUP_TOOL_COLOR = "Tool (Group)";
     public static final String ERROR_TOOL_COLOR = "Tool (Error)";
     public static final String NAME_COLOR = "Tool Name";
-    public static final String UNCONNECTED_NODE_COLOR = "Unconnected Node";
+    public static final String NODE_COLOR = "Data Node";
     public static final String TRIGGER_NODE_COLOR = "Trigger Node";
     public static final String ERROR_NODE_COLOR = "Error Node";
     public static final String PROGRESS_COLOR = "Progress Indicator";
@@ -97,5 +97,6 @@ public interface TrianaColorConstants {
     public static final String SHOW_TOOL_UNCONNECTED_COLOR = "Show Tool (Unconnected)";
     public static final String CABLE_COLOR = "Cable Color";
     public static final String CONTROL_CABLE_COLOR = "Control Cable Color";
+    public static final String BACKGROUND_COLOR = "Background Color";
 
 }
