@@ -59,7 +59,9 @@ public class ExecUnit{
         if(!executable.equals("")){
             if(!error()){
                 commmandStrVector.add(executable);
-                commmandStrVector.add(input_file);
+                if(!input_file.equals("")){
+                    commmandStrVector.add(input_file);
+                }
                 commmandStrVector.addAll(options);
 
                 StringBuilder buffer = new StringBuilder();

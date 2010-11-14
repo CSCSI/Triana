@@ -179,12 +179,20 @@ public class TabManager implements TrianaDesktopViewManager {
                 public void stateChanged(ChangeEvent evt) {
                     final TabView tab = (TabView) tabbedPane.getSelectedComponent();
                     if (tab != null) {
-                        selected = getDesktopViewFor(tab.getTaskgraphPanel());
+     //                 selected = getDesktopViewFor(tab.getTaskgraphPanel());
+                        selected = tab;
+                        System.out.println("Selected : " + selected.toString());
+                        SwingUtilities.invokeLater(new Runnable()
+                        {
+                            public void run()
+                            {
+                                tab.requestFocus();
+                            }
+                        });
                     } else {
                         selected = null;
                     }
                 }
-
             });
         }
 
