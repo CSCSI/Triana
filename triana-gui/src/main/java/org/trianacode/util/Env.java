@@ -60,9 +60,12 @@ package org.trianacode.util;
 
 
 import org.trianacode.config.Locations;
+import org.trianacode.gui.action.Actions;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.desktop.frames.FramesDesktopManager;
+import org.trianacode.gui.desktop.tabbedPane.TabManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
 import org.trianacode.gui.main.TaskGraphPanel;
@@ -164,6 +167,7 @@ public final class Env {
     public static String WINDOW_SIZE_STR = "window_size";
     public static String DEBUG_VISIBLE_STR = "debug_visible";
     public static String DEBUG_POSITION_STR = "debug_position";
+    public static final String DESKTOP_VIEW = "desktop_view";
     public static String DEBUG_SIZE_STR = "debug_size";
     public static String ZOOM_FACTOR_STR = "zoom_factor";
     public static String FILE_READERS_STR = "file_readers";
@@ -919,17 +923,26 @@ public final class Env {
         }
     }
 
-    public final static void setTabbedView(boolean tabbed){
-        setUserProperty("TabbedView", String.valueOf(tabbed));
+    public final static void setDesktopView(TrianaDesktopViewManager manager) {
+        if (manager == FramesDesktopManager.getManager()) {
+            setUserProperty(DESKTOP_VIEW, Actions.VIRTUAL_DESKTOP_VIEW);
+        } else {
+            setUserProperty(DESKTOP_VIEW, Actions.TABBED_DESKTOP_VIEW);
+        }
+
     }
 
-    public final static boolean isTabbedView() {
-        Object tabbed = getUserProperty("TabbedView");
-
-        if (tabbed == null) {
-            return false;
+    public final static TrianaDesktopViewManager getDesktopViewManager() {
+        String name = (String) getUserProperty(DESKTOP_VIEW);
+        if (name == null) {
+            return FramesDesktopManager.getManager();
+        }
+        if (name.equals(Actions.VIRTUAL_DESKTOP_VIEW)) {
+            return FramesDesktopManager.getManager();
+        } else if (name.equals(Actions.TABBED_DESKTOP_VIEW)) {
+            return TabManager.getManager();
         } else {
-            return new Boolean((String) tabbed).booleanValue();
+            return FramesDesktopManager.getManager();
         }
     }
 

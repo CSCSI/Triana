@@ -1,7 +1,5 @@
 package org.trianacode.gui.desktop;
 
-import org.trianacode.gui.desktop.frames.FramesDesktopManager;
-import org.trianacode.gui.desktop.tabbedPane.TabManager;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.util.Env;
 
@@ -13,7 +11,7 @@ import java.awt.*;
  */
 public class DesktopViewController {
 
-    private static TrianaDesktopViewManager currentView = Env.isTabbedView() ? TabManager.getManager() : FramesDesktopManager.getManager();
+    private static TrianaDesktopViewManager currentView = Env.getDesktopViewManager();
 
     public static void swapView(final TrianaDesktopViewManager newView, final DesktopViewListener app) {
         if (newView != null && newView != currentView) {
@@ -32,10 +30,15 @@ public class DesktopViewController {
             newView.addDesktopViewListener(app);
             newView.desktopAdded();
             currentView = newView;
+            Env.setDesktopView(currentView);
         }
     }
 
     public static TrianaDesktopViewManager getCurrentView() {
         return currentView;
+    }
+
+    public static void setCurrentView(TrianaDesktopViewManager currentView) {
+        DesktopViewController.currentView = currentView;
     }
 }
