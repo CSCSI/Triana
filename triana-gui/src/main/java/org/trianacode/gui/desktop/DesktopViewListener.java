@@ -6,11 +6,11 @@ package org.trianacode.gui.desktop;
  */
 public interface DesktopViewListener {
 
-    public void ViewClosing(TrianaDesktopView view);
+    public void ViewClosing(DesktopView view);
 
-    public void ViewClosed(TrianaDesktopView view);
+    public void ViewClosed(DesktopView view);
 
-    public void ViewOpened(TrianaDesktopView view);
+    public void ViewOpened(DesktopView view);
 
-    public void desktopChanged(TrianaDesktopViewManager manager);
+    public void desktopChanged(DesktopViewManager manager);
 }

@@ -62,7 +62,7 @@ import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.Actions;
 import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.DesktopViewListener;
-import org.trianacode.gui.desktop.frames.FramesDesktopManager;
+import org.trianacode.gui.desktop.frames.FramesManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -92,7 +92,7 @@ public class VirtualDesktopAction extends AbstractAction implements ActionDispla
     public void actionPerformed(ActionEvent e) {
         firePropertyChange(Actions.DESKTOP_CHANGE_PROPERTY, null
                 , Actions.VIRTUAL_DESKTOP_VIEW);
-        DesktopViewController.swapView(FramesDesktopManager.getManager(), listener);
+        DesktopViewController.swapView(FramesManager.getManager(), listener);
     }
 
 }

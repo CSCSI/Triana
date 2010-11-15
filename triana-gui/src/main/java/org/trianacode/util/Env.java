@@ -62,9 +62,9 @@ package org.trianacode.util;
 import org.trianacode.config.Locations;
 import org.trianacode.gui.action.Actions;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
-import org.trianacode.gui.desktop.TrianaDesktopView;
-import org.trianacode.gui.desktop.TrianaDesktopViewManager;
-import org.trianacode.gui.desktop.frames.FramesDesktopManager;
+import org.trianacode.gui.desktop.DesktopView;
+import org.trianacode.gui.desktop.DesktopViewManager;
+import org.trianacode.gui.desktop.frames.FramesManager;
 import org.trianacode.gui.desktop.tabs.TabManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
@@ -923,8 +923,8 @@ public final class Env {
         }
     }
 
-    public final static void setDesktopView(TrianaDesktopViewManager manager) {
-        if (manager == FramesDesktopManager.getManager()) {
+    public final static void setDesktopView(DesktopViewManager manager) {
+        if (manager == FramesManager.getManager()) {
             setUserProperty(DESKTOP_VIEW, Actions.VIRTUAL_DESKTOP_VIEW);
         } else {
             setUserProperty(DESKTOP_VIEW, Actions.TABBED_DESKTOP_VIEW);
@@ -932,17 +932,17 @@ public final class Env {
 
     }
 
-    public final static TrianaDesktopViewManager getDesktopViewManager() {
+    public final static DesktopViewManager getDesktopViewManager() {
         String name = (String) getUserProperty(DESKTOP_VIEW);
         if (name == null) {
-            return FramesDesktopManager.getManager();
+            return FramesManager.getManager();
         }
         if (name.equals(Actions.VIRTUAL_DESKTOP_VIEW)) {
-            return FramesDesktopManager.getManager();
+            return FramesManager.getManager();
         } else if (name.equals(Actions.TABBED_DESKTOP_VIEW)) {
             return TabManager.getManager();
         } else {
-            return FramesDesktopManager.getManager();
+            return FramesManager.getManager();
         }
     }
 
@@ -1192,7 +1192,7 @@ public final class Env {
     private static void recursivelyOpenChildWindows(OpenTaskGraph toOpen, TaskGraph parent) {
         Task task = parent.getTask(toOpen.getName());
         if ((task != null) && (task instanceof TaskGraph)) {
-            TrianaDesktopView panel = GUIEnv.getDesktopViewFor(parent);
+            DesktopView panel = GUIEnv.getDesktopViewFor(parent);
             GUIEnv.getApplicationFrame().addChildTaskGraphPanel((TaskGraph) task, panel.getTaskgraphPanel().getTrianaClient());
         }
         OpenTaskGraph[] openChildren = toOpen.getChildren();
@@ -1261,7 +1261,7 @@ public final class Env {
      * @return The name of the tempory file to save to or null if nothing has been saved.
      */
     private static String saveTaskGraphContainer(TaskGraphPanel cont) {
-        TrianaDesktopViewManager manager = GUIEnv.getApplicationFrame().getDesktopViewManager();
+        DesktopViewManager manager = GUIEnv.getApplicationFrame().getDesktopViewManager();
         String windowName = manager.getTitle(manager.getDesktopViewFor(cont));
         StringBuffer name = new StringBuffer(windowName);
         name.append("_");

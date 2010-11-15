@@ -60,7 +60,7 @@ package org.trianacode.gui.action.taskgraph;
 
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.TaskGraph;
@@ -114,7 +114,7 @@ public class UnGroupAction extends AbstractAction implements ActionDisplayOption
      */
     public void unGroup(TaskGraph taskgraph) {
         try {
-            TrianaDesktopView view = GUIEnv.getDesktopViewFor(taskgraph);
+            DesktopView view = GUIEnv.getDesktopViewFor(taskgraph);
             if (view != null) {
                 view.getTaskgraphPanel().dispose();
                 GUIEnv.removeTaskGraphContainer(view);

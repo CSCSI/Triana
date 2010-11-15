@@ -60,7 +60,7 @@ package org.trianacode.gui.action.files;
 
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
@@ -108,7 +108,7 @@ public class OpenAction extends AbstractAction implements ActionDisplayOptions {
             TaskGraph taskgraph = (TaskGraph) selectionHandler.getSelectedTool();
 
             if (GUIEnv.getDesktopViewFor(taskgraph) != null) {
-                TrianaDesktopView panel = GUIEnv.getDesktopViewFor(taskgraph);
+                DesktopView panel = GUIEnv.getDesktopViewFor(taskgraph);
                 GUIEnv.getApplicationFrame().getDesktopViewManager().setSelected(panel, true);
             } else if (taskgraph.getParent() == null) {
                 GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskgraph);

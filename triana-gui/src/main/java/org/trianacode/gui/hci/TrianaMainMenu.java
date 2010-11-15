@@ -66,7 +66,7 @@ import org.trianacode.gui.action.files.OptionsMenuHandler;
 import org.trianacode.gui.action.tools.ToolImportAction;
 import org.trianacode.gui.action.tools.ToolsMenuHandler;
 import org.trianacode.gui.desktop.DesktopViewController;
-import org.trianacode.gui.desktop.frames.FramesDesktopManager;
+import org.trianacode.gui.desktop.frames.FramesManager;
 import org.trianacode.gui.desktop.tabs.TabManager;
 import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.extensions.ExtensionManager;
@@ -259,7 +259,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
         optionsMenu.add(tabbedDesktop);
         desktopActions.add(tabbedDesktop);
         JCheckBoxMenuItem virtualDesktop = new JCheckBoxMenuItem(ActionTable.getAction(Actions.VIRTUAL_DESKTOP_VIEW));
-        virtualDesktop.setSelected(DesktopViewController.getCurrentView() == FramesDesktopManager.getManager());
+        virtualDesktop.setSelected(DesktopViewController.getCurrentView() == FramesManager.getManager());
         optionsMenu.add(virtualDesktop);
         desktopActions.add(virtualDesktop);
         ActionTable.getAction(Actions.VIRTUAL_DESKTOP_VIEW).addPropertyChangeListener(this);

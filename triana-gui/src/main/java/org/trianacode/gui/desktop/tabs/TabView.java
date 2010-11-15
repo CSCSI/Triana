@@ -1,6 +1,6 @@
 package org.trianacode.gui.desktop.tabs;
 
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.main.TaskGraphPanel;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ import java.awt.*;
  * Time: 5:47:54 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TabView extends JPanel implements TrianaDesktopView {
+public class TabView extends JPanel implements DesktopView {
 
     private TaskGraphPanel panel;
     private String title = "";

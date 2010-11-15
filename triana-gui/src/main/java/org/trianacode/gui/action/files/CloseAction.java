@@ -59,7 +59,7 @@
 package org.trianacode.gui.action.files;
 
 import org.trianacode.gui.action.ActionDisplayOptions;
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.util.Env;
 
@@ -88,7 +88,7 @@ public class CloseAction extends AbstractAction implements ActionDisplayOptions 
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        TrianaDesktopView panel = GUIEnv.getApplicationFrame().getSelectedDesktopView();
+        DesktopView panel = GUIEnv.getApplicationFrame().getSelectedDesktopView();
 
         if (panel != null) {
             GUIEnv.getApplicationFrame().closeTaskGraphPanel(panel);

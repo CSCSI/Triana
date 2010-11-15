@@ -1,8 +1,8 @@
 package org.trianacode.gui.desktop.tabs;
 
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.desktop.DesktopViewListener;
-import org.trianacode.gui.desktop.TrianaDesktopView;
-import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.desktop.DesktopViewManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.taskgraph.TaskGraph;
@@ -21,10 +21,10 @@ import java.util.ArrayList;
  * Time: 5:27:58 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TabManager implements TrianaDesktopViewManager {
+public class TabManager implements DesktopViewManager {
 
     private JTabbedPane tabbedPane;
-    private TrianaDesktopView selected;
+    private DesktopView selected;
     private java.util.List<TabView> tabs = new ArrayList<TabView>();
     private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
 
@@ -45,7 +45,7 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public TrianaDesktopView newDesktopView(final TaskGraphPanel panel) {
+    public DesktopView newDesktopView(final TaskGraphPanel panel) {
         final TabView tab = new TabView(panel);
         tabs.add(tab);
 
@@ -83,7 +83,7 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public void remove(TrianaDesktopView tab) {
+    public void remove(DesktopView tab) {
         if (tab instanceof TabView) {
             tabs.remove(tab);
             tabbedPane.remove((TabView) tab);
@@ -94,7 +94,7 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public TrianaDesktopView getTaskgraphViewFor(TaskGraph taskgraph) {
+    public DesktopView getTaskgraphViewFor(TaskGraph taskgraph) {
         for (TabView tab : tabs) {
             TaskGraphPanel panel = tab.getTaskgraphPanel();
             if (panel.getTaskGraph() == taskgraph) {
@@ -117,12 +117,12 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public TrianaDesktopView[] getViews() {
-        return tabs.toArray(new TrianaDesktopView[tabs.size()]);
+    public DesktopView[] getViews() {
+        return tabs.toArray(new DesktopView[tabs.size()]);
     }
 
     @Override
-    public void setSelected(TrianaDesktopView panel, boolean sel) {
+    public void setSelected(DesktopView panel, boolean sel) {
         int tabs = tabbedPane.getTabCount();
         for (int i = 0; i < tabs; i++) {
             Component c = tabbedPane.getTabComponentAt(i);
@@ -134,14 +134,14 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public TrianaDesktopView getSelected() {
+    public DesktopView getSelected() {
         return selected;
     }
 
     @Override
-    public TrianaDesktopView getDesktopViewFor(TaskGraphPanel panel) {
-        TrianaDesktopView[] views = getViews();
-        for (TrianaDesktopView view : views) {
+    public DesktopView getDesktopViewFor(TaskGraphPanel panel) {
+        DesktopView[] views = getViews();
+        for (DesktopView view : views) {
             if (view.getTaskgraphPanel() == panel) {
                 return view;
             }
@@ -150,7 +150,7 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public String getTitle(TrianaDesktopView view) {
+    public String getTitle(DesktopView view) {
         if (view instanceof TabView) {
             return ((TabView) view).getTitle();
         }
@@ -158,7 +158,7 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public void setTitle(TrianaDesktopView view, String title) {
+    public void setTitle(DesktopView view, String title) {
         if (view instanceof TabView) {
             ((TabView) view).setTitle(title);
         }
@@ -180,7 +180,7 @@ public class TabManager implements TrianaDesktopViewManager {
     }
 
     @Override
-    public TrianaDesktopView getDropTarget(int x, int y, Component source) {
+    public DesktopView getDropTarget(int x, int y, Component source) {
         for (TabView tab : tabs) {
             if (tab.isVisible()) {
                 int landingPosX = x -

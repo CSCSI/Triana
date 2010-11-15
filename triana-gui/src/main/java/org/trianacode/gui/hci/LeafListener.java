@@ -64,8 +64,8 @@ import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.action.ToolSelectionListener;
 import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
 import org.trianacode.gui.action.clipboard.ClipboardPasteInterface;
-import org.trianacode.gui.desktop.TrianaDesktopView;
-import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.desktop.DesktopView;
+import org.trianacode.gui.desktop.DesktopViewManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.OptionPane;
@@ -531,11 +531,11 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
             DragWindow.DRAG_WINDOW.setVisible(false);
 
             Component source = e.getComponent();
-            TrianaDesktopViewManager manager = frame.getDesktopViewManager();
+            DesktopViewManager manager = frame.getDesktopViewManager();
             int landingPosX;
             int landingPosY;
 
-            TrianaDesktopView view = manager.getDropTarget(e.getX(), e.getY(), source);
+            DesktopView view = manager.getDropTarget(e.getX(), e.getY(), source);
 
             if (view != null) { // ok we have a drop target
                 // locate the mainTriana panel

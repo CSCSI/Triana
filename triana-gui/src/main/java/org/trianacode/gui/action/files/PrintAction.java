@@ -61,7 +61,7 @@ package org.trianacode.gui.action.files;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.ParameterPanel;
@@ -117,7 +117,7 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
                     Component comp = null;
 
                     if (panel.isPrintSelectedTaskgraph()) {
-                        TrianaDesktopView view = GUIEnv.getDesktopViewFor(taskgraph);
+                        DesktopView view = GUIEnv.getDesktopViewFor(taskgraph);
                         if (view != null) {
                             TaskGraphPanel taskgraphpanel = view.getTaskgraphPanel();
                             if (taskgraphpanel != null) {

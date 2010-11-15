@@ -1,6 +1,6 @@
 package org.trianacode.gui.desktop.frames;
 
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,11 +15,11 @@ import java.beans.PropertyVetoException;
 
 public class CascadeAction extends AbstractAction {
 
-    private FramesDesktopManager desk;
+    private FramesManager desk;
     private int offX;
     private int offY;
 
-    public CascadeAction(FramesDesktopManager desk, int offX, int offY) {
+    public CascadeAction(FramesManager desk, int offX, int offY) {
         super("Cascade Frames");
         this.desk = desk;
         this.offX = offX;
@@ -28,15 +28,15 @@ public class CascadeAction extends AbstractAction {
 
     public void actionPerformed(ActionEvent ev) {
 
-        TrianaDesktopView[] allframes = desk.getViews();
+        DesktopView[] allframes = desk.getViews();
         int count = allframes.length;
         if (count == 0) return;
 
         for (int i = 0; i < count; i++) {
 
-            TrianaDesktopView view = allframes[i];
-            if (view instanceof FramesDesktopView) {
-                FramesDesktopView f = (FramesDesktopView) view;
+            DesktopView view = allframes[i];
+            if (view instanceof FramesView) {
+                FramesView f = (FramesView) view;
                 if (!f.isClosed() && f.isIcon()) {
                     try {
                         f.setIcon(false);

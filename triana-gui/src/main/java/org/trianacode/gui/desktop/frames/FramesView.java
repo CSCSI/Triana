@@ -1,6 +1,6 @@
 package org.trianacode.gui.desktop.frames;
 
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.main.TaskGraphPanel;
 
 import javax.swing.*;
@@ -11,11 +11,11 @@ import java.awt.*;
  * @author Andrew Harrison
  * @version 1.0.0 Nov 10, 2010
  */
-public class FramesDesktopView extends JInternalFrame implements TrianaDesktopView {
+public class FramesView extends JInternalFrame implements DesktopView {
 
     private TaskGraphPanel panel;
 
-    public FramesDesktopView(TaskGraphPanel panel) {
+    public FramesView(TaskGraphPanel panel) {
         super(panel.getTaskGraph().getToolName(),
                 true, true, true, false);
         this.panel = panel;

@@ -11,12 +11,15 @@ import java.awt.*;
  */
 public class DesktopViewController {
 
-    private static TrianaDesktopViewManager currentView = Env.getDesktopViewManager();
+    private static DesktopViewManager currentView = Env.getDesktopViewManager();
 
-    public static void swapView(final TrianaDesktopViewManager newView, final DesktopViewListener app) {
+    public static void swapView(final DesktopViewManager newView, final DesktopViewListener app) {
         if (newView != null && newView != currentView) {
-            TrianaDesktopView[] views = currentView.getViews();
-            for (TrianaDesktopView view : views) {
+
+            newView.addDesktopViewListener(app);
+            newView.desktopAdded();
+            DesktopView[] views = currentView.getViews();
+            for (DesktopView view : views) {
                 TaskGraphPanel panel = view.getTaskgraphPanel();
                 Container c = panel.getContainer();
                 if (c != null) {
@@ -27,18 +30,16 @@ public class DesktopViewController {
                 }
             }
             currentView.desktopRemoved();
-            newView.addDesktopViewListener(app);
-            newView.desktopAdded();
             currentView = newView;
             Env.setDesktopView(currentView);
         }
     }
 
-    public static TrianaDesktopViewManager getCurrentView() {
+    public static DesktopViewManager getCurrentView() {
         return currentView;
     }
 
-    public static void setCurrentView(TrianaDesktopViewManager currentView) {
+    public static void setCurrentView(DesktopViewManager currentView) {
         DesktopViewController.currentView = currentView;
     }
 }

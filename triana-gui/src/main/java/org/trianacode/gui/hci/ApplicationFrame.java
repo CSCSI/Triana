@@ -80,10 +80,10 @@ import org.trianacode.gui.components.script.ScriptComponentModel;
 import org.trianacode.gui.components.text.TextToolComponentModel;
 import org.trianacode.gui.components.triana.TrianaColorModel;
 import org.trianacode.gui.components.triana.TrianaComponentModel;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.DesktopViewListener;
-import org.trianacode.gui.desktop.TrianaDesktopView;
-import org.trianacode.gui.desktop.TrianaDesktopViewManager;
+import org.trianacode.gui.desktop.DesktopViewManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.color.ColorTable;
@@ -662,11 +662,11 @@ public class ApplicationFrame extends TrianaWindow
     /**
      * Closes the specified main triana and cleans-up the taskgraph if required
      */
-    public void closeTaskGraphPanel(TrianaDesktopView panel) {
+    public void closeTaskGraphPanel(DesktopView panel) {
         disposeTaskGraphPanel(panel);
     }
 
-    public TrianaDesktopView getDesktopView(TaskGraphPanel panel) {
+    public DesktopView getDesktopView(TaskGraphPanel panel) {
         return getDesktopViewManager().getDesktopViewFor(panel);
     }
 
@@ -674,10 +674,10 @@ public class ApplicationFrame extends TrianaWindow
      * @return an array all the taskgraph panels that are open within the application
      */
     public TaskGraphPanel[] getTaskGraphPanels() {
-        TrianaDesktopView[] views = getDesktopViewManager().getViews();
+        DesktopView[] views = getDesktopViewManager().getViews();
         TaskGraphPanel[] panels = new TaskGraphPanel[views.length];
         for (int i = 0; i < views.length; i++) {
-            TrianaDesktopView view = views[i];
+            DesktopView view = views[i];
             panels[i] = view.getTaskgraphPanel();
         }
         return panels;
@@ -687,10 +687,10 @@ public class ApplicationFrame extends TrianaWindow
      * @return an array of all taskgraph panels with no parents
      */
     public TaskGraphPanel[] getRootTaskGraphPanels() {
-        TrianaDesktopView[] views = getDesktopViewManager().getViews();
+        DesktopView[] views = getDesktopViewManager().getViews();
         List<TaskGraphPanel> panels = new ArrayList<TaskGraphPanel>();
         for (int i = 0; i < views.length; i++) {
-            TrianaDesktopView view = views[i];
+            DesktopView view = views[i];
             if (view.getTaskgraphPanel().getTaskGraph().getParent() == null) {
                 panels.add(view.getTaskgraphPanel());
             }
@@ -705,10 +705,10 @@ public class ApplicationFrame extends TrianaWindow
      * @return the child taskgraph panels
      */
     public TaskGraphPanel[] getChildTaskGraphPanels(TaskGraphPanel parent) {
-        TrianaDesktopView[] views = getDesktopViewManager().getViews();
+        DesktopView[] views = getDesktopViewManager().getViews();
         List<TaskGraphPanel> panels = new ArrayList<TaskGraphPanel>();
         for (int i = 0; i < views.length; i++) {
-            TrianaDesktopView view = views[i];
+            DesktopView view = views[i];
             if (view.getTaskgraphPanel().getTaskGraph().getParent() == parent.getTaskGraph()) {
                 panels.add(view.getTaskgraphPanel());
             }
@@ -721,15 +721,15 @@ public class ApplicationFrame extends TrianaWindow
      * @return the taskgraph panel which is representing the specified task graph, or null if the task isn't
      *         represented
      */
-    public TrianaDesktopView getDesktopViewFor(TaskGraph group) {
+    public DesktopView getDesktopViewFor(TaskGraph group) {
         return getDesktopViewManager().getTaskgraphViewFor(group);
     }
 
-    public void removeDesktopView(TrianaDesktopView view) {
+    public void removeDesktopView(DesktopView view) {
         getDesktopViewManager().remove(view);
     }
 
-    public String getTitle(TrianaDesktopView view) {
+    public String getTitle(DesktopView view) {
         return getDesktopViewManager().getTitle(view);
     }
 
@@ -806,7 +806,7 @@ public class ApplicationFrame extends TrianaWindow
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                TrianaDesktopView view = getDesktopViewManager().newDesktopView(panel);
+                DesktopView view = getDesktopViewManager().newDesktopView(panel);
                 selected = panel;
             }
         });
@@ -819,8 +819,8 @@ public class ApplicationFrame extends TrianaWindow
      */
     private String getNextUntitledName() {
         int untitledCount = 1;
-        TrianaDesktopView[] views = getDesktopViewManager().getViews();
-        for (TrianaDesktopView view : views) {
+        DesktopView[] views = getDesktopViewManager().getViews();
+        for (DesktopView view : views) {
             String name = getDesktopViewManager().getTitle(view);
             if (name.startsWith("Untitled")) {
                 String numberString = name.substring(8);
@@ -895,7 +895,7 @@ public class ApplicationFrame extends TrianaWindow
      * Hides of a main triana window and all its sub windows. If the main triana is a parent this also disposes of the
      * whole taskgraph.
      */
-    private void disposeTaskGraphPanel(TrianaDesktopView panel) {
+    private void disposeTaskGraphPanel(DesktopView panel) {
         TaskGraph taskgraph = panel.getTaskgraphPanel().getTaskGraph();
         cleanUpWindows(taskgraph);
     }
@@ -903,7 +903,7 @@ public class ApplicationFrame extends TrianaWindow
 
     private void cleanUpWindows(TaskGraph taskgraph) {
         Task[] tasks = taskgraph.getTasks(false);
-        TrianaDesktopView cont;
+        DesktopView cont;
 
         cont = getDesktopViewManager().getTaskgraphViewFor(taskgraph);
 
@@ -923,7 +923,7 @@ public class ApplicationFrame extends TrianaWindow
     /**
      * Cleans up a main triana window
      */
-    private void disposeWindow(final TrianaDesktopView view) {
+    private void disposeWindow(final DesktopView view) {
         final TaskListener tasklist = this;
         final TaskGraphListener tgraphlist = this;
 
@@ -943,7 +943,7 @@ public class ApplicationFrame extends TrianaWindow
         });
     }
 
-    public TrianaDesktopViewManager getDesktopViewManager() {
+    public DesktopViewManager getDesktopViewManager() {
         return DesktopViewController.getCurrentView();
     }
 
@@ -960,7 +960,7 @@ public class ApplicationFrame extends TrianaWindow
         TaskGraphPanel[] cont = parents.toArray(new TaskGraphPanel[parents.size()]);
 
         for (int count = 0; count < cont.length; count++) {
-            TrianaDesktopView tdv = getDesktopViewManager().getDesktopViewFor(cont[count]);
+            DesktopView tdv = getDesktopViewManager().getDesktopViewFor(cont[count]);
             closeTaskGraphPanel(tdv);
         }
     }
@@ -977,7 +977,7 @@ public class ApplicationFrame extends TrianaWindow
         }
     }
 
-    public TrianaDesktopView getSelectedDesktopView() {
+    public DesktopView getSelectedDesktopView() {
         if (selected instanceof TaskGraphPanel) {
             return getDesktopViewManager().getDesktopViewFor((TaskGraphPanel) selected);
         } else {
@@ -1064,7 +1064,7 @@ public class ApplicationFrame extends TrianaWindow
         }
 
         if (comps[count].getTaskGraph() == task) {
-            TrianaDesktopView view = getDesktopViewManager().getDesktopViewFor(comps[count]);
+            DesktopView view = getDesktopViewManager().getDesktopViewFor(comps[count]);
             getDesktopViewManager().setTitle(view, comps[count].getTaskGraph().getToolName());
         }
     }
@@ -1106,7 +1106,7 @@ public class ApplicationFrame extends TrianaWindow
      */
     public void taskRemoved(TaskGraphTaskEvent event) {
         if (event.getTask() instanceof TaskGraph) {
-            TrianaDesktopView view = getDesktopViewFor((TaskGraph) event.getTask());
+            DesktopView view = getDesktopViewFor((TaskGraph) event.getTask());
             if (view != null) {
                 closeTaskGraphPanel(view);
             }
@@ -1194,7 +1194,7 @@ public class ApplicationFrame extends TrianaWindow
     public void focusLost(FocusEvent event) {
         // required to fix internal frame focus/selection bug
         if (event.getComponent() instanceof TaskGraphPanel) {
-            TrianaDesktopView frame = getDesktopViewManager().getDesktopViewFor((TaskGraphPanel) event.getComponent());
+            DesktopView frame = getDesktopViewManager().getDesktopViewFor((TaskGraphPanel) event.getComponent());
 
             if (frame != null) {
                 getDesktopViewManager().setSelected(frame, false);
@@ -1204,22 +1204,22 @@ public class ApplicationFrame extends TrianaWindow
 
 
     @Override
-    public void ViewClosing(TrianaDesktopView view) {
+    public void ViewClosing(DesktopView view) {
         disposeTaskGraphPanel(view);
     }
 
     @Override
-    public void ViewClosed(TrianaDesktopView view) {
+    public void ViewClosed(DesktopView view) {
         disposeTaskGraphPanel(view);
     }
 
     @Override
-    public void ViewOpened(TrianaDesktopView view) {
+    public void ViewOpened(DesktopView view) {
         selected = view.getTaskgraphPanel();
     }
 
     @Override
-    public void desktopChanged(TrianaDesktopViewManager manager) {
+    public void desktopChanged(DesktopViewManager manager) {
         if (workspace.getComponentCount() > 0) {
             workspace.remove(0);
             workspace.add(manager.getWorkspace());

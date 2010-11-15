@@ -60,7 +60,7 @@ package org.trianacode.gui.action.taskgraph;
 
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.gui.main.TaskComponent;
@@ -112,7 +112,7 @@ public class SelectAllAction extends AbstractAction implements ActionDisplayOpti
      */
     public void actionPerformed(ActionEvent e) {
         if (selhandler.getSelectedTaskgraph() != null) {
-            TrianaDesktopView view = GUIEnv.getDesktopViewFor(selhandler.getSelectedTaskgraph());
+            DesktopView view = GUIEnv.getDesktopViewFor(selhandler.getSelectedTaskgraph());
             if (view != null) {
                 if (view != null) {
                     TaskGraphPanel cont = view.getTaskgraphPanel();

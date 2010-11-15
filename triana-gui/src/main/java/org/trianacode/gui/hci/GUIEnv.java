@@ -59,7 +59,7 @@
 package org.trianacode.gui.hci;
 
 
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.color.ColorTableEntry;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.Help;
@@ -124,7 +124,7 @@ public class GUIEnv {
         return app;
     }
 
-    public static TrianaDesktopView getSelectedDesktopView() {
+    public static DesktopView getSelectedDesktopView() {
         return app.getSelectedDesktopView();
     }
 
@@ -132,12 +132,12 @@ public class GUIEnv {
     /**
      * Remove the specified main triana from the workspace
      */
-    public static void removeTaskGraphContainer(TrianaDesktopView cont) {
+    public static void removeTaskGraphContainer(DesktopView cont) {
         app.removeDesktopView(cont);
     }
 
 
-    public static TrianaDesktopView getDesktopViewFor(TaskGraph group) {
+    public static DesktopView getDesktopViewFor(TaskGraph group) {
         return app.getDesktopViewFor(group);
     }
 

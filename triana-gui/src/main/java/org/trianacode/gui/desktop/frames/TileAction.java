@@ -1,6 +1,6 @@
 package org.trianacode.gui.desktop.frames;
 
-import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.DesktopView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,16 +15,16 @@ import java.beans.PropertyVetoException;
 
 public class TileAction extends AbstractAction {
 
-    private FramesDesktopManager desk;
+    private FramesManager desk;
 
-    public TileAction(FramesDesktopManager desk) {
+    public TileAction(FramesManager desk) {
         super("Tile Frames");
         this.desk = desk;
     }
 
     public void actionPerformed(ActionEvent ev) {
 
-        TrianaDesktopView[] allframes = desk.getViews();
+        DesktopView[] allframes = desk.getViews();
         int count = allframes.length;
         if (count == 0) return;
 
@@ -48,9 +48,9 @@ public class TileAction extends AbstractAction {
             for (int j = 0; j < cols && ((i * cols) + j < count); j++) {
                 int next = (i * cols) + j;
                 boolean last = next == count - 1 ? true : false;
-                TrianaDesktopView view = allframes[next];
-                if (view instanceof FramesDesktopView) {
-                    FramesDesktopView f = (FramesDesktopView) view;
+                DesktopView view = allframes[next];
+                if (view instanceof FramesView) {
+                    FramesView f = (FramesView) view;
                     if (!f.isClosed() && f.isIcon()) {
                         try {
                             f.setIcon(false);
