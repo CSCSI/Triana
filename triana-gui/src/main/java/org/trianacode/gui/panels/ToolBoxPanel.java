@@ -134,6 +134,8 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener, List
             t = loader.loadToolbox(path, name, tools.getProperties());
             tools.getToolResolver().addToolbox(t);
             toolBoxItems.add(path);
+            toolboxList.revalidate();
+            toolboxList.repaint();
         }
 
     }
@@ -154,8 +156,10 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener, List
         setLayout(new BorderLayout());
         typeField.setEditable(false);
 
-        JPanel buttonpanel = new JPanel(new GridLayout(2, 1));
+        JPanel buttonpanel = new JPanel();
+        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
         buttonpanel.setBorder(new EmptyBorder(3, 3, 3, 3));
+        buttonpanel.add(Box.createVerticalGlue());
         Collection<ToolboxLoader> loaders = ToolboxLoaderRegistry.getLoaders();
         for (ToolboxLoader loader : loaders) {
             String type = loader.getType();

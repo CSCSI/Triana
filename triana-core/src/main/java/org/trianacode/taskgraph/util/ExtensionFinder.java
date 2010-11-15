@@ -70,7 +70,16 @@ public class ExtensionFinder {
     public static Map<Class, List<Object>> services(List<Class> providers) {
         Map<Class, List<Object>> ret = new HashMap<Class, List<Object>>();
         for (File searchDir : searchDirs) {
-            ret.putAll(getProviders(providers, searchDir));
+            Map<Class, List<Object>> map = getProviders(providers, searchDir);
+            for (Class aClass : map.keySet()) {
+                List<Object> objs = ret.get(aClass);
+                if (objs == null) {
+                    ret.put(aClass, map.get(aClass));
+                } else {
+                    objs.addAll(map.get(aClass));
+                    ret.put(aClass, objs);
+                }
+            }
         }
         return ret;
     }
@@ -98,6 +107,7 @@ public class ExtensionFinder {
                     for (Class provider : providers) {
                         File prov = new File(services, provider.getName());
                         if (prov.exists()) {
+
                             List<Object> impls = null;
                             try {
                                 BufferedReader reader = new BufferedReader(
@@ -126,7 +136,12 @@ public class ExtensionFinder {
                                 log.debug("error thrown while reading file:" + e.getMessage());
                             }
                             if (impls.size() > 0) {
-                                ret.put(provider, impls);
+                                List<Object> exist = ret.get(provider);
+                                if (exist == null) {
+                                    exist = new ArrayList<Object>();
+                                }
+                                exist.addAll(impls);
+                                ret.put(provider, exist);
                             }
                         }
                     }
@@ -142,7 +157,16 @@ public class ExtensionFinder {
             });
             if (children != null) {
                 for (File child : children) {
-                    ret.putAll(getProviders(providers, child));
+                    Map<Class, List<Object>> map = getProviders(providers, child);
+                    for (Class aClass : map.keySet()) {
+                        List<Object> objs = ret.get(aClass);
+                        if (objs == null) {
+                            ret.put(aClass, map.get(aClass));
+                        } else {
+                            objs.addAll(map.get(aClass));
+                            ret.put(aClass, objs);
+                        }
+                    }
                 }
             }
         } else {
@@ -179,7 +203,12 @@ public class ExtensionFinder {
                                     }
                                 }
                                 if (impls.size() > 0) {
-                                    ret.put(provider, impls);
+                                    List<Object> exist = ret.get(provider);
+                                    if (exist == null) {
+                                        exist = new ArrayList<Object>();
+                                    }
+                                    exist.addAll(impls);
+                                    ret.put(provider, exist);
                                 }
                             }
                         }

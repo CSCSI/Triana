@@ -18,7 +18,6 @@ import java.awt.*;
 public class DaxFileTrianaTask extends MainTrianaTask {
 
     private Task task;
-    private Color color = Color.cyan.darker();
     private JLabel collectionComponent = null;
 
     /**
@@ -77,22 +76,6 @@ public class DaxFileTrianaTask extends MainTrianaTask {
         g.setColor(orig);
     }
 
-
-    public Color getToolColor() {
-        return color;
-    }
-
-    private int getNumberOfFiles() {
-        Object o = getTask().getParameter("numberOfFiles");
-        if (o != null) {
-            int value = (Integer) o;
-            if (value > 1) {
-                return value;
-            }
-            return 1;
-        }
-        return 1;
-    }
 
     private boolean isCollection() {
         Object o = getTask().getParameter("collection");

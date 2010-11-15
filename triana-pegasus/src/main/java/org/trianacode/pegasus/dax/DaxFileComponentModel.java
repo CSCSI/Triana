@@ -15,6 +15,9 @@ import javax.swing.*;
  * To change this template use File | Settings | File Templates.
  */
 public class DaxFileComponentModel implements RegisterableToolComponentModel {
+
+    public static final String DAX_FILE_RENDERING_HINT = "DAX File";
+
     @Override
     public Icon getTreeIcon(Tool tool) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
@@ -63,6 +66,6 @@ public class DaxFileComponentModel implements RegisterableToolComponentModel {
 
     @Override
     public String getRegistrationString() {
-        return "DAX_FILE_RENDERING_HINT";
+        return DAX_FILE_RENDERING_HINT;
     }
 }

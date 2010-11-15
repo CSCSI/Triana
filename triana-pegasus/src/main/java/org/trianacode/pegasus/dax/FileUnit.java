@@ -17,7 +17,7 @@ import java.util.UUID;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass = "org.trianacode.pegasus.dax.FileUnitPanel", renderingHints = {"DAX_FILE_RENDERING_HINT"})
+@Tool(panelClass = "org.trianacode.pegasus.dax.FileUnitPanel", renderingHints = {"DAX File"})
 public class FileUnit {
 
     @Parameter
@@ -36,7 +36,7 @@ public class FileUnit {
     private boolean one2one = false;
 
     @Process(gather = true)
-    public UUID fileUnitProcess(List in){
+    public UUID fileUnitProcess(List in) {
 
         log("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
         DaxFileChunk thisFile = new DaxFileChunk();
@@ -54,18 +54,16 @@ public class FileUnit {
 
         log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
-        for(Object object : in){
-            if(object instanceof DaxSettingObject){
+        for (Object object : in) {
+            if (object instanceof DaxSettingObject) {
                 log("Found settings object");
-                DaxSettingObject dso = (DaxSettingObject)object;
+                DaxSettingObject dso = (DaxSettingObject) object;
                 int number = dso.getNumberFiles();
                 log("Found number of files from settings object : " + number);
                 thisFile.setNumberOfFiles(number);
                 numberOfFiles = number;
-            }
-
-            else if(object instanceof DaxJobChunk){
-                DaxJobChunk jobChunk = (DaxJobChunk)object;
+            } else if (object instanceof DaxJobChunk) {
+                DaxJobChunk jobChunk = (DaxJobChunk) object;
 
                 log("Previous job was : " + jobChunk.getJobName());
 
@@ -75,13 +73,11 @@ public class FileUnit {
                 log("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                 thisFile.addInJobChunk(jobChunk);
 
-            }
-
-            else if(object instanceof UUID){
-                UUID uuid = (UUID)object;
+            } else if (object instanceof UUID) {
+                UUID uuid = (UUID) object;
                 DaxJobChunk jobChunk = register.getJobChunkFromUUID(uuid);
 
-                if(jobChunk != null){
+                if (jobChunk != null) {
 
                     log("\nPrevious job was : " + jobChunk.getJobName() + "\n");
 
@@ -90,19 +86,16 @@ public class FileUnit {
 
                     log("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                     thisFile.addInJobChunk(jobChunk);
-                }
-                else{
+                } else {
                     log("jobChunk not found in register");
                 }
-            }
-
-            else{
+            } else {
                 log("Cannot handle input : " + object.getClass().getName());
             }
 
         }
 
-        if(in.size() == 0){
+        if (in.size() == 0) {
             log("No jobs enter fileUnit : " + thisFile.getFilename());
         }
 
@@ -156,7 +149,7 @@ public class FileUnit {
         return thisFile.getUuid();
     }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);

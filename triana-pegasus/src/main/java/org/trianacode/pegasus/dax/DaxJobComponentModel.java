@@ -15,9 +15,12 @@ import javax.swing.*;
  * To change this template use File | Settings | File Templates.
  */
 public class DaxJobComponentModel implements RegisterableToolComponentModel {
+
+    public static final String DAX_JOB_RENDERING_HINT = "DAX Job";
+
     @Override
     public String getRegistrationString() {
-        return "DAX_JOB_RENDERING_HINT";
+        return DAX_JOB_RENDERING_HINT;
     }
 
     @Override
@@ -52,7 +55,6 @@ public class DaxJobComponentModel implements RegisterableToolComponentModel {
 
     @Override
     public TaskComponent getTaskComponent(Task task) {
-
         return new DaxJobTrianaTask(task);
     }
 

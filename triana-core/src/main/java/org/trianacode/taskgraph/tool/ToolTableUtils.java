@@ -139,7 +139,7 @@ public class ToolTableUtils {
                 try {
                     ClassLoaders.forName(name);
                 } catch (ClassNotFoundException e) {
-                    log.warn("Broken tool: " + name);
+                    log.warn("Broken tool: " + name, e);
                     return true;
                 }
 

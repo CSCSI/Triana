@@ -32,6 +32,7 @@ public class BeanUnit extends Unit {
     private String primitiveValue = null;
     private boolean isList = false;
     private boolean showMethodChoice = false;
+    private boolean returnMe = false;
 
     public BeanUnit(Class beanClass) throws Exception {
         this(beanClass, null);
@@ -67,6 +68,10 @@ public class BeanUnit extends Unit {
                     showMethodChoice = true;
                     this.selectedMethod = setters.get(0);
                     setIOTypes(selectedMethod);
+                } else {
+                    returnMe = true;
+                    currentOutputs = new String[]{this.beanClass.getName()};
+                    currentInputs = new String[0];
                 }
 
             } else {
@@ -105,6 +110,8 @@ public class BeanUnit extends Unit {
         } else {
             if (primitiveValue != null) {
                 setValue(primitiveValue);
+            } else if (returnMe) {
+                this.bean = this;
             } else {
                 if (isList) {
                     List<Object> params = new ArrayList<Object>();
@@ -124,7 +131,7 @@ public class BeanUnit extends Unit {
                         }
                     }
 
-                } else {
+                } else if (getInputAtNode(0) != null) {
                     Object obj = getInputAtNode(0);
                     this.bean = obj;
                 }
