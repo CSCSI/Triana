@@ -440,7 +440,6 @@ public class MainTriana extends JPanel
     public void paintComponent(Graphics graphs) {
         setBackground(getBackgroundColor());
         super.paintComponent(graphs);
-
         paintSelected(graphs);
         paintCables(graphs);
         paintShowCables(graphs);
@@ -526,13 +525,9 @@ public class MainTriana extends JPanel
         if (isSelectionBox()) {
             int x = Math.min(selorigin.x, selorigin.x + seldimension.width);
             int y = Math.min(selorigin.y, selorigin.y + seldimension.height);
-
-            Color col = graphs.getColor();
-
-            graphs.setColor(getBackground().darker());
+            graphs.setXORMode(Color.white);
             graphs.drawRect(x, y, Math.abs(seldimension.width), Math.abs(seldimension.height));
-
-            graphs.setColor(col);
+            graphs.setPaintMode();
         }
     }
 
