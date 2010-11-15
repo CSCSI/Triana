@@ -200,7 +200,6 @@ public class ColorManager {
             model = getToolColorModel(tool, element);
             modelcache.put(key, model);
         }
-
         return model.getColor(element, tool);
     }
 
@@ -283,7 +282,6 @@ public class ColorManager {
 
         for (int count = 0; count < hints.length; count++) {
             hint = hints[count].getRenderingHint();
-
             if (modeltable.containsKey(hint)) {
                 tempmodel = (ColorModel) modeltable.get(hint);
 

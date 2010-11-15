@@ -58,10 +58,10 @@
  */
 package org.trianacode.gui.hci.color;
 
-import java.awt.Color;
-import java.util.Hashtable;
-
 import org.trianacode.gui.hci.GUIEnv;
+
+import java.awt.*;
+import java.util.Hashtable;
 
 /**
  * A lookup table between color names and actual color values
@@ -75,26 +75,20 @@ public class ColorTable {
     /**
      * A hashtable of colors keyed on modelname:colorname
      */
-    private final Hashtable coltable = new Hashtable();
+    private final Hashtable<String, Color> coltable = new Hashtable<String, Color>();
 
     /**
      * A hashtable of default colors keyed on modelname:colorname
      */
-    private final Hashtable defaulttable = new Hashtable();
+    private final Hashtable<String, Color> defaulttable = new Hashtable<String, Color>();
 
     /**
      * Singleton instance
      */
-    private static ColorTable instance;
+    private static ColorTable instance = new ColorTable();
 
     private ColorTable() {
-        ColorTableEntry[] colorTableEntries = GUIEnv.getColorTableEntries();
-        synchronized (coltable) {
-            for (int i = 0; i < colorTableEntries.length; i++) {
-                ColorTableEntry colorTableEntry = colorTableEntries[i];
-                coltable.put(colorTableEntry.getColorname(), colorTableEntry.getColor());
-            }
-        }
+
     }
 
 
@@ -149,10 +143,17 @@ public class ColorTable {
         coltable.clear();
     }
 
-    public static ColorTable instance() {
-        if (instance == null) {
-            instance = new ColorTable();
+    public void loadUserPrefs() {
+        ColorTableEntry[] colorTableEntries = GUIEnv.getColorTableEntries();
+        synchronized (coltable) {
+            for (int i = 0; i < colorTableEntries.length; i++) {
+                ColorTableEntry colorTableEntry = colorTableEntries[i];
+                coltable.put(colorTableEntry.getColorname(), colorTableEntry.getColor());
+            }
         }
+    }
+
+    public static ColorTable instance() {
         return instance;
     }
 }

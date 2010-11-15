@@ -58,13 +58,13 @@
  */
 package org.trianacode.gui.components.script;
 
-import java.awt.Color;
-
 import org.trianacode.gui.hci.color.ColorModel;
 import org.trianacode.gui.hci.color.ColorTable;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.awt.*;
 
 /**
  * The color model for web service tools
@@ -80,7 +80,7 @@ public class ScriptColorModel implements ColorModel, TrianaColorConstants {
 
     public ScriptColorModel() {
         ColorTable.instance().initDefaultColor(this, TOOL_COLOR, SCRIPT_COLOR);
-        ColorTable.instance().initDefaultColor(this, ERROR_TOOL_COLOR, DEFAULT_ERROR_COLOR);
+        ColorTable.instance().initDefaultColor(this, ERROR_TOOL_COLOR, ERROR_COLOR);
     }
 
     /**

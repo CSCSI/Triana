@@ -2027,20 +2027,6 @@ public final class Env {
     }
 
     /**
-     * Returns the default toolbox directory
-     *
-     * @return File the default directory for tools
-     */
-    public static File getDefaultToolBoxDir() {
-        String pathname = home() + File.separatorChar + "toolboxes" + File.separatorChar;
-        File defaultToolBox = new File(pathname);
-        if (!defaultToolBox.isDirectory()) {
-            defaultToolBox.mkdir();
-        }
-        return defaultToolBox;
-    }
-
-    /**
      * Inner class that acts as a timer for writing out the currently open taskgraphs
      */
     private static class WriteStateThread extends Thread {

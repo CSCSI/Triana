@@ -86,6 +86,8 @@ import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
 import org.trianacode.gui.extensions.*;
 import org.trianacode.gui.hci.color.ColorManager;
+import org.trianacode.gui.hci.color.ColorTable;
+import org.trianacode.gui.hci.color.RegisterableColorModel;
 import org.trianacode.gui.hci.tools.*;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.ParameterPanelManager;
@@ -273,7 +275,8 @@ public class ApplicationFrame extends TrianaWindow
                     TaskGraphExporterInterface.class,
                     TaskGraphImporterInterface.class,
                     ToolImporterInterface.class,
-                    RegisterableToolComponentModel.class);
+                    RegisterableToolComponentModel.class,
+                    RegisterableColorModel.class);
             engine.init(this, false);
             tools = engine.getToolTable();
 
@@ -482,7 +485,18 @@ public class ApplicationFrame extends TrianaWindow
             ToolImporterInterface e = (ToolImporterInterface) o;
             ImportExportRegistry.addToolImporter(e);
         }
-
+        en = engine.getExtensions(RegisterableColorModel.class);
+        for (Object o : en) {
+            RegisterableColorModel e = (RegisterableColorModel) o;
+            String[] names = e.getRegistrationNames();
+            for (String name : names) {
+                ColorManager.registerColorModel(name, e);
+                Color c = e.getDefaultColorForRegistrationName(name);
+                if (c != null) {
+                    ColorTable.instance().initDefaultColor(e, name, c);
+                }
+            }
+        }
     }
 
     private void initPostLayoutExtensions() {
@@ -503,6 +517,9 @@ public class ApplicationFrame extends TrianaWindow
         GUIEnv.setApplicationFrame(this);
         ColorManager.setDefaultColorModel(new TrianaColorModel());
         ColorManager.registerColorModel(ScriptConstants.SCRIPT_RENDERING_HINT, new ScriptColorModel());
+
+        // do this after all other color loading
+        ColorTable.instance().loadUserPrefs();
 
         TaskGraphView defaultview = new TaskGraphView("Default View");
         TrianaComponentModel compmodel = new TrianaComponentModel(tools, this, this);
