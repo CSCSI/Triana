@@ -1,7 +1,5 @@
 package org.trianacode.taskgraph.databus;
 
-import java.io.Serializable;
-
 import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 
 /**
@@ -25,7 +23,7 @@ public interface DataBusInterface {
      * @param packet
      * @param data
      */
-    public void putData(WorkflowDataPacket packet, Serializable data);
+    public void putData(WorkflowDataPacket packet, Object data);
 
     /**
      * Gets the data out of the store with the provided WorkflowDataPacket
@@ -33,7 +31,7 @@ public interface DataBusInterface {
      * @param packet
      * @return
      */
-    public Serializable get(WorkflowDataPacket packet) throws DataNotResolvableException;
+    public Object get(WorkflowDataPacket packet) throws DataNotResolvableException;
 
     /**
      * Removes the URL and the data from the store.
@@ -48,7 +46,7 @@ public interface DataBusInterface {
      * @param data
      * @return
      */
-    public WorkflowDataPacket addObject(Serializable data, boolean deleteAfterUse);
+    public WorkflowDataPacket addObject(Object data, boolean deleteAfterUse);
 
 
 }

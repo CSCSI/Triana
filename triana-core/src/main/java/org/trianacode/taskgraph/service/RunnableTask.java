@@ -684,7 +684,7 @@ public class RunnableTask extends AbstractRunnableTask
             // IAN T - Need to map GUI choice of data sending to databus here:
 
             WorkflowDataPacket packet = DataBus.getDataBus(LocalDataBus.LOCAL_PROTOCOL)
-                    .addObject((Serializable) data, true);
+                    .addObject(data, true);
 
             //HTTPServices.getWorkflowServer().addDataResource(packet.getDataLocation().getPath(), (Serializable) data);
 

@@ -1,4 +1,4 @@
-package org.trianacode.gui.desktop.tabbedPane;
+package org.trianacode.gui.desktop.tabs;
 
 import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.TrianaDesktopView;
@@ -9,8 +9,6 @@ import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,20 +23,19 @@ import java.util.ArrayList;
  */
 public class TabManager implements TrianaDesktopViewManager {
 
-    JTabbedPane tabbedPane;
-    TrianaDesktopView selected;
-
-    public static TabManager manager = new TabManager();
+    private JTabbedPane tabbedPane;
+    private TrianaDesktopView selected;
     private java.util.List<TabView> tabs = new ArrayList<TabView>();
     private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
 
+    private static TabManager manager = new TabManager();
 
     public static TabManager getManager() {
         return manager;
     }
 
     public TabManager() {
-        this.tabbedPane = new TrianaTabbedPane();
+        this.tabbedPane = new JTabbedPane();
 
     }
 
@@ -67,7 +64,9 @@ public class TabManager implements TrianaDesktopViewManager {
         close.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 remove(tab);
-                tabbedPane.remove(tab);
+                for (DesktopViewListener listener : listeners) {
+                    listener.ViewClosed(tab);
+                }
             }
         });
         close.setOpaque(false);
@@ -76,20 +75,21 @@ public class TabManager implements TrianaDesktopViewManager {
         close.setBorder(new EmptyBorder(0, 10, 0, 0));
 
         tabHeader.add(close, BorderLayout.EAST);
-        tabbedPane.addTab(name, tab);
-        tabbedPane.setSelectedComponent(tab);
-        tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), tabHeader);
+        tabbedPane.addTab(null, tab);
+        tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, tabHeader);
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 
         return tab;
     }
 
     @Override
     public void remove(TrianaDesktopView tab) {
-        for (DesktopViewListener listener : listeners) {
-            listener.ViewClosed((TrianaDesktopView) tab);
-        }
         if (tab instanceof TabView) {
             tabs.remove(tab);
+            tabbedPane.remove((TabView) tab);
+        }
+        for (DesktopViewListener listener : listeners) {
+            listener.ViewClosed(tab);
         }
     }
 
@@ -123,8 +123,14 @@ public class TabManager implements TrianaDesktopViewManager {
 
     @Override
     public void setSelected(TrianaDesktopView panel, boolean sel) {
-        selected = panel;
-
+        int tabs = tabbedPane.getTabCount();
+        for (int i = 0; i < tabs; i++) {
+            Component c = tabbedPane.getTabComponentAt(i);
+            if (c == panel) {
+                tabbedPane.setSelectedIndex(i);
+                selected = panel;
+            }
+        }
     }
 
     @Override
@@ -173,28 +179,20 @@ public class TabManager implements TrianaDesktopViewManager {
         }
     }
 
-    class TrianaTabbedPane extends JTabbedPane {
-        public TrianaTabbedPane() {
-            this.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent evt) {
-                    final TabView tab = (TabView) tabbedPane.getSelectedComponent();
-                    if (tab != null) {
-     //                 selected = getDesktopViewFor(tab.getTaskgraphPanel());
-                        selected = tab;
-                        System.out.println("Selected : " + selected.toString());
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                tab.requestFocus();
-                            }
-                        });
-                    } else {
-                        selected = null;
-                    }
+    @Override
+    public TrianaDesktopView getDropTarget(int x, int y, Component source) {
+        for (TabView tab : tabs) {
+            if (tab.isVisible()) {
+                int landingPosX = x -
+                        (tab.getLocationOnScreen().x - source.getLocationOnScreen().x);
+                int landingPosY = y -
+                        (tab.getLocationOnScreen().y - source.getLocationOnScreen().y);
+                if (tab.contains(landingPosX, landingPosY)) {
+                    return tab;
                 }
-            });
+            }
         }
-
+        return null;
     }
+
 }

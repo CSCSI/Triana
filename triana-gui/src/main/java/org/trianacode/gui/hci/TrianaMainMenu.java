@@ -67,7 +67,7 @@ import org.trianacode.gui.action.tools.ToolImportAction;
 import org.trianacode.gui.action.tools.ToolsMenuHandler;
 import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.frames.FramesDesktopManager;
-import org.trianacode.gui.desktop.tabbedPane.TabManager;
+import org.trianacode.gui.desktop.tabs.TabManager;
 import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.taskgraph.tool.ToolTable;

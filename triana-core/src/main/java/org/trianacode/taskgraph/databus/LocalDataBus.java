@@ -3,7 +3,6 @@ package org.trianacode.taskgraph.databus;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.databus.packet.WorkflowDataPacket;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ public class LocalDataBus implements DataBusInterface {
 
     public static final String LOCAL_PROTOCOL = "local";
 
-    private static HashMap<WorkflowDataPacket, Serializable> datastore = new HashMap();
+    private static HashMap<WorkflowDataPacket, Object> datastore = new HashMap();
 
     public LocalDataBus() {
     }
@@ -28,13 +27,13 @@ public class LocalDataBus implements DataBusInterface {
         return LOCAL_PROTOCOL;
     }
 
-    public void putData(WorkflowDataPacket url, Serializable data) {
+    public void putData(WorkflowDataPacket url, Object data) {
         datastore.put(url, data);
     }
 
-    public Serializable get(WorkflowDataPacket packet) throws DataNotResolvableException {
+    public Object get(WorkflowDataPacket packet) throws DataNotResolvableException {
         Loggers.EXECUTION_LOGGER.debug("Getting WorkflowDataPacket from store: " + packet.getDataLocation());
-        Serializable s = datastore.get(packet);
+        Object s = datastore.get(packet);
         if (s == null) {
             throw new DataNotResolvableException("No data for packet:" + packet.getDataLocation());
         }
@@ -49,7 +48,7 @@ public class LocalDataBus implements DataBusInterface {
     }
 
 
-    public WorkflowDataPacket addObject(Serializable data, boolean deleteAfterUse) {
+    public WorkflowDataPacket addObject(Object data, boolean deleteAfterUse) {
         //String identifier = Integer.toString(new Random(seed).nextInt());
         // Andrew will cringe, but it'll work :)
 

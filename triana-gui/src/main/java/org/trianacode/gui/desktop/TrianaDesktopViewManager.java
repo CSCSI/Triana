@@ -39,5 +39,7 @@ public interface TrianaDesktopViewManager {
 
     public void desktopAdded();
 
+    public TrianaDesktopView getDropTarget(int x, int y, Component source);
+
 
 }

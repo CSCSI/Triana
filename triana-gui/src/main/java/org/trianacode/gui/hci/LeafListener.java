@@ -65,6 +65,7 @@ import org.trianacode.gui.action.ToolSelectionListener;
 import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
 import org.trianacode.gui.action.clipboard.ClipboardPasteInterface;
 import org.trianacode.gui.desktop.TrianaDesktopView;
+import org.trianacode.gui.desktop.TrianaDesktopViewManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.OptionPane;
@@ -114,8 +115,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     private MouseEvent startDrag = null; // The last start drag event
     private Point mtStartDrag;
     private Tool selectedTool; // The current lead selected tool
-
-    private Component workspaceContainer; // The desktop that contains MainTriana panels
+    private ApplicationFrame frame;
     private JTree toolBoxTree; // The tree that this listener belongs to
 
     /**
@@ -132,8 +132,8 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
     private ArrayList sellisteners = new ArrayList();
 
 
-    public LeafListener(JTree tree, Component workspaceContainer, ToolTable tools) {
-        this.workspaceContainer = workspaceContainer;
+    public LeafListener(JTree tree, ApplicationFrame frame, ToolTable tools) {
+        this.frame = frame;
         this.toolBoxTree = tree;
         this.toolTable = tools;
 
@@ -531,27 +531,15 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
             DragWindow.DRAG_WINDOW.setVisible(false);
 
             Component source = e.getComponent();
-            Component landed = workspaceContainer;
-            Component parent;
+            TrianaDesktopViewManager manager = frame.getDesktopViewManager();
             int landingPosX;
             int landingPosY;
 
-            // find the main triana window unit is dropped on (if it is dropped on one)
-            do {
-                parent = landed;
+            TrianaDesktopView view = manager.getDropTarget(e.getX(), e.getY(), source);
 
-                landingPosX = e.getX() -
-                        (parent.getLocationOnScreen().x - source.getLocationOnScreen().x);
-                landingPosY = e.getY() -
-                        (parent.getLocationOnScreen().y - source.getLocationOnScreen().y);
-
-                landed = parent.getComponentAt(landingPosX, landingPosY);
-            } while ((landed != null) && (landed != parent) &&
-                    (!(landed instanceof TrianaDesktopView)));
-
-            if (landed instanceof TrianaDesktopView) { // ok we have a drop target
+            if (view != null) { // ok we have a drop target
                 // locate the mainTriana panel
-                TaskGraphPanel cont = ((TrianaDesktopView) landed).getTaskgraphPanel();
+                TaskGraphPanel cont = view.getTaskgraphPanel();
                 cont.getContainer().requestFocus();
                 // landing position within this frame
                 landingPosX = e.getX() - (cont.getContainer().getLocationOnScreen().x -
@@ -632,7 +620,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
                     break;
                 }
             }
-            boolean ok = OptionPane.showOkCancel(sb.toString(), "Tool Conversion", workspaceContainer);
+            boolean ok = OptionPane.showOkCancel(sb.toString(), "Tool Conversion", frame.getDesktopViewManager().getWorkspace());
             if (!ok) {
                 return;
             }

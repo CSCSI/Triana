@@ -65,7 +65,7 @@ import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.desktop.TrianaDesktopViewManager;
 import org.trianacode.gui.desktop.frames.FramesDesktopManager;
-import org.trianacode.gui.desktop.tabbedPane.TabManager;
+import org.trianacode.gui.desktop.tabs.TabManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorTableEntry;
 import org.trianacode.gui.main.TaskGraphPanel;

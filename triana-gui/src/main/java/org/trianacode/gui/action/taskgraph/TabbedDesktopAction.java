@@ -62,7 +62,7 @@ import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.Actions;
 import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.DesktopViewListener;
-import org.trianacode.gui.desktop.tabbedPane.TabManager;
+import org.trianacode.gui.desktop.tabs.TabManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

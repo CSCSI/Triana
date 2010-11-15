@@ -380,6 +380,20 @@ public class FramesDesktopManager implements InternalFrameListener, ComponentLis
         }
     }
 
+    @Override
+    public TrianaDesktopView getDropTarget(int x, int y, Component source) {
+        Component target;
+        int landingPosX = x -
+                (desktop.getLocationOnScreen().x - source.getLocationOnScreen().x);
+        int landingPosY = y -
+                (desktop.getLocationOnScreen().y - source.getLocationOnScreen().y);
+        target = desktop.getComponentAt(landingPosX, landingPosY);
+        if (target instanceof TrianaDesktopView) {
+            return (TrianaDesktopView) target;
+        }
+        return null;
+    }
+
     private class ButtonListener implements ActionListener {
 
         @Override

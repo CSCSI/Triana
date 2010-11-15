@@ -1,4 +1,4 @@
-package org.trianacode.gui.desktop.tabbedPane;
+package org.trianacode.gui.desktop.tabs;
 
 import org.trianacode.gui.desktop.TrianaDesktopView;
 import org.trianacode.gui.main.TaskGraphPanel;
@@ -18,32 +18,32 @@ public class TabView extends JPanel implements TrianaDesktopView {
     private TaskGraphPanel panel;
     private String title = "";
 
-    public TabView(TaskGraphPanel panel){
+    public TabView(TaskGraphPanel panel) {
         super();
+        setLayout(new BorderLayout());
         this.panel = panel;
         setTitle(panel.getTaskGraph().getToolName());
 
         JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scroll.setViewportView(panel.getContainer());
+        scroll.setViewportView(this.panel.getContainer());
         scroll.doLayout();
-        setLayout(new BorderLayout());
-        add(scroll);
+        add(scroll, BorderLayout.CENTER);
     }
 
     public TaskGraphPanel getTaskgraphPanel() {
         return panel;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public String toString(){
+    public String toString() {
         return ("Tab: " + getTitle() + " holds panel: " + panel.getTaskGraph().getToolName());
     }
 }

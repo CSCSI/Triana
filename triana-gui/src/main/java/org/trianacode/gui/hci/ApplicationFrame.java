@@ -572,7 +572,7 @@ public class ApplicationFrame extends TrianaWindow
         actMap.setParent(this.getRootPane().getActionMap());
         this.getRootPane().setActionMap(actMap);
 
-        leaflistener = new LeafListener(toolboxTree, workspace, tools);
+        leaflistener = new LeafListener(toolboxTree, this, tools);
 
         keymaps = new MainTrianaKeyMapFactory(leaflistener, ActionDisplayOptions.DISPLAY_NAME);
         inputMap = keymaps.getInputMap();
