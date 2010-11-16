@@ -84,13 +84,14 @@ public class TabManager implements DesktopViewManager {
 
     @Override
     public void remove(DesktopView tab) {
+        for (DesktopViewListener listener : listeners) {
+            listener.ViewClosed(tab);
+        }
         if (tab instanceof TabView) {
             tabs.remove(tab);
             tabbedPane.remove((TabView) tab);
         }
-        for (DesktopViewListener listener : listeners) {
-            listener.ViewClosed(tab);
-        }
+
     }
 
     @Override
