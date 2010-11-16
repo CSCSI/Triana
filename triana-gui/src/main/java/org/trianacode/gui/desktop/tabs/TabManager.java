@@ -127,13 +127,15 @@ public class TabManager implements DesktopViewManager, ChangeListener {
 
     @Override
     public void setSelected(DesktopView panel, boolean sel) {
-        int tabs = tabbedPane.getTabCount();
-        for (int i = 0; i < tabs; i++) {
-            Component c = tabbedPane.getTabComponentAt(i);
-            if (c instanceof TabView) {
-                if (c == panel) {
-                    tabbedPane.setSelectedIndex(i);
-                    selected = (TabView) c;
+        if (sel) {
+            int tabs = tabbedPane.getTabCount();
+            for (int i = 0; i < tabs; i++) {
+                Component c = tabbedPane.getTabComponentAt(i);
+                if (c instanceof TabView) {
+                    if (c == panel) {
+                        tabbedPane.setSelectedIndex(i);
+                        selected = (TabView) c;
+                    }
                 }
             }
         }
