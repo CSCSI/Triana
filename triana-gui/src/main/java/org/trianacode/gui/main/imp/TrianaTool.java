@@ -302,8 +302,10 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
      * Sets the triana tool as selected (i.e. it appears depressed)
      */
     public void setSelected(boolean state) {
-        selected = state;
-        repaint();
+        if (selected != state) {
+            selected = state;
+            repaint();
+        }
     }
 
     /**

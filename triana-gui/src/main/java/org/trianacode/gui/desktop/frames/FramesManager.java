@@ -313,6 +313,7 @@ public class FramesManager implements InternalFrameListener, ComponentListener, 
                     ((FramesView) view).toFront();
                     selected = (FramesView) view;
                 } else {
+                    // this doesn't change the selected status.
                     ((FramesView) view).setSelected(false);
                 }
             } catch (PropertyVetoException e) {
@@ -356,7 +357,6 @@ public class FramesManager implements InternalFrameListener, ComponentListener, 
 
     @Override
     public void desktopRemoved() {
-        selected = null;
         for (FramesView frame : frames) {
             desktop.getDesktopManager().closeFrame(frame);
             desktop.remove(frame);
@@ -369,7 +369,6 @@ public class FramesManager implements InternalFrameListener, ComponentListener, 
         frames.clear();
         listeners.clear();
         buttons.clear();
-
         selected = null;
     }
 

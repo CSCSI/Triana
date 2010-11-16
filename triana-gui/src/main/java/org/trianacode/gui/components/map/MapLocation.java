@@ -59,16 +59,13 @@
 
 package org.trianacode.gui.components.map;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
-import javax.swing.AbstractButton;
 import org.trianacode.gui.main.NodeComponent;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The component used to represent a location on the map.
@@ -114,7 +111,9 @@ public class MapLocation extends AbstractButton implements TaskComponent {
      * Sets the component as selected
      */
     public void setSelected(boolean state) {
-        selected = state;
+        if (selected != state) {
+            selected = state;
+        }
     }
 
     /**

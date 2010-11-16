@@ -59,13 +59,6 @@
 
 package org.trianacode.gui.components.hidden;
 
-import java.awt.Component;
-import java.util.Hashtable;
-
-import javax.swing.AbstractButton;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JPopupMenu;
 import org.trianacode.gui.hci.tools.DoNothingAction;
 import org.trianacode.gui.hci.tools.ToolComponentModel;
 import org.trianacode.gui.main.NodeComponent;
@@ -73,6 +66,10 @@ import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Hashtable;
 
 /**
  * A tool model that renders a tool invisible on the gui.
@@ -203,7 +200,9 @@ public class HiddenComponentModel implements ToolComponentModel {
          * Sets the component as selected
          */
         public void setSelected(boolean state) {
-            this.selected = state;
+            if (selected != state) {
+                this.selected = state;
+            }
         }
 
         /**

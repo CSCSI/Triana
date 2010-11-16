@@ -440,7 +440,7 @@ public class MainTriana extends JPanel
     public void paintComponent(Graphics graphs) {
         setBackground(getBackgroundColor());
         super.paintComponent(graphs);
-        paintSelected(graphs);
+        //paintSelected(graphs);
         paintCables(graphs);
         paintShowCables(graphs);
         paintIndicationCableInterface(graphs);
@@ -525,9 +525,16 @@ public class MainTriana extends JPanel
         if (isSelectionBox()) {
             int x = Math.min(selorigin.x, selorigin.x + seldimension.width);
             int y = Math.min(selorigin.y, selorigin.y + seldimension.height);
-            graphs.setXORMode(Color.white);
-            graphs.drawRect(x, y, Math.abs(seldimension.width), Math.abs(seldimension.height));
-            graphs.setPaintMode();
+            Graphics2D g2d = (Graphics2D) graphs;
+            Color c = g2d.getColor();
+            Color sel = new Color(Math.abs(c.getRed() - 125), Math.abs(c.getGreen() - 125), Math.abs(c.getBlue() - 125));
+            g2d.setColor(sel);
+            AlphaComposite ta = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+            g2d.setComposite(ta);
+            g2d.fillRect(x, y, Math.abs(seldimension.width), Math.abs(seldimension.height));
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            g2d.drawRect(x, y, Math.abs(seldimension.width), Math.abs(seldimension.height));
+            g2d.setColor(c);
         }
     }
 
