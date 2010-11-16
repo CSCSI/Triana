@@ -58,10 +58,6 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
@@ -70,6 +66,9 @@ import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.service.ClientException;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "run" actions.
@@ -109,7 +108,6 @@ public class RunAction extends AbstractAction implements ActionDisplayOptions {
      */
     public void actionPerformed(ActionEvent e) {
         TrianaClient client = selhandler.getSelectedTrianaClient();
-
         if (client != null) {
             try {
                 client.run();
