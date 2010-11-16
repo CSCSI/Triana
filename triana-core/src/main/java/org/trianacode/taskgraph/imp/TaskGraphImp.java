@@ -653,8 +653,8 @@ public class TaskGraphImp extends TaskImp
 
             TRectangle bounds = TaskLayoutUtils.getBoundingBox(grouptasks);
             TPoint grouppos = TaskLayoutUtils.getPosition(group);
-            TaskLayoutUtils.translateTo(grouptasks, new TPoint(grouppos.getX() - (bounds.getWidth() / 2) + 0.5,
-                    grouppos.getY() - (bounds.getHeight() / 2) + 0.5));
+            TaskLayoutUtils.translateTo(grouptasks, new TPoint(Math.max(0, grouppos.getX() - (bounds.getWidth() / 2) + 0.5),
+                    Math.max(0, grouppos.getY() - (bounds.getHeight() / 2) + 0.5)));
 
             TaskGraphUtils.disconnectControlTask(group);
 
