@@ -9,6 +9,8 @@ import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,10 +23,10 @@ import java.util.ArrayList;
  * Time: 5:27:58 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TabManager implements DesktopViewManager {
+public class TabManager implements DesktopViewManager, ChangeListener {
 
     private JTabbedPane tabbedPane;
-    private DesktopView selected;
+    private TabView selected;
     private java.util.List<TabView> tabs = new ArrayList<TabView>();
     private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
 
@@ -36,6 +38,7 @@ public class TabManager implements DesktopViewManager {
 
     public TabManager() {
         this.tabbedPane = new JTabbedPane();
+        tabbedPane.addChangeListener(this);
 
     }
 
@@ -78,7 +81,7 @@ public class TabManager implements DesktopViewManager {
         tabbedPane.addTab(null, tab);
         tabbedPane.setTabComponentAt(tabbedPane.getTabCount() - 1, tabHeader);
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-
+        // no need to set selected here - staeChanged gets called when the tab is added.
         return tab;
     }
 
@@ -127,9 +130,11 @@ public class TabManager implements DesktopViewManager {
         int tabs = tabbedPane.getTabCount();
         for (int i = 0; i < tabs; i++) {
             Component c = tabbedPane.getTabComponentAt(i);
-            if (c == panel) {
-                tabbedPane.setSelectedIndex(i);
-                selected = panel;
+            if (c instanceof TabView) {
+                if (c == panel) {
+                    tabbedPane.setSelectedIndex(i);
+                    selected = (TabView) c;
+                }
             }
         }
     }
@@ -167,9 +172,9 @@ public class TabManager implements DesktopViewManager {
 
     @Override
     public void desktopRemoved() {
+        tabbedPane.removeAll();
         tabs.clear();
         listeners.clear();
-        tabbedPane.removeAll();
         selected = null;
     }
 
@@ -196,4 +201,16 @@ public class TabManager implements DesktopViewManager {
         return null;
     }
 
+    @Override
+    public void stateChanged(ChangeEvent evt) {
+        if (evt.getSource() == tabbedPane) {
+            Component selected = tabbedPane.getSelectedComponent();
+            if (selected instanceof TabView) {
+                this.selected = (TabView) selected;
+                for (DesktopViewListener listener : listeners) {
+                    listener.ViewOpened(this.selected);
+                }
+            }
+        }
+    }
 }
