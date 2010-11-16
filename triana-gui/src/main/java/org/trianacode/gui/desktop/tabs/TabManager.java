@@ -209,6 +209,7 @@ public class TabManager implements DesktopViewManager, ChangeListener {
             Component selected = tabbedPane.getSelectedComponent();
             if (selected instanceof TabView) {
                 this.selected = (TabView) selected;
+                this.selected.getTaskgraphPanel().getContainer().requestFocus();
                 for (DesktopViewListener listener : listeners) {
                     listener.ViewOpened(this.selected);
                 }
