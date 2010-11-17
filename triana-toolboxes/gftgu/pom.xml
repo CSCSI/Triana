@@ -23,24 +23,24 @@
     <parent>
         <groupId>org.trianacode</groupId>
         <artifactId>triana-toolboxes</artifactId>
-        <version>0.1</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>toolboxes-gftgu</artifactId>
     <packaging>jar</packaging>
     <name>Toolboxes GFTGU</name>
-    <version>0.1</version>
+    <version>4.0.0-SNAPSHOT</version>
     <url>http://www.trianacode.org</url>
 
     <dependencies>
         <dependency>
             <groupId>org.trianacode</groupId>
             <artifactId>triana-types</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.trianacode</groupId>
             <artifactId>toolboxes-signalproc</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

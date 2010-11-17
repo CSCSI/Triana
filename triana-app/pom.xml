@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.trianacode</groupId>
         <artifactId>triana</artifactId>
-        <version>0.1</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>triana-app</artifactId>
     <packaging>jar</packaging>
     <name>Triana App</name>
-    <version>0.1</version>
+    <version>4.0.0-SNAPSHOT</version>
     <url>http://www.trianacode.org</url>
 
 
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.trianacode</groupId>
             <artifactId>triana-gui</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -131,7 +131,7 @@
                     </execution>
                     <execution>
                         <id>ant4</id>
-                        <phase>compile</phase>
+                        <phase>clean</phase>
                         <configuration>
                             <tasks>
                                 <ant dir="." target="clean"/>

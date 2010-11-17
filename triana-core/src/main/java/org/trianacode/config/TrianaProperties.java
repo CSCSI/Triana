@@ -29,6 +29,8 @@ public class TrianaProperties extends Properties {
 
     public static final String PROPERTY_SEARCH_PATH_PROPERTY = DOMAIN + ".property.search.path";
     public static final String TOOLBOX_SEARCH_PATH_PROPERTY = DOMAIN + ".toolbox.search.path";
+    public static final String MODULE_SEARCH_PATH_PROPERTY = DOMAIN + ".module.search.path";
+
     public static final String TEMPLATE_SEARCH_PATH_PROPERTY = DOMAIN + ".template.search.path";
 
     // List of property files that can contains properties (1 or more).  Default is DEFAULT_PROPERTY_FILE
@@ -74,10 +76,8 @@ public class TrianaProperties extends Properties {
      */
     public TrianaProperties(TrianaInstance engine, Properties initValues) {
         this.engine = engine;
-        if (initValues == null || initValues.isEmpty()) {
-            // put default values
-            this.putAll(getDefaultConfiguration());
-        } else {
+        this.putAll(getDefaultConfiguration());
+        if (initValues != null) {
             putAll(initValues);
         }
     }
@@ -94,8 +94,6 @@ public class TrianaProperties extends Properties {
             String value = systemprops.getProperty(prop);
 
             if ((value != null) && (value.contains(DOMAIN))) {
-                System.out.println("TrianaProperties.overrideUsingSystemProperties REMOVING PROERPTY");
-                remove(prop);
                 setProperty(prop, value);
             }
         }
@@ -110,6 +108,7 @@ public class TrianaProperties extends Properties {
 
 
         properties.put(TOOLBOX_SEARCH_PATH_PROPERTY, Locations.getDefaultToolboxRoot());
+        properties.put(MODULE_SEARCH_PATH_PROPERTY, Locations.getDefaultModuleRoot());
 
         // should we do this???
         // ANDREW: No - these will be on the classpath if classes/ is used or is in a jar

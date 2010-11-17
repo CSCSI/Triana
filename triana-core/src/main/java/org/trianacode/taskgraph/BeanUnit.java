@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Takes a class in the constructor and creates inputs to a selected method.
- * Outputs the result of invoking the method, or fi a primitive or collection or enum,
+ * Outputs the result of invoking the method, or if a primitive or collection or enum,
  * outputs the input.
  *
  * @author Andrew Harrison
@@ -63,15 +63,25 @@ public class BeanUnit extends Unit {
             List<Method>[] arr = extractMethods(this.beanClass);
             this.setters = arr[0];
             this.getters = arr[1];
+
             if (defaultMethod == null) {
                 if (setters.size() > 0 && getters.size() > 0) {
                     showMethodChoice = true;
                     this.selectedMethod = setters.get(0);
                     setIOTypes(selectedMethod);
                 } else {
-                    returnMe = true;
-                    currentOutputs = new String[]{this.beanClass.getName()};
-                    currentInputs = new String[0];
+                    showMethodChoice = false;
+                    if (setters.size() == 0) {
+                        currentInputs = new String[]{this.beanClass.getName()};
+                        if (getters.size() > 0) {
+                            this.selectedMethod = getters.get(0);
+                            currentOutputs = new String[]{this.selectedMethod.getReturnType().getName()};
+                        }
+                    }
+                    if (getters.size() == 0) {
+                        currentOutputs = new String[]{this.beanClass.getName()};
+                        returnMe = true;
+                    }
                 }
 
             } else {
@@ -92,20 +102,33 @@ public class BeanUnit extends Unit {
     public void process() {
         Method m = selectedMethod;
         if (m != null) {
-            List<Object> params = new ArrayList<Object>();
-            for (int count = 0; count < getInputNodeCount(); count++) {
-                Object obj = getInputAtNode(count);
-                params.add(obj);
-            }
-            try {
-                m.invoke(bean, params.toArray(new Object[params.size()]));
-                Method getter = getMatchingMethod(m);
-                Object ret = getter.invoke(bean, null);
-                if (ret != null) {
-                    output(ret);
+            if (isGetter(m)) {
+                try {
+                    Object ret = m.invoke(bean, new Object[0]);
+                    if (ret != null) {
+                        output(ret);
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                List<Object> params = new ArrayList<Object>();
+                for (int count = 0; count < getInputNodeCount(); count++) {
+                    Object obj = getInputAtNode(count);
+                    params.add(obj);
+                }
+                try {
+                    m.invoke(bean, params.toArray(new Object[params.size()]));
+                    Method getter = getMatchingMethod(m);
+                    Object ret = getter.invoke(bean, null);
+                    if (ret != null) {
+                        output(ret);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             if (primitiveValue != null) {
@@ -138,6 +161,15 @@ public class BeanUnit extends Unit {
             }
             output(bean);
         }
+    }
+
+    private boolean isGetter(Method m) {
+        if (m.getName().startsWith("get") || m.getName().startsWith("is")) {
+            if (m.getParameterTypes().length == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<Method>[] extractMethods(Class o) {

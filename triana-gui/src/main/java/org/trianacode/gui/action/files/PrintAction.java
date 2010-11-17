@@ -91,7 +91,7 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
         putValue(SHORT_DESCRIPTION, Env.getString("PrintTip"));
         putValue(ACTION_COMMAND_KEY, Env.getString("Print"));
         putValue(SMALL_ICON, GUIEnv.getIcon("print.png"));
-        putValue(NAME, Env.getString("Print") + "...");
+        putValue(NAME, Env.getString("Print"));
     }
 
     /**
@@ -107,7 +107,7 @@ public class PrintAction extends AbstractAction implements ActionDisplayOptions 
 
                 ParameterWindow window = new ParameterWindow(GUIEnv.getApplicationFrame(),
                         WindowButtonConstants.OK_CANCEL_BUTTONS, true);
-                window.setTitle(Env.getString("Print") + "...");
+                window.setTitle(Env.getString("Print"));
                 window.setParameterPanel(panel);
                 Display.centralise(window);
 

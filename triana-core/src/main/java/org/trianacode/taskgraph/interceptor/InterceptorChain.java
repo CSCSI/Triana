@@ -16,10 +16,10 @@
 
 package org.trianacode.taskgraph.interceptor;
 
+import org.trianacode.taskgraph.Node;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.trianacode.taskgraph.Node;
 
 /**
  * An interceptor intercepts data while it's on the cable.
@@ -60,6 +60,7 @@ public class InterceptorChain {
             Interceptor interceptor = interceptors.get(s);
             data = interceptor.interceptSend(sendNode, receiveNode, data);
         }
+
         return data;
     }
 

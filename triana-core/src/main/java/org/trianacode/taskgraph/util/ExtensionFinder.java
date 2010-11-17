@@ -18,13 +18,12 @@ package org.trianacode.taskgraph.util;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.module.ModuleClassLoader;
 import org.trianacode.taskgraph.tool.ClassLoaders;
+import org.trianacode.taskgraph.tool.ToolClassLoader;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -40,39 +39,59 @@ public class ExtensionFinder {
 
     static Log log = Loggers.CONFIG_LOGGER;
 
-    private static List<File> searchDirs = new ArrayList<File>();
 
-
-    static {
+    private static void loadPaths(List<File> searchDirs) {
         String cp = System.getProperty("java.class.path");
         String sep = System.getProperty("path.separator");
         if (cp != null && cp.length() > 0) {
             String[] paths = cp.split(sep);
             for (String path : paths) {
-
-                File f = new File(path);
-                if (f.exists()) {
-                    log.debug("adding search path:" + f.getAbsolutePath());
-                    searchDirs.add(f);
+                if (path.trim().length() > 0) {
+                    File f = new File(path);
+                    if (f.exists()) {
+                        log.debug("adding search path:" + f.getAbsolutePath());
+                        searchDirs.add(f);
+                    }
+                }
+            }
+        }
+        List<ModuleClassLoader> mod = ClassLoaders.getModuleClassLoaders();
+        for (ModuleClassLoader moduleClassLoader : mod) {
+            List<String> paths = moduleClassLoader.getClassPathList();
+            for (String path : paths) {
+                if (path.trim().length() > 0) {
+                    File f = new File(path);
+                    if (f.exists()) {
+                        log.debug("adding search path:" + f.getAbsolutePath());
+                        searchDirs.add(f);
+                    }
+                }
+            }
+        }
+        List<ToolClassLoader> tools = ClassLoaders.getToolClassLoaders();
+        for (ToolClassLoader toolLoader : tools) {
+            List<String> paths = toolLoader.getClassPathList();
+            for (String path : paths) {
+                if (path.trim().length() > 0) {
+                    File f = new File(path);
+                    if (f.exists()) {
+                        log.debug("adding search path:" + f.getAbsolutePath());
+                        searchDirs.add(f);
+                    }
                 }
             }
         }
     }
 
-    public static void addSearchPaths(List<File> files) {
-        for (File file : files) {
-            if (!searchDirs.contains(file)) {
-                searchDirs.add(file);
-            }
-        }
-    }
 
-    public static Map<Class, List<Object>> services(List<Class> providers) {
-        Map<Class, List<Object>> ret = new HashMap<Class, List<Object>>();
+    public static Map<Class, Set<Object>> services(List<Class> providers) {
+        List<File> searchDirs = new ArrayList<File>();
+        loadPaths(searchDirs);
+        Map<Class, Set<Object>> ret = new HashMap<Class, Set<Object>>();
         for (File searchDir : searchDirs) {
-            Map<Class, List<Object>> map = getProviders(providers, searchDir);
+            Map<Class, Set<Object>> map = getProviders(providers, searchDir);
             for (Class aClass : map.keySet()) {
-                List<Object> objs = ret.get(aClass);
+                Set<Object> objs = ret.get(aClass);
                 if (objs == null) {
                     ret.put(aClass, map.get(aClass));
                 } else {
@@ -84,21 +103,21 @@ public class ExtensionFinder {
         return ret;
     }
 
-    public static List<Object> services(Class provider) {
+    public static Set<Object> services(Class provider) {
         List provs = new ArrayList<Class>();
         provs.add(provider);
-        Map<Class, List<Object>> ret = services(provs);
+        Map<Class, Set<Object>> ret = services(provs);
         if (ret != null && ret.get(provider) != null) {
             return ret.get(provider);
         }
-        return new ArrayList<Object>();
+        return new HashSet<Object>();
     }
 
 
-    public static Map<Class, List<Object>> getProviders(List<Class> providers, File file) {
+    public static Map<Class, Set<Object>> getProviders(List<Class> providers, File file) {
         log.debug("searching for providers:" + file.getAbsolutePath());
         log.debug("*** Looking for extensions in : " + file.getAbsolutePath());
-        Map<Class, List<Object>> ret = new HashMap<Class, List<Object>>();
+        Map<Class, Set<Object>> ret = new HashMap<Class, Set<Object>>();
         if (file.isDirectory()) {
             File meta = new File(file, "META-INF");
             if (meta.exists()) {
@@ -136,9 +155,9 @@ public class ExtensionFinder {
                                 log.debug("error thrown while reading file:" + e.getMessage());
                             }
                             if (impls.size() > 0) {
-                                List<Object> exist = ret.get(provider);
+                                Set<Object> exist = ret.get(provider);
                                 if (exist == null) {
-                                    exist = new ArrayList<Object>();
+                                    exist = new HashSet<Object>();
                                 }
                                 exist.addAll(impls);
                                 ret.put(provider, exist);
@@ -157,9 +176,9 @@ public class ExtensionFinder {
             });
             if (children != null) {
                 for (File child : children) {
-                    Map<Class, List<Object>> map = getProviders(providers, child);
+                    Map<Class, Set<Object>> map = getProviders(providers, child);
                     for (Class aClass : map.keySet()) {
-                        List<Object> objs = ret.get(aClass);
+                        Set<Object> objs = ret.get(aClass);
                         if (objs == null) {
                             ret.put(aClass, map.get(aClass));
                         } else {
@@ -203,9 +222,9 @@ public class ExtensionFinder {
                                     }
                                 }
                                 if (impls.size() > 0) {
-                                    List<Object> exist = ret.get(provider);
+                                    Set<Object> exist = ret.get(provider);
                                     if (exist == null) {
-                                        exist = new ArrayList<Object>();
+                                        exist = new HashSet<Object>();
                                     }
                                     exist.addAll(impls);
                                     ret.put(provider, exist);

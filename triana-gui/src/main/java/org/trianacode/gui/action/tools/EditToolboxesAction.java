@@ -56,61 +56,53 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.gui.action.taskgraph;
+package org.trianacode.gui.action.tools;
 
 import org.trianacode.gui.action.ActionDisplayOptions;
-import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
-import org.trianacode.gui.main.TaskGraphOrganize;
+import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 /**
- * Action class to handle all "select all" actions.
- *
  * @author Matthew Shields
  * @version $Revision: 4048 $
  */
-public class OrganizeAction extends AbstractAction implements ActionDisplayOptions {
+public class EditToolboxesAction extends AbstractAction implements ActionDisplayOptions {
 
-    private ToolSelectionHandler selhandler;
+    private ToolTable tools;
 
-    public OrganizeAction(ToolSelectionHandler sel) {
-        this(sel, DISPLAY_BOTH);
+
+    public EditToolboxesAction(ToolTable tools) {
+        this(tools, DISPLAY_BOTH);
     }
 
-    public OrganizeAction(ToolSelectionHandler sel, int displayOption, JMenu parentMenu) {
-        this(sel, displayOption);
-        char mnem = MenuMnemonics.getInstance().getNextMnemonic(parentMenu, Env.getString("Organize"));
+    public EditToolboxesAction(ToolTable tools, int displayOption, JMenu parentMenu) {
+        this(tools, displayOption);
+        char mnem = MenuMnemonics.getInstance().getNextMnemonic(parentMenu, Env.getString("editToolBoxPaths"));
         putValue(MNEMONIC_KEY, new Integer(mnem));
     }
 
-    public OrganizeAction(ToolSelectionHandler sel, int displayOption) {
+    public EditToolboxesAction(ToolTable tools, int displayOption) {
         super();
-        this.selhandler = sel;
-        putValue(SHORT_DESCRIPTION, Env.getString("OrganizeTip"));
-        putValue(ACTION_COMMAND_KEY, Env.getString("Organize"));
+        this.tools = tools;
+        putValue(SHORT_DESCRIPTION, Env.getString("editToolBoxPaths"));
+        putValue(ACTION_COMMAND_KEY, Env.getString("editToolBoxPaths"));
         if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
-            putValue(SMALL_ICON, GUIEnv.getIcon("layout.png"));
+            putValue(SMALL_ICON, GUIEnv.getIcon("cogbox.png"));
         }
         if ((displayOption == DISPLAY_NAME) || (displayOption == DISPLAY_BOTH)) {
-            putValue(NAME, Env.getString("Organize"));
+            putValue(NAME, Env.getString("editToolBoxPaths"));
         }
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_G,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     }
 
     /**
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (selhandler.getSelectedTaskgraph() != null) {
-            TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.TREE_ORGANIZE, selhandler.getSelectedTaskgraph());
-        }
+        new ToolBoxHandler(tools).init();
     }
 }

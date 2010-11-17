@@ -159,19 +159,36 @@ public class Locations {
         }
         if (p != null) {
             File[] boxes = p.listFiles();
-            StringBuilder sb = new StringBuilder();
-            for (File box : boxes) {
-                if (box.isDirectory()) {
-                    sb.append(
-                            "{" + FileToolboxLoader.LOCAL_TYPE + "}{" + box.getName() + "}" + box.getAbsolutePath() + ", ");
+            if (boxes != null) {
+                StringBuilder sb = new StringBuilder();
+                for (File box : boxes) {
+                    if (box.isDirectory()) {
+                        sb.append(
+                                "{" + FileToolboxLoader.LOCAL_TYPE + "}{" + box.getName() + "}" + box.getAbsolutePath() + ", ");
+                    }
                 }
+                String all = sb.toString();
+                if (all.indexOf(",") > -1) {
+                    return all.substring(0, all.lastIndexOf(","));
+                }
+                return all;
             }
-            String all = sb.toString();
-            return all.substring(0, all.lastIndexOf(","));
-        } else {
-            return "";
         }
+        return "";
+    }
 
+    public static String getDefaultModuleRoot() {
+        File f = Locations.runHome();
+        File p;
+        if (isJarred()) {
+            p = new File(f.getParentFile(), "modules");
+        } else {
+            p = new File(f, "modules");
+        }
+        if (p != null) {
+            return p.getAbsolutePath();
+        }
+        return "";
     }
 
     public static String getDefaultTemplateRoot() {

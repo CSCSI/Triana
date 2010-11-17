@@ -1,5 +1,6 @@
 package org.trianacode;
 
+import org.apache.commons.logging.Log;
 import org.trianacode.config.Locations;
 import org.trianacode.config.PropertyLoader;
 import org.trianacode.config.TrianaProperties;
@@ -10,6 +11,7 @@ import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.http.HTTPServices;
+import org.trianacode.module.Module;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -22,6 +24,7 @@ import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.util.ExtensionFinder;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -44,11 +47,14 @@ import java.util.concurrent.Executors;
 
 public class TrianaInstance {
 
+    private static Log log = Loggers.CONFIG_LOGGER;
+
+
     private ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 20);
     private HTTPServices httpServices;
     private ToolResolver toolResolver;
 
-    private Map<Class, List<Object>> extensions = new HashMap<Class, List<Object>>();
+    private Map<Class, Set<Object>> extensions = new HashMap<Class, Set<Object>>();
     private TrianaProperties props;
     private PropertyLoader propertyLoader;
     //private DiscoverTools discoveryTools;
@@ -58,6 +64,9 @@ public class TrianaInstance {
     private ArgumentParser parser;
     private List<Class> extensionClasses = new ArrayList<Class>();
     private List<String> extraToolboxes = new ArrayList<String>();
+    private List<String> modulePaths = new ArrayList<String>();
+    private List<Module> modules = new ArrayList<Module>();
+
     private boolean runServer = false;
     private boolean reresolve = false;
 
@@ -89,6 +98,10 @@ public class TrianaInstance {
         if (toolboxes != null) {
             this.extraToolboxes.addAll(toolboxes);
         }
+        List<String> modules = TrianaOptions.getOptionValues(parser, TrianaOptions.EXTRA_MODULES_OPTION);
+        if (modules != null) {
+            this.modulePaths.addAll(modules);
+        }
         String existing = Locations.getDefaultConfigFile();
         File f = new File(existing);
         if (!f.exists()) {
@@ -108,14 +121,19 @@ public class TrianaInstance {
             progress.setProgressSteps(4);
             progress.showCurrentProgress("Initializing Engine");
         }
+
+        //load modules first - this just adds stuff to the class path
+        initModules(modulePaths);
         toolResolver = new ToolResolver(props);
         toolTable = new ToolTableImpl(toolResolver);
+
 
         ProxyFactory.initProxyFactory();
         TaskGraphManager.initTaskGraphManager();
         TaskGraphManager.initToolTable(toolTable);
         initObjectDeserializers();
         initExtensions(extensionClasses);
+
 
         httpServices = new HTTPServices();
         if (runServer) {
@@ -160,7 +178,7 @@ public class TrianaInstance {
         return httpServices;
     }
 
-    public TrianaProperties getProps() {
+    public TrianaProperties getProperties() {
         return props;
     }
 
@@ -192,6 +210,49 @@ public class TrianaInstance {
         }
     }
 
+    public void addModulePath(String path) {
+        if (!modulePaths.contains(path)) {
+            modulePaths.add(path);
+        }
+    }
+
+    private void initModules(List<String> modulePaths) {
+        String moduleRoot = props.getProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY);
+        if (moduleRoot != null) {
+            File f = new File(moduleRoot);
+            if (f.exists() && f.isDirectory()) {
+                File[] files = f.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory() && !file.getName().startsWith(".") && !file.getName().equals("CVS");
+                    }
+                });
+                for (File file : files) {
+                    try {
+                        Module m = new Module(file);
+                        modules.add(m);
+                        ClassLoaders.addClassLoader(m.getClassLoader());
+                    } catch (Exception e) {
+                        log.error(e);
+                    }
+
+                }
+            }
+        }
+        for (String modulePath : modulePaths) {
+            File file = new File(modulePath);
+            if (file.exists() && file.isDirectory()) {
+                try {
+                    Module m = new Module(file);
+                    modules.add(m);
+                    ClassLoaders.addClassLoader(m.getClassLoader());
+                } catch (Exception e) {
+                    log.error(e);
+                }
+            }
+        }
+    }
+
     public boolean isRunServer() {
         return runServer;
     }
@@ -209,7 +270,6 @@ public class TrianaInstance {
     }
 
     private void initExtensions(List<Class> exten) {
-
         List ext = new ArrayList<Class>();
         ext.add(Interceptor.class);
         ext.add(ToolMetadataResolver.class);
@@ -226,25 +286,25 @@ public class TrianaInstance {
         Set<Class> keys = extensions.keySet();
         for (Class key : keys) {
             if (key.equals(Interceptor.class)) {
-                List<Object> exts = extensions.get(key);
+                Set<Object> exts = extensions.get(key);
                 for (Object o : exts) {
                     Interceptor e = (Interceptor) o;
                     InterceptorChain.register(e);
                 }
             } else if (key.equals(ToolMetadataResolver.class)) {
-                List<Object> exts = extensions.get(key);
+                Set<Object> exts = extensions.get(key);
                 for (Object o : exts) {
                     ToolMetadataResolver e = (ToolMetadataResolver) o;
                     ResolverRegistry.registerResolver(e);
                 }
             } else if (key.equals(DataBusInterface.class)) {
-                List<Object> exts = extensions.get(key);
+                Set<Object> exts = extensions.get(key);
                 for (Object o : exts) {
                     DataBusInterface e = (DataBusInterface) o;
                     DataBus.registerDataBus(e);
                 }
             } else if (key.equals(ToolboxLoader.class)) {
-                List<Object> exts = extensions.get(key);
+                Set<Object> exts = extensions.get(key);
                 for (Object o : exts) {
                     ToolboxLoader e = (ToolboxLoader) o;
                     ToolboxLoaderRegistry.registerLoader(e);
@@ -258,16 +318,16 @@ public class TrianaInstance {
                 new Base64ObjectDeserializer());
     }
 
-    public Map<Class, List<Object>> getExtensions() {
+    public Map<Class, Set<Object>> getExtensions() {
         return Collections.unmodifiableMap(extensions);
     }
 
-    public List<Object> getExtensions(Class cls) {
-        List<Object> exts = extensions.get(cls);
+    public Set<Object> getExtensions(Class cls) {
+        Set<Object> exts = extensions.get(cls);
         if (exts != null) {
-            return Collections.unmodifiableList(exts);
+            return Collections.unmodifiableSet(exts);
         }
-        return new ArrayList<Object>();
+        return new HashSet<Object>();
     }
 
     public void execute(Runnable runnable) {

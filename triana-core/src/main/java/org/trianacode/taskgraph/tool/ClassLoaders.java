@@ -18,6 +18,7 @@ package org.trianacode.taskgraph.tool;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.module.ModuleClassLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +26,9 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -42,9 +46,10 @@ public class ClassLoaders {
     /**
      * hash table of class loaders
      */
-    private static java.util.Hashtable<String, ClassLoader> mappedLoaders
-            = new java.util.Hashtable<String, ClassLoader>();
+    private static java.util.Hashtable<String, ClassLoader> mappedLoaders = new Hashtable<String, ClassLoader>();
     private static Vector<ClassLoader> loaders = new Vector<ClassLoader>();
+    private static Vector<ModuleClassLoader> moduleLoaders = new Vector<ModuleClassLoader>();
+    private static Vector<ToolClassLoader> toolLoaders = new Vector<ToolClassLoader>();
 
 
     /**
@@ -55,6 +60,16 @@ public class ClassLoaders {
     public static void addClassLoader(ClassLoader loader) {
         if (!loaders.contains(loader)) {
             loaders.add(loader);
+            if (loader instanceof ModuleClassLoader) {
+                if (!moduleLoaders.contains(loader)) {
+                    moduleLoaders.add((ModuleClassLoader) loader);
+                }
+            }
+            if (loader instanceof ToolClassLoader) {
+                if (!toolLoaders.contains(loader)) {
+                    toolLoaders.add((ToolClassLoader) loader);
+                }
+            }
         }
     }
 
@@ -65,6 +80,16 @@ public class ClassLoaders {
      */
     public static void removeClassLoader(ClassLoader loader) {
         loaders.remove(loader);
+        if (loader instanceof ModuleClassLoader) {
+            if (!moduleLoaders.contains(loader)) {
+                moduleLoaders.remove((ModuleClassLoader) loader);
+            }
+        }
+        if (loader instanceof ToolClassLoader) {
+            if (!toolLoaders.contains(loader)) {
+                toolLoaders.remove((ToolClassLoader) loader);
+            }
+        }
     }
 
     /**
@@ -75,6 +100,16 @@ public class ClassLoaders {
     public static void setClassLoader(String className, ClassLoader loader) {
         if (className != null && loader != null) {
             mappedLoaders.put(className, loader);
+            if (loader instanceof ModuleClassLoader) {
+                if (!moduleLoaders.contains(loader)) {
+                    moduleLoaders.add((ModuleClassLoader) loader);
+                }
+            }
+            if (loader instanceof ToolClassLoader) {
+                if (!toolLoaders.contains(loader)) {
+                    toolLoaders.add((ToolClassLoader) loader);
+                }
+            }
         }
     }
 
@@ -97,7 +132,19 @@ public class ClassLoaders {
      * @param className the name of a class
      */
     public static void removeClassLoader(String className) {
-        mappedLoaders.remove(className);
+        ClassLoader loader = mappedLoaders.remove(className);
+        if (loader != null) {
+            if (loader instanceof ModuleClassLoader) {
+                if (!moduleLoaders.contains(loader)) {
+                    moduleLoaders.add((ModuleClassLoader) loader);
+                }
+            }
+            if (loader instanceof ToolClassLoader) {
+                if (!toolLoaders.contains(loader)) {
+                    toolLoaders.add((ToolClassLoader) loader);
+                }
+            }
+        }
     }
 
 
@@ -306,6 +353,14 @@ public class ClassLoaders {
             }
         }
         return null;
+    }
+
+    public static List<ModuleClassLoader> getModuleClassLoaders() {
+        return Collections.unmodifiableList(moduleLoaders);
+    }
+
+    public static List<ToolClassLoader> getToolClassLoaders() {
+        return Collections.unmodifiableList(toolLoaders);
     }
 
 

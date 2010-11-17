@@ -58,18 +58,12 @@
  */
 package org.trianacode.gui.hci;
 
-import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
 import org.trianacode.gui.action.files.OpenRecentListener;
-import org.trianacode.gui.action.files.OptionsMenuHandler;
-import org.trianacode.gui.action.tools.ToolImportAction;
-import org.trianacode.gui.action.tools.ToolsMenuHandler;
 import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.frames.FramesManager;
 import org.trianacode.gui.desktop.tabs.TabManager;
-import org.trianacode.gui.extensions.Extension;
-import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
 
@@ -96,7 +90,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
      */
     private JMenu fileMenu;
     //private JMenu helpMenu;
-    private JMenu toolsMenu;
+    //private JMenu toolsMenu;
     private JMenu editMenu;
     private JMenu optionsMenu;
     private JMenu recentMenu;
@@ -189,7 +183,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
         editMenu.add(new JMenuItem(ActionTable.getAction(ORGANIZE_ACTION)));
 
         MenuUtils.assignMnemonics(editMenu);
-
+        /*
         toolsMenu = MenuMnemonics.getInstance().createMenu(Env.getString("tools"));
         ToolsMenuHandler toolsMenuHandler = new ToolsMenuHandler(tools);
         MenuMnemonics.getInstance().createMenuItem(Env.getString("newUnit"), toolsMenu, toolsMenuHandler);
@@ -220,7 +214,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
             toolsMenu.add(extmenu);
         }
 
-        /*servicesMenu = MenuMnemonics.getInstance().createMenu(Env.getString("services"));
+        servicesMenu = MenuMnemonics.getInstance().createMenu(Env.getString("services"));
         servicesMenu.add(new JMenuItem(ActionTable.getAction(DISCOVER_SERVICES_ACTION)));
         servicesMenu.add(new JMenuItem(ActionTable.getAction(IMPORT_SERVICE_ACTION)));
         servicesMenu.addSeparator();
@@ -245,12 +239,11 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
         }*/
 
         optionsMenu = MenuMnemonics.getInstance().createMenu(Env.getString("Options"));
-        OptionsMenuHandler optionsMenuHandler = new OptionsMenuHandler(applicationFrame.getTools());
-        item = MenuMnemonics.getInstance()
-                .createCheckBoxMenuItem(Env.getString("DebugWindow"), optionsMenu, optionsMenuHandler);
-        optionsMenuHandler.addMonitorDebugWindow(item);
+        optionsMenu.add(new JMenuItem(ActionTable.getAction(OPTIONS)));
         optionsMenu.addSeparator();
-        MenuMnemonics.getInstance().createMenuItem(Env.getString("TrianaOptionTitle"), optionsMenu, optionsMenuHandler);
+
+        optionsMenu.add(new JMenuItem(ActionTable.getAction(EDIT_TOOLBOXES)));
+
         optionsMenu.addSeparator();
 
         JCheckBoxMenuItem tabbedDesktop = new JCheckBoxMenuItem(ActionTable.getAction(Actions.TABBED_DESKTOP_VIEW));
@@ -275,7 +268,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
         this.add(fileMenu);
         this.add(editMenu);
         this.add(runMenu);
-        this.add(toolsMenu);
+        //this.add(toolsMenu);
         //this.add(servicesMenu);
 
         this.add(optionsMenu);

@@ -50,7 +50,6 @@ public class DaxFileComponentModel implements RegisterableToolComponentModel {
 
     @Override
     public TaskComponent getTaskComponent(Task task) {
-
         return new DaxFileTrianaTask(task);
     }
 

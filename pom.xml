@@ -4,7 +4,7 @@
     <groupId>org.trianacode</groupId>
     <artifactId>triana</artifactId>
     <packaging>pom</packaging>
-    <version>0.1</version>
+    <version>4.0.0-SNAPSHOT</version>
     <name>triana</name>
     <url>http://www.trianacode.org</url>
 

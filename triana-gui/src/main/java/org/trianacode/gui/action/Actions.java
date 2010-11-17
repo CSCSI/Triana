@@ -136,6 +136,8 @@ public interface Actions {
     public static final String REMOVE_TRIGGER_NODE_ACTION = "removeTriggerNode";
     public static final String TOGGLE_ERROR_NODE_ACTION = "toggleErrorNode";
 
+    public static final String OPTIONS = "Options";
+    public static final String EDIT_TOOLBOXES = "Edit Toolboxes";
     public static final String TABBED_DESKTOP_VIEW = "Tabbed Desktop";
     public static final String VIRTUAL_DESKTOP_VIEW = "Virtual Desktop";
 

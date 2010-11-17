@@ -126,9 +126,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
 
 
@@ -437,6 +435,8 @@ public class ApplicationFrame extends TrianaWindow
 
         ActionTable.putAction(Actions.TABBED_DESKTOP_VIEW, new TabbedDesktopAction(this));
         ActionTable.putAction(Actions.VIRTUAL_DESKTOP_VIEW, new VirtualDesktopAction(this));
+        ActionTable.putAction(Actions.EDIT_TOOLBOXES, new EditToolboxesAction(this.tools));
+        ActionTable.putAction(Actions.OPTIONS, new OptionsAction(this.tools));
 
     }
 
@@ -461,7 +461,7 @@ public class ApplicationFrame extends TrianaWindow
      * Discover and initialize the extension classes and populate the extension manager
      */
     private void initExtensions() {
-        List<Object> en = engine.getExtensions(Extension.class);
+        Set<Object> en = engine.getExtensions(Extension.class);
         for (Object o : en) {
             Extension e = (Extension) o;
             e.init(this);
@@ -501,7 +501,7 @@ public class ApplicationFrame extends TrianaWindow
 
     private void initPostLayoutExtensions() {
         TaskGraphView defaultview = TaskGraphViewManager.getDefaultTaskgraphView();
-        List<Object> en = engine.getExtensions(RegisterableToolComponentModel.class);
+        Set<Object> en = engine.getExtensions(RegisterableToolComponentModel.class);
         for (Object o : en) {
             RegisterableToolComponentModel e = (RegisterableToolComponentModel) o;
             defaultview.registerToolModel(e.getRegistrationString(), e);

@@ -58,6 +58,8 @@
  */
 package org.trianacode.taskgraph.service;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.ClassLoaders;
@@ -75,6 +77,8 @@ import java.util.ArrayList;
  * @version $Revision: 4048 $
  */
 public final class TypeChecking {
+
+    private static Log log = Loggers.EXECUTION_LOGGER;
 
 
     public static final String DOUBLE_ARRAY = "double[]";
@@ -98,6 +102,8 @@ public final class TypeChecking {
 
         for (int outcount = 0; (!match) && (outcount < outTypes.length); ++outcount) {
             for (int incount = 0; (!match) && (incount < inTypes.length); ++incount) {
+                log.debug("TypeChecking.isCompatibility OUT:" + outTypes[outcount]);
+                log.debug("TypeChecking.isCompatibility IN:" + inTypes[incount]);
                 match = match || (outTypes[outcount].isAssignableFrom(inTypes[incount])) ||
                         (inTypes[incount].isAssignableFrom(outTypes[outcount]));
             }
@@ -121,6 +127,7 @@ public final class TypeChecking {
         Class sentType = sentObject.getClass();
 
         for (int count = 0; count < inTypes.length; ++count) {
+            log.debug("TypeChecking.isCompatible in:" + inTypes[count] + " out:" + sentType);
             if (inTypes[count].isAssignableFrom(sentType)) {
                 return true;
             }
@@ -211,7 +218,7 @@ public final class TypeChecking {
             try {
                 javaType = ClassLoaders.forName("triana.types." + name);
             } catch (ClassNotFoundException e) {
-                System.out.println("Type Error: " + name + " class not found!");
+                log.warn("Type Error: " + name + " class not found!");
                 return null;
             }
         }
