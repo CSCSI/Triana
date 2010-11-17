@@ -95,8 +95,8 @@ public class FileUnitPanel extends ParameterPanel {
 
         this.getTask().setParameter(Tool.DEFAULT_INPUT_NODES, 0);
 
-
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File"));
         JLabel nameLabel = new JLabel("File Name :");
@@ -133,7 +133,8 @@ public class FileUnitPanel extends ParameterPanel {
         }
         upperPanel.add(collectLabel);
 
-        add(upperPanel);
+        mainPanel.add(upperPanel);
+
 
         //Lower Panel
 
@@ -210,8 +211,9 @@ public class FileUnitPanel extends ParameterPanel {
 
         lowerPanel.add(lowerPanel1);
         lowerPanel.add(lowerPanel2);
-        add(lowerPanel);
+        mainPanel.add(lowerPanel);
         setEnabling(lowerPanel, collection);
+        this.add(mainPanel);
     }
 
     @Override

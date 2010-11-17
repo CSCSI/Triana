@@ -15,9 +15,12 @@ import org.trianacode.taskgraph.annotation.Tool;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -50,7 +53,7 @@ public class DaxCreatorUnit {
         DaxRegister register = DaxRegister.getDaxRegister();
 
         try{
-            GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));            
+            GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //  daxFromInList(in);
             daxFromRegister(register);
         }catch(Exception e){
@@ -411,65 +414,66 @@ public class DaxCreatorUnit {
     private void one2oneConnect(ADAG dax, DaxJobChunk jobChunk){
         int n = 0;
         int m = 0;
-        for(DaxFileChunk fc : jobChunk.getInFileChunks()){
-            fc.resetNextCounter();
-
-            log("Job has " + fc.getNumberOfFiles() + " inputs.");
-            if(fc.getNumberOfFiles() > jobChunk.getNumberOfJobs()){
-                jobChunk.setNumberOfJobs(fc.getNumberOfFiles());
-            }
-
-
-            for(int i = 0; i < fc.getNumberOfFiles(); i++){
-                Job job = new Job();
-                idNumber ++;
-                job.addArgument(new PseudoText(jobChunk.getJobArgs()));
-
-                String jobName = jobChunk.getJobName();
-                if(jobChunk.getNumberOfJobs() > 1){
-                    jobName = (jobName + "-" + n);
-                    n++;
-                }
-                job.setName(jobName);
-                String id = "0000000" + (idNumber);
-                job.setID("ID" + id.substring(id.length() - 7));
-
-                String fileName = fc.getFilename();
-                if(fc.getNumberOfFiles() > 1){
-                    fileName = (fileName + "-" + m);
-                    m++;
-                }
-                fileName = fc.getNextFilename();
-                log("Job has " + fileName + " as an input.");
-                job.addUses(new Filename(fileName, 1));
-
-                addOutputs(job, jobChunk);
-
-//                List outFiles = jobChunk.getOutFileChunks();
-//                for(int j = 0; j < outFiles.size(); j++){
-//                    DaxFileChunk chunk = (DaxFileChunk)outFiles.get(j);
-//                    if(chunk.isCollection()){
-//                        for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
-//                            log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + k);
-//
-//                            if(chunk.getNamePattern() != null){
-//                                log("Collection has a naming pattern");
-//                            }else{
-//                                log("Collection has no naming pattern, using *append int*");
-//                            }
-//
-//                            job.addUses(new Filename(chunk.getFilename() + "-" + k, 2));
-//                        }
-//                    }
-//                    else{
-//                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
-//                        job.addUses(new Filename(chunk.getFilename(), 2));
-//                    }
-//                }
-                dax.addJob(job);
-                log("Added job : " + job.getName() + " to ADAG.");
-            }
+        List<DaxFileChunk> fcs = jobChunk.getInFileChunks();
+        DaxFileChunk pfc = null;
+        if(fcs.size() > 1){
+            pfc = (DaxFileChunk)PrimaryFilePanel.getValue(jobChunk.getJobName(), fcs);
         }
+        else{
+            pfc = fcs.get(0);
+        }
+
+        DaxFileChunk fc = pfc;
+        fc.resetNextCounter();
+
+        log("Job has " + fc.getNumberOfFiles() + " inputs.");
+        if(fc.getNumberOfFiles() > jobChunk.getNumberOfJobs()){
+            jobChunk.setNumberOfJobs(fc.getNumberOfFiles());
+        }
+
+        for(int i = 0; i < fc.getNumberOfFiles(); i++){
+            Job job = new Job();
+            idNumber ++;
+            job.addArgument(new PseudoText(jobChunk.getJobArgs()));
+
+            String jobName = jobChunk.getJobName();
+            if(jobChunk.getNumberOfJobs() > 1){
+                jobName = (jobName + "-" + n);
+                n++;
+            }
+            job.setName(jobName);
+            String id = "0000000" + (idNumber);
+            job.setID("ID" + id.substring(id.length() - 7));
+
+            String fileName = fc.getFilename();
+            if(fc.getNumberOfFiles() > 1){
+                fileName = (fileName + "-" + m);
+                m++;
+            }
+            fileName = fc.getNextFilename();
+            log("Job has " + fileName + " as an input.");
+            job.addUses(new Filename(fileName, 1));
+
+            for(DaxFileChunk dfc : fcs){
+                if(dfc != pfc){
+                    if(dfc.isCollection()){
+                        for(int j = 0; j < dfc.getNumberOfFiles(); j++){
+                            job.addUses(new Filename(dfc.getNextFilename(), 1));
+                        }
+                    }
+                    else{
+                        job.addUses(new Filename(dfc.getFilename(), 1));
+
+                    }
+                }
+            }
+
+            addOutputs(job, jobChunk);
+
+            dax.addJob(job);
+            log("Added job : " + job.getName() + " to ADAG.");
+        }
+
     }
 
     private void addOutputs(Job job, DaxJobChunk jobChunk){
@@ -559,7 +563,7 @@ public class DaxCreatorUnit {
         }else{
             log("Not displaying demo");
         }
-        GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));        
+        GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Dax saved : " + fileName);
 
     }
@@ -569,5 +573,83 @@ public class DaxCreatorUnit {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
+    }
+}
+
+class PrimaryFilePanel extends JDialog implements ActionListener {
+
+    JPanel mainPanel = new JPanel();
+    ButtonGroup bg = new ButtonGroup();
+
+    List<DaxFileChunk> chunks = new ArrayList();
+    String jobName = "";
+    DaxFileChunk returnChunk = null;
+
+    public static Object getValue(String jobName, List list){
+        PrimaryFilePanel pfp = new PrimaryFilePanel(jobName, list);
+        return pfp.getReturnValue();
+    }
+
+    private Object getReturnValue(){
+        return returnChunk;
+    }
+
+    public PrimaryFilePanel(String jobName, List l){
+        this.chunks = l;
+        this.jobName = jobName;
+        this.setSize(400,400);
+        this.setModal(true);
+        this.setLocationRelativeTo(this.getOwner());
+
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job duplication selection"));
+
+        JTextArea text = new JTextArea("Job " + jobName + " is set to duplicate in a one-2-one pattern.\n\n" +
+                "It currently has more than one input file.\n\n" +
+                "Please select the input file this jobs duplication should match the number of.\n\n" +
+                "Select primary file : ");
+        text.setWrapStyleWord(true);
+        mainPanel.add(text);
+
+        JPanel radioPanel = new JPanel(new GridLayout(2,0));
+        returnChunk = chunks.get(0);
+        for(int i = 0; i < chunks.size(); i++){
+            DaxFileChunk fc = chunks.get(i);
+            JRadioButton radio = new JRadioButton(fc.getFilename() +
+                    " (" + fc.getNumberOfFiles() + " job" + ((fc.getNumberOfFiles() > 1) ? "s" : "" ) + " will be created)");
+            radio.setActionCommand("" + i);
+            radio.addActionListener(this);
+            radioPanel.add(radio);
+            bg.add(radio);
+        }
+        mainPanel.add(radioPanel);
+
+        JButton ok = new JButton("Ok");
+        ok.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent actionEvent) {
+                okPressed();
+            }
+        });
+        mainPanel.add(ok);
+
+        this.add(mainPanel);
+        this.setTitle("Select primary file");
+        this.pack();
+        this.setVisible(true);
+
+    }
+
+    private void okPressed(){
+        if(returnChunk == null){
+            returnChunk = chunks.get(0);
+        }
+        dispose();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int i = Integer.parseInt(e.getActionCommand());
+        returnChunk = chunks.get(i);
+        System.out.println("Setting " + returnChunk.getFilename() + " as primary file");
     }
 }

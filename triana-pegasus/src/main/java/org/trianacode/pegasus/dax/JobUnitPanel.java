@@ -25,6 +25,7 @@ public class JobUnitPanel extends ParameterPanel {
     private static final int ONE2ONE_CONNECT = 2;
     private static final int SPREAD_CONNECT = 3;
 
+    private JTabbedPane tabPane = new JTabbedPane();
     private JPanel upperPanel = new JPanel(new GridLayout(3,2,5,5));
     private JPanel lowerPanel = new JPanel();
     private JTextField nameField = new JTextField("");
@@ -53,7 +54,8 @@ public class JobUnitPanel extends ParameterPanel {
 //        p = this.getTask().getProperties();
 //        log("Properties after : " + p.toString());
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        JPanel mainPane = new JPanel();
+        mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
 
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job"));
         JLabel nameLabel = new JLabel("Job Name :");
@@ -91,7 +93,7 @@ public class JobUnitPanel extends ParameterPanel {
         }
         upperPanel.add(collectLabel);
 
-        add(upperPanel);
+        mainPane.add(upperPanel);
 
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
         lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Collection Options"));
@@ -219,13 +221,14 @@ public class JobUnitPanel extends ParameterPanel {
         lowerPanel.add(lowerPanel1);
         lowerPanel.add(lowerPanelAuto);
         lowerPanel.add(lowerPanelScatter);
-        add(lowerPanel);
+        mainPane.add(lowerPanel);
 
         setEnabling(lowerPanel, collection);
         if(collection){
             setEnabling(lowerPanelAuto, autoConnect);
             setEnabling(lowerPanelScatter, !autoConnect);
         }
+        this.add(mainPane);
     }
 
 
