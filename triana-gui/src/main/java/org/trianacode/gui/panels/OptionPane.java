@@ -16,10 +16,17 @@
 
 package org.trianacode.gui.panels;
 
+import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.util.Env;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Class Description Here...
@@ -45,8 +52,8 @@ public class OptionPane {
                 JOptionPane.showMessageDialog(parent, msg, title, JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             }
         });
-
     }
+
 
     public static boolean showOkCancel(String msg, String title, Component parent) {
         int reply = JOptionPane
@@ -56,6 +63,51 @@ public class OptionPane {
             return true;
         }
         return false;
+    }
+
+    public static void showException(Exception e) {
+        final JDialog showit = new JDialog(GUIEnv.getApplicationFrame(), e.getClass().getName(), true);
+
+        JButton ok = new JButton("OK");
+        ok.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        showit.dispose();
+                    }
+                });
+        String text = e.getMessage();
+        StringWriter ss = new StringWriter();
+        PrintWriter sr = new PrintWriter(ss);
+        e.printStackTrace(sr);
+        text += "\n";
+        text += Env.getString("FullTrace") +
+                "\n\n" + ss.toString();
+
+        JPanel buttonpanel = new JPanel(new FlowLayout());
+        buttonpanel.add(ok);
+
+        JTextArea textarea = new JTextArea(text);
+        textarea.setEditable(false);
+        textarea.setBackground(ok.getBackground());
+        textarea.setBorder(new EmptyBorder(3, 3, 3, 3));
+
+        ImageIcon ima = GUIEnv.getTrianaIcon();
+        JLabel icon = new JLabel(ima);
+        icon.setBorder(new EmptyBorder(3, 3, 3, 3));
+        JScrollPane scroll = new JScrollPane(textarea);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        showit.getContentPane().setLayout(new BorderLayout());
+        showit.getContentPane().add(scroll, BorderLayout.EAST);
+        showit.getContentPane().add(icon, BorderLayout.WEST);
+        showit.getContentPane().add(buttonpanel, BorderLayout.SOUTH);
+
+        showit.pack();
+        Display.centralise(showit);
+        showit.setVisible(true);
+        showit.toFront();
+
     }
 
     public static void showInformation(String msg, String title) {

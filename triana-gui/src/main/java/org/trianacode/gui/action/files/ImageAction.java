@@ -67,8 +67,13 @@ import org.trianacode.gui.panels.LabelledTextFieldPanel;
 import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.gui.util.TaskGraphPanelUtils;
+import org.trianacode.taskgraph.TaskGraph;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -81,8 +86,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Action to handle workflow/taskgraph Exporting.
@@ -103,6 +108,7 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
         putValue(NAME, "Create Image");
     }
 
+
     /**
      * Invoked when an action occurs.
      */
@@ -113,6 +119,13 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
         if (view != null) {
             taskgraphpanel = view.getTaskgraphPanel();
             if (taskgraphpanel != null) {
+                TaskGraph tg = taskgraphpanel.getTaskGraph();
+                if (tg == null || tg.getTasks(false).length == 0) {
+                    JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
+                            "No Task Graph to Create an Image From", "Create Image", JOptionPane.ERROR_MESSAGE,
+                            GUIEnv.getTrianaIcon());
+                    return;
+                }
                 comp = taskgraphpanel.getContainer();
             } else {
                 JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(),
@@ -139,7 +152,40 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
         }
     }
 
-    private void save(File f, Component comp, double scale, Rectangle2D rect, BufferedImage image, String type) {
+
+    public void save(File output, double scale, String type) {
+        TaskGraphPanel taskgraphpanel = null;
+        Component comp = null;
+        DesktopView view = GUIEnv.getSelectedDesktopView();
+        if (view != null) {
+            taskgraphpanel = view.getTaskgraphPanel();
+            if (taskgraphpanel != null) {
+                TaskGraph tg = taskgraphpanel.getTaskGraph();
+                if (tg == null || tg.getTasks(false).length == 0) {
+                    System.out.println("No taskgraph found.");
+                    return;
+                }
+                comp = taskgraphpanel.getContainer();
+            } else {
+                System.out.println("No taskgraph panel found.");
+                return;
+            }
+        } else {
+            System.out.println("no taskgraph view found.");
+            return;
+        }
+        if (comp != null && comp.isVisible()) {
+            Dimension size = comp.getSize();
+            BufferedImage image = new BufferedImage(size.width, size.height,
+                    BufferedImage.TYPE_INT_RGB);
+            Rectangle2D rect = TaskGraphPanelUtils.getBoundingBox(taskgraphpanel);
+            save(output, comp, scale, rect, image, type, false);
+        } else {
+            System.out.println("no Component found.");
+        }
+    }
+
+    private void save(File f, Component comp, double scale, Rectangle2D rect, BufferedImage image, String type, boolean display) {
         if (scale == 0.0) {
             scale = 0.1;
         }
@@ -151,9 +197,12 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
         }
         File out = new File(f.getParentFile(), nm);
         if (out.exists()) {
-            int choice = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
-                    "Over write existing file '" + nm + "'?", "Over Write", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
+            int choice = JOptionPane.OK_OPTION;
+            if (display) {
+                choice = JOptionPane.showConfirmDialog(GUIEnv.getApplicationFrame(),
+                        "Over write existing file '" + nm + "'?", "Over Write", JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon());
+            }
             if (choice == JOptionPane.CANCEL_OPTION) {
                 return;
             } else {
@@ -166,19 +215,39 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
         comp.paint(image.getGraphics());
         AffineTransform tx = new AffineTransform();
         tx.scale(scale, scale);
-        tx.translate(-(rect.getX() - (margin * scale)), -(rect.getY() - (margin * scale)));
+        tx.translate(-(rect.getX() - (margin)), -(rect.getY() - (margin)));
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        BufferedImage dest = new BufferedImage((int) ((rect.getWidth() + (margin * 2)) * scale), (int) ((rect.getHeight() + (margin * 2)) * scale),
+        BufferedImage dest = new BufferedImage((int) ((rect.getWidth()) * scale) + (margin * 2), (int) ((rect.getHeight()) * scale) + (margin * 2),
                 BufferedImage.TYPE_INT_RGB);
         image = op.filter(image, dest);
+
+        Iterator iter = ImageIO.getImageWritersByFormatName(type);
+        if (iter == null || !iter.hasNext()) {
+            if (display) {
+                OptionPane.showError("No Image writers availabale for " + type, "Error", GUIEnv.getApplicationFrame());
+            } else {
+                System.out.println("ImageAction.save: No Image writers could be found for:" + type);
+            }
+        }
+        ImageWriter writer = (ImageWriter) iter.next();
+        ImageWriteParam iwp = writer.getDefaultWriteParam();
+        iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        iwp.setCompressionQuality(1);
+
         try {
-            FileOutputStream fout = new FileOutputStream(out);
-            ImageIO.write(image, type, fout);
+            FileImageOutputStream fout = new FileImageOutputStream(out);
+            writer.setOutput(fout);
+            IIOImage im = new IIOImage(image, null, null);
+            writer.write(null, im, iwp);
+            writer.dispose();
             fout.flush();
             fout.close();
         } catch (IOException e) {
-            OptionPane.showError(e.getMessage(), "Error", GUIEnv.getApplicationFrame());
-            e.printStackTrace();
+            if (display) {
+                OptionPane.showError(e.getMessage(), "Error", GUIEnv.getApplicationFrame());
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -306,7 +375,7 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
                 if (f != null) {
                     Thread thread = new Thread() {
                         public void run() {
-                            save(f, comp, getScale(), rect, image, getType());
+                            save(f, comp, getScale(), rect, image, getType(), true);
                             setVisible(false);
                             dispose();
                         }
