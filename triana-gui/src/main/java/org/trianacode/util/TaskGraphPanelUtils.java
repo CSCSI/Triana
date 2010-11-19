@@ -1,7 +1,9 @@
-package org.trianacode.gui.util;
+package org.trianacode.util;
 
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.main.ZoomLayout;
+import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 
@@ -20,6 +22,8 @@ public class TaskGraphPanelUtils {
         int maxX = Integer.MIN_VALUE;
         int maxY = Integer.MIN_VALUE;
         TaskGraph tg = panel.getTaskGraph();
+        Task currLeft = null;
+        Task currRight = null;
         Container c = panel.getContainer();
         if (tg != null && c != null) {
             Component[] comp = c.getComponents();
@@ -36,12 +40,14 @@ public class TaskGraphPanelUtils {
                         int h = cc.getHeight();
                         if (x < minX) {
                             minX = x;
+                            currLeft = t;
                         }
                         if (y < minY) {
                             minY = y;
                         }
                         if (x + w > maxX) {
                             maxX = x + w;
+                            currRight = t;
                         }
                         if (y + h > maxY) {
                             maxY = y + h;
@@ -63,6 +69,35 @@ public class TaskGraphPanelUtils {
         }
         if (height < 0) {
             height = 0;
+        }
+
+        if (currLeft != null) {
+            Node[] nodes = currLeft.getInputNodes();
+            for (Node node : nodes) {
+                if (node.isConnected()) {
+                    if (minX > 0) {
+                        if (c.getLayout() instanceof ZoomLayout) {
+                            minX = (int) Math.max(0, minX - (10 * ((ZoomLayout) c.getLayout()).getZoom()));
+                        } else {
+                            minX = Math.max(0, minX - 10);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        if (currRight != null) {
+            Node[] nodes = currLeft.getOutputNodes();
+            for (Node node : nodes) {
+                if (node.isConnected()) {
+                    if (c.getLayout() instanceof ZoomLayout) {
+                        width += 10 * ((ZoomLayout) c.getLayout()).getZoom();
+                    } else {
+                        width += 10;
+                    }
+                    break;
+                }
+            }
         }
         return new Rectangle2D.Double(minX, minY, width, height);
     }
