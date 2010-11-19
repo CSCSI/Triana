@@ -3,7 +3,7 @@
     <groupId>org.trianacode</groupId>
     <artifactId>triana</artifactId>
     <packaging>pom</packaging>
-    <version>4.0.0</version>
+    <version>4.0.1-SNAPSHOT</version>
     <name>triana</name>
     <url>http://www.trianacode.org</url>
 
@@ -45,9 +45,9 @@
 
 
     <scm>
-        <connection>scm:svn:https://svn.cs.cf.ac.uk/projects/triana/tags/triana-4.0.0</connection>
-        <developerConnection>scm:svn:https://svn.cs.cf.ac.uk/projects/triana/tags/triana-4.0.0</developerConnection>
-        <url>https://svn.cs.cf.ac.uk/projects/triana/tags/triana-4.0.0</url>
+        <connection>scm:svn:https://svn.cs.cf.ac.uk/projects/triana/trunk</connection>
+        <developerConnection>scm:svn:https://svn.cs.cf.ac.uk/projects/triana/trunk</developerConnection>
+        <url>https://svn.cs.cf.ac.uk/projects/triana/trunk</url>
     </scm>
 
     <modules>

@@ -20,12 +20,12 @@
     <parent>
         <groupId>org.trianacode</groupId>
         <artifactId>triana</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>triana-toolboxes</artifactId>
     <packaging>pom</packaging>
     <name>Triana Toolboxes</name>
-    <version>4.0.0</version>
+    <version>4.0.1-SNAPSHOT</version>
     <url>http://www.trianacode.org</url>
 
     <dependencies>

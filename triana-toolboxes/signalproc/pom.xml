@@ -20,12 +20,12 @@
     <parent>
         <groupId>org.trianacode</groupId>
         <artifactId>triana-toolboxes</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>toolboxes-signalproc</artifactId>
     <packaging>jar</packaging>
     <name>Toolboxes SignalProc</name>
-    <version>4.0.0</version>
+    <version>4.0.1-SNAPSHOT</version>
     <url>http://www.trianacode.org</url>
 
     <dependencies>

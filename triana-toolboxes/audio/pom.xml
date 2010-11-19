@@ -20,12 +20,12 @@
     <parent>
         <groupId>org.trianacode</groupId>
         <artifactId>triana-toolboxes</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>toolboxes-audio</artifactId>
     <packaging>jar</packaging>
     <name>Toolboxes Audio</name>
-    <version>4.0.0</version>
+    <version>4.0.1-SNAPSHOT</version>
     <url>http://www.trianacode.org</url>
 
     <dependencies>
