@@ -119,8 +119,9 @@ public class TaskGraphFileHandler implements SelectionManager {
      * @param tools        The tooltable (can be null)
      * @param updateRecent if true then the file is added to the recent items list
      */
-    public static void saveTaskGraphAs(final Tool task, final String file, final ToolTable tools,
-                                       final boolean updateRecent) {
+    public static boolean saveTaskGraphAs(final Tool task, final String file, final ToolTable tools,
+                                          final boolean updateRecent) {
+        boolean b = true;
         XMLWriter writer = null;
         try {
             BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file));
@@ -136,6 +137,7 @@ public class TaskGraphFileHandler implements SelectionManager {
             }
         }
         catch (IOException e) {
+            b = false;
             e.printStackTrace(System.out);
         }
         finally {
@@ -144,9 +146,10 @@ public class TaskGraphFileHandler implements SelectionManager {
             }
             catch (IOException e) {
                 e.printStackTrace(System.out);
+                b = false;
             }
         }
-
+        return b;
     }
 
     /**
@@ -416,7 +419,7 @@ public class TaskGraphFileHandler implements SelectionManager {
      * rudimentary at the moment just pops up a dialog, no checking to see if this is an existing group that has been
      * modified
      */
-    public static void saveTaskGraph(TaskGraph taskgraph, ToolTable tools, boolean saveas) {
+    public static boolean saveTaskGraph(TaskGraph taskgraph, ToolTable tools, boolean saveas) {
         TaskGraph group = taskgraph;
 
         if (group.getParent() != null) {
@@ -440,7 +443,7 @@ public class TaskGraphFileHandler implements SelectionManager {
             if (choice == 1) {
                 group = parent;
             } else if (choice == 2) {
-                return;
+                return false;
             }
         }
         URL definitionPath = group.getDefinitionPath();
@@ -468,6 +471,7 @@ public class TaskGraphFileHandler implements SelectionManager {
         if (writeFile) {
             backGroundSaveTaskGraph(taskgraph, definitionPath.getPath(), tools, true);
         }
+        return writeFile;
     }
 
     private static File getOutputFile(File toolbox, String pkg) {

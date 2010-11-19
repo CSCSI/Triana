@@ -121,10 +121,7 @@ public class ZoomAction extends AbstractAction implements ActionDisplayOptions {
                 if ((panel != null) && (panel.getContainer().getLayout() instanceof ZoomLayout)) {
                     ZoomLayout layout = (ZoomLayout) panel.getContainer().getLayout();
                     double zoom = layout.getZoom() * ZOOM_FACTOR;
-
                     layout.setZoom(zoom);
-                    Env.setZoomFactor(zoom, panel.getTaskGraph().getQualifiedTaskName());
-
                     panel.getContainer().invalidate();
                     panel.getContainer().validate();
                     panel.getContainer().repaint();

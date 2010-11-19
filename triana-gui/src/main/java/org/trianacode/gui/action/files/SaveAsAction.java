@@ -58,14 +58,17 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.main.ZoomLayout;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "save" actions.
@@ -93,7 +96,16 @@ public class SaveAsAction extends AbstractAction implements ActionDisplayOptions
      */
     public void actionPerformed(ActionEvent e) {
         if (selectionHandler.getSelectedTaskgraph() != null) {
-            TaskGraphFileHandler.saveTaskGraph(selectionHandler.getSelectedTaskgraph(), tools, true);
+            if (TaskGraphFileHandler.saveTaskGraph(selectionHandler.getSelectedTaskgraph(), tools, true)) {
+                DesktopView view = GUIEnv.getDesktopViewFor(selectionHandler.getSelectedTaskgraph());
+                if (view != null) {
+                    TaskGraphPanel panel = view.getTaskgraphPanel();
+                    if ((panel != null) && (panel.getContainer().getLayout() instanceof ZoomLayout)) {
+                        ZoomLayout layout = (ZoomLayout) panel.getContainer().getLayout();
+                        Env.setZoomFactor(layout.getZoom(), panel.getTaskGraph().getQualifiedTaskName());
+                    }
+                }
+            }
         }
     }
 

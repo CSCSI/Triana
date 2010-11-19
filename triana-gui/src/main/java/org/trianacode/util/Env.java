@@ -75,7 +75,6 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.ObjectMarshaller;
-import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.Listing;
 import org.w3c.dom.Element;
@@ -1268,7 +1267,7 @@ public final class Env {
         name.append(System.currentTimeMillis());
         name.append(".taskgraph");
         String fileName = Env.getTempDir() + Env.separator() + name.toString();
-        TaskGraphFileHandler.saveTaskGraphAs((Tool) cont.getTaskGraph(), fileName, null, false);
+        TaskGraphFileHandler.saveTaskGraphAs(cont.getTaskGraph(), fileName, null, false);
         return name.toString();
     }
 
