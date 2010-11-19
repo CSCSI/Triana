@@ -59,11 +59,11 @@
 package org.trianacode.gui.panels;
 
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.*;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

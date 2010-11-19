@@ -16,7 +16,7 @@
 
 package org.trianacode.gui.panels;
 
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import java.awt.*;

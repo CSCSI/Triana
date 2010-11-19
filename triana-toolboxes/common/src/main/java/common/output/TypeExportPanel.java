@@ -1,22 +1,18 @@
 package common.output;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import org.trianacode.gui.panels.UnitPanel;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.util.FileUtils;
+import triana.types.AsciiComm;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import org.trianacode.gui.panels.UnitPanel;
-import org.trianacode.gui.windows.ErrorDialog;
-import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
-import triana.types.AsciiComm;
-import org.trianacode.taskgraph.Unit;
 
 /**
  * A TypeExportPanel which exports to file any type which implements the AsciiComm interface

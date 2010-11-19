@@ -62,11 +62,11 @@ import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.*;

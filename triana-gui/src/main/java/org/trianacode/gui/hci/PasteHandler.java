@@ -60,13 +60,13 @@ package org.trianacode.gui.hci;
 
 import org.trianacode.gui.TrianaDialog;
 import org.trianacode.gui.panels.PastePanel;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.ParameterWindowListener;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.util.Env;
 
 import java.io.File;
 

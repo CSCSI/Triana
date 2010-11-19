@@ -59,23 +59,6 @@
 package org.trianacode.gui.windows;
 
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.help.AboutDialog;
@@ -83,7 +66,14 @@ import org.trianacode.gui.help.search.FindWordDialog;
 import org.trianacode.gui.help.search.FindWordEvent;
 import org.trianacode.gui.help.search.FindWordListener;
 import org.trianacode.gui.help.search.HTMLSearchResults;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Triana Window creates a basic Triana Window with common functionalities and appearance of all Triana Windows.  Triana

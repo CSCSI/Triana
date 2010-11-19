@@ -63,12 +63,10 @@ import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.gui.main.TaskGraphOrganize;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "select all" actions.
@@ -101,8 +99,7 @@ public class OrganizeAction extends AbstractAction implements ActionDisplayOptio
         if ((displayOption == DISPLAY_NAME) || (displayOption == DISPLAY_BOTH)) {
             putValue(NAME, Env.getString("Organize"));
         }
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_G,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
     }
 
     /**

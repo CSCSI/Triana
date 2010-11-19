@@ -58,21 +58,13 @@
  */
 package org.trianacode.gui.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.util.Env;
 
 /**
  * A dialog for selecting an item from a list

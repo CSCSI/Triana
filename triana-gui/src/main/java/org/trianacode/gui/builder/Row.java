@@ -58,29 +58,19 @@
  */
 package org.trianacode.gui.builder;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import org.trianacode.gui.panels.TFileChooser;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
-import org.trianacode.gui.panels.TFileChooser;
-import org.trianacode.util.Env;
 
 /**
  * This is a class used to represt one row of the interface builder's building screen. A JTextField followed by a

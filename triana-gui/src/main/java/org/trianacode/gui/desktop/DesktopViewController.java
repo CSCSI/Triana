@@ -1,7 +1,7 @@
 package org.trianacode.gui.desktop;
 
 import org.trianacode.gui.main.TaskGraphPanel;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import java.awt.*;
 

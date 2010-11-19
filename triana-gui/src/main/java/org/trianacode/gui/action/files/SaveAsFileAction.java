@@ -56,44 +56,59 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.gui.action.tools;
+package org.trianacode.gui.action.files;
 
+import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.desktop.DesktopView;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.main.ZoomLayout;
 import org.trianacode.gui.util.Env;
-import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.tool.ToolTable;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.ActionEvent;
 
 /**
- * Action class for "run continuously" actions
+ * Action class to handle all "save" actions.
  *
- * @author Matthew Shields 2@created May 12, 2003: 4:47:25 PM
+ * @author Matthew Shields
  * @version $Revision: 4048 $
  */
-public class RunContinuouslyMenuItem extends JRadioButtonMenuItem implements ItemListener {
+public class SaveAsFileAction extends AbstractAction implements ActionDisplayOptions {
 
-    private ToolSelectionHandler selhandler;
+    private ToolSelectionHandler selectionHandler;
+    private ToolTable tools;
 
+    public SaveAsFileAction(ToolSelectionHandler selhandler, ToolTable tools) {
+        this.selectionHandler = selhandler;
+        this.tools = tools;
 
-    public RunContinuouslyMenuItem(ToolSelectionHandler sel) {
-        super(Env.getString("runContinuously"));
+        putValue(SHORT_DESCRIPTION, "Save To File");
+        putValue(ACTION_COMMAND_KEY, "Save To File");
+        //putValue(SMALL_ICON, GUIEnv.getIcon("save.png"));
+        putValue(NAME, "Save To File");
 
-        this.selhandler = sel;
-
-        addItemListener(this);
     }
-
 
     /**
-     * Invoked when an item has been selected or deselected by the user. The code written for this method performs the
-     * operations that need to occur when an item is selected (or deselected).
+     * Invoked when an action occurs.
      */
-    public void itemStateChanged(ItemEvent e) {
-        if (selhandler.isSingleSelectedTool() && (selhandler.getSelectedTool() instanceof Task)) {
-            ((Task) selhandler.getSelectedTool()).setRunContinuously(isSelected());
+    public void actionPerformed(ActionEvent e) {
+        if (selectionHandler.getSelectedTaskgraph() != null) {
+            if (TaskGraphFileHandler.saveTaskGraphAsFile(selectionHandler.getSelectedTaskgraph(), tools)) {
+                DesktopView view = GUIEnv.getDesktopViewFor(selectionHandler.getSelectedTaskgraph());
+                if (view != null) {
+                    TaskGraphPanel panel = view.getTaskgraphPanel();
+                    if ((panel != null) && (panel.getContainer().getLayout() instanceof ZoomLayout)) {
+                        ZoomLayout layout = (ZoomLayout) panel.getContainer().getLayout();
+                        if (layout.getZoom() != 1.0) {
+                            Env.setZoomFactor(layout.getZoom(), panel.getTaskGraph().getQualifiedTaskName());
+                        }
+                    }
+                }
+            }
         }
     }
-
 }

@@ -59,22 +59,21 @@
 
 package org.trianacode.gui.action.tools;
 
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.gui.panels.GroupEditor;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * The action for showing the node editor

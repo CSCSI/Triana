@@ -58,30 +58,23 @@
  */
 package org.trianacode.gui.appmaker;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.panels.ClassPathPanel;
+import org.trianacode.gui.panels.TFileChooser;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.ParameterWindow;
+import org.trianacode.gui.windows.ParameterWindowListener;
+import org.trianacode.gui.windows.WindowButtonConstants;
+import org.trianacode.taskgraph.tool.ToolTable;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.panels.ClassPathPanel;
-import org.trianacode.gui.panels.TFileChooser;
-import org.trianacode.gui.windows.ParameterWindow;
-import org.trianacode.gui.windows.ParameterWindowListener;
-import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 /**
  * The panel for specifying the taskgraph that is executed from the command line.

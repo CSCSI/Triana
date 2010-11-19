@@ -1,4 +1,4 @@
-package org.trianacode.util;
+package org.trianacode.gui.util;
 
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;

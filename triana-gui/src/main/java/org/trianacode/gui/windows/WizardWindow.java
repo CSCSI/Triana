@@ -59,21 +59,17 @@
 package org.trianacode.gui.windows;
 
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.util.Env;
 
 /**
  * A window for creating wizards. This window displays a series of panels that can be navigated through using next and

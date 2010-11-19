@@ -1,9 +1,9 @@
 package imageproc.input;
 
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
 import triana.types.TrianaImage;
 import triana.types.TrianaPixelMap;
 

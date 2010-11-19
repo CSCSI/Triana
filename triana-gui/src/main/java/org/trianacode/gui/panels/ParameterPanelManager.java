@@ -62,6 +62,7 @@ package org.trianacode.gui.panels;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.builder.GUICreaterPanel;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.taskgraph.Task;
@@ -70,7 +71,6 @@ import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -56,7 +56,7 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.util;
+package org.trianacode.gui.util;
 
 
 import org.trianacode.config.Locations;
@@ -102,7 +102,7 @@ import java.util.logging.Logger;
  */
 public final class Env {
 
-    static Logger logger = Logger.getLogger("org.trianacode.util.Env");
+    static Logger logger = Logger.getLogger("org.trianacode.gui.util.Env");
 
     public static String TAB = "    ";
 
@@ -374,7 +374,7 @@ public final class Env {
     }
 
     public static String getPath() throws IOException {
-        return getPath("org.trianacode.util.Env", Env.class.getClassLoader());
+        return getPath("org.trianacode.gui.util.Env", Env.class.getClassLoader());
 
     }
 

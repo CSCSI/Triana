@@ -18,7 +18,7 @@ package org.trianacode.gui.panels;
 
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -56,8 +56,10 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.util;
+package org.trianacode.gui.util;
 
+
+import org.trianacode.gui.panels.ScrollingMessageFrame;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,8 +68,6 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import org.trianacode.gui.panels.ScrollingMessageFrame;
 
 
 /**

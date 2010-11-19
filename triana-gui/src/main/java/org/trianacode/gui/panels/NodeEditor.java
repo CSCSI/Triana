@@ -58,36 +58,23 @@
  */
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.util.Enumeration;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.FormatKeyStroke;
 import org.trianacode.gui.action.tools.DecInNodeAction;
 import org.trianacode.gui.action.tools.DecOutNodeAction;
 import org.trianacode.gui.action.tools.IncInNodeAction;
 import org.trianacode.gui.action.tools.IncOutNodeAction;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.ParameterNode;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Enumeration;
 
 
 /**

@@ -26,26 +26,22 @@ package common.input;
  */
 
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import org.trianacode.gui.panels.UnitPanel;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.gui.windows.QuestionWindow;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.util.FileUtils;
+import triana.types.AsciiComm;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import org.trianacode.gui.panels.UnitPanel;
-import org.trianacode.gui.windows.ErrorDialog;
-import org.trianacode.gui.windows.QuestionWindow;
-import org.trianacode.taskgraph.Unit;
-import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
-import triana.types.AsciiComm;
 
 /**
  * A TypeImportPanel UnitPanel to import any datatype which supports the AsciiComm type interface.  There is code also

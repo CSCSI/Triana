@@ -58,20 +58,19 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.io.File;
-
-import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.help.search.FindWordDialog;
 import org.trianacode.gui.help.search.HTMLSearchResults;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.TrianaWindow;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
 
 /**
  * Action class to handle all "find" actions.

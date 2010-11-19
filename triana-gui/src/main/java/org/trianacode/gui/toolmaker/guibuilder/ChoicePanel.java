@@ -58,27 +58,16 @@
  */
 package org.trianacode.gui.toolmaker.guibuilder;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import org.trianacode.gui.panels.ParameterPanelImp;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * The panel for defining a gui builder choice component

@@ -61,9 +61,9 @@ package org.trianacode.gui.action.tools;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ToolBoxPanel;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;

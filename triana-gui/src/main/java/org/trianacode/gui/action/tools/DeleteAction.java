@@ -58,18 +58,16 @@
  */
 package org.trianacode.gui.action.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "delete" actions.

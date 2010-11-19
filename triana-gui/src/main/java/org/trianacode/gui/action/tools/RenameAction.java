@@ -58,13 +58,13 @@
  */
 package org.trianacode.gui.action.tools;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "rename" actions.

@@ -61,10 +61,10 @@ package org.trianacode.gui.action.tools;
 import org.trianacode.gui.appmaker.CommandLineWizard;
 import org.trianacode.gui.hci.CompileHandler;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

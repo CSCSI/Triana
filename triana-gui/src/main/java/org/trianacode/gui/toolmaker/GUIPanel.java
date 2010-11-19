@@ -58,39 +58,25 @@
  */
 package org.trianacode.gui.toolmaker;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.Window;
+import org.trianacode.gui.builder.GUICreaterPanel;
+import org.trianacode.gui.toolmaker.guibuilder.BuilderPanel;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.ParameterWindow;
+import org.trianacode.gui.windows.WindowButtonConstants;
+import org.trianacode.gui.windows.WizardInterface;
+import org.trianacode.gui.windows.WizardPanel;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Vector;
-
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.trianacode.gui.builder.GUICreaterPanel;
-import org.trianacode.gui.toolmaker.guibuilder.BuilderPanel;
-import org.trianacode.gui.windows.ParameterWindow;
-import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.gui.windows.WizardInterface;
-import org.trianacode.gui.windows.WizardPanel;
-import org.trianacode.util.Env;
 
 /**
  * A tool wizard panel for specifying the tools graphical interface.

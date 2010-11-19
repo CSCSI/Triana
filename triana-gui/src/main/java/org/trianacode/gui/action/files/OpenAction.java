@@ -62,8 +62,8 @@ import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.*;

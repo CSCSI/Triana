@@ -58,20 +58,18 @@
  */
 package org.trianacode.gui.action.clipboard;
 
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * Action class to handle all "cut" operations.

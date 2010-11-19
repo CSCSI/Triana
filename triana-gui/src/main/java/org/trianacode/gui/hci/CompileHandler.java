@@ -58,25 +58,25 @@
  */
 package org.trianacode.gui.hci;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-
 import org.trianacode.gui.panels.CompilePanel;
 import org.trianacode.gui.panels.ScrollingMessageFrame;
+import org.trianacode.gui.util.CompileUtil;
+import org.trianacode.gui.util.CompilerException;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.ParameterWindowListener;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.FileToolbox;
-import org.trianacode.taskgraph.tool.Toolbox;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.CompileUtil;
-import org.trianacode.util.CompilerException;
-import org.trianacode.util.Env;
+import org.trianacode.taskgraph.tool.Toolbox;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
 
 /**
  * The class responsible for co-ordinating the compiling of tools and the generation of tool XML
@@ -124,7 +124,7 @@ public class CompileHandler implements ParameterWindowListener {
      */
     public CompileHandler(boolean automatedCompile, ToolTable tools) {
         this.automatedCompile = automatedCompile;
-        this.toolTable=tools;
+        this.toolTable = tools;
 
         if (automatedCompile) {
             init();
@@ -324,21 +324,21 @@ public class CompileHandler implements ParameterWindowListener {
     public void compile() {
         try {
             Toolbox box = toolTable.getToolResolver().getToolbox(toolBox);
-            if(box instanceof FileToolbox) {
-            if (compileSource) {
-                if (!automatedCompile) {
-                    compiler = new CompileUtil(sourceFilePath, true);
-                    compiler.setCompilerLocation(panel.getCompilerCommand());
-                    compiler.setCompilerClasspath(
-                            panel.getCompilerClasspath() + System.getProperty("path.separator") + ((FileToolbox)box).getClassPath());
-                    compiler.setCompilerArguments(panel.getCompilerArguments());
-                } else {
-                    compiler.setJavaFile(sourceFilePath);
+            if (box instanceof FileToolbox) {
+                if (compileSource) {
+                    if (!automatedCompile) {
+                        compiler = new CompileUtil(sourceFilePath, true);
+                        compiler.setCompilerLocation(panel.getCompilerCommand());
+                        compiler.setCompilerClasspath(
+                                panel.getCompilerClasspath() + System.getProperty("path.separator") + ((FileToolbox) box).getClassPath());
+                        compiler.setCompilerArguments(panel.getCompilerArguments());
+                    } else {
+                        compiler.setJavaFile(sourceFilePath);
+                    }
+                    compiler.setDestDir(destFilePath);
+                    compiler.setSourcepath(sourceDir);
+                    compiler.compile();
                 }
-                compiler.setDestDir(destFilePath);
-                compiler.setSourcepath(sourceDir);
-                compiler.compile();
-            }
             }
             if (compileGUI) {
 
@@ -379,36 +379,36 @@ public class CompileHandler implements ParameterWindowListener {
         if (compileGUI && tool.isParameterName(Tool.PARAM_PANEL_CLASS)) {
             Toolbox box = toolTable.getToolResolver().getToolbox(toolBox);
             if (box instanceof FileToolbox) {
-            String panelclass = (String) tool.getParameter(Tool.PARAM_PANEL_CLASS);
-            panelclass = panelclass.substring(panelclass.lastIndexOf('.') + 1);
+                String panelclass = (String) tool.getParameter(Tool.PARAM_PANEL_CLASS);
+                panelclass = panelclass.substring(panelclass.lastIndexOf('.') + 1);
 
-            String sourcepath = sourceDir + Env.separator() + panelclass + ".java";
+                String sourcepath = sourceDir + Env.separator() + panelclass + ".java";
 
-            if (!(new File(sourcepath).exists())) {
-                String errorMsg = Env.getString("compileError3") + ", " + sourcepath + " does not exist";
-                if (automatedCompile) {
-                    errorFrame.setVisible(true);
-                    errorFrame.println(errorMsg);
-                } else {
-                    new ErrorDialog(Env.getString("compileError"), errorMsg);
-                    showParameterWindow();
+                if (!(new File(sourcepath).exists())) {
+                    String errorMsg = Env.getString("compileError3") + ", " + sourcepath + " does not exist";
+                    if (automatedCompile) {
+                        errorFrame.setVisible(true);
+                        errorFrame.println(errorMsg);
+                    } else {
+                        new ErrorDialog(Env.getString("compileError"), errorMsg);
+                        showParameterWindow();
+                    }
+                    return;
                 }
-                return;
-            }
 
-            if (automatedCompile) {
-                compiler.setJavaFile(sourcepath);
-            } else {
-                compiler = new CompileUtil(sourcepath, true);
-                compiler.setCompilerLocation(panel.getCompilerCommand());
-                //TODO
-                compiler.setCompilerClasspath(
-                        panel.getCompilerClasspath() + System.getProperty("path.separator") + ((FileToolbox)box).getClassPath());
-                compiler.setCompilerArguments(panel.getCompilerArguments());
-            }
-            compiler.setDestDir(destFilePath);
-            compiler.setSourcepath(sourceDir);
-            compiler.compile();
+                if (automatedCompile) {
+                    compiler.setJavaFile(sourcepath);
+                } else {
+                    compiler = new CompileUtil(sourcepath, true);
+                    compiler.setCompilerLocation(panel.getCompilerCommand());
+                    //TODO
+                    compiler.setCompilerClasspath(
+                            panel.getCompilerClasspath() + System.getProperty("path.separator") + ((FileToolbox) box).getClassPath());
+                    compiler.setCompilerArguments(panel.getCompilerArguments());
+                }
+                compiler.setDestDir(destFilePath);
+                compiler.setSourcepath(sourceDir);
+                compiler.compile();
             }
         }
     }

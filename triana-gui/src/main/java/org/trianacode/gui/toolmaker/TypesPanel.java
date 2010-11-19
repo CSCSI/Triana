@@ -59,7 +59,7 @@
 package org.trianacode.gui.toolmaker;
 
 
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

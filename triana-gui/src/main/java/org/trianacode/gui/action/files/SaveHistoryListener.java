@@ -58,37 +58,31 @@
  */
 package org.trianacode.gui.action.files;
 
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Hashtable;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphOrganize;
 import org.trianacode.gui.panels.SaveHistoryPanel;
 import org.trianacode.gui.panels.TFileChooser;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.service.ClipableTaskInterface;
-import org.trianacode.taskgraph.service.ExecutionEvent;
-import org.trianacode.taskgraph.service.ExecutionListener;
-import org.trianacode.taskgraph.service.RunnableInstance;
-import org.trianacode.taskgraph.service.RunnableTask;
+import org.trianacode.taskgraph.service.*;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileView;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Hashtable;
 
 /**
  * Action class for "save History" actions
@@ -249,13 +243,13 @@ public class SaveHistoryListener implements ActionListener, ExecutionListener {
     public void executionFinished(ExecutionEvent event) {
         if (infotable.containsKey(event.getTask())) {
             Task task = event.getTask();
-            if(task instanceof RunnableTask) {
-            SaveHistoryInfo info = (SaveHistoryInfo) infotable.get(task);
+            if (task instanceof RunnableTask) {
+                SaveHistoryInfo info = (SaveHistoryInfo) infotable.get(task);
 
-            if (((RunnableTask)task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
-                saveHistory((RunnableTask)task, getFile(task, info));
-                info.increaseSequenceNumber();
-            }
+                if (((RunnableTask) task).isClipInName(HistoryClipIn.HISTORY_CLIPIN_NAME)) {
+                    saveHistory((RunnableTask) task, getFile(task, info));
+                    info.increaseSequenceNumber();
+                }
             }
         }
     }

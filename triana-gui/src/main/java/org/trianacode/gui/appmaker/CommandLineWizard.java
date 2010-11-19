@@ -58,25 +58,18 @@
  */
 package org.trianacode.gui.appmaker;
 
-import java.awt.Frame;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.CompileUtil;
+import org.trianacode.gui.util.CompilerException;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.WizardListener;
 import org.trianacode.gui.windows.WizardWindow;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.CompileUtil;
-import org.trianacode.util.CompilerException;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
 
 
 /**

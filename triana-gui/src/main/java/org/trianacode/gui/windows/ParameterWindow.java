@@ -61,7 +61,7 @@ package org.trianacode.gui.windows;
 import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ParameterWindowInterface;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

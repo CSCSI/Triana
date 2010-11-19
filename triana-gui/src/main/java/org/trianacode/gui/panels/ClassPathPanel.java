@@ -59,37 +59,24 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import org.trianacode.gui.util.Env;
+import org.trianacode.taskgraph.tool.FileToolbox;
+import org.trianacode.taskgraph.tool.ToolTable;
+import org.trianacode.taskgraph.tool.Toolbox;
+import org.trianacode.taskgraph.util.FileUtils;
+
+import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import org.trianacode.taskgraph.tool.FileToolbox;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
+import java.util.*;
 
 /**
  * Parameter panel class for editing the classpath

@@ -58,26 +58,20 @@
  */
 package org.trianacode.gui.hci.tools.filters;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.hci.ToolFilter;
+import org.trianacode.gui.util.Env;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.TypeUtils;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Vector;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.hci.ToolFilter;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.TypeUtils;
-import org.trianacode.util.Env;
 
 /**
  * A filter that sorts tools by sub-package first, e.g. SignalProc.Input becomes Input.SignalProc

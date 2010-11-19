@@ -59,23 +59,17 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+import org.trianacode.gui.Display;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import org.trianacode.gui.Display;
-import org.trianacode.util.Env;
 
 /**
  * Class Description Here...

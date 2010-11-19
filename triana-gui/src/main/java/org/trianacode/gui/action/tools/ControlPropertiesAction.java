@@ -58,12 +58,12 @@
  */
 package org.trianacode.gui.action.tools;
 
-import java.awt.event.ActionEvent;
-
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.panels.ParameterPanelManager;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.util.Env;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "properties" actions.

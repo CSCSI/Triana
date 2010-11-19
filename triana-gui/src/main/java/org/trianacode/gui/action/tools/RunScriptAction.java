@@ -67,6 +67,7 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.FormLayout;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ParameterPanelManager;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
@@ -78,7 +79,6 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolListener;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

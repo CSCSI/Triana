@@ -20,10 +20,10 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.tools.PackageTree;
 import org.trianacode.gui.panels.NormalizedField;
 import org.trianacode.gui.panels.OptionPane;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.tool.Toolbox;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

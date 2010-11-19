@@ -59,20 +59,15 @@
 
 package org.trianacode.gui.appmaker;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.Window;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.WizardInterface;
 import org.trianacode.gui.windows.WizardPanel;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * @author Ian Wang

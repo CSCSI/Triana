@@ -58,38 +58,20 @@
  */
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.ParameterWindow;
+import org.trianacode.gui.windows.WindowButtonConstants;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.tool.ToolTable;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.windows.ParameterWindow;
-import org.trianacode.gui.windows.WindowButtonConstants;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.NodeException;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 /**
  * Editor panel to change nodes and parameter nodes for a group

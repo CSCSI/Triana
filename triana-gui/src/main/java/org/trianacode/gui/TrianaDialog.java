@@ -59,10 +59,11 @@
 
 package org.trianacode.gui;
 
-import javax.swing.JOptionPane;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
 
 /**
  * Utility class for holding GUI based dialogs methods.

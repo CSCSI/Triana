@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.trianacode.util;
+package org.trianacode.gui.util;
 
 /**
  * Class Description Here...

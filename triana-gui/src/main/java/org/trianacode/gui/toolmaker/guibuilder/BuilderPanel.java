@@ -59,8 +59,12 @@
 package org.trianacode.gui.toolmaker.guibuilder;
 
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
+import org.trianacode.gui.toolmaker.GUIPanel;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
@@ -69,15 +73,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.toolmaker.GUIPanel;
-import org.trianacode.util.Env;
 
 /**
  * A panel for defining gui builder interface components

@@ -63,10 +63,10 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.color.TrianaColorConstants;
 import org.trianacode.gui.main.NodeComponent;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.constants.StripeToolConstants;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.*;
@@ -330,7 +330,8 @@ public abstract class TrianaTool extends JPanel implements TrianaColorConstants 
      * Paints the main tool rectangle
      */
     protected void drawRectangle(Graphics graphs, Color color, Color orig) {
-        graphs.setColor(color);
+        Color sel = isSelected() ? color.darker() : color;
+        graphs.setColor(sel);
         graphs.fill3DRect(0, 0, getWidth(), getHeight(), !isSelected());
         graphs.setColor(orig);
     }

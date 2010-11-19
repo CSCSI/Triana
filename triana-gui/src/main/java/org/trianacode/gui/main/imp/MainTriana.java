@@ -71,11 +71,11 @@ import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.hci.tools.UpdateActionConstants;
 import org.trianacode.gui.main.*;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.*;

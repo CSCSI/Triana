@@ -58,20 +58,15 @@
  */
 package org.trianacode.gui.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.util.logging.Logger;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.logging.Logger;
 
 /**
  * Start-up Splash screen
@@ -118,8 +113,8 @@ public class SplashScreen {
         progressPanel.setBackground(Color.WHITE);
         progressPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
         progressPanel.add(progressLabel, BorderLayout.CENTER);
- //       JPanel pbarPanel = new JPanel(new BorderLayout());
-   //     pbarPanel.add(progressBar, BorderLayout.SOUTH);
+        //       JPanel pbarPanel = new JPanel(new BorderLayout());
+        //     pbarPanel.add(progressBar, BorderLayout.SOUTH);
         progressPanel.add(progressBar, BorderLayout.SOUTH);
 
         jp.add(progressPanel, BorderLayout.SOUTH);

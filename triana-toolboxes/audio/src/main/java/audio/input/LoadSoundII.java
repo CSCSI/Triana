@@ -1,17 +1,17 @@
 package audio.input;
 
-import java.io.File;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.gui.windows.QuestionWindow;
+import org.trianacode.taskgraph.Unit;
+import triana.types.audio.AudioChannelFormat;
+import triana.types.audio.MultipleAudio;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import org.trianacode.gui.windows.ErrorDialog;
-import org.trianacode.gui.windows.QuestionWindow;
-import org.trianacode.taskgraph.Unit;
-import org.trianacode.util.Env;
-import triana.types.audio.AudioChannelFormat;
-import triana.types.audio.MultipleAudio;
+import java.io.File;
 
 /**
  * A class for a Unit which allows the user to load a sound file into Triana. This unit allows the user to split the
@@ -235,7 +235,7 @@ public class LoadSoundII extends Unit {
                 ErrorDialog.show(ex.toString());
             }
         } else {
-             ErrorDialog.show("Audio file " + file.getAbsolutePath());
+            ErrorDialog.show("Audio file " + file.getAbsolutePath());
         }
     }
 

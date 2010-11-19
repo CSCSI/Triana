@@ -68,6 +68,7 @@ import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.ParameterPanelImp;
 import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.gui.panels.ToolPanel;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.SaveToolDialog;
@@ -79,7 +80,6 @@ import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.UrlUtils;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -470,6 +470,51 @@ public class TaskGraphFileHandler implements SelectionManager {
         }
         if (writeFile) {
             backGroundSaveTaskGraph(taskgraph, definitionPath.getPath(), tools, true);
+        }
+        return writeFile;
+    }
+
+
+    /**
+     * rudimentary at the moment just pops up a dialog, no checking to see if this is an existing group that has been
+     * modified
+     */
+    public static boolean saveTaskGraphAsFile(TaskGraph taskgraph, ToolTable tools) {
+        TaskGraph group = taskgraph;
+
+        if (group.getParent() != null) {
+            TaskGraph parent = group.getParent();
+
+            while (parent.getParent() != null) {
+                parent = parent.getParent();
+            }
+
+            String[] options = new String[]{group.getToolName(), parent.getToolName() + " (root)", "Cancel"};
+            String
+                    title = "Save As...";
+
+            int choice = JOptionPane.showOptionDialog(GUIEnv.getApplicationFrame(),
+                    "Save current group or root taskgraph?", title, JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, GUIEnv.getTrianaIcon(), options, options[0]);
+
+            if (choice == 1) {
+                group = parent;
+            } else if (choice == 2) {
+                return false;
+            }
+        }
+
+        boolean writeFile = false;
+        TFileChooser chooser = new TFileChooser(System.getProperty("user.dir"));
+        chooser.setMultiSelectionEnabled(false);
+
+        int result = chooser.showSaveDialog(GUIEnv.getApplicationFrame());
+        if (result == TFileChooser.APPROVE_OPTION) {
+            File f = chooser.getSelectedFile();
+            if (f != null) {
+                backGroundSaveTaskGraph(taskgraph, f.getAbsolutePath(), tools, true);
+                writeFile = true;
+            }
         }
         return writeFile;
     }

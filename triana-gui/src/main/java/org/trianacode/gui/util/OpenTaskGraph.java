@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.trianacode.util;
+package org.trianacode.gui.util;
 
-import java.util.EventObject;
+import java.util.Vector;
 
 /**
  * Class Description Here...
@@ -25,32 +25,34 @@ import java.util.EventObject;
  * @version $Revision:$
  */
 
-
-public class UserPropertyEvent extends EventObject {
-
-    private String propname;
-    private Object propval;
+public class OpenTaskGraph {
 
 
-    public UserPropertyEvent(Object source, String propname, Object propval) {
-        super(source);
-        this.propname = propname;
-        this.propval = propval;
+    private String rootFileName;
+    private String name;
+    private Vector children = new Vector();
+
+    public void addChild(OpenTaskGraph child) {
+        children.add(child);
     }
 
-
-    /**
-     * the name of the property
-     */
-    public String getPropertyName() {
-        return propname;
+    public OpenTaskGraph[] getChildren() {
+        return (OpenTaskGraph[]) children.toArray(new OpenTaskGraph[children.size()]);
     }
 
-    /**
-     * the new value for the property
-     */
-    public Object getPropertyValue() {
-        return propval;
+    public String getRootFileName() {
+        return rootFileName;
     }
 
+    public void setRootFileName(String rootFileName) {
+        this.rootFileName = rootFileName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

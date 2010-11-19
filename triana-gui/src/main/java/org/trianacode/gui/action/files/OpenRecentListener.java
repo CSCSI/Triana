@@ -58,6 +58,9 @@
  */
 package org.trianacode.gui.action.files;
 
+import org.trianacode.gui.hci.ApplicationFrame;
+import org.trianacode.gui.util.Env;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -65,9 +68,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import org.trianacode.gui.hci.ApplicationFrame;
-import org.trianacode.util.Env;
 
 /**
  * Specific internal class that implements a listener just to listen to the recent items list.

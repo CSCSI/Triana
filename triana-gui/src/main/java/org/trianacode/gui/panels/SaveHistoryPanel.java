@@ -59,20 +59,14 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Insets;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
 
 /**
  * A panel for specifying the auto save history file and sequence number policy

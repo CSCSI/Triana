@@ -58,17 +58,16 @@
  */
 package org.trianacode.gui.action.tools;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action to handle Tool/Component Importing

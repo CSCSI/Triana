@@ -59,10 +59,10 @@
 package org.trianacode.gui.action.files;
 
 import org.trianacode.gui.hci.OptionsHandler;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.util.UserPropertyEvent;
+import org.trianacode.gui.util.UserPropertyListener;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
-import org.trianacode.util.UserPropertyEvent;
-import org.trianacode.util.UserPropertyListener;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

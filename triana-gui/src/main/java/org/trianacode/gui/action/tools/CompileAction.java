@@ -58,17 +58,17 @@
  */
 package org.trianacode.gui.action.tools;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.action.taskgraph.ZoomAction;
 import org.trianacode.gui.hci.CompileHandler;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "select all" actions.

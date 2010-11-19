@@ -59,14 +59,7 @@
 package org.trianacode.gui.toolmaker;
 
 
-import java.awt.Frame;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.WizardListener;
 import org.trianacode.gui.windows.WizardWindow;
 import org.trianacode.taskgraph.TaskException;
@@ -76,7 +69,12 @@ import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.FileUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 
 /**

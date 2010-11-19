@@ -59,44 +59,23 @@
 
 package org.trianacode.gui.hci;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.logging.Logger;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.IncompatibleTypeException;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.TPoint;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphFactory;
-import org.trianacode.taskgraph.TaskGraphManager;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.TaskLayoutUtils;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
 import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.logging.Logger;
 
 /**
  * A gui class with static methods for handling taskgraph operations, such as create task and connect nodes.

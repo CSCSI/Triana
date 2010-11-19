@@ -59,18 +59,17 @@
 
 package org.trianacode.gui.action.taskgraph;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.TaskLayoutUtils;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * The action for showing the node editor

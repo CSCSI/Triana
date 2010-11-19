@@ -59,25 +59,17 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.ParameterNode;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * A panel that allows you to add parameter nodes to a task. The nodes can either be parameter only, parameter+trigger,

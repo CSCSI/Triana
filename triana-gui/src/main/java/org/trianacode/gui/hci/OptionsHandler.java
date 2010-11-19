@@ -58,12 +58,13 @@
  */
 package org.trianacode.gui.hci;
 
-import javax.swing.JOptionPane;
 import org.trianacode.gui.panels.OptionsPanel;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
 
 /**
  * A self contained class for listening a user request for the options panel and displaying it

@@ -65,11 +65,11 @@ import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.ParameterPanel;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.util.PrintUtilities;
 import org.trianacode.gui.windows.ParameterWindow;
 import org.trianacode.gui.windows.WindowButtonConstants;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.util.Env;
-import org.trianacode.util.PrintUtilities;
 
 import javax.swing.*;
 import java.awt.*;

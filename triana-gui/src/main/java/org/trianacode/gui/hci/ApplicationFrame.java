@@ -93,6 +93,7 @@ import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.gui.service.LocalServer;
 import org.trianacode.gui.service.WorkflowActionManager;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.SplashScreen;
 import org.trianacode.gui.windows.TrianaWindow;
@@ -110,7 +111,6 @@ import org.trianacode.taskgraph.service.LocalDeployAssistant;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
@@ -438,6 +438,7 @@ public class ApplicationFrame extends TrianaWindow
         ActionTable.putAction(Actions.EDIT_TOOLBOXES, new EditToolboxesAction(this.tools));
         ActionTable.putAction(Actions.OPTIONS, new OptionsAction(this.tools));
         ActionTable.putAction(Actions.CREATE_IMAGE, new ImageAction());
+        ActionTable.putAction(Actions.SAVE_AS_FILE, new SaveAsFileAction(this, tools));
 
     }
 

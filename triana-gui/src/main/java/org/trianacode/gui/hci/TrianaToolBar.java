@@ -60,7 +60,7 @@ package org.trianacode.gui.hci;
 
 import org.trianacode.gui.action.ActionTable;
 import org.trianacode.gui.action.Actions;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import java.awt.*;

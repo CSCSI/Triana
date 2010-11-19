@@ -59,16 +59,17 @@
 
 package org.trianacode.gui.action.taskgraph;
 
-import javax.swing.JOptionPane;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.service.WorkflowActions;
 import org.trianacode.gui.service.WorkflowException;
 import org.trianacode.gui.service.WorkflowVerifier;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.util.Env;
+
+import javax.swing.*;
 
 /**
  * Checks a pre-run workflow to see whether it has any ProtoServices, and if so prompts the user to distribute these

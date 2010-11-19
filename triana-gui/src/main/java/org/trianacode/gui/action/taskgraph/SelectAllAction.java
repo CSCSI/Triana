@@ -65,7 +65,7 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
 import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import java.awt.*;

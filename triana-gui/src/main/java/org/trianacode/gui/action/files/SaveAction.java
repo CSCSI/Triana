@@ -64,8 +64,8 @@ import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.main.ZoomLayout;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,10 +87,10 @@ public class SaveAction extends AbstractAction implements ActionDisplayOptions {
         this.selectionHandler = selhandler;
         this.tools = tools;
 
-        putValue(SHORT_DESCRIPTION, Env.getString("Save"));
-        putValue(ACTION_COMMAND_KEY, Env.getString("Save"));
+        putValue(SHORT_DESCRIPTION, Env.getString("SaveTool"));
+        putValue(ACTION_COMMAND_KEY, Env.getString("SaveTool"));
         putValue(SMALL_ICON, GUIEnv.getIcon("save.png"));
-        putValue(NAME, Env.getString("Save"));
+        putValue(NAME, Env.getString("SaveTool"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     }

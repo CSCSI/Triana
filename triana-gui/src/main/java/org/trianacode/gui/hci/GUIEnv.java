@@ -61,13 +61,13 @@ package org.trianacode.gui.hci;
 
 import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.color.ColorTableEntry;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.Help;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.util.FileUtils;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.applet.Applet;

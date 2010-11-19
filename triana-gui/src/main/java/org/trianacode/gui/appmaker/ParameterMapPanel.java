@@ -59,11 +59,19 @@
 
 package org.trianacode.gui.appmaker;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.GridLayout;
-import java.awt.Window;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.WizardInterface;
+import org.trianacode.gui.windows.WizardPanel;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.tool.Tool;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -72,24 +80,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.windows.WizardInterface;
-import org.trianacode.gui.windows.WizardPanel;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.ser.XMLReader;
-import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
 
 /**
  * @author Ian Wang

@@ -62,10 +62,10 @@ import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.MenuMnemonics;
+import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.service.ClientException;
 import org.trianacode.taskgraph.service.TrianaClient;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

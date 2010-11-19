@@ -64,8 +64,8 @@ import org.trianacode.gui.action.files.OpenRecentListener;
 import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.frames.FramesManager;
 import org.trianacode.gui.desktop.tabs.TabManager;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -141,6 +141,8 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
         fileMenu.addSeparator();
         fileMenu.add(new JMenuItem(ActionTable.getAction(SAVE_ACTION)));
         fileMenu.add(new JMenuItem(ActionTable.getAction(SAVE_AS_ACTION)));
+        fileMenu.add(new JMenuItem(ActionTable.getAction(SAVE_AS_FILE)));
+
         fileMenu.add(new JMenuItem(ActionTable.getAction(CLOSE_ACTION)));
         fileMenu.addSeparator();
         fileMenu.add(new JMenuItem(ActionTable.getAction(IMPORT_ACTION)));

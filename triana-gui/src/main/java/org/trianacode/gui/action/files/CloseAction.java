@@ -61,7 +61,7 @@ package org.trianacode.gui.action.files;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
 import java.awt.*;

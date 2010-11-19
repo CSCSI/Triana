@@ -58,25 +58,18 @@
  */
 package org.trianacode.gui.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.TreeMap;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
 
 
 /**

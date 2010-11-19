@@ -75,13 +75,13 @@ import org.trianacode.gui.main.TaskComponent;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.main.imp.MainTriana;
 import org.trianacode.gui.main.imp.MainTrianaTask;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.imp.ToolTipWriter;
 import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 

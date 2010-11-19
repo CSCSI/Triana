@@ -58,14 +58,13 @@
  */
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
+import org.trianacode.gui.util.Env;
+import org.trianacode.taskgraph.tool.ToolTable;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 /**
  * UI for pasing tasks that have been cut or copied from the scratch pad back to the tool box

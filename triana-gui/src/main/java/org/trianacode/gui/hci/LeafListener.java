@@ -69,6 +69,7 @@ import org.trianacode.gui.desktop.DesktopViewManager;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.panels.OptionPane;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
@@ -79,7 +80,6 @@ import org.trianacode.taskgraph.service.TrianaClient;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 import org.trianacode.taskgraph.util.UrlUtils;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;

@@ -64,8 +64,8 @@ import org.trianacode.gui.desktop.DesktopView;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.gui.main.ZoomLayout;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.tool.ToolTable;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -85,10 +85,10 @@ public class SaveAsAction extends AbstractAction implements ActionDisplayOptions
         this.selectionHandler = selhandler;
         this.tools = tools;
 
-        putValue(SHORT_DESCRIPTION, Env.getString("SaveAs"));
-        putValue(ACTION_COMMAND_KEY, Env.getString("SaveAs"));
+        putValue(SHORT_DESCRIPTION, Env.getString("SaveToolAs"));
+        putValue(ACTION_COMMAND_KEY, Env.getString("SaveToolAs"));
         putValue(SMALL_ICON, GUIEnv.getIcon("saveas.png"));
-        putValue(NAME, Env.getString("SaveAs"));
+        putValue(NAME, Env.getString("SaveToolAs"));
     }
 
     /**

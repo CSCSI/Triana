@@ -56,7 +56,7 @@
  * Foundation and is governed by the laws of England and Wales.
  *
  */
-package org.trianacode.util;
+package org.trianacode.gui.util;
 
 /**
  * An exception thrown when a compiler command generates errors

@@ -59,14 +59,11 @@
 package org.trianacode.gui.toolmaker.guibuilder;
 
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import org.trianacode.gui.util.Env;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import org.trianacode.util.Env;
+import java.awt.*;
 
 /**
  * The panel for defining a gui builder text field component

@@ -61,10 +61,10 @@ package org.trianacode.gui.extensions;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.TFileChooser;
+import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.util.Env;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;

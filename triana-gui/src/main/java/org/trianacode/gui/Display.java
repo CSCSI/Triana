@@ -58,23 +58,11 @@
  */
 package org.trianacode.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.Window;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JWindow;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.util.Env;
+import org.trianacode.gui.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
 
 
 /**

@@ -59,11 +59,15 @@
 package org.trianacode.gui.toolmaker;
 
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.Window;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.WizardInterface;
+import org.trianacode.gui.windows.WizardPanel;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -71,17 +75,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import org.trianacode.gui.windows.WizardInterface;
-import org.trianacode.gui.windows.WizardPanel;
-import org.trianacode.util.Env;
 
 /**
  * The final tool wizard panel prompting the user to press finish to generate code

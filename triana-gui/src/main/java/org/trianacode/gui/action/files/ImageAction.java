@@ -66,8 +66,8 @@ import org.trianacode.gui.panels.IntegerField;
 import org.trianacode.gui.panels.LabelledTextFieldPanel;
 import org.trianacode.gui.panels.OptionPane;
 import org.trianacode.gui.panels.TFileChooser;
+import org.trianacode.gui.util.TaskGraphPanelUtils;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.util.TaskGraphPanelUtils;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;

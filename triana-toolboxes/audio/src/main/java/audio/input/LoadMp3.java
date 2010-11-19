@@ -1,10 +1,24 @@
 package audio.input;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import org.trianacode.gui.Display;
+import org.trianacode.gui.util.Env;
+import org.trianacode.gui.windows.ErrorDialog;
+import org.trianacode.gui.windows.QuestionWindow;
+import org.trianacode.taskgraph.Unit;
+import org.tritonus.share.sampled.file.TAudioFileFormat;
+import triana.types.audio.AudioChannelFormat;
+import triana.types.audio.MultipleAudio;
+import triana.types.util.Str;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -12,36 +26,10 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.Map;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import org.trianacode.gui.Display;
-import org.trianacode.gui.windows.ErrorDialog;
-import org.trianacode.gui.windows.QuestionWindow;
-import org.trianacode.taskgraph.Unit;
-import org.trianacode.util.Env;
-import org.tritonus.share.sampled.file.TAudioFileFormat;
-import triana.types.audio.AudioChannelFormat;
-import triana.types.audio.MultipleAudio;
-import triana.types.util.Str;
-
 /**
  * A class for a Unit which allows the user to load a sound file into Triana. This unit allows the user to split the
  * audio into a stream of contiguous chunks, and output, or as the whole sound file in its entirity. Created by Dr. Ian
  * Taylor. Modified and updated by Eddie Al-Shakarchi. Contact e.alshakarchi@cs.cf.ac.uk .
- *
  *
  * @author Eddie Al-Shakarchi
  * @version $Revision: 2921 $
@@ -592,7 +580,6 @@ public class LoadMp3 extends Unit {
     }
 
     /**
-     *
      * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
@@ -614,8 +601,6 @@ public class LoadMp3 extends Unit {
     public String[] getInputTypes() {
         return new String[]{};
     }
-
-
 
 
     /**
