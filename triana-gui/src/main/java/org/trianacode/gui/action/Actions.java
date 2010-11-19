@@ -140,6 +140,7 @@ public interface Actions {
     public static final String EDIT_TOOLBOXES = "Edit Toolboxes";
     public static final String TABBED_DESKTOP_VIEW = "Tabbed Desktop";
     public static final String VIRTUAL_DESKTOP_VIEW = "Virtual Desktop";
+    public static final String CREATE_IMAGE = "Create Image";
 
     public static final String DESKTOP_CHANGE_PROPERTY = "desktop.change.property";
 }

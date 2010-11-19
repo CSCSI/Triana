@@ -16,14 +16,13 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.Component;
-import java.awt.HeadlessException;
+import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import javax.swing.JFileChooser;
-import org.trianacode.util.Env;
 
 /**
  * Class Description Here...
@@ -64,6 +63,7 @@ public class TFileChooser extends JFileChooser implements ActionListener {
     public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
         setApproveButtonText(approveButtonText);
         int result = super.showDialog(parent, null);
+
         return result;
     }
 

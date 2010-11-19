@@ -147,6 +147,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
         fileMenu.add(new JMenuItem(ActionTable.getAction(EXPORT_ACTION)));
         fileMenu.addSeparator();
         fileMenu.add(new JMenuItem(ActionTable.getAction(PRINT_ACTION)));
+        fileMenu.add(new JMenuItem(ActionTable.getAction(CREATE_IMAGE)));
         fileMenu.addSeparator();
         MenuMnemonics.getInstance().createMenuItem(Env.getString("Quit"), fileMenu, applicationFrame);
         MenuUtils.assignMnemonics(fileMenu);

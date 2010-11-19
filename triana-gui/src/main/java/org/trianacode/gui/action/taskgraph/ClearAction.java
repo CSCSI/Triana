@@ -58,14 +58,15 @@
  */
 package org.trianacode.gui.action.taskgraph;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.util.Env;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action class to handle all "clear" actions.
@@ -78,11 +79,18 @@ public class ClearAction extends AbstractAction implements ActionDisplayOptions 
     private ToolSelectionHandler selectionHandler;
 
     public ClearAction(ToolSelectionHandler selhandler) {
+        this(selhandler, DISPLAY_BOTH);
+    }
+
+    public ClearAction(ToolSelectionHandler selhandler, int displayOption) {
         super();
         this.selectionHandler = selhandler;
         putValue(SHORT_DESCRIPTION, Env.getString("Clear"));
         putValue(ACTION_COMMAND_KEY, Env.getString("Clear"));
         putValue(NAME, Env.getString("Clear"));
+        if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
+            putValue(SMALL_ICON, GUIEnv.getIcon("clear.png"));
+        }
 
     }
 

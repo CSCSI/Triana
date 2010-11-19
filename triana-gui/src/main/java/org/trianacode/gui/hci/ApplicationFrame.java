@@ -437,6 +437,7 @@ public class ApplicationFrame extends TrianaWindow
         ActionTable.putAction(Actions.VIRTUAL_DESKTOP_VIEW, new VirtualDesktopAction(this));
         ActionTable.putAction(Actions.EDIT_TOOLBOXES, new EditToolboxesAction(this.tools));
         ActionTable.putAction(Actions.OPTIONS, new OptionsAction(this.tools));
+        ActionTable.putAction(Actions.CREATE_IMAGE, new ImageAction());
 
     }
 
@@ -978,6 +979,7 @@ public class ApplicationFrame extends TrianaWindow
     }
 
     public DesktopView getSelectedDesktopView() {
+        log.debug("ApplicationFrame.getSelectedDesktopView selected:" + selected);
         if (selected instanceof TaskGraphPanel) {
             return getDesktopViewManager().getDesktopViewFor((TaskGraphPanel) selected);
         } else {

@@ -93,7 +93,7 @@ public class OptionsAction extends AbstractAction implements ActionDisplayOption
         putValue(SHORT_DESCRIPTION, Env.getString("TrianaOptionTitle"));
         putValue(ACTION_COMMAND_KEY, Env.getString("TrianaOptionTitle"));
         if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
-            putValue(SMALL_ICON, GUIEnv.getIcon("options.png"));
+            putValue(SMALL_ICON, GUIEnv.getIcon("properties.png"));
         }
         if ((displayOption == DISPLAY_NAME) || (displayOption == DISPLAY_BOTH)) {
             putValue(NAME, Env.getString("TrianaOptionTitle"));

@@ -92,7 +92,7 @@ public class EditToolboxesAction extends AbstractAction implements ActionDisplay
         putValue(SHORT_DESCRIPTION, Env.getString("editToolBoxPaths"));
         putValue(ACTION_COMMAND_KEY, Env.getString("editToolBoxPaths"));
         if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
-            putValue(SMALL_ICON, GUIEnv.getIcon("cogbox.png"));
+            putValue(SMALL_ICON, GUIEnv.getIcon("box1.png"));
         }
         if ((displayOption == DISPLAY_NAME) || (displayOption == DISPLAY_BOTH)) {
             putValue(NAME, Env.getString("editToolBoxPaths"));
