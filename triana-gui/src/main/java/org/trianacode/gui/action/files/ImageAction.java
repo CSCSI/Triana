@@ -219,6 +219,11 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
         BufferedImage dest = new BufferedImage((int) ((rect.getWidth()) * scale) + (margin * 2), (int) ((rect.getHeight()) * scale) + (margin * 2),
                 BufferedImage.TYPE_INT_RGB);
+        Graphics g = dest.getGraphics();
+        Color c = g.getColor();
+        g.setColor(comp.getBackground());
+        g.fillRect(0, 0, dest.getWidth(), dest.getHeight());
+        g.setColor(c);
         image = op.filter(image, dest);
 
         Iterator iter = ImageIO.getImageWritersByFormatName(type);
