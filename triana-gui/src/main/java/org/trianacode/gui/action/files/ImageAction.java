@@ -97,7 +97,7 @@ import java.util.Iterator;
  */
 public class ImageAction extends AbstractAction implements ActionDisplayOptions {
 
-    private int margin = 20;
+    private static int margin = 20;
 
 
     public ImageAction() {
@@ -153,7 +153,7 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
     }
 
 
-    public void save(File output, double scale, String type) {
+    public static void save(File output, double scale, String type) {
         TaskGraphPanel taskgraphpanel = null;
         Component comp = null;
         DesktopView view = GUIEnv.getSelectedDesktopView();
@@ -185,7 +185,7 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
         }
     }
 
-    private void save(File f, Component comp, double scale, Rectangle2D rect, BufferedImage image, String type, boolean display) {
+    private static void save(File f, Component comp, double scale, Rectangle2D rect, BufferedImage image, String type, boolean display) {
         if (scale == 0.0) {
             scale = 0.1;
         }
@@ -230,9 +230,12 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
             }
         }
         ImageWriter writer = (ImageWriter) iter.next();
+
         ImageWriteParam iwp = writer.getDefaultWriteParam();
-        iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        iwp.setCompressionQuality(1);
+        if (writer.canWriteRasters()) {
+            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            iwp.setCompressionQuality(1);
+        }
 
         try {
             FileImageOutputStream fout = new FileImageOutputStream(out);
