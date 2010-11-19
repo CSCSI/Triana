@@ -27,6 +27,8 @@ public class AnnotatedUnitWrapper extends Unit {
     private String panelClass = null;
     private boolean aggregate = false;
     private boolean isArray = false;
+    private int minimumInputs = 0;
+    private int minimumOutputs = 0;
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
 
 
@@ -89,16 +91,24 @@ public class AnnotatedUnitWrapper extends Unit {
         renderingDetails.put(new String[]{hint, name}, f);
     }
 
+    public void setMinimumInputs(int minimumInputs) {
+        this.minimumInputs = minimumInputs;
+    }
+
+    public void setMinimumOutputs(int minimumOutputs) {
+        this.minimumOutputs = minimumOutputs;
+    }
+
     public void init() {
         setDefaultInputNodes(inputs.length);
-        setMinimumInputNodes(0);
+        setMinimumInputNodes(minimumInputs);
         if (aggregate) {
             setMaximumInputNodes(Integer.MAX_VALUE);
         } else {
             setMaximumInputNodes(inputs.length);
         }
         setDefaultOutputNodes(outputs.length);
-        setMinimumOutputNodes(0);
+        setMinimumOutputNodes(minimumOutputs);
         if (outputs.length == 0) {
             setMaximumOutputNodes(0);
         } else {
@@ -128,7 +138,6 @@ public class AnnotatedUnitWrapper extends Unit {
         if (panelClass != null && panelClass.length() > 0) {
             setParameterPanelClass(panelClass);
             setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
-            //setParameterUpdatePolicy(Unit.IMMEDIATE_UPDATE);
         }
         if (renderingHints.length > 0) {
             for (String s : renderingHints) {

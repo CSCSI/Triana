@@ -29,6 +29,8 @@ public class AnnotationProcessor {
         pkge = t.displayPackage();
         panelClass = t.panelClass();
         String[] renderingHints = t.renderingHints();
+        int minimumInputs = t.minimumInputs();
+        int minimumOutputs = t.minimumOutputs();
 
         AnnotatedUnitWrapper wrapper = null;
         Method[] methods = annotated.getDeclaredMethods();
@@ -68,6 +70,12 @@ public class AnnotationProcessor {
                         outputs, willAggr);
                 if (renderingHints != null) {
                     wrapper.setRenderingHints(renderingHints);
+                }
+                if (minimumInputs >= 0) {
+                    wrapper.setMinimumInputs(minimumInputs);
+                }
+                if (minimumOutputs >= 0) {
+                    wrapper.setMinimumOutputs(minimumOutputs);
                 }
                 break;
             }

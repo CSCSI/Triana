@@ -17,7 +17,7 @@ import java.util.UUID;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass = "org.trianacode.pegasus.dax.JobUnitPanel", renderingHints = {"DAX Job"})
+@Tool(panelClass = "org.trianacode.pegasus.dax.JobUnitPanel", renderingHints = {"DAX Job"}, minimumInputs = 1)
 public class JobUnit {
 
 

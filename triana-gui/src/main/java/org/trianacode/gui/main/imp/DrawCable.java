@@ -59,16 +59,12 @@
 
 package org.trianacode.gui.main.imp;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Point;
-
 import org.trianacode.taskgraph.Cable;
 
+import java.awt.*;
+
 /**
- * <<<<<<< DrawCable.java Common interface implemented by all cable classes
+ * DrawCable.java Common interface implemented by all cable classes
  *
  * @author Ian Wang
  * @author Ian Wang

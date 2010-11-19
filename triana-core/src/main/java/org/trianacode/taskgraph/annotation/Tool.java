@@ -23,5 +23,9 @@ public @interface Tool {
 
     String panelClass() default "";
 
+    int minimumInputs() default 0;
+
+    int minimumOutputs() default 0;
+
     String[] renderingHints() default {};
 }
