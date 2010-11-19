@@ -18,6 +18,14 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <tagBase>https://svn.cs.cf.ac.uk/projects/triana/tags</tagBase>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -35,6 +43,13 @@
             <url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>
         </repository>
     </distributionManagement>
+
+
+    <scm>
+        <connection>scm:svn:https://svn.cs.cf.ac.uk/projects/triana/trunk</connection>
+        <developerConnection>scm:svn:https://svn.cs.cf.ac.uk/projects/triana/trunk</developerConnection>
+        <url>https://svn.cs.cf.ac.uk/projects/triana/trunk</url>
+    </scm>
 
     <modules>
         <module>triana-core</module>
