@@ -106,7 +106,9 @@ public class SaveAction extends AbstractAction implements ActionDisplayOptions {
                     TaskGraphPanel panel = view.getTaskgraphPanel();
                     if ((panel != null) && (panel.getContainer().getLayout() instanceof ZoomLayout)) {
                         ZoomLayout layout = (ZoomLayout) panel.getContainer().getLayout();
-                        Env.setZoomFactor(layout.getZoom(), panel.getTaskGraph().getQualifiedTaskName());
+                        if (layout.getZoom() != 1.0) {
+                            Env.setZoomFactor(layout.getZoom(), panel.getTaskGraph().getQualifiedTaskName());
+                        }
                     }
                 }
             }
