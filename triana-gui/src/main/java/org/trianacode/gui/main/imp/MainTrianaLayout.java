@@ -59,25 +59,11 @@
 
 package org.trianacode.gui.main.imp;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.util.ArrayList;
+import org.trianacode.gui.main.*;
+import org.trianacode.taskgraph.*;
 
-import org.trianacode.gui.main.ForShowComponent;
-import org.trianacode.gui.main.TaskComponent;
-import org.trianacode.gui.main.TaskGraphPanel;
-import org.trianacode.gui.main.TrianaLayoutConstants;
-import org.trianacode.gui.main.ZoomLayout;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.TDimension;
-import org.trianacode.taskgraph.TPoint;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskLayoutDetails;
-import org.trianacode.taskgraph.TaskLayoutUtils;
-import org.trianacode.util.Env;
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * The layout manager for positioning the triana tools on the workspace.
@@ -104,7 +90,7 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
     private int leftforshowwidth = -1;
     private int taskgraphwidth = -1;
 
-    private double zoom = Env.getZoomFactor();
+    private double zoom;
 
 
     /**
@@ -113,9 +99,10 @@ public class MainTrianaLayout implements LayoutManager, TaskLayoutDetails, ZoomL
      * @param border       the border around the components
      * @param forshowspace the space between the rightmost componenet and the right hand for show tools.
      */
-    public MainTrianaLayout(int border, int forshowspace) {
+    public MainTrianaLayout(int border, int forshowspace, double zoom) {
         this.border = border;
         this.forshowspace = forshowspace;
+        this.zoom = zoom;
     }
 
 

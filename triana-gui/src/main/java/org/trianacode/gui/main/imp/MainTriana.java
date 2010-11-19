@@ -168,7 +168,7 @@ public class MainTriana extends JPanel
         super();
 
         layout = new MainTrianaLayout(TrianaLayoutConstants.DEFAULT_NODE_SIZE.width,
-                TrianaLayoutConstants.DEFAULT_TOOL_SIZE.width / 2);
+                TrianaLayoutConstants.DEFAULT_TOOL_SIZE.width / 2, Env.getZoomFactor(taskgraph.getQualifiedTaskName()));
         setLayout(layout);
 
         addActionMaps();

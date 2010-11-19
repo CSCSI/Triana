@@ -989,15 +989,15 @@ public final class Env {
     /**
      * Sets the current gui zoom factor
      */
-    public final static void setZoomFactor(double zoom) {
-        setUserProperty(ZOOM_FACTOR_STR, new Double(zoom));
+    public final static void setZoomFactor(double zoom, String task) {
+        setUserProperty(ZOOM_FACTOR_STR + ":" + task, new Double(zoom));
     }
 
     /**
      * @return the current gui zoom factor
      */
-    public final static double getZoomFactor() {
-        Object zoom = getUserProperty(ZOOM_FACTOR_STR);
+    public final static double getZoomFactor(String task) {
+        Object zoom = getUserProperty(ZOOM_FACTOR_STR + ":" + task);
 
         if ((zoom == null) || (!(zoom instanceof Double))) {
             return 1;

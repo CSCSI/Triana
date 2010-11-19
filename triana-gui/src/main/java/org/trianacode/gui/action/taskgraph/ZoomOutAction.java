@@ -123,7 +123,7 @@ public class ZoomOutAction extends AbstractAction implements ActionDisplayOption
                     double zoom = layout.getZoom() * ZOOM_FACTOR;
 
                     layout.setZoom(zoom);
-                    Env.setZoomFactor(zoom);
+                    Env.setZoomFactor(zoom, panel.getTaskGraph().getQualifiedTaskName());
 
                     panel.getContainer().invalidate();
                     panel.getContainer().validate();
