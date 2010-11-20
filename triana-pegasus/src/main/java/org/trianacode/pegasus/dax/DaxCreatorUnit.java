@@ -460,10 +460,10 @@ public class DaxCreatorUnit {
                         for(int j = 0; j < dfc.getNumberOfFiles(); j++){
                             job.addUses(new Filename(dfc.getNextFilename(), 1));
                         }
+                        dfc.resetNextCounter();
                     }
                     else{
                         job.addUses(new Filename(dfc.getFilename(), 1));
-
                     }
                 }
             }
