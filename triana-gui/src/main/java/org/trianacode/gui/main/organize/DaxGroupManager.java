@@ -26,9 +26,12 @@ public class DaxGroupManager {
         }
 
         DaxGroupObject dgo = initDaxGroupObject(t, level);
-                if(t.getDataOutputNodeCount() > 5){
+
+        if(t.getDataOutputNodeCount() > 5){
             addSpecialTask(dgo);
         }
+        setParams(dgo);
+
 
         objects.add(dgo);
         return dgo;
@@ -41,6 +44,14 @@ public class DaxGroupManager {
             }
         }
         return null;
+    }
+
+    public void setParams(DaxGroupObject dgo){
+        Task t = dgo.getTask();
+        t.setParameter(Task.GUI_X, String.valueOf(dgo.getLevel() * 2));
+
+        t.setParameter(Task.GUI_Y, String.valueOf(dgo.getRow() * 2));
+
     }
 
     private DaxGroupObject initDaxGroupObject(Task t, int level){
@@ -73,9 +84,17 @@ public class DaxGroupManager {
     public void placeSpecialTasks() {
         for(DaxGroupObject dgo : specialTasks){
             Task [] nextTasks = DaxOrganize.getNextTasks(dgo.getTask());
-            DaxGroupObject nextDGO = getDGOforTask(nextTasks[1]);
-            dgo.setLevel(nextDGO.getLevel() - 1);
+            Task aNextTask = nextTasks[1];
+            DaxGroupObject nextDGO = getDGOforTask(aNextTask);
+            int nextDGOLevel = nextDGO.getLevel();
+            dgo.setLevel(nextDGOLevel - 1);
             dgo.setRow(getFreeRow(dgo.getLevel()));
+
+            setParams(dgo);
+
+            System.out.println("Special task " + dgo.getTask().getToolName() + " has " + aNextTask.getToolName() +
+                    ", level " + nextDGO.getLevel() + " after it. " +
+                    "Setting tasks level to " + dgo.getLevel() + " on available row " + dgo.getRow());
 
         }
     }

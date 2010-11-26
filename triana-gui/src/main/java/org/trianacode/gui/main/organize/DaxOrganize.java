@@ -22,16 +22,17 @@ public class DaxOrganize {
     public DaxOrganize(TaskGraph t){
         HashMap levels = new HashMap();
 
-        recurse( levels, getRootTasks(t), 0);
+        Task[] roots = getRootTasks(t);
+
+        recurse( levels, roots, 0);
+
         dgm.placeSpecialTasks();
         System.out.println("HashMap : " + levels +
                 "\n\nSpecial tasks : " + dgm.getSpecialTasks());
-        dgm.placeSpecialTasks();
 
     }
 
     private  void recurse(HashMap h, Task[] ts, int level){
-       // level ++;
         System.out.println("Considering level " + level + " object");
         if(ts.length > 0){
             for(Task task : ts){
@@ -46,14 +47,21 @@ public class DaxOrganize {
     private void recLevel( HashMap h, Task t, int level){
         System.out.println("Task " + t.getToolName() + " is on level " + level);
 
-        DaxGroupObject dgo = dgm.addTask(t, level);
+        DaxGroupObject dgo = dgm.getDGOforTask(t);
+        if(dgo == null){
+            dgo = dgm.addTask(t, level);
 
-
-        t.setParameter(Task.GUI_X, String.valueOf(dgo.getLevel() * 3));
-
-        t.setParameter(Task.GUI_Y, String.valueOf(dgo.getRow() * 2));
-
-
+        }
+        else{
+            int currentSetLevel = dgo.getLevel();
+            System.out.println("Task " + t.getToolName() + " already has a DGO." +
+                    "Checking level to see if adjustment is needed." +
+                    "Current level is :" + currentSetLevel + " which may be changed to : " + level);
+            if(level > currentSetLevel){
+                dgo.setLevel(level);
+                dgm.setParams(dgo);
+            }
+        }
         h.put(t,level);
     }
 
