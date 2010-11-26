@@ -552,8 +552,8 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
     private Proxy makeProxy(String filename, String packageLocation) {
         HashMap details = new HashMap();
-        details.put("unitName", ObjectMarshaller.marshallStringToJava(filename));
-        details.put("unitPackage", ObjectMarshaller.marshallStringToJava(packageLocation));
+        details.put("unitName", (filename));
+        details.put("unitPackage", (packageLocation));
         Proxy proxy = null;
         try {
             proxy = ProxyFactory.createProxy("Java", details);

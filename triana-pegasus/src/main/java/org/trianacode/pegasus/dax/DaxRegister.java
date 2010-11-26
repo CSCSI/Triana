@@ -13,6 +13,7 @@ import java.util.UUID;
  * Date: Sep 17, 2010
  * Time: 4:47:50 PM
  * To change this template use File | Settings | File Templates.
+ * TODO use concurrent hashmap
  */
 public class DaxRegister {
     private static DaxRegister register = new DaxRegister();

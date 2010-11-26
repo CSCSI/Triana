@@ -19,6 +19,7 @@ public class DaxFileTrianaTask extends MainTrianaTask {
 
     private Task task;
     private JLabel collectionComponent = null;
+    int counter = 0;
 
     /**
      * Constructs a new MainTrianaTask for viewing the specified task

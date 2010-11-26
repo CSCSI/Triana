@@ -60,11 +60,11 @@
 package org.trianacode.gui.main;
 
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Dimension2D;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.*;
 
+import org.trianacode.gui.main.organize.DaxOrganize;
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.TPoint;
@@ -72,6 +72,7 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.TaskLayoutUtils;
+
 
 /**
  * Algorithms for organizing the task gtaph layout
@@ -82,8 +83,9 @@ import org.trianacode.taskgraph.TaskLayoutUtils;
 
 public class TaskGraphOrganize {
 
-    public static final int TREE_ORGANIZE = 0;
+    public static final int TREE_ORGANIZE = 2;
     public static final int GRAPH_ORGANIZE = 1;
+    public static final int DAX_ORGANIZE = 0;
 
     private static final int GRAPH_CONFLICT_WEIGHT = 2;
 
@@ -91,10 +93,14 @@ public class TaskGraphOrganize {
     public static void organizeTaskGraph(int policy, TaskGraph taskgraph) {
         if (policy == TREE_ORGANIZE) {
             treeOrganize(taskgraph);
-        } else {
+
+        } else if (policy == DAX_ORGANIZE){
+            DaxOrganize daxO = new DaxOrganize(taskgraph);
+        } else{
             graphOrganize(taskgraph);
         }
     }
+
 
 
     /**
