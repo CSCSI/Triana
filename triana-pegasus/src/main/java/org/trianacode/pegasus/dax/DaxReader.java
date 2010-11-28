@@ -5,7 +5,7 @@ import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.extensions.AbstractFormatFilter;
 import org.trianacode.gui.extensions.TaskGraphImporterInterface;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.main.TaskGraphOrganize;
+import org.trianacode.gui.main.organize.TaskGraphOrganize;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
