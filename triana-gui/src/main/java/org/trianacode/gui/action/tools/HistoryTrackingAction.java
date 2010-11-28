@@ -63,7 +63,7 @@ import org.trianacode.gui.Display;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.main.TaskGraphOrganize;
+import org.trianacode.gui.main.organize.TaskGraphOrganize;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.gui.panels.TFileChooser;
 import org.trianacode.gui.util.Env;
