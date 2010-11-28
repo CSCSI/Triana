@@ -16,8 +16,13 @@ public class DaxGroupManager {
     Vector<DaxGroupObject> groups = new Vector();
     Vector<DaxGroupObject> objects = new Vector();
     ArrayList<DaxGroupObject> specialTasks = new ArrayList();
+    int levelMax = 0;
+    int rowMax = 0;
 
     public DaxGroupObject addTask(Task t, int level){
+        if(level > levelMax){
+            levelMax = level;
+        }
 
         for(DaxGroupObject d : objects){
             if(d.getTask() == t){
@@ -27,9 +32,6 @@ public class DaxGroupManager {
 
         DaxGroupObject dgo = initDaxGroupObject(t, level);
 
-        if(t.getDataOutputNodeCount() > 5){
-            addSpecialTask(dgo);
-        }
         setParams(dgo);
 
 
@@ -78,13 +80,16 @@ public class DaxGroupManager {
 
         }
         System.out.println("Last used row in level : " + level + " is : " + freeRow);
+        if(freeRow + 1 > rowMax){
+            rowMax = freeRow + 1;
+        }
         return (freeRow +1);
     }
 
     public void placeSpecialTasks() {
         for(DaxGroupObject dgo : specialTasks){
             Task [] nextTasks = DaxOrganize.getNextTasks(dgo.getTask());
-            Task aNextTask = nextTasks[1];
+            Task aNextTask = nextTasks[0];
             DaxGroupObject nextDGO = getDGOforTask(aNextTask);
             int nextDGOLevel = nextDGO.getLevel();
             dgo.setLevel(nextDGOLevel - 1);
@@ -101,5 +106,27 @@ public class DaxGroupManager {
 
     public ArrayList getSpecialTasks() {
         return specialTasks;
+    }
+
+    public void setRoots(Task[] roots) {
+        for(Task t : roots){
+            DaxGroupObject dgo = getDGOforTask(t);
+            if(dgo != null){
+                addSpecialTask(dgo);
+            }
+
+        }
+    }
+
+    public void tidyUp(){
+        System.out.println("Grid has " + rowMax + " rows, " +
+                + levelMax +" levels (columns)");
+
+        for( DaxGroupObject dgo : objects){
+            int thisLevel = dgo.getLevel();
+            int thisRow = dgo.getRow();
+
+            
+        }
     }
 }

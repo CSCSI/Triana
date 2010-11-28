@@ -28,6 +28,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -43,8 +44,8 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
     private File file = null;
     private Document doc = null;
-    private Vector<DaxJobHolder> toolVector = new Vector<DaxJobHolder>();
-    private Vector<DaxFileHolder> files = new Vector<DaxFileHolder>();
+    private ArrayList<DaxJobHolder> toolVector = new ArrayList<DaxJobHolder>();
+    private ArrayList<DaxFileHolder> files = new ArrayList<DaxFileHolder>();
 
     public static void main(String[] args){
         String filename = "";
@@ -77,8 +78,8 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     private void reset() {
         file = null;
         doc = null;
-        toolVector = new Vector();
-        files = new Vector();
+        toolVector = new ArrayList();
+        files = new ArrayList();
     }
 
     @Override

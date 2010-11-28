@@ -26,7 +26,10 @@ public class DaxOrganize {
 
         recurse( levels, roots, 0);
 
+        dgm.setRoots(roots);        
         dgm.placeSpecialTasks();
+
+        dgm.tidyUp();
         System.out.println("HashMap : " + levels +
                 "\n\nSpecial tasks : " + dgm.getSpecialTasks());
 
