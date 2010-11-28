@@ -57,21 +57,15 @@
  *
  */
 
-package org.trianacode.gui.main;
+package org.trianacode.gui.main.organize;
 
+
+import org.trianacode.taskgraph.*;
 
 import java.awt.*;
 import java.awt.geom.Dimension2D;
-import java.util.*;
-
-import org.trianacode.gui.main.organize.DaxOrganize;
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.TPoint;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.TaskLayoutUtils;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 
 /**
