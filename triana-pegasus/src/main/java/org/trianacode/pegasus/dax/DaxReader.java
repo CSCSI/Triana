@@ -12,7 +12,6 @@ import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.ser.ObjectMarshaller;
 import org.trianacode.taskgraph.tool.Tool;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -220,7 +219,6 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         attachCables(tg);
         log("Attached Cables. Trying to organize taskgraph.");
         tg = combineUnits(tg);
-
 
         TaskGraphOrganize.organizeTaskGraph(0, tg);
 

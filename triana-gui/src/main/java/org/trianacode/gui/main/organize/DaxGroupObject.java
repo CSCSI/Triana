@@ -1,41 +1,28 @@
 package org.trianacode.gui.main.organize;
 
-import org.trianacode.taskgraph.Task;
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
  * User: ian
- * Date: Nov 25, 2010
- * Time: 9:14:18 AM
+ * Date: Nov 28, 2010
+ * Time: 6:39:17 PM
  * To change this template use File | Settings | File Templates.
  */
 public class DaxGroupObject {
-    
     private int level;
-    private int row;
-    private Task task;
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
+    private String toolname;
+    private ArrayList<DaxUnitObject> tasks = new ArrayList();
 
     public int getLevel() {
         return level;
     }
 
-    public int getRow() {
-        return row;
+    public String getToolname() {
+        return toolname;
     }
 
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
-    public Task getTask() {
-        return task;
+    public void addTask(DaxUnitObject duo) {
+        tasks.add(duo);
     }
 }

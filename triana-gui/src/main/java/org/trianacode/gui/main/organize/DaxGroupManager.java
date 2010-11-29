@@ -14,33 +14,47 @@ import java.util.Vector;
  */
 public class DaxGroupManager {
     Vector<DaxGroupObject> groups = new Vector();
-    Vector<DaxGroupObject> objects = new Vector();
-    ArrayList<DaxGroupObject> specialTasks = new ArrayList();
-    int levelMax = 0;
+    Vector<DaxUnitObject> objects = new Vector();
+    ArrayList<DaxUnitObject> specialTasks = new ArrayList();
+
+    DaxGrid daxGrid = new DaxGrid();
+
     int rowMax = 0;
 
-    public DaxGroupObject addTask(Task t, int level){
-        if(level > levelMax){
-            levelMax = level;
-        }
+    public DaxUnitObject addTask(Task t, int level){
 
-        for(DaxGroupObject d : objects){
+        for(DaxUnitObject d : objects){
             if(d.getTask() == t){
                 return d;
             }
         }
 
-        DaxGroupObject dgo = initDaxGroupObject(t, level);
+        DaxUnitObject duo = new DaxUnitObject(t);
 
-        setParams(dgo);
+        DaxLevel daxLevel = daxGrid.getLevel(level);
+        if(daxLevel != null){
+            daxLevel.addUnit(duo);
+        }
+        else{
+            daxLevel = new DaxLevel();
+            daxLevel.addUnit(duo);
+            daxGrid.addLevel(daxLevel);
+        }
 
+        duo.setLevel(daxLevel);
+        duo.setRow(daxLevel.getFreeRow());
+        setParams(duo);
 
-        objects.add(dgo);
-        return dgo;
+        objects.add(duo);
+        return duo;
     }
 
-    public DaxGroupObject getDGOforTask(Task t){
-        for(DaxGroupObject d : objects){
+    private int numberOfGroupedUnits(){
+        return groups.size();
+    }
+
+    public DaxUnitObject getDUOforTask(Task t){
+        for(DaxUnitObject d : objects){
             if(d.getTask() == t){
                 return d;
             }
@@ -48,59 +62,60 @@ public class DaxGroupManager {
         return null;
     }
 
-    public void setParams(DaxGroupObject dgo){
-        Task t = dgo.getTask();
-        t.setParameter(Task.GUI_X, String.valueOf(dgo.getLevel() * 2));
+    public void setParams(DaxUnitObject duo){
+        Task t = duo.getTask();
+        String levelValue = String.valueOf(duo.getLevel().getLevelNumber() * 2);
+        String rowValue = String.valueOf(duo.getRow() * 2);
 
-        t.setParameter(Task.GUI_Y, String.valueOf(dgo.getRow() * 2));
+        System.out.println("Setting value to level: " + levelValue + " row: " + rowValue);
 
+        t.setParameter(Task.GUI_X, levelValue);
+        t.setParameter(Task.GUI_Y, rowValue);
     }
 
-    private DaxGroupObject initDaxGroupObject(Task t, int level){
-        DaxGroupObject dgo = new DaxGroupObject();
-        dgo.setTask(t);
-        dgo.setLevel(level);
-        dgo.setRow(getFreeRow(level));
-        return dgo;
-    }
 
-    private void addSpecialTask(DaxGroupObject t){
+
+    private void addSpecialTask(DaxUnitObject t){
         specialTasks.add(t);
     }
 
-    public int getFreeRow(int level) {
-        int freeRow = 0;
-        for(DaxGroupObject dgo : objects){
-            if(dgo.getLevel() == level){
-                int thisRow = dgo.getRow();
-                if(thisRow >= freeRow){
-                    freeRow = thisRow;
-                }
-            }
-
-        }
-        System.out.println("Last used row in level : " + level + " is : " + freeRow);
-        if(freeRow + 1 > rowMax){
-            rowMax = freeRow + 1;
-        }
-        return (freeRow +1);
-    }
+//
+//    public int getFreeRow(int level) {
+//        int freeRow = 0;
+//        for(DaxUnitObject duo : objects){
+//            if(duo.getLevel().getLevelNumber() == level){
+//                int thisRow = duo.getRow();
+//                if(thisRow >= freeRow){
+//                    freeRow = thisRow;
+//                }
+//            }
+//
+//        }
+//        System.out.println("Last used row in level : " + level + " is : " + freeRow);
+//        if(freeRow + 1 > rowMax){
+//            rowMax = freeRow + 1;
+//        }
+//        return (freeRow +1);
+//    }
 
     public void placeSpecialTasks() {
-        for(DaxGroupObject dgo : specialTasks){
-            Task [] nextTasks = DaxOrganize.getNextTasks(dgo.getTask());
+        System.out.println("\n\nRearranging special tasks");
+        for(DaxUnitObject duo : specialTasks){
+            Task [] nextTasks = DaxOrganize.getNextTasks(duo.getTask());
             Task aNextTask = nextTasks[0];
-            DaxGroupObject nextDGO = getDGOforTask(aNextTask);
-            int nextDGOLevel = nextDGO.getLevel();
-            dgo.setLevel(nextDGOLevel - 1);
-            dgo.setRow(getFreeRow(dgo.getLevel()));
+            DaxUnitObject nextduo = getDUOforTask(aNextTask);
+            int nextduoLevel = nextduo.getLevel().getLevelNumber();
 
-            setParams(dgo);
+            if(nextduoLevel != duo.getLevel().getLevelNumber()){
+                duo.setLevel(daxGrid.getLevel(nextduoLevel - 1));
+                duo.setRow(duo.getLevel().getFreeRow());
+                setParams(duo);
 
-            System.out.println("Special task " + dgo.getTask().getToolName() + " has " + aNextTask.getToolName() +
-                    ", level " + nextDGO.getLevel() + " after it. " +
-                    "Setting tasks level to " + dgo.getLevel() + " on available row " + dgo.getRow());
+            }
 
+//            System.out.println("Special task " + duo.getTask().getToolName() + " has " + aNextTask.getToolName() +
+//                    ", level " + nextduo.getLevel() + " after it. " +
+//                    "Setting tasks level to " + duo.getLevel() + " on available row " + duo.getRow());
         }
     }
 
@@ -110,23 +125,24 @@ public class DaxGroupManager {
 
     public void setRoots(Task[] roots) {
         for(Task t : roots){
-            DaxGroupObject dgo = getDGOforTask(t);
-            if(dgo != null){
-                addSpecialTask(dgo);
+            DaxUnitObject duo = getDUOforTask(t);
+            if(duo != null){
+                addSpecialTask(duo);
             }
-
         }
     }
 
     public void tidyUp(){
         System.out.println("Grid has " + rowMax + " rows, " +
-                + levelMax +" levels (columns)");
+                + daxGrid.numberOfLevels() +" levels (columns)");
 
-        for( DaxGroupObject dgo : objects){
-            int thisLevel = dgo.getLevel();
-            int thisRow = dgo.getRow();
-
-            
+        for( DaxUnitObject duo : objects){
+            int thisLevel = duo.getLevel().getLevelNumber();
+            int thisRow = duo.getRow();
         }
+    }
+
+    public DaxGrid getGrid() {
+        return daxGrid;
     }
 }

@@ -36,10 +36,9 @@ public class DaxOrganize {
     }
 
     private  void recurse(HashMap h, Task[] ts, int level){
-        System.out.println("Considering level " + level + " object");
+        System.out.println("\n\nGrid has " + dgm.getGrid().numberOfLevels() + " levels.");
         if(ts.length > 0){
             for(Task task : ts){
-
                 recLevel(h, task, level);
                 Task[] nextLevel = getNextTasks(task);
                 recurse(h, nextLevel, level+1);
@@ -50,19 +49,28 @@ public class DaxOrganize {
     private void recLevel( HashMap h, Task t, int level){
         System.out.println("Task " + t.getToolName() + " is on level " + level);
 
-        DaxGroupObject dgo = dgm.getDGOforTask(t);
-        if(dgo == null){
-            dgo = dgm.addTask(t, level);
+        DaxUnitObject duo = dgm.getDUOforTask(t);
+        if(duo == null){
+            duo = dgm.addTask(t, level);
 
         }
         else{
-            int currentSetLevel = dgo.getLevel();
-            System.out.println("Task " + t.getToolName() + " already has a DGO." +
-                    "Checking level to see if adjustment is needed." +
-                    "Current level is :" + currentSetLevel + " which may be changed to : " + level);
+            int currentSetLevel = duo.getLevel().getLevelNumber();
+            System.out.println("Task " + t.getToolName() + " already has a DaxUnitObject. " +
+                    "Previously stored level :" + currentSetLevel + ", this route gives level : " + level);
             if(level > currentSetLevel){
-                dgo.setLevel(level);
-                dgm.setParams(dgo);
+//                duo.setLevel(dgm.getGrid().getLevel(level));
+//                System.out.println("Changed level to " + duo.getLevel().getLevelNumber());
+//                int newRow = duo.getLevel().getFreeRow();
+//                duo.setRow(newRow);
+
+                duo.leaveLevel();
+                dgm.getGrid().getLevel(level).addUnit(duo);
+
+                dgm.setParams(duo);
+            }
+            else{
+                System.out.println("Left task " + t.getToolName() + " on level " + duo.getLevel().getLevelNumber());
             }
         }
         h.put(t,level);
