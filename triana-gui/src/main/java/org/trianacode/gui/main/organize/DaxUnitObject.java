@@ -52,4 +52,15 @@ public class DaxUnitObject {
     public void leaveLevel() {
         getLevel().removeDUO(this);
     }
+
+    public void setParams() {
+        Task t = getTask();
+        String levelValue = String.valueOf(getLevel().getLevelNumber() * 2);
+        String rowValue = String.valueOf(getRow() * 2);
+
+        System.out.println("Setting value to level: " + levelValue + " row: " + rowValue);
+
+        t.setParameter(Task.GUI_X, levelValue);
+        t.setParameter(Task.GUI_Y, rowValue);
+    }
 }

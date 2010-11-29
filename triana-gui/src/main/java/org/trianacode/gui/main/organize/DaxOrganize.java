@@ -20,6 +20,7 @@ public class DaxOrganize {
 
 
     public DaxOrganize(TaskGraph t){
+        
         HashMap levels = new HashMap();
 
         Task[] roots = getRootTasks(t);

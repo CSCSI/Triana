@@ -18,6 +18,12 @@ public class DaxGrid {
                 return thisLevel;
             }
         }
+        System.out.println("Level " + level + " doesn't exist. Creating new level.");
+
+        return addLevel(level);                      
+    }
+
+    private DaxLevel addLevel (int level){
         DaxLevel newLevel = new DaxLevel();
         newLevel.setLevelNumber(level);
         addLevel(newLevel);
@@ -25,7 +31,7 @@ public class DaxGrid {
     }
 
     public void addLevel (DaxLevel newLevel){
-        newLevel.setLevelNumber(numberOfLevels() + 1);
+        newLevel.setLevelNumber(newLevel.getLevelNumber());
         levels.add(newLevel);
         System.out.println("Added level " + newLevel.getLevelNumber() + ". " +
                 "There are now " + numberOfLevels() + " levels in the grid.");

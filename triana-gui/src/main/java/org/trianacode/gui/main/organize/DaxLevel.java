@@ -21,7 +21,7 @@ public class DaxLevel {
         levelNumber = number;
     }
 
-    private int levelSize(){
+    public int levelSize(){
         return duos.size();
     }
 
@@ -51,5 +51,26 @@ public class DaxLevel {
 
     public void removeDUO(DaxUnitObject duo) {
         duos.remove(duo);
+    }
+
+    public void tidyupRows(){
+        for(int j = 0; j < getFreeRow() ; j++){
+
+            for( DaxUnitObject duo : duos){
+                int row = duo.getRow();
+                boolean occupied = false;
+                for( DaxUnitObject otherDUO : duos){
+                    if (otherDUO.getRow() == (row -1)){
+                        System.out.println("Task " + duo.toString() + " has task " + otherDUO.toString() + " above it.");
+                        occupied = true;
+                    }
+                }
+                if(occupied == false && (row -1 > 0)){
+                    System.out.println("Able to move duo " + duo.toString() + " up one row");
+                    duo.setRow(row -1);
+                    duo.setParams();
+                }
+            }
+        }
     }
 }
