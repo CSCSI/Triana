@@ -1,5 +1,8 @@
 package org.trianacode.gui.main.organize;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+
 import java.util.ArrayList;
 
 /**
@@ -12,15 +15,21 @@ import java.util.ArrayList;
 public class DaxGrid {
     private ArrayList<DaxLevel> levels = new ArrayList();
 
+    private void log(String text){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(text);
+        System.out.println(text);
+    }
+
     public DaxLevel getLevel(int level) {
         for(DaxLevel thisLevel : levels){
             if (thisLevel.getLevelNumber() == level){
                 return thisLevel;
             }
         }
-        System.out.println("Level " + level + " doesn't exist. Creating new level.");
+        log("Level " + level + " doesn't exist. Creating new level.");
 
-        return addLevel(level);                      
+        return addLevel(level);
     }
 
     private DaxLevel addLevel (int level){
@@ -33,7 +42,7 @@ public class DaxGrid {
     public void addLevel (DaxLevel newLevel){
         newLevel.setLevelNumber(newLevel.getLevelNumber());
         levels.add(newLevel);
-        System.out.println("Added level " + newLevel.getLevelNumber() + ". " +
+        log("Added level " + newLevel.getLevelNumber() + ". " +
                 "There are now " + numberOfLevels() + " levels in the grid.");
     }
 
@@ -42,6 +51,13 @@ public class DaxGrid {
     }
 
     public int numberOfRows(){
-        return 0;
+        int rowMax = 0;
+        for(DaxLevel thisLevel : levels){
+            int levelRows = thisLevel.getFreeRow();
+            if( levelRows > rowMax){
+                rowMax = levelRows;
+            }
+        }
+        return rowMax;
     }
 }

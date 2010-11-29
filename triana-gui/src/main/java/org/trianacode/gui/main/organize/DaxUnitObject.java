@@ -1,5 +1,7 @@
 package org.trianacode.gui.main.organize;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 
 /**
@@ -10,7 +12,7 @@ import org.trianacode.taskgraph.Task;
  * To change this template use File | Settings | File Templates.
  */
 public class DaxUnitObject {
-    
+
     private DaxLevel level;
     private int row;
     private Task task;
@@ -55,12 +57,18 @@ public class DaxUnitObject {
 
     public void setParams() {
         Task t = getTask();
-        String levelValue = String.valueOf(getLevel().getLevelNumber() * 2);
+        String levelValue = String.valueOf(getLevel().getLevelNumber() * 2.5);
         String rowValue = String.valueOf(getRow() * 2);
 
-        System.out.println("Setting value to level: " + levelValue + " row: " + rowValue);
+        log("Setting value to level: " + levelValue + " row: " + rowValue);
 
         t.setParameter(Task.GUI_X, levelValue);
         t.setParameter(Task.GUI_Y, rowValue);
+    }
+
+    private void log(String text){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(text);
+        System.out.println(text);
     }
 }

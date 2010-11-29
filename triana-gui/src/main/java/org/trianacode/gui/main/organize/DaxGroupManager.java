@@ -1,5 +1,7 @@
 package org.trianacode.gui.main.organize;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 
 import java.util.ArrayList;
@@ -18,8 +20,6 @@ public class DaxGroupManager {
     ArrayList<DaxUnitObject> specialTasks = new ArrayList();
 
     DaxGrid daxGrid = new DaxGrid();
-
-    int rowMax = 0;
 
     public DaxUnitObject addTask(Task t, int level){
 
@@ -71,28 +71,21 @@ public class DaxGroupManager {
     }
 
     public void placeSpecialTasks() {
-        System.out.println("\n\nRearranging special tasks");
+        log("\n\nRearranging special tasks");
         for(DaxUnitObject duo : specialTasks){
             Task [] nextTasks = DaxOrganize.getNextTasks(duo.getTask());
             Task aNextTask = nextTasks[0];
             DaxUnitObject nextduo = getDUOforTask(aNextTask);
             int nextduoLevel = nextduo.getLevel().getLevelNumber();
 
-            System.out.println("Task after root task " + duo.getTask() + " is level " + nextduoLevel);
+            log("Task after root task " + duo.getTask() + " is level " + nextduoLevel);
 
             if(nextduoLevel != duo.getLevel().getLevelNumber()){
                 duo.leaveLevel();
                 daxGrid.getLevel(nextduoLevel - 1).addUnit(duo);
-
-//                duo.setLevel(daxGrid.getLevel(nextduoLevel - 1));
-//                duo.setRow(duo.getLevel().getFreeRow());
                 setParams(duo);
 
             }
-
-//            System.out.println("Special task " + duo.getTask().getToolName() + " has " + aNextTask.getToolName() +
-//                    ", level " + nextduo.getLevel() + " after it. " +
-//                    "Setting tasks level to " + duo.getLevel() + " on available row " + duo.getRow());
         }
     }
 
@@ -107,22 +100,37 @@ public class DaxGroupManager {
                 addSpecialTask(duo);
             }
         }
+
+        for(Task t : roots){
+            DaxUnitObject duo = getDUOforTask(t);
+            if(duo != null){
+                if(duo.getTask().getOutputNodeCount() > 5){
+                    addSpecialTask(duo);
+                }
+            }
+        }
     }
 
     public void tidyUp(){
-        System.out.println("Grid has " + rowMax + " rows, " +
+        log("Grid has " + daxGrid.numberOfRows() + " rows, " +
                 + daxGrid.numberOfLevels() +" levels (columns)");
 
         for( int i = 0; i < daxGrid.numberOfLevels() ; i++){
             DaxLevel l = daxGrid.getLevel(i);
-                l.tidyupRows();
-            
-            System.out.println("Level " + i + " contains " + l.levelSize() + " tasks.");
+            l.tidyupRows();
+
+            log("Level " + i + " contains " + l.levelSize() + " tasks.");
         }
 
     }
 
     public DaxGrid getGrid() {
         return daxGrid;
+    }
+
+    private void log(String text){
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(text);
+        System.out.println(text);
     }
 }

@@ -93,6 +93,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         TaskGraph tg = null;
         if (jobList != null) {
             tg = createTaskGraph(jobList);
+            tg.setToolName(file.getName());
         }
         return tg;
     }

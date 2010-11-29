@@ -1,5 +1,8 @@
 package org.trianacode.gui.main.organize;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
+
 import java.util.ArrayList;
 
 /**
@@ -12,6 +15,14 @@ import java.util.ArrayList;
 public class DaxLevel {
     ArrayList<DaxUnitObject> duos = new ArrayList();
     private int levelNumber = 0;
+    private int width = 10;
+    private int height = 10;
+
+    private void log(String text){
+                Log log = Loggers.DEV_LOGGER;
+        log.debug(text);
+        System.out.println(text);
+    }
 
     public int getLevelNumber(){
         return levelNumber;
@@ -29,9 +40,18 @@ public class DaxLevel {
         duo.setLevel(this);
         duo.setRow(getFreeRow());
 
+        String name = duo.getTask().getToolName();
+        if(name.length() > getWidth()){
+            setWidth(name.length());
+        }
+
+        int maxNodes = (duo.getTask().getInputNodeCount() > duo.getTask().getOutputNodeCount()) ?
+                duo.getTask().getInputNodeCount() : duo.getTask().getOutputNodeCount();
+        setHeight( (maxNodes > height) ? maxNodes : height);
+
         duos.add(duo);
 
-        System.out.println("Added unit " + duo + " to level " + getLevelNumber() + ". " +
+        log("Added unit " + duo + " to level " + getLevelNumber() + ". " +
                 "Level now contains " + levelSize() + " units.");
     }
 
@@ -44,7 +64,7 @@ public class DaxLevel {
             }
 
         }
-        System.out.println("Last used row in level : " + getLevelNumber() + " is : " + freeRow + ". (" + duos.size() + " objects in level)");
+        log("Last used row in level : " + getLevelNumber() + " is : " + freeRow + ". (" + duos.size() + " objects in level)");
 
         return (freeRow +1);
     }
@@ -54,23 +74,44 @@ public class DaxLevel {
     }
 
     public void tidyupRows(){
-        for(int j = 0; j < getFreeRow() ; j++){
 
-            for( DaxUnitObject duo : duos){
+        for( DaxUnitObject duo : duos){
+            boolean changeOccured = true;
+            while(changeOccured){
                 int row = duo.getRow();
                 boolean occupied = false;
                 for( DaxUnitObject otherDUO : duos){
-                    if (otherDUO.getRow() == (row -1)){
-                        System.out.println("Task " + duo.toString() + " has task " + otherDUO.toString() + " above it.");
+                    if (otherDUO.getRow() == (row -1) && occupied == false){
+                        log("Task " + duo.toString() + " has task " + otherDUO.toString() + " above it.");
                         occupied = true;
                     }
                 }
                 if(occupied == false && (row -1 > 0)){
-                    System.out.println("Able to move duo " + duo.toString() + " up one row");
+                    log("Able to move duo " + duo.toString() + " up one row");
                     duo.setRow(row -1);
                     duo.setParams();
+                    changeOccured = true;
+                }
+                else{
+                    changeOccured = false;
                 }
             }
         }
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }
