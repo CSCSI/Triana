@@ -3,6 +3,7 @@ package org.trianacode.pegasus.dax;
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.annotation.Parameter;
 import org.trianacode.taskgraph.annotation.Process;
 import org.trianacode.taskgraph.annotation.TextFieldParameter;
 import org.trianacode.taskgraph.annotation.Tool;
@@ -25,6 +26,9 @@ import java.util.List;
 @Tool (panelClass = "org.trianacode.pegasus.dax.ExecUnitPanel")
 public class ExecUnit{
 
+    public static final String numberOfFiles = "Number of files";
+    public static final String namesOfFiles = "Names of files";
+
     DaxSettingObject dso = new DaxSettingObject();
 
     @TextFieldParameter
@@ -35,6 +39,8 @@ public class ExecUnit{
     private String executable_args = "";
     @TextFieldParameter
     private String search_for = "";
+    @Parameter
+    private String save_as = "";
 
     @Process(gather=true)
     public DaxSettingObject process(List in){
@@ -129,7 +135,21 @@ public class ExecUnit{
             log("Found : " + search_for);
             String found = s.substring(search_for.length());
             log("Adding : " + found);
-            dso.addObject("files", found);
+
+            if(save_as.equals(ExecUnit.numberOfFiles)){
+                dso.addObject(ExecUnit.numberOfFiles, found);
+            }
+            if(save_as.equals(ExecUnit.namesOfFiles)){
+                String foundNames = dso.getFileNames();
+                String names = "";
+                if(foundNames.equals("")){
+                    names = found;
+                }
+                else{
+                    names = foundNames + ", " + found;
+                }
+                dso.addObject(ExecUnit.namesOfFiles, names);
+            }
         }else{
             //         log("String : *" + s + "* does not contain : " + search_for);
         }

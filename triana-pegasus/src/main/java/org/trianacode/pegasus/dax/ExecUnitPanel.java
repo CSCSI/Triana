@@ -23,12 +23,24 @@ public class ExecUnitPanel extends ParameterPanel {
     JTextField fileField = new JTextField();
     JTextField execArgsField = new JTextField();
     JTextField searchField = new JTextField();
+    String[] options = {ExecUnit.numberOfFiles , ExecUnit.namesOfFiles};
+    JComboBox dropDown = new JComboBox(options);
+    
+
+//    private HashMap map = new HashMap();
+    private JPanel mainPanel = new JPanel();
+    
 
     @Override
     public void init() {
         getParams();
 
-        JPanel mainPanel = new JPanel(new GridLayout(5, 2, 5, 5));
+        mainPanel.setLayout(new BorderLayout(5, 5));
+
+        JPanel topPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+        final JPanel midPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+        JPanel lowerPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+
 
         JLabel execLabel = new JLabel("Executable : ");
         JLabel fileLabel = new JLabel("Input file : ");
@@ -59,7 +71,6 @@ public class ExecUnitPanel extends ParameterPanel {
         filePanel.add(fileButton, BorderLayout.EAST);
 
         JLabel execArgsLabel = new JLabel("Executable arguments : ");
-        JLabel searchLabel = new JLabel("Search string : ");
 
         JButton helpButton = new JButton("Help");
         helpButton.addActionListener(new ActionListener(){
@@ -68,35 +79,44 @@ public class ExecUnitPanel extends ParameterPanel {
             }
         });
 
-        mainPanel.add(execLabel);
-        mainPanel.add(execField);
-        mainPanel.add(fileLabel);
-        mainPanel.add(filePanel);
-        mainPanel.add(execArgsLabel);
-        mainPanel.add(execArgsField);
-        mainPanel.add(searchLabel);
-        mainPanel.add(searchField);
-        mainPanel.add(helpButton);
-        add(mainPanel);
+        topPanel.add(execLabel);
+        topPanel.add(execField);
+        topPanel.add(fileLabel);
+        topPanel.add(filePanel);
+        topPanel.add(execArgsLabel);
+        topPanel.add(execArgsField);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
+        midPanel.add(new JLabel("Search string : "));
+        midPanel.add(searchField);
+        mainPanel.add(midPanel, BorderLayout.CENTER);
+
+        lowerPanel.add(dropDown);
+        lowerPanel.add(helpButton);
+        mainPanel.add(lowerPanel, BorderLayout.SOUTH);
+
+        this.setLayout(new BorderLayout());
+        this.add(mainPanel, BorderLayout.CENTER);
     }
 
     public void applyClicked(){ apply(); }
     public void okClicked(){ apply(); }
 
     public void apply(){
+
         getTask().setParameter("executable", execField.getText());
         getTask().setParameter("input_file", fileField.getText());
         getTask().setParameter("executable_args", execArgsField.getText());
         getTask().setParameter("search_for", searchField.getText());
+        getTask().setParameter("save_as", (String)dropDown.getSelectedItem());
     }
 
     private void getParams(){
         execField.setText((String)getTask().getParameter("executable"));
-        fileField.setText((String)getTask().getParameter("input_file"));        
+        fileField.setText((String)getTask().getParameter("input_file"));
         execArgsField.setText((String)getTask().getParameter("executable_args"));
         searchField.setText((String)getTask().getParameter("search_for"));
-
+        dropDown.setSelectedItem((String)getTask().getParameter("save_as"));
     }
 
     @Override

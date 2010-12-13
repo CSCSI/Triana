@@ -16,6 +16,10 @@ public class DaxSettingObject implements Serializable {
 
     public DaxSettingObject(){}
 
+    public DaxSettingObject(HashMap map){
+        putHashMap(map);
+    }
+
     public void addObject(String name, Object object){
         objectHash.put(name, object);
     }
@@ -28,14 +32,30 @@ public class DaxSettingObject implements Serializable {
         return objectHash;
     }
 
+    public void putHashMap(HashMap map){
+        objectHash = map;
+    }
+
     public String[] getKeys(){
         return new String[]{""};
     }
 
-    public int getNumberFiles(){
-        if(objectHash.containsKey("files")){
+    public String getFileNames(){
+        if(objectHash.containsKey(ExecUnit.namesOfFiles)){
             try{
-                return Integer.parseInt(objectHash.get("files").toString());
+                return objectHash.get(ExecUnit.namesOfFiles).toString();
+            }catch(Exception e){
+                e.printStackTrace();
+                return "";
+            }
+        }
+        return "";
+    }
+
+    public int getNumberFiles(){
+        if(objectHash.containsKey(ExecUnit.numberOfFiles)){
+            try{
+                return Integer.parseInt(objectHash.get(ExecUnit.numberOfFiles).toString());
             }catch(Exception e){
                 e.printStackTrace();
                 return 1;

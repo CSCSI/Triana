@@ -58,7 +58,7 @@ public class DaxUnitObject {
     public void setParams() {
         Task t = getTask();
         String levelValue = String.valueOf(getLevel().getLevelNumber() * 2.5);
-        String rowValue = String.valueOf(getRow() * 2);
+        String rowValue = String.valueOf(getRow() * 1.5);
 
         log("Setting value to level: " + levelValue + " row: " + rowValue);
 

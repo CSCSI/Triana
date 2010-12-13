@@ -107,7 +107,7 @@ public class OrganizeAction extends AbstractAction implements ActionDisplayOptio
      */
     public void actionPerformed(ActionEvent e) {
         if (selhandler.getSelectedTaskgraph() != null) {
-            TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.TREE_ORGANIZE, selhandler.getSelectedTaskgraph());
+            TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, selhandler.getSelectedTaskgraph());
         }
     }
 }

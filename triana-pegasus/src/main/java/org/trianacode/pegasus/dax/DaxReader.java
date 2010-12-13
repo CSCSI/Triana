@@ -219,9 +219,9 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
         attachCables(tg);
         log("Attached Cables. Trying to organize taskgraph.");
-        tg = combineUnits(tg);
+    //    tg = combineUnits(tg);
 
-        TaskGraphOrganize.organizeTaskGraph(0, tg);
+        TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
 
         return tg;
 

@@ -26,8 +26,10 @@ public class DaxOrganize {
         System.out.println(text);
     }
 
-    public DaxOrganize(TaskGraph t){
-
+    public DaxOrganize(final TaskGraph t){
+//        Thread thread = new Thread(){
+//            public void run(){
+//
         HashMap levels = new HashMap();
 
         Task[] roots = getRootTasks(t);
@@ -40,7 +42,9 @@ public class DaxOrganize {
         dgm.tidyUp();
         log("HashMap : " + levels +
                 "\n\nSpecial tasks : " + dgm.getSpecialTasks());
-
+//    }
+//        };
+//        thread.start();
     }
 
     private  void recurse(HashMap h, Task[] ts, int level){
