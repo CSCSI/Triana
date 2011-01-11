@@ -8,7 +8,7 @@ import org.trianacode.discovery.protocols.tdp.TDPServer;
  * User: scmijt Date: Jul 30, 2010 Time: 2:57:41 PM To change this template use File | Settings | File Templates.
  */
 public class LocalTrawler extends TDPServer {
-
+//
 //    private ToolResolver resolver;
 //
 //    public LocalTrawler(HttpPeer httpPeer, ToolResolver resolver) {

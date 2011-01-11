@@ -6,7 +6,7 @@ package org.trianacode.discovery;
  * Settings | File Templates.
  */
 public class DiscoverTools {
-
+//
 //    private static Log log = Loggers.TOOL_LOGGER;
 //
 //

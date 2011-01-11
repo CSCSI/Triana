@@ -9,7 +9,7 @@ import org.thinginitself.http.Resource;
  * User: Ian Taylor Date: Jul 30, 2010 Time: 11:54:53 AM To change this template use File | Settings | File Templates.
  */
 public abstract class TDPServer extends Resource {
-
+//
 //    private static Log log = Loggers.LOGGER;
 //
 //
