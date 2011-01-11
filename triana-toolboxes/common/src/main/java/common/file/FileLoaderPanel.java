@@ -22,7 +22,8 @@ public class FileLoaderPanel extends ParameterPanel {
 
     @Override
     public void init() {
-
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        
         JPanel locationPanel = new JPanel(new BorderLayout());
         JLabel locationLabel = new JLabel("File Path : ");
         final JTextField locationField = new JTextField(getPath());
@@ -68,7 +69,12 @@ public class FileLoaderPanel extends ParameterPanel {
         if(o instanceof String){
             pathParameter = (String)o;
         }
-        return "";
+
+        if (pathParameter.isEmpty()){
+            return "          ";
+        }else{
+            return pathParameter;
+        }
     }
     @Override
     public void reset() {

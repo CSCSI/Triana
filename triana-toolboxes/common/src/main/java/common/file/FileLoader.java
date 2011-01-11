@@ -14,7 +14,7 @@ import java.io.File;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass="org.trianacode.pegasus.dax.FileLoaderPanel")
+@Tool(panelClass="common.file.FileLoaderPanel")
 public class FileLoader {
 
     @TextFieldParameter
@@ -30,6 +30,6 @@ public class FileLoader {
             }
             return null;
         }
-        return null;
+        return new File ("./diamond.dax");
     }
 }

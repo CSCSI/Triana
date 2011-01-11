@@ -47,7 +47,7 @@ public class DaxCreatorUnit {
     private String fileName = "output.dax";
 
     @Process(gather=true)
-    public void process(List in){
+    public File process(List in){
         log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         DaxRegister register = DaxRegister.getDaxRegister();
@@ -55,7 +55,7 @@ public class DaxCreatorUnit {
         try{
             GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //  daxFromInList(in);
-            daxFromRegister(register);
+            File daxFile = daxFromRegister(register);
         }catch(Exception e){
             System.out.println("Failed at something : " + e + "\n\n");
             e.printStackTrace();
@@ -64,6 +64,7 @@ public class DaxCreatorUnit {
             System.out.println("Cleared register");
             GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
+        return null;
     }
 
     private void daxFromInList(List in){
@@ -105,7 +106,7 @@ public class DaxCreatorUnit {
         writeDax(dax);
     }
 
-    private void daxFromRegister(DaxRegister register){
+    private File daxFromRegister(DaxRegister register){
         //      register.listAll();
         idNumber = 0;
         ADAG dax = new ADAG();
@@ -146,7 +147,7 @@ public class DaxCreatorUnit {
             }
 
         }
-        writeDax(dax);
+        return writeDax(dax);
 
     }
 
@@ -526,7 +527,7 @@ public class DaxCreatorUnit {
 
 
 
-    private void writeDax(ADAG dax){
+    private File writeDax(ADAG dax){
         log("\nADAG has " + dax.getJobCount() + " jobs in.");
 
         if(dax.getJobCount() > 0 ){
@@ -550,11 +551,13 @@ public class DaxCreatorUnit {
             log("No jobs in DAX, will not create file. (Avoids overwrite)");
         }
 
+        File daxFile = new File(fileName);
+
         if(demo){
             log("Displaying demo");
             DaxReader dr = new DaxReader();
             try {
-                TaskGraph t = dr.importWorkflow(new File(fileName));
+                TaskGraph t = dr.importWorkflow(daxFile);
                 TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
             } catch (Exception e) {
                 log("Error opening *" + fileName + "* demo taskgraph : " + e);
@@ -566,6 +569,7 @@ public class DaxCreatorUnit {
         GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Dax saved : " + fileName);
 
+        return daxFile;
     }
 
 
