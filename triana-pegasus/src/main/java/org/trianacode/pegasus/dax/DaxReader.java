@@ -384,6 +384,9 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
                     //    NamedNodeMap map = node.getAttributes();
                     //    String fileName = map.getNamedItem("file").getNodeValue();
                     String fileName = getNodeAttributeValue(node, "file");
+                    if(fileName == null){
+                        fileName = getNodeAttributeValue(node, "name");
+                    }
                     //      log("Getting info for file : " + fileName);
 
                     if(!filenames.contains(fileName)){
@@ -477,11 +480,23 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
                 NamedNodeMap map = childNode.getAttributes();
                 //      log("Job uses : "  + listAllAttributes(map));
                 if(map.getNamedItem("link").getNodeValue().equals("input")){
-                    djh.addFileIn(inputNodes, map.getNamedItem("file").getNodeValue());
+                    String fileName;
+                    if(map.getNamedItem("file") != null){
+                        fileName = map.getNamedItem("file").getNodeValue();
+                    }else{
+                        fileName = map.getNamedItem("name").getNodeValue();
+                    }
+                    djh.addFileIn(inputNodes, fileName);
                     inputNodes ++;
                 }
                 if(map.getNamedItem("link").getNodeValue().equals("output")){
-                    djh.addFileOut(outputNodes, map.getNamedItem("file").getNodeValue());
+                    String fileName;
+                    if(map.getNamedItem("file") != null){
+                        fileName = map.getNamedItem("file").getNodeValue();
+                    }else{
+                        fileName = map.getNamedItem("name").getNodeValue();
+                    }
+                    djh.addFileOut(outputNodes, fileName);
                     outputNodes ++;
                 }
             }
@@ -565,7 +580,12 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
 
     private String getNodeAttributeValue(Node node, String name){
-        return node.getAttributes().getNamedItem(name).getNodeValue();
+        Node child = node.getAttributes().getNamedItem(name);
+        if(child != null){
+            return node.getAttributes().getNamedItem(name).getNodeValue();
+        }else{
+            return null;
+        }
     }
 
     public File getFile() {

@@ -13,6 +13,8 @@ import java.util.Properties;
  */
 public class PegasusWorkflowData implements Serializable {
 
+    private static long serialVersionUID = -1;
+    
     private String dax, replicaCatalog, transformationCatalog, siteFile;
     Properties properties;
 

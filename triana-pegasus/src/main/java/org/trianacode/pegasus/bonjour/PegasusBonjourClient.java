@@ -78,7 +78,7 @@ public class PegasusBonjourClient {
         return getContents(siteLoc); 
     }
 
-    public void parse(String[] commandline) {
+    public Response parse(String[] commandline) {
         if (commandline.length<6) PegasusBonjourClient.showUsageInstructionsAndQuit();
 
 
@@ -115,17 +115,20 @@ public class PegasusBonjourClient {
             ou.flush();
 
             RequestContext c = new RequestContext(httpAddress);
-            c.setResource(new Resource(new StreamableString(out.toString())));
+//            c.setResource(new Resource(new StreamableString(out.toString())));
+            c.setResource(new Resource(new StreamableString( new String (out.toByteArray() , "UTF-8" ))));
 
             out.close();
 
             HttpPeer peer = new HttpPeer();
             Response ret = peer.post(c);
-            //    System.out.println("Tried to send :" + out.toString() + " to : *" + httpAddress + "*");            
+ //               System.out.println("Tried to send :" + out.toString() + " to : *" + httpAddress + "*");            
             System.out.println("Received reply :" + ret.toString());
+            return ret;
         } catch (IOException e) {
             e.printStackTrace(); 
         }
+        return null;
     }
     
     public static void main(String [] args) {

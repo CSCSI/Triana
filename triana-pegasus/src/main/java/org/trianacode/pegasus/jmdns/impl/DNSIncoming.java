@@ -180,7 +180,7 @@ public final class DNSIncoming extends DNSMessage {
         this._messageInputStream = new MessageInputStream(packet.getData(), packet.getLength());
         this._receivedTime = System.currentTimeMillis();
         this._senderUDPPayload = org.trianacode.pegasus.jmdns.impl.constants.DNSConstants.MAX_MSG_TYPICAL;
-
+//        System.out.println("Source : " + source.toString());
         try {
             this.setId(_messageInputStream.readUnsignedShort());
             this.setFlags(_messageInputStream.readUnsignedShort());

@@ -1,8 +1,10 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
+import org.thinginitself.http.Response;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.pegasus.bonjour.PegasusBonjourClient;
+import org.trianacode.pegasus.extras.ProgressPopup;
 import org.trianacode.pegasus.jmdns.JmDNS;
 import org.trianacode.pegasus.jmdns.ServiceEvent;
 import org.trianacode.pegasus.jmdns.ServiceInfo;
@@ -11,10 +13,13 @@ import org.trianacode.taskgraph.annotation.Parameter;
 import org.trianacode.taskgraph.annotation.Process;
 import org.trianacode.taskgraph.annotation.Tool;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,8 +32,14 @@ import java.util.ArrayList;
 @Tool(panelClass="org.trianacode.pegasus.dax.DaxToPegasusPanel")
 public class DaxToPegasusUnit {
 
+    ProgressPopup popup;
+
     @Parameter
-    String propertiesLocation = "../bonjourpegasus/bin/config/properties";
+    String locationService = "AUTO";
+    @Parameter
+    String manualURL = "";
+    @Parameter
+    String propLocation = "../bonjourpegasus/bin/config/properties";
     @Parameter
     String daxLocation = "../bonjourpegasus/bin/dax/diamond.dax";
     @Parameter
@@ -41,6 +52,7 @@ public class DaxToPegasusUnit {
 
     @Process
     public void process(File file){
+        popup = new ProgressPopup("Finding Pegasus", 30);
         log("Uploading file " + file.getName() + " to Pegasus.");
 
         if(file.exists() && file.canRead()){
@@ -48,12 +60,37 @@ public class DaxToPegasusUnit {
         }
 
         if(getAndCheckFiles()){
+            popup.addText("All files good.");
             log("All files good");
-            String address = findPegasus(20000);
 
-            if(address != null){
-                sendToPegasus(address);
+            popup.addText("Pegasus locating : " + locationService);
+            if(locationService.equals("AUTO")){
+                log("Auto");
+                ServiceInfo pegasusInfo = findPegasus(20000);
+
+                if(pegasusInfo != null){
+                    popup.addText("Sending to Pegasus");
+                    sendToPegasus(pegasusInfo);
+                    popup.addText("Finished");
+                }
             }
+            if(locationService.equals("URL")){
+                log("Manual");
+                sendToPegasus(manualURL);
+            }
+            if(locationService.equals("LOCAL")){
+                String condor_env = System.getenv("CONDOR_CONFIG");
+                System.out.println("CONDOR_CONFIG : " + condor_env);
+                popup.addText("CONDOR_CONFIG : " + condor_env);
+                if(condor_env.equals("")){
+                    log("CONDOR_CONFIG environment variable not set");
+                    popup.addText("CONDOR_CONFIG environment variable not set.");
+                }else{
+                    log("Running pegasus-plan locally");
+                    runLocal();
+                }
+            }
+            popup.finish();
         }
     }
 
@@ -73,16 +110,17 @@ public class DaxToPegasusUnit {
             File f = new File((String)file);
             if (!f.exists() && f.canRead()) {
                 log("File " + location + " doesn't exist.");
+                popup.addTextNoProgress("Error : file " + location + " not found");
                 return false;
             }
         }
         return true;
     }
 
-    private String findPegasus(long timeout){
+    private ServiceInfo findPegasus(long timeout){
         log("Trying to find services with JmDNS");
         JmDNS jmdns = null;
-        String pegasusAddress = "";
+        ServiceInfo pegasusInfo = null;
         boolean found = false;
 
         try {
@@ -93,6 +131,9 @@ public class DaxToPegasusUnit {
 
             long startTime = System.currentTimeMillis();
             long timeNow = 0;
+
+            popup.addText("Scanning network for Pegasus installations.");
+            popup.setUnsureTime();
             while(!pl.foundSomething() && timeNow < (startTime + timeout)){
                 log("Nothing found, waiting again.");
                 try {Thread.sleep(1000);}catch(InterruptedException e) {}
@@ -102,9 +143,19 @@ public class DaxToPegasusUnit {
             if(pl.foundSomething()){
                 for (Object o : pl.getServices()) {
                     ServiceInfo info = (ServiceInfo) o;
-                    log("Found service : " + info.getName() + " Address " + info.getURL());
+                    log("\n       Found service : " + info.getName() +
+                            "\n     Address " + info.getURL() +
+                            "\n     " + info.getHostAddress() +
+                            "\n     " + info.getDomain() +
+                            "\n     " + info.getInetAddress() +
+                            "\n     " + info.getPort() +
+                            "\n     " + info.getServer() +
+                            "\n     " + info.getApplication() +
+                            "\n      " + info.toString() + "\n");
                     if (info.getName().contains("Pegasus")) {
-                        pegasusAddress = info.getURL();
+                        popup.addText("Found Pegasus : " + info.getURL());
+                        pegasusInfo = info;
+
                         found = true;
                     }
                 }
@@ -113,10 +164,12 @@ public class DaxToPegasusUnit {
         } catch (Exception e) {
             e.printStackTrace();
             log("Something broke.");
+            popup.addTextNoProgress("Networking error");
         } finally{
             if (jmdns != null) {
                 try {
                     jmdns.close();
+                    popup.addText("Closing JmDNS");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -124,16 +177,58 @@ public class DaxToPegasusUnit {
         }
 
         if(found){
-            return pegasusAddress;
+            return pegasusInfo;
         }else{
             log("Pegasus is hiding... can't find it.");
+            popup.addText("Couldn't find Pegasus on local network.");
             return null;
         }
     }
 
-    private void sendToPegasus(String pegasusAddress){
-        log("Pegasus found!! Address " + pegasusAddress);
-        String[] args = {pegasusAddress +"/remotecontrol",
+    private void sendToPegasus(ServiceInfo info){
+        popup.addText("Setting properties.");
+        boolean foundAndSent = false;
+        int attempt = 0;
+        int port = info.getPort();
+
+        while( !foundAndSent && attempt < 10){
+            String url = ("http://" + info.getHostAddress() + ":" + port);
+            log("Pegasus found at address " + url + ". Trying port " + port);
+            String[] args = {url +"/remotecontrol",
+                    this.getPropertiesLocation(),
+                    this.getDaxLocation(),
+                    this.getRcLocation(),
+                    this.getTcLocation(),
+                    this.getSitesLocation()};
+
+            PegasusBonjourClient pbc = new PegasusBonjourClient();
+            popup.addTextNoProgress("Parsing args : " + url);
+            Response ret = pbc.parse(args);
+            String result = ret.toString();
+
+
+            if(ret.getOutcome().equals("Not Found")){
+                log("Pegasus not responding on port " + port + "\n");
+                port ++;
+                attempt ++;
+            }else{
+                foundAndSent = true;
+                popup.addText("Connection opened and info sent.");
+                log("Connection opened and info sent.");
+            }
+            popup.addText(result);
+
+        }
+        log("Waiting");
+        try {Thread.sleep(10000);}catch(InterruptedException e) {}
+        log("Done");
+
+    }
+
+    private void sendToPegasus(String url){
+        popup.addText("Setting properties.");
+
+        String[] args = {url,
                 this.getPropertiesLocation(),
                 this.getDaxLocation(),
                 this.getRcLocation(),
@@ -141,7 +236,21 @@ public class DaxToPegasusUnit {
                 this.getSitesLocation()};
 
         PegasusBonjourClient pbc = new PegasusBonjourClient();
-        pbc.parse(args);
+        popup.addText("Parsing args : " + url);
+        Response ret = pbc.parse(args);
+        String result = ret.toString();
+
+        if(ret.getOutcome().equals("Not Found")){
+            log("Service could not be found");
+            popup.addTextNoProgress("Service could not be found at this address.");
+        }else{
+            log("Connection opened and info sent.");
+            popup.addText("Connection opened and info sent.");
+
+        }
+        popup.addText(result);
+
+
         log("Waiting");
         try {Thread.sleep(10000);}catch(InterruptedException e) {}
         log("Done");
@@ -149,7 +258,7 @@ public class DaxToPegasusUnit {
     }
 
     public String getPropertiesLocation() {
-        return propertiesLocation;
+        return propLocation;
     }
 
     public String getDaxLocation() {
@@ -226,7 +335,60 @@ public class DaxToPegasusUnit {
         }
     }
 
+    private void runLocal(){
+        log("Running locally");
+        List commmandStrVector = new ArrayList();
+        String outputDir = System.getProperty("user.dir") + "/pegasus_output";
+
+//            String []cmdarray = {"pegasus-plan", " -D pegasus.user.properties=" + propLocation, " --sites condorpool",
+//                    "--dir " + System.getProperty("user.dir") + "/pegasus_output", "--output local", "--dax " + daxLocation, " --submit"
+//            };
+//        String[] cmdarray = (String[]) commmandStrVector.toArray(new String[commmandStrVector.size()]);
+
+        String cmd = "pegasus-plan" + " -D pegasus.user.properties=" + propLocation + " --sites condorpool" +
+                " --dir " + outputDir +
+                " --output local" + " --dax " + daxLocation +" --submit";
+        log("Running : " + cmd);
+        popup.addText("Running : " + cmd);
+        popup.setUnsureTime();
+
+        runExec(cmd);
+        popup.addText("Results in folder : " + outputDir);
+        runExec("condor_q");
+
+    }
+    private void runExec(String cmd){
+        try {
+            Runtime runtime = Runtime.getRuntime();
+            java.lang.Process process = runtime.exec(cmd);  // execute command
+
+            BufferedReader errorreader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String str;
+            String errLog = "";
+            boolean errors = false;
+            while ((str = errorreader.readLine()) != null) {
+                errors = true;
+                errLog += str + "\n";
+            }
+            errorreader.close();
+
+            BufferedReader inreader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder out = new StringBuilder();
+            str = "";
+            while ((str = inreader.readLine()) != null) {
+                out.append(str).append("\n");
+                popup.addTextNoProgress(out.toString());
+            }
+            inreader.close();
+            popup.addText("Done.");
+
+            log("Output from Executable :\n\n" + out.toString());
+            log("Errors from Executable :\n\n" + errLog);
+        } catch (Exception e){e.printStackTrace();}
+    }
 }
+
+
 //TODO maybe thread this?
 class JmDNSRun extends Thread{
     boolean running = false;
