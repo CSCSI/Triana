@@ -1,57 +1,55 @@
 package org.trianacode.pegasus.dax;
-//
-//import edu.isi.pegasus.planner.dax.ADAG;
-//import edu.isi.pegasus.planner.dax.Job;
+
+import edu.isi.pegasus.planner.dax.ADAG;
+import edu.isi.pegasus.planner.dax.Executable;
+import edu.isi.pegasus.planner.dax.File;
+import edu.isi.pegasus.planner.dax.Job;
 import org.apache.commons.logging.Log;
-import org.griphyn.vdl.dax.ADAG;
-import org.griphyn.vdl.dax.Filename;
-import org.griphyn.vdl.dax.Job;
-import org.griphyn.vdl.dax.PseudoText;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.annotation.CheckboxParameter;
-import org.trianacode.taskgraph.annotation.Process;
 import org.trianacode.taskgraph.annotation.TextFieldParameter;
 import org.trianacode.taskgraph.annotation.Tool;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
  * User: ian
- * Date: Aug 24, 2010
- * Time: 1:07:14 PM
+ * Date: Jan 17, 2011
+ * Time: 9:27:14 PM
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass="org.trianacode.pegasus.dax.DaxCreatorPanel")
-public class DaxCreatorUnit {
+@Tool(panelClass="org.trianacode.pegasus.dax.DaxCreatorV3Panel")
+public class DaxCreatorV3 {
     private static final int AUTO_CONNECT = 0;
     private static final int SCATTER_CONNECT = 1;
     private static final int ONE2ONE_CONNECT = 2;
     private static final int SPREAD_CONNECT = 3;
     public int idNumber = 0;
 
+    private ArrayList<String> PFLarray = new ArrayList<String>();
+
     @CheckboxParameter
     private boolean demo = false;
 
     @TextFieldParameter
-    private String fileName = "output.dax";
+    private String fileName = "output";
 
-    @Process(gather=true)
-    public File process(List in) {
+    @org.trianacode.taskgraph.annotation.Process(gather=true)
+    public java.io.File process(List in) {
         log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         DaxRegister register = DaxRegister.getDaxRegister();
 
-        File daxFile = null;
+        java.io.File daxFile = null;
         try {
             GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //  daxFromInList(in);
@@ -68,7 +66,7 @@ public class DaxCreatorUnit {
     }
 
     private void daxFromInList(List in){
-        ADAG dax = new ADAG();
+        ADAG dax = new ADAG(fileName);
 
         for(int j = 0; j < in.size(); j++){
             Object o = in.get(j);
@@ -76,19 +74,21 @@ public class DaxCreatorUnit {
                 DaxJobChunk inChunk = (DaxJobChunk)o;
 
                 if(!inChunk.isStub()){
-                    Job job = new Job();
-                    job.addArgument(new PseudoText(inChunk.getJobArgs()));
-                    job.setName("Process");
+                    String jobName = "Process";
                     String id = "0000000" + (j+1);
-                    job.setID("ID" + id.substring(id.length() - 7));
+                    id = ("ID" + id.substring(id.length() - 7));
+                    Job job = new Job(id, jobName);
+                    job.addArgument(inChunk.getJobArgs());
+
 
                     List inFiles = inChunk.getInFiles();
                     for(int i = 0; i < inFiles.size(); i++){
-                        job.addUses(new Filename((String)inFiles.get(i), 1));
+                        job.uses(new File((String)inFiles.get(i)), File.LINK.input);
+
                     }
                     List outFiles = inChunk.getOutFiles();
                     for(int i = 0; i < outFiles.size(); i++){
-                        job.addUses(new Filename((String)outFiles.get(i), 2));
+                        job.uses(new File((String)outFiles.get(i)), File.LINK.output);
                     }
                     dax.addJob(job);
                     log("Added a job to ADAG.");
@@ -106,10 +106,12 @@ public class DaxCreatorUnit {
         writeDax(dax);
     }
 
-    private File daxFromRegister(DaxRegister register){
+    private java.io.File daxFromRegister(DaxRegister register){
         //      register.listAll();
         idNumber = 0;
-        ADAG dax = new ADAG();
+        ADAG dax = new ADAG(fileName);
+
+        HashMap<String, Executable> execs = new HashMap<String, Executable>();
 
         List<DaxJobChunk> jobChunks = register.getJobChunks();
         int idNumber = 0;
@@ -146,7 +148,19 @@ public class DaxCreatorUnit {
                 fc.resetNextCounter();
             }
 
+            Executable exec = new Executable(fileName, jobChunk.getJobName(), "1.0");
+            exec.setArchitecture(Executable.ARCH.X86).setOS(Executable.OS.LINUX);
+            exec.setInstalled(true);
+            exec.addPhysicalFile("file:///bin/ls", "condorpool");
+            execs.put(jobChunk.getJobName(), exec);
+
         }
+        for(Executable ex : execs.values()){
+            dax.addExecutable(ex);
+        }
+
+        System.out.println("\nFound files : " + PFLarray.toString());
+
         return writeDax(dax);
 
     }
@@ -154,17 +168,19 @@ public class DaxCreatorUnit {
     private void autoConnect(ADAG dax, DaxJobChunk jobChunk){
         log("Job " + jobChunk.getJobName() + " has " + jobChunk.getNumberOfJobs() + " jobs.");
         for(int n = 0; n < jobChunk.getNumberOfJobs(); n++){
-            Job job = new Job();
-            idNumber ++;
-            job.addArgument(new PseudoText(jobChunk.getJobArgs()));
-
             String jobName = jobChunk.getJobName();
             if(jobChunk.getNumberOfJobs() > 1){
                 jobName = (jobName + "-" + n);
             }
-            job.setName(jobName);
+            idNumber ++;
             String id = "0000000" + (idNumber);
-            job.setID("ID" + id.substring(id.length() - 7));
+            id = ("ID" + id.substring(id.length() - 7));
+
+            Job job = new Job(id, fileName, jobName, "1.0");
+            job.addArgument(jobChunk.getJobArgs());
+
+
+            //           job.setName(jobName);
 
             jobChunk.listChunks();
             List inFiles = jobChunk.getInFileChunks();
@@ -173,7 +189,7 @@ public class DaxCreatorUnit {
                 chunk.resetNextCounter();
                 if(chunk.isCollection()){
                     for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-                        log("Job " + job.getID() + " named : "  + job.getName() + " has input : " + chunk.getFilename() + "-" + m);
+                        log("Job " + job.getId() + " named : "  + job.getName() + " has input : " + chunk.getFilename() + "-" + m);
 
                         if(chunk.getNamePattern() != null){
                             log("Collection has a naming pattern");
@@ -181,14 +197,39 @@ public class DaxCreatorUnit {
                             log("Collection has no naming pattern, using *append int*");
                         }
 
-                        String filename = chunk.getFilename() + "-" + m;
-                        filename = chunk.getNextFilename();
-                        job.addUses(new Filename(filename, 1));
+                        String filename = chunk.getNextFilename();
+                        String fileLocation = chunk.getFileLocation();
+                        File file = new File(filename);
+
+                        if(!fileLocation.equals("")){
+                            PFLarray.add(fileLocation + java.io.File.separator + filename);
+                            file.addPhysicalFile("file://" + fileLocation + java.io.File.separator + filename, "condorpool");
+                            dax.addFile(file);
+
+                        }
+                        job.uses(file, File.LINK.input);
                     }
                 }
                 else{
-                    log("Job " + job.getID() + " named : " + job.getName() + " has input : " + chunk.getFilename());
-                    job.addUses(new Filename(chunk.getFilename(), 1));
+                    log("Job " + job.getId() + " named : " + job.getName() + " has input : " + chunk.getFilename());
+//                    job.uses(new File(chunk.getFilename()), File.LINK.input);
+//                    String fileLocation = chunk.getFileLocation();
+//                    if(!fileLocation.equals("")){
+//                        PFLarray.add(fileLocation + java.io.File.separator + chunk.getFilename());
+//                    }
+                    
+                    String filename = chunk.getFilename();
+                    String fileLocation = chunk.getFileLocation();
+                    File file = new File(filename);
+
+                    if(!fileLocation.equals("")){
+                        PFLarray.add(fileLocation + java.io.File.separator + filename);
+                        file.addPhysicalFile("file://" + fileLocation + java.io.File.separator + filename, "condorpool");
+                        dax.addFile(file);
+
+                    }
+                    job.uses(file, File.LINK.input);
+
                 }
             }
 
@@ -274,9 +315,7 @@ public class DaxCreatorUnit {
         for (int i = 0; i< numberJobs; i++){
 
             //  System.out.println("Sorting out job : " + i);
-            Job job = new Job();
             idNumber ++;
-            job.addArgument(new PseudoText(jobChunk.getJobArgs()));
 
             String jobName = jobChunk.getJobName();
             if(numberJobs > 1){
@@ -284,9 +323,10 @@ public class DaxCreatorUnit {
                 System.out.println("Jobs name is : " + jobName);
                 n++;
             }
-            job.setName(jobName);
             String id = "0000000" + (idNumber);
-            job.setID("ID" + id.substring(id.length() - 7));
+            id = ("ID" + id.substring(id.length() - 7));
+            Job job = new Job(id, jobName);
+            job.addArgument(jobChunk.getJobArgs());
 
 
             for(int j = 0; j < filesPerJob[i] ; j++){
@@ -298,7 +338,7 @@ public class DaxCreatorUnit {
                     DaxFileChunk fc = fcs.get(r);
                     fcs.remove(r);
                     //    System.out.println("Got : " + r + " filename : " + fc.getFilename());
-                    job.addUses(new Filename(fc.getNextFilename(), 1));
+                    job.uses(new File(fc.getNextFilename()), File.LINK.input);
                 }
             }
 
@@ -357,9 +397,7 @@ public class DaxCreatorUnit {
         int offset = 0;
         for(int i = 0; i < numberJobs ; i++){
             System.out.println("Sorting out job : " + i);
-            Job job = new Job();
             idNumber ++;
-            job.addArgument(new PseudoText(jobChunk.getJobArgs()));
 
             String jobName = jobChunk.getJobName();
             if(numberJobs > 1){
@@ -367,9 +405,10 @@ public class DaxCreatorUnit {
                 System.out.println("Jobs name is : " + jobName);
                 n++;
             }
-            job.setName(jobName);
             String id = "0000000" + (idNumber);
-            job.setID("ID" + id.substring(id.length() - 7));
+            id = ("ID" + id.substring(id.length() - 7));
+            Job job = new Job(id, jobName);
+            job.addArgument(jobChunk.getJobArgs());
 
             for(int j = offset; j < (offset + numberInputsPerJob); j++){
                 if(j < numberInputFiles){
@@ -378,7 +417,7 @@ public class DaxCreatorUnit {
                     System.out.println("Adding file : " + filename + " to job : " + i +
                             " (Job : " + j + " of " + numberInputFiles + ")");
 
-                    job.addUses(new Filename(filename,1));
+                    job.uses(new File(filename),File.LINK.input);
                 }
             }
             offset = offset + (int)numberInputsPerJob;
@@ -433,18 +472,17 @@ public class DaxCreatorUnit {
         }
 
         for(int i = 0; i < fc.getNumberOfFiles(); i++){
-            Job job = new Job();
             idNumber ++;
-            job.addArgument(new PseudoText(jobChunk.getJobArgs()));
 
             String jobName = jobChunk.getJobName();
             if(jobChunk.getNumberOfJobs() > 1){
                 jobName = (jobName + "-" + n);
                 n++;
             }
-            job.setName(jobName);
             String id = "0000000" + (idNumber);
-            job.setID("ID" + id.substring(id.length() - 7));
+            id =("ID" + id.substring(id.length() - 7));
+            Job job = new Job(id, jobName);
+            job.addArgument(jobChunk.getJobArgs());
 
             String fileName = fc.getFilename();
             if(fc.getNumberOfFiles() > 1){
@@ -453,18 +491,18 @@ public class DaxCreatorUnit {
             }
             fileName = fc.getNextFilename();
             log("Job has " + fileName + " as an input.");
-            job.addUses(new Filename(fileName, 1));
+            job.uses(new File(fileName), File.LINK.input);
 
             for(DaxFileChunk dfc : fcs){
                 if(dfc != pfc){
                     if(dfc.isCollection()){
                         for(int j = 0; j < dfc.getNumberOfFiles(); j++){
-                            job.addUses(new Filename(dfc.getNextFilename(), 1));
+                            job.uses(new File(dfc.getNextFilename()), File.LINK.input);
                         }
                         dfc.resetNextCounter();
                     }
                     else{
-                        job.addUses(new Filename(dfc.getFilename(), 1));
+                        job.uses(new File(dfc.getFilename()), File.LINK.input);
                     }
                 }
             }
@@ -498,8 +536,8 @@ public class DaxCreatorUnit {
                     }
 
                     String filename = chunk.getNextFilename();
-                    log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + filename);
-                    job.addUses(new Filename(filename, 2));
+                    log("Job " + job.getId() + " named : "  + job.getName() + " has output : " + filename);
+                    job.uses(new File(filename), File.LINK.output);
                 }
                 else{
                     log("Not a one2one");
@@ -511,50 +549,40 @@ public class DaxCreatorUnit {
 //                            log("Collection has no naming pattern, using *append int*");
 //                        }
                         String filename = chunk.getNextFilename();
-                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + filename);
+                        log("Job " + job.getId() + " named : "  + job.getName() + " has output : " + filename);
 
-                        job.addUses(new Filename(filename, 2));
+                        job.uses(new File(filename), File.LINK.output);
 
                     }
                 }
             }
             else{
-                log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
-                job.addUses(new Filename(chunk.getFilename(), 2));
+                log("Job " + job.getId() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+                job.uses(new File(chunk.getFilename()), File.LINK.output);
             }
         }
     }
 
 
 
-    private File writeDax(ADAG dax){
-        log("\nADAG has " + dax.getJobCount() + " jobs in.");
+    private java.io.File writeDax(ADAG dax){
+        //      log("\nADAG has " + dax.getJobCount() + " jobs in.");
 
-        if(dax.getJobCount() > 0 ){
+        //      if(dax.getJobCount() > 0 ){
 
-            FileWriter fw = null;
-            try {
-                fw = new FileWriter(fileName);
-                dax.toXML(fw, "", null );
-                log("File " + fileName + " saved.\n");
-            } catch (IOException e){
-                e.printStackTrace();
-            } finally{
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        //       FileWriter fw = null;
+        //           fw = new FileWriter(fileName + ".dax");
+        dax.writeToFile(fileName + ".dax");
+        log("File " + fileName + " saved.\n");
 
-        }else{
-            log("No jobs in DAX, will not create file. (Avoids overwrite)");
-        }
+//        }else{
+//            log("No jobs in DAX, will not create file. (Avoids overwrite)");
+//        } 
 
-        File daxFile = new File(fileName);
+        java.io.File daxFile = new java.io.File(fileName + ".dax");
 
-        if(demo){
-            log("Displaying demo");
+        if(demo && daxFile.exists() && daxFile.canRead()){
+            log("Displaying demo of " + daxFile.getAbsolutePath());
             DaxReader dr = new DaxReader();
             try {
                 TaskGraph t = dr.importWorkflow(daxFile);
@@ -564,7 +592,7 @@ public class DaxCreatorUnit {
                 e.printStackTrace();
             }
         }else{
-            log("Not displaying demo");
+            log("Not displaying demo, or file not found/accessible : " + daxFile.getAbsolutePath());
         }
         GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Dax saved : " + fileName);

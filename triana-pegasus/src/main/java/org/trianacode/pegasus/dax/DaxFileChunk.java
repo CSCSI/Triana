@@ -26,6 +26,7 @@ public class DaxFileChunk implements Serializable {
     private int numberOfFiles = 1;
     private PatternCollection namePattern = null;
     private int counter = 0;
+    private String fileLocation = "";
 
     public String getFilename() {
         if(namePattern == null){
@@ -139,5 +140,13 @@ public class DaxFileChunk implements Serializable {
 
     public void setOne2one(boolean one2one) {
         this.one2one = one2one;
+    }
+
+    public void setFileLocation(String fileLocation) {
+        this.fileLocation = fileLocation;
+    }
+
+    public String getFileLocation() {
+        return fileLocation;
     }
 }

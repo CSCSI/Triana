@@ -131,6 +131,6 @@ public class DaxGroupManager {
     private void log(String text){
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
-        System.out.println(text);
+   //     System.out.println(text);
     }
 }

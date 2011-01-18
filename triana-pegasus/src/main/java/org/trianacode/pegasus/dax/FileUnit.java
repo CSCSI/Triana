@@ -23,6 +23,8 @@ public class FileUnit {
     @Parameter
     private String programmaticParam = "This is a file";
     @Parameter
+    private String fileLocation = "";
+    @Parameter
     private int numberOfFiles = 1;
     @Parameter
     private PatternCollection namingPattern = null;
@@ -42,6 +44,7 @@ public class FileUnit {
         DaxFileChunk thisFile = new DaxFileChunk();
 
         thisFile.setFilename(fileName);
+        thisFile.setFileLocation(fileLocation);
         thisFile.setUuid(UUID.randomUUID());
         thisFile.setCollection(collection);
         thisFile.setNumberOfFiles(numberOfFiles);

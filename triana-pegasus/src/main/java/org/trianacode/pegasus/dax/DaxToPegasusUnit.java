@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.thinginitself.http.Response;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.pegasus.bonjour.PegasusBonjourClient;
+import org.trianacode.pegasus.extras.FileBuilder;
 import org.trianacode.pegasus.extras.ProgressPopup;
 import org.trianacode.pegasus.jmdns.JmDNS;
 import org.trianacode.pegasus.jmdns.ServiceEvent;
@@ -340,14 +341,21 @@ public class DaxToPegasusUnit {
         List commmandStrVector = new ArrayList();
         String outputDir = System.getProperty("user.dir") + "/pegasus_output";
 
-//            String []cmdarray = {"pegasus-plan", " -D pegasus.user.properties=" + propLocation, " --sites condorpool",
-//                    "--dir " + System.getProperty("user.dir") + "/pegasus_output", "--output local", "--dax " + daxLocation, " --submit"
-//            };
-//        String[] cmdarray = (String[]) commmandStrVector.toArray(new String[commmandStrVector.size()]);
+        String topDir = System.getProperty("user.dir");
 
-        String cmd = "pegasus-plan" + " -D pegasus.user.properties=" + propLocation + " --sites condorpool" +
+        buildSitesFile(topDir);
+        buildPropertiesFile(topDir);
+
+//        String cmd = "pegasus-plan" + " -D pegasus.user.properties=" + propLocation + " --sites condorpool" +
+//                " --dir " + outputDir +
+//                " --output local" + " --dax " + daxLocation +" --submit";
+
+        String cmd = "pegasus-plan" +
+                " -D pegasus.user.properties=" + System.getProperty("user.dir") + File.separator +"properties" +
+                " --sites condorpool" +
                 " --dir " + outputDir +
                 " --output local" + " --dax " + daxLocation +" --submit";
+
         log("Running : " + cmd);
         popup.addText("Running : " + cmd);
         popup.setUnsureTime();
@@ -355,8 +363,19 @@ public class DaxToPegasusUnit {
         runExec(cmd);
         popup.addText("Results in folder : " + outputDir);
         runExec("condor_q");
+    }
+
+    private void buildPropertiesFile(String topDir) {
+        String propertiesFileContents = "pegasus.catalog.site=XML3\n" +
+                "pegasus.catalog.site.file=" + topDir + File.separator + "sites.xml\n" +
+                "\n" +
+                "pegasus.dir.useTimestamp=true\n" +
+                "pegasus.dir.storage.deep=false";
+
+        new FileBuilder(topDir + File.separator + "properties", propertiesFileContents);
 
     }
+
     private void runExec(String cmd){
         try {
             Runtime runtime = Runtime.getRuntime();
@@ -377,14 +396,68 @@ public class DaxToPegasusUnit {
             str = "";
             while ((str = inreader.readLine()) != null) {
                 out.append(str).append("\n");
-                popup.addTextNoProgress(out.toString());
             }
             inreader.close();
+            popup.addText(out.toString());
+            popup.addText("Errors : " + errLog);
             popup.addText("Done.");
 
             log("Output from Executable :\n\n" + out.toString());
             log("Errors from Executable :\n\n" + errLog);
         } catch (Exception e){e.printStackTrace();}
+    }
+
+    private void buildSitesFile(String topDir) {
+        String pegasusDir = System.getenv("PEGASUS_HOME");
+
+        String sitesContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<sitecatalog xmlns=\"http://pegasus.isi.edu/schema/sitecatalog\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+                " xsi:schemaLocation=\"http://pegasus.isi.edu/schema/sitecatalog http://pegasus.isi.edu/schema/sc-3.0.xsd\" version=\"3.0\">\n" +
+                "    <site  handle=\"local\" arch=\"x86\" os=\"LINUX\">\n" +
+                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
+                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"unknown\" jobtype=\"compute\"/>\n" +
+                "        <head-fs>\n" +
+                "            <scratch>\n" +
+                "                <shared>\n" +
+                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir +"/outputs\"/>\n" +
+                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
+                "                </shared>\n" +
+                "            </scratch>\n" +
+                "            <storage>\n" +
+                "                <shared>\n" +
+                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir + "/outputs\"/>\n" +
+                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
+                "                </shared>\n" +
+                "            </storage>\n" +
+                "        </head-fs>\n" +
+                "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
+                "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >" + pegasusDir + "</profile>\n" +
+                "    </site>\n" +
+                "    <site  handle=\"condorpool\" arch=\"x86\" os=\"LINUX\">\n" +
+                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
+                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"unknown\" jobtype=\"compute\"/>\n" +
+                "        <head-fs>\n" +
+                "            <scratch>\n" +
+                "                <shared>\n" +
+                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir + "/outputs\"/>\n" +
+                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
+                "                </shared>\n" +
+                "            </scratch>\n" +
+                "            <storage>\n" +
+                "                <shared>\n" +
+                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir + "/outputs\"/>\n" +
+                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
+                "                </shared>\n" +
+                "            </storage>\n" +
+                "        </head-fs>\n" +
+                "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
+                "        <profile namespace=\"pegasus\" key=\"style\" >condor</profile>\n" +
+                "        <profile namespace=\"condor\" key=\"universe\" >vanilla</profile>\n" +
+                "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >" + pegasusDir + "</profile>\n" +
+                "    </site>\n" +
+                "</sitecatalog>";
+
+        new FileBuilder(topDir + File.separator  + "sites.xml", sitesContent);
     }
 }
 

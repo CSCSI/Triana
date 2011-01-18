@@ -23,7 +23,7 @@ public class DaxOrganize {
     private void log(String text){
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
-        System.out.println(text);
+  //      System.out.println(text);
     }
 
     public DaxOrganize(final TaskGraph t){
@@ -48,7 +48,7 @@ public class DaxOrganize {
     }
 
     private  void recurse(HashMap h, Task[] ts, int level){
-        System.out.println("\n\nGrid has " + dgm.getGrid().numberOfLevels() + " levels.");
+        log("\n\nGrid has " + dgm.getGrid().numberOfLevels() + " levels.");
         if(ts.length > 0){
             for(Task task : ts){
                 recLevel(h, task, level);

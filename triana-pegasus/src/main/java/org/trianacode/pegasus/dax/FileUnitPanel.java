@@ -2,6 +2,7 @@ package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.pegasus.string.CharSequencePattern;
 import org.trianacode.pegasus.string.PatternCollection;
@@ -13,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.Vector;
 
 /**
@@ -27,18 +29,18 @@ public class FileUnitPanel extends ParameterPanel {
     private int numberOfFiles = 1;
     private boolean collection = false;
     private boolean one2one = false;
+    String locationString = "";
 
     JLabel collectLabel = new JLabel("");
     JLabel iterLabel = new JLabel("");
     JTextField nameField = new JTextField("");
-    JTextField extensionField = new JTextField("");
+    JTextField locationField = new JTextField("");
     JTextArea fileListArea = new JTextArea("Example filenames here..");
-    JPanel upperPanel = new JPanel(new GridLayout(3,2,5,5));
+    JPanel upperPanel = new JPanel();
     JPanel lowerPanel = new JPanel(new GridLayout(2,3,5,5));
     JComboBox namingPatternBox = new JComboBox();
     private PatternCollection namingPattern = null;
-
-
+    JCheckBox locationCheck;
 
     //   public boolean isAutoCommitByDefault(){return true;}
 
@@ -53,6 +55,20 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private void apply(){
+        if(locationCheck.isSelected() && !locationField.getText().equals("")){
+            File file = new File(locationField.getText());
+            if(file.exists()){
+                if(file.isFile()){
+                    locationString = file.getParent();
+                }
+                if(file.isDirectory()){
+                    locationString = file.getAbsolutePath();
+
+                }
+                System.out.println("PFL : file:/" + locationString + " +" + nameField.getText());
+            }
+
+        }
         changeToolName(nameField.getText());
         fillFileListArea();
         setParams();
@@ -69,6 +85,7 @@ public class FileUnitPanel extends ParameterPanel {
         getTask().setParameter("numberOfFiles", numberOfFiles);
         getTask().setParameter("collection", collection);
         getTask().setParameter("one2one", one2one);
+        getTask().setParameter("fileLocation", locationString);
         if(namingPattern != null){
             log("Setting param namingPattern : " + namingPattern.toString());
             getTask().setParameter("namingPattern", namingPattern);
@@ -82,6 +99,7 @@ public class FileUnitPanel extends ParameterPanel {
         numberOfFiles = getNumberOfFiles();
         namingPattern = getNamingPattern();
         one2one = isOne2one();
+        locationString = getFileLocation();
     }
 
     @Override
@@ -99,18 +117,43 @@ public class FileUnitPanel extends ParameterPanel {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File"));
-        JLabel nameLabel = new JLabel("File Name :");
-        upperPanel.add(nameLabel);
+        upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.Y_AXIS));
 
+        JPanel namePanel = new JPanel(new BorderLayout());
+        JLabel nameLabel = new JLabel("File Name : ");
+        namePanel.add(nameLabel, BorderLayout.WEST);
         changeToolName(getTask().getToolName());
-        upperPanel.add(nameField);
-        JLabel extLabel = new JLabel("File extension : *. ");
-        upperPanel.add(extLabel);
-        upperPanel.add(extensionField);
+        namePanel.add(nameField, BorderLayout.CENTER);
+
+        JPanel locationPanel = new JPanel(new BorderLayout());
+        locationCheck = new JCheckBox("Use location : ");
+        locationField.setText(locationString);
+        JButton locationButton = new JButton("...");
+        locationButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                JFileChooser chooser = new JFileChooser();
+                chooser.setMultiSelectionEnabled(false);
+                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                int returnVal = chooser.showDialog(GUIEnv.getApplicationFrame(), "Select");
+                String filePath = null;
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File f = chooser.getSelectedFile();
+                    if (f != null) {
+                        filePath = f.getAbsolutePath();
+                        locationField.setText(filePath);
+                        if(f.isFile()){
+                            nameField.setText(f.getName());
+                        }
+                    }
+                }
+            }
+        });
+        locationPanel.add(locationCheck, BorderLayout.WEST);
+        locationPanel.add(locationField, BorderLayout.CENTER);
+        locationPanel.add(locationButton, BorderLayout.EAST);
 
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
-
         final JCheckBox collectionBox = new JCheckBox("Collection", collection);
         collectionBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
@@ -125,13 +168,18 @@ public class FileUnitPanel extends ParameterPanel {
                 }
             }
         });
-        upperPanel.add(collectionBox);
+        JPanel collectionPanel = new JPanel(new BorderLayout());
+        collectionPanel.add(collectionBox, BorderLayout.WEST);
         if(collection){
             collectLabel.setText("Collection of files.");
         }else{
             collectLabel.setText("Not a collection");
         }
-        upperPanel.add(collectLabel);
+        collectionPanel.add(collectLabel, BorderLayout.EAST);
+
+        upperPanel.add(namePanel);
+        upperPanel.add(locationPanel);
+        upperPanel.add(collectionPanel);
 
         mainPanel.add(upperPanel);
 
@@ -174,7 +222,7 @@ public class FileUnitPanel extends ParameterPanel {
                 fillFileListArea();
             }
         });
-        lowerPanel1b.add(numberLabel);        
+        lowerPanel1b.add(numberLabel);
         lowerPanel1b.add(numbersCombo);
         lowerPanel1.add(lowerPanel1a);
         lowerPanel1.add(lowerPanel1b);
@@ -259,6 +307,14 @@ public class FileUnitPanel extends ParameterPanel {
         return 1;
     }
 
+    private String getFileLocation(){
+        Object o = getParameter("fileLocation");
+        if(o != null && !((String)o).equals("")){
+            return (String)o;
+        }
+        return "";
+    }
+
     public void setEnabling(Component c,boolean enable) {
         c.setEnabled(enable);
         if (c instanceof Container)
@@ -269,15 +325,14 @@ public class FileUnitPanel extends ParameterPanel {
     }
 
     private void fillFileListArea(){
-        String ext = extensionField.getText();
         if(namingPattern != null){
             iterLabel.setText("Filename " + (namingPattern.varies() ? "iterates well" : "does not vary, will +\"01\""));
-            nameField.setText(namingPattern.next() + ext);
+            nameField.setText(namingPattern.next());
             namingPattern.resetCount();
             fileListArea.setText("Files will be named : \n");
             for(int i = 0 ; i< numberOfFiles; i++){
                 log("adding a filename to fileListArea");
-                fileListArea.append(namingPattern.next() + ext +"\n");
+                fileListArea.append(namingPattern.next() + "\n");
             }
         }
         else{
@@ -285,7 +340,7 @@ public class FileUnitPanel extends ParameterPanel {
             String name = (String)getParameter("fileName");
             for(int i = 0 ; i< numberOfFiles; i++){
                 log("adding a name to fileListArea");
-                fileListArea.append(name + "." + ext +"\n");
+                fileListArea.append(name + "." + "\n");
             }
         }
 
