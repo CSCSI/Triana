@@ -81,10 +81,12 @@ public class ProgressPopup extends JDialog {
     }
 
     public void finish(){
-        bar.setValue(100);        
-        if(!done){
-            addText("Done. Closing in 30 seconds.");
-            try {Thread.sleep(30000);}catch(InterruptedException e) {}
+        bar.setValue(100);
+        int wait = 0;
+        while(!done && wait < 30){
+            wait ++;
+            addText("Done. Closing in " + (30-wait) + " seconds.");
+            try {Thread.sleep(1000);}catch(InterruptedException e) {}
         }
         this.dispose();
     }

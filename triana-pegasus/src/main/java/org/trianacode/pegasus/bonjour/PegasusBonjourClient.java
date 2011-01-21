@@ -4,7 +4,7 @@ import org.thinginitself.http.HttpPeer;
 import org.thinginitself.http.RequestContext;
 import org.thinginitself.http.Resource;
 import org.thinginitself.http.Response;
-import org.thinginitself.streamable.StreamableString;
+import org.thinginitself.streamable.StreamableObject;
 
 import java.io.*;
 import java.util.Properties;
@@ -114,10 +114,21 @@ public class PegasusBonjourClient {
             ou.writeObject(wf);
             ou.flush();
 
+            ObjectOutputStream foos = new ObjectOutputStream(new FileOutputStream(new File("temp_wfd.txt")));
+            foos.writeObject(wf);
+
+            ObjectInputStream fois = new ObjectInputStream(new FileInputStream(new File("temp_wfd.txt")));
+            try {
+                PegasusWorkflowData wf2 = (PegasusWorkflowData)fois.readObject();
+                System.out.println("Dax : " + wf2.getDax());
+            } catch (ClassNotFoundException e) {
+                System.out.println("PWD object not recognised after reading back in");
+            }
+
             RequestContext c = new RequestContext(httpAddress);
 //            c.setResource(new Resource(new StreamableString(out.toString())));
-            c.setResource(new Resource(new StreamableString( new String (out.toByteArray() , "UTF-8" ))));
-
+//            c.setResource(new Resource(new StreamableString( new String (out.toByteArray() , "UTF-8" ))));
+            c.setResource(new Resource(new StreamableObject(wf)));
             out.close();
 
             HttpPeer peer = new HttpPeer();

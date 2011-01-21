@@ -1,19 +1,18 @@
 package org.trianacode.pegasus.dax;
 
+import JmDNS_Restless_Pegasus.PegasusBonjourClient;
+import JmDNS_Restless_Pegasus.PegasusListener;
 import org.apache.commons.logging.Log;
 import org.thinginitself.http.Response;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.pegasus.bonjour.PegasusBonjourClient;
-import org.trianacode.pegasus.extras.FileBuilder;
+import org.trianacode.pegasus.bonjour.CatalogBuilder;
 import org.trianacode.pegasus.extras.ProgressPopup;
-import org.trianacode.pegasus.jmdns.JmDNS;
-import org.trianacode.pegasus.jmdns.ServiceEvent;
-import org.trianacode.pegasus.jmdns.ServiceInfo;
-import org.trianacode.pegasus.jmdns.ServiceListener;
 import org.trianacode.taskgraph.annotation.Parameter;
 import org.trianacode.taskgraph.annotation.Process;
 import org.trianacode.taskgraph.annotation.Tool;
 
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -153,7 +152,7 @@ public class DaxToPegasusUnit {
                             "\n     " + info.getServer() +
                             "\n     " + info.getApplication() +
                             "\n      " + info.toString() + "\n");
-                    if (info.getName().contains("Pegasus")) {
+                    if (info.getName().toLowerCase().contains("pegasus")) {
                         popup.addText("Found Pegasus : " + info.getURL());
                         pegasusInfo = info;
 
@@ -192,10 +191,10 @@ public class DaxToPegasusUnit {
         int attempt = 0;
         int port = info.getPort();
 
-        while( !foundAndSent && attempt < 10){
+        while( !foundAndSent && attempt < 10) {
             String url = ("http://" + info.getHostAddress() + ":" + port);
             log("Pegasus found at address " + url + ". Trying port " + port);
-            String[] args = {url +"/remotecontrol",
+            String[] args = {url + "/remotecontrol",
                     this.getPropertiesLocation(),
                     this.getDaxLocation(),
                     this.getRcLocation(),
@@ -204,15 +203,20 @@ public class DaxToPegasusUnit {
 
             PegasusBonjourClient pbc = new PegasusBonjourClient();
             popup.addTextNoProgress("Parsing args : " + url);
-            Response ret = pbc.parse(args);
-            String result = ret.toString();
+            Response ret = null;
+            String result = null;
+            try {
+                ret = pbc.parse(args);
+                result = ret.toString();
+            } catch (Exception e) {
+                System.out.println("Error forming connection");
+            }
 
-
-            if(ret.getOutcome().equals("Not Found")){
+            if (ret != null && ret.getOutcome().equals("Not Found")) {
                 log("Pegasus not responding on port " + port + "\n");
-                port ++;
-                attempt ++;
-            }else{
+                port++;
+                attempt++;
+            } else {
                 foundAndSent = true;
                 popup.addText("Connection opened and info sent.");
                 log("Connection opened and info sent.");
@@ -284,58 +288,6 @@ public class DaxToPegasusUnit {
         System.out.println(s);
     }
 
-    class PegasusListener implements ServiceListener {
-
-        JmDNS jmdns;
-        String mdns_type;
-        private ArrayList<org.trianacode.pegasus.jmdns.ServiceInfo> services;
-
-        public PegasusListener(JmDNS jmdns, String mdns_type){
-            this.jmdns = jmdns;
-            this.mdns_type = mdns_type;
-            services = new ArrayList<ServiceInfo>();
-        }
-
-        public ArrayList getServices(){return services;}
-
-        @Override
-        public void serviceAdded(ServiceEvent event) {
-            log("Service added   : " + event.getName() + "." + event.getType());
-            log("Found this ->" + event.getInfo().toString());
-            refreshList();
-        }
-
-        @Override
-        public void serviceRemoved(org.trianacode.pegasus.jmdns.ServiceEvent event) {
-            log("Service removed : " + event.getName() + "." + event.getType());
-            refreshList();
-        }
-
-        @Override
-        public void serviceResolved(ServiceEvent event) {
-            log("Service resolved: " + event.getInfo());
-            refreshList();
-        }
-        public boolean foundSomething(){
-            if(services.size() > 0){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-
-        private void refreshList(){
-            log("Something happened");
-            ServiceInfo[] infos = jmdns.list(mdns_type);
-            if (infos != null && infos.length > 0) {
-                ArrayList<org.trianacode.pegasus.jmdns.ServiceInfo> temp = new ArrayList<ServiceInfo>();
-                for (int i = 0; i < infos.length; i++) { temp.add(infos[i]);}
-                services = temp;
-            }
-        }
-    }
-
     private void runLocal(){
         log("Running locally");
         List commmandStrVector = new ArrayList();
@@ -343,8 +295,8 @@ public class DaxToPegasusUnit {
 
         String topDir = System.getProperty("user.dir");
 
-        buildSitesFile(topDir);
-        buildPropertiesFile(topDir);
+        CatalogBuilder.buildSitesFile(topDir);
+        CatalogBuilder.buildPropertiesFile(topDir);
 
 //        String cmd = "pegasus-plan" + " -D pegasus.user.properties=" + propLocation + " --sites condorpool" +
 //                " --dir " + outputDir +
@@ -365,16 +317,7 @@ public class DaxToPegasusUnit {
         runExec("condor_q");
     }
 
-    private void buildPropertiesFile(String topDir) {
-        String propertiesFileContents = "pegasus.catalog.site=XML3\n" +
-                "pegasus.catalog.site.file=" + topDir + File.separator + "sites.xml\n" +
-                "\n" +
-                "pegasus.dir.useTimestamp=true\n" +
-                "pegasus.dir.storage.deep=false";
 
-        new FileBuilder(topDir + File.separator + "properties", propertiesFileContents);
-
-    }
 
     private void runExec(String cmd){
         try {
@@ -407,58 +350,8 @@ public class DaxToPegasusUnit {
         } catch (Exception e){e.printStackTrace();}
     }
 
-    private void buildSitesFile(String topDir) {
-        String pegasusDir = System.getenv("PEGASUS_HOME");
 
-        String sitesContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<sitecatalog xmlns=\"http://pegasus.isi.edu/schema/sitecatalog\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
-                " xsi:schemaLocation=\"http://pegasus.isi.edu/schema/sitecatalog http://pegasus.isi.edu/schema/sc-3.0.xsd\" version=\"3.0\">\n" +
-                "    <site  handle=\"local\" arch=\"x86\" os=\"LINUX\">\n" +
-                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
-                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"unknown\" jobtype=\"compute\"/>\n" +
-                "        <head-fs>\n" +
-                "            <scratch>\n" +
-                "                <shared>\n" +
-                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir +"/outputs\"/>\n" +
-                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
-                "                </shared>\n" +
-                "            </scratch>\n" +
-                "            <storage>\n" +
-                "                <shared>\n" +
-                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir + "/outputs\"/>\n" +
-                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
-                "                </shared>\n" +
-                "            </storage>\n" +
-                "        </head-fs>\n" +
-                "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
-                "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >" + pegasusDir + "</profile>\n" +
-                "    </site>\n" +
-                "    <site  handle=\"condorpool\" arch=\"x86\" os=\"LINUX\">\n" +
-                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
-                "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"unknown\" jobtype=\"compute\"/>\n" +
-                "        <head-fs>\n" +
-                "            <scratch>\n" +
-                "                <shared>\n" +
-                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir + "/outputs\"/>\n" +
-                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
-                "                </shared>\n" +
-                "            </scratch>\n" +
-                "            <storage>\n" +
-                "                <shared>\n" +
-                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir + "/outputs\"/>\n" +
-                "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
-                "                </shared>\n" +
-                "            </storage>\n" +
-                "        </head-fs>\n" +
-                "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
-                "        <profile namespace=\"pegasus\" key=\"style\" >condor</profile>\n" +
-                "        <profile namespace=\"condor\" key=\"universe\" >vanilla</profile>\n" +
-                "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >" + pegasusDir + "</profile>\n" +
-                "    </site>\n" +
-                "</sitecatalog>";
 
-        new FileBuilder(topDir + File.separator  + "sites.xml", sitesContent);
-    }
 }
 
 
