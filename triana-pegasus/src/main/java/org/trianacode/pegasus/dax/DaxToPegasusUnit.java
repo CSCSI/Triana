@@ -5,7 +5,6 @@ import JmDNS_Restless_Pegasus.PegasusListener;
 import org.apache.commons.logging.Log;
 import org.thinginitself.http.Response;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.pegasus.bonjour.CatalogBuilder;
 import org.trianacode.pegasus.extras.ProgressPopup;
 import org.trianacode.taskgraph.annotation.Parameter;
 import org.trianacode.taskgraph.annotation.Process;
@@ -146,11 +145,11 @@ public class DaxToPegasusUnit {
                     log("\n       Found service : " + info.getName() +
                             "\n     Address " + info.getURL() +
                             "\n     " + info.getHostAddress() +
-                            "\n     " + info.getDomain() +
+                            //                  "\n     " + info.getDomain() +
                             "\n     " + info.getInetAddress() +
                             "\n     " + info.getPort() +
                             "\n     " + info.getServer() +
-                            "\n     " + info.getApplication() +
+                            //                  "\n     " + info.getApplication() +
                             "\n      " + info.toString() + "\n");
                     if (info.getName().toLowerCase().contains("pegasus")) {
                         popup.addText("Found Pegasus : " + info.getURL());
@@ -169,10 +168,8 @@ public class DaxToPegasusUnit {
             if (jmdns != null) {
                 try {
                     jmdns.close();
-                    popup.addText("Closing JmDNS");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                } catch(IOException e){e.printStackTrace();}
+                popup.addText("Closing JmDNS");
             }
         }
 

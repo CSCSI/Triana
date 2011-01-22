@@ -57,6 +57,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>javax.jmdns</groupId>
+            <artifactId>jmdns</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thinginitself</groupId>
+            <artifactId>restless</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.trianacode</groupId>
             <artifactId>triana-core</artifactId>
             <version>${project.version}</version>
@@ -68,12 +78,21 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>pegasus.nodeps</groupId>
-            <artifactId>pegasus</artifactId>
-            <version>2.4.3</version>
-            <scope>compile</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>pegasus.nodeps</groupId>-->
+        <!--<artifactId>pegasus</artifactId>-->
+        <!--<version>2.4.3</version>-->
+        <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>jmdns</groupId>-->
+        <!--<artifactId>jmdns</artifactId>-->
+        <!--<version>3.1.6</version>-->
+        <!--</dependency>-->
     </dependencies>
-
+    
+    <distributionManagement>
+        <downloadUrl>scm:svn:https://jmdns.svn.sourceforge.net/svnroot/jmdns/tags/jmdns-3.2.2</downloadUrl>
+    </distributionManagement>
+    
 </project>

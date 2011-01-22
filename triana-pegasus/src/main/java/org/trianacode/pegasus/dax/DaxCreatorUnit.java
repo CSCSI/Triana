@@ -1,8 +1,10 @@
 package org.trianacode.pegasus.dax;
-//
-//import edu.isi.pegasus.planner.dax.ADAG;
-//import edu.isi.pegasus.planner.dax.Job;
+
 import org.apache.commons.logging.Log;
+
+//very important these lines remain org.griphyn
+//for backward compatibility to pegasus 2.3.1
+
 import org.griphyn.vdl.dax.ADAG;
 import org.griphyn.vdl.dax.Filename;
 import org.griphyn.vdl.dax.Job;

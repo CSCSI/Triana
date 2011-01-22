@@ -1,9 +1,5 @@
 package org.trianacode.pegasus.dax;
 
-import edu.isi.pegasus.planner.dax.ADAG;
-import edu.isi.pegasus.planner.dax.Executable;
-import edu.isi.pegasus.planner.dax.File;
-import edu.isi.pegasus.planner.dax.Job;
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.GUIEnv;
@@ -15,7 +11,6 @@ import org.trianacode.taskgraph.annotation.Tool;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -25,6 +20,11 @@ import java.util.Vector;
  * Date: Jan 17, 2011
  * Time: 9:27:14 PM
  * To change this template use File | Settings | File Templates.
+ *
+ * DO NOT USE org.griphyn FOR THIS CLASS
+ * use isi.pegasus. for v3.0.1 compatibility.
+ * TODO figure out how to import the new pegasus v3 wms jars without messing up the http stream from DaxToPegasusUnit
+ * 
  */
 
 @Tool(panelClass="org.trianacode.pegasus.dax.DaxCreatorV3Panel")
@@ -66,6 +66,10 @@ public class DaxCreatorV3 {
     }
 
     private void daxFromInList(List in){
+
+        //needs to be in the new isi.pegasus
+        // NOT org.griphyn
+
         ADAG dax = new ADAG(fileName);
 
         for(int j = 0; j < in.size(); j++){

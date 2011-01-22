@@ -1,4 +1,4 @@
-package org.trianacode.pegasus.bonjour;
+package org.trianacode.pegasus.dax;
 
 import org.trianacode.pegasus.extras.FileBuilder;
 
