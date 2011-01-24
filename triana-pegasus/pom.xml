@@ -78,21 +78,21 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>pegasus.nodeps</groupId>-->
-        <!--<artifactId>pegasus</artifactId>-->
-        <!--<version>2.4.3</version>-->
-        <!--<scope>compile</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>pegasus.nodeps</groupId>
+            <artifactId>pegasus</artifactId>
+            <version>2.4.3</version>
+            <scope>compile</scope>
+        </dependency>
         <!--<dependency>-->
         <!--<groupId>jmdns</groupId>-->
         <!--<artifactId>jmdns</artifactId>-->
         <!--<version>3.1.6</version>-->
         <!--</dependency>-->
     </dependencies>
-    
+
     <distributionManagement>
         <downloadUrl>scm:svn:https://jmdns.svn.sourceforge.net/svnroot/jmdns/tags/jmdns-3.2.2</downloadUrl>
     </distributionManagement>
-    
+
 </project>
