@@ -1,8 +1,10 @@
 package org.trianacode.taskgraph.annotation;
 
 import org.trianacode.taskgraph.RenderingHint;
+import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
+import org.trianacode.taskgraph.tool.ClassLoaders;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -30,6 +32,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private int minimumInputs = 0;
     private int minimumOutputs = 0;
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
+    private Method panelMethod;
 
 
     private Map<String, Field> params = new HashMap<String, Field>();
@@ -68,6 +71,14 @@ public class AnnotatedUnitWrapper extends Unit {
                 }
             }
         }
+    }
+
+    public Method getPanelMethod() {
+        return panelMethod;
+    }
+
+    public void setPanelMethod(Method panelMethod) {
+        this.panelMethod = panelMethod;
     }
 
     public void setPanelClass(String panelClass) {
@@ -138,6 +149,18 @@ public class AnnotatedUnitWrapper extends Unit {
         if (panelClass != null && panelClass.length() > 0) {
             setParameterPanelClass(panelClass);
             setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
+
+        } else {
+            if (panelMethod != null) {
+                try {
+                    Object panel = panelMethod.invoke(annotated, new Object[0]);
+                    Class manager = ClassLoaders.forName("org.trianacode.gui.panels.ParameterPanelManager");
+                    Method setter = manager.getMethod("registerPanel", new Class[]{ClassLoaders.forName("javax.swing.JPanel"), Task.class});
+                    setter.invoke(null, new Object[]{panel, this});
+                } catch (Throwable e) {
+                    log("error creating custom panel", e);
+                }
+            }
         }
         if (renderingHints.length > 0) {
             for (String s : renderingHints) {

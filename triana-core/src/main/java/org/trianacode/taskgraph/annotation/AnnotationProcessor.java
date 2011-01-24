@@ -1,5 +1,7 @@
 package org.trianacode.taskgraph.annotation;
 
+import org.trianacode.taskgraph.tool.ClassLoaders;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -35,6 +37,7 @@ public class AnnotationProcessor {
         AnnotatedUnitWrapper wrapper = null;
         Method[] methods = annotated.getDeclaredMethods();
         Map<String, Field> ps = new HashMap<String, Field>();
+        Method panelMethod = null;
         for (Method method : methods) {
             Process p = method.getAnnotation(Process.class);
             if (p != null) {
@@ -78,6 +81,21 @@ public class AnnotationProcessor {
                     wrapper.setMinimumOutputs(minimumOutputs);
                 }
                 break;
+            } else {
+                Panel panel = method.getAnnotation(Panel.class);
+                if (panel != null) {
+                    Class ret = method.getReturnType();
+                    try {
+                        if (ClassLoaders.forName("javax.swing.JPanel").isAssignableFrom(ret)) {
+                            Class[] ins = method.getParameterTypes();
+                            if (ins.length == 0) {
+                                panelMethod = method;
+                            }
+                        }
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         if (wrapper == null) {
@@ -190,7 +208,12 @@ public class AnnotationProcessor {
             }
             if (panelClass != null) {
                 wrapper.setPanelClass(panelClass);
+            } else {
+                if (panelMethod != null) {
+                    wrapper.setPanelMethod(panelMethod);
+                }
             }
+
         }
 
         return wrapper;
