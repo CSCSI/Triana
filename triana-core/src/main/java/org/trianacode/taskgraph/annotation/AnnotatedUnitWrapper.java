@@ -152,13 +152,15 @@ public class AnnotatedUnitWrapper extends Unit {
 
         } else {
             if (panelMethod != null) {
+                Object panel=null;
                 try {
-                    Object panel = panelMethod.invoke(annotated, new Object[0]);
+                    panel = panelMethod.invoke(annotated, new Object[0]);
                     Class manager = ClassLoaders.forName("org.trianacode.gui.panels.ParameterPanelManager");
                     Method setter = manager.getMethod("registerPanel", new Class[]{ClassLoaders.forName("javax.swing.JPanel"), Task.class});
-                    setter.invoke(null, new Object[]{panel, this});
+                    setter.invoke(null, new Object[]{panel, this.getTask()});
                 } catch (Throwable e) {
-                    log("error creating custom panel", e);
+                    debug("error creating custom panel", e);
+                    e.printStackTrace();
                 }
             }
         }

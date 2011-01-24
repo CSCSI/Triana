@@ -80,7 +80,7 @@ public class AnnotationProcessor {
                 if (minimumOutputs >= 0) {
                     wrapper.setMinimumOutputs(minimumOutputs);
                 }
-                break;
+           //     break;     One issue - will never get to the else ...
             } else {
                 Panel panel = method.getAnnotation(Panel.class);
                 if (panel != null) {
@@ -206,14 +206,11 @@ public class AnnotationProcessor {
             if (guiLines.size() > 0) {
                 wrapper.setGuiLines(guiLines);
             }
-            if (panelClass != null) {
+            if (panelMethod != null) {
+                wrapper.setPanelMethod(panelMethod);
+            } else if (panelClass != null) {
                 wrapper.setPanelClass(panelClass);
-            } else {
-                if (panelMethod != null) {
-                    wrapper.setPanelMethod(panelMethod);
-                }
             }
-
         }
 
         return wrapper;
