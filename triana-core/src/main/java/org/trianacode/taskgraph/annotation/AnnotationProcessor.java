@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class AnnotationProcessor {
 
-    public static AnnotatedUnitWrapper createUnit(Object annotatedObject) {
+    public static AnnotatedUnitWrapper createUnit(Object annotatedObject) throws Exception {
         Class annotated = annotatedObject.getClass();
         Map<String, String> guiLines = new HashMap<String, String>();
         String name = null;
@@ -25,7 +25,7 @@ public class AnnotationProcessor {
         String panelClass = null;
         Tool t = (Tool) annotated.getAnnotation(Tool.class);
         if (t == null) {
-            return null;
+            throw new Exception("Could not get the annotation for the class " + annotatedObject);
         }
         name = t.displayName();
         pkge = t.displayPackage();

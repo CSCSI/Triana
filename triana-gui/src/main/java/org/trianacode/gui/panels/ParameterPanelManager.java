@@ -212,14 +212,17 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         }
     }
 
-    public static void registerComponent(Component panel, Task task) {
+    public static void registerComponent(Component panel, Task task) throws Exception {
         if (!paneltable.containsKey(task)) {
             ParameterPanel paramPanel = null;
             if (panel instanceof ParameterPanel) {
                 paramPanel = (ParameterPanel) panel;
+            } else if (panel instanceof Window) {
+                  throw new Exception("You Cannot use a Window as a Triana GUI Component!");
             } else {
                 paramPanel = new PanelHolder(panel);
             }
+
             paneltable.put(task, paramPanel);
             task.addTaskListener(disposemanager);
         }
