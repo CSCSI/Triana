@@ -32,7 +32,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private int minimumInputs = 0;
     private int minimumOutputs = 0;
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
-    private Method panelMethod;
+    private Method customGUIComponent;
 
 
     private Map<String, Field> params = new HashMap<String, Field>();
@@ -73,12 +73,12 @@ public class AnnotatedUnitWrapper extends Unit {
         }
     }
 
-    public Method getPanelMethod() {
-        return panelMethod;
+    public Method getCustomGUIComponent() {
+        return customGUIComponent;
     }
 
-    public void setPanelMethod(Method panelMethod) {
-        this.panelMethod = panelMethod;
+    public void setCustomGUIComponent(Method customGUIComponent) {
+        this.customGUIComponent = customGUIComponent;
     }
 
     public void setPanelClass(String panelClass) {
@@ -151,13 +151,14 @@ public class AnnotatedUnitWrapper extends Unit {
             setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
 
         } else {
-            if (panelMethod != null) {
-                Object panel=null;
+            if (customGUIComponent != null) {
+
+                Object gui=null;
                 try {
-                    panel = panelMethod.invoke(annotated, new Object[0]);
+                    gui = customGUIComponent.invoke(annotated, new Object[0]);
                     Class manager = ClassLoaders.forName("org.trianacode.gui.panels.ParameterPanelManager");
-                    Method setter = manager.getMethod("registerPanel", new Class[]{ClassLoaders.forName("javax.swing.JPanel"), Task.class});
-                    setter.invoke(null, new Object[]{panel, this.getTask()});
+                    Method setter = manager.getMethod("registerComponent", new Class[]{ClassLoaders.forName("java.awt.Component"), Task.class});
+                    setter.invoke(null, new Object[]{gui, this.getTask()});
                 } catch (Throwable e) {
                     debug("error creating custom panel", e);
                     e.printStackTrace();

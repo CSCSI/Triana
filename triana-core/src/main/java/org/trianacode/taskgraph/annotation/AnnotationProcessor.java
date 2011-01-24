@@ -37,7 +37,7 @@ public class AnnotationProcessor {
         AnnotatedUnitWrapper wrapper = null;
         Method[] methods = annotated.getDeclaredMethods();
         Map<String, Field> ps = new HashMap<String, Field>();
-        Method panelMethod = null;
+        Method customGUIComponent = null;
         for (Method method : methods) {
             Process p = method.getAnnotation(Process.class);
             if (p != null) {
@@ -80,16 +80,15 @@ public class AnnotationProcessor {
                 if (minimumOutputs >= 0) {
                     wrapper.setMinimumOutputs(minimumOutputs);
                 }
-           //     break;     One issue - will never get to the else ...
             } else {
-                Panel panel = method.getAnnotation(Panel.class);
-                if (panel != null) {
+                CustomGUIComponent component = method.getAnnotation(CustomGUIComponent.class);
+                if (component != null) {
                     Class ret = method.getReturnType();
                     try {
-                        if (ClassLoaders.forName("javax.swing.JPanel").isAssignableFrom(ret)) {
+                        if (ClassLoaders.forName("java.awt.Component").isAssignableFrom(ret)) {
                             Class[] ins = method.getParameterTypes();
                             if (ins.length == 0) {
-                                panelMethod = method;
+                                customGUIComponent = method;
                             }
                         }
                     } catch (ClassNotFoundException e) {
@@ -206,8 +205,8 @@ public class AnnotationProcessor {
             if (guiLines.size() > 0) {
                 wrapper.setGuiLines(guiLines);
             }
-            if (panelMethod != null) {
-                wrapper.setPanelMethod(panelMethod);
+            if (customGUIComponent != null) {
+                wrapper.setCustomGUIComponent(customGUIComponent);
             } else if (panelClass != null) {
                 wrapper.setPanelClass(panelClass);
             }

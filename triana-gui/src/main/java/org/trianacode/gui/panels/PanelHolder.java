@@ -16,9 +16,7 @@
 
 package org.trianacode.gui.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Window;
+import java.awt.*;
 
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -41,8 +39,13 @@ public class PanelHolder extends ParameterPanel {
     private JPanel panel;
 
 
-    public PanelHolder(JPanel panel) {
-        this.panel = panel;
+    public PanelHolder(Component panel) {
+        if (panel instanceof JPanel)
+            this.panel = (JPanel)panel;
+        else {
+            this.panel = new JPanel();
+            this.panel.add(panel);
+        }
         setLayout(new BorderLayout());
         add(BorderLayout.CENTER, panel);
     }
@@ -139,7 +142,7 @@ public class PanelHolder extends ParameterPanel {
      * @return the panels preferred button combination (as defined in Windows Constants).
      */
     public byte getPreferredButtons() {
-        return WindowButtonConstants.NO_BUTTONS;
+        return WindowButtonConstants.OK_BUTTON;
     }
 
     /**

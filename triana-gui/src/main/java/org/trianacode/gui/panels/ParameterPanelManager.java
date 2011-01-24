@@ -212,7 +212,7 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
         }
     }
 
-    public static void registerPanel(JPanel panel, Task task) {
+    public static void registerComponent(Component panel, Task task) {
         if (!paneltable.containsKey(task)) {
             ParameterPanel paramPanel = null;
             if (panel instanceof ParameterPanel) {
