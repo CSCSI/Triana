@@ -1,5 +1,6 @@
 package org.trianacode.taskgraph.annotation;
 
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 
 import java.lang.reflect.Field;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public class AnnotationProcessor {
 
-    public static AnnotatedUnitWrapper createUnit(Object annotatedObject) throws Exception {
+    public static AnnotatedUnitWrapper createUnit(Object annotatedObject) throws ProxyInstantiationException {
         Class annotated = annotatedObject.getClass();
         Map<String, String> guiLines = new HashMap<String, String>();
         String name = null;
@@ -25,7 +26,7 @@ public class AnnotationProcessor {
         String panelClass = null;
         Tool t = (Tool) annotated.getAnnotation(Tool.class);
         if (t == null) {
-            throw new Exception("Could not get the annotation for the class " + annotatedObject);
+            throw new ProxyInstantiationException("Could not get the annotation for the class " + annotatedObject);
         }
         name = t.displayName();
         pkge = t.displayPackage();

@@ -477,7 +477,7 @@ public class FileToolbox implements Toolbox {
      * @param className
      * @return
      */
-    protected Tool createTool(String className) {
+    protected Tool createTool(String className) throws Exception {
         try {
             ToolImp tool = new ToolImp();
             tool.setDefinitionType(Tool.DEFINITION_JAVA_CLASS);

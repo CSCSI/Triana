@@ -71,7 +71,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The proxy for java units
+ * The proxy for java units.
+ *
+ * Ian T changed so that errors are thrown not consumed and ignored ....
  *
  * @author Ian Wang
  * @version $Revision: 4048 $
@@ -84,21 +86,23 @@ public class JavaProxy implements Proxy {
     private String unitpackage;
     private Unit unit;
 
-    public JavaProxy(Object unit, String unitname, String unitpackage) {
+    public JavaProxy(Object unit, String unitname, String unitpackage) throws ProxyInstantiationException {
         this.unitname = unitname;
         this.unitpackage = unitpackage;
         this.unit = createUnit(unit);
     }
 
 
-    public JavaProxy(String unitname) {
+    public JavaProxy(String unitname) throws ProxyInstantiationException {
         this.unitname = unitname;
         this.unitpackage = "";
+        createUnit();
     }
 
-    public JavaProxy(String unitname, String unitpackage) {
+    public JavaProxy(String unitname, String unitpackage) throws ProxyInstantiationException {
         this.unitname = hackUnitName(unitname);
         this.unitpackage = unitpackage;
+        createUnit();
     }
 
     public JavaProxy(Map instdetails) throws ProxyInstantiationException {
@@ -137,7 +141,7 @@ public class JavaProxy implements Proxy {
         return JavaConstants.JAVA_PROXY_TYPE;
     }
 
-    private void createUnit() {
+    private void createUnit() throws ProxyInstantiationException  {
         try {
             Class cls = ClassLoaders.forName(getFullUnitName());
             Object o = cls.newInstance();
@@ -150,17 +154,16 @@ public class JavaProxy implements Proxy {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ProxyInstantiationException(e.getMessage());
         }
     }
 
-    private Unit createUnit(Object o) {
+    private Unit createUnit(Object o) throws ProxyInstantiationException {
         if (o instanceof Unit) {
             return (Unit) o;
         } else {
             return AnnotationProcessor.createUnit(o);
         }
-
     }
 
 
@@ -190,9 +193,6 @@ public class JavaProxy implements Proxy {
     }
 
     public Unit getUnit() {
-        if (unit == null) {
-            createUnit();
-        }
         return unit;
     }
 

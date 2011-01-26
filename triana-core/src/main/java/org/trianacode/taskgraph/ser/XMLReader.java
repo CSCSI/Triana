@@ -683,7 +683,11 @@ public class XMLReader implements XMLConstants {
             unitpack = elem.getTextContent();
         }
 
-        tool.setProxy(new JavaProxy(unitname, unitpack));
+        try {
+            tool.setProxy(new JavaProxy(unitname, unitpack));
+        } catch (ProxyInstantiationException e) {
+            throw new TaskException(e.getMessage());
+        }
     }
 
 }

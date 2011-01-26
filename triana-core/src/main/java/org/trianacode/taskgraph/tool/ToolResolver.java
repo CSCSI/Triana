@@ -11,6 +11,7 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.util.ToolUtils;
 import org.trianacode.taskgraph.util.UrlUtils;
@@ -357,7 +358,7 @@ public class ToolResolver implements ToolMetadataResolver {
     }
 
 
-    private void reresolve() {
+    private void reresolve() throws ProxyInstantiationException, TaskException {
         for (String s : toolboxes.keySet()) {
             Toolbox tb = toolboxes.get(s);
             resolve(toolboxes.get(s));
@@ -379,35 +380,32 @@ public class ToolResolver implements ToolMetadataResolver {
     /**
      * Will this work for taskgraph???
      *
+     * No exceptions, just a warning ....   need to propagate these though.
+     *
      * @param metadata
      * @return
      */
-    private Tool createTool(ToolMetadata metadata) {
-        try {
-            if (!metadata.isTaskgraph()) {
-                ToolImp tool = new ToolImp();
-                tool.setDefinitionType(Tool.DEFINITION_METADATA);
-                tool.setToolName(ToolUtils.getClassName(metadata.getToolName()));
-                tool.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
-                tool.setProperties(getProperties());
-                String cls = metadata.getUnitWrapper();
-                if (cls == null) {
-                    tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
-                } else {
-                    tool.setProxy(new JavaProxy(ToolUtils.getClassName(cls), ToolUtils.getPackageName(cls)));
-                }
-                return tool;
+    private Tool createTool(ToolMetadata metadata) throws ProxyInstantiationException, TaskException {
+        if (!metadata.isTaskgraph()) {
+            ToolImp tool = new ToolImp();
+            tool.setDefinitionType(Tool.DEFINITION_METADATA);
+            tool.setToolName(ToolUtils.getClassName(metadata.getToolName()));
+            tool.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
+            tool.setProperties(getProperties());
+            String cls = metadata.getUnitWrapper();
+            if (cls == null) {
+                tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
             } else {
-                TaskGraph taskgraph = TaskGraphManager.createTaskGraph();
-                taskgraph.setDefinitionType(Tool.DEFINITION_METADATA);
-                taskgraph.setToolName(ToolUtils.getClassName(metadata.getToolName()));
-                taskgraph.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
-
-                return taskgraph;
+                tool.setProxy(new JavaProxy(ToolUtils.getClassName(cls), ToolUtils.getPackageName(cls)));
             }
-        } catch (TaskException e) {
-            log.warn("Error creating tool:", e);
-            return null;
+            return tool;
+        } else {
+            TaskGraph taskgraph = TaskGraphManager.createTaskGraph();
+            taskgraph.setDefinitionType(Tool.DEFINITION_METADATA);
+            taskgraph.setToolName(ToolUtils.getClassName(metadata.getToolName()));
+            taskgraph.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
+
+            return taskgraph;
         }
     }
 
@@ -563,9 +561,18 @@ public class ToolResolver implements ToolMetadataResolver {
         }
     }
 
+    /**
+     * Where should these errors go ???
+     */
     private class ResolveThread extends TimerTask {
         public void run() {
-            reresolve();
+            try {
+                reresolve();
+            } catch (ProxyInstantiationException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (TaskException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
     }
 
