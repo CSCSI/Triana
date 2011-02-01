@@ -38,13 +38,12 @@ public class CSVtoVect extends Unit {
 
         FileName input = null;
         int nodeCount = getInputNodeCount();
-        //FileName input= (FileName) getInputAtNode(0);
-
         FileName[] inputFileNames = new FileName[nodeCount];
 
         if (nodeCount == 0){
                 openInputFile(fileName);
         }
+
         // If there are one or more nodes, go through each node and assign filename to input array
         if (nodeCount > 0){
             for (int i = 0; i < nodeCount; ++i) {
@@ -237,6 +236,3 @@ public class CSVtoVect extends Unit {
         return new String[] {"VectorType"};
     }
 }
-
-
-
