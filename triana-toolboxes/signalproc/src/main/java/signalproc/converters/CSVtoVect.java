@@ -1,6 +1,5 @@
 package signalproc.converters;
 
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +12,10 @@ import triana.types.FileName;
 import triana.types.VectorType;
 
 /**
- *
+ * Unit to convert single (first) column CSV file or fileName (passed from previous unit) to a Triana VectorType.
+ * If there are no input nodes the built-in browser must be used. If there are input nodes, the built in browser is
+ * ignored. This unit can accept multiple inputs, and will process each of the incoming fileNames and output the
+ * VectorType to the corresponding output node.
  *
  * @author     Eddie Al-Shakarchi
  * @created    31 Jan 2011
@@ -21,6 +23,7 @@ import triana.types.VectorType;
  * @date       $Date: 2006-07-25 14:39:49 +0000 (Tue, 25 Jul 2006) $ modified by $Author: spxmss $
  * @todo
  */
+
 public class CSVtoVect extends Unit {
 
     // parameter data type definitions
@@ -143,7 +146,6 @@ public class CSVtoVect extends Unit {
         return stringArr;
     }
 
-
     /**
      * Called when the unit is created. Initialises the unit's properties and
      * parameters.
@@ -202,7 +204,6 @@ public class CSVtoVect extends Unit {
             fileName = (String) value;
     }
 
-
     /**
      * @return an array of the types accepted by each input node. For node indexes
      * not covered the types specified by getInputTypes() are assumed.
@@ -218,7 +219,6 @@ public class CSVtoVect extends Unit {
     public String [] getInputTypes() {
         return new String[] {"FileName"};
     }
-
 
     /**
      * @return an array of the types output by each output node. For node indexes
