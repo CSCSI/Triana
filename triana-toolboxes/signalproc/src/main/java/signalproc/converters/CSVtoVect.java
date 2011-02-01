@@ -37,6 +37,7 @@ public class CSVtoVect extends Unit {
     /*
      * Called whenever there is data for the unit to process
      */
+
     public void process() throws Exception {
 
         FileName input = null;
