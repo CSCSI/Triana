@@ -29,49 +29,70 @@ public class CSVtoVect extends Unit {
     private BufferedReader din;
     String colname;
 
-    Vector csvValues = new Vector();
+    Vector<Double> csvValues = new Vector<Double>();
 
     /*
      * Called whenever there is data for the unit to process
      */
     public void process() throws Exception {
-        FileName input=null;
 
-        if (getInputNodeCount()>0)
-           input = (FileName) getInputAtNode(0);
+        FileName input = null;
+        int nodeCount = getInputNodeCount();
+        //FileName input= (FileName) getInputAtNode(0);
+
+        FileName[] inputFileNames = new FileName[nodeCount];
+
+        if (nodeCount == 0){
+                openInputFile(fileName);
+        }
+        // If there are one or more nodes, go through each node and assign filename to input array
+        if (nodeCount > 0){
+            for (int i = 0; i < nodeCount; ++i) {
+                inputFileNames[i] = (FileName) getInputAtNode(i);
+            }
+        }
 
         if (input!=null)
             fileName = input.getFile();
 
-        VectorType output;
+        int inputNumber;
 
-        openInputFile(fileName);
-
-        String colnames[] = getColumnNameAndValues();
-        colname = colnames[0];
-        System.out.println("colname = " + colname);
-        int len = colnames.length;
-        Double[] csvVals = new Double[csvValues.size()];
-        double[] csvValsFinal = new double[csvValues.size()];
-
-        csvValues.copyInto(csvVals);
-
-        //Converts from Double[] to double[], which is required by Vectortype
-        for (int j = 0; j < csvVals.length; j++){
-            csvValsFinal[j] = csvVals[j];
-        }
-        for (int j = 0; j < csvVals.length; j++){
-            System.out.println("csvValsFinal = " + csvValsFinal[j]);
+        if (nodeCount == 0 || nodeCount == 1){
+            inputNumber = 1;
+        } else {
+            inputNumber = nodeCount;
         }
 
-        closeInputFile();
+        for (int i = 0; i < inputNumber; ++i) {// For each node
+            if (nodeCount > 0){
+                openInputFile(inputFileNames[i].getFile());
+            }
+            VectorType output;
 
-        output = new VectorType(csvValsFinal);
+            String colnames[] = getColumnNameAndValues();
+            colname = colnames[0];
+            System.out.println("colname = " + colname);
 
-        output.setIndependentLabels(0, colname);
-        output.setDependentLabels(0, "Patient Value");
+            Double[] csvVals = new Double[csvValues.size()];
+            double[] csvValsFinal = new double[csvValues.size()];
 
-        output(output);
+            csvValues.copyInto(csvVals);
+
+            //Converts from Double[] to double[], which is required by Vectortype
+            for (int j = 0; j < csvVals.length; j++){
+                csvValsFinal[j] = csvVals[j];
+            }
+            for (int j = 0; j < csvVals.length; j++){
+                System.out.println("csvValsFinal = " + csvValsFinal[j]);
+            }
+
+            closeInputFile();
+
+            output = new VectorType(csvValsFinal);
+            output.setIndependentLabels(0, colname);
+            output.setDependentLabels(0, "Patient Value");
+            outputAtNode(i, output);
+        }
     }
 
     /**
@@ -79,8 +100,11 @@ public class CSVtoVect extends Unit {
      *
      * @param inputFile
      * @return
+     * @throws java.io.FileNotFoundException
      */
     String openInputFile(String inputFile) throws FileNotFoundException {
+        //System.out.println("openInputFile method");
+        System.out.println("inputFile name = " + inputFile);
         inf = new FileInputStream(inputFile);
 
         din = new BufferedReader(new InputStreamReader(inf));
@@ -93,6 +117,7 @@ public class CSVtoVect extends Unit {
     }
 
     public String[] getColumnNameAndValues() throws IOException {
+        //System.out.println("getColumnNameAndValues method");
 
         String inString = null;
         String[] stringArr;
@@ -108,7 +133,7 @@ public class CSVtoVect extends Unit {
         try {
             stringArr = inString.split(",");
             //for (int j = 0; j < myarray.length; j++){
-            while ((inString = din.readLine()) != null) {
+            while ((din.readLine()) != null) {
                 //myarray[j] = din.readLine();
                 //System.out.println("myarray[i] = " + myarray[j]);
                 csvValues.addElement((Double.parseDouble(din.readLine())));
@@ -118,7 +143,6 @@ public class CSVtoVect extends Unit {
             System.out.println("EOF Found!!!");
             return null;
         }
-
         return stringArr;
     }
 
@@ -133,7 +157,7 @@ public class CSVtoVect extends Unit {
         // Initialise node properties
         setDefaultInputNodes(1);
         setMinimumInputNodes(0);
-        setMaximumInputNodes(1);
+        setMaximumInputNodes(Integer.MAX_VALUE);
 
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
