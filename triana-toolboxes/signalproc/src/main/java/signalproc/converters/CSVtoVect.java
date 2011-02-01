@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.Vector;
 
 import org.trianacode.taskgraph.Unit;
+import triana.types.FileName;
 import triana.types.VectorType;
 
 /**
@@ -34,7 +35,13 @@ public class CSVtoVect extends Unit {
      * Called whenever there is data for the unit to process
      */
     public void process() throws Exception {
-        //java.lang.Object input = (java.lang.Object) getInputAtNode(0);
+        FileName input=null;
+
+        if (getInputNodeCount()>0)
+           input = (FileName) getInputAtNode(0);
+
+        if (input!=null)
+            fileName = input.getFile();
 
         VectorType output;
 
@@ -65,11 +72,6 @@ public class CSVtoVect extends Unit {
         output.setDependentLabels(0, "Patient Value");
 
         output(output);
-    }
-
-    private void process(String filename) {
-
-       // output(new TrianaPixelMap(currentImage));
     }
 
     /**
@@ -129,9 +131,9 @@ public class CSVtoVect extends Unit {
         super.init();
 
         // Initialise node properties
-        setDefaultInputNodes(0);
+        setDefaultInputNodes(1);
         setMinimumInputNodes(0);
-        setMaximumInputNodes(0);
+        setMaximumInputNodes(1);
 
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
@@ -193,7 +195,7 @@ public class CSVtoVect extends Unit {
      * by getNodeInputTypes().
      */
     public String [] getInputTypes() {
-        return new String[] {"java.lang.Object"};
+        return new String[] {"FileName"};
     }
 
 
