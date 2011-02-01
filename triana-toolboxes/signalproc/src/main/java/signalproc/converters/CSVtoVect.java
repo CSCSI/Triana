@@ -102,8 +102,8 @@ public class CSVtoVect extends Unit {
      * @return
      * @throws java.io.FileNotFoundException
      */
-    String openInputFile(String inputFile) throws FileNotFoundException {
-        //System.out.println("openInputFile method");
+    public String openInputFile(String inputFile) throws FileNotFoundException {
+
         System.out.println("inputFile name = " + inputFile);
         inf = new FileInputStream(inputFile);
 
@@ -134,8 +134,6 @@ public class CSVtoVect extends Unit {
             stringArr = inString.split(",");
             //for (int j = 0; j < myarray.length; j++){
             while ((din.readLine()) != null) {
-                //myarray[j] = din.readLine();
-                //System.out.println("myarray[i] = " + myarray[j]);
                 csvValues.addElement((Double.parseDouble(din.readLine())));
             }
 
