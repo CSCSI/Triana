@@ -66,12 +66,28 @@ public class CSVtoVect extends Unit {
             else if (singleNodeInput instanceof Object[]){
                 inputobjects = (Object[]) singleNodeInput;
 
+                int outputNode=0;
                 // Print out the four strings, ignore last Stringbuffer
-                for (int i = 0; i < (inputobjects.length)-1; ++i){
-                   // System.out.println("inputobjects i = " + inputobjects[i]);
+                for (Object string : inputobjects){
+                    if (string instanceof String) { // its a CSV
+                         String[] vals = ((String)string).split("\n");
+
+                         double[] vectVals= new double[vals.length-1];
+
+                         for (int i=1; i<vals.length; ++i ) {
+                             vectVals[i-1] = (double)Integer.parseInt(vals[i]);
+                         }
+
+                        VectorType v = new VectorType(vectVals);
+                        v.setIndependentLabels(0, vals[0] + " (Num)");
+                        v.setDependentLabels(0, "Cluster Number");
+                        outputAtNode(outputNode, v);
+                        ++outputNode;
+                        if (outputNode> this.getOutputNodeCount())
+                            throw new Exception("Too many inputs for output nodes - input count is " + outputNode);
+                   }
                 }
-                System.out.println("inputobjects.length = " + inputobjects.length);
-                //String type = singleNodeInput instanceof;
+                return; // once output all inputs, return in this mode.
             }
         }
 
