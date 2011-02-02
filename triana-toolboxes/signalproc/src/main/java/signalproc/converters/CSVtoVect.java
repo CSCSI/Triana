@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.Scanner;
 import java.util.Vector;
 
 import org.trianacode.taskgraph.Unit;
@@ -13,9 +15,10 @@ import triana.types.VectorType;
 
 /**
  * Unit to convert single (first) column CSV file or fileName (passed from previous unit) to a Triana VectorType.
- * If there are no input nodes the built-in browser must be used. If there are input nodes, the built in browser is
- * ignored. This unit can accept multiple inputs, and will process each of the incoming fileNames and output the
- * VectorType to the corresponding output node.
+ * If there are no input nodes the built-in browser is used. If there are input nodes, the built in browser is
+ * ignored and either a custom Object array or multiple incoming FileNames (on multiple input nodes can be used as
+ * input. If there are multiple FileName input nodes, the outputted VectorType corresponds to the same number output as
+ * the input. Simples.
  *
  * @author     Eddie Al-Shakarchi
  * @created    31 Jan 2011
@@ -30,9 +33,8 @@ public class CSVtoVect extends Unit {
     private String fileName;
     private FileInputStream inf = null;
     private BufferedReader din;
-    String colname;
 
-    Vector<Double> csvValues = new Vector<Double>();
+    private Vector<Double> csvValues = new Vector<Double>();
 
     /*
      * Called whenever there is data for the unit to process
@@ -43,58 +45,117 @@ public class CSVtoVect extends Unit {
         FileName input = null;
         int nodeCount = getInputNodeCount();
         FileName[] inputFileNames = new FileName[nodeCount];
+        Object singleNodeInput = null;
+        Object[] inputobjects = null;
+        int inputNumber;
 
+        // If there are no input nodes, use built in file browser
         if (nodeCount == 0){
                 openInputFile(fileName);
         }
 
-        // If there are one or more nodes, go through each node and assign filename to input array
-        if (nodeCount > 0){
-            for (int i = 0; i < nodeCount; ++i) {
-                inputFileNames[i] = (FileName) getInputAtNode(i);
+        // If there's just one input, find out if it's an object array or a fileName
+        if (nodeCount == 1){
+
+            singleNodeInput = getInputAtNode(0);
+
+            // if the input is a filename, continue as normal
+            if (singleNodeInput instanceof FileName) {
+                    inputFileNames[0] = (FileName) singleNodeInput;
             }
+            else if (singleNodeInput instanceof Object[]){
+                inputobjects = (Object[]) singleNodeInput;
+
+                // Print out the four strings, ignore last Stringbuffer
+                for (int i = 0; i < (inputobjects.length)-1; ++i){
+                   // System.out.println("inputobjects i = " + inputobjects[i]);
+                }
+                System.out.println("inputobjects.length = " + inputobjects.length);
+                //String type = singleNodeInput instanceof;
+            }
+        }
+
+        // If there are more than one nodes, go through each node and assign filename to input array
+        if (nodeCount > 1){
+            for (int i = 0; i < nodeCount; ++i)
+                inputFileNames[i] = (FileName) getInputAtNode(i);
         }
 
         if (input!=null)
             fileName = input.getFile();
 
-        int inputNumber;
-
-        if (nodeCount == 0 || nodeCount == 1){
+        if (nodeCount == 0 || nodeCount == 1)
             inputNumber = 1;
-        } else {
+        else
             inputNumber = nodeCount;
-        }
 
-        for (int i = 0; i < inputNumber; ++i) {// For each node
-            if (nodeCount > 0){
-                openInputFile(inputFileNames[i].getFile());
-            }
+        // For each node
+        for (int i = 0; i < inputNumber; ++i) {
+
+            String colname = null;
             VectorType output;
+            String[] colnames = null;
 
-            String colnames[] = getColumnNameAndValues();
-            colname = colnames[0];
-            System.out.println("colname = " + colname);
+            VectorType[] outputs = null;
 
-            Double[] csvVals = new Double[csvValues.size()];
-            double[] csvValsFinal = new double[csvValues.size()];
+            // Essentially making sure that the input is 1 or more FileNames
+            if (nodeCount > 0 && !(singleNodeInput instanceof Object[])){
+                openInputFile(inputFileNames[i].getFile());
+                colname = getColumnNameAndValues();
 
-            csvValues.copyInto(csvVals);
+                System.out.println("colname = " + colname);
 
-            //Converts from Double[] to double[], which is required by Vectortype
-            for (int j = 0; j < csvVals.length; j++){
-                csvValsFinal[j] = csvVals[j];
+                Double[] csvVals = new Double[csvValues.size()];
+                double[] csvValsFinal = new double[csvValues.size()];
+
+                csvValues.copyInto(csvVals);
+
+                //Converts from Double[] to double[], which is required by Vectortype
+                for (int j = 0; j < csvVals.length; ++j){
+                    csvValsFinal[j] = csvVals[j];
+                    System.out.println("csvValsFinal = " + csvValsFinal[j]);
+                }
+
+                closeInputFile();
+
+                output = new VectorType(csvValsFinal);
+                output.setIndependentLabels(0, colname);
+                output.setDependentLabels(0, "Patient Value");
+                outputAtNode(i, output);
             }
-            for (int j = 0; j < csvVals.length; j++){
-                System.out.println("csvValsFinal = " + csvValsFinal[j]);
+
+            // Else If we're dealing with array of Objects...
+            else if (nodeCount == 1 && (singleNodeInput instanceof Object[])){
+
+                colnames = new String[inputobjects.length];
+
+                // For each object (minus the last one which is a StringBuffer), assign the column name - needed for output
+                for (int j = 0; j < (inputobjects.length)-1; ++j){
+                    //System.out.println("inputobjects i = " + inputobjects[j]);
+                    colnames[j] = getColumnNameAndValuesFromString(inputobjects[j].toString());
+                    System.out.println("colnames = " + colnames[j]);
+                }
+
+                Double[] csvVals = new Double[csvValues.size()];
+                double[] csvValsFinal = new double[csvValues.size()];
+
+                csvValues.copyInto(csvVals);
+
+                //Converts from Double[] to double[], which is required by Vectortype
+                for (int j = 0; j < csvVals.length; ++j){
+                    csvValsFinal[j] = csvVals[j];
+                    //System.out.println("csvValsFinal = " + csvValsFinal[j]);
+                }
+
+                // Trying to show here that you need to output each of the '4' strings as a VectorType on a different node
+                // so that String 1 is outputted to output node 0, and so on
+                for (int j = 0; j < (inputobjects.length)-1; ++j){
+                    outputs[j] = new VectorType(csvValsFinal);
+                    outputs[j].setIndependentLabels(0, colnames[j]);
+                    outputs[j].setDependentLabels(0, "Patient Value");
+                    outputAtNode(i, outputs[j]);
+                }
             }
-
-            closeInputFile();
-
-            output = new VectorType(csvValsFinal);
-            output.setIndependentLabels(0, colname);
-            output.setDependentLabels(0, "Patient Value");
-            outputAtNode(i, output);
         }
     }
 
@@ -119,32 +180,55 @@ public class CSVtoVect extends Unit {
         catch(IOException e) {System.out.println("Input file close error!!!"+e);return;}
     }
 
-    public String[] getColumnNameAndValues() throws IOException {
-        //System.out.println("getColumnNameAndValues method");
 
-        String inString = null;
-        String[] stringArr;
+    public String getColumnNameAndValuesFromString(String current) throws IOException{
+        String str = "";
+        String columnName = null;
 
-        try {
-            inString = din.readLine();
-        } //catch(EOFException ee) {System.out.println("End of Input File Reached!!");return;}
-        catch(IOException e) {
-            System.out.println("File record read error!!");
-            return null;
-        }
+        BufferedReader reader = new BufferedReader(new StringReader(current));
+        int index = 0;
 
         try {
-            stringArr = inString.split(",");
-            //for (int j = 0; j < myarray.length; j++){
-            while ((din.readLine()) != null) {
-                csvValues.addElement((Double.parseDouble(din.readLine())));
+            while ((str = reader.readLine()) != null) {
+                if (index == 0){
+                    columnName = (str);
+                }
+                else{
+                    csvValues.addElement((Double.parseDouble(str)));
+                }
+                ++index;
             }
-
-        } catch(NullPointerException eee) {
-            System.out.println("EOF Found!!!");
-            return null;
         }
-        return stringArr;
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        return columnName;
+    }
+
+
+    public String getColumnNameAndValues() throws IOException {
+        //System.out.println("getColumnNameAndValues method");
+        String columnName = null;
+
+		Scanner numScan = new Scanner(inf);
+
+		String line;
+        int index = 0;
+
+		while (numScan.hasNext()) {
+			line = numScan.nextLine();
+
+            if (index == 0){
+                    columnName = (line);
+                }
+            else{
+                csvValues.addElement((Double.parseDouble(line)));
+            }
+            ++index;
+			//System.out.println(line);
+		}
+        System.out.println("index size = " + index);
+        return columnName;
     }
 
     /**
@@ -218,7 +302,7 @@ public class CSVtoVect extends Unit {
      * by getNodeInputTypes().
      */
     public String [] getInputTypes() {
-        return new String[] {"FileName"};
+        return new String[] {"FileName", "java.lang.Object"};
     }
 
     /**
