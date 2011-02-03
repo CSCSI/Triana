@@ -70,6 +70,7 @@ public class CSVtoVect extends Unit {
                 // Print out the four strings, ignore last Stringbuffer
                 for (Object string : inputobjects){
                     if (string instanceof String) { // its a CSV
+                        System.out.println("Processing " + string);
                          String[] vals = ((String)string).split("\n");
 
                          double[] vectVals= new double[vals.length-1];
@@ -83,8 +84,8 @@ public class CSVtoVect extends Unit {
                         v.setDependentLabels(0, "Cluster Number");
                         outputAtNode(outputNode, v);
                         ++outputNode;
-                        if (outputNode> this.getOutputNodeCount())
-                            throw new Exception("Too many inputs for output nodes - input count is " + outputNode);
+                        if (outputNode> this.getOutputNodeCount()) return;
+   //                         throw new Exception("Too many inputs for output nodes - input count is " + outputNode);
                    }
                 }
                 return; // once output all inputs, return in this mode.
