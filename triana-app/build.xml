@@ -68,10 +68,10 @@
         </antcall>
         <antcall target="dev-toolboxes"/>
         <mkdir dir="dist/modules"/>
-        <antcall target="module">
+        <!--<antcall target="module">
             <param name="module" value="triana-pegasus"/>
             <param name="targetModule" value="pegasus"/>
-        </antcall>
+        </antcall>-->
     </target>
 
     <target name="module">

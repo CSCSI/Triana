@@ -120,12 +120,18 @@ public class ToolBoxPanel extends ParameterPanel implements ActionListener, List
     }
 
     private void apply() {
+        if (typeField.getText() == null || typeField.getText().length() == 0) {
+            return;
+        }
         ToolboxLoader loader = ToolboxLoaderRegistry.getLoader(typeField.getText());
         String name = nameField.getText();
         if (name.length() == 0) {
             name = null;
         }
         String path = pathField.getText();
+        if (path == null || path.length() == 0) {
+            return;
+        }
 
         Toolbox t = tools.getToolResolver().getToolbox(path);
         if (t != null) {
