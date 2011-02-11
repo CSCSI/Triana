@@ -769,6 +769,7 @@ public class FileUtils {
             if (FileUtils.isOnInternet(imageName)) {
                 image = Toolkit.getDefaultToolkit().getImage(new URL(imageName));
             } else {
+                System.out.println("FileUtils.getImage getting image for path:" + imageName);
                 image = Toolkit.getDefaultToolkit().getImage(imageName);
             }
         } catch (Exception e) {

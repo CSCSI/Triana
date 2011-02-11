@@ -21,6 +21,9 @@ public class PoisonTask implements Task {
         this.properties = properties;
     }
 
+    public PoisonTask() {
+    }
+
     /**
      * Not sure what this does - how is this created etc ?
      *

@@ -66,10 +66,7 @@ import org.trianacode.taskgraph.service.RunnableInstance;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -85,7 +82,7 @@ public class TaskGraphImp extends TaskImp
     /**
      * a hashtable containing all the tasks with this taskgraph keyed by taskid.
      */
-    public Hashtable tasks = new Hashtable();
+    private Map<String, Task> tasks = new Hashtable<String, Task>();
 
     /**
      * an array list of the task's listeners
@@ -489,12 +486,13 @@ public class TaskGraphImp extends TaskImp
             copy = new Task[tasks.size() - 1];
         }
 
-        Enumeration enumeration = tasks.elements();
+        Set<String> enumeration = tasks.keySet();
+        Iterator it = enumeration.iterator();
         Task task;
         int count = 0;
 
-        while (enumeration.hasMoreElements()) {
-            task = (Task) enumeration.nextElement();
+        while (it.hasNext()) {
+            task = tasks.get(it.next());
 
             if (includecontrol || (task != controltask)) {
                 if (task == controltask) {
@@ -572,7 +570,7 @@ public class TaskGraphImp extends TaskImp
      * @return true if the taskgraph contains the specified task
      */
     public boolean containsTask(Task task) {
-        return tasks.contains(task) || (controltask == task);
+        return tasks.values().contains(task) || (controltask == task);
     }
 
     /**
@@ -915,12 +913,12 @@ public class TaskGraphImp extends TaskImp
      */
     public void taskNameUpdate(Task task) {
         if (containsTask(task)) {
-            Enumeration enumeration = tasks.keys();
+            Set<String> enumeration = tasks.keySet();
             boolean found = false;
             Object key;
-
-            while ((!found) && enumeration.hasMoreElements()) {
-                key = enumeration.nextElement();
+            Iterator it = enumeration.iterator();
+            while ((!found) && it.hasNext()) {
+                key = it.next();
 
                 if (tasks.get(key) == task) {
                     tasks.remove(key);
@@ -1175,9 +1173,10 @@ public class TaskGraphImp extends TaskImp
     public void dispose() {
         removeTaskListener(this);
 
-        Enumeration enumeration = tasks.elements();
-        while (enumeration.hasMoreElements()) {
-            removeTask((Task) enumeration.nextElement());
+        Set<String> enumeration = tasks.keySet();
+        Iterator it = enumeration.iterator();
+        while (it.hasNext()) {
+            removeTask((Task) tasks.get(it.next()));
         }
         execlisteners.clear();
         super.dispose();

@@ -1165,4 +1165,77 @@ public class TaskGraphUtils {
         return (String[]) typelist.toArray(new String[typelist.size()]);
     }
 
+
+    public static java.util.List<Task> getSuccessors(Task t) {
+        java.util.List<Task> ret = new ArrayList<Task>();
+        int count = t.getOutputNodeCount();
+        for (int i = 0; i < count; i++) {
+            Node node = t.getOutputNode(i);
+            if (node.isConnected()) {
+                ret.add(node.getCable().getReceivingTask());
+            }
+        }
+        return ret;
+    }
+
+    public static java.util.List<Task> getPredecessors(Task t) {
+        java.util.List<Task> ret = new ArrayList<Task>();
+
+        int count = t.getInputNodeCount();
+        for (int i = 0; i < count; i++) {
+            Node node = t.getInputNode(i);
+            if (node.isConnected()) {
+                ret.add(node.getCable().getSendingTask());
+            }
+        }
+        return ret;
+    }
+
+    public static java.util.List<Task> getLeafTasks(TaskGraph taskgraph) {
+        Task[] tasks = taskgraph.getTasks(false);
+        Node[] outnodes;
+        ArrayList endtasks = new ArrayList();
+        boolean endtask;
+
+        for (int count = 0; count < tasks.length; count++) {
+            outnodes = tasks[count].getDataOutputNodes();
+            endtask = true;
+
+            for (int nodecount = 0; (nodecount < outnodes.length) && endtask; nodecount++) {
+                if (outnodes[nodecount].isConnected()) {
+                    endtask = false;
+                }
+            }
+
+            if (endtask) {
+                endtasks.add(tasks[count]);
+            }
+        }
+        return endtasks;
+    }
+
+    public static java.util.List<Task> getRootTasks(TaskGraph taskgraph) {
+        Task[] tasks = taskgraph.getTasks(false);
+        Node[] innodes;
+        ArrayList endtasks = new ArrayList();
+        boolean starttask;
+
+        for (int count = 0; count < tasks.length; count++) {
+            innodes = tasks[count].getDataInputNodes();
+            starttask = true;
+
+            for (int nodecount = 0; (nodecount < innodes.length) && starttask; nodecount++) {
+                if (innodes[nodecount].isConnected()) {
+                    starttask = false;
+                }
+            }
+
+            if (starttask) {
+                endtasks.add(tasks[count]);
+            }
+        }
+        return endtasks;
+    }
+
+
 }

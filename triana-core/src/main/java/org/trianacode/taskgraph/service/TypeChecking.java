@@ -98,12 +98,19 @@ public final class TypeChecking {
      */
     public static boolean isCompatibility(Class[] outTypes, Class[] inTypes) {
 
+        System.out.println("TypeChecking.isCompatibility ENTER MATCH ");
+        for (Class outType : outTypes) {
+            System.out.println("TypeChecking.isCompatibility OUTTYPE:" + outType);
+        }
+        for (Class inType : inTypes) {
+            System.out.println("TypeChecking.isCompatibility INTYPE:" + inType);
+        }
         boolean match = false;
 
         for (int outcount = 0; (!match) && (outcount < outTypes.length); ++outcount) {
             for (int incount = 0; (!match) && (incount < inTypes.length); ++incount) {
-                log.debug("TypeChecking.isCompatibility OUT:" + outTypes[outcount]);
-                log.debug("TypeChecking.isCompatibility IN:" + inTypes[incount]);
+                log.info("TypeChecking.isCompatibility OUT:" + outTypes[outcount]);
+                log.info("TypeChecking.isCompatibility IN:" + inTypes[incount]);
                 match = match || (outTypes[outcount].isAssignableFrom(inTypes[incount])) ||
                         (inTypes[incount].isAssignableFrom(outTypes[outcount]));
             }
@@ -127,7 +134,7 @@ public final class TypeChecking {
         Class sentType = sentObject.getClass();
 
         for (int count = 0; count < inTypes.length; ++count) {
-            log.debug("TypeChecking.isCompatible in:" + inTypes[count] + " out:" + sentType);
+            log.info("TypeChecking.isCompatible in:" + inTypes[count] + " out:" + sentType);
             if (inTypes[count].isAssignableFrom(sentType)) {
                 return true;
             }

@@ -102,5 +102,4 @@ public class TaskGraphPanelUtils {
         return new Rectangle2D.Double(minX, minY, width, height);
     }
 
-
 }

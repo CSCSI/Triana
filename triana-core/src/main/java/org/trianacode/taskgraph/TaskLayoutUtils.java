@@ -58,10 +58,10 @@
  */
 package org.trianacode.taskgraph;
 
+import org.trianacode.taskgraph.tool.Tool;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * A set of utils for manipulating the location of tasks (as stored in their GUI_XPOS and DEPRECATED_GUI_YPOS
@@ -205,6 +205,16 @@ public class TaskLayoutUtils {
         for (int count = 0; count < tasks.length; count++) {
             taskpos = getPosition(tasks[count]);
             setPosition(tasks[count], new TPoint(taskpos.getX() - grouppos.getX(), taskpos.getY() - grouppos.getY()));
+        }
+    }
+
+    public static void translateToOrigin(Task[] tasks, int border) {
+        TRectangle grouppos = getBoundingBox(tasks);
+        TPoint taskpos;
+
+        for (int count = 0; count < tasks.length; count++) {
+            taskpos = getPosition(tasks[count]);
+            setPosition(tasks[count], new TPoint((taskpos.getX() - grouppos.getX()) + border, (taskpos.getY() - grouppos.getY()) + border));
         }
     }
 

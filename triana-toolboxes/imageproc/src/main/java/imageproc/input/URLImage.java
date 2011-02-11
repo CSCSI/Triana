@@ -26,6 +26,10 @@ public class URLImage extends Unit {
     public void process() {
         TrianaImage trianaImage = null;
 
+        Object data = getInputAtNode(0);
+        if (data != null) {
+            imageUrlString = data.toString();
+        }
         if (!imageUrlString.equals("")) {
             Image image = FileUtils.getImage(imageUrlString);
             trianaImage = new TrianaImage(image);
@@ -86,7 +90,7 @@ public class URLImage extends Unit {
      *         space.
      */
     public String[] getInputTypes() {
-        return new String[]{};
+        return new String[]{"java.lang.String"};
     }
 
     /**

@@ -59,30 +59,15 @@
 package org.trianacode.gui.hci;
 
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-
-import javax.swing.Action;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 import org.trianacode.gui.hci.tools.TaskGraphViewManager;
-import org.trianacode.gui.main.NodeComponent;
-import org.trianacode.gui.main.SelectionBoxInterface;
-import org.trianacode.gui.main.TaskComponent;
-import org.trianacode.gui.main.TaskGraphPanel;
-import org.trianacode.gui.main.TaskSubComponent;
+import org.trianacode.gui.main.*;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskLayoutUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * ToolMouseHandler handles all mouse events on task components and on the panel taskgraph window.
@@ -339,16 +324,16 @@ public class ToolMouseHandler implements
                 if (!task.isSelected()) {
                     selectOnly(task);
                 }
-
                 onrelease = DO_NOTHING_ON_RELEASE;
             } else {
                 if (task.isSelected()) {
-                    onrelease = SELECT_NONE_ON_RELEASE;
+                    onrelease = DO_NOTHING_ON_RELEASE;
+                    //onrelease = SELECT_NONE_ON_RELEASE;
+
+                } else {
+                    selectOnly(task);
                 }
-
-                selectOnly(task);
             }
-
             task.setSelected(true);
         }
 

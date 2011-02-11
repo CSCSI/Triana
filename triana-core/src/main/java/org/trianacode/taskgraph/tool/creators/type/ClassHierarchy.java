@@ -95,7 +95,7 @@ public class ClassHierarchy {
     }
 
     public String toString() {
-        return "Name:" + name + " Superclass:" + superClass + " Interfaces:" + interfaces;
+        return "Name:" + name + " Superclass:" + superClass + " Interfaces:" + interfaces + " Annotated:" + annotated;
     }
 
 
