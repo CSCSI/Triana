@@ -1,10 +1,12 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.annotation.CheckboxParameter;
+import org.trianacode.annotation.Parameter;
+import org.trianacode.annotation.TextFieldParameter;
+import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.pegasus.string.PatternCollection;
-import org.trianacode.taskgraph.annotation.*;
-import org.trianacode.taskgraph.annotation.Process;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +39,7 @@ public class FileUnit {
     @CheckboxParameter
     private boolean one2one = false;
 
-    @Process(gather = true)
+    @org.trianacode.annotation.Process(gather = true)
     public UUID fileUnitProcess(List in) {
 
         log("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
@@ -157,4 +159,5 @@ public class FileUnit {
         log.debug(s);
         System.out.println(s);
     }
+
 }

@@ -1,4 +1,4 @@
-package org.trianacode.taskgraph.annotation;
+package org.trianacode.annotation;
 
 /**
  * Annotation to be applied to a method in a class that is annotated with the @Tool annotation This annotation

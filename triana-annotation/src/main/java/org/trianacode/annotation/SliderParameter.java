@@ -1,4 +1,4 @@
-package org.trianacode.taskgraph.annotation;
+package org.trianacode.annotation;
 
 /**
  * GENERAL NOTE: parameters that are displayed in auto generated GUIs should only be primitive or string types

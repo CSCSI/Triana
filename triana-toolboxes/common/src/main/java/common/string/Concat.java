@@ -1,8 +1,7 @@
 package common.string;
 
-import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.TextFieldParameter;
-import org.trianacode.taskgraph.annotation.Tool;
+import org.trianacode.annotation.TextFieldParameter;
+import org.trianacode.annotation.Tool;
 
 import java.util.Collection;
 
@@ -17,7 +16,7 @@ public class Concat {
     @TextFieldParameter
     private String boundary = " ";
 
-    @Process(gather = true)
+    @org.trianacode.annotation.Process(gather = true)
     public String concat(Collection vals) {
         StringBuilder sb = new StringBuilder();
 

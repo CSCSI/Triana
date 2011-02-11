@@ -4,9 +4,9 @@
 //import org.trianacode.enactment.logging.Loggers;
 //import org.trianacode.gui.hci.GUIEnv;
 //import org.trianacode.taskgraph.TaskGraph;
-//import org.trianacode.taskgraph.annotation.CheckboxParameter;
-//import org.trianacode.taskgraph.annotation.TextFieldParameter;
-//import org.trianacode.taskgraph.annotation.Tool;
+//import org.trianacode.annotation.CheckboxParameter;
+//import org.trianacode.annotation.TextFieldParameter;
+//import org.trianacode.annotation.Tool;
 //
 //import javax.swing.*;
 //import java.awt.*;
@@ -43,7 +43,7 @@
 //    @TextFieldParameter
 //    private String fileName = "output";
 //
-//    @org.trianacode.taskgraph.annotation.Process(gather=true)
+//    @org.trianacode.annotation.Process(gather=true)
 //    public java.io.File process(List in) {
 //        log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 //

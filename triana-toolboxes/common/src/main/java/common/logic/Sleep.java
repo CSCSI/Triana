@@ -1,8 +1,8 @@
 package common.logic;
 
-import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.SliderParameter;
-import org.trianacode.taskgraph.annotation.Tool;
+import org.trianacode.annotation.Process;
+import org.trianacode.annotation.SliderParameter;
+import org.trianacode.annotation.Tool;
 
 import java.util.List;
 

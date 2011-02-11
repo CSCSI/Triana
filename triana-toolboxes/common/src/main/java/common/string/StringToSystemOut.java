@@ -1,7 +1,6 @@
 package common.string;
 
-import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.Tool;
+import org.trianacode.annotation.Tool;
 
 import java.util.List;
 
@@ -16,12 +15,12 @@ import java.util.List;
 @Tool
 public class StringToSystemOut {
 
-    @Process(gather = true)
-    public void process(List list){
+    @org.trianacode.annotation.Process(gather = true)
+    public void process(List list) {
 
         for (Object o : list) {
-            if (o instanceof String){
-                System.out.println("" + (String)o);
+            if (o instanceof String) {
+                System.out.println("" + (String) o);
             }
         }
     }

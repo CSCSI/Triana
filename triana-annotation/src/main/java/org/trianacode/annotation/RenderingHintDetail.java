@@ -1,4 +1,4 @@
-package org.trianacode.taskgraph.annotation;
+package org.trianacode.annotation;
 
 /**
  * The hint value must match a rendering hint given in the Tool annotation
@@ -11,5 +11,6 @@ package org.trianacode.taskgraph.annotation;
 public @interface RenderingHintDetail {
 
     String hint();
+
     String detail();
 }

@@ -1,5 +1,7 @@
 package org.trianacode.taskgraph.annotation;
 
+import org.trianacode.annotation.*;
+import org.trianacode.annotation.Process;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 

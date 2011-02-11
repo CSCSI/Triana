@@ -1,9 +1,9 @@
 package common.string;
 
-import org.trianacode.taskgraph.annotation.Parameter;
-import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.TextAreaParameter;
-import org.trianacode.taskgraph.annotation.Tool;
+import org.trianacode.annotation.Parameter;
+import org.trianacode.annotation.Process;
+import org.trianacode.annotation.TextAreaParameter;
+import org.trianacode.annotation.Tool;
 
 /**
  * @author Andrew Harrison

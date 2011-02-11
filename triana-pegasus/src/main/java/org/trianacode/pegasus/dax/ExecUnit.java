@@ -1,12 +1,12 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.annotation.Parameter;
+import org.trianacode.annotation.Process;
+import org.trianacode.annotation.TextFieldParameter;
+import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.annotation.Parameter;
-import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.TextFieldParameter;
-import org.trianacode.taskgraph.annotation.Tool;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -17,14 +17,14 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
  * todo - pipe input stream?
+ *
  * @author Andrew Harrison
  * @version 1.0.0 Jul 27, 2010
  */
 
-@Tool (panelClass = "org.trianacode.pegasus.dax.ExecUnitPanel")
-public class ExecUnit{
+@Tool(panelClass = "org.trianacode.pegasus.dax.ExecUnitPanel")
+public class ExecUnit {
 
     public static final String numberOfFiles = "Number of files";
     public static final String namesOfFiles = "Names of files";
@@ -42,8 +42,8 @@ public class ExecUnit{
     @Parameter
     private String save_as = "";
 
-    @Process(gather=true)
-    public DaxSettingObject process(List in){
+    @Process(gather = true)
+    public DaxSettingObject process(List in) {
 
         dso.clear();
 
@@ -56,16 +56,16 @@ public class ExecUnit{
 
         List<String> options = new ArrayList<String>();
         String[] optionsStrings = executable_args.split(" ");
-        for(int i = 0; i < optionsStrings.length; i++){
+        for (int i = 0; i < optionsStrings.length; i++) {
             options.add(optionsStrings[i]);
         }
 
         StringBuilder out = new StringBuilder();
         List commmandStrVector = new ArrayList();
-        if(!executable.equals("")){
-            if(!error()){
+        if (!executable.equals("")) {
+            if (!error()) {
                 commmandStrVector.add(executable);
-                if(!input_file.equals("")){
+                if (!input_file.equals("")) {
                     commmandStrVector.add(input_file);
                 }
                 commmandStrVector.addAll(options);
@@ -116,46 +116,45 @@ public class ExecUnit{
 
     }
 
-    private boolean error(){
-        if(input_file.equals("")){
+    private boolean error() {
+        if (input_file.equals("")) {
             return false;
-        }else{
-            if( new File(input_file).exists()){
+        } else {
+            if (new File(input_file).exists()) {
                 return false;
-            }else{
-                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Input file (" + input_file +")for ExecUnit does not appear to exist.\n" +
+            } else {
+                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Input file (" + input_file + ")for ExecUnit does not appear to exist.\n" +
                         ".dax file will be created, but may contain errors.", "Error", JOptionPane.WARNING_MESSAGE);
                 return true;
             }
         }
     }
 
-    private void checkForData(String s){
-        if(s.contains(search_for)){
+    private void checkForData(String s) {
+        if (s.contains(search_for)) {
             log("Found : " + search_for);
             String found = s.substring(search_for.length());
             log("Adding : " + found);
 
-            if(save_as.equals(ExecUnit.numberOfFiles)){
+            if (save_as.equals(ExecUnit.numberOfFiles)) {
                 dso.addObject(ExecUnit.numberOfFiles, found);
             }
-            if(save_as.equals(ExecUnit.namesOfFiles)){
+            if (save_as.equals(ExecUnit.namesOfFiles)) {
                 String foundNames = dso.getFileNames();
                 String names = "";
-                if(foundNames.equals("")){
+                if (foundNames.equals("")) {
                     names = found;
-                }
-                else{
+                } else {
                     names = foundNames + ", " + found;
                 }
                 dso.addObject(ExecUnit.namesOfFiles, names);
             }
-        }else{
+        } else {
             //         log("String : *" + s + "* does not contain : " + search_for);
         }
     }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);

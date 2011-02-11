@@ -1,8 +1,7 @@
 package common.file;
 
-import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.TextFieldParameter;
-import org.trianacode.taskgraph.annotation.Tool;
+import org.trianacode.annotation.TextFieldParameter;
+import org.trianacode.annotation.Tool;
 
 import java.io.File;
 
@@ -14,22 +13,22 @@ import java.io.File;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass="common.file.FileLoaderPanel")
+@Tool(panelClass = "common.file.FileLoaderPanel")
 public class FileLoader {
 
     @TextFieldParameter
     private String filePath = "";
 
-    @Process
-    public File process(){
+    @org.trianacode.annotation.Process
+    public File process() {
 
-        if (!filePath.equals("")){
+        if (!filePath.equals("")) {
             File file = new File(filePath);
-            if(file.exists()){
+            if (file.exists()) {
                 return file;
             }
             return null;
         }
-        return new File ("./diamond.dax");
+        return new File("./diamond.dax");
     }
 }

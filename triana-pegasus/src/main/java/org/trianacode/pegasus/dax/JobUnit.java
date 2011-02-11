@@ -1,9 +1,9 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.annotation.*;
+import org.trianacode.annotation.Process;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.taskgraph.annotation.*;
-import org.trianacode.taskgraph.annotation.Process;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package org.trianacode.taskgraph.annotation;
+package org.trianacode.annotation;
 
 /**
  * Annotation that should be applied to a class wanting to be wrapped as a Tool This annotation should be applied to the

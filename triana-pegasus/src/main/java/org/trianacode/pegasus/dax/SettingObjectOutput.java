@@ -1,8 +1,8 @@
 package org.trianacode.pegasus.dax;
 
-import org.trianacode.taskgraph.annotation.Parameter;
-import org.trianacode.taskgraph.annotation.Process;
-import org.trianacode.taskgraph.annotation.Tool;
+import org.trianacode.annotation.Parameter;
+import org.trianacode.annotation.Process;
+import org.trianacode.annotation.Tool;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool (panelClass = "org.trianacode.pegasus.dax.SettingObjectOutputPanel")
+@Tool(panelClass = "org.trianacode.pegasus.dax.SettingObjectOutputPanel")
 public class SettingObjectOutput {
 
     @Parameter
@@ -24,9 +24,9 @@ public class SettingObjectOutput {
 
 
     @Process(gather = true)
-    public DaxSettingObject process(List in){
-        for(Object o : in){
-            if(o instanceof DaxSettingObject){
+    public DaxSettingObject process(List in) {
+        for (Object o : in) {
+            if (o instanceof DaxSettingObject) {
                 HashMap thisMap = ((DaxSettingObject) o).getHashMap();
                 System.out.println("Incoming map : " + thisMap);
                 map.putAll(thisMap);
@@ -35,11 +35,11 @@ public class SettingObjectOutput {
         }
 
         DaxSettingObject outputdso = new DaxSettingObject(map);
-        System.out.println("Output dso : " + outputdso);        
+        System.out.println("Output dso : " + outputdso);
         return outputdso;
 
     }
 
-    private void setParam(){
+    private void setParam() {
     }
 }

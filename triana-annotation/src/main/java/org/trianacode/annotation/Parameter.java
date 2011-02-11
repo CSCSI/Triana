@@ -1,4 +1,4 @@
-package org.trianacode.taskgraph.annotation;
+package org.trianacode.annotation;
 
 /**
  * An annotation to allow parameters to be defined. This annotation should be applied to fields.
