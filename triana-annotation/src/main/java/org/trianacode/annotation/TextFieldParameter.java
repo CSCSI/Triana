@@ -1,7 +1,8 @@
 package org.trianacode.annotation;
 
 /**
- * GENERAL NOTE: parameters that are displayed in auto generated GUIs should only be primitive or string types
+ * GENERAL NOTE: parameters that are displayed in auto generated GUIs should only be primitive or string types.
+ * <p/>
  * automatically defines a field as a parameter and defines the gui for it
  * <p/>
  * This will produce a text field suitable for short strings with no new lines

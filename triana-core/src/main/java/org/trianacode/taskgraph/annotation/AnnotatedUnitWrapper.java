@@ -1,5 +1,6 @@
 package org.trianacode.taskgraph.annotation;
 
+import org.trianacode.annotation.NodeAware;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
@@ -33,6 +34,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private int minimumOutputs = 0;
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
     private Method customGUIComponent;
+    private boolean toolAware = false;
 
 
     private Map<String, Field> params = new HashMap<String, Field>();
@@ -56,6 +58,9 @@ public class AnnotatedUnitWrapper extends Unit {
         this.inputs = inputs;
         this.outputs = outputs;
         this.aggregate = aggregate;
+        if (annotated instanceof NodeAware) {
+            toolAware = true;
+        }
         for (String input : inputs) {
             debug("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
         }
@@ -153,9 +158,11 @@ public class AnnotatedUnitWrapper extends Unit {
         } else {
             if (customGUIComponent != null) {
 
-                Object gui=null;
+                Object gui = null;
                 try {
                     gui = customGUIComponent.invoke(annotated, new Object[0]);
+
+                    // TODO - HACK. need some sort of callback to panel manager from tool
                     Class manager = ClassLoaders.forName("org.trianacode.gui.panels.ParameterPanelManager");
                     Method setter = manager.getMethod("registerComponent", new Class[]{ClassLoaders.forName("java.awt.Component"), Task.class});
                     setter.invoke(null, new Object[]{gui, this.getTask()});
@@ -270,10 +277,16 @@ public class AnnotatedUnitWrapper extends Unit {
     @Override
     public void process() throws Exception {
         Class[] clss = process.getParameterTypes();
+        int inCount = getInputNodeCount();
+        if (toolAware) {
+            NodeAware na = (NodeAware) annotated;
+            na.setInputNodeCount(inCount);
+            na.setOutputNodeCount(getOutputNodeCount());
+        }
 
         List<Object> ins = new ArrayList<Object>();
         if (aggregate) {
-            for (int count = 0; count < getInputNodeCount(); count++) {
+            for (int count = 0; count < inCount; count++) {
                 Object o = getInputAtNode(count);
                 if (o != null) {
                     ins.add(o);

@@ -1,7 +1,8 @@
 package org.trianacode.annotation;
 
 /**
- * GENERAL NOTE: parameters that are displayed in auto generated GUIs should only be primitive or string types
+ * GENERAL NOTE: parameters that are displayed in auto generated GUIs should only be primitive or string types.
+ * <p/>
  * automatically defines a field as a parameter and defines the gui for it The gui will be a slider with optional
  * minimum, maximum and current settings. Default max is 100 Default min and current are 0 NOTE: the field should still
  * be a string - for the time being...

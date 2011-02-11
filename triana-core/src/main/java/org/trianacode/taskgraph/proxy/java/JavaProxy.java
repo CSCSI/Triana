@@ -72,7 +72,7 @@ import java.util.Map;
 
 /**
  * The proxy for java units.
- *
+ * <p/>
  * Ian T changed so that errors are thrown not consumed and ignored ....
  *
  * @author Ian Wang
@@ -141,7 +141,7 @@ public class JavaProxy implements Proxy {
         return JavaConstants.JAVA_PROXY_TYPE;
     }
 
-    private void createUnit() throws ProxyInstantiationException  {
+    private void createUnit() throws ProxyInstantiationException {
         try {
             Class cls = ClassLoaders.forName(getFullUnitName());
             Object o = cls.newInstance();
@@ -154,7 +154,7 @@ public class JavaProxy implements Proxy {
                 }
             }
         } catch (Exception e) {
-            throw new ProxyInstantiationException(e.getMessage());
+            throw new ProxyInstantiationException(e);
         }
     }
 

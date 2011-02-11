@@ -1,5 +1,6 @@
 package common.file;
 
+import org.trianacode.annotation.Process;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
 
@@ -19,7 +20,7 @@ public class FileLoader {
     @TextFieldParameter
     private String filePath = "";
 
-    @org.trianacode.annotation.Process
+    @Process
     public File process() {
 
         if (!filePath.equals("")) {

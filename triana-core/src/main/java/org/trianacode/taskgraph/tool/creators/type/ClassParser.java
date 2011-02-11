@@ -308,7 +308,7 @@ public class ClassParser {
                 for (int an = 0; an < annoslength; an++) {
                     int annoName = stream.readUnsignedShort();
                     UTF8Constant anno = names.get(annoName);
-                    if (anno.getClasses()[0].equals("org/trianacode/taskgraph/annotation/Tool")) {
+                    if (anno.getClasses()[0].equals("org/trianacode/annotation/Tool")) {
                         hier.setAnnotated(true);
                     }
                     drainAnnotation(stream);
