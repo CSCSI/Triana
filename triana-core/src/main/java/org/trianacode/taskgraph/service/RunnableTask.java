@@ -314,7 +314,6 @@ public class RunnableTask extends AbstractRunnableTask
     public final synchronized void wakeUp() {
         boolean wakeup = true;
         Node[] nodes = getRequiredNodes();
-
         // Check if wake-ups have been received from all essential nodes.
         for (int count = 0; (count < nodes.length) && (wakeup); count++) {
             if (!wakeups.contains(nodes[count])) {
@@ -407,7 +406,6 @@ public class RunnableTask extends AbstractRunnableTask
 
                         pool.addTask(this);
                     }
-
                     handled = true;
                 } else {
                     Thread.yield();
@@ -448,7 +446,12 @@ public class RunnableTask extends AbstractRunnableTask
             throw new OutOfRangeException("Node " + nodeNumber + " is out of range on Unit " + getToolName());
         }
 
+
         RunnableNode node = (RunnableNode) getDataInputNode(nodeNumber);
+        if (!node.isConnected()) {
+            log.info("Node is not connected at input:" + nodeNumber);
+            return null;
+        }
         Object data = getInput(node);
 
         String[] types = getDataInputTypes(nodeNumber);
@@ -537,7 +540,6 @@ public class RunnableTask extends AbstractRunnableTask
         } else {
             data = mess;
         }
-
         return data;
     }
 
@@ -730,6 +732,7 @@ public class RunnableTask extends AbstractRunnableTask
             if ((isRunContinuously()) && (runAgain <= 0)) {
                 runAgain = 1;
                 executionRequested();
+
             }
 
             if (getExecutionState() != ExecutionState.RESETTING) {
@@ -738,7 +741,6 @@ public class RunnableTask extends AbstractRunnableTask
                 synchronized (THREAD_LOCK) {
                     threadstate = IN_PROCESS;
                 }
-
                 process();
 
                 synchronized (THREAD_LOCK) {
@@ -839,9 +841,8 @@ public class RunnableTask extends AbstractRunnableTask
      */
     public void process() {
         try {
-            log.debug("RUNNING " + getQualifiedTaskName());
+            log.info("RUNNING " + getQualifiedToolName());
             waitPause();
-
             try {
                 unit.process();
             }
@@ -850,7 +851,7 @@ public class RunnableTask extends AbstractRunnableTask
             }
 
             if (!getExecutionState().equals(ExecutionState.ERROR)) {
-                log.debug("FINISHED RUNNING " + getQualifiedTaskName());
+                log.info("FINISHED RUNNING " + getQualifiedTaskName());
             } else {
                 System.err
                         .println("ERROR RUNNING " + getQualifiedTaskName() + " (" + getParameter(ERROR_MESSAGE) + ")");

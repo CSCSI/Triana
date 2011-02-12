@@ -163,7 +163,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      * Called by subclass when execution is requested
      */
     protected void executionRequested() {
+        System.out.println("AbstractRunnableTask.executionRequested EXECUTION REQUESTED");
         waitPause();
+        System.out.println("AbstractRunnableTask.executionRequested DONE WITH WAIT PAUSE");
 
         executionRequest++;
         setParameterType(EXECUTION_REQUEST_COUNT, TRANSIENT);

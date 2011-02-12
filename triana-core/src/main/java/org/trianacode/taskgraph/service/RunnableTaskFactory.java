@@ -111,7 +111,7 @@ public class RunnableTaskFactory implements TaskFactory {
     public Task createTask(Tool tool, TaskGraph parent, boolean preserveinst) throws TaskException {
         try {
             if (tool instanceof TaskGraph) {
-                Task task = (Task) TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, parent, preserveinst);
+                Task task = TaskGraphUtils.cloneTaskGraph((TaskGraph) tool, parent, preserveinst);
                 task.setParent(parent);
                 task.init();
 

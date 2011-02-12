@@ -98,12 +98,12 @@ public final class TypeChecking {
      */
     public static boolean isCompatibility(Class[] outTypes, Class[] inTypes) {
 
-        System.out.println("TypeChecking.isCompatibility ENTER MATCH ");
+        log.info("TypeChecking.isCompatibility ENTER MATCH ");
         for (Class outType : outTypes) {
-            System.out.println("TypeChecking.isCompatibility OUTTYPE:" + outType);
+            log.info("TypeChecking.isCompatibility OUTTYPE:" + outType);
         }
         for (Class inType : inTypes) {
-            System.out.println("TypeChecking.isCompatibility INTYPE:" + inType);
+            log.info("TypeChecking.isCompatibility INTYPE:" + inType);
         }
         boolean match = false;
 

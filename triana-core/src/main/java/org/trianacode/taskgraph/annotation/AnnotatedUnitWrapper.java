@@ -7,12 +7,10 @@ import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Andrew Harrison
@@ -34,7 +32,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private int minimumOutputs = 0;
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
     private Method customGUIComponent;
-    private boolean toolAware = false;
+    private boolean nodeAware = false;
 
 
     private Map<String, Field> params = new HashMap<String, Field>();
@@ -59,7 +57,7 @@ public class AnnotatedUnitWrapper extends Unit {
         this.outputs = outputs;
         this.aggregate = aggregate;
         if (annotated instanceof NodeAware) {
-            toolAware = true;
+            nodeAware = true;
         }
         for (String input : inputs) {
             debug("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
@@ -116,8 +114,8 @@ public class AnnotatedUnitWrapper extends Unit {
     }
 
     public void init() {
-        setDefaultInputNodes(inputs.length);
-        setMinimumInputNodes(minimumInputs);
+        setDefaultInputNodes(0);
+        setMinimumInputNodes(0);
         if (aggregate) {
             setMaximumInputNodes(Integer.MAX_VALUE);
         } else {
@@ -157,11 +155,9 @@ public class AnnotatedUnitWrapper extends Unit {
 
         } else {
             if (customGUIComponent != null) {
-
                 Object gui = null;
                 try {
                     gui = customGUIComponent.invoke(annotated, new Object[0]);
-
                     // TODO - HACK. need some sort of callback to panel manager from tool
                     Class manager = ClassLoaders.forName("org.trianacode.gui.panels.ParameterPanelManager");
                     Method setter = manager.getMethod("registerComponent", new Class[]{ClassLoaders.forName("java.awt.Component"), Task.class});
@@ -276,9 +272,11 @@ public class AnnotatedUnitWrapper extends Unit {
 
     @Override
     public void process() throws Exception {
+        log("ENTER for task " + getTask().getQualifiedToolName());
         Class[] clss = process.getParameterTypes();
         int inCount = getInputNodeCount();
-        if (toolAware) {
+        log("input count:" + inCount);
+        if (nodeAware) {
             NodeAware na = (NodeAware) annotated;
             na.setInputNodeCount(inCount);
             na.setOutputNodeCount(getOutputNodeCount());
@@ -287,9 +285,21 @@ public class AnnotatedUnitWrapper extends Unit {
         List<Object> ins = new ArrayList<Object>();
         if (aggregate) {
             for (int count = 0; count < inCount; count++) {
+                log("next input node:" + count);
+                log("next input node is connected:" + getTask().getInputNode(count).isConnected());
                 Object o = getInputAtNode(count);
+                log("next input node object:" + o);
                 if (o != null) {
-                    ins.add(o);
+                    if (o.getClass().isArray()) {
+                        int len = Array.getLength(o);
+                        for (int i = 0; i < len; i++) {
+                            ins.add(Array.get(o, i));
+                        }
+                    } else if (o instanceof Collection) {
+                        ins.addAll((Collection) o);
+                    } else {
+                        ins.add(o);
+                    }
                 }
             }
         } else {
@@ -324,6 +334,7 @@ public class AnnotatedUnitWrapper extends Unit {
             currentParams.put(s, params.get(s).get(annotated));
         }
         Object ret = process.invoke(annotated, input);
+        log("return value is " + ret);
         for (String s : currentParams.keySet()) {
             Object param = currentParams.get(annotated);
             Object now = params.get(s).get(annotated);
@@ -340,7 +351,10 @@ public class AnnotatedUnitWrapper extends Unit {
             }
         }
         if (ret != null) {
+            log("EXIT for task " + getTask().getQualifiedTaskName() + " outputted " + ret);
             output(ret);
         }
+        log("EXIT for task " + getTask().getQualifiedTaskName() + " did not output ");
+
     }
 }

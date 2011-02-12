@@ -429,6 +429,7 @@ public class TaskImp extends ToolImp implements Task {
      * @return the number of data input nodes
      */
     public int getDataInputNodeCount() {
+        //log.info("TaskImp.getDataInputNodeCount:" + innodes.size());
         return innodes.size();
     }
 
@@ -974,11 +975,6 @@ public class TaskImp extends ToolImp implements Task {
         //    }
         //};
 
-        //if (GUI.equals(type)) {
-        //    event.run();
-        //} else {
-        //    TaskGraphEventDispatch.invokeLater(event);
-        //}
     }
 
 

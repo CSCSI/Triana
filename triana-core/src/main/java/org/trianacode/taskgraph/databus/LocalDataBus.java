@@ -32,7 +32,7 @@ public class LocalDataBus implements DataBusInterface {
     }
 
     public Object get(WorkflowDataPacket packet) throws DataNotResolvableException {
-        Loggers.EXECUTION_LOGGER.debug("Getting WorkflowDataPacket from store: " + packet.getDataLocation());
+        Loggers.EXECUTION_LOGGER.info("Getting WorkflowDataPacket from store: " + packet.getDataLocation());
         Object s = datastore.get(packet);
         if (s == null) {
             throw new DataNotResolvableException("No data for packet:" + packet.getDataLocation());
