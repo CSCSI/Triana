@@ -28,4 +28,7 @@ public @interface Tool {
     int minimumOutputs() default 0;
 
     String[] renderingHints() default {};
+
+    OutputPolicy outputPolicy() default OutputPolicy.CLONE_MULTIPLE;
+
 }

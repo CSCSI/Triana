@@ -1,6 +1,7 @@
 package org.trianacode.taskgraph.annotation;
 
 import org.trianacode.annotation.NodeAware;
+import org.trianacode.annotation.OutputPolicy;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
@@ -34,6 +35,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private Method customGUIComponent;
     private boolean nodeAware = false;
     private boolean flatten = false;
+    private OutputPolicy outputClonePolicy;
 
 
     private Map<String, Field> params = new HashMap<String, Field>();
@@ -75,6 +77,14 @@ public class AnnotatedUnitWrapper extends Unit {
                 }
             }
         }
+    }
+
+    public OutputPolicy getOutputClonePolicy() {
+        return outputClonePolicy;
+    }
+
+    public void setOutputClonePolicy(OutputPolicy outputClonePolicy) {
+        this.outputClonePolicy = outputClonePolicy;
     }
 
     public boolean isFlatten() {
@@ -198,6 +208,13 @@ public class AnnotatedUnitWrapper extends Unit {
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+        if (outputClonePolicy != null) {
+            if (outputClonePolicy == OutputPolicy.CLONE_MULTIPLE) {
+                setOutputPolicy(CLONE_MULTIPLE_OUTPUT);
+            } else if (outputClonePolicy == OutputPolicy.CLONE_MULTIPLE) {
+                setOutputPolicy(CLONE_ALL_OUTPUT);
             }
         }
     }

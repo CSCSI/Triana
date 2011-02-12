@@ -36,6 +36,7 @@ public class AnnotationProcessor {
         String[] renderingHints = t.renderingHints();
         int minimumInputs = t.minimumInputs();
         int minimumOutputs = t.minimumOutputs();
+        OutputPolicy outputPolicy = t.outputPolicy();
 
         AnnotatedUnitWrapper wrapper = null;
         Method[] methods = annotated.getDeclaredMethods();
@@ -87,6 +88,9 @@ public class AnnotationProcessor {
                 }
                 if (minimumOutputs >= 0) {
                     wrapper.setMinimumOutputs(minimumOutputs);
+                }
+                if (outputPolicy != null) {
+                    wrapper.setOutputClonePolicy(outputPolicy);
                 }
             } else {
                 CustomGUIComponent component = method.getAnnotation(CustomGUIComponent.class);
