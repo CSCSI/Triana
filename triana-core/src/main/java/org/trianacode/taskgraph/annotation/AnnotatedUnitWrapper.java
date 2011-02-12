@@ -1,7 +1,7 @@
 package org.trianacode.taskgraph.annotation;
 
-import org.trianacode.annotation.NodeAware;
 import org.trianacode.annotation.OutputPolicy;
+import org.trianacode.annotation.TaskAware;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
@@ -59,7 +59,7 @@ public class AnnotatedUnitWrapper extends Unit {
         this.inputs = inputs;
         this.outputs = outputs;
         this.aggregate = aggregate;
-        if (annotated instanceof NodeAware) {
+        if (annotated instanceof TaskAware) {
             nodeAware = true;
         }
         for (String input : inputs) {
@@ -303,9 +303,11 @@ public class AnnotatedUnitWrapper extends Unit {
         int inCount = getInputNodeCount();
         log("input count:" + inCount);
         if (nodeAware) {
-            NodeAware na = (NodeAware) annotated;
+            TaskAware na = (TaskAware) annotated;
             na.setInputNodeCount(inCount);
             na.setOutputNodeCount(getOutputNodeCount());
+            na.setTaskName(getTask().getQualifiedTaskName());
+            na.setTaskSubtitle(getTask().getSubTitle());
         }
 
         List<Object> ins = new ArrayList<Object>();

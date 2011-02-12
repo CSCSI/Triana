@@ -150,7 +150,7 @@ public class TrianaComponentModel implements
         JMenuItem copy = new JMenuItem(ActionTable.getAction(Actions.COPY_ACTION));
         JMenuItem delete = new JMenuItem(ActionTable.getAction(Actions.DELETE_ACTION));
         JMenuItem pasteInto = new JMenuItem(ActionTable.getAction(Actions.PASTE_INTO_ACTION));
-        JMenuItem compile = new JMenuItem(ActionTable.getAction(Actions.COMPILE_ACTION));
+        //JMenuItem compile = new JMenuItem(ActionTable.getAction(Actions.COMPILE_ACTION));
 
 
         multipleSelectedPopup = new JPopupMenu("Selected");
@@ -161,7 +161,7 @@ public class TrianaComponentModel implements
         multipleSelectedPopup.add(pasteInto);
         multipleSelectedPopup.add(delete);
         multipleSelectedPopup.addSeparator();
-        multipleSelectedPopup.add(compile);
+        //multipleSelectedPopup.add(compile);
 
     }
 
@@ -181,7 +181,7 @@ public class TrianaComponentModel implements
         JMenuItem pasteInto = new JMenuItem(ActionTable.getAction(Actions.PASTE_INTO_ACTION));
         JMenuItem delete = new JMenuItem(ActionTable.getAction(Actions.DELETE_ACTION));
         JMenuItem rename = new JMenuItem(ActionTable.getAction(Actions.RENAME_ACTION));
-        JMenuItem help = new JMenuItem(ActionTable.getAction(Actions.HELP_ACTION));
+        //JMenuItem help = new JMenuItem(ActionTable.getAction(Actions.HELP_ACTION));
 
         toolWorkspacePopup = new JPopupMenu("Task Menu");
         toolWorkspacePopup.add(properties);
@@ -191,15 +191,15 @@ public class TrianaComponentModel implements
         toolWorkspacePopup.add(runcont);
         toolWorkspacePopup.add(new JSeparator());
         //toolWorkspacePopup.add(publish);
-        toolWorkspacePopup.add(script);
-        toolWorkspacePopup.add(new JSeparator());
+        //toolWorkspacePopup.add(script);
+        //toolWorkspacePopup.add(new JSeparator());
         toolWorkspacePopup.add(cut);
         toolWorkspacePopup.add(copy);
         toolWorkspacePopup.add(delete);
         toolWorkspacePopup.add(pasteInto);
         toolWorkspacePopup.add(rename);
-        toolWorkspacePopup.add(new JSeparator());
-        toolWorkspacePopup.add(help);
+        //toolWorkspacePopup.add(new JSeparator());
+        //toolWorkspacePopup.add(help);
     }
 
     /**
@@ -228,8 +228,8 @@ public class TrianaComponentModel implements
         groupWorkspacePopup.add(ungroup);
         groupWorkspacePopup.add(new JSeparator());
         //groupWorkspacePopup.add(publish);
-        groupWorkspacePopup.add(script);
-        groupWorkspacePopup.add(new JSeparator());
+        //groupWorkspacePopup.add(script);
+        //groupWorkspacePopup.add(new JSeparator());
         groupWorkspacePopup.add(cut);
         groupWorkspacePopup.add(copy);
         groupWorkspacePopup.add(pasteInto);
@@ -254,7 +254,7 @@ public class TrianaComponentModel implements
         //JMenuItem edithtml = new JMenuItem(ActionTable.getAction(Actions.EDIT_HTML_ACTION));
         //JMenuItem editxml = new JMenuItem(ActionTable.getAction(Actions.EDIT_XML_ACTION));
         JMenuItem compile = new JMenuItem(ActionTable.getAction(Actions.COMPILE_ACTION));
-        JMenuItem help = new JMenuItem(ActionTable.getAction(Actions.HELP_ACTION));
+        //JMenuItem help = new JMenuItem(ActionTable.getAction(Actions.HELP_ACTION));
 
         toolTreePopup = new JPopupMenu("Tool Menu");
         toolTreePopup.add(cut);
@@ -263,16 +263,16 @@ public class TrianaComponentModel implements
         toolTreePopup.add(delete);
         toolTreePopup.add(deleteRefs);
         toolTreePopup.add(rename);
-        toolTreePopup.addSeparator();
+        //toolTreePopup.addSeparator();
         //toolTreePopup.add(editdesc);
         //toolTreePopup.add(editgui);
         //toolTreePopup.add(editsource);
         //toolTreePopup.add(edithtml);
         //toolTreePopup.add(editxml);
-        toolTreePopup.addSeparator();
-        toolTreePopup.add(compile);
-        toolTreePopup.addSeparator();
-        toolTreePopup.add(help);
+        //toolTreePopup.addSeparator();
+        //toolTreePopup.add(compile);
+        //toolTreePopup.addSeparator();
+        //toolTreePopup.add(help);
     }
 
     /**
@@ -292,7 +292,7 @@ public class TrianaComponentModel implements
         //JMenuItem editgui = new JMenuItem(ActionTable.getAction(Actions.EDIT_GUI_ACTION));
         //JMenuItem edithtml = new JMenuItem(ActionTable.getAction(Actions.EDIT_HTML_ACTION));
         //JMenuItem editxml = new JMenuItem(ActionTable.getAction(Actions.EDIT_XML_ACTION));
-        JMenuItem help = new JMenuItem(ActionTable.getAction(Actions.HELP_ACTION));
+        //JMenuItem help = new JMenuItem(ActionTable.getAction(Actions.HELP_ACTION));
 
         groupTreePopup = new JPopupMenu("Tool Menu");
         groupTreePopup.add(open);
@@ -303,13 +303,13 @@ public class TrianaComponentModel implements
         groupTreePopup.add(delete);
         groupTreePopup.add(deleteRefs);
         groupTreePopup.add(rename);
-        groupTreePopup.addSeparator();
+        //groupTreePopup.addSeparator();
         //groupTreePopup.add(editdesc);
         //groupTreePopup.add(editgui);
         //groupTreePopup.add(edithtml);
         //groupTreePopup.add(editxml);
-        groupTreePopup.addSeparator();
-        groupTreePopup.add(help);
+        //groupTreePopup.addSeparator();
+        //groupTreePopup.add(help);
     }
 
 

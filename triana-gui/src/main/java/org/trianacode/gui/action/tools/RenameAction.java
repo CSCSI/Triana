@@ -61,6 +61,7 @@ package org.trianacode.gui.action.tools;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.SelectionManager;
 import org.trianacode.gui.action.clipboard.ClipboardActionInterface;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.util.Env;
 
 import javax.swing.*;
@@ -82,6 +83,8 @@ public class RenameAction extends AbstractAction implements ActionDisplayOptions
         putValue(SHORT_DESCRIPTION, Env.getString("Rename"));
         putValue(ACTION_COMMAND_KEY, Env.getString("Rename"));
         putValue(NAME, Env.getString("Rename"));
+        putValue(SMALL_ICON, GUIEnv.getIcon("rename.png"));
+
     }
 
     /**

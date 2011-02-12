@@ -271,7 +271,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         packageMenu.add(new JMenuItem(ActionTable.getAction(DELETE_ACTION)));
         packageMenu.add(new JMenuItem(ActionTable.getAction(DELETE_REFERENCES_ACTION)));
         packageMenu.add(new JMenuItem(ActionTable.getAction(RENAME_ACTION)));
-        packageMenu.add(new JMenuItem(ActionTable.getAction(COMPILE_ACTION)));
+        //packageMenu.add(new JMenuItem(ActionTable.getAction(COMPILE_ACTION)));
     }
 
     private void initMultipleMenu() {
@@ -279,7 +279,7 @@ public class LeafListener implements MouseListener, MouseMotionListener, TreeSel
         multipleMenu.add(new JMenuItem(ActionTable.getAction(COPY_ACTION)));
         multipleMenu.add(new JMenuItem(ActionTable.getAction(DELETE_ACTION)));
         multipleMenu.add(new JMenuItem(ActionTable.getAction(DELETE_REFERENCES_ACTION)));
-        multipleMenu.add(new JMenuItem(ActionTable.getAction(COMPILE_ACTION)));
+        //multipleMenu.add(new JMenuItem(ActionTable.getAction(COMPILE_ACTION)));
     }
 
     /**

@@ -66,7 +66,11 @@ import org.trianacode.taskgraph.service.RunnableInstance;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -82,7 +86,7 @@ public class TaskGraphImp extends TaskImp
     /**
      * a hashtable containing all the tasks with this taskgraph keyed by taskid.
      */
-    private Map<String, Task> tasks = new Hashtable<String, Task>();
+    private Map<String, Task> tasks = new ConcurrentHashMap<String, Task>();
 
     /**
      * an array list of the task's listeners
@@ -1176,7 +1180,7 @@ public class TaskGraphImp extends TaskImp
         Set<String> enumeration = tasks.keySet();
         Iterator it = enumeration.iterator();
         while (it.hasNext()) {
-            removeTask((Task) tasks.get(it.next()));
+            removeTask(tasks.get(it.next()));
         }
         execlisteners.clear();
         super.dispose();
