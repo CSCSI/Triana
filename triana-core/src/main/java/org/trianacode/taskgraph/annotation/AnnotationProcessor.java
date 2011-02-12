@@ -45,6 +45,7 @@ public class AnnotationProcessor {
             Process p = method.getAnnotation(Process.class);
             if (p != null) {
                 boolean aggr = p.gather();
+                boolean flatten = p.flatten();
                 boolean willAggr = false;
                 Class[] params = method.getParameterTypes();
                 String[] inputs = null;
@@ -74,6 +75,10 @@ public class AnnotationProcessor {
                 }
                 wrapper = new AnnotatedUnitWrapper(name, pkge, annotatedObject, method, inputs,
                         outputs, willAggr);
+                if (willAggr && flatten) {
+                    wrapper.setFlatten(true);
+
+                }
                 if (renderingHints != null) {
                     wrapper.setRenderingHints(renderingHints);
                 }

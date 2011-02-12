@@ -33,6 +33,7 @@ public class AnnotatedUnitWrapper extends Unit {
     private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
     private Method customGUIComponent;
     private boolean nodeAware = false;
+    private boolean flatten = false;
 
 
     private Map<String, Field> params = new HashMap<String, Field>();
@@ -74,6 +75,14 @@ public class AnnotatedUnitWrapper extends Unit {
                 }
             }
         }
+    }
+
+    public boolean isFlatten() {
+        return flatten;
+    }
+
+    public void setFlatten(boolean flatten) {
+        this.flatten = flatten;
     }
 
     public Method getCustomGUIComponent() {
@@ -290,13 +299,17 @@ public class AnnotatedUnitWrapper extends Unit {
                 Object o = getInputAtNode(count);
                 log("next input node object:" + o);
                 if (o != null) {
-                    if (o.getClass().isArray()) {
-                        int len = Array.getLength(o);
-                        for (int i = 0; i < len; i++) {
-                            ins.add(Array.get(o, i));
+                    if (flatten) {
+                        if (o.getClass().isArray()) {
+                            int len = Array.getLength(o);
+                            for (int i = 0; i < len; i++) {
+                                ins.add(Array.get(o, i));
+                            }
+                        } else if (o instanceof Collection) {
+                            ins.addAll((Collection) o);
+                        } else {
+                            ins.add(o);
                         }
-                    } else if (o instanceof Collection) {
-                        ins.addAll((Collection) o);
                     } else {
                         ins.add(o);
                     }

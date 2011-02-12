@@ -28,4 +28,6 @@ public @interface Process {
 
     boolean gather() default false;
 
+    boolean flatten() default false;
+
 }
