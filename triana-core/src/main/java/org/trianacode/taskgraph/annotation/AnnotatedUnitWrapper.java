@@ -216,6 +216,8 @@ public class AnnotatedUnitWrapper extends Unit {
                 setOutputPolicy(CLONE_MULTIPLE_OUTPUT);
             } else if (outputClonePolicy == OutputPolicy.CLONE_MULTIPLE) {
                 setOutputPolicy(CLONE_ALL_OUTPUT);
+            } else if (outputClonePolicy == OutputPolicy.CLONE_NONE) {
+                setOutputPolicy(COPY_OUTPUT);
             }
         }
     }
