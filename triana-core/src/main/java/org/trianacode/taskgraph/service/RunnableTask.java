@@ -563,9 +563,9 @@ public class RunnableTask extends AbstractRunnableTask
                 }
             }
 
-            boolean clonemultiple = (!isParameterName(OUTPUT_POLICY)) || (getParameter(OUTPUT_POLICY).equals(
+            boolean clonemultiple = ((data instanceof Serializable) && !isParameterName(OUTPUT_POLICY)) || (getParameter(OUTPUT_POLICY).equals(
                     CLONE_MULTIPLE_OUTPUT));
-            boolean cloneall = (isParameterName(OUTPUT_POLICY)) && (getParameter(OUTPUT_POLICY).equals(
+            boolean cloneall = ((data instanceof Serializable) && isParameterName(OUTPUT_POLICY)) && (getParameter(OUTPUT_POLICY).equals(
                     CLONE_ALL_OUTPUT));
 
             for (int i = 0; i < this.getDataOutputNodeCount(); ++i) {
