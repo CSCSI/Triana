@@ -2,6 +2,7 @@ package org.trianacode.taskgraph.annotation;
 
 import org.trianacode.annotation.OutputPolicy;
 import org.trianacode.annotation.TaskAware;
+import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.RenderingHint;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
@@ -133,14 +134,8 @@ public class AnnotatedUnitWrapper extends Unit {
     public void reset() {
         for (String s : fieldDescs.keySet()) {
             Object value = originalValues.get(s);
-            FieldDescriptor fd = fieldDescs.get(s);
-            if (value != null && fd != null) {
-                Field f = fd.getField();
-                try {
-                    f.set(toolDesc.getAnnotated(), value);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if (value != null) {
+                parameterUpdate(s, value);
             }
         }
     }
@@ -229,19 +224,34 @@ public class AnnotatedUnitWrapper extends Unit {
         Method process = methodDesc.getMethod();
         Object annotated = toolDesc.getAnnotated();
         Class[] clss = process.getParameterTypes();
-        int inCount = getInputNodeCount();
-        log("input count:" + inCount);
+
         if (toolDesc.isTaskAware()) {
+            int connectedIns = 0;
+            Node[] inNodes = getTask().getDataInputNodes();
+            for (int i = 0; i < inNodes.length; i++) {
+                Node inNode = inNodes[i];
+                if (inNode.isConnected()) {
+                    connectedIns++;
+                }
+            }
+            int connectedOuts = 0;
+            Node[] outNodes = getTask().getDataOutputNodes();
+            for (int i = 0; i < inNodes.length; i++) {
+                Node node = outNodes[i];
+                if (node.isConnected()) {
+                    connectedOuts++;
+                }
+            }
             TaskAware na = (TaskAware) annotated;
-            na.setInputNodeCount(inCount);
-            na.setOutputNodeCount(getOutputNodeCount());
+            na.setInputNodeCount(connectedIns);
+            na.setOutputNodeCount(connectedOuts);
             na.setTaskName(getTask().getQualifiedTaskName());
             na.setTaskSubtitle(getTask().getSubTitle());
         }
 
         List<Object> ins = new ArrayList<Object>();
         if (methodDesc.isGather()) {
-            for (int count = 0; count < inCount; count++) {
+            for (int count = 0; count < getInputNodeCount(); count++) {
                 log("next input node:" + count);
                 log("next input node is connected:" + getTask().getInputNode(count).isConnected());
                 Object o = getInputAtNode(count);
