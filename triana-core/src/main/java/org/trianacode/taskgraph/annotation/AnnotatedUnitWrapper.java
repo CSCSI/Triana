@@ -60,6 +60,7 @@ public class AnnotatedUnitWrapper extends Unit {
         this.outputs = outputs;
         this.aggregate = aggregate;
         if (annotated instanceof TaskAware) {
+            System.out.println("AnnotatedUnitWrapper.AnnotatedUnitWrapper OBJECT IS NODE AWARE");
             nodeAware = true;
         }
         for (String input : inputs) {

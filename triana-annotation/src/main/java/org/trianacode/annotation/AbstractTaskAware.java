@@ -18,7 +18,7 @@ public class AbstractTaskAware implements TaskAware {
     }
 
     @Override
-    public void setTaskName(String name) {
+    public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
 
