@@ -104,6 +104,7 @@ public interface Tool {
     public static final String OUTPUT_POLICY = "outputPolicy";
     public static final String PARAM_UPDATE_POLICY = "paramUpdatePolicy";
 
+    public static final String PANEL_INSTANCE = "panelInstance";
     public static final String PARAM_PANEL_CLASS = "paramPanelClass";
     public static final String PARAM_PANEL_INSTANTIATE = "paramPanelInstantiate";
     public static final String GUI_BUILDER = "guiBuilder";

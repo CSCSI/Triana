@@ -4,10 +4,9 @@ import org.trianacode.annotation.OutputPolicy;
 import org.trianacode.annotation.TaskAware;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
-import org.trianacode.taskgraph.tool.ClassLoaders;
+import org.trianacode.taskgraph.tool.Tool;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -103,10 +102,8 @@ public class AnnotatedUnitWrapper extends Unit {
                 Object gui = null;
                 try {
                     gui = toolDesc.getCustomGuiComponent().invoke(toolDesc.getAnnotated(), new Object[0]);
-                    // TODO - HACK. need some sort of callback to panel manager from tool
-                    Class manager = ClassLoaders.forName("org.trianacode.gui.panels.ParameterPanelManager");
-                    Method setter = manager.getMethod("registerComponent", new Class[]{ClassLoaders.forName("java.awt.Component"), Task.class});
-                    setter.invoke(null, new Object[]{gui, this.getTask()});
+                    getTask().setParameter(Tool.PANEL_INSTANCE, gui);
+                    getTask().setParameterType(Tool.PANEL_INSTANCE, Tool.INTERNAL);
                 } catch (Throwable e) {
                     debug("error creating custom panel", e);
                     e.printStackTrace();
@@ -236,7 +233,7 @@ public class AnnotatedUnitWrapper extends Unit {
             }
             int connectedOuts = 0;
             Node[] outNodes = getTask().getDataOutputNodes();
-            for (int i = 0; i < inNodes.length; i++) {
+            for (int i = 0; i < outNodes.length; i++) {
                 Node node = outNodes[i];
                 if (node.isConnected()) {
                     connectedOuts++;

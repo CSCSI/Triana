@@ -177,17 +177,34 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
                         (task.getParameter(Tool.PARAM_PANEL_INSTANTIATE).equals(Tool.ON_TASK_INSTANTIATION)))));
     }
 
+    private static Component getRegisterPanel(Task task) {
+        Object c = task.getParameter(Tool.PANEL_INSTANCE);
+        if (c != null && c instanceof Component) {
+            return (Component) c;
+        }
+        return null;
+    }
+
 
     private void handleTaskCreated(Task task) {
-        if (isInstantiatePanel(task)) {
-            instantiatePanel(task);
-        }
+        Component c = getRegisterPanel(task);
+        if (c != null) {
+            try {
+                registerComponent(c, task);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (isInstantiatePanel(task)) {
+                instantiatePanel(task);
+            }
 
-        if (task instanceof TaskGraph) {
-            Task[] tasks = ((TaskGraph) task).getTasks(true);
+            if (task instanceof TaskGraph) {
+                Task[] tasks = ((TaskGraph) task).getTasks(true);
 
-            for (int count = 0; count < tasks.length; count++) {
-                handleTaskCreated(tasks[count]);
+                for (int count = 0; count < tasks.length; count++) {
+                    handleTaskCreated(tasks[count]);
+                }
             }
         }
     }
@@ -218,7 +235,7 @@ public class ParameterPanelManager implements TaskGraphListener, TaskListener {
             if (panel instanceof ParameterPanel) {
                 paramPanel = (ParameterPanel) panel;
             } else if (panel instanceof Window) {
-                  throw new Exception("You Cannot use a Window as a Triana GUI Component!");
+                throw new Exception("You Cannot use a Window as a Triana GUI Component!");
             } else {
                 paramPanel = new PanelHolder(panel);
             }
