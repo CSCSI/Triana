@@ -1,7 +1,9 @@
 package org.trianacode.taskgraph.annotation;
 
+import org.apache.commons.logging.Log;
 import org.trianacode.annotation.*;
 import org.trianacode.annotation.Process;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 
@@ -19,80 +21,226 @@ import java.util.Map;
 
 public class AnnotationProcessor {
 
+    private static Log log = Loggers.TOOL_LOGGER;
+
+
     public static AnnotatedUnitWrapper createUnit(Object annotatedObject) throws ProxyInstantiationException {
         Class annotated = annotatedObject.getClass();
-        Map<String, String> guiLines = new HashMap<String, String>();
-        String name = null;
-
-        String pkge = null;
-        String panelClass = null;
         Tool t = (Tool) annotated.getAnnotation(Tool.class);
         if (t == null) {
             throw new ProxyInstantiationException("Could not get the annotation for the class " + annotatedObject);
         }
-        name = t.displayName();
-        pkge = t.displayPackage();
-        panelClass = t.panelClass();
-        String[] renderingHints = t.renderingHints();
-        int minimumInputs = t.minimumInputs();
-        int minimumOutputs = t.minimumOutputs();
-        OutputPolicy outputPolicy = t.outputPolicy();
+        ToolDescriptor td = processTool(t, annotatedObject);
 
-        AnnotatedUnitWrapper wrapper = null;
         Method[] methods = annotated.getDeclaredMethods();
-        Map<String, Field> ps = new HashMap<String, Field>();
-        Method customGUIComponent = null;
+        MethodDescriptor md = new MethodDescriptor();
+        md = processMethods(td, md, methods);
+        Class superClass = annotated.getSuperclass();
+        while (md.getMethod() == null && superClass != null && !(superClass.equals(Object.class))) {
+            methods = superClass.getDeclaredMethods();
+            md = processMethods(td, md, methods);
+            superClass = superClass.getSuperclass();
+        }
+        if (md.getMethod() == null) {
+            log.info("no @Process method found for " + annotated);
+            return null;
+        }
+        if (md.isGather()) {
+            Class[] clss = md.getMethod().getParameterTypes();
+            if (clss.length == 1) {
+                Class cls = clss[0];
+                if (cls.isArray()) {
+                    md.setArray(true);
+                }
+            }
+        }
+        Field[] fields = annotated.getDeclaredFields();
+        Map<String, FieldDescriptor> fds = processFields(fields);
+        superClass = annotated.getSuperclass();
+        while (superClass != null && !(superClass.equals(Object.class))) {
+            fields = superClass.getDeclaredFields();
+            Map<String, FieldDescriptor> next = processFields(fields);
+            for (String s : next.keySet()) {
+                if (!fds.containsKey(s)) {
+                    fds.put(s, next.get(s));
+                }
+            }
+            superClass = superClass.getSuperclass();
+        }
+        AnnotatedUnitWrapper wrapper = new AnnotatedUnitWrapper(td, md, fds);
+
+        return wrapper;
+    }
+
+    private static FieldDescriptor createFieldDescriptor(Field f, String guiLines) {
+        FieldDescriptor fd = new FieldDescriptor();
+        fd.setName(f.getName());
+        fd.setField(f);
+        fd.setGuiline(guiLines);
+        addRenderingHintDetail(fd);
+        return fd;
+    }
+
+    private static Map<String, FieldDescriptor> processFields(Field[] fields) {
+        Map<String, FieldDescriptor> ret = new HashMap<String, FieldDescriptor>();
+        for (Field field : fields) {
+            Parameter param = field.getAnnotation(Parameter.class);
+            if (param != null) {
+                FieldDescriptor fd = new FieldDescriptor();
+                fd.setName(field.getName());
+                fd.setField(field);
+                addRenderingHintDetail(fd);
+                ret.put(field.getName(), fd);
+                continue;
+            }
+            TextFieldParameter textField = field.getAnnotation(TextFieldParameter.class);
+            if (textField != null) {
+                String txt = processGuiTextField(textField, field);
+                if (txt != null) {
+                    FieldDescriptor fd = createFieldDescriptor(field, txt);
+                    ret.put(field.getName(), fd);
+                    continue;
+                }
+            }
+            TextAreaParameter textArea = field.getAnnotation(TextAreaParameter.class);
+            if (textArea != null) {
+                String txt = processGuiTextArea(textArea, field);
+                if (txt != null) {
+                    FieldDescriptor fd = createFieldDescriptor(field, txt);
+                    ret.put(field.getName(), fd);
+                    continue;
+                }
+            }
+            ChoiceParameter choice = field.getAnnotation(ChoiceParameter.class);
+            if (choice != null) {
+                String txt = processGuiChoice(choice, field);
+                if (txt != null) {
+                    FieldDescriptor fd = createFieldDescriptor(field, txt);
+                    ret.put(field.getName(), fd);
+                    continue;
+                }
+            }
+            SliderParameter scroll = field.getAnnotation(SliderParameter.class);
+            if (scroll != null) {
+                String txt = processGuiScroller(scroll, field);
+                if (txt != null) {
+                    FieldDescriptor fd = createFieldDescriptor(field, txt);
+                    ret.put(field.getName(), fd);
+                    continue;
+                }
+            }
+            FileParameter file = field.getAnnotation(FileParameter.class);
+            if (file != null) {
+                String txt = processGuiFile(file, field);
+                if (txt != null) {
+                    FieldDescriptor fd = createFieldDescriptor(field, txt);
+                    ret.put(field.getName(), fd);
+                    continue;
+                }
+            }
+            LabelParameter label = field.getAnnotation(LabelParameter.class);
+            if (label != null) {
+                String txt = processGuiLabel(label, field);
+                if (txt != null) {
+                    FieldDescriptor fd = createFieldDescriptor(field, txt);
+                    ret.put(field.getName(), fd);
+                    continue;
+                }
+            }
+            CheckboxParameter check = field.getAnnotation(CheckboxParameter.class);
+            if (check != null) {
+                String txt = processGuiBoolean(check, field);
+                if (txt != null) {
+                    FieldDescriptor fd = createFieldDescriptor(field, txt);
+                    ret.put(field.getName(), fd);
+                    continue;
+                }
+            }
+        }
+        return ret;
+    }
+
+    private static void addRenderingHintDetail(FieldDescriptor fd) {
+        Field field = fd.getField();
+        RenderingHintDetail detail = field.getAnnotation(RenderingHintDetail.class);
+        if (detail != null) {
+            String hint = detail.hint();
+            String d = detail.detail();
+            if (hint != null && d != null) {
+                fd.setRenderingDetails(new String[]{hint, d});
+            }
+        }
+    }
+
+    private static ToolDescriptor processTool(Tool tool, Object annotated) {
+        ToolDescriptor td = new ToolDescriptor();
+        td.setAnnotated(annotated);
+        td.setMinimumInputs(tool.minimumInputs());
+        td.setMinimumOutputs(tool.minimumOutputs());
+        td.setOutputPolicy(tool.outputPolicy());
+        if (tool.displayName() != null && tool.displayName().length() > 0) {
+            td.setName(tool.displayName());
+        }
+        if (tool.displayPackage() != null && tool.displayPackage().length() > 0) {
+            td.setPckge(tool.displayPackage());
+        }
+        if (tool.panelClass() != null && tool.panelClass().length() > 0) {
+            td.setPanelClass(tool.panelClass());
+        }
+        if (tool.renderingHints() != null && tool.renderingHints().length > 0) {
+            td.setRenderingHints(tool.renderingHints());
+        }
+        return td;
+    }
+
+    private static MethodDescriptor processMethods(ToolDescriptor td, MethodDescriptor md, Method[] methods) {
+
         for (Method method : methods) {
-            Process p = method.getAnnotation(Process.class);
-            if (p != null) {
-                boolean aggr = p.gather();
-                boolean flatten = p.flatten();
-                boolean willAggr = false;
-                Class[] params = method.getParameterTypes();
-                String[] inputs = null;
-                if (aggr && params.length == 1) {
-                    Class coll = params[0];
-                    if (coll.isArray()) {
-                        inputs = new String[]{convert(coll.getComponentType())};
-                        willAggr = true;
-                    } else if (Collection.class.isAssignableFrom(coll) || coll.equals(List.class)) {
-                        inputs = new String[]{"java.lang.Object"};
-                        willAggr = true;
+            if (md.getMethod() == null) {
+                Process p = method.getAnnotation(Process.class);
+                if (p != null) {
+                    boolean aggr = p.gather();
+                    boolean flatten = p.flatten();
+                    boolean willAggr = false;
+                    boolean willFlatten = false;
+                    Class[] params = method.getParameterTypes();
+                    String[] inputs = null;
+                    if (aggr && params.length == 1) {
+                        Class coll = params[0];
+                        if (coll.isArray()) {
+                            inputs = new String[]{convert(coll.getComponentType())};
+                            willAggr = true;
+                        } else if (Collection.class.isAssignableFrom(coll) || coll.equals(List.class)) {
+                            inputs = new String[]{"java.lang.Object"};
+                            willAggr = true;
+                        }
                     }
-                }
-                if (inputs == null) {
-                    inputs = new String[params.length];
-                    for (int i = 0; i < params.length; i++) {
-                        Class param = params[i];
-                        inputs[i] = convert(param);
+                    if (inputs == null) {
+                        inputs = new String[params.length];
+                        for (int i = 0; i < params.length; i++) {
+                            Class param = params[i];
+                            inputs[i] = convert(param);
+                        }
                     }
-                }
-                String[] outputs;
-                Class ret = method.getReturnType();
-                if (ret.equals(void.class)) {
-                    outputs = new String[0];
-                } else {
-                    outputs = new String[]{convert(ret)};
-                }
-                wrapper = new AnnotatedUnitWrapper(name, pkge, annotatedObject, method, inputs,
-                        outputs, willAggr);
-                if (willAggr && flatten) {
-                    wrapper.setFlatten(true);
+                    String[] outputs;
+                    Class ret = method.getReturnType();
+                    if (ret.equals(void.class)) {
+                        outputs = new String[0];
+                    } else {
+                        outputs = new String[]{convert(ret)};
+                    }
+                    if (willAggr && flatten) {
+                        willFlatten = true;
+                    }
+                    md.setMethod(method);
+                    md.setGather(willAggr);
+                    md.setFlatten(willFlatten);
+                    md.setInputs(inputs);
+                    md.setOutputs(outputs);
 
                 }
-                if (renderingHints != null) {
-                    wrapper.setRenderingHints(renderingHints);
-                }
-                if (minimumInputs >= 0) {
-                    wrapper.setMinimumInputs(minimumInputs);
-                }
-                if (minimumOutputs >= 0) {
-                    wrapper.setMinimumOutputs(minimumOutputs);
-                }
-                if (outputPolicy != null) {
-                    wrapper.setOutputClonePolicy(outputPolicy);
-                }
-            } else {
+            }
+            if (td.getCustomGuiComponent() == null) {
                 CustomGUIComponent component = method.getAnnotation(CustomGUIComponent.class);
                 if (component != null) {
                     Class ret = method.getReturnType();
@@ -100,7 +248,7 @@ public class AnnotationProcessor {
                         if (ClassLoaders.forName("java.awt.Component").isAssignableFrom(ret)) {
                             Class[] ins = method.getParameterTypes();
                             if (ins.length == 0) {
-                                customGUIComponent = method;
+                                td.setCustomGuiComponent(method);
                             }
                         }
                     } catch (ClassNotFoundException e) {
@@ -108,125 +256,11 @@ public class AnnotationProcessor {
                     }
                 }
             }
-        }
-        if (wrapper == null) {
-            return null;
-        }
-        Field[] fields = annotated.getDeclaredFields();
-        for (Field field : fields) {
-            boolean hasParam = false;
-            String paramName = field.getName();
 
-            Parameter param = field.getAnnotation(Parameter.class);
-            if (param != null) {
-                hasParam = true;
-                ps.put(paramName, field);
-            }
-            if (!hasParam) {
-                TextFieldParameter textField = field.getAnnotation(TextFieldParameter.class);
-                if (textField != null) {
-                    hasParam = true;
-                    String txt = processGuiTextField(textField, field);
-                    if (txt != null) {
-                        ps.put(paramName, field);
-                        guiLines.put(paramName, txt);
-                    }
-                }
-            }
-            if (!hasParam) {
-                TextAreaParameter textArea = field.getAnnotation(TextAreaParameter.class);
-                if (textArea != null) {
-                    hasParam = true;
-                    String txt = processGuiTextArea(textArea, field);
-                    if (txt != null) {
-                        ps.put(paramName, field);
-                        guiLines.put(paramName, txt);
-                    }
-                }
-            }
-            if (!hasParam) {
-                ChoiceParameter choice = field.getAnnotation(ChoiceParameter.class);
-                if (choice != null) {
-                    hasParam = true;
-                    String txt = processGuiChoice(choice, field);
-                    if (txt != null) {
-                        ps.put(paramName, field);
-                        guiLines.put(paramName, txt);
-                    }
-                }
-            }
-            if (!hasParam) {
-                SliderParameter scroll = field.getAnnotation(SliderParameter.class);
-                if (scroll != null) {
-                    hasParam = true;
-                    String txt = processGuiScroller(scroll, field);
-                    if (txt != null) {
-                        ps.put(paramName, field);
-                        guiLines.put(paramName, txt);
-                    }
-                }
-            }
-            if (!hasParam) {
-                FileParameter file = field.getAnnotation(FileParameter.class);
-                if (file != null) {
-                    hasParam = true;
-                    String txt = processGuiFile(file, field);
-                    if (txt != null) {
-                        ps.put(paramName, field);
-                        guiLines.put(paramName, txt);
-                    }
-                }
-            }
-            if (!hasParam) {
-                LabelParameter label = field.getAnnotation(LabelParameter.class);
-                if (label != null) {
-                    hasParam = true;
-                    String txt = processGuiLabel(label, field);
-                    if (txt != null) {
-                        ps.put(paramName, field);
-                        guiLines.put(paramName, txt);
-                    }
-                }
-            }
-            if (!hasParam) {
-                CheckboxParameter label = field.getAnnotation(CheckboxParameter.class);
-                if (label != null) {
-                    hasParam = true;
-                    String txt = processGuiBoolean(label, field);
-                    if (txt != null) {
-                        ps.put(paramName, field);
-                        guiLines.put(paramName, txt);
-                    }
-                }
-            }
-            if (!hasParam) {
-                RenderingHintDetail detail = field.getAnnotation(RenderingHintDetail.class);
-                if (detail != null) {
-                    String hint = detail.hint();
-                    String d = detail.detail();
-                    if (hint != null && d != null) {
-                        wrapper.addRenderingDetail(hint, d, field);
-                    }
-                }
-            }
         }
-        if (wrapper != null) {
-            for (String s : ps.keySet()) {
-                wrapper.addAnnotatedParameter(s, ps.get(s));
-            }
-            if (guiLines.size() > 0) {
-                wrapper.setGuiLines(guiLines);
-            }
-            if (customGUIComponent != null) {
-                wrapper.setCustomGUIComponent(customGUIComponent);
-            } else if (panelClass != null) {
-                wrapper.setPanelClass(panelClass);
-            }
-        }
-
-        return wrapper;
-
+        return md;
     }
+
 
     private static String processGuiTextField(TextFieldParameter field, Field f) {
         String title = field.title();

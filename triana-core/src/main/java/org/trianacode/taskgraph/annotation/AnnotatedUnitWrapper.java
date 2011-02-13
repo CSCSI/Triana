@@ -20,144 +20,68 @@ import java.util.*;
 
 public class AnnotatedUnitWrapper extends Unit {
 
-    private Object annotated;
-    private Method process;
-    private String[] inputs;
-    private String[] outputs;
-    private String[] renderingHints = new String[0];
-    private Map<String, String> guiLines = new HashMap<String, String>();
-    private String panelClass = null;
-    private boolean aggregate = false;
-    private boolean isArray = false;
-    private int minimumInputs = 0;
-    private int minimumOutputs = 0;
-    private Map<String[], Field> renderingDetails = new HashMap<String[], Field>();
-    private Method customGUIComponent;
-    private boolean nodeAware = false;
-    private boolean flatten = false;
-    private OutputPolicy outputClonePolicy;
 
+    private ToolDescriptor toolDesc;
+    private MethodDescriptor methodDesc;
+    private Map<String, FieldDescriptor> fieldDescs = new HashMap<String, FieldDescriptor>();
 
-    private Map<String, Field> params = new HashMap<String, Field>();
+    private Map<String, Object> originalValues = new HashMap<String, Object>();
 
-    public AnnotatedUnitWrapper(String name, String pkge, Object annotated, Method process, String[] inputs,
-                                String[] outputs, boolean aggregate) {
+    public AnnotatedUnitWrapper(ToolDescriptor tooldesc, MethodDescriptor methoddesc, Map<String, FieldDescriptor> fielddescs) {
+        this.toolDesc = tooldesc;
+        this.methodDesc = methoddesc;
+        this.fieldDescs = fielddescs;
+        Object annotated = tooldesc.getAnnotated();
         setToolName(annotated.getClass().getSimpleName());
         setToolPackage(getPackageName(annotated.getClass().getName()));
-        if (name != null) {
-            setDisplayName(name);
+        if (tooldesc.getName() != null) {
+            setDisplayName(tooldesc.getName());
         } else {
             setDisplayName(getToolName());
         }
-        if (pkge != null) {
-            setDisplayPackage(pkge);
+        if (tooldesc.getPckge() != null) {
+            setDisplayPackage(tooldesc.getPckge());
         } else {
             setDisplayPackage(getToolPackage());
         }
-        this.annotated = annotated;
-        this.process = process;
-        this.inputs = inputs;
-        this.outputs = outputs;
-        this.aggregate = aggregate;
-        if (annotated instanceof TaskAware) {
-            System.out.println("AnnotatedUnitWrapper.AnnotatedUnitWrapper OBJECT IS NODE AWARE");
-            nodeAware = true;
-        }
-        for (String input : inputs) {
-            debug("AnnotatedUnitWrapper.AnnotatedUnitWrapper INPUT:" + input);
-        }
-        for (String output : outputs) {
-            debug("AnnotatedUnitWrapper.AnnotatedUnitWrapper OUTPUT:" + output);
-        }
-        if (aggregate) {
-            Class[] clss = process.getParameterTypes();
-            if (clss.length == 1) {
-                Class cls = clss[0];
-                if (cls.isArray()) {
-                    isArray = true;
-                }
-            }
-        }
-    }
-
-    public OutputPolicy getOutputClonePolicy() {
-        return outputClonePolicy;
-    }
-
-    public void setOutputClonePolicy(OutputPolicy outputClonePolicy) {
-        this.outputClonePolicy = outputClonePolicy;
-    }
-
-    public boolean isFlatten() {
-        return flatten;
-    }
-
-    public void setFlatten(boolean flatten) {
-        this.flatten = flatten;
-    }
-
-    public Method getCustomGUIComponent() {
-        return customGUIComponent;
-    }
-
-    public void setCustomGUIComponent(Method customGUIComponent) {
-        this.customGUIComponent = customGUIComponent;
-    }
-
-    public void setPanelClass(String panelClass) {
-        this.panelClass = panelClass;
-    }
-
-    public void setGuiLines(Map<String, String> map) {
-        this.guiLines = map;
-    }
-
-    public void addAnnotatedParameter(String name, Field f) {
-        f.setAccessible(true);
-        params.put(name, f);
-    }
-
-    public void setRenderingHints(String[] renderingHints) {
-        this.renderingHints = renderingHints;
-    }
-
-    public void addRenderingDetail(String hint, String name, Field f) {
-        renderingDetails.put(new String[]{hint, name}, f);
-    }
-
-    public void setMinimumInputs(int minimumInputs) {
-        this.minimumInputs = minimumInputs;
-    }
-
-    public void setMinimumOutputs(int minimumOutputs) {
-        this.minimumOutputs = minimumOutputs;
     }
 
     public void init() {
         setDefaultInputNodes(0);
-        setMinimumInputNodes(minimumInputs);
-        if (aggregate) {
+        setMinimumInputNodes(toolDesc.getMinimumInputs());
+        if (methodDesc.isGather()) {
             setMaximumInputNodes(Integer.MAX_VALUE);
         } else {
-            setMaximumInputNodes(inputs.length);
+            setMaximumInputNodes(methodDesc.getInputs().length);
         }
-        setDefaultOutputNodes(outputs.length);
-        setMinimumOutputNodes(minimumOutputs);
-        if (outputs.length == 0) {
+        setDefaultOutputNodes(methodDesc.getOutputs().length);
+        setMinimumOutputNodes(toolDesc.getMinimumOutputs());
+        if (methodDesc.getOutputs().length == 0) {
             setMaximumOutputNodes(0);
         } else {
             setMaximumOutputNodes(Integer.MAX_VALUE);
         }
         StringBuilder sb = new StringBuilder();
+        Object annotated = toolDesc.getAnnotated();
         try {
-            for (String s : params.keySet()) {
-                Field f = params.get(s);
+            for (String s : fieldDescs.keySet()) {
+                FieldDescriptor fd = fieldDescs.get(s);
+                Field f = fd.getField();
                 Object o = f.get(annotated);
                 if (o != null) {
+                    originalValues.put(s, o);
                     defineParameter(s, f.get(annotated), USER_ACCESSIBLE);
-                    String guiLine = guiLines.get(s);
+                    String guiLine = fd.getGuiline();
                     if (guiLine != null) {
-                        sb.append(guiLines.get(s)).append("\n");
+                        sb.append(guiLine).append("\n");
+                    }
+                    String[] rhd = fd.getRenderingDetails();
+                    if (rhd != null) {
+                        RenderingHint rh = getTask().getRenderingHint(rhd[0]);
+                        if (rh != null && rh instanceof RenderingHintImp) {
+                            RenderingHintImp imp = (RenderingHintImp) rh;
+                            imp.setRenderingDetail(rhd[1], o);
+                        }
                     }
                 }
             }
@@ -169,15 +93,15 @@ public class AnnotatedUnitWrapper extends Unit {
             debug("AnnotatedUnitWrapper.init guiLines:" + gl);
             setGUIBuilderV2Info(gl);
         }
-        if (panelClass != null && panelClass.length() > 0) {
-            setParameterPanelClass(panelClass);
+        if (toolDesc.getPanelClass() != null) {
+            setParameterPanelClass(toolDesc.getPanelClass());
             setParameterPanelInstantiate(Unit.ON_USER_ACCESS);
 
         } else {
-            if (customGUIComponent != null) {
+            if (toolDesc.getCustomGuiComponent() != null) {
                 Object gui = null;
                 try {
-                    gui = customGUIComponent.invoke(annotated, new Object[0]);
+                    gui = toolDesc.getCustomGuiComponent().invoke(toolDesc.getAnnotated(), new Object[0]);
                     // TODO - HACK. need some sort of callback to panel manager from tool
                     Class manager = ClassLoaders.forName("org.trianacode.gui.panels.ParameterPanelManager");
                     Method setter = manager.getMethod("registerComponent", new Class[]{ClassLoaders.forName("java.awt.Component"), Task.class});
@@ -188,48 +112,48 @@ public class AnnotatedUnitWrapper extends Unit {
                 }
             }
         }
-        if (renderingHints.length > 0) {
-            for (String s : renderingHints) {
+        if (toolDesc.getRenderingHints() != null) {
+            for (String s : toolDesc.getRenderingHints()) {
                 RenderingHintImp hint = new RenderingHintImp(s, false);
                 getTask().addRenderingHint(hint);
             }
         }
-        if (renderingDetails.size() > 0) {
-            for (String[] s : renderingDetails.keySet()) {
-                try {
-                    Field f = params.get(s);
-                    Object o = f.get(annotated);
-                    if (o != null) {
-                        RenderingHint rh = getTask().getRenderingHint(s[0]);
-                        if (rh != null && rh instanceof RenderingHintImp) {
-                            RenderingHintImp imp = (RenderingHintImp) rh;
-                            imp.setRenderingDetail(s[1], o);
-                        }
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (outputClonePolicy != null) {
-            if (outputClonePolicy == OutputPolicy.CLONE_MULTIPLE) {
+
+        if (toolDesc.getOutputPolicy() != null) {
+            if (toolDesc.getOutputPolicy() == OutputPolicy.CLONE_MULTIPLE) {
                 setOutputPolicy(CLONE_MULTIPLE_OUTPUT);
-            } else if (outputClonePolicy == OutputPolicy.CLONE_MULTIPLE) {
+            } else if (toolDesc.getOutputPolicy() == OutputPolicy.CLONE_MULTIPLE) {
                 setOutputPolicy(CLONE_ALL_OUTPUT);
-            } else if (outputClonePolicy == OutputPolicy.CLONE_NONE) {
+            } else if (toolDesc.getOutputPolicy() == OutputPolicy.CLONE_NONE) {
                 setOutputPolicy(COPY_OUTPUT);
             }
         }
     }
 
+    public void reset() {
+        for (String s : fieldDescs.keySet()) {
+            Object value = originalValues.get(s);
+            FieldDescriptor fd = fieldDescs.get(s);
+            if (value != null && fd != null) {
+                Field f = fd.getField();
+                try {
+                    f.set(toolDesc.getAnnotated(), value);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public void parameterUpdate(String paramname, Object value) {
-        Field f = params.get(paramname);
-        if (f != null) {
+        FieldDescriptor fd = fieldDescs.get(paramname);
+        if (fd != null) {
+            Field f = fd.getField();
             if (value instanceof String) {
                 value = fromString((String) value, f);
             }
             try {
-                f.set(annotated, value);
+                f.set(toolDesc.getAnnotated(), value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -272,40 +196,42 @@ public class AnnotatedUnitWrapper extends Unit {
 
     private static Class convert(Class cls) {
         if (cls.equals(boolean.class)) {
-            return java.lang.Boolean.class;
+            return Boolean.class;
         } else if (cls.equals(short.class)) {
-            return java.lang.Short.class;
+            return Short.class;
         } else if (cls.equals(long.class)) {
-            return java.lang.Long.class;
+            return Long.class;
         } else if (cls.equals(int.class)) {
-            return java.lang.Integer.class;
+            return Integer.class;
         } else if (cls.equals(float.class)) {
-            return java.lang.Float.class;
+            return Float.class;
         } else if (cls.equals(double.class)) {
-            return java.lang.Double.class;
+            return Double.class;
         } else if (cls.equals(byte.class)) {
-            return java.lang.Byte.class;
+            return Byte.class;
         }
         return cls;
     }
 
     @Override
     public String[] getInputTypes() {
-        return inputs;
+        return methodDesc.getInputs();
     }
 
     @Override
     public String[] getOutputTypes() {
-        return outputs;
+        return methodDesc.getOutputs();
     }
 
     @Override
     public void process() throws Exception {
         log("ENTER for task " + getTask().getQualifiedToolName());
+        Method process = methodDesc.getMethod();
+        Object annotated = toolDesc.getAnnotated();
         Class[] clss = process.getParameterTypes();
         int inCount = getInputNodeCount();
         log("input count:" + inCount);
-        if (nodeAware) {
+        if (toolDesc.isTaskAware()) {
             TaskAware na = (TaskAware) annotated;
             na.setInputNodeCount(inCount);
             na.setOutputNodeCount(getOutputNodeCount());
@@ -314,14 +240,14 @@ public class AnnotatedUnitWrapper extends Unit {
         }
 
         List<Object> ins = new ArrayList<Object>();
-        if (aggregate) {
+        if (methodDesc.isGather()) {
             for (int count = 0; count < inCount; count++) {
                 log("next input node:" + count);
                 log("next input node is connected:" + getTask().getInputNode(count).isConnected());
                 Object o = getInputAtNode(count);
                 log("next input node object:" + o);
                 if (o != null) {
-                    if (flatten) {
+                    if (methodDesc.isFlatten()) {
                         if (o.getClass().isArray()) {
                             int len = Array.getLength(o);
                             for (int i = 0; i < len; i++) {
@@ -354,8 +280,8 @@ public class AnnotatedUnitWrapper extends Unit {
             }
         }
         Object[] input = null;
-        if (aggregate) {
-            if (isArray) {
+        if (methodDesc.isGather()) {
+            if (methodDesc.isArray()) {
                 input = new Object[]{ins.toArray(new Object[ins.size()])};
             } else { // it's a list or a collection
                 input = new Object[]{ins};
@@ -365,14 +291,14 @@ public class AnnotatedUnitWrapper extends Unit {
         }
 
         Map<String, Object> currentParams = new HashMap<String, Object>();
-        for (String s : params.keySet()) {
-            currentParams.put(s, params.get(s).get(annotated));
+        for (String s : fieldDescs.keySet()) {
+            currentParams.put(s, fieldDescs.get(s).getField().get(annotated));
         }
         Object ret = process.invoke(annotated, input);
         log("return value is " + ret);
         for (String s : currentParams.keySet()) {
             Object param = currentParams.get(annotated);
-            Object now = params.get(s).get(annotated);
+            Object now = fieldDescs.get(s).getField().get(annotated);
             if (now != null) {
                 if (!now.equals(param)) {
                     setParameter(s, now);
