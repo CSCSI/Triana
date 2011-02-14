@@ -87,7 +87,7 @@ public class TrianaColorModel implements NodeColorModel, CableColorModel, Backgr
         ColorTable.instance().initDefaultColor(this, NODE_COLOR, Color.black);
         ColorTable.instance().initDefaultColor(this, TRIGGER_NODE_COLOR, Color.red);
         ColorTable.instance().initDefaultColor(this, ERROR_NODE_COLOR, Color.blue);
-        ColorTable.instance().initDefaultColor(this, PROGRESS_COLOR, Color.blue);
+        ColorTable.instance().initDefaultColor(this, PROGRESS_COLOR, Color.green);
         ColorTable.instance().initDefaultColor(this, SHOW_TOOL_CONNECTED_COLOR, FORSHOW_CONNECTED_COLOR);
         ColorTable.instance().initDefaultColor(this, SHOW_TOOL_UNCONNECTED_COLOR, FORSHOW_UNCONNECTED_COLOR);
         ColorTable.instance().initDefaultColor(this, CABLE_COLOR, Color.black);

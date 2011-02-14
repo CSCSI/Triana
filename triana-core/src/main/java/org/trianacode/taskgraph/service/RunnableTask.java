@@ -98,7 +98,8 @@ public class RunnableTask extends AbstractRunnableTask
     private static final Integer NO_THREAD = new Integer(0);
     private static final Integer IN_PROCESS = new Integer(1);
     private static final Integer UNSTABLE = new Integer(2);
-    private static final Integer THREAD_LOCK = new Integer(-1);
+    // object to lock on - an instane variable
+    private final Integer THREAD_LOCK = new Integer(-1);
 
     private Unit unit;
 
@@ -404,7 +405,7 @@ public class RunnableTask extends AbstractRunnableTask
                         runAgain = 0;
                         threadstate = UNSTABLE;
 
-                        pool.addTask(this);
+                        getProperties().getEngine().execute(this);
                     }
                     handled = true;
                 } else {
@@ -583,19 +584,8 @@ public class RunnableTask extends AbstractRunnableTask
                     } else {
                         toOutput = data;
                     }
-                    // TODO
-                    //output(node, toOutput, !Env.isNonBlockingOutputNodes());
                     output(node, toOutput, true);
                 }
-
-                // Wait for non-blocking outputs to return
-                // TODO
-                /*if (Env.isNonBlockingOutputNodes()) {
-                    do {
-                        Thread.yield();
-                    }
-                    while (packetsLeft > 0);
-                }*/
             }
         }
         catch (NotSerializableException except) {
@@ -775,7 +765,7 @@ public class RunnableTask extends AbstractRunnableTask
     public void reset() {
         super.reset();
 
-        pool.addTask(new Runnable() {
+        getProperties().getEngine().execute(new Runnable() {
             public void run() {
 
                 boolean handled = false;

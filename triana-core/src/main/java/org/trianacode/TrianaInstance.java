@@ -29,8 +29,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class represents an instance of Triana and allows arguments to be passed to it and properties for
@@ -50,7 +51,9 @@ public class TrianaInstance {
     private static Log log = Loggers.CONFIG_LOGGER;
 
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 20);
+    private ThreadPoolExecutor executorService = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 5,
+            Runtime.getRuntime().availableProcessors() * 20,
+            60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(Runtime.getRuntime().availableProcessors() * 20));
     private HTTPServices httpServices;
     private ToolResolver toolResolver;
 
@@ -83,6 +86,7 @@ public class TrianaInstance {
      * @throws Exception
      */
     public TrianaInstance(String[] args) throws IOException {
+        executorService.allowCoreThreadTimeOut(true);
         if (args == null) {
             args = new String[0];
         }

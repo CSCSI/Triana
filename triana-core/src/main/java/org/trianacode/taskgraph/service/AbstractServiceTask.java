@@ -60,15 +60,11 @@
 package org.trianacode.taskgraph.service;
 
 
-import java.util.ArrayList;
-
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.ParameterNode;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.ClipInBucket;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.util.ArrayList;
 
 /**
  * An abstract service task is responsible for handling the wake-ups and output from a task. Sub classes for this class
@@ -239,9 +235,8 @@ public abstract class AbstractServiceTask extends AbstractRunnableTask {
             final Task task = this;
             final ClipInBucket bucket = new ClipInBucket(task);
             final Object[] indata = getData(bucket);
-            //AspectManager.applyBefore(this, getData(bucket));
 
-            pool.addTask(new Runnable() {
+            getProperties().getEngine().execute(new Runnable() {
                 public void run() {
                     try {
                         try {

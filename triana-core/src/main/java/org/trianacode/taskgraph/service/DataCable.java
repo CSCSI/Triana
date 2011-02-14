@@ -66,7 +66,7 @@ package org.trianacode.taskgraph.service;
  * @version $Revision: 4048 $
  */
 
-public class DataCable extends LocalCable {
+public class DataCable extends QueueCable {
 
     public static final String DATA_CABLE = "Data";
 

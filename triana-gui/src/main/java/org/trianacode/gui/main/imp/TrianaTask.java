@@ -213,7 +213,7 @@ public class TrianaTask extends TrianaTool implements TaskListener, TaskComponen
                 }
 
                 g.setColor(col);
-                g.fillRect(left, top, width, height);
+                g.fill3DRect(left, top, width, height, true);
 
                 left += width + 1;
                 int offset = height / 2;

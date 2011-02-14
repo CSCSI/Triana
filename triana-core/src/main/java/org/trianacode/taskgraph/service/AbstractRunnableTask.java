@@ -76,11 +76,6 @@ import java.util.HashSet;
 
 public abstract class AbstractRunnableTask extends TaskImp implements RunnableInstance {
 
-    /**
-     * A thread pool for every running unit
-     */
-    protected static ThreadPool pool = new ThreadPool(Integer.MAX_VALUE);
-
 
     /**
      * a list of the execution listeners for this task
@@ -301,6 +296,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      */
     protected void waitPause() {
         while (getExecutionState().equals(ExecutionState.PAUSED)) {
+            System.out.println("AbstractRunnableTask.waitPause EXECUTION IS PAUSED. WAITING FOR 500 MILLIS!!!");
             try {
                 Thread.sleep(500);
             } catch (InterruptedException except) {
