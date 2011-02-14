@@ -59,11 +59,12 @@
 package org.trianacode.gui.extensions;
 
 
-import java.io.File;
-import java.io.IOException;
-
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
+
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -85,5 +86,5 @@ public interface TaskGraphImporterInterface {
      *                            brackets for example.
      * @throws IOException        thrown if there is a file IO problem.
      */
-    public TaskGraph importWorkflow(File file) throws TaskGraphException, IOException;
+    public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException;
 }

@@ -205,7 +205,8 @@ public class ToolImp implements Tool {
      * Default constructor
      * Which blows everything up. Where do the proerpties come from ???????????????????????
      */
-    public ToolImp() {
+    public ToolImp(TrianaProperties properties) {
+        this.properties = properties;
 
     }
 

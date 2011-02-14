@@ -377,8 +377,7 @@ public class Scheduler implements SchedulerInterface {
                 }
             };
 
-            //tgraph.getProperties().getEngine().execute(runnable);
-            new Thread(runnable).start();
+            tgraph.getProperties().getEngine().execute(runnable);
         }
     }
 

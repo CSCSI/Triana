@@ -1,6 +1,7 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.extensions.AbstractFormatFilter;
 import org.trianacode.gui.extensions.TaskGraphImporterInterface;
@@ -46,33 +47,34 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     private ArrayList<DaxJobHolder> toolVector = new ArrayList<DaxJobHolder>();
     private ArrayList<DaxFileHolder> files = new ArrayList<DaxFileHolder>();
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String filename = "";
-        if(args.length > 0){
+        if (args.length > 0) {
             filename = args[0];
             new DaxReader(filename);
-        }else{
+        } else {
             System.out.println("Set an XML file for input.");
         }
     }
 
-    public DaxReader(String filename){
+    public DaxReader(String filename) {
         setFile(new File(filename));
         getJobInfo();
     }
 
-    public void DaxReaderWithChooser(){
+    public void DaxReaderWithChooser() {
         JFileChooser fc = new JFileChooser();
         if (fc.showOpenDialog(GUIEnv.getApplicationFrame()) == JFileChooser.APPROVE_OPTION) {
             setFile(fc.getSelectedFile());
             NodeList jobList = getJobInfo();
-            if(jobList != null){
-                createTaskGraph(jobList);
+            if (jobList != null) {
+                createTaskGraph(jobList, GUIEnv.getApplicationFrame().getEngine().getProperties());
             }
         }
     }
 
-    public DaxReader(){}
+    public DaxReader() {
+    }
 
     private void reset() {
         file = null;
@@ -82,7 +84,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     }
 
     @Override
-    public TaskGraph importWorkflow(File file) throws TaskGraphException, IOException {
+    public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException {
         log("importWorkflow called.");
         setFile(file);
         NodeList jobList = getJobInfo();
@@ -92,18 +94,18 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
         TaskGraph tg = null;
         if (jobList != null) {
-            tg = createTaskGraph(jobList);
+            tg = createTaskGraph(jobList, properties);
             tg.setToolName(file.getName());
         }
         return tg;
     }
 
-    private void listAllJobs(Vector<DaxJobHolder> jobs){
-        for(DaxJobHolder job : jobs){
+    private void listAllJobs(Vector<DaxJobHolder> jobs) {
+        for (DaxJobHolder job : jobs) {
             log("Found job : " + job.getToolname());
-            if(job.isCollection()){
+            if (job.isCollection()) {
                 log("Is collection");
-            }else{
+            } else {
                 log("Is not a collection");
             }
         }
@@ -111,6 +113,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
     /**
      * set the DAX file to create the workflow from
+     *
      * @param file
      */
 
@@ -120,8 +123,10 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         log("Set dax input file as : " + getFileName());
         setDoc();
     }
+
     /**
      * Returns a list of all the nodes labelled "job"
+     *
      * @return
      */
     private NodeList getJobInfo() {
@@ -134,9 +139,9 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         return jobList;
     }
 
-    public Vector<DaxJobHolder> getJobHoldersFromNodeList(NodeList jobList){
+    public Vector<DaxJobHolder> getJobHoldersFromNodeList(NodeList jobList) {
         Vector<DaxJobHolder> sortedJobs = new Vector<DaxJobHolder>();
-        for(int i = 0; i < jobList.getLength(); i++){
+        for (int i = 0; i < jobList.getLength(); i++) {
             Node node = jobList.item(i);
             NamedNodeMap map = node.getAttributes();
             log("Job " + i + " has " + map.getLength() + " attributes : " + listAllAttributes(map));
@@ -146,15 +151,15 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
             newJob.setToolname(name);
 
             boolean repeatedJob = false;
-            for(DaxJobHolder holder : sortedJobs){
-                if(holder.getToolname().equals(name)){
+            for (DaxJobHolder holder : sortedJobs) {
+                if (holder.getToolname().equals(name)) {
                     log("SortedJobs already contains : " + name + ", so it will be a collection.");
                     repeatedJob = true;
                     holder.setCollection(true);
                 }
             }
 
-            if(!repeatedJob){
+            if (!repeatedJob) {
                 sortedJobs.add(newJob);
                 log("Added : " + name);
             }
@@ -165,7 +170,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         return sortedJobs;
     }
 
-    private TaskGraph createTaskGraph(NodeList jobList){
+    private TaskGraph createTaskGraph(NodeList jobList, TrianaProperties properties) {
         TaskGraph tg = null;
 
         try {
@@ -176,9 +181,9 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         }
 
         findFiles();
-        for(Iterator iter = files.iterator(); iter.hasNext();){
-            DaxFileHolder dfh = (DaxFileHolder)(iter.next());
-            ToolImp tool = new ToolImp();
+        for (Iterator iter = files.iterator(); iter.hasNext();) {
+            DaxFileHolder dfh = (DaxFileHolder) (iter.next());
+            ToolImp tool = new ToolImp(properties);
             initFileTool(tool, dfh);
             try {
                 tg.createTask(tool);
@@ -187,31 +192,31 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
             }
         }
 
-        for(int i = 0; i < jobList.getLength(); i++){
+        for (int i = 0; i < jobList.getLength(); i++) {
             Node node = jobList.item(i);
             NamedNodeMap map = node.getAttributes();
             log("Job " + i + " has " + map.getLength() + " attributes : " + listAllAttributes(map));
 
-            ToolImp tool = new ToolImp();
+            ToolImp tool = new ToolImp(properties);
             initJobTool(tool, node);
 
             try {
                 Task task = tg.createTask(tool);
 
-                JavaProxy jp = (JavaProxy)tool.getProxy();
+                JavaProxy jp = (JavaProxy) tool.getProxy();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
 
-        for(Iterator iter = toolVector.iterator(); iter.hasNext();){
-            DaxJobHolder djh = (DaxJobHolder)(iter.next());
-            for (int i = 0; i < djh.getNumInputNodes(); i++){
+        for (Iterator iter = toolVector.iterator(); iter.hasNext();) {
+            DaxJobHolder djh = (DaxJobHolder) (iter.next());
+            for (int i = 0; i < djh.getNumInputNodes(); i++) {
                 log("Job : " + djh.getToolname() + " has file : " + djh.getLinkAtInNode(i) +
                         " at input node " + i);
             }
-            for(int i = 0; i < djh.getNumOutputNodes(); i++){
+            for (int i = 0; i < djh.getNumOutputNodes(); i++) {
                 log("Job : " + djh.getToolname() + " has file : " + djh.getLinkAtOutNode(i) + " at output node " + i);
 
             }
@@ -219,7 +224,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
         attachCables(tg);
         log("Attached Cables. Trying to organize taskgraph.");
-    //    tg = combineUnits(tg);
+        //    tg = combineUnits(tg);
 
         TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
 
@@ -227,20 +232,20 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
     }
 
-    private TaskGraph combineUnits(TaskGraph tg){
+    private TaskGraph combineUnits(TaskGraph tg) {
 
         Task[] tasks = tg.getTasks(false);
-        for(Task task : tasks){
-            if(task.getDataInputNodeCount() > 3){
+        for (Task task : tasks) {
+            if (task.getDataInputNodeCount() > 3) {
                 System.out.println("Task : " + task.getToolName() + " has : " + task.getDataInputNodeCount() + " input nodes.");
             }
-            if(task.getDataOutputNodeCount() > 3){
+            if (task.getDataOutputNodeCount() > 3) {
                 System.out.println("Task : " + task.getToolName() + " has : " + task.getDataOutputNodeCount() + " output nodes.");
 
             }
         }
-        for(DaxJobHolder djh : toolVector){
-            if(djh.getNumInputNodes() > 3){
+        for (DaxJobHolder djh : toolVector) {
+            if (djh.getNumInputNodes() > 3) {
                 System.out.println("Job : " + djh.getToolname() + " has : " + djh.getNumInputNodes() + " input nodes.");
                 HashMap inHash = djh.getFilesIn();
                 System.out.println("Hash has : " + inHash.toString());
@@ -250,7 +255,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 //                    }
 //                }
             }
-            if(djh.getNumOutputNodes() > 3){
+            if (djh.getNumOutputNodes() > 3) {
                 System.out.println("Job : " + djh.getToolname() + " has : " + djh.getNumOutputNodes() + " output nodes.");
                 HashMap outHash = djh.getFilesOut();
                 System.out.println("Hash has : " + outHash.toString());
@@ -265,25 +270,25 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         return tg;
     }
 
-    public static String lcs(String a, String b){
+    public static String lcs(String a, String b) {
 
         System.out.println("s.a : " + a + " s.b : " + b);
 
         int aLen = a.length();
         int bLen = b.length();
-        if(aLen == 0 || bLen == 0){
+        if (aLen == 0 || bLen == 0) {
             return "";
-        }else if(a.charAt(aLen-1) == b.charAt(bLen-1)){
-            return lcs(a.substring(0,aLen-1),b.substring(0,bLen-1))
-                    + a.charAt(aLen-1);
-        }else{
-            String x = lcs(a, b.substring(0,bLen-1));
-            String y = lcs(a.substring(0,aLen-1), b);
+        } else if (a.charAt(aLen - 1) == b.charAt(bLen - 1)) {
+            return lcs(a.substring(0, aLen - 1), b.substring(0, bLen - 1))
+                    + a.charAt(aLen - 1);
+        } else {
+            String x = lcs(a, b.substring(0, bLen - 1));
+            String y = lcs(a.substring(0, aLen - 1), b);
             return (x.length() > y.length()) ? x : y;
         }
     }
 
-    private Task getTaskFromTool(Tool tool){
+    private Task getTaskFromTool(Tool tool) {
         Task task = null;
         /*
         try {
@@ -313,20 +318,20 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
      *
      * @param tg
      */
-    private void attachCables(TaskGraph tg){
-        for(Iterator iter  =  toolVector.iterator(); iter.hasNext();){
-            DaxJobHolder djh = (DaxJobHolder)iter.next();
+    private void attachCables(TaskGraph tg) {
+        for (Iterator iter = toolVector.iterator(); iter.hasNext();) {
+            DaxJobHolder djh = (DaxJobHolder) iter.next();
             Task jobTask = getTaskFromTool(djh.getTool());
-            if(jobTask == null){
+            if (jobTask == null) {
                 jobTask = tg.getTask(djh.getJobID());
             }
 
-            for(int i = 0; i < djh.getNumInputNodes(); i++){
+            for (int i = 0; i < djh.getNumInputNodes(); i++) {
                 String link = djh.getLinkAtInNode(i);
                 org.trianacode.taskgraph.Node fileNode = null;
-                for(Iterator iter2 = files.iterator(); iter2.hasNext();){
-                    DaxFileHolder dfh = (DaxFileHolder)iter2.next();
-                    if(dfh.getFilename().equals(link)){
+                for (Iterator iter2 = files.iterator(); iter2.hasNext();) {
+                    DaxFileHolder dfh = (DaxFileHolder) iter2.next();
+                    if (dfh.getFilename().equals(link)) {
                         //  String filesJobID = dfh.getJobAtOutNode(0);
                         //  String jobsID = djh.getJobID();
                         //  if(!(filesJobID == null) && filesJobID.equals(jobsID)){
@@ -343,12 +348,12 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
                 }
             }
 
-            for(int i = 0; i < djh.getNumOutputNodes(); i++){
+            for (int i = 0; i < djh.getNumOutputNodes(); i++) {
                 String link = djh.getLinkAtOutNode(i);
                 org.trianacode.taskgraph.Node fileNode = null;
-                for(Iterator iter2 = files.iterator(); iter2.hasNext();){
-                    DaxFileHolder dfh = (DaxFileHolder)iter2.next();
-                    if(dfh.getFilename().equals(link)){
+                for (Iterator iter2 = files.iterator(); iter2.hasNext();) {
+                    DaxFileHolder dfh = (DaxFileHolder) iter2.next();
+                    if (dfh.getFilename().equals(link)) {
                         //  String filesJobID = dfh.getJobAtInNode(0);
                         //  String jobsID = djh.getJobID();
                         //  if(!(filesJobID == null) && filesJobID.equals(jobsID)){
@@ -368,39 +373,39 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     }
 
     /**
-     * Finds all nodes labelled "job" in DAX,      
+     * Finds all nodes labelled "job" in DAX,
      */
-    private void findFiles(){
+    private void findFiles() {
         NodeList jobLst = doc.getElementsByTagName("job");
         Vector<String> filenames = new Vector<String>();
 
-        for(int j = 0; j < jobLst.getLength(); j++){
+        for (int j = 0; j < jobLst.getLength(); j++) {
             Node jobNode = jobLst.item(j);
             NodeList nodeLst = jobNode.getChildNodes();
 
-            for(int i = 0; i < nodeLst.getLength(); i++){
+            for (int i = 0; i < nodeLst.getLength(); i++) {
                 Node node = nodeLst.item(i);
-                if(node.getNodeName().equals("uses")){
+                if (node.getNodeName().equals("uses")) {
                     //    NamedNodeMap map = node.getAttributes();
                     //    String fileName = map.getNamedItem("file").getNodeValue();
                     String fileName = getNodeAttributeValue(node, "file");
-                    if(fileName == null){
+                    if (fileName == null) {
                         fileName = getNodeAttributeValue(node, "name");
                     }
                     //      log("Getting info for file : " + fileName);
 
-                    if(!filenames.contains(fileName)){
+                    if (!filenames.contains(fileName)) {
                         filenames.add(fileName);
                         DaxFileHolder dfh = new DaxFileHolder();
                         dfh.setFilename(fileName);
                         String parentID = getNodeAttributeValue(jobNode, "id");
                         //log("Files parent is job : " + parentID);
-                        if(getNodeAttributeValue(node, "link").equals("input")){
+                        if (getNodeAttributeValue(node, "link").equals("input")) {
                             int nodeNumber = dfh.getFreeOutNode();
                             dfh.addJobOut(nodeNumber, parentID);
                             log("File " + fileName + " has job " + parentID + " attached to output node : " + nodeNumber);
                         }
-                        if(getNodeAttributeValue(node, "link").equals("output")){
+                        if (getNodeAttributeValue(node, "link").equals("output")) {
                             int nodeNumber = dfh.getFreeInNode();
                             dfh.addJobIn(nodeNumber, parentID);
                             log("File " + fileName + " has job " + parentID + " attached to input node : " + nodeNumber);
@@ -408,19 +413,18 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
                         }
 
                         files.add(dfh);
-                    }
-                    else{
-                        for(Iterator iter = files.iterator(); iter.hasNext();){
-                            DaxFileHolder dfh = (DaxFileHolder)iter.next();
-                            if(dfh.getFilename().equals(fileName)){
+                    } else {
+                        for (Iterator iter = files.iterator(); iter.hasNext();) {
+                            DaxFileHolder dfh = (DaxFileHolder) iter.next();
+                            if (dfh.getFilename().equals(fileName)) {
                                 String parentID = getNodeAttributeValue(jobNode, "id");
                                 log("Files parent is job : " + parentID);
-                                if(getNodeAttributeValue(node, "link").equals("input")){
+                                if (getNodeAttributeValue(node, "link").equals("input")) {
                                     int nodeNumber = dfh.getFreeOutNode();
                                     dfh.addJobOut(nodeNumber, parentID);
                                     log("File " + fileName + " has job " + parentID + " attached to output node : " + nodeNumber);
                                 }
-                                if(getNodeAttributeValue(node, "link").equals("output")){
+                                if (getNodeAttributeValue(node, "link").equals("output")) {
                                     int nodeNumber = dfh.getFreeInNode();
                                     dfh.addJobIn(nodeNumber, parentID);
                                     log("File " + fileName + " has job " + parentID + " attached to input node : " + nodeNumber);
@@ -439,23 +443,23 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     /**
      * Method to list the jobs associated with certain nodes of each file found so far.
      */
-    private void listKnownFileData(){
+    private void listKnownFileData() {
         log("\n**** System knows this about files:");
-        for(Iterator i = files.iterator(); i.hasNext();){
-            DaxFileHolder dfh = (DaxFileHolder)(i.next());
-            for(int j = 0; j< dfh.getNumInputNodes(); j++){
+        for (Iterator i = files.iterator(); i.hasNext();) {
+            DaxFileHolder dfh = (DaxFileHolder) (i.next());
+            for (int j = 0; j < dfh.getNumInputNodes(); j++) {
                 log("File : " + dfh.getFilename() + " has job : " + dfh.getJobAtInNode(j) + " at input node " + j);
             }
-            for(int j = 0; j < dfh.getNumOutputNodes(); j++){
+            for (int j = 0; j < dfh.getNumOutputNodes(); j++) {
                 log("File : " + dfh.getFilename() + " has job : " + dfh.getJobAtOutNode(j) + " at output node " + j);
             }
         }
     }
 
     /**
-     *    Fills the tool with information taken from the job node of a DAX
-     *    All tools created are of type "JobUnit".
-     *    Created tool should have the correct number of input and output nodes
+     * Fills the tool with information taken from the job node of a DAX
+     * All tools created are of type "JobUnit".
+     * Created tool should have the correct number of input and output nodes
      *
      * @param tool
      * @param node
@@ -466,41 +470,41 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         String toolname = getNodeAttributeValue(node, "id");
         tool.setParameter("name", getNodeAttributeValue(node, "name"));
         tool.setToolName(toolname);
-                        tool.setSubTitle((String)tool.getParameter("name"));
-                System.out.println("Subtitle set to : " + tool.getSubTitle());
+        tool.setSubTitle((String) tool.getParameter("name"));
+        System.out.println("Subtitle set to : " + tool.getSubTitle());
 
 
         int inputNodes = 0;
         int outputNodes = 0;
 
         NodeList nl = node.getChildNodes();
-        for(int i = 0; i < nl.getLength(); i++){
+        for (int i = 0; i < nl.getLength(); i++) {
             Node childNode = nl.item(i);
-            if(childNode.getNodeName().equals("uses")){
+            if (childNode.getNodeName().equals("uses")) {
                 NamedNodeMap map = childNode.getAttributes();
                 //      log("Job uses : "  + listAllAttributes(map));
-                if(map.getNamedItem("link").getNodeValue().equals("input")){
+                if (map.getNamedItem("link").getNodeValue().equals("input")) {
                     String fileName;
-                    if(map.getNamedItem("file") != null){
+                    if (map.getNamedItem("file") != null) {
                         fileName = map.getNamedItem("file").getNodeValue();
-                    }else{
+                    } else {
                         fileName = map.getNamedItem("name").getNodeValue();
                     }
                     djh.addFileIn(inputNodes, fileName);
-                    inputNodes ++;
+                    inputNodes++;
                 }
-                if(map.getNamedItem("link").getNodeValue().equals("output")){
+                if (map.getNamedItem("link").getNodeValue().equals("output")) {
                     String fileName;
-                    if(map.getNamedItem("file") != null){
+                    if (map.getNamedItem("file") != null) {
                         fileName = map.getNamedItem("file").getNodeValue();
-                    }else{
+                    } else {
                         fileName = map.getNamedItem("name").getNodeValue();
                     }
                     djh.addFileOut(outputNodes, fileName);
-                    outputNodes ++;
+                    outputNodes++;
                 }
             }
-            if(childNode.getNodeName().equals("argument")){
+            if (childNode.getNodeName().equals("argument")) {
                 tool.setParameter("args", childNode.getTextContent().trim());
                 log("Job tool will have args : " + childNode.getTextContent());
             }
@@ -525,15 +529,15 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         djh.setTool(tool);
 
 
-        log("Job " + toolname + " has " + inputNodes + " inputNodes, and " + outputNodes  + " outputNodes.");
+        log("Job " + toolname + " has " + inputNodes + " inputNodes, and " + outputNodes + " outputNodes.");
         String inputs = "";
         String outputs = "";
 
-        for(int i = 0; i < djh.getNumInputNodes(); i++){
+        for (int i = 0; i < djh.getNumInputNodes(); i++) {
             inputs += "Node " + i + " : " + djh.getLinkAtInNode(i) + " ";
         }
 
-        for(int i = 0; i < djh.getNumOutputNodes(); i++){
+        for (int i = 0; i < djh.getNumOutputNodes(); i++) {
             outputs += "Node " + i + " : " + djh.getLinkAtOutNode(i) + " ";
         }
 
@@ -579,11 +583,11 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     }
 
 
-    private String getNodeAttributeValue(Node node, String name){
+    private String getNodeAttributeValue(Node node, String name) {
         Node child = node.getAttributes().getNamedItem(name);
-        if(child != null){
+        if (child != null) {
             return node.getAttributes().getNamedItem(name).getNodeValue();
-        }else{
+        } else {
             return null;
         }
     }
@@ -592,14 +596,14 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         return file;
     }
 
-    public String getFileName(){
+    public String getFileName() {
         return file.getName();
     }
 
     /**
      * Sets the doc variable which will be used as the root node when building tools from the DAX
      */
-    private void setDoc(){
+    private void setDoc() {
         try {
             BufferedInputStream bufferedInput = new BufferedInputStream(new FileInputStream(file));
 
@@ -616,16 +620,16 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
     /**
      * Checks if the first string in the file is "adag"
+     *
      * @return
      */
-    private boolean isValidDax(){
+    private boolean isValidDax() {
         String rootString = doc.getDocumentElement().getNodeName();
         log("Root element : " + rootString);
-        if(rootString.equals("adag")){
+        if (rootString.equals("adag")) {
             log("File " + getFileName() + " is a valid DAX");
             return true;
-        }
-        else{
+        } else {
             log("File " + getFileName() + " is not a valid DAX");
             return false;
         }
@@ -638,12 +642,13 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
     /**
      * Lists all the attributes in the NamedNodeMap
+     *
      * @param map
      * @return
      */
-    private String listAllAttributes(NamedNodeMap map){
+    private String listAllAttributes(NamedNodeMap map) {
         String listString = "";
-        for(int i = 0; i < map.getLength(); i++){
+        for (int i = 0; i < map.getLength(); i++) {
             Node node = map.item(i);
             listString += node.getNodeName();
             listString += " = " + node.getNodeValue() + " : ";
@@ -677,11 +682,11 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         return 0;
     }
 
-    public String toString(){
+    public String toString() {
         return "DaxReader";
     }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         //System.out.println(s);

@@ -575,7 +575,7 @@ public class CommandLineExec extends TrianaExec {
             }
 
             XMLReader reader = new XMLReader(new FileReader(file));
-            CommandLineExec exec = new CommandLineExec("CommandLineExec <xmlfile> ", reader.readComponent());
+            CommandLineExec exec = new CommandLineExec("CommandLineExec <xmlfile> ", reader.readComponent(engine.getProperties()));
 
             String[] argsub = new String[args.length - 1];
             System.arraycopy(args, 1, argsub, 0, argsub.length);

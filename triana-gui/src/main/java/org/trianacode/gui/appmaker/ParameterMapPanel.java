@@ -380,7 +380,7 @@ public class ParameterMapPanel extends JPanel
 
                 try {
                     XMLReader reader = new XMLReader(new FileReader(filename));
-                    tool = reader.readComponent();
+                    tool = reader.readComponent(GUIEnv.getApplicationFrame().getEngine().getProperties());
                 } catch (IOException except) {
                     JOptionPane
                             .showMessageDialog(null, "Error reading " + filename, "IO Error", JOptionPane.ERROR_MESSAGE,

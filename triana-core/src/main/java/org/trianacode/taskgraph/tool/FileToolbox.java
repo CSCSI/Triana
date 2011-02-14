@@ -388,9 +388,8 @@ public class FileToolbox implements Toolbox {
         XMLReader reader = null;
         try {
             reader = new XMLReader(new BufferedReader(new InputStreamReader(streamable.getInputStream())));
-            Tool tool = reader.readComponent();
+            Tool tool = reader.readComponent(getProperties());
             if (tool != null) {
-                tool.setProperties(getProperties());
                 return Arrays.asList(tool);
             }
             return new ArrayList<Tool>();
@@ -464,6 +463,7 @@ public class FileToolbox implements Toolbox {
         if (ch != null) {
             Tool tool = createTool(ch.getName());
             if (tool != null) {
+
                 return Arrays.asList(tool);
             }
         }
@@ -479,12 +479,12 @@ public class FileToolbox implements Toolbox {
      */
     protected Tool createTool(String className) throws Exception {
         try {
-            ToolImp tool = new ToolImp();
+            ToolImp tool = new ToolImp(getProperties());
             tool.setDefinitionType(Tool.DEFINITION_JAVA_CLASS);
             tool.setToolName(ToolUtils.getClassName(className));
             tool.setToolPackage(ToolUtils.getPackageName(className));
             tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));
-            tool.setProperties(getProperties());
+
             return tool;
         } catch (TaskException e) {
             log.warn("Error creating tool:", e);

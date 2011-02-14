@@ -379,7 +379,7 @@ public class ToolResolver implements ToolMetadataResolver {
 
     /**
      * Will this work for taskgraph???
-     *
+     * <p/>
      * No exceptions, just a warning ....   need to propagate these though.
      *
      * @param metadata
@@ -387,11 +387,11 @@ public class ToolResolver implements ToolMetadataResolver {
      */
     private Tool createTool(ToolMetadata metadata) throws ProxyInstantiationException, TaskException {
         if (!metadata.isTaskgraph()) {
-            ToolImp tool = new ToolImp();
+            ToolImp tool = new ToolImp(getProperties());
             tool.setDefinitionType(Tool.DEFINITION_METADATA);
             tool.setToolName(ToolUtils.getClassName(metadata.getToolName()));
             tool.setToolPackage(ToolUtils.getPackageName(metadata.getToolName()));
-            tool.setProperties(getProperties());
+
             String cls = metadata.getUnitWrapper();
             if (cls == null) {
                 tool.setProxy(new JavaProxy(tool.getToolName(), tool.getToolPackage()));

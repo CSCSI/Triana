@@ -248,7 +248,8 @@ public class FileImportExportDecorator implements ActionListener {
             throw (new RuntimeException("Attempting to import workflow before Import Dialog shown"));
         }
 
-        return ((TaskGraphImporterInterface) getSelectedFilter()).importWorkflow(fc.getSelectedFile());
+        return ((TaskGraphImporterInterface) getSelectedFilter()).importWorkflow(fc.getSelectedFile(),
+                GUIEnv.getApplicationFrame().getEngine().getProperties());
     }
 
     /**

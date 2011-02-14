@@ -205,7 +205,7 @@ public class Exec implements ExecutionListener {
         TrianaInstance engine = new TrianaInstance();
         engine.init();
         XMLReader reader = new XMLReader(new FileReader(f));
-        Tool tool = reader.readComponent();
+        Tool tool = reader.readComponent(engine.getProperties());
         execute(tool, data);
 
     }

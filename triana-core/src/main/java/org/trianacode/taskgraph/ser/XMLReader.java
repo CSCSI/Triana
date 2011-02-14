@@ -17,6 +17,7 @@
 package org.trianacode.taskgraph.ser;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
@@ -87,8 +88,8 @@ public class XMLReader implements XMLConstants {
      * @return a TrianaIOComponent containing the abstract representation of either a ToolImp, TaskGraphImp or
      *         TaskGraphLayout.
      */
-    public Tool readComponent() throws TaskGraphException, IOException {
-        return parseTaskGraph(handler.document());
+    public Tool readComponent(TrianaProperties properties) throws TaskGraphException, IOException {
+        return parseTaskGraph(handler.document(), properties);
     }
 
     /**
@@ -106,11 +107,11 @@ public class XMLReader implements XMLConstants {
         }
     }
 
-    private Tool parseTaskGraph(Document xmlDoc) throws TaskGraphException {
+    private Tool parseTaskGraph(Document xmlDoc, TrianaProperties properties) throws TaskGraphException {
         Element root = xmlDoc.getDocumentElement();
 
         if (isTool(root)) {
-            Tool tool = getTool(root);
+            Tool tool = getTool(root, properties);
 
             if ((preserveinst) && (!root.getLocalName().equals(TOOL_TAG))) {
                 return TaskGraphManager.createTask(tool, TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE, preserveinst);
@@ -129,7 +130,7 @@ public class XMLReader implements XMLConstants {
     }
 
 
-    private Tool getTool(Element parent) throws TaskGraphException {
+    private Tool getTool(Element parent, TrianaProperties properties) throws TaskGraphException {
         Element tasklist = handler.getChild(parent, TASK_LIST_TAG);
 
         if (tasklist != null) {
@@ -142,16 +143,16 @@ public class XMLReader implements XMLConstants {
                 Element taskelem = (Element) iter.next();
 
                 if (isTool(taskelem)) {
-                    taskgraph.createTask(getTool(taskelem), preserveinst);
+                    taskgraph.createTask(getTool(taskelem, properties), preserveinst);
                 }
             }
 
             addConnections(taskgraph, tasklist);
             addExternalMap(taskgraph, tasklist);
-            addControlTask(taskgraph, tasklist);
+            addControlTask(taskgraph, tasklist, properties);
             return taskgraph;
         } else {
-            ToolImp tool = new ToolImp();
+            ToolImp tool = new ToolImp(properties);
             initTool(tool, parent);
             return tool;
         }
@@ -272,14 +273,14 @@ public class XMLReader implements XMLConstants {
         }
     }
 
-    private void addControlTask(TaskGraph taskgraph, Element parent) throws TaskGraphException {
+    private void addControlTask(TaskGraph taskgraph, Element parent, TrianaProperties properties) throws TaskGraphException {
         Element controlElem = handler.getChild(parent, CONTROL_TASK_TAG);
 
         if (controlElem != null) {
             Element taskElem = handler.getChild(controlElem, TASK_TAG);
 
             if (taskElem != null) {
-                taskgraph.createControlTask(getTool(taskElem), true);
+                taskgraph.createControlTask(getTool(taskElem, properties), true);
                 TaskGraphUtils.connectControlTask(taskgraph);
             }
         }

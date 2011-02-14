@@ -36,7 +36,7 @@ public class ExecutionControlTest implements ExecutionControlListener {
         }
 
         XMLReader reader = new XMLReader(new FileReader(file));
-        ExecutionControlTest test = new ExecutionControlTest((Task) reader.readComponent());
+        ExecutionControlTest test = new ExecutionControlTest((Task) reader.readComponent(engine.getProperties()));
         test.start();
 
     }

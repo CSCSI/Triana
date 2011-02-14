@@ -59,6 +59,7 @@
 
 package org.trianacode.taskgraph.proxy;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskGraphFactoryImp;
@@ -107,16 +108,16 @@ public class DefaultFactoryInit {
      * Initialises the default and non-runnable factories in the taskgraph manager. Repeat calls to this method have no
      * effect.
      */
-    public static void initTaskGraphManager() {
+    public static void initTaskGraphManager(TrianaProperties props) {
         if (!taskgraphinit) {
             taskgraphinit = true;
 
-            TaskGraphFactoryImp defaultfactory = new TaskGraphFactoryImp();
+            TaskGraphFactoryImp defaultfactory = new TaskGraphFactoryImp(props);
             RunnableTaskFactory javafactory = new RunnableTaskFactory();
 
             defaultfactory.registerTaskGraphFactory(JavaConstants.JAVA_PROXY_TYPE, javafactory);
 
-            TaskGraphFactoryImp nonrunfactory = new TaskGraphFactoryImp();
+            TaskGraphFactoryImp nonrunfactory = new TaskGraphFactoryImp(props);
             nonrunfactory.registerTaskGraphFactory(JavaConstants.JAVA_PROXY_TYPE, new TaskFactoryImp(javafactory));
             TaskGraphManager.registerTaskGraphFactory(TaskGraphManager.DEFAULT_FACTORY_TYPE, defaultfactory);
             TaskGraphManager.registerTaskGraphFactory(TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE, nonrunfactory);

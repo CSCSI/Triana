@@ -469,7 +469,7 @@ public class TrianaComponentModel implements
      *         component is used)
      */
     public TaskGraphPanel getOpenGroupComponent(TaskGraph taskgraph, TrianaClient client) {
-        return new MainTriana((TaskGraph) taskgraph, client);
+        return new MainTriana(taskgraph, client);
     }
 
 

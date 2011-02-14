@@ -143,7 +143,7 @@ public class TaskGraphUtils {
      */
     public static Tool createPlaceHolderTool(Tool tool) throws TaskException {
         try {
-            ToolImp placeholder = new ToolImp();
+            ToolImp placeholder = new ToolImp(tool.getProperties());
             placeholder.setToolName(tool.getToolName());
             placeholder.setDataInputNodeCount(tool.getDataInputNodeCount());
             placeholder.setDataOutputNodeCount(tool.getDataOutputNodeCount());

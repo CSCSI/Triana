@@ -547,7 +547,7 @@ public class DaxCreatorUnit {
             log("Displaying demo");
             DaxReader dr = new DaxReader();
             try {
-                TaskGraph t = dr.importWorkflow(daxFile);
+                TaskGraph t = dr.importWorkflow(daxFile, GUIEnv.getApplicationFrame().getEngine().getProperties());
                 TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
             } catch (Exception e) {
                 log("Error opening *" + fileName + "* demo taskgraph : " + e);

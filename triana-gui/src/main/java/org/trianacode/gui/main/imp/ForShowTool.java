@@ -58,27 +58,17 @@
  */
 package org.trianacode.gui.main.imp;
 
-import java.awt.Color;
-import java.awt.Component;
-
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.gui.hci.color.ColorManager;
 import org.trianacode.gui.main.ForShowComponent;
 import org.trianacode.gui.main.NodeComponent;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.NodeUtils;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.event.NodeEvent;
-import org.trianacode.taskgraph.event.NodeListener;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.imp.ToolImp;
+
+import java.awt.*;
 
 /**
  * ForShowTool is a class for showing what tools within group are connected to in upper groups.  They provide an icon
@@ -401,7 +391,7 @@ public class ForShowTool extends TrianaTool implements NodeListener, TaskListene
     private class DummyTask extends TaskImp {
 
         public DummyTask() throws TaskException {
-            super(new ToolImp(), new TaskFactoryImp(), false);
+            super(new ToolImp((TrianaProperties) null), new TaskFactoryImp(), false);
         }
 
 

@@ -59,24 +59,14 @@
 
 package org.trianacode.taskgraph.imp;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.IncompatibleTypeException;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.RenderingHint;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskFactory;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphFactory;
-import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.config.TrianaProperties;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.proxy.IncompatibleProxyException;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * An implementation of MultiTaskGraphFactory
@@ -98,11 +88,14 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
      */
     private TaskFactory localfactory = new TaskFactoryImp();
 
+    private TrianaProperties properties;
+
 
     /**
      * Constructs a taskgraph factory
      */
-    public TaskGraphFactoryImp() {
+    public TaskGraphFactoryImp(TrianaProperties properties) {
+        this.properties = properties;
     }
 
 
@@ -208,7 +201,9 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
      * Creates an empty taskgraph inherting properties from the specified taskgraph
      */
     public TaskGraph createTaskGraph(TaskGraph taskgraph, boolean preserveinst) throws TaskException {
+        taskgraph.setProperties(properties);
         TaskGraphImp inittaskgraph = new TaskGraphImp(taskgraph, localfactory, preserveinst);
+
         inittaskgraph.init();
 
         return inittaskgraph;
@@ -218,7 +213,8 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
      * @return a new group task containing the specified tasks
      */
     public TaskGraph createGroupTask(Task[] tasks, TaskGraph parent, boolean preserveinst) throws TaskException {
-        TaskGraphImp taskgraph = new TaskGraphImp(tasks, localfactory, preserveinst);
+
+        TaskGraphImp taskgraph = new TaskGraphImp(tasks, localfactory, preserveinst, properties);
         taskgraph.setParent(parent);
         taskgraph.init();
 

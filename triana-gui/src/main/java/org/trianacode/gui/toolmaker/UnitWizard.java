@@ -59,6 +59,7 @@
 package org.trianacode.gui.toolmaker;
 
 
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.WizardListener;
 import org.trianacode.gui.windows.WizardWindow;
@@ -729,7 +730,7 @@ public class UnitWizard implements WizardListener {
      */
     private boolean generatePlaceHolder() {
         try {
-            ToolImp placeholder = new ToolImp();
+            ToolImp placeholder = new ToolImp(GUIEnv.getApplicationFrame().getEngine().getProperties());
             String placename = finalpanel.getPlaceHolderToolName();
             int index = placename.lastIndexOf('.');
             if (index == -1) {

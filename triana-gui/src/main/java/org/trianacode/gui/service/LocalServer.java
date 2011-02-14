@@ -22,8 +22,6 @@ import org.trianacode.taskgraph.clipin.HistoryClipIn;
 import org.trianacode.taskgraph.service.*;
 
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Class Description Here...
@@ -35,7 +33,6 @@ import java.util.concurrent.Executors;
 public class LocalServer implements TrianaClient, TrianaServer {
 
 
-    private static ExecutorService exec = Executors.newFixedThreadPool(10);
     /**
      * the taskgraph this client handles
      */
@@ -77,7 +74,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Sends a message to the sever to run the taskgraph.
      */
     public void run() throws ClientException {
-        exec.execute(new Runnable() {
+        taskgraph.getProperties().getEngine().execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 
@@ -106,7 +103,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Sends a message to the sever to run the taskgraph. The specfied history clip-ins is attached to every input task
      */
     public void run(final HistoryClipIn history) throws ClientException {
-        exec.execute(new Runnable() {
+        taskgraph.getProperties().getEngine().execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 
@@ -143,7 +140,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Sends a message to the server to stop running the taskgraph.
      */
     public void pause() throws ClientException {
-        exec.execute(new Runnable() {
+        taskgraph.getProperties().getEngine().execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 
@@ -171,7 +168,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Sends a message to the server to reset the taskgraph.
      */
     public void reset() throws ClientException {
-        exec.execute(new Runnable() {
+        taskgraph.getProperties().getEngine().execute(new Runnable() {
             public void run() {
                 int result = WorkflowActionManager.CANCEL;
 

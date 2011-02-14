@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  * command line arguments (need to be defined) and it now creates all of the necessary classes required by
  * an instance e.g. properties.
  *
- * @author Andrew Harrison, rewrite by Ian T
+ * @author Andrew Harrison, rewrite by Ian T, rewrite and Andrew H
  * @version 1.0.0 Jul 22, 2010
  */
 
@@ -53,7 +53,8 @@ public class TrianaInstance {
 
     private ThreadPoolExecutor executorService = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 5,
             Runtime.getRuntime().availableProcessors() * 20,
-            60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(Runtime.getRuntime().availableProcessors() * 20));
+            10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(Runtime.getRuntime().availableProcessors() * 20));
+
     private HTTPServices httpServices;
     private ToolResolver toolResolver;
 
@@ -133,7 +134,7 @@ public class TrianaInstance {
 
 
         ProxyFactory.initProxyFactory();
-        TaskGraphManager.initTaskGraphManager();
+        TaskGraphManager.initTaskGraphManager(props);
         TaskGraphManager.initToolTable(toolTable);
         initObjectDeserializers();
         initExtensions(extensionClasses);

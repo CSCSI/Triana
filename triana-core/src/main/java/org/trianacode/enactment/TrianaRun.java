@@ -59,6 +59,7 @@
 
 package org.trianacode.enactment;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.CableImp;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
@@ -141,7 +142,7 @@ public class TrianaRun {
      * the exec cables.
      */
     private void initDummyTask() throws TaskException, NodeException {
-        dummy = new TaskImp(new ToolImp(), new TaskFactoryImp(), false);
+        dummy = new TaskImp(new ToolImp((TrianaProperties) null), new TaskFactoryImp(), false);
 
         dummy.setToolName("Dummy");
         dummy.addDataInputNode();

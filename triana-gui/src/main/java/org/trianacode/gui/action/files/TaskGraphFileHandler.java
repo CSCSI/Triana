@@ -213,7 +213,7 @@ public class TaskGraphFileHandler implements SelectionManager {
         }
 
         try {
-            Tool tool = reader.readComponent();
+            Tool tool = reader.readComponent(GUIEnv.getApplicationFrame().getEngine().getProperties());
 
             if (tool instanceof TaskGraph) {
                 progressBar = new TrianaProgressBar("loading: " + file.getName(), false);

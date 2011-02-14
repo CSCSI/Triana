@@ -322,7 +322,7 @@ public class ApplicationFrame extends TrianaWindow
                         try {
                             File f = new File(workflow);
                             XMLReader reader = new XMLReader(new FileReader(f));
-                            Tool t = reader.readComponent();
+                            Tool t = reader.readComponent(engine.getProperties());
                             if (t instanceof TaskGraph) {
                                 addParentTaskGraphPanel((TaskGraph) t);
                             }

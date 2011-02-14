@@ -129,6 +129,7 @@ public class TaskImp extends ToolImp implements Task {
 
 
     public TaskImp(Tool tool, TaskFactory factory, boolean preserveinst) throws TaskException {
+        super(tool.getProperties());
         try {
             this.factory = factory;
 

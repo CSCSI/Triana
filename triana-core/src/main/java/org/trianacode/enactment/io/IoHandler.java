@@ -235,7 +235,7 @@ public class IoHandler {
         TrianaInstance engine = new TrianaInstance();
         engine.init();
         XMLReader reader = new XMLReader(new FileReader(f));
-        Task tool = (Task) reader.readComponent();
+        Task tool = (Task) reader.readComponent(engine.getProperties());
         NodeMappings ret = new IoHandler().map(conf, tool);
         Map<Integer, Object> map = ret.getMap();
         System.out.println("Node Mappings index => value");

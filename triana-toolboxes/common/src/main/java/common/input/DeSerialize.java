@@ -1,16 +1,11 @@
 package common.input;
 
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
+
+import java.io.*;
 
 
 /**
@@ -46,7 +41,7 @@ public class DeSerialize extends Unit {
         // try to deserialize as a Triana tool
         try {
             XMLReader xmlreader = new XMLReader(new FileReader(filename));
-            Tool tool = xmlreader.readComponent();
+            Tool tool = xmlreader.readComponent(getTask().getProperties());
             xmlreader.close();
 
             int datalen = 1;

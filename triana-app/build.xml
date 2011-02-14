@@ -10,7 +10,7 @@
     <property name="gui-classes" value="../triana-gui/target/classes"/>
     <property name="anno-classes" value="../triana-annotation/target/classes"/>
     <property name="types-classes" value="../triana-types/target/classes"/>
-    <!--<property name="pegasus-classes" value="../triana-pegasus/target/classes"/>-->
+    <property name="pegasus-classes" value="../triana-pegasus/target/classes"/>
     <property name="toolboxes" value="../triana-toolboxes"/>
 
     <target name="triana-app">
@@ -72,10 +72,10 @@
         </antcall>
         <antcall target="dev-toolboxes"/>
         <mkdir dir="dist/modules"/>
-        <!--<antcall target="module">
+        <antcall target="module">
             <param name="module" value="triana-pegasus"/>
             <param name="targetModule" value="pegasus"/>
-        </antcall>-->
+        </antcall>
     </target>
 
     <target name="module">

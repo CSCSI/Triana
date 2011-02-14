@@ -60,6 +60,7 @@
 package org.trianacode.taskgraph;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.event.TaskGraphCreatedEvent;
 import org.trianacode.taskgraph.event.TaskGraphManagerListener;
@@ -114,12 +115,15 @@ public class TaskGraphManager {
      */
     private final static List listeners = Collections.synchronizedList(new ArrayList());
 
+    private static TrianaProperties properties;
+
 
     /**
      * Initializes the taskgraph factories
      */
-    public static void initTaskGraphManager() {
-        DefaultFactoryInit.initTaskGraphManager();
+    public static void initTaskGraphManager(TrianaProperties props) {
+        properties = props;
+        DefaultFactoryInit.initTaskGraphManager(props);
 
         /*Object[] plugins = PluginLoader.getInstance().getInstances(PluginInit.class);
 
@@ -301,14 +305,14 @@ public class TaskGraphManager {
      * Creates a empty root taskgraph using the non-runnable factory
      */
     public static TaskGraph createTaskGraph() throws TaskException {
-        return createTaskGraph(new TaskGraphImp(), NON_RUNNABLE_FACTORY_TYPE, false);
+        return createTaskGraph(new TaskGraphImp(properties), NON_RUNNABLE_FACTORY_TYPE, false);
     }
 
     /**
      * Creates a empty root taskgraph
      */
     public static TaskGraph createTaskGraph(String factorytype) throws TaskException {
-        return createTaskGraph(new TaskGraphImp(), factorytype, false);
+        return createTaskGraph(new TaskGraphImp(properties), factorytype, false);
     }
 
     /**
@@ -321,6 +325,7 @@ public class TaskGraphManager {
         }
 
         TaskGraph inittaskgraph = getTaskGraphFactory(factorytype).createTaskGraph(taskgraph, preserveinst);
+
         registerFactoryType(inittaskgraph, factorytype);
 
         notifyTaskGraphCreated(taskgraph, factorytype);

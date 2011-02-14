@@ -58,6 +58,7 @@
  */
 package org.trianacode.taskgraph.imp;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.service.ExecutionEvent;
@@ -120,8 +121,14 @@ public class TaskGraphImp extends TaskImp
     /**
      * Create a taskgraph that uses the default task factory.
      */
-    public TaskGraphImp() throws TaskException {
-        this(new ToolImp(), new TaskFactoryImp(), false);
+    public TaskGraphImp(TrianaProperties properties) throws TaskException {
+
+        this(new ToolImp(properties), new TaskFactoryImp(), false);
+
+        if (getProperties() == null) {
+            new Exception().printStackTrace();
+        }
+
     }
 
     /**
@@ -138,9 +145,12 @@ public class TaskGraphImp extends TaskImp
      * Create a taskgraph containig the specified tasks, and using the specified taskgraph factory. A default mapping
      * between the groups nodes and the tasks nodes is made.
      */
-    public TaskGraphImp(Task[] tasks, TaskFactory factory, boolean preserveinst) throws TaskException {
-        this(new ToolImp(), factory, preserveinst);
+    public TaskGraphImp(Task[] tasks, TaskFactory factory, boolean preserveinst, TrianaProperties properties) throws TaskException {
+        this(new ToolImp(properties), factory, preserveinst);
 
+        if (getProperties() == null) {
+            new Exception().printStackTrace();
+        }
         for (int count = 0; count < tasks.length; count++) {
             this.tasks.put(tasks[count].getToolName() + "_TEMP_KEY" + Math.random(),
                     tasks[count]);
