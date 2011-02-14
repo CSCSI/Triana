@@ -70,9 +70,8 @@ import org.trianacode.taskgraph.clipin.HistoryClipIn;
  */
 public class Scheduler implements SchedulerInterface {
 
-    private static ThreadPool schedulerpool = new ThreadPool(10);
-
     private ExecutionState tgState = ExecutionState.RESET;
+
 
     /**
      * The taskgraph which this scheduler runs.
@@ -378,7 +377,8 @@ public class Scheduler implements SchedulerInterface {
                 }
             };
 
-            schedulerpool.addTask(runnable);
+            //tgraph.getProperties().getEngine().execute(runnable);
+            new Thread(runnable).start();
         }
     }
 
