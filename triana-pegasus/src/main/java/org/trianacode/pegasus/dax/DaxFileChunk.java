@@ -27,23 +27,24 @@ public class DaxFileChunk implements Serializable {
     private PatternCollection namePattern = null;
     private int counter = 0;
     private String fileLocation = "";
+    private String fileProtocol;
 
     public String getFilename() {
-        if(namePattern == null){
+        if (namePattern == null || !isCollection) {
             log("returning filename");
             return filename;
-        }
-        else{
+        } else {
             log("returning next patterned name");
             return namePattern.next();
         }
     }
 
-    public String getNextFilename(){
- //       if(counter < numberOfFiles){
-            String returnName = getFilename() + "-" + counter;
-            counter++;
-            return returnName;
+    @Deprecated
+    public String getNextFilename() {
+//       if(counter < numberOfFiles){
+        String returnName = getFilename() + "-" + counter;
+        counter++;
+        return returnName;
 
 //        }
 //        else{
@@ -51,8 +52,11 @@ public class DaxFileChunk implements Serializable {
 //        }
     }
 
-    public void resetNextCounter(){
+    public void resetNextCounter() {
         counter = 0;
+        if (namePattern != null) {
+            namePattern.resetCount();
+        }
     }
 
     public void setFilename(String filename) {
@@ -82,6 +86,7 @@ public class DaxFileChunk implements Serializable {
     public void addInJobChunk(DaxJobChunk chunk) {
         inJobChunks.add(chunk);
     }
+
     public void setInJobChunks(Vector inJobChunks) {
         this.inJobChunks = inJobChunks;
     }
@@ -98,11 +103,11 @@ public class DaxFileChunk implements Serializable {
         this.outJobChunks = outJobChunks;
     }
 
-    public void listChunks(){
-        for(DaxJobChunk c : inJobChunks){
+    public void listChunks() {
+        for (DaxJobChunk c : inJobChunks) {
             log(" ******* File : " + getFilename() + " has input : " + c.getJobName());
         }
-        for(DaxJobChunk c : outJobChunks){
+        for (DaxJobChunk c : outJobChunks) {
             log(" ******* File : " + getFilename() + " has output : " + c.getJobName());
         }
     }
@@ -112,9 +117,9 @@ public class DaxFileChunk implements Serializable {
     }
 
     public int getNumberOfFiles() {
-        if(isCollection()){
+        if (isCollection()) {
             return numberOfFiles;
-        }else{
+        } else {
             return 1;
         }
     }
@@ -128,10 +133,10 @@ public class DaxFileChunk implements Serializable {
         this.namePattern = namePattern;
     }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-   //     System.out.println(s);
+        //     System.out.println(s);
     }
 
     public boolean isOne2one() {
@@ -148,5 +153,13 @@ public class DaxFileChunk implements Serializable {
 
     public String getFileLocation() {
         return fileLocation;
+    }
+
+    public String getFileProtocol() {
+        return fileProtocol;
+    }
+
+    public void setFileProtocol(String fileProtocol) {
+        this.fileProtocol = fileProtocol;
     }
 }

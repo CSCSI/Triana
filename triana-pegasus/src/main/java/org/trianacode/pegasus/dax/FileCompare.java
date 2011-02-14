@@ -1,16 +1,15 @@
 //package org.trianacode.pegasus.dax;
 //
-//import org.trianacode.pegasus.bonjour.PegasusWorkflowData;
 //
 //import java.io.*;
 //
 ///**
-// * Created by IntelliJ IDEA.
-// * User: ian
-// * Date: Jan 20, 2011
-// * Time: 7:25:55 PM
-// * To change this template use File | Settings | File Templates.
-// */
+//* Created by IntelliJ IDEA.
+//* User: ian
+//* Date: Jan 20, 2011
+//* Time: 7:25:55 PM
+//* To change this template use File | Settings | File Templates.
+//*/
 //public class FileCompare {
 //    public FileCompare(String s1, String s2) throws IOException {
 //        File f1 = new File(s1);

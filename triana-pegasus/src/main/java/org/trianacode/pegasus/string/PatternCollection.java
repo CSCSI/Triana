@@ -13,7 +13,7 @@ import java.util.List;
 public class PatternCollection implements StringPattern, Serializable {
 
     private static long serialVersionUID = -1;
-    
+
 
     private String link = "";
     private List<StringPattern> patterns = new ArrayList<StringPattern>();
@@ -26,11 +26,11 @@ public class PatternCollection implements StringPattern, Serializable {
         patterns.add(pattern);
     }
 
-    public List getStringPatternList(){
+    public List getStringPatternList() {
         return patterns;
     }
 
-    public int getPatternCollectionSize(){
+    public int getPatternCollectionSize() {
         return patterns.size();
     }
 
@@ -39,27 +39,28 @@ public class PatternCollection implements StringPattern, Serializable {
         for (int i = 0; i < patterns.size(); i++) {
             StringPattern pattern = patterns.get(i);
             sb.append(pattern.next());
-            if(i < patterns.size() - 1) {
+            if (i < patterns.size() - 1) {
                 sb.append(link);
             }
         }
         return sb.toString();
     }
 
-    @Override
     public void resetCount() {
-
+        for (StringPattern sp : patterns) {
+            sp.resetCount();
+        }
     }
 
-    public String toString(){
+    public String toString() {
         return patterns.toString();
     }
 
-    public boolean varies(){
+    public boolean varies() {
         boolean varies = false;
-        for(Iterator i = patterns.iterator(); i.hasNext();){
+        for (Iterator i = patterns.iterator(); i.hasNext();) {
             Object o = i.next();
-            if(!(o instanceof CharSequencePattern)){
+            if (!(o instanceof CharSequencePattern)) {
                 varies = true;
             }
         }

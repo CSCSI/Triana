@@ -27,6 +27,8 @@ public class FileUnit {
     @Parameter
     private String fileLocation = "";
     @Parameter
+    private String fileProtocol = "";
+    @Parameter
     private int numberOfFiles = 1;
     @Parameter
     private PatternCollection namingPattern = null;
@@ -47,6 +49,7 @@ public class FileUnit {
 
         thisFile.setFilename(fileName);
         thisFile.setFileLocation(fileLocation);
+        thisFile.setFileProtocol(fileProtocol);
         thisFile.setUuid(UUID.randomUUID());
         thisFile.setCollection(collection);
         thisFile.setNumberOfFiles(numberOfFiles);
@@ -54,6 +57,7 @@ public class FileUnit {
         log("setting files one2one as " + one2one);
         thisFile.setOne2one(one2one);
 
+        //    GUIEnv.getApplicationFrame().getSelectedTaskgraph().getToolName();
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
 
@@ -88,6 +92,7 @@ public class FileUnit {
 
                     log("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
                     jobChunk.addOutFileChunk(thisFile);
+                    jobChunk.getArgBuilder().addOutputFile(fileName);
 
                     log("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                     thisFile.addInJobChunk(jobChunk);

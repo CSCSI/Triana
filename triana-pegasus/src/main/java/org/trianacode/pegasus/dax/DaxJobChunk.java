@@ -33,6 +33,7 @@ public class DaxJobChunk implements Serializable {
     private int numberOfJobs = 1;
     private int connectPattern = 0;
     private int fileInputsPerJob = 1;
+    private ArgBuilder argBuilder;
 
     public String getJobName() {
         return jobName;
@@ -50,7 +51,7 @@ public class DaxJobChunk implements Serializable {
         this.jobArgs = jobArgs;
     }
 
-    public void addJobArg(String jobArg){
+    public void addJobArg(String jobArg) {
         jobArgs += jobArg;
     }
 
@@ -113,6 +114,7 @@ public class DaxJobChunk implements Serializable {
     public void addOutFileChunk(DaxFileChunk chunk) {
         outFileChunks.add(chunk);
     }
+
     public void setOutFileChunks(Vector<DaxFileChunk> outFileChunks) {
         this.outFileChunks = outFileChunks;
     }
@@ -138,20 +140,19 @@ public class DaxJobChunk implements Serializable {
     }
 
 
-    public void listChunks(){
-        for(DaxFileChunk c : inFileChunks){
+    public void listChunks() {
+        for (DaxFileChunk c : inFileChunks) {
             log("Job : " + getJobName() + " has input : " + c.getFilename());
         }
-        for(DaxFileChunk c : outFileChunks){
+        for (DaxFileChunk c : outFileChunks) {
             log("Job : " + getJobName() + " has output : " + c.getFilename());
         }
     }
 
     public int getNumberOfJobs() {
-        if(isCollection){
+        if (isCollection) {
             return numberOfJobs;
-        }
-        else{
+        } else {
             return 1;
         }
     }
@@ -160,7 +161,7 @@ public class DaxJobChunk implements Serializable {
         this.numberOfJobs = numberOfJobs;
     }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         //System.out.println(s);
@@ -180,5 +181,13 @@ public class DaxJobChunk implements Serializable {
 
     public void setFileInputsPerJob(int fileInputsPerJob) {
         this.fileInputsPerJob = fileInputsPerJob;
+    }
+
+    public void addArgBuilder(ArgBuilder ab) {
+        this.argBuilder = ab;
+    }
+
+    public ArgBuilder getArgBuilder() {
+        return argBuilder;
     }
 }

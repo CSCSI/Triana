@@ -54,6 +54,7 @@ public class JobUnit {
         DaxJobChunk thisJob = new DaxJobChunk();
 
         thisJob.setJobName(jobName);
+        thisJob.setJobArgs(args);
         thisJob.setUuid(UUID.randomUUID());
         thisJob.setCollection(collection);
         thisJob.setNumberOfJobs(numberOfJobs);
@@ -65,6 +66,10 @@ public class JobUnit {
 
         log("\nList into " + jobName + " is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
+        ArgBuilder ab = new ArgBuilder();
+        ab.setInputSwitch("-i");
+        ab.setOutputSwitch("-o");
+        ab.setArgString(args);
 
         for (Object object : in) {
             if (object instanceof DaxFileChunk) {
@@ -88,6 +93,7 @@ public class JobUnit {
 
                     log("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
                     thisJob.addInFileChunk(fileChunk);
+                    ab.addInputFile(fileChunk.getFilename());
 
                 } else {
                     log("FileChunk not found in register");
@@ -96,58 +102,8 @@ public class JobUnit {
                 log("Cannot handle input : " + object.getClass().getName());
             }
         }
-        /*
-        List fileStrings = new ArrayList();
 
-        List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
-
-
-            List<List> inList = (List<List>)in;
-            for(int i = 0; i < inList.size(); i++){
-                Object o = inList.get(i);
-                if(o instanceof List){
-                    List<List> innerList = (List)o;
-
-                    for(int j = 0; j < innerList.size(); j++){
-                        Object o2 = innerList.get(j);
-                        if(o2 instanceof DaxJobChunk){
-                            log("Found a DaxJobChunk");
-                            if(j == (innerList.size() - 1)){
-                                DaxJobChunk jobChunk = (DaxJobChunk) o2;
-                                log("This path through workflow includes " + jobChunk.getOutputFilename() + " before this job");
-                                fileStrings.add(jobChunk.getOutputFilename());
-                            }
-                            jcl.add((DaxJobChunk) o2);
-                        }
-                        else{
-                            log("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
-                        }
-                    }
-                }
-                else{
-                    log("Incoming list didn't contain a list, contains : " + o.getClass().toString());
-                }
-            }
-
-        log("Adding " + fileStrings.size() + " inputs to job.");
-        for(int i = 0; i < fileStrings.size(); i++){
-            thisJob.addInFile((String)fileStrings.get(i));
-        }
-
-        thisJob.setJobArgs(args);
-        log("Is collection : " + collection);
-        thisJob.setCollection(collection);
-
-
-
-        jcl.add(thisJob);
-
-        log("\nList out is size: " + jcl.size() + " contains : " + jcl.toString() + ".\n ");
-
-        return jcl;
-        */
-
-        //    register.listAll();
+        thisJob.addArgBuilder(ab);
         return thisJob.getUuid();
     }
 
@@ -157,3 +113,57 @@ public class JobUnit {
         System.out.println(s);
     }
 }
+
+
+/*
+List fileStrings = new ArrayList();
+
+List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
+
+
+    List<List> inList = (List<List>)in;
+    for(int i = 0; i < inList.size(); i++){
+        Object o = inList.get(i);
+        if(o instanceof List){
+            List<List> innerList = (List)o;
+
+            for(int j = 0; j < innerList.size(); j++){
+                Object o2 = innerList.get(j);
+                if(o2 instanceof DaxJobChunk){
+                    log("Found a DaxJobChunk");
+                    if(j == (innerList.size() - 1)){
+                        DaxJobChunk jobChunk = (DaxJobChunk) o2;
+                        log("This path through workflow includes " + jobChunk.getOutputFilename() + " before this job");
+                        fileStrings.add(jobChunk.getOutputFilename());
+                    }
+                    jcl.add((DaxJobChunk) o2);
+                }
+                else{
+                    log("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
+                }
+            }
+        }
+        else{
+            log("Incoming list didn't contain a list, contains : " + o.getClass().toString());
+        }
+    }
+
+log("Adding " + fileStrings.size() + " inputs to job.");
+for(int i = 0; i < fileStrings.size(); i++){
+    thisJob.addInFile((String)fileStrings.get(i));
+}
+
+thisJob.setJobArgs(args);
+log("Is collection : " + collection);
+thisJob.setCollection(collection);
+
+
+
+jcl.add(thisJob);
+
+log("\nList out is size: " + jcl.size() + " contains : " + jcl.toString() + ".\n ");
+
+return jcl;
+*/
+
+//    register.listAll();

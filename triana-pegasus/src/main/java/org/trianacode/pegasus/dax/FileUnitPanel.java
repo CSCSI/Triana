@@ -5,6 +5,7 @@ import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.pegasus.string.CharSequencePattern;
+import org.trianacode.pegasus.string.CounterPattern;
 import org.trianacode.pegasus.string.PatternCollection;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -30,76 +31,84 @@ public class FileUnitPanel extends ParameterPanel {
     private boolean collection = false;
     private boolean one2one = false;
     String locationString = "";
+    String fileProtocol = "";
+    File location;
 
     JLabel collectLabel = new JLabel("");
     JLabel iterLabel = new JLabel("");
     JTextField nameField = new JTextField("");
     JTextField locationField = new JTextField("");
-    JTextArea fileListArea = new JTextArea("Example filenames here..");
-    JPanel upperPanel = new JPanel();
-    JPanel lowerPanel = new JPanel(new GridLayout(2,3,5,5));
+    JTextArea fileListArea = new JTextArea("Example filenames here..\n\n");
+    JPanel namePanel = new JPanel();
+    JPanel collectionPanel = new JPanel();
+    JCheckBox one2oneCheck;
     JComboBox namingPatternBox = new JComboBox();
     private PatternCollection namingPattern = null;
     JCheckBox locationCheck;
+    JComboBox locationTypeCombo;
 
     //   public boolean isAutoCommitByDefault(){return true;}
 
-    public void applyClicked(){ apply(); }
-    public void okClicked(){ apply(); }
+    public void applyClicked() {
+        apply();
+    }
+
+    public void okClicked() {
+        apply();
+    }
     //  public void cancelClicked(){ reset(); }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
     }
 
-    private void apply(){
-        if(locationCheck.isSelected() && !locationField.getText().equals("")){
-            File file = new File(locationField.getText());
-            if(file.exists()){
-                if(file.isFile()){
-                    locationString = file.getParent();
-                }
-                if(file.isDirectory()){
-                    locationString = file.getAbsolutePath();
-
-                }
-                System.out.println("PFL : file:/" + locationString + " +" + nameField.getText());
-            }
-
+    private void apply() {
+        if (locationCheck.isSelected()) {
+            fileProtocol = (String) locationTypeCombo.getSelectedItem();
+            locationString = locationField.getText();
+            System.out.println("PFL : " + fileProtocol + locationString + File.separator + nameField.getText());
+        } else {
+            System.out.println("File does not have a physical location");
         }
+
+
         changeToolName(nameField.getText());
         fillFileListArea();
         setParams();
     }
 
-    public void changeToolName(String name){
+    public void changeToolName(String name) {
         nameField.setText(name);
         log("Changing tool " + getTask().getToolName() + " to : " + name);
         getTask().setParameter("fileName", name);
         getTask().setToolName(name);
     }
 
-    private void setParams(){
+    private void setParams() {
         getTask().setParameter("numberOfFiles", numberOfFiles);
         getTask().setParameter("collection", collection);
         getTask().setParameter("one2one", one2one);
+
         getTask().setParameter("fileLocation", locationString);
-        if(namingPattern != null){
+        getTask().setParameter("fileProtocol", fileProtocol);
+
+        if (namingPattern != null) {
             log("Setting param namingPattern : " + namingPattern.toString());
             getTask().setParameter("namingPattern", namingPattern);
             log("Checking namingPattern param : " + getNamingPattern().toString());
         }
     }
 
-    public void getParams(){
+    public void getParams() {
         nameField.setText(getTask().getToolName());
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
         namingPattern = getNamingPattern();
         one2one = isOne2one();
         locationString = getFileLocation();
+        fileProtocol = getFileProtocol();
     }
 
     @Override
@@ -116,151 +125,205 @@ public class FileUnitPanel extends ParameterPanel {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File"));
-        upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.Y_AXIS));
+        namePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File"));
+        namePanel.setLayout(new BorderLayout());
 
-        JPanel namePanel = new JPanel(new BorderLayout());
         JLabel nameLabel = new JLabel("File Name : ");
         namePanel.add(nameLabel, BorderLayout.WEST);
         changeToolName(getTask().getToolName());
         namePanel.add(nameField, BorderLayout.CENTER);
 
-        JPanel locationPanel = new JPanel(new BorderLayout());
-        locationCheck = new JCheckBox("Use location : ");
+//          locationPanel
+        JPanel locationMainPanel = new JPanel();
+        locationMainPanel.setLayout(new BoxLayout(locationMainPanel, BoxLayout.Y_AXIS));
+        locationMainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Location"));
+        final JPanel locationPanel = new JPanel(new BorderLayout());
+
+        final JPanel locationCheckPanel = new JPanel(new BorderLayout());
+        locationCheck = new JCheckBox("Set location : ", !locationString.equals(""));
+        locationCheck.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent ie) {
+                if (locationCheck.isSelected()) {
+                    setEnabling(locationPanel, true);
+                    locationField.requestFocus();
+                } else {
+                    setEnabling(locationPanel, false);
+                }
+            }
+        });
+        locationCheckPanel.add(locationCheck, BorderLayout.WEST);
+
+        final JButton locationButton = new JButton("...");
+        String[] locationTypes = {"file://", "http://"};
+        locationTypeCombo = new JComboBox(locationTypes);
+        if (!fileProtocol.equals("")) {
+            locationTypeCombo.setSelectedItem(fileProtocol);
+        }
+        locationTypeCombo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                fileProtocol = (String) locationTypeCombo.getSelectedItem();
+                if (fileProtocol.equals("file://")) {
+                    locationButton.setVisible(true);
+                } else {
+                    locationButton.setVisible(false);
+                }
+
+            }
+        });
+
         locationField.setText(locationString);
-        JButton locationButton = new JButton("...");
-        locationButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        locationButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setMultiSelectionEnabled(false);
-                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 int returnVal = chooser.showDialog(GUIEnv.getApplicationFrame(), "Select");
                 String filePath = null;
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File f = chooser.getSelectedFile();
-                    if (f != null) {
-                        filePath = f.getAbsolutePath();
-                        locationField.setText(filePath);
-                        if(f.isFile()){
-                            nameField.setText(f.getName());
-                        }
+                    location = chooser.getSelectedFile();
+                    if (location != null) {
+                        locationField.setText(location.getParent());
+                        nameField.setText(location.getName());
+//                        filePath = f.getAbsolutePath();
+//                        locationField.setText(filePath);
+//                        if(f.isFile()){
+//                            nameField.setText(f.getName());
+//                        }
                     }
                 }
             }
         });
-        locationPanel.add(locationCheck, BorderLayout.WEST);
+
+        locationPanel.add(locationTypeCombo, BorderLayout.WEST);
         locationPanel.add(locationField, BorderLayout.CENTER);
         locationPanel.add(locationButton, BorderLayout.EAST);
+        setEnabling(locationPanel, locationCheck.isSelected());
+
+        locationMainPanel.add(locationCheckPanel);
+        locationMainPanel.add(locationPanel);
+
+
+        mainPanel.add(namePanel);
+        mainPanel.add(locationMainPanel);
+
+
+//          collectionPanel
+        collectionPanel.setLayout(new BoxLayout(collectionPanel, BoxLayout.Y_AXIS));
+        collectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File Collection Options"));
+
+        JPanel collectionCheckPanel = new JPanel(new BorderLayout());
+        final JPanel numberFilesPanel = new JPanel(new BorderLayout());
+        final JPanel customNamePanel = new JPanel(new GridLayout(1, 3));
 
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
-        final JCheckBox collectionBox = new JCheckBox("Collection", collection);
-        collectionBox.addItemListener(new ItemListener() {
+        final JCheckBox collectionCheck = new JCheckBox("Collection", collection);
+        collectionCheck.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
-                if (collectionBox.isSelected()) {
+                if (collectionCheck.isSelected()) {
                     collectLabel.setText("Collection of files.");
                     collection = true;
-                    setEnabling(lowerPanel, true);
+                    setEnabling(one2oneCheck, true);
+                    setEnabling(numberFilesPanel, true);
+                    setEnabling(customNamePanel, true);
+                    setEnabling(fileListArea, true);
+
                 } else {
                     collectLabel.setText("Not a collection");
                     collection = false;
-                    setEnabling(lowerPanel, false);
+                    setEnabling(one2oneCheck, false);
+                    setEnabling(numberFilesPanel, false);
+                    setEnabling(customNamePanel, false);
+                    setEnabling(fileListArea, false);
                 }
             }
         });
-        JPanel collectionPanel = new JPanel(new BorderLayout());
-        collectionPanel.add(collectionBox, BorderLayout.WEST);
-        if(collection){
+        if (collection) {
             collectLabel.setText("Collection of files.");
-        }else{
+        } else {
             collectLabel.setText("Not a collection");
         }
-        collectionPanel.add(collectLabel, BorderLayout.EAST);
+        collectionCheckPanel.add(collectionCheck, BorderLayout.WEST);
+        collectionCheckPanel.add(collectLabel, BorderLayout.EAST);
+        collectionPanel.add(collectionCheckPanel);
 
-        upperPanel.add(namePanel);
-        upperPanel.add(locationPanel);
-        upperPanel.add(collectionPanel);
-
-        mainPanel.add(upperPanel);
-
-
-        //Lower Panel
-
-        lowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File Collection Options"));
-        JPanel lowerPanel1 = new JPanel(new GridLayout(3, 1, 5, 5));
-
-        JPanel lowerPanel1a = new JPanel(new GridLayout(1, 2, 5, 5));
-        final JPanel lowerPanel1b = new JPanel(new GridLayout(1, 2, 5, 5));
-
-        final JLabel one2oneLabel = new JLabel("One2one with previous jobs : ");
-        final JCheckBox one2oneBox = new JCheckBox("one2one", one2one);
-        one2oneBox.addItemListener(new ItemListener() {
+        one2oneCheck = new JCheckBox("One2one with previous jobs", one2one);
+        one2oneCheck.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
-                if (one2oneBox.isSelected()) {
+                if (one2oneCheck.isSelected()) {
                     one2one = true;
-                    setEnabling(lowerPanel1b, false);
+                    setEnabling(numberFilesPanel, false);
+//                    setEnabling(customNamePanel, false);
+//                    setEnabling(fileListArea, false);
                 } else {
                     one2one = false;
-                    setEnabling(lowerPanel1b, true);
+                    setEnabling(numberFilesPanel, true);
+//                    setEnabling(customNamePanel, true);
+//                    setEnabling(fileListArea, true);
                 }
             }
         });
-        lowerPanel1a.add(one2oneLabel);
-        lowerPanel1a.add(one2oneBox);
+        JPanel one2oneCheckPanel = new JPanel(new BorderLayout());
+        one2oneCheckPanel.add(one2oneCheck);
+        collectionPanel.add(one2oneCheckPanel);
+        setEnabling(one2oneCheckPanel, false);
 
         final JLabel numberLabel = new JLabel("No. files : " + numberOfFiles);
         final String[] numbers = new String[100];
-        for(int i = 1; i < 100; i++){
+        for (int i = 1; i < 100; i++) {
             numbers[i] = "" + i;
         }
         final JComboBox numbersCombo = new JComboBox(numbers);
         numbersCombo.setSelectedItem("" + numberOfFiles);
-        numbersCombo.addActionListener(new ActionListener(){
+        numbersCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                numberOfFiles = Integer.parseInt((String)numbersCombo.getSelectedItem());
+                numberOfFiles = Integer.parseInt((String) numbersCombo.getSelectedItem());
                 numberLabel.setText("No. files : " + numberOfFiles);
                 fillFileListArea();
             }
         });
-        lowerPanel1b.add(numberLabel);
-        lowerPanel1b.add(numbersCombo);
-        lowerPanel1.add(lowerPanel1a);
-        lowerPanel1.add(lowerPanel1b);
+        numberFilesPanel.add(numberLabel, BorderLayout.WEST);
+        numberFilesPanel.add(numbersCombo, BorderLayout.EAST);
+        collectionPanel.add(numberFilesPanel);
+        setEnabling(numberFilesPanel, false);
 
-        final JPanel lowerPanel1c = new JPanel(new GridLayout(1, 2, 5, 5));
-        JLabel custom = new JLabel("Or create custom name :");
+        JLabel customLabel = new JLabel("Custom name :");
         JButton namingButton = new JButton("Custom pattern...");
-        namingButton.addActionListener(new ActionListener(){
+        namingButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 int parts = 3;
-                if(namingPattern != null){
+                if (namingPattern != null) {
                     parts = namingPattern.getPatternCollectionSize();
                 }
-                namingPattern = (PatternCollection)NamingPanel.getValue(parts);
+                namingPattern = (PatternCollection) NamingPanel.getValue(parts);
                 fillFileListArea();
-                if(namingPattern != null){
+                if (namingPattern != null) {
                     log("ChosenNamingPattern : " + namingPattern.toString());
 
                 }
             }
         });
-        lowerPanel1c.add(custom);
-        lowerPanel1c.add(namingButton);
-        lowerPanel1.add(lowerPanel1c);
+        JButton nameReset = new JButton("Reset");
+        nameReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                namingPattern = null;
+                fillFileListArea();
+            }
+        });
+        customNamePanel.add(customLabel);
+        customNamePanel.add(namingButton);
+        customNamePanel.add(nameReset);
+        collectionPanel.add(customNamePanel);
+        setEnabling(customNamePanel, false);
 
-        JPanel lowerPanel2 = new JPanel();
-        lowerPanel2.setLayout(new BoxLayout(lowerPanel2, BoxLayout.Y_AXIS));
         fileListArea.setRows(6);
         fileListArea.setEditable(false);
         JScrollPane sp = new JScrollPane(fileListArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        lowerPanel2.add(sp);
+        collectionPanel.add(sp);
+        setEnabling(fileListArea, false);
 
-        lowerPanel2.add(iterLabel);
+        mainPanel.add(collectionPanel);
 
-        lowerPanel.add(lowerPanel1);
-        lowerPanel.add(lowerPanel2);
-        mainPanel.add(lowerPanel);
-        setEnabling(lowerPanel, collection);
         this.add(mainPanel);
     }
 
@@ -268,38 +331,43 @@ public class FileUnitPanel extends ParameterPanel {
     public void dispose() {
     }
 
-    private PatternCollection getNamingPattern(){
+
+    /**
+     * Various getting and setting of parameters
+     *
+     * @return
+     */
+
+    private PatternCollection getNamingPattern() {
         Object o = getParameter("namingPattern");
-        //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
-        if(o instanceof PatternCollection){
+        if (o instanceof PatternCollection) {
             log("Found : " + o.toString());
-            return (PatternCollection)o;
+            return (PatternCollection) o;
         }
         return null;
     }
 
-    private boolean isCollection(){
-        if(getParameter("collection").equals(true)){
+    private boolean isCollection() {
+        if (getParameter("collection").equals(true)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private boolean isOne2one(){
-        if(getParameter("one2one").equals(true)){
+    private boolean isOne2one() {
+        if (getParameter("one2one").equals(true)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private int getNumberOfFiles(){
+    private int getNumberOfFiles() {
         Object o = getParameter("numberOfFiles");
-        //     System.out.println("Returned object from param *numberOfFiles* : " + o.getClass().getCanonicalName() + " : " + o.toString());
-        if(o != null){
-            int value = (Integer)o;
-            if(value > 1 ){
+        if (o != null) {
+            int value = (Integer) o;
+            if (value > 1) {
                 return value;
             }
             return 1;
@@ -307,47 +375,75 @@ public class FileUnitPanel extends ParameterPanel {
         return 1;
     }
 
-    private String getFileLocation(){
+    private String getFileLocation() {
         Object o = getParameter("fileLocation");
-        if(o != null && !((String)o).equals("")){
-            return (String)o;
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
         }
         return "";
     }
 
-    public void setEnabling(Component c,boolean enable) {
+    private String getFileProtocol() {
+        Object o = getParameter("fileProtocol");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return "";
+    }
+
+    public void setEnabling(Component c, boolean enable) {
         c.setEnabled(enable);
-        if (c instanceof Container)
-        {
-            Component [] arr = ((Container) c).getComponents();
-            for (int j=0;j<arr.length;j++) { setEnabling(arr[j],enable); }
+        if (c instanceof Container) {
+            Component[] arr = ((Container) c).getComponents();
+            for (int j = 0; j < arr.length; j++) {
+                setEnabling(arr[j], enable);
+            }
         }
     }
 
-    private void fillFileListArea(){
-        if(namingPattern != null){
-            iterLabel.setText("Filename " + (namingPattern.varies() ? "iterates well" : "does not vary, will +\"01\""));
-            nameField.setText(namingPattern.next());
-            namingPattern.resetCount();
-            fileListArea.setText("Files will be named : \n");
-            for(int i = 0 ; i< numberOfFiles; i++){
-                log("adding a filename to fileListArea");
-                fileListArea.append(namingPattern.next() + "\n");
-            }
+
+    /**
+     * Uses the currently set namingPattern object to list the names the files will take.
+     */
+    private void fillFileListArea() {
+        if (namingPattern == null) {
+            namingPattern = new PatternCollection("-");
+            CharSequencePattern a = new CharSequencePattern(nameField.getText());
+            CounterPattern b = new CounterPattern(0, 3, 1, 1);
+            namingPattern.add(a);
+            namingPattern.add(b);
         }
-        else{
-            fileListArea.setText("Files will be named : \n");
-            String name = (String)getParameter("fileName");
-            for(int i = 0 ; i< numberOfFiles; i++){
-                log("adding a name to fileListArea");
-                fileListArea.append(name + "." + "\n");
-            }
+
+        namingPattern.resetCount();
+        fileListArea.setText("Files will be named : \n");
+        for (int i = 0; i < numberOfFiles; i++) {
+            fileListArea.append(namingPattern.next() + "\n");
         }
+
+//        iterLabel.setText("Filename " + (namingPattern.varies() ? "iterates well" : "does not vary, will +\"01\""));
+//        nameField.setText(namingPattern.next());
+//        namingPattern.resetCount();
+//        fileListArea.setText("Files will be named : \n");
+//        for(int i = 0 ; i< numberOfFiles; i++){
+//            log("adding a filename to fileListArea");
+//            fileListArea.append(namingPattern.next() + "\n");
+//        }
+//
+//        fileListArea.setText("Files will be named : \n");
+//        String name = (String)getParameter("fileName");
+//        for(int i = 0 ; i< numberOfFiles; i++){
+//            log("adding a name to fileListArea");
+//            fileListArea.append(name + "." + "\n");
+//        }
 
     }
 }
 
-class NamingPanel extends JDialog{
+/**
+ * JDialog to provide the formation of a naming pattern
+ */
+
+class NamingPanel extends JDialog {
     JPanel mainPanel = new JPanel();
     JLabel hi = new JLabel();
     JTextField name = new JTextField("");
@@ -362,27 +458,27 @@ class NamingPanel extends JDialog{
     String[] letterArray = {"A", "AA", "AAA", "AAAA", "AAAAA"};
     PatternCollection chosenNamingPattern = null;
 
-    public static Object getValue(int p){
+    public static Object getValue(int p) {
         NamingPanel np = new NamingPanel(p);
         return np.getReturnValue();
     }
 
-    private Object getReturnValue(){
+    private Object getReturnValue() {
         return chosenNamingPattern;
     }
 
-    private void prepNameParts(){
-        for(int i = 0; i < parts; i++){
+    private void prepNameParts() {
+        for (int i = 0; i < parts; i++) {
             nameParts.add("");
         }
     }
 
-    private void refresh(){
+    private void refresh() {
         mainPanel.revalidate();
         this.pack();
     }
 
-    public NamingPanel(int p){
+    public NamingPanel(int p) {
         this.setModal(true);
         this.setLocationRelativeTo(this.getOwner());
         this.parts = p;
@@ -393,13 +489,13 @@ class NamingPanel extends JDialog{
         mainPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File name pattern"));
 
         JPanel setNumParts = new JPanel(new GridLayout(1, 3, 5, 5));
-        setNumParts.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setNumParts.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JPanel topPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JPanel midPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-        midPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        midPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         final JPanel lowerPanel = new JPanel();
-        lowerPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        lowerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         JLabel exampleLabel = new JLabel("XXX-XXX-XXX");
         mainPanel.add(exampleLabel);
@@ -408,11 +504,11 @@ class NamingPanel extends JDialog{
         setNumParts.add(label);
         String numbers[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         final JComboBox numsBox = new JComboBox(numbers);
-        numsBox.setSelectedItem((String)"" + p);
+        numsBox.setSelectedItem((String) "" + p);
         setNumParts.add(numsBox);
 
         JButton setButton = new JButton("Set");
-        setButton.addActionListener(new ActionListener(){
+        setButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 parts = Integer.parseInt(numsBox.getSelectedItem().toString());
                 hi.setText("Filename will have " + parts + " part" + ((parts > 1) ? "s." : "."));
@@ -435,8 +531,8 @@ class NamingPanel extends JDialog{
         separatorBox = new JComboBox(seperatorOptions);
         separatorBox.setSelectedIndex(0);
         separatorBox.setEditable(true);
-        separatorBox.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent actionEvent){
+        separatorBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
                 separator = getSeparator();
                 setNameLabel(buildName(getSeparator()));
             }
@@ -449,22 +545,22 @@ class NamingPanel extends JDialog{
 
         mainPanel.add(lowerPanel);
         JButton ok = new JButton("Ok");
-        ok.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        ok.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 okPressed();
             }
         });
 
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
 
         JButton helpButton = new JButton("Help");
-        helpButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        helpButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 new helpFrame();
             }
         });
@@ -482,32 +578,34 @@ class NamingPanel extends JDialog{
 
     }
 
-    private void okPressed(){
+    private void okPressed() {
         boolean completeName = true;
-        for(JComboBox jcb : patternDetailVector){
-            if(jcb.getSelectedItem().equals("")){
+        for (JComboBox jcb : patternDetailVector) {
+            if (jcb.getSelectedItem().equals("")) {
                 completeName = false;
             }
         }
-        if(completeName){
-            try{
+        if (completeName) {
+            try {
                 PatternCollection pc = new PatternCollection(getSeparator());
-                for(int i = 0; i < parts; i++){
+                for (int i = 0; i < parts; i++) {
                     pc.add(new CharSequencePattern(nameParts.get(i)));
                 }
                 for (int i = 0; i < 5; i++) {
                     System.out.println(pc.next());
                 }
 
-                log((pc.varies()) ? "Name iterates ok." :  "Name does not iterate");
+                log((pc.varies()) ? "Name iterates ok." : "Name does not iterate");
+                if (!pc.varies()) {
+                    pc.add(new CounterPattern(0, 3, 1, 1));
+                }
 
                 setNamingPattern(pc);
-            }catch(Exception ex){}
-            finally{
+            } catch (Exception ex) {
+            } finally {
                 dispose();
             }
-        }
-        else{
+        } else {
             log("name not complete");
             JOptionPane.showMessageDialog(mainPanel,
                     "Name not complete.\nFill or remove empty part(s).",
@@ -515,14 +613,14 @@ class NamingPanel extends JDialog{
         }
     }
 
-    private void addChoosers(JPanel lowerPanel){
+    private void addChoosers(JPanel lowerPanel) {
         lowerPanel.removeAll();
-        if(patternDetailVector.size() > 0){
+        if (patternDetailVector.size() > 0) {
             patternDetailVector.removeAllElements();
         }
         lowerPanel.setLayout(new GridLayout(parts, 3, 5, 5));
 
-        for(int i = 0; i < parts; i++){
+        for (int i = 0; i < parts; i++) {
             log("adding a line of choosers");
             final int finalI = i;
 
@@ -533,10 +631,10 @@ class NamingPanel extends JDialog{
             final JComboBox detailChooser = new JComboBox(patternDetail);
             patternDetailVector.add(detailChooser);
 
-            section.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent actionEvent){
+            section.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent actionEvent) {
                     Object selected = section.getSelectedItem();
-                    setSection(finalI, (String)selected);
+                    setSection(finalI, (String) selected);
                     setNameLabel(buildName(getSeparator()));
                     fillDetailCombo(detailChooser, selected);
                 }
@@ -544,16 +642,16 @@ class NamingPanel extends JDialog{
 
             fillDetailCombo(detailChooser, section.getSelectedItem());
 
-            JLabel lx = new JLabel("Pattern " + (i+1) + " : ");
+            JLabel lx = new JLabel("Pattern " + (i + 1) + " : ");
 
             lowerPanel.add(lx);
             lowerPanel.add(section);
             lowerPanel.add(detailChooser);
 
             JButton setButton = new JButton("Set");
-            setButton.addActionListener(new ActionListener(){
+            setButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    setSection(finalI, (String)detailChooser.getSelectedItem());
+                    setSection(finalI, (String) detailChooser.getSelectedItem());
                     setNameLabel(buildName(getSeparator()));
                 }
             });
@@ -562,101 +660,99 @@ class NamingPanel extends JDialog{
         //   lowerPanel.revalidate();
     }
 
-    private void setNamingPattern(PatternCollection pc){
+    private void setNamingPattern(PatternCollection pc) {
         log("chosenNamingPattern : " + pc.toString());
         chosenNamingPattern = pc;
     }
 
-
-
-    private void fillDetailCombo(JComboBox detail, Object patternSelection){
+    private void fillDetailCombo(JComboBox detail, Object patternSelection) {
         detail.removeAllItems();
         detail.setEditable(false);
 
-        if(patternSelection.equals("numbers")){
+        if (patternSelection.equals("numbers")) {
             addArrayToCombo(detail, numberArray);
         }
-        if(patternSelection.equals("dates")){
+        if (patternSelection.equals("dates")) {
             addArrayToCombo(detail, dateArray);
             detail.setEditable(true);
         }
-        if(patternSelection.equals("words")){
+        if (patternSelection.equals("words")) {
             String[] array = {""};
             addArrayToCombo(detail, array);
             detail.setEditable(true);
         }
-        if(patternSelection.equals("letters")){
+        if (patternSelection.equals("letters")) {
             addArrayToCombo(detail, letterArray);
         }
     }
 
-    private void addArrayToCombo(JComboBox box, String[] array){
-        for(int i = 0; i < array.length ; i++){
+    private void addArrayToCombo(JComboBox box, String[] array) {
+        for (int i = 0; i < array.length; i++) {
             log("adding array to combobox");
             box.addItem(array[i]);
         }
     }
 
-
-    private void setNameLabel(String n){
+    private void setNameLabel(String n) {
         name.setText(n);
     }
 
-
-    private void setSection(int i, String s){
-        if(i >= nameParts.size()){
+    private void setSection(int i, String s) {
+        if (i >= nameParts.size()) {
             log("trying to set " + i + " nameParts is : " + nameParts.size());
-            for(int j = nameParts.size(); j < (i+1); j++){
+            for (int j = nameParts.size(); j < (i + 1); j++) {
 
                 nameParts.add("");
             }
             log("nameParts is now : " + nameParts.size());
         }
-        log("Setting namePart " + i + " as : "+ s);
-        nameParts.setElementAt(s,i);
+        log("Setting namePart " + i + " as : " + s);
+        nameParts.setElementAt(s, i);
     }
 
-    private String getSeparator(){
-        String s = (String)separatorBox.getSelectedItem();
-        s = s.substring(0,1);
-        if(s.equals("(")){ s = "";}
+    private String getSeparator() {
+        String s = (String) separatorBox.getSelectedItem();
+        s = s.substring(0, 1);
+        if (s.equals("(")) {
+            s = "";
+        }
         return s;
     }
 
-    public String buildName(String sep){
+    public String buildName(String sep) {
         String name = "";
         int size = nameParts.size();
-        if(size > 1){
-            for (int i = 0; i < (size - 1); i++){
+        if (size > 1) {
+            for (int i = 0; i < (size - 1); i++) {
                 String bit = "XXX";
-                if(nameParts.get(i) != null){
+                if (nameParts.get(i) != null) {
                     bit = nameParts.get(i);
                 }
                 name += bit + sep;
             }
         }
-        if(nameParts.get(size - 1) != null){
+        if (nameParts.get(size - 1) != null) {
             name += nameParts.get(size - 1);
-        }else{
+        } else {
             name += "XXX";
         }
 
         return name;
     }
 
-    public String getName(){
+    public String getName() {
         return name.getText();
     }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
     }
 }
 
-class helpFrame extends JFrame{
-    public helpFrame(){
+class helpFrame extends JFrame {
+    public helpFrame() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -691,14 +787,14 @@ class helpFrame extends JFrame{
 
         panel.add(helpLabel);
         JButton ok = new JButton("Ok");
-        ok.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        ok.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
         panel.add(ok);
         this.add(panel);
-        this.setSize(600,400);
+        this.setSize(600, 400);
         this.setVisible(true);
         this.setTitle("Help");
     }

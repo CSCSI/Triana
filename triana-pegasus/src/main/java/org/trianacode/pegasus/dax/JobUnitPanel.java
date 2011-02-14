@@ -26,9 +26,10 @@ public class JobUnitPanel extends ParameterPanel {
     private static final int SPREAD_CONNECT = 3;
 
     private JTabbedPane tabPane = new JTabbedPane();
-    private JPanel upperPanel = new JPanel(new GridLayout(3,2,5,5));
+    private JPanel upperPanel = new JPanel(new GridLayout(4, 2, 5, 5));
     private JPanel lowerPanel = new JPanel();
     private JTextField nameField = new JTextField("");
+    private JTextField execField = new JTextField("");
     private JTextField argsField = new JTextField("");
     JLabel collectLabel = new JLabel("");
 
@@ -38,6 +39,8 @@ public class JobUnitPanel extends ParameterPanel {
     private boolean autoConnect = true;
     private int connectPattern = AUTO_CONNECT;
 
+    String exec = "ls";
+
     //  public boolean isAutoCommitByDefault(){return true;}
 
     @Override
@@ -45,23 +48,27 @@ public class JobUnitPanel extends ParameterPanel {
         getParams();
 
         TrianaProperties p = this.getTask().getProperties();
-        if(p != null){
+        if (p != null) {
             log("Properties before : " + p.toString());
         }
 
         JPanel mainPane = new JPanel();
         mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
-
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job"));
+
         JLabel nameLabel = new JLabel("Job Name :");
         upperPanel.add(nameLabel);
-
         changeToolName(getTask().getToolName());
         upperPanel.add(nameField);
 
+        JLabel jobExecLabel = new JLabel("Executable location");
+        upperPanel.add(jobExecLabel);
+        execField.setText(exec);
+        upperPanel.add(execField);
+
+
         JLabel argsLabel = new JLabel("Job Args :");
         upperPanel.add(argsLabel);
-
         argsField.setText((String) getParameter("args"));
         upperPanel.add(argsField);
 
@@ -81,9 +88,9 @@ public class JobUnitPanel extends ParameterPanel {
         });
         upperPanel.add(collectionBox);
 
-        if(collection){
+        if (collection) {
             collectLabel.setText("Collection of jobs.");
-        }else{
+        } else {
             collectLabel.setText("Not a collection");
         }
         upperPanel.add(collectLabel);
@@ -159,15 +166,15 @@ public class JobUnitPanel extends ParameterPanel {
         final JLabel numberInputFilesLabel = new JLabel("No. Files/job : " + fileInputsPerJob);
 
         final String[] numbers = new String[100];
-        for(int i = 1; i < 100; i++){
+        for (int i = 1; i < 100; i++) {
             numbers[i] = "" + i;
         }
 
         final JComboBox jobsCombo = new JComboBox(numbers);
         jobsCombo.setSelectedItem("" + numberOfJobs);
-        jobsCombo.addActionListener(new ActionListener(){
+        jobsCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                numberOfJobs = Integer.parseInt((String)jobsCombo.getSelectedItem());
+                numberOfJobs = Integer.parseInt((String) jobsCombo.getSelectedItem());
                 numberJobsLabel.setText("No. files : " + numberOfJobs);
             }
         });
@@ -176,9 +183,9 @@ public class JobUnitPanel extends ParameterPanel {
 
         final JComboBox filesPerJobCombo = new JComboBox(numbers);
         filesPerJobCombo.setSelectedItem("" + fileInputsPerJob);
-        filesPerJobCombo.addActionListener(new ActionListener(){
+        filesPerJobCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fileInputsPerJob = Integer.parseInt((String)filesPerJobCombo.getSelectedItem());
+                fileInputsPerJob = Integer.parseInt((String) filesPerJobCombo.getSelectedItem());
                 numberInputFilesLabel.setText("No. files : " + fileInputsPerJob);
             }
         });
@@ -191,21 +198,21 @@ public class JobUnitPanel extends ParameterPanel {
         mainPane.add(lowerPanel);
 
         setEnabling(lowerPanel, collection);
-        if(collection){
+        if (collection) {
             setEnabling(lowerPanelAuto, autoConnect);
             setEnabling(lowerPanelScatter, !autoConnect);
         }
         this.add(mainPane);
     }
 
-    public void getParams(){
+    public void getParams() {
         collection = isCollection();
         numberOfJobs = getNumberOfJobs();
         connectPattern = getConnectPattern();
         fileInputsPerJob = getFileInputsPerJob();
     }
 
-    private void setParams(){
+    private void setParams() {
         getTask().setParameter("args", argsField.getText());
         getTask().setParameter("numberOfJobs", numberOfJobs);
         getTask().setParameter("fileInputsPerJob", fileInputsPerJob);
@@ -213,72 +220,87 @@ public class JobUnitPanel extends ParameterPanel {
         getTask().setParameter("connectPattern", connectPattern);
     }
 
-    public void changeToolName(String name){
+    public void changeToolName(String name) {
         nameField.setText(name);
         log("Changing tool " + getTask().getToolName() + " to : " + name);
         getTask().setParameter("jobName", name);
         getTask().setToolName(name);
     }
 
-    public void applyClicked(){ apply();}
-    public void okClicked(){ apply();};
-    public void apply(){
+    public void applyClicked() {
+        apply();
+    }
+
+    public void okClicked() {
+        apply();
+    }
+
+    ;
+
+    public void apply() {
         changeToolName(nameField.getText());
         setParams();
     }
 
-    public void setEnabling(Component c,boolean enable) {
+    public void setEnabling(Component c, boolean enable) {
         c.setEnabled(enable);
-        if (c instanceof Container)
-        {
-            Component [] arr = ((Container) c).getComponents();
-            for (int j=0;j<arr.length;j++) { setEnabling(arr[j],enable); }
+        if (c instanceof Container) {
+            Component[] arr = ((Container) c).getComponents();
+            for (int j = 0; j < arr.length; j++) {
+                setEnabling(arr[j], enable);
+            }
         }
     }
 
-    private boolean isCollection(){
+    private boolean isCollection() {
         Object o = getParameter("collection");
         log("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
-        if(o.equals(true)){
+        if (o.equals(true)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private int getNumberOfJobs(){
+    private int getNumberOfJobs() {
         Object o = getParameter("numberOfJobs");
         log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
-        if(o != null){
-            int value = (Integer)o;
-            if(value > 1 ){
+        if (o != null) {
+            int value = (Integer) o;
+            if (value > 1) {
                 return value;
             }
             return 1;
         }
         return 1;
     }
-    private int getFileInputsPerJob(){
+
+    private int getFileInputsPerJob() {
         Object o = getParameter("fileInputsPerJob");
         log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
-        if(o != null){
-            int value = (Integer)o;
-            if(value > 1 ){
+        if (o != null) {
+            int value = (Integer) o;
+            if (value > 1) {
                 return value;
             }
             return 1;
         }
         return 1;
     }
-    private int getConnectPattern(){
+
+    private int getConnectPattern() {
         Object o = getParameter("connectPattern");
-        if(o != null){
-            int value = (Integer)o;
-            switch(value){
-                case 0 : return AUTO_CONNECT;
-                case 1 : return SCATTER_CONNECT;
-                case 2 : return ONE2ONE_CONNECT;
-                case 3 : return SPREAD_CONNECT;
+        if (o != null) {
+            int value = (Integer) o;
+            switch (value) {
+                case 0:
+                    return AUTO_CONNECT;
+                case 1:
+                    return SCATTER_CONNECT;
+                case 2:
+                    return ONE2ONE_CONNECT;
+                case 3:
+                    return SPREAD_CONNECT;
             }
         }
         return AUTO_CONNECT;
@@ -293,7 +315,8 @@ public class JobUnitPanel extends ParameterPanel {
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
-    private void log(String s){
+
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
 //        System.out.println(s);
