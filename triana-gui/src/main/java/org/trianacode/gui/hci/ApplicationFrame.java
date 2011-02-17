@@ -223,16 +223,14 @@ public class ApplicationFrame extends TrianaWindow
         if (myOSName.equals("windows")) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
         } else {
             if (!myOSName.equals("osx")) {
                 try {
                     MetalLookAndFeel.setCurrentTheme(new OceanTheme());
                     UIManager.setLookAndFeel(new MetalLookAndFeel());
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                 }
             }
 
@@ -464,6 +462,7 @@ public class ApplicationFrame extends TrianaWindow
      */
     private void initExtensions() {
         Set<Object> en = engine.getExtensions(Extension.class);
+        System.out.println("ApplicationFrame.initExtensions got extensions? " + en);
         for (Object o : en) {
             Extension e = (Extension) o;
             e.init(this);
@@ -757,8 +756,7 @@ public class ApplicationFrame extends TrianaWindow
         String factoryType = TaskGraphManager.DEFAULT_FACTORY_TYPE;
         try {
             return addParentTaskGraphPanel(initgraph, factoryType);
-        }
-        catch (TaskException e) {
+        } catch (TaskException e) {
             ErrorDialog.show(this, "Error Rendering TaskGraph: " + initgraph.getToolName(), e);
             return null;
         }
@@ -768,8 +766,7 @@ public class ApplicationFrame extends TrianaWindow
         String factoryType = TaskGraphManager.NON_RUNNABLE_FACTORY_TYPE;
         try {
             return addParentTaskGraphPanel(initgraph, factoryType);
-        }
-        catch (TaskException e) {
+        } catch (TaskException e) {
             ErrorDialog.show(this, "Error Rendering TaskGraph: " + initgraph.getToolName(), e);
             return null;
         }

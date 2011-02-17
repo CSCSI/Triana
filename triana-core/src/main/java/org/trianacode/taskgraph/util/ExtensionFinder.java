@@ -56,6 +56,7 @@ public class ExtensionFinder {
             }
         }
         List<ModuleClassLoader> mod = ClassLoaders.getModuleClassLoaders();
+
         for (ModuleClassLoader moduleClassLoader : mod) {
             List<String> paths = moduleClassLoader.getClassPathList();
             for (String path : paths) {
