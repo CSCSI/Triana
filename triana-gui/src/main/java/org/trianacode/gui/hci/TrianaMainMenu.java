@@ -64,6 +64,8 @@ import org.trianacode.gui.action.files.OpenRecentListener;
 import org.trianacode.gui.desktop.DesktopViewController;
 import org.trianacode.gui.desktop.frames.FramesManager;
 import org.trianacode.gui.desktop.tabs.TabManager;
+import org.trianacode.gui.extensions.Extension;
+import org.trianacode.gui.extensions.ExtensionManager;
 import org.trianacode.gui.util.Env;
 import org.trianacode.taskgraph.tool.ToolTable;
 
@@ -90,7 +92,7 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
      */
     private JMenu fileMenu;
     //private JMenu helpMenu;
-    //private JMenu toolsMenu;
+    private JMenu extMenu;
     private JMenu editMenu;
     private JMenu optionsMenu;
     private JMenu recentMenu;
@@ -241,6 +243,15 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
             servicesMenu.add(extmenu);
         }*/
 
+        Action[] extentions = ExtensionManager.getWorkflowExtensions(Extension.TOOL_TYPE);
+
+        if (extentions.length > 0) {
+            extMenu = MenuMnemonics.getInstance().createMenu(("Extensions"));
+
+            for (int count = 0; count < extentions.length; count++) {
+                extMenu.add(extentions[count]);
+            }
+        }
         optionsMenu = MenuMnemonics.getInstance().createMenu(Env.getString("Options"));
         optionsMenu.add(new JMenuItem(ActionTable.getAction(OPTIONS)));
         optionsMenu.addSeparator();
