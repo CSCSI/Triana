@@ -282,10 +282,11 @@ public class TrianaMainMenu extends JMenuBar implements Actions, PropertyChangeL
         this.add(fileMenu);
         this.add(editMenu);
         this.add(runMenu);
-        //this.add(toolsMenu);
+
         //this.add(servicesMenu);
 
         this.add(optionsMenu);
+        this.add(extMenu);
     }
 
     /**
