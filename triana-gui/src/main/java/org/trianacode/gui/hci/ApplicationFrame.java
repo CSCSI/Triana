@@ -462,7 +462,6 @@ public class ApplicationFrame extends TrianaWindow
      */
     private void initExtensions() {
         Set<Object> en = engine.getExtensions(Extension.class);
-        System.out.println("ApplicationFrame.initExtensions got extensions? " + en);
         for (Object o : en) {
             Extension e = (Extension) o;
             e.init(this);

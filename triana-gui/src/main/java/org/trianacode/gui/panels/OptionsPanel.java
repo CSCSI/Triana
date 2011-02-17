@@ -58,6 +58,7 @@
  */
 package org.trianacode.gui.panels;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.gui.SpringUtilities;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
@@ -78,6 +79,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 
 /**
@@ -114,6 +116,9 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     private JPanel colorPanel;
     private JPanel externalPanel;
 
+    private JTextField modulesTextField;
+    private TrianaProperties properties;
+
     public void okClicked() {
         GUIEnv.getApplicationFrame().repaintWorkspace();
         super.okClicked();
@@ -149,7 +154,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
      */
     private JPanel getGeneralPanel() {
         if (generalPanel == null) {
-            JPanel panel = new JPanel(new GridLayout(7, 1));
+            JPanel panel = new JPanel(new GridLayout(8, 1));
             autoconnectChk = addCheckBox(panel, Env.getString("autoConnect"), GUIEnv.isAutoConnect());
             restoreChk = addCheckBox(panel, Env.getString("restoreLast"), GUIEnv.restoreLast());
             enableTipsChk = addCheckBox(panel, Env.getString("showToolTips"), GUIEnv.showPopUpDescriptions());
@@ -158,6 +163,27 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
             showNodeEditIconsChk = addCheckBox(panel, Env.getString("showNodeEditIcons"), GUIEnv.showNodeEditIcons());
             convertToDoubleChk = addCheckBox(panel, Env.getString("convertToDouble"), Env.getConvertToDouble());
             smoothCables = addCheckBox(panel, "Smooth Cables", GUIEnv.isSmoothCables());
+            this.properties = GUIEnv.getApplicationFrame().getEngine().getProperties();
+
+            String modulesRoot = properties.getProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY);
+            if (modulesRoot == null) {
+                modulesRoot = "";
+            }
+
+            modulesTextField = new JTextField(20);
+            modulesTextField.setText(modulesRoot);
+            JPanel intern = new JPanel(new BorderLayout());
+            intern.setBorder(new EmptyBorder(0, 3, 0, 3));
+            intern.add(new JLabel("Modules Root: "), BorderLayout.WEST);
+            intern.add(modulesTextField, BorderLayout.CENTER);
+
+            JButton browseButton = new JButton(GUIEnv.getIcon("dots.png"));
+            browseButton.setActionCommand("modulesRoot");
+            browseButton.addActionListener(this);
+            browseButton.setMargin(new Insets(6, 4, 2, 4));
+            intern.add(browseButton, BorderLayout.EAST);
+            panel.add(intern);
+
             generalPanel = new JPanel(new BorderLayout());
             generalPanel.add(panel, BorderLayout.NORTH);
         }
@@ -469,6 +495,33 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
+        TFileChooser chooser = new TFileChooser();
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setDialogTitle("Select " + e.getActionCommand());
+        chooser.setApproveButtonText(Env.getString("OK"));
+
+        if (e.getActionCommand().equals("modulesRoot")) {
+            File f = new File(modulesTextField.getText().trim());
+            if (f.exists()) {
+                chooser.setCurrentDirectory(f);
+            }
+        }
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (e.getActionCommand().equals("modulesRoot")) {
+                if (properties != null) {
+                    modulesTextField.setText(chooser.getSelectedFile().getAbsolutePath());
+                    modulesTextField.setCaretPosition(0);
+                    properties.setProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY, modulesTextField.getText().trim());
+                    try {
+                        properties.saveProperties();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        }
 //        if (e.getSource() == classpathButton) {
 //            handleClasspath();
 //        } else {
