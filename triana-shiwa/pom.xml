@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.trianacode</groupId>
+        <artifactId>triana</artifactId>
+        <version>4.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>triana-shiwa</artifactId>
+    <packaging>jar</packaging>
+    <name>Triana Pegasus</name>
+    <version>4.0.1-SNAPSHOT</version>
+    <url>http://www.trianacode.org</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.trianacode</groupId>
+            <artifactId>triana-gui</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.shiwa.fgi</groupId>
+            <artifactId>iwir</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+</project>

@@ -59,6 +59,7 @@
         <module>triana-pegasus</module>
         <module>triana-toolboxes</module>
         <module>triana-app</module>
+        <module>triana-shiwa</module>
     </modules>
 
 </project>
