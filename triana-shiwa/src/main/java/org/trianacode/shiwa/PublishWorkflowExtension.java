@@ -34,6 +34,9 @@ public class PublishWorkflowExtension implements Extension {
 
     @Override
     public Action getWorkflowAction(int type) {
-        return new PublishWorkflow();
+        if(type == Extension.TOOL_TYPE){
+        return (Action) new PublishWorkflow();
+        }
+        else return null;
     }
 }

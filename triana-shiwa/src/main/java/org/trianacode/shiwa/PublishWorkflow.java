@@ -1,5 +1,6 @@
 package org.trianacode.shiwa;
 
+import org.trianacode.TrianaInstance;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.TaskGraph;
@@ -15,10 +16,17 @@ import java.awt.event.ActionEvent;
  * To change this template use File | Settings | File Templates.
  */
 public class PublishWorkflow extends AbstractAction {
+
+    public PublishWorkflow(){
+        putValue(SHORT_DESCRIPTION, "Publish");
+        putValue(NAME, "Publish");
+    }
+
     public void actionPerformed(ActionEvent actionEvent) {
         System.out.println("Hello World");
 
         TaskGraph tg = GUIEnv.getApplicationFrame().getSelectedTaskgraph();
+        TrianaInstance instance = GUIEnv.getApplicationFrame().getEngine();
         String name = tg.getToolName();
 
 
@@ -37,5 +45,14 @@ public class PublishWorkflow extends AbstractAction {
                 System.out.println("Taskgraph output node " + i + " may produce : " + s);
             }
         }
+
+//        TrianaEngineHandler teh = new TrianaEngineHandler(instance, tg);
+//
+//        JPanel popup = new SHIWADesktopPanel(teh);
+//
+//        JDialog dialog = new JDialog();
+//        dialog.add(popup);
+//        dialog.setVisible(true);
+
     }
 }
