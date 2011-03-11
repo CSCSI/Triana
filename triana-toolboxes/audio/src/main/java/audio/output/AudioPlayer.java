@@ -6,7 +6,7 @@ import javax.sound.sampled.SourceDataLine;
 
 /**
  * A class to support the threaded playback of chunked audio. A thread is used in order to boost the CPU efficiency,
- * while the Play class converts the audio from a short to a byte array in a seperate thread. Contact
+ * while the Play class converts the audio from a short to a byte array in a separate thread. Contact
  * e.alshakarchi@cs.cf.ac.uk
  *
  * @author Eddie Al-Shakarchi

@@ -249,7 +249,6 @@ public class LoadSoundII extends Unit {
         setDefaultInputNodes(0);
         setMinimumInputNodes(0);
         setMaximumInputNodes(0);
-
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(0);
         setMaximumOutputNodes(Integer.MAX_VALUE);
@@ -257,6 +256,8 @@ public class LoadSoundII extends Unit {
         // Initialise parameter update policy and output policy
         setParameterUpdatePolicy(PROCESS_UPDATE);
         setOutputPolicy(CLONE_MULTIPLE_OUTPUT);
+        setParameterPanelClass("audio.input.LoadSoundIIPanel");
+        setParameterPanelInstantiate(ON_USER_ACCESS);
 
         // Initialise pop-up description and help file location
         setPopUpDescription("Load in an audio file...");
@@ -270,8 +271,6 @@ public class LoadSoundII extends Unit {
         defineParameter("numberOfChunksInSong", "", USER_ACCESSIBLE);
 
         // Initialise custom panels interface
-        setParameterPanelClass("audio.input.LoadSoundIIPanel");
-        setParameterPanelInstantiate(ON_USER_ACCESS);
     }
 
     /**

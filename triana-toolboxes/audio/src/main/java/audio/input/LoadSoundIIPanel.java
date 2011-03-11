@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,7 +25,6 @@ import javax.swing.event.ChangeListener;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.panels.ParameterPanel;
 import triana.types.util.Str;
-
 
 /**
  * $POPUP_DESCRIPTION
@@ -44,6 +42,7 @@ public class LoadSoundIIPanel extends ParameterPanel {
     private int numberOfChunks;
     double duration, seconds;
     String lastDir = null;
+    JFileChooser fc;
 
     /**
      * This method is called before the panel is displayed. It should initialise the panel layout.
@@ -57,17 +56,14 @@ public class LoadSoundIIPanel extends ParameterPanel {
                 file = new File(lastDir);
             }
 
-            JFileChooser fc = new JFileChooser(file);
+            fc = new JFileChooser(file);
             fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
 
                 public boolean accept(File f) {
                     if (f.isDirectory()) {
                         return true;
                     }
-
                     String name = f.getName();
-
-                    //System.out.println("name = " + name);
 
                     if (name.endsWith(".au") || name.endsWith(".wav") || name.endsWith(".aiff") || name.endsWith(".aif")
                             ||
@@ -101,7 +97,6 @@ public class LoadSoundIIPanel extends ParameterPanel {
 
                 setParameter((LoadSoundIIPanel.fileName), fn);
                 setParameter((LoadSoundII.fileName), fn);
-
 
                 System.out.println("filename after setParameter is " + fileName + " or " + fn);
                 lastDir = fc.getSelectedFile().getPath();
@@ -255,7 +250,7 @@ public class LoadSoundIIPanel extends ParameterPanel {
         if (entireFile.isSelected()) {
             numberOfChunks = 1;
             outputSizeInSamples = songSizeInSamples;
-            System.out.println("it says here that there should be one chunk....");
+            System.out.println("Single chunk");
         } else {
             System.out.println("it says here that there should NOT!!!!! be one chunk....");
             outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadSoundII.format.getSampleRate());
