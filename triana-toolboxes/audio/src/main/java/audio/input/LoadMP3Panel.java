@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,7 +25,6 @@ import javax.swing.event.ChangeListener;
 import org.trianacode.gui.Display;
 import org.trianacode.gui.panels.ParameterPanel;
 import triana.types.util.Str;
-
 
 /**
  * $POPUP_DESCRIPTION
@@ -44,6 +42,7 @@ public class LoadMP3Panel extends ParameterPanel {
     private int numberOfChunks;
     double duration, seconds;
     String lastDir = null;
+    JFileChooser fc;
 
     /**
      * This method is called before the panel is displayed. It should initialise the panel layout.
@@ -57,17 +56,14 @@ public class LoadMP3Panel extends ParameterPanel {
                 file = new File(lastDir);
             }
 
-            JFileChooser fc = new JFileChooser(file);
+            fc = new JFileChooser(file);
             fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
 
                 public boolean accept(File f) {
                     if (f.isDirectory()) {
                         return true;
                     }
-
                     String name = f.getName();
-
-                    //System.out.println("name = " + name);
 
                     if (name.endsWith(".au") || name.endsWith(".wav") || name.endsWith(".aiff") || name.endsWith(".aif")
                             ||
@@ -88,7 +84,9 @@ public class LoadMP3Panel extends ParameterPanel {
 
                 System.out.println("test me!!");
 
-                LoadSound.createAudioInputStream(fc.getSelectedFile());
+                // Pay attention to reference back to LoadMP3
+                LoadMP3.createAudioInputStream(fc.getSelectedFile());
+
                 String fn = fc.getSelectedFile().getAbsolutePath();
                 System.out.println("fn = " + fn);
                 userScreen(fc.getSelectedFile().getName());
@@ -98,8 +96,7 @@ public class LoadMP3Panel extends ParameterPanel {
                 System.out.println("fn 3 = " + fn);
 
                 setParameter((LoadMP3Panel.fileName), fn);
-                setParameter((LoadSound.fileName), fn);
-
+                setParameter((LoadMP3.fileName), fn);
 
                 System.out.println("filename after setParameter is " + fileName + " or " + fn);
                 lastDir = fc.getSelectedFile().getPath();
@@ -113,17 +110,17 @@ public class LoadMP3Panel extends ParameterPanel {
     }
 
     public void userScreen(String fileName) {
-        long milliseconds = (long) ((LoadSound.audioInputStream.getFrameLength() * 1000) / LoadSound
+        long milliseconds = (long) ((LoadMP3.audioInputStream.getFrameLength() * 1000) / LoadMP3
                 .audioInputStream.getFormat().getFrameRate());
         duration = milliseconds / 1000.0;
 
         System.out.println("DURATION = " + duration);
 
-        long bufferLengthInFrames = LoadSound.audioInputStream.getFrameLength();
+        long bufferLengthInFrames = LoadMP3.audioInputStream.getFrameLength();
         System.out.println("bufferLengthInFrames = " + bufferLengthInFrames);
         int samples = (int) bufferLengthInFrames;
-        final double convertSampsToMSec = 1000.0 / (double) LoadSound.format.getSampleRate();
-        int frameSizeInBytes = LoadSound.format.getFrameSize();
+        final double convertSampsToMSec = 1000.0 / (double) LoadMP3.format.getSampleRate();
+        int frameSizeInBytes = LoadMP3.format.getFrameSize();
         System.out.println("frameSizeInBytes = " + frameSizeInBytes);
 
         bufSize = bufferLengthInFrames * frameSizeInBytes;
@@ -179,7 +176,7 @@ public class LoadMP3Panel extends ParameterPanel {
         });
         JLabel fname = new JLabel(
                 fileName + " : " + duration + " seconds in length (" + bufferLengthInFrames + " samples)");
-        JLabel formatLab = new JLabel("Format : " + LoadSound.format.toString());
+        JLabel formatLab = new JLabel("Format : " + LoadMP3.format.toString());
 
         JLabel stream = new JLabel("Or Stream Audio As Follows :", JLabel.CENTER);
         stream.setForeground(Color.black);
@@ -253,10 +250,10 @@ public class LoadMP3Panel extends ParameterPanel {
         if (entireFile.isSelected()) {
             numberOfChunks = 1;
             outputSizeInSamples = songSizeInSamples;
-            System.out.println("it says here that there should be one chunk....");
+            System.out.println("Single chunk");
         } else {
             System.out.println("it says here that there should NOT!!!!! be one chunk....");
-            outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadSound.format.getSampleRate());
+            outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadMP3.format.getSampleRate());
             System.out.println("outputSizeInSamples" + outputSizeInSamples);
 
             numberOfChunks = (int) (songSizeInSamples / outputSizeInSamples);
@@ -272,27 +269,19 @@ public class LoadMP3Panel extends ParameterPanel {
         System.out.println("number of chunks = " + numberOfChunks);
 
         //parameterUpdate("bufSize", (Object)by);
-        LoadSound.bufSize = (by);
+        LoadMP3.bufSize = (by);
+        LoadMP3.songSizeInSamples = (songSizeInSamples);
+        LoadMP3.outputSizeInSamples = (outputSizeInSamples);
+        LoadMP3.numberOfChunks = (numberOfChunks);
+        LoadMP3.bytes = null;
+        LoadMP3.ma = null;
 
-
-        LoadSound.songSizeInSamples = (songSizeInSamples);
-        LoadSound.outputSizeInSamples = (outputSizeInSamples);
-        LoadSound.numberOfChunks = (numberOfChunks);
-
-
-        //parameterUpdate("outputSizeInSamples", (Object)outputSizeInSamples);
-//        parameterUpdate("songSizeInSamples", (Object)songSizeInSamples);
-//        parameterUpdate("numberOfChunks", (Object)numberOfChunks);
-        LoadSound.bytes = null;
-
-        LoadSound.ma = null;
         if (entireFile.isSelected()) {
-            LoadSound.gotEntireFile = true;
+            LoadMP3.gotEntireFile = true;
         } else {
-            LoadSound.gotEntireFile = false;
+            LoadMP3.gotEntireFile = false;
         }
     }
-
 
     /**
      * This method is called when cancel is clicked on the parameter window. It should synchronize the GUI components
@@ -304,7 +293,6 @@ public class LoadMP3Panel extends ParameterPanel {
         // namelabel.setText(getParameter("name"));         
     }
 
-
     /**
      * This method is called when a parameter in the task is updated. It should update the GUI in response to the
      * parameter update
@@ -313,31 +301,31 @@ public class LoadMP3Panel extends ParameterPanel {
 
         if (paramname.equals("fileName")) {
             fileName = (String) value;
-            LoadSound.fileName = (fileName);
+            LoadMP3.fileName = (fileName);
             System.out.println("filename from paramupdate = " + fileName);
         }
 
         if (paramname.equals("bufSize")) {
             bufSize = new Long((String) value).longValue();
-            LoadSound.bufSize = (bufSize);
+            LoadMP3.bufSize = (bufSize);
             System.out.println("bufSize from paramupdate = " + bufSize);
         }
 
         if (paramname.equals("songSizeInSamples")) {
             songSizeInSamples = new Long((String) value).longValue();
             System.out.println("songSizeInSamples from paramupdate = " + songSizeInSamples);
-            LoadSound.songSizeInSamples = (songSizeInSamples);
+            LoadMP3.songSizeInSamples = (songSizeInSamples);
         }
 
         if (paramname.equals("outputSizeInSamples")) {
             outputSizeInSamples = new Long((String) value).longValue();
             System.out.println("outputSizeInSamples from paramupdate = " + outputSizeInSamples);
-            LoadSound.outputSizeInSamples = (outputSizeInSamples);
+            LoadMP3.outputSizeInSamples = (outputSizeInSamples);
         }
 
         if (paramname.equals("numberOfChunksInSong")) {
             numberOfChunks = new Integer((String) value).intValue();
-            LoadSound.numberOfChunks = (numberOfChunks);
+            LoadMP3.numberOfChunks = (numberOfChunks);
 
             System.out.println("numberOfChunks from paramupdate = " + numberOfChunks);
         }
