@@ -88,7 +88,7 @@ public class LoadMP3Panel extends ParameterPanel {
 
                 System.out.println("test me!!");
 
-                LoadSoundII.createAudioInputStream(fc.getSelectedFile());
+                LoadSound.createAudioInputStream(fc.getSelectedFile());
                 String fn = fc.getSelectedFile().getAbsolutePath();
                 System.out.println("fn = " + fn);
                 userScreen(fc.getSelectedFile().getName());
@@ -98,7 +98,7 @@ public class LoadMP3Panel extends ParameterPanel {
                 System.out.println("fn 3 = " + fn);
 
                 setParameter((LoadMP3Panel.fileName), fn);
-                setParameter((LoadSoundII.fileName), fn);
+                setParameter((LoadSound.fileName), fn);
 
 
                 System.out.println("filename after setParameter is " + fileName + " or " + fn);
@@ -113,17 +113,17 @@ public class LoadMP3Panel extends ParameterPanel {
     }
 
     public void userScreen(String fileName) {
-        long milliseconds = (long) ((LoadSoundII.audioInputStream.getFrameLength() * 1000) / LoadSoundII
+        long milliseconds = (long) ((LoadSound.audioInputStream.getFrameLength() * 1000) / LoadSound
                 .audioInputStream.getFormat().getFrameRate());
         duration = milliseconds / 1000.0;
 
         System.out.println("DURATION = " + duration);
 
-        long bufferLengthInFrames = LoadSoundII.audioInputStream.getFrameLength();
+        long bufferLengthInFrames = LoadSound.audioInputStream.getFrameLength();
         System.out.println("bufferLengthInFrames = " + bufferLengthInFrames);
         int samples = (int) bufferLengthInFrames;
-        final double convertSampsToMSec = 1000.0 / (double) LoadSoundII.format.getSampleRate();
-        int frameSizeInBytes = LoadSoundII.format.getFrameSize();
+        final double convertSampsToMSec = 1000.0 / (double) LoadSound.format.getSampleRate();
+        int frameSizeInBytes = LoadSound.format.getFrameSize();
         System.out.println("frameSizeInBytes = " + frameSizeInBytes);
 
         bufSize = bufferLengthInFrames * frameSizeInBytes;
@@ -179,7 +179,7 @@ public class LoadMP3Panel extends ParameterPanel {
         });
         JLabel fname = new JLabel(
                 fileName + " : " + duration + " seconds in length (" + bufferLengthInFrames + " samples)");
-        JLabel formatLab = new JLabel("Format : " + LoadSoundII.format.toString());
+        JLabel formatLab = new JLabel("Format : " + LoadSound.format.toString());
 
         JLabel stream = new JLabel("Or Stream Audio As Follows :", JLabel.CENTER);
         stream.setForeground(Color.black);
@@ -256,7 +256,7 @@ public class LoadMP3Panel extends ParameterPanel {
             System.out.println("it says here that there should be one chunk....");
         } else {
             System.out.println("it says here that there should NOT!!!!! be one chunk....");
-            outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadSoundII.format.getSampleRate());
+            outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadSound.format.getSampleRate());
             System.out.println("outputSizeInSamples" + outputSizeInSamples);
 
             numberOfChunks = (int) (songSizeInSamples / outputSizeInSamples);
@@ -272,24 +272,24 @@ public class LoadMP3Panel extends ParameterPanel {
         System.out.println("number of chunks = " + numberOfChunks);
 
         //parameterUpdate("bufSize", (Object)by);
-        LoadSoundII.bufSize = (by);
+        LoadSound.bufSize = (by);
 
 
-        LoadSoundII.songSizeInSamples = (songSizeInSamples);
-        LoadSoundII.outputSizeInSamples = (outputSizeInSamples);
-        LoadSoundII.numberOfChunks = (numberOfChunks);
+        LoadSound.songSizeInSamples = (songSizeInSamples);
+        LoadSound.outputSizeInSamples = (outputSizeInSamples);
+        LoadSound.numberOfChunks = (numberOfChunks);
 
 
         //parameterUpdate("outputSizeInSamples", (Object)outputSizeInSamples);
 //        parameterUpdate("songSizeInSamples", (Object)songSizeInSamples);
 //        parameterUpdate("numberOfChunks", (Object)numberOfChunks);
-        LoadSoundII.bytes = null;
+        LoadSound.bytes = null;
 
-        LoadSoundII.ma = null;
+        LoadSound.ma = null;
         if (entireFile.isSelected()) {
-            LoadSoundII.gotEntireFile = true;
+            LoadSound.gotEntireFile = true;
         } else {
-            LoadSoundII.gotEntireFile = false;
+            LoadSound.gotEntireFile = false;
         }
     }
 
@@ -313,31 +313,31 @@ public class LoadMP3Panel extends ParameterPanel {
 
         if (paramname.equals("fileName")) {
             fileName = (String) value;
-            LoadSoundII.fileName = (fileName);
+            LoadSound.fileName = (fileName);
             System.out.println("filename from paramupdate = " + fileName);
         }
 
         if (paramname.equals("bufSize")) {
             bufSize = new Long((String) value).longValue();
-            LoadSoundII.bufSize = (bufSize);
+            LoadSound.bufSize = (bufSize);
             System.out.println("bufSize from paramupdate = " + bufSize);
         }
 
         if (paramname.equals("songSizeInSamples")) {
             songSizeInSamples = new Long((String) value).longValue();
             System.out.println("songSizeInSamples from paramupdate = " + songSizeInSamples);
-            LoadSoundII.songSizeInSamples = (songSizeInSamples);
+            LoadSound.songSizeInSamples = (songSizeInSamples);
         }
 
         if (paramname.equals("outputSizeInSamples")) {
             outputSizeInSamples = new Long((String) value).longValue();
             System.out.println("outputSizeInSamples from paramupdate = " + outputSizeInSamples);
-            LoadSoundII.outputSizeInSamples = (outputSizeInSamples);
+            LoadSound.outputSizeInSamples = (outputSizeInSamples);
         }
 
         if (paramname.equals("numberOfChunksInSong")) {
             numberOfChunks = new Integer((String) value).intValue();
-            LoadSoundII.numberOfChunks = (numberOfChunks);
+            LoadSound.numberOfChunks = (numberOfChunks);
 
             System.out.println("numberOfChunks from paramupdate = " + numberOfChunks);
         }

@@ -261,7 +261,7 @@ public class LoadMp3 extends Unit {
 
         // Initialise pop-up description and help file location
         setPopUpDescription("Load in an audio file...");
-        setHelpFileLocation("LoadSoundII.html");
+        setHelpFileLocation("LoadSound.html");
 
         // Define initial value and type of parameters
         defineParameter("fileName", "untitled", USER_ACCESSIBLE);
@@ -272,7 +272,7 @@ public class LoadMp3 extends Unit {
 
         System.out.println("first init method...?");
         // Initialise custom panels interface
-        setParameterPanelClass("audio.input.LoadSoundIIPanel");
+        setParameterPanelClass("audio.input.LoadSoundPanel");
         setParameterPanelInstantiate(ON_USER_ACCESS);
     }
 

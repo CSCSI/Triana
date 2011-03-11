@@ -23,7 +23,7 @@ import java.io.File;
  * @version $Revision: 4052 $
  */
 
-public class LoadSoundII extends Unit {
+public class LoadSound extends Unit {
     static boolean bigendian = true;
 
     // Works out type of operating system in order to establish byte-order
@@ -256,12 +256,12 @@ public class LoadSoundII extends Unit {
         // Initialise parameter update policy and output policy
         setParameterUpdatePolicy(PROCESS_UPDATE);
         setOutputPolicy(CLONE_MULTIPLE_OUTPUT);
-        setParameterPanelClass("audio.input.LoadSoundIIPanel");
+        setParameterPanelClass("audio.input.LoadSoundPanel");
         setParameterPanelInstantiate(ON_USER_ACCESS);
 
         // Initialise pop-up description and help file location
         setPopUpDescription("Load in an audio file...");
-        setHelpFileLocation("LoadSoundII.html");
+        setHelpFileLocation("LoadSound.html");
 
         // Define initial value and type of parameters
         defineParameter("fileName", "untitled", USER_ACCESSIBLE);
@@ -287,7 +287,7 @@ public class LoadSoundII extends Unit {
      * Called when the unit is disposed of.
      */
     public void dispose() {
-        // Insert code to clean-up LoadSoundII (e.g. close open files) 
+        // Insert code to clean-up LoadSound (e.g. close open files)
     }
 
 
@@ -297,7 +297,7 @@ public class LoadSoundII extends Unit {
     public void parameterUpdate(String paramname, Object value) {
         // Code to update local variables 
         if (paramname.equals("fileName")) {
-            LoadSoundIIPanel.fileName = (String) value;
+            LoadSoundPanel.fileName = (String) value;
         }
     }
 
