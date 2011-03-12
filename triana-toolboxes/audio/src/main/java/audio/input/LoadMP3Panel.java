@@ -110,6 +110,10 @@ public class LoadMP3Panel extends ParameterPanel {
     }
 
     public void userScreen(String fileName) {
+        System.out.println("TEEEEEESSSSSST 1");
+        int test = LoadMP3.audioInputStream.getFormat().getSampleSizeInBits();
+        System.out.println("TEEEEEESSSSSST 2 + " + test);
+
         long milliseconds = (long) ((LoadMP3.audioInputStream.getFrameLength() * 1000) / LoadMP3
                 .audioInputStream.getFormat().getFrameRate());
         duration = milliseconds / 1000.0;

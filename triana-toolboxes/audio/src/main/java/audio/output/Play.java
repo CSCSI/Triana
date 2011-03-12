@@ -46,8 +46,10 @@ public class Play extends Unit {
     AudioPlayer audioPlayer = null;
 
     /**
-     * **************************************************************************************** This is the main
-     * processing method. Called whenever there is data for the unit to process *****************************************************************************************
+     * ****************************************************************************************
+     * This is the main
+     * processing method. Called whenever there is data for the unit to process
+     * *****************************************************************************************
      */
 
     public void process() throws Exception {
@@ -68,28 +70,41 @@ public class Play extends Unit {
         // A MultipleAudio type
         else {
 
+              System.out.println("PLAY TEST 1!");
+
             newformat = input.getAudioFormat();
             AudioFormat au;
+
+            System.out.println("PLAY TEST 2!");
 
             // For each channel
             for (int chan = 0; chan < newformat.getChannels(); ++chan) {
                 au = input.getAudioFormat(); // grab the audio format
-
+                System.out.println("PLAY TEST 3 + "+chan);
                 if (!newformat.matches(au)) {
                     throw new Exception("Incompatible Format Error in " + getToolName() +
                             "\n : Format at node 0 is : \n" + newformat + "\n and format at node "
                             + String.valueOf(chan) + " is : \n" + au);
                 }
             }
+            System.out.println("PLAY TEST 3!");
 
             // convert to byte array in correct format
             try {
+
+                System.out.println("PLAY TEST 4!");
                 bytes = toByteArray(input); // calls toByteArray method on 'input'
+                System.out.println("PLAY TEST 5!");
+                System.out.println("THE SAMPLE SIZE IN BITS = " + newformat.getSampleSizeInBits());
 
                 if (newformat.getSampleSizeInBits() == 8) {
                     outputBufferSize = input.getChannelLength(0);
-                } else if (newformat.getSampleSizeInBits() == 16) {
+                }
+                if (newformat.getSampleSizeInBits() == 16) {
                     outputBufferSize = input.getChannelLength(0) * 4;
+                }
+                if (newformat.getSampleSizeInBits() == 24) {
+                    //System.out.println("yep, it's 24bit alright!");
                 }
             }
             catch (Exception e) {
@@ -213,7 +228,38 @@ public class Play extends Unit {
                         }
                     }
                 }
-            } else { // assume 32 bit
+            }
+
+            else if (newformat.getSampleSizeInBits() == 24){
+                System.out.println("yep, it's 24bit alright!");
+                //if it's 24bit do something here
+
+                int b = 3;
+                int bitVal;
+                int vals[] = (int[]) o;
+                //byte[] vals2 = (byte[])vals.length;
+
+                if (bigendian) {
+                    for (j = 0; j < vals.length; ++j) {
+                        pos = j * channels;
+                        bitVal = (int) vals[j];
+                        for (i = 0; i < b; ++i) {
+                            bytedata[(chan * b) + b - i - 1 + (pos * b)] = (byte) (bitVal & filt);
+                            bitVal = (short) (bitVal >> 8);
+                        }
+                    }
+                } else { // swap 'em if little endian
+                    for (j = 0; j < vals.length; ++j) {
+                        pos = j * channels;
+                        bitVal = (int) vals[j];
+                        for (i = 0; i < b; ++i) {
+                            bytedata[(chan * b) + i + (pos * b)] = (byte) (bitVal & filt);
+                            bitVal = (short) (bitVal >> 8);
+                        }
+                    }
+                }
+            }
+            else { // assume 32 bit
 
                 int b = 4;
                 int bitVal;
@@ -251,7 +297,7 @@ public class Play extends Unit {
 
         // Initialise node properties
         setDefaultInputNodes(1);
-        setMinimumInputNodes(0);
+        setMinimumInputNodes(1);
         setMaximumInputNodes(Integer.MAX_VALUE);
 
         setDefaultOutputNodes(1);

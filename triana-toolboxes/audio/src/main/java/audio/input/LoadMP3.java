@@ -7,11 +7,10 @@ import org.trianacode.taskgraph.Unit;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import java.io.File;
+import javax.sound.sampled.*;
+import java.io.*;
+
+import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 /**
  * A class for a Unit which allows the user to load a sound file into Triana. This unit allows the user to split the
@@ -50,9 +49,12 @@ public class LoadMP3 extends Unit {
     static String errStr;
     public static MultipleAudio ma = null;
     public static boolean gotEntireFile = false;
+    public static AudioInputStream din;
     double duration, seconds;
     public static long bufSize = 16384;
     public static long songSizeInSamples;
+    public static AudioFormat baseFormat;
+    public static AudioFormat decodedFormat;
     public static long outputSizeInSamples;
     public static int numberOfChunks;
     public static byte[] bytes;
@@ -219,14 +221,56 @@ public class LoadMP3 extends Unit {
     }
 
     public static void createAudioInputStream(File file) {
+        System.out.println("TEST 1");
+        System.out.println("file = " + file);
         if (file != null && file.isFile()) {
+            System.out.println("TEST 2");
             try {
+                System.out.println("TEST 3");
                 errStr = null;
-                audioInputStream = AudioSystem.getAudioInputStream(file);
-                audioFileFormat = AudioSystem.getAudioFileFormat(file);
-                audioInputStream = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED, audioInputStream);
+                System.out.println("TEST 4");
 
-                format = audioInputStream.getFormat();
+                try
+		{
+			audioInputStream = AudioSystem.getAudioInputStream(file);
+		}
+		catch (Exception e)
+		{
+			/*
+			  In case of an exception, we dump the exception
+			  including the stack trace to the console output.
+			  Then, we exit the program.
+			*/
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+
+//                        if (audioFileFormat instanceof TAudioFileFormat) {
+//                            System.out.println("HELLLLOO WE'RE GETTING SOMEWHERE");
+//                        }
+
+
+                //audioInputStream = AudioSystem.getAudioInputStream(file);
+                System.out.println("TEST 4b");
+                din = null;
+                baseFormat = audioInputStream.getFormat();
+                decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
+                        baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+
+                din = AudioSystem.getAudioInputStream(decodedFormat, audioInputStream);
+
+                System.out.println("TEST 5");
+
+                //audioFileFormat = AudioSystem.getAudioFileFormat(file);
+                System.out.println("TEST 6");
+
+                //audioInputStream = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED, audioInputStream);
+                System.out.println("TEST 7");
+
+                //din = null;
+                //baseFormat = audioInputStream.getFormat();
+                //format = audioInputStream.getFormat();
                 System.out.println("Format = " + format);
                 System.out.println("Frame size = " + format.getFrameSize());
                 System.out.println("Frame Rate = " + format.getFrameRate());
@@ -250,7 +294,7 @@ public class LoadMP3 extends Unit {
         setMinimumInputNodes(0);
         setMaximumInputNodes(0);
         setDefaultOutputNodes(1);
-        setMinimumOutputNodes(0);
+        setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
         // Initialise parameter update policy and output policy
@@ -300,7 +344,6 @@ public class LoadMP3 extends Unit {
             LoadMP3Panel.fileName = (String) value;
         }
     }
-
 
     /**
      * @return an array of the types accepted by each input node. For node indexes not covered the types specified by
