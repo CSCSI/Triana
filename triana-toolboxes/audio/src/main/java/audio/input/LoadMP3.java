@@ -10,8 +10,6 @@ import triana.types.audio.MultipleAudio;
 import javax.sound.sampled.*;
 import java.io.*;
 
-import org.tritonus.share.sampled.file.TAudioFileFormat;
-
 /**
  * A class for a Unit which allows the user to load a sound file into Triana. This unit allows the user to split the
  * audio into a stream of contiguous chunks, and output, or as the whole sound file in its entirety. Created by Dr. Ian
@@ -244,11 +242,6 @@ public class LoadMP3 extends Unit {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-
-//                        if (audioFileFormat instanceof TAudioFileFormat) {
-//                            System.out.println("HELLLLOO WE'RE GETTING SOMEWHERE");
-//                        }
 
 
                 //audioInputStream = AudioSystem.getAudioInputStream(file);
