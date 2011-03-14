@@ -43,11 +43,25 @@
         </dependency>
         <dependency>
             <groupId>org.trianacode</groupId>
-            <artifactId>audio-tritonus_share</artifactId>
+            <artifactId>audio-tritonus_share-0-3-6</artifactId>
             <version>0.1</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/tritonus_share.jar</systemPath>
+            <systemPath>${basedir}/lib/tritonus_share-0.3.6.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.trianacode</groupId>
+            <artifactId>jlayer1-0-1</artifactId>
+            <version>0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/jl1.0.1.jar</systemPath>
+        </dependency>        
+        <dependency>
+            <groupId>org.trianacode</groupId>
+            <artifactId>MP3SPI</artifactId>
+            <version>0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/mp3spi1.9.5.jar</systemPath>
+        </dependency>        
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
