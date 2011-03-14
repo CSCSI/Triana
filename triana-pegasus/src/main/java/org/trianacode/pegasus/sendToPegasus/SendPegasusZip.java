@@ -16,20 +16,19 @@ import java.io.File;
  * To change this template use File | Settings | File Templates.
  */
 public class SendPegasusZip {
-    public static String SendFile(String httpAddress, File file) {
-        Response ret = null;
-        try {
+
+    public static Response sendFile(String httpAddress, File file){
+        try{
             RequestContext c = new RequestContext(httpAddress);
+
             c.setResource(new Resource(new StreamableFile(file)));
             HttpPeer peer = new HttpPeer();
-            ret = peer.post(c);
-        } catch (Exception e) {
-            System.out.println("Failed to send zip to TriPeg");
-        }
-        if(ret != null){
-            return ret.toString();
-        }else{
-            return "Fail";
+            Response ret = peer.post(c);
+            System.out.println("Received reply :" + ret.toString());
+            return ret;
+        }catch (Exception e){
+            System.out.println("Sending failure");
+            return null;
         }
     }
 }
