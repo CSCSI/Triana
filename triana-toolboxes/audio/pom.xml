@@ -54,7 +54,14 @@
             <version>0.1</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/jl1.0.1.jar</systemPath>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.trianacode</groupId>
+            <artifactId>mp3plugin</artifactId>
+            <version>0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/mp3plugin.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>org.trianacode</groupId>
             <artifactId>MP3SPI</artifactId>
