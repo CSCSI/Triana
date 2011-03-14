@@ -3,6 +3,7 @@ package audio.input;
 import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.QuestionWindow;
+import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
@@ -85,11 +86,6 @@ public class LoadSound extends Unit {
 
             do {
                 try {
-                    //  System.out.println("!!!!!!Bytes:" + bytes);
-                    //  System.out.println("Bufsize:" + bufSize);
-                    //  System.out.println("Bytesread: " + bytesread);
-                    //  System.out.println("Audioinputstream: " + audioInputStream);
-
                     bytesread = audioInputStream.read(bytes, 0, (int) bufSize);
                 }
                 catch (Exception e) {
@@ -256,8 +252,6 @@ public class LoadSound extends Unit {
         // Initialise parameter update policy and output policy
         setParameterUpdatePolicy(PROCESS_UPDATE);
         setOutputPolicy(CLONE_MULTIPLE_OUTPUT);
-        setParameterPanelClass("audio.input.LoadSoundPanel");
-        setParameterPanelInstantiate(ON_USER_ACCESS);
 
         // Initialise pop-up description and help file location
         setPopUpDescription("Load in an audio file...");
@@ -271,6 +265,9 @@ public class LoadSound extends Unit {
         defineParameter("numberOfChunksInSong", "", USER_ACCESSIBLE);
 
         // Initialise custom panels interface
+        setParameterPanelClass("audio.input.LoadSoundPanel");
+        setParameterPanelInstantiate(ON_USER_ACCESS);
+
     }
 
     /**

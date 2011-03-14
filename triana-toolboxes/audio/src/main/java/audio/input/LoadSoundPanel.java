@@ -82,18 +82,16 @@ public class LoadSoundPanel extends ParameterPanel {
 
             if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 
-                System.out.println("test me!!");
-
                 // Pay attention to reference back to LoadSound
                 LoadSound.createAudioInputStream(fc.getSelectedFile());
 
                 String fn = fc.getSelectedFile().getAbsolutePath();
-                System.out.println("fn = " + fn);
+//                System.out.println("fn = " + fn);
                 userScreen(fc.getSelectedFile().getName());
-                System.out.println("fn 2 = " + fn);
+  //              System.out.println("fn 2 = " + fn);
                 parameterUpdate("fileName", fn);
 
-                System.out.println("fn 3 = " + fn);
+    //            System.out.println("fn 3 = " + fn);
 
                 setParameter((LoadSoundPanel.fileName), fn);
                 setParameter((LoadSound.fileName), fn);
@@ -102,7 +100,6 @@ public class LoadSoundPanel extends ParameterPanel {
                 lastDir = fc.getSelectedFile().getPath();
             }
         } catch (SecurityException ex) {
-            // JavaSound.showInfoDialog();
             ex.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();

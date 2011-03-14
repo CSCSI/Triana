@@ -4,11 +4,19 @@ import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.QuestionWindow;
 import org.trianacode.taskgraph.Unit;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFormat;
+import sun.audio.AudioStream;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
 
+import javazoom.spi.mpeg.sampled.*;
+
 import javax.sound.sampled.*;
 import java.io.*;
+import java.util.Map;
+
+import org.tritonus.share.sampled.TAudioFormat;
+import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 /**
  * A class for a Unit which allows the user to load a sound file into Triana. This unit allows the user to split the
@@ -38,21 +46,24 @@ public class LoadMP3 extends Unit {
     }
 
     public static AudioInputStream audioInputStream;
-    static AudioFileFormat audioFileFormat;
+    public static MpegAudioFormat test;
+    public static AudioInputStream din;
+    public static AudioFileFormat audioFileFormat;
     public static AudioFormat format;
+    public static AudioFormat baseFormat;
+    public static AudioFormat decodedFormat;
+
     String lastDir = null;
 
     public static String fileName;
 
-    static String errStr;
+    public static String errStr;
     public static MultipleAudio ma = null;
     public static boolean gotEntireFile = false;
-    public static AudioInputStream din;
+
     double duration, seconds;
     public static long bufSize = 16384;
     public static long songSizeInSamples;
-    public static AudioFormat baseFormat;
-    public static AudioFormat decodedFormat;
     public static long outputSizeInSamples;
     public static int numberOfChunks;
     public static byte[] bytes;
@@ -221,27 +232,28 @@ public class LoadMP3 extends Unit {
     public static void createAudioInputStream(File file) {
         System.out.println("TEST 1");
         System.out.println("file = " + file);
-        if (file != null && file.isFile()) {
-            System.out.println("TEST 2");
-            try {
-                System.out.println("TEST 3");
-                errStr = null;
-                System.out.println("TEST 4");
 
-                try
-		{
-			audioInputStream = AudioSystem.getAudioInputStream(file);
-		}
-		catch (Exception e)
-		{
-			/*
-			  In case of an exception, we dump the exception
-			  including the stack trace to the console output.
-			  Then, we exit the program.
-			*/
-			e.printStackTrace();
-			System.exit(1);
-		}
+        AudioFileFormat testFileFormat = null;
+        AudioFormat testFormat = null;
+
+        if (file != null && file.isFile()) {
+            System.out.println("NEW TEST 2");
+            try {
+                System.out.println("NEW TEST 3");
+                errStr = null;
+                System.out.println("NEW TEST 4");
+
+                try{
+			        audioInputStream = AudioSystem.getAudioInputStream(file);
+		        } catch (Exception e){
+                    /*
+                      In case of an exception, we dump the exception
+                      including the stack trace to the console output.
+                      Then, we exit the program.
+                    */
+                    e.printStackTrace();
+                    System.exit(1);
+		        }
 
 
                 //audioInputStream = AudioSystem.getAudioInputStream(file);
