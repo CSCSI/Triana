@@ -49,7 +49,7 @@ public class LoadMP3 extends Unit {
     public static MpegAudioFormat test;
     public static AudioInputStream din;
     public static AudioFileFormat audioFileFormat;
-    public static AudioFormat format;
+    public static MpegAudioFormat format;
     public static AudioFormat baseFormat;
     public static AudioFormat decodedFormat;
 
