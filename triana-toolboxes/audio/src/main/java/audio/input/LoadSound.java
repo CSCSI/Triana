@@ -3,7 +3,6 @@ package audio.input;
 import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.QuestionWindow;
-import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
@@ -94,7 +93,6 @@ public class LoadSound extends Unit {
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    //    System.out.println("QUICKTEST CATCH");
                 }
 
                 if (bytesread == -1) {
@@ -184,7 +182,6 @@ public class LoadSound extends Unit {
                     }
 
                     ma.setChannel(chan, vals, new AudioChannelFormat(format));
-                    //System.out.println("outputsize = " + vals.length);
                 }
             } else { // 8-bit
                 int i, j, chan;
@@ -210,19 +207,6 @@ public class LoadSound extends Unit {
             output(ma); //outputs the multiple audio which has been converted from the byte array
             ++chunkNo;
         }
-//        if (chunkNo == numberOfChunks){
-//            System.out.println(("say hello"));
-//            int channels = format.getChannels();
-//
-//            for (int chan = 0; chan < channels; ++chan) {
-//                short[] vals = new short[0];
-//
-//            ma.setChannel(chan, vals, new AudioChannelFormat(format));
-//            output(ma);
-//                ++testnumber;
-//                System.out.println("testnumber = " + testnumber);
-//            }
-//        }
 
         if (audioInputStream != null) {
             try {
@@ -238,7 +222,6 @@ public class LoadSound extends Unit {
             try {
                 errStr = null;
                 audioInputStream = AudioSystem.getAudioInputStream(file);
-                //audioFileFormat = AudioSystem.getAudioFileFormat(file);
                 audioInputStream = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED, audioInputStream);
 
                 format = audioInputStream.getFormat();
@@ -348,5 +331,4 @@ public class LoadSound extends Unit {
     public String[] getOutputTypes() {
         return new String[]{"triana.types.audio.MultipleAudio"};
     }
-
 }

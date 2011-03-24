@@ -253,7 +253,6 @@ public class LoadSoundPanel extends ParameterPanel {
         long by = (long) (frameSizeInBytes * outputSizeInSamples);
         System.out.println("Number of chunks = " + numberOfChunks);
 
-        //parameterUpdate("bufSize", (Object)by);
         LoadSound.bufSize = (by);
         LoadSound.songSizeInSamples = (songSizeInSamples);
         LoadSound.outputSizeInSamples = (outputSizeInSamples);
