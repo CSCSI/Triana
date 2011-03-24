@@ -50,7 +50,6 @@ public class LoadMP3 extends Unit {
 
     public static AudioInputStream audioInputStream;
     public static AudioInputStream din;
-    public MpegAudioFormat format;
     public static AudioFormat baseFormat;
     public static AudioFormat decodedFormat;
     public static long duration;
@@ -61,10 +60,9 @@ public class LoadMP3 extends Unit {
 
     public static String errStr;
     public static MultipleAudio ma = null;
-    public static boolean gotEntireFile = false;
+    public static boolean gotEntireFile;
 
     //static double duration;
-    double seconds;
     public static long bufSize;
     public static long songSizeInSamples;
     public static long outputSizeInSamples;
@@ -255,7 +253,7 @@ public class LoadMP3 extends Unit {
 
         if (file != null && file.isFile()) {
             try {
-                errStr = null;
+                //errStr = null;
 
                 try{
 			        audioInputStream = AudioSystem.getAudioInputStream(file);
@@ -268,7 +266,6 @@ public class LoadMP3 extends Unit {
                 baseFormat = audioInputStream.getFormat();
                 decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
                         baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), baseFormat.isBigEndian());
-
 
 
                 AudioFileFormat baseFileFormat = new MpegAudioFileReader().getAudioFileFormat(file);
@@ -284,7 +281,7 @@ public class LoadMP3 extends Unit {
                 System.out.println("decodedFormat Frame size = " + decodedFormat.getFrameSize());
                 System.out.println("decodedFormat Frame Rate = " + decodedFormat.getFrameRate());
                 System.out.println("decodedFormat sample Rate = " + decodedFormat.getSampleRate());
-                System.out.println("din format = " + din.getFormat());
+                //System.out.println("din format = " + din.getFormat());
 
                 //rawplay(decodedFormat, din);
                 //System.out.println("din = " + din);

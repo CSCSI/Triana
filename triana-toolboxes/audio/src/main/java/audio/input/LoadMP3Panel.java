@@ -43,7 +43,6 @@ public class LoadMP3Panel extends ParameterPanel {
     double duration, seconds;
     String lastDir = null;
     JFileChooser fc;
-    //LoadMP3 loadmp3 = null;
 
     /**
      * This method is called before the panel is displayed. It should initialise the panel layout.
@@ -86,8 +85,8 @@ public class LoadMP3Panel extends ParameterPanel {
                 userScreen(fc.getSelectedFile().getName());
                 parameterUpdate("fileName", fn);
 
-//                setParameter((fileName), fn);
-//                setParameter((LoadMP3.fileName), fn);
+                setParameter((fileName), fn);
+                setParameter((LoadMP3.fileName), fn);
 
                 lastDir = fc.getSelectedFile().getPath();
             }
@@ -118,12 +117,6 @@ public class LoadMP3Panel extends ParameterPanel {
 
         songSizeInSamples = bufferLengthInFrames;
         System.out.println("songSizeInSamples = " + songSizeInSamples);
-
-        /** System.out.println("Format : " + format);
-         System.out.println("Audio Encoding : " + format.getEncoding());
-         System.out.println("Number Of Samples : " + samples);
-         System.out.println("Conversion : " + convertSampsToMSec);
-         System.out.println("BUFSIZE =" + bufSize); */
 
         final JSlider slider = new JSlider();
         final JTextField text = new JTextField(String.valueOf(milliseconds));
