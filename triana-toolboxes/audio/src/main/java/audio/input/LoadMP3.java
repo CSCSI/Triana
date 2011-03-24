@@ -69,9 +69,10 @@ public class LoadMP3 extends Unit {
     public static long songSizeInSamples;
     public static long outputSizeInSamples;
     public static int numberOfChunks;
-    public static byte[] bytes;
-    byte[] buffer;
+
+    public static byte[] newBytes;
     public SourceDataLine line;
+
 
     //public byte[] bytes;
     int by;
@@ -80,9 +81,10 @@ public class LoadMP3 extends Unit {
 
         int chunkNo = 0;
         //createAudioInputStream(new File(fileName));
-        System.out.println("Chunk Number = " + chunkNo);
+
 
         while (chunkNo < numberOfChunks) {
+            System.out.println("Chunk Number = " + chunkNo);
 
             // If multiple audio is not null and you have the entire file, then output the multiple audio
             if ((ma != null) && (gotEntireFile)) {
@@ -90,28 +92,21 @@ public class LoadMP3 extends Unit {
                 return;
             }
 
-            byte[] data = new byte[(int)bufSize];
-            buffer = new byte[(int)bufSize];
-
             System.out.println("bufSize = " + bufSize);
 
-            if (bytes == null) {
-                bytes = new byte[(int) bufSize];
-            }
+            //if (bytes == null) {
+            byte[] bytes = new byte[(int) bufSize];
+            //}
             Vector<Byte> bytesVector = new Vector<Byte>();
 
-            byte[] newbytes = new byte[(int) bufSize];
-
-            //ArrayList arrayList = new ArrayList;
-
-            int increment = 0;
             int bytesread = 0;
             din = AudioSystem.getAudioInputStream(decodedFormat, audioInputStream);
 
-            System.out.println("CHECKING 1!");
+            System.out.println("CHECK 1!");
 
                 try {
                     bytesread = din.read(bytes, 0, (int) bufSize);
+                    System.out.println("BYTESREAD = " + bytesread);
 
                     while (bytesread != -1) {
                         for (int i = 0; i < bytesread; ++i) {
@@ -125,23 +120,31 @@ public class LoadMP3 extends Unit {
                     //    System.out.println("QUICKTEST CATCH");
                 }
 
+            System.out.println("vector size is = " + bytesVector.size());
+//            System.out.println("newBytes.length = " + newBytes.length);
+
             if (numberOfChunks == 1){
+                //newBytes = new byte[bytes.length];
+                System.out.println("bytes.length = " + bytes.length);
                 for (int i = 0; i < bytesVector.size(); ++i) {
                     bytes[i] = bytesVector.get(i);
                 }
            }
             if (numberOfChunks > 1){
-                for (int i = 0; i < bytesVector.size(); ++i) {
+                System.out.println("bytes.length = " + bytes.length);
+                for (int i = 0; i < bytes.length; ++i) {
                     bytes[i] = bytesVector.get(i);
                 }
             }
 
+            //byteToShortArray(bytesVector);
+
             int channels = decodedFormat.getChannels();
             ma = new MultipleAudio(channels);
 
-            if (decodedFormat.getSampleSizeInBits() > 16) { // i.e. for 24 and 32, store as ints
+        if (decodedFormat.getSampleSizeInBits() > 16) { // i.e. for 24 and 32, store as ints
 
-                int i, j, chan;
+            int i, j, chan;
                 int ptr;
                 int tracklength;
                 int chan2;
@@ -192,10 +195,6 @@ public class LoadMP3 extends Unit {
                         for (i = 0; i < tracklength; ++i) {
                             vals[i] = ((short) (((bytes[chan2 + (i * channels2)] & 0xFF) << 8) |
                                     ((bytes[chan2 + (i * channels2) + 1] & 0xFF))));
-
-//                            if(vals[i] != 0){
-//                               System.out.print(" vals = " + vals[i]);
-//                            }
                         }
                         //System.out.print(" vals is big endian and length = " + vals.length);
                     } else {
@@ -203,11 +202,6 @@ public class LoadMP3 extends Unit {
                             vals[i] = (short) (((bytes[chan2 + (i * channels2)] & 0xFF)) |
                                     ((bytes[chan2 + (i * channels2) + 1] & 0xFF) << 8));
                         }
-                        //System.out.print(" vals is little endian and length = " + vals.length);
-//                        if(vals[i] != 0){
-//                           // System.out.print(" vals = " + vals[i]);
-//                        }
-
                     }
 
                     ma.setChannel(chan, vals, new AudioChannelFormat(decodedFormat));
@@ -235,17 +229,25 @@ public class LoadMP3 extends Unit {
 
             output(ma); //outputs the multiple audio which has been converted from the byte array
             ++chunkNo;
+
         }
 
-        if (din != null) {
-            try {
-                din.close();
+            if (din != null) {
+                try {
+                    din.close();
+                }
+                catch (Exception ee) {
+                    ee.printStackTrace();
+                }
             }
-            catch (Exception ee) {
-                ee.printStackTrace();
-            }
-        }
+
     }
+
+    public void byteToShortArray(Vector<Byte> fullByteVector){
+
+
+        }
+
 
     public static void createAudioInputStream(File file) {
 

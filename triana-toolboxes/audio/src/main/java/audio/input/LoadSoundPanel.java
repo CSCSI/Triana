@@ -68,15 +68,14 @@ public class LoadSoundPanel extends ParameterPanel {
                     if (name.endsWith(".au") || name.endsWith(".wav") || name.endsWith(".aiff") || name.endsWith(".aif")
                             ||
                             name.endsWith(".AU") || name.endsWith(".WAV") || name.endsWith(".WAV")
-                            || name.endsWith(".AIF") ||
-                            name.endsWith(".mp3") || name.endsWith(".MP3")) {
+                            || name.endsWith(".AIF")) {
                         return true;
                     }
                     return false;
                 }
 
                 public String getDescription() {
-                    return ".aif, .au, .mp3, .wav, .AU, .WAV, .AIF, .MP3";
+                    return ".aif, .au, .wav, .AU, .WAV, .AIF";
                 }
             });
 

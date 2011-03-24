@@ -35,7 +35,7 @@ import triana.types.util.Str;
 public class LoadMP3Panel extends ParameterPanel {
 
     // Define GUI components here, e.g.
-    public  String fileName;
+    public static String fileName;
     private long songSizeInSamples;
     private long bufSize = 16384;
     private long outputSizeInSamples;
@@ -66,38 +66,28 @@ public class LoadMP3Panel extends ParameterPanel {
                     }
                     String name = f.getName();
 
-                    if (name.endsWith(".au") || name.endsWith(".wav") || name.endsWith(".aiff") || name.endsWith(".aif")
-                            ||
-                            name.endsWith(".AU") || name.endsWith(".WAV") || name.endsWith(".WAV")
-                            || name.endsWith(".AIF") ||
-                            name.endsWith(".mp3") || name.endsWith(".MP3")) {
+                    if (name.endsWith(".mp3") || name.endsWith(".MP3") || name.endsWith(".Mp3")) {
                         return true;
                     }
                     return false;
                 }
 
                 public String getDescription() {
-                    return ".aif, .au, .mp3, .wav, .AU, .WAV, .AIF, .MP3";
+                    return ".mp3, .MP3, .Mp3";
                 }
             });
 
             if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 
                 // Pay attention to reference back to LoadMP3
-
-                //if (loadmp3 == null) {
-//            allpass = new AllPassEffect(delayOffset, feedback, chunked, delayInMs, sampleRate);
-        //}
-
-                //loadmp3 = new LoadMP3();
                 LoadMP3.createAudioInputStream(fc.getSelectedFile());
 
                 String fn = fc.getSelectedFile().getAbsolutePath();
                 userScreen(fc.getSelectedFile().getName());
                 parameterUpdate("fileName", fn);
 
-                setParameter((fileName), fn);
-                setParameter((LoadMP3.fileName), fn);
+//                setParameter((fileName), fn);
+//                setParameter((LoadMP3.fileName), fn);
 
                 lastDir = fc.getSelectedFile().getPath();
             }
@@ -251,11 +241,9 @@ public class LoadMP3Panel extends ParameterPanel {
             outputSizeInSamples = songSizeInSamples;
             System.out.println("Single chunk");
         } else {
-            System.out.println("slider.getValue() = " + slider.getValue());
-
-            System.out.println("sample rate = " + LoadMP3.decodedFormat.getSampleRate());
             outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadMP3.decodedFormat.getSampleRate());
             System.out.println("outputSizeInSamples = " + outputSizeInSamples);
+            System.out.println("slider.getValue() = " + slider.getValue());
 
             numberOfChunks = (int) (songSizeInSamples / outputSizeInSamples);
 
@@ -267,12 +255,11 @@ public class LoadMP3Panel extends ParameterPanel {
         long by = (long) (frameSizeInBytes * outputSizeInSamples);
         System.out.println("Number of chunks = " + numberOfChunks);
 
-        //parameterUpdate("bufSize", (Object)by);
         LoadMP3.bufSize = (by);
         LoadMP3.songSizeInSamples = (songSizeInSamples);
         LoadMP3.outputSizeInSamples = (outputSizeInSamples);
         LoadMP3.numberOfChunks = (numberOfChunks);
-        LoadMP3.bytes = null;
+        //LoadMP3.bytes = null;
         LoadMP3.ma = null;
 
         if (entireFile.isSelected()) {
