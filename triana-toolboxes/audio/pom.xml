@@ -27,6 +27,14 @@
     <name>Toolboxes Audio</name>
     <version>4.0.1-SNAPSHOT</version>
     <url>http://www.trianacode.org</url>
+       
+    <repositories>
+    <repository>
+            <id>JBOSS</id>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+        </repositories>
 
     <dependencies>
         <dependency>
@@ -42,18 +50,14 @@
             <systemPath>${basedir}/lib/tritonus_aos.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.trianacode</groupId>
-            <artifactId>audio-tritonus_share-0-3-6</artifactId>
-            <version>0.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/tritonus_share-0.3.6.jar</systemPath>
+            <groupId>org.mobicents.external.tritonus</groupId>
+            <artifactId>tritonus_share</artifactId>
+            <version>0.3.6</version>
         </dependency>
         <dependency>
-            <groupId>org.trianacode</groupId>
-            <artifactId>jlayer1-0-1</artifactId>
-            <version>0.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/jl1.0.1.jar</systemPath>
+            <groupId>de.huxhorn.sulky</groupId>
+            <artifactId>de.huxhorn.sulky.3rdparty.jlayer</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.trianacode</groupId>
@@ -63,12 +67,10 @@
             <systemPath>${basedir}/lib/mp3plugin.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.trianacode</groupId>
-            <artifactId>MP3SPI</artifactId>
-            <version>0.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/mp3spi1.9.5.jar</systemPath>
-        </dependency>        
+            <groupId>org.mobicents.external.fmj</groupId>
+            <artifactId>mp3spi</artifactId>
+            <version>1.9.4</version>
+        </dependency>      
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>

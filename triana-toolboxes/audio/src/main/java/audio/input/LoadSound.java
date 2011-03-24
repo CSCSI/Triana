@@ -51,7 +51,8 @@ public class LoadSound extends Unit {
     static String errStr;
     public static MultipleAudio ma = null;
     public static boolean gotEntireFile = false;
-    double duration, seconds;
+    static double duration;
+    double seconds;
     public static long bufSize = 16384;
     public static long songSizeInSamples;
     public static long outputSizeInSamples;
@@ -66,7 +67,7 @@ public class LoadSound extends Unit {
         }
 
         int chunkNo = 0;
-        createAudioInputStream(new File(fileName));
+        //createAudioInputStream(new File(fileName));
         System.out.println("Chunk Number = " + chunkNo);
 
         while (chunkNo < numberOfChunks) {
@@ -84,9 +85,12 @@ public class LoadSound extends Unit {
 
             int bytesread = 0;
 
+            System.out.println("bufSize = " + bufSize);
+
             do {
                 try {
                     bytesread = audioInputStream.read(bytes, 0, (int) bufSize);
+                    System.out.println("bytesread" + bytesread);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -110,6 +114,7 @@ public class LoadSound extends Unit {
                 byte[] newbytes = new byte[(int) bufSize];
                 for (int i = 0; i < bytesread; ++i) {
                     newbytes[i] = bytes[i];
+                    System.out.println("bytes[i] = " + bytes[i]);
                 }
                 bytes = newbytes;
             }
@@ -151,7 +156,7 @@ public class LoadSound extends Unit {
                     ma.setChannel(chan, vals, new AudioChannelFormat(format));
                 }
             } else if (format.getSampleSizeInBits() == 16) { // 16 bit
-                System.out.println("converting from byte array...");
+                //System.out.println("converting from byte array...");
 
                 int i, j, chan;
                 int tracklength;
@@ -179,6 +184,7 @@ public class LoadSound extends Unit {
                     }
 
                     ma.setChannel(chan, vals, new AudioChannelFormat(format));
+                    //System.out.println("outputsize = " + vals.length);
                 }
             } else { // 8-bit
                 int i, j, chan;
@@ -204,6 +210,19 @@ public class LoadSound extends Unit {
             output(ma); //outputs the multiple audio which has been converted from the byte array
             ++chunkNo;
         }
+//        if (chunkNo == numberOfChunks){
+//            System.out.println(("say hello"));
+//            int channels = format.getChannels();
+//
+//            for (int chan = 0; chan < channels; ++chan) {
+//                short[] vals = new short[0];
+//
+//            ma.setChannel(chan, vals, new AudioChannelFormat(format));
+//            output(ma);
+//                ++testnumber;
+//                System.out.println("testnumber = " + testnumber);
+//            }
+//        }
 
         if (audioInputStream != null) {
             try {
@@ -219,7 +238,7 @@ public class LoadSound extends Unit {
             try {
                 errStr = null;
                 audioInputStream = AudioSystem.getAudioInputStream(file);
-                audioFileFormat = AudioSystem.getAudioFileFormat(file);
+                //audioFileFormat = AudioSystem.getAudioFileFormat(file);
                 audioInputStream = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED, audioInputStream);
 
                 format = audioInputStream.getFormat();
@@ -246,7 +265,7 @@ public class LoadSound extends Unit {
         setMinimumInputNodes(0);
         setMaximumInputNodes(0);
         setDefaultOutputNodes(1);
-        setMinimumOutputNodes(0);
+        setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
         // Initialise parameter update policy and output policy

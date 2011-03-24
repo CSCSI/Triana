@@ -4,19 +4,22 @@ import org.trianacode.gui.util.Env;
 import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.gui.windows.QuestionWindow;
 import org.trianacode.taskgraph.Unit;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 import javazoom.spi.mpeg.sampled.file.MpegAudioFormat;
-import sun.audio.AudioStream;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
-
-import javazoom.spi.mpeg.sampled.*;
-
-import javax.sound.sampled.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Vector;
 
-import org.tritonus.share.sampled.TAudioFormat;
-import org.tritonus.share.sampled.file.TAudioFileFormat;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 /**
  * A class for a Unit which allows the user to load a sound file into Triana. This unit allows the user to split the
@@ -46,12 +49,11 @@ public class LoadMP3 extends Unit {
     }
 
     public static AudioInputStream audioInputStream;
-    public static MpegAudioFormat test;
     public static AudioInputStream din;
-    public static AudioFileFormat audioFileFormat;
-    public static MpegAudioFormat format;
+    public MpegAudioFormat format;
     public static AudioFormat baseFormat;
     public static AudioFormat decodedFormat;
+    public static long duration;
 
     String lastDir = null;
 
@@ -61,22 +63,23 @@ public class LoadMP3 extends Unit {
     public static MultipleAudio ma = null;
     public static boolean gotEntireFile = false;
 
-    double duration, seconds;
-    public static long bufSize = 16384;
+    //static double duration;
+    double seconds;
+    public static long bufSize;
     public static long songSizeInSamples;
     public static long outputSizeInSamples;
     public static int numberOfChunks;
     public static byte[] bytes;
+    byte[] buffer;
+    public SourceDataLine line;
+
+    //public byte[] bytes;
     int by;
 
     public void process() throws Exception {
 
-        if (audioInputStream == null) {
-            return;
-        }
-
         int chunkNo = 0;
-        createAudioInputStream(new File(fileName));
+        //createAudioInputStream(new File(fileName));
         System.out.println("Chunk Number = " + chunkNo);
 
         while (chunkNo < numberOfChunks) {
@@ -87,52 +90,87 @@ public class LoadMP3 extends Unit {
                 return;
             }
 
-            // If bytes is null, then bytes is a new byte array of size 16384
+            byte[] data = new byte[(int)bufSize];
+            buffer = new byte[(int)bufSize];
+
+            System.out.println("bufSize = " + bufSize);
+
             if (bytes == null) {
                 bytes = new byte[(int) bufSize];
             }
 
+            byte[] newbytes = new byte[(int) bufSize];
+            Vector<Byte> bytesVector = new Vector<Byte>();
+            //ArrayList arrayList = new ArrayList;
+
+            int increment = 0;
             int bytesread = 0;
+            din = AudioSystem.getAudioInputStream(decodedFormat, audioInputStream);
 
-            do {
+            System.out.println("CHECKING 1!");
+
                 try {
-                    //  System.out.println("!!!!!!Bytes:" + bytes);
-                    //  System.out.println("Bufsize:" + bufSize);
-                    //  System.out.println("Bytesread: " + bytesread);
-                    //  System.out.println("Audioinputstream: " + audioInputStream);
+                    long newtest = din.getFrameLength();
+                    long newtest2 = din.getFormat().getSampleSizeInBits();
 
-                    bytesread = audioInputStream.read(bytes, 0, (int) bufSize);
+
+                    System.out.println("din.getFrameLength() = " + newtest);
+                    System.out.println("din.getFormat().getSampleSizeInBits() = " + newtest2);
+
+                    bytesread = din.read(bytes, 0, (int) bufSize);
+                    System.out.println("bytesread 1 = " + bytesread);
+
+                    while (bytesread != -1) {
+                        //if (bytesread != bufSize) {
+                        for (int i = 0; i < bytesread; ++i) {
+
+                            bytesVector.add(bytes[i]);
+
+//                            newbytes[i] = bytes[i];
+//
+                        }
+
+	                    bytesread = din.read(bytes, 0, (int) bufSize);
+
+                        System.out.println("bytesread 2 = " + bytesread);
+                    }
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                     //    System.out.println("QUICKTEST CATCH");
                 }
 
-                if (bytesread == -1) {
-                    QuestionWindow con = new QuestionWindow(null, Env.getString("StartFromBeginning"));
-                    if (con.reply == con.YES) {
-                        reset();
-                    } else {
-                        //  stop();
-                        return;
-                    }
-                }
-            } // End of do block
 
-            while (bytesread == -1);
+                //bytesVector.copyInto(bytes);
 
-            if (bytesread != bufSize) {
-                byte[] newbytes = new byte[(int) bufSize];
-                for (int i = 0; i < bytesread; ++i) {
-                    newbytes[i] = bytes[i];
-                }
-                bytes = newbytes;
+            for (int i = 0; i < bytesVector.size(); ++i) {
+                //System.out.println("printing each bytes vector element = " + bytesVector.elementAt(i));
+                //bytes[i] = bytesVector.elementAt(i);
+                 bytes[i] = bytesVector.get(i);
+//
+////                bytes[i] = data[i];
+//                                if (newbytes[i] != 0){
+//                                    System.out.println("newbytes [i] = " + newbytes[i]);
+//                                }
             }
 
-            int channels = format.getChannels();
+//            if (bytesread != bufSize) {
+//                newbytes = new byte[(int) bufSize];
+//                System.out.println("THIS IS A TEST");
+//                System.out.println("bytesread = "  + bytesread);
+//                for (int i = 0; i < bufSize; ++i) {
+//                    newbytes[i] = bytes[i];
+//                    //System.out.println("newbytes [i] = " + newbytes[i]);
+//                }
+
+//            }
+
+            //bytesVector.copyInto(data);
+
+            int channels = decodedFormat.getChannels();
             ma = new MultipleAudio(channels);
 
-            if (format.getSampleSizeInBits() > 16) { // i.e. for 24 and 32, store as ints
+            if (decodedFormat.getSampleSizeInBits() > 16) { // i.e. for 24 and 32, store as ints
 
                 int i, j, chan;
                 int ptr;
@@ -145,7 +183,7 @@ public class LoadMP3 extends Unit {
                     int[] vals = new int[bytes.length / 4 / channels];
                     tracklength = vals.length;
 
-                    if (format.isBigEndian()) {
+                    if (decodedFormat.isBigEndian()) {
                         for (i = 0; i < tracklength; ++i) {
                             ptr = chan2 + (i * channels4);
                             vals[i] = ((bytes[ptr] & 0xFF) << 24) |
@@ -163,9 +201,9 @@ public class LoadMP3 extends Unit {
                         }
                     }
 
-                    ma.setChannel(chan, vals, new AudioChannelFormat(format));
+                    ma.setChannel(chan, vals, new AudioChannelFormat(decodedFormat));
                 }
-            } else if (format.getSampleSizeInBits() == 16) { // 16 bit
+            } else if (decodedFormat.getSampleSizeInBits() == 16) { // 16 bit
                 System.out.println("converting from byte array...");
 
                 int i, j, chan;
@@ -180,20 +218,30 @@ public class LoadMP3 extends Unit {
                     chan2 = chan * 2;
                     tracklength = vals.length;
 
-                    // If format = big endian, then for each sample
-                    if (format.isBigEndian()) {
+                    // If  = big endian, then for each sample
+                    if (decodedFormat.isBigEndian()) {
                         for (i = 0; i < tracklength; ++i) {
                             vals[i] = ((short) (((bytes[chan2 + (i * channels2)] & 0xFF) << 8) |
                                     ((bytes[chan2 + (i * channels2) + 1] & 0xFF))));
+
+                            if(vals[i] != 0){
+                               System.out.print(" vals = " + vals[i]);
+                            }
                         }
+                        //System.out.print(" vals is big endian and length = " + vals.length);
                     } else {
                         for (i = 0; i < tracklength; ++i) {
                             vals[i] = (short) (((bytes[chan2 + (i * channels2)] & 0xFF)) |
                                     ((bytes[chan2 + (i * channels2) + 1] & 0xFF) << 8));
                         }
+                        //System.out.print(" vals is little endian and length = " + vals.length);
+//                        if(vals[i] != 0){
+//                           // System.out.print(" vals = " + vals[i]);
+//                        }
+
                     }
 
-                    ma.setChannel(chan, vals, new AudioChannelFormat(format));
+                    ma.setChannel(chan, vals, new AudioChannelFormat(decodedFormat));
                 }
             } else { // 8-bit
                 int i, j, chan;
@@ -201,7 +249,7 @@ public class LoadMP3 extends Unit {
 
                 if (channels == 1) {
                     byte[] vals = bytes;
-                    ma.setChannel(0, vals, new AudioChannelFormat(format));
+                    ma.setChannel(0, vals, new AudioChannelFormat(decodedFormat));
                 } else { // 2 or more channels
                     int chan2;
                     for (chan = 0; chan < channels; ++chan) {
@@ -211,7 +259,7 @@ public class LoadMP3 extends Unit {
                         for (i = 0; i < tracklength; ++i) {
                             vals[i] = bytes[chan2 + i * channels];
                         }
-                        ma.setChannel(chan, vals, new AudioChannelFormat(format));
+                        ma.setChannel(chan, vals, new AudioChannelFormat(decodedFormat));
                     }
                 }
             }
@@ -220,65 +268,57 @@ public class LoadMP3 extends Unit {
             ++chunkNo;
         }
 
-        if (audioInputStream != null) {
+        if (din != null) {
             try {
-                audioInputStream.close();
+                din.close();
             }
             catch (Exception ee) {
+                ee.printStackTrace();
             }
         }
     }
 
     public static void createAudioInputStream(File file) {
-        System.out.println("TEST 1");
+
         System.out.println("file = " + file);
 
-        AudioFileFormat testFileFormat = null;
-        AudioFormat testFormat = null;
-
         if (file != null && file.isFile()) {
-            System.out.println("NEW TEST 2");
             try {
-                System.out.println("NEW TEST 3");
                 errStr = null;
-                System.out.println("NEW TEST 4");
 
                 try{
 			        audioInputStream = AudioSystem.getAudioInputStream(file);
+                    //System.out.println("audioinputstream = " + audioInputStream);
 		        } catch (Exception e){
-                    /*
-                      In case of an exception, we dump the exception
-                      including the stack trace to the console output.
-                      Then, we exit the program.
-                    */
                     e.printStackTrace();
-                    System.exit(1);
+                    //System.exit(1);
 		        }
 
-
-                //audioInputStream = AudioSystem.getAudioInputStream(file);
-                System.out.println("TEST 4b");
-                din = null;
                 baseFormat = audioInputStream.getFormat();
                 decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
-                        baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+                        baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), baseFormat.isBigEndian());
 
-                din = AudioSystem.getAudioInputStream(decodedFormat, audioInputStream);
 
-                System.out.println("TEST 5");
 
-                //audioFileFormat = AudioSystem.getAudioFileFormat(file);
-                System.out.println("TEST 6");
+                AudioFileFormat baseFileFormat = new MpegAudioFileReader().getAudioFileFormat(file);
+                Map properties = baseFileFormat.properties();
+                String key_author = "author";
+                String key_duration = "duration";
+                duration = (Long) properties.get(key_duration);
 
-                //audioInputStream = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED, audioInputStream);
-                System.out.println("TEST 7");
+                System.out.println("Author = " + properties.get(key_author));
+                System.out.println("Duration in microseconds = " + duration);
 
-                //din = null;
-                //baseFormat = audioInputStream.getFormat();
-                //format = audioInputStream.getFormat();
-                System.out.println("Format = " + format);
-                System.out.println("Frame size = " + format.getFrameSize());
-                System.out.println("Frame Rate = " + format.getFrameRate());
+                System.out.println("DecodedFormat = " + decodedFormat);
+                System.out.println("decodedFormat Frame size = " + decodedFormat.getFrameSize());
+                System.out.println("decodedFormat Frame Rate = " + decodedFormat.getFrameRate());
+                System.out.println("decodedFormat sample Rate = " + decodedFormat.getSampleRate());
+                System.out.println("din format = " + din.getFormat());
+
+                //rawplay(decodedFormat, din);
+                //System.out.println("din = " + din);
+
+                audioInputStream.close();
 
             } catch (Exception ex) {
                 ErrorDialog.show(ex.toString());
@@ -287,6 +327,41 @@ public class LoadMP3 extends Unit {
             ErrorDialog.show("Audio file " + file.getAbsolutePath());
         }
     }
+
+    private static void rawplay(AudioFormat targetFormat, AudioInputStream din) throws IOException, LineUnavailableException {
+
+        byte[] data = new byte[(int)bufSize];
+        SourceDataLine line = getLine(targetFormat);
+
+        if (line != null){
+            // Start
+            line.start();
+            int nBytesRead = 0, nBytesWritten = 0;
+            while (nBytesRead != -1) {
+                nBytesRead = din.read(data, 0, data.length);
+                System.out.println("nBytesRead" + nBytesRead);
+                if (nBytesRead != -1){
+                    nBytesWritten = line.write(data, 0, nBytesRead);
+                }
+            }
+            System.out.println("nBytesRead = " + nBytesRead);
+            System.out.println("nBytesWritten = " + nBytesWritten );
+            // Stop
+            line.drain();
+            line.stop();
+            line.close();
+            din.close();
+        }
+    }
+
+    private static SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
+        SourceDataLine res = null;
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+        res = (SourceDataLine) AudioSystem.getLine(info);
+        res.open(audioFormat);
+        return res;
+    }
+
 
     /**
      * Called when the unit is created. Initialises the unit's properties and parameters.
@@ -346,7 +421,7 @@ public class LoadMP3 extends Unit {
     public void parameterUpdate(String paramname, Object value) {
         // Code to update local variables
         if (paramname.equals("fileName")) {
-            LoadMP3Panel.fileName = (String) value;
+           // LoadMP3Panel.fileName = (String) value;
         }
     }
 

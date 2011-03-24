@@ -35,7 +35,7 @@ import triana.types.util.Str;
 public class LoadMP3Panel extends ParameterPanel {
 
     // Define GUI components here, e.g.
-    public static String fileName;
+    public  String fileName;
     private long songSizeInSamples;
     private long bufSize = 16384;
     private long outputSizeInSamples;
@@ -43,6 +43,7 @@ public class LoadMP3Panel extends ParameterPanel {
     double duration, seconds;
     String lastDir = null;
     JFileChooser fc;
+    //LoadMP3 loadmp3 = null;
 
     /**
      * This method is called before the panel is displayed. It should initialise the panel layout.
@@ -82,23 +83,22 @@ public class LoadMP3Panel extends ParameterPanel {
 
             if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 
-                System.out.println("test me!!");
-
                 // Pay attention to reference back to LoadMP3
+
+                //if (loadmp3 == null) {
+//            allpass = new AllPassEffect(delayOffset, feedback, chunked, delayInMs, sampleRate);
+        //}
+
+                //loadmp3 = new LoadMP3();
                 LoadMP3.createAudioInputStream(fc.getSelectedFile());
 
                 String fn = fc.getSelectedFile().getAbsolutePath();
-                System.out.println("fn = " + fn);
                 userScreen(fc.getSelectedFile().getName());
-                System.out.println("fn 2 = " + fn);
                 parameterUpdate("fileName", fn);
 
-                System.out.println("fn 3 = " + fn);
-
-                setParameter((LoadMP3Panel.fileName), fn);
+                setParameter((fileName), fn);
                 setParameter((LoadMP3.fileName), fn);
 
-                System.out.println("filename after setParameter is " + fileName + " or " + fn);
                 lastDir = fc.getSelectedFile().getPath();
             }
         } catch (SecurityException ex) {
@@ -110,24 +110,20 @@ public class LoadMP3Panel extends ParameterPanel {
     }
 
     public void userScreen(String fileName) {
-        System.out.println("TEEEEEESSSSSST 1");
-        int test = LoadMP3.audioInputStream.getFormat().getSampleSizeInBits();
-        System.out.println("TEEEEEESSSSSST 2 + " + test);
 
-        long milliseconds = (long) ((LoadMP3.audioInputStream.getFrameLength() * 1000) / LoadMP3
-                .audioInputStream.getFormat().getFrameRate());
+        long milliseconds = (long) ((LoadMP3.duration / 1000));// / LoadMP3.din.getFormat().getFrameRate());
         duration = milliseconds / 1000.0;
 
         System.out.println("DURATION = " + duration);
 
-        long bufferLengthInFrames = LoadMP3.audioInputStream.getFrameLength();
+        long bufferLengthInFrames = (long) (duration * LoadMP3.decodedFormat.getSampleRate());//LoadMP3.din.getFrameLength();
         System.out.println("bufferLengthInFrames = " + bufferLengthInFrames);
         int samples = (int) bufferLengthInFrames;
-        final double convertSampsToMSec = 1000.0 / (double) LoadMP3.format.getSampleRate();
-        int frameSizeInBytes = LoadMP3.format.getFrameSize();
+        final double convertSampsToMSec = 1000.0 / (double) LoadMP3.decodedFormat.getSampleRate();
+        int frameSizeInBytes = LoadMP3.decodedFormat.getFrameSize();
         System.out.println("frameSizeInBytes = " + frameSizeInBytes);
 
-        bufSize = bufferLengthInFrames * frameSizeInBytes;
+        bufSize = (bufferLengthInFrames) * frameSizeInBytes;
         System.out.println("bufSize = " + bufSize);
 
         songSizeInSamples = bufferLengthInFrames;
@@ -140,7 +136,7 @@ public class LoadMP3Panel extends ParameterPanel {
          System.out.println("BUFSIZE =" + bufSize); */
 
         final JSlider slider = new JSlider();
-        final JTextField text = new JTextField(String.valueOf(bufSize));
+        final JTextField text = new JTextField(String.valueOf(milliseconds));
         final JTextField textSamp = new JTextField(String.valueOf(samples));
         int range = (int) milliseconds;
 
@@ -178,9 +174,8 @@ public class LoadMP3Panel extends ParameterPanel {
                 }
             }
         });
-        JLabel fname = new JLabel(
-                fileName + " : " + duration + " seconds in length (" + bufferLengthInFrames + " samples)");
-        JLabel formatLab = new JLabel("Format : " + LoadMP3.format.toString());
+        JLabel fname = new JLabel(fileName + " : " + duration + " seconds in length (" + bufferLengthInFrames + " samples)");
+        JLabel formatLab = new JLabel("Format : " + LoadMP3.decodedFormat.toString());
 
         JLabel stream = new JLabel("Or Stream Audio As Follows :", JLabel.CENTER);
         stream.setForeground(Color.black);
@@ -256,21 +251,21 @@ public class LoadMP3Panel extends ParameterPanel {
             outputSizeInSamples = songSizeInSamples;
             System.out.println("Single chunk");
         } else {
-            System.out.println("it says here that there should NOT!!!!! be one chunk....");
-            outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadMP3.format.getSampleRate());
-            System.out.println("outputSizeInSamples" + outputSizeInSamples);
+            System.out.println("slider.getValue() = " + slider.getValue());
+
+            System.out.println("sample rate = " + LoadMP3.decodedFormat.getSampleRate());
+            outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadMP3.decodedFormat.getSampleRate());
+            System.out.println("outputSizeInSamples = " + outputSizeInSamples);
 
             numberOfChunks = (int) (songSizeInSamples / outputSizeInSamples);
-            System.out.println("numberOfChunks " + numberOfChunks);
+
             if ((songSizeInSamples % outputSizeInSamples) > 0) {
                 ++numberOfChunks;
             }
         }
 
         long by = (long) (frameSizeInBytes * outputSizeInSamples);
-
-        //System.out.println("erm, test?");
-        System.out.println("number of chunks = " + numberOfChunks);
+        System.out.println("Number of chunks = " + numberOfChunks);
 
         //parameterUpdate("bufSize", (Object)by);
         LoadMP3.bufSize = (by);

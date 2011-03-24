@@ -44,6 +44,8 @@ public class Play extends Unit {
     AudioFormat format = null;
     AudioFormat newformat = null;
     AudioPlayer audioPlayer = null;
+    long oldBytesSize = 0;
+    int i = 0;
 
     /**
      * ****************************************************************************************
@@ -56,6 +58,7 @@ public class Play extends Unit {
 
         Object in = getInputAtNode(0);
         byte[] bytes;
+
         MultipleAudio input = (MultipleAudio) in;
 
         // SampleSet
@@ -70,31 +73,25 @@ public class Play extends Unit {
         // A MultipleAudio type
         else {
 
-              System.out.println("PLAY TEST 1!");
-
             newformat = input.getAudioFormat();
             AudioFormat au;
-
-            System.out.println("PLAY TEST 2!");
 
             // For each channel
             for (int chan = 0; chan < newformat.getChannels(); ++chan) {
                 au = input.getAudioFormat(); // grab the audio format
-                System.out.println("PLAY TEST 3 + "+chan);
                 if (!newformat.matches(au)) {
                     throw new Exception("Incompatible Format Error in " + getToolName() +
                             "\n : Format at node 0 is : \n" + newformat + "\n and format at node "
                             + String.valueOf(chan) + " is : \n" + au);
                 }
             }
-            System.out.println("PLAY TEST 3!");
 
             // convert to byte array in correct format
             try {
-
-                System.out.println("PLAY TEST 4!");
                 bytes = toByteArray(input); // calls toByteArray method on 'input'
-                System.out.println("PLAY TEST 5!");
+                i++;
+                System.out.println("i = " + i);
+
                 System.out.println("THE SAMPLE SIZE IN BITS = " + newformat.getSampleSizeInBits());
 
                 if (newformat.getSampleSizeInBits() == 8) {
@@ -102,6 +99,7 @@ public class Play extends Unit {
                 }
                 if (newformat.getSampleSizeInBits() == 16) {
                     outputBufferSize = input.getChannelLength(0) * 4;
+                    oldBytesSize = outputBufferSize;
                 }
                 if (newformat.getSampleSizeInBits() == 24) {
                     //System.out.println("yep, it's 24bit alright!");
@@ -114,17 +112,21 @@ public class Play extends Unit {
         }
 
         if (audioPlayer == null) {
-            System.out.println("play unit test 1");
             setUpPlayer(newformat); // can only set one format per output line
             format = newformat;
             audioPlayer = new AudioPlayer(outputChannel);
             audioPlayer.start();
+            System.out.println("bytes.length = " + bytes.length);
             audioPlayer.addChunk(bytes);
         } else {
-            System.out.println("play unit test 2");
             audioPlayer.addChunk(bytes);
+            System.out.println("bytes.length when audioplayer isn't null = " + bytes.length);
+            if (oldBytesSize == 0){
+                //System.out.println("bytes.length is smaller than oldBytesSize!");
+                //audioPlayer.stopPlayer();
+            }
         }
-
+         System.out.println("oldbytessize" + oldBytesSize);
         output(in);  // output the input data if there are any output nodes
     }
 
@@ -187,6 +189,10 @@ public class Play extends Unit {
 
         samples = samples * channels;
 
+        System.out.println("In PLAY frameSizeInBytes = " + frameSizeInBytes);
+        System.out.println("In PLAY samples = " + samples);
+        System.out.println("in PLAY channels = " + channels);
+
         if (frameSizeInBytes == 2) {
             bytedata = new byte[(frameSizeInBytes * samples)];
         } else {
@@ -214,6 +220,9 @@ public class Play extends Unit {
                         pos = j * channels;
                         bitVal = (short) vals[j];
                         for (i = 0; i < b; ++i) {
+//                            if(j<50){
+//                                System.out.println("vals = " + vals[j]);
+//                            }
                             bytedata[(chan * b) + (pos * b) + (b - i - 1)] = (byte) (bitVal & filt);
                             bitVal = (short) (bitVal >> 8);
                         }

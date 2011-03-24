@@ -86,17 +86,13 @@ public class LoadSoundPanel extends ParameterPanel {
                 LoadSound.createAudioInputStream(fc.getSelectedFile());
 
                 String fn = fc.getSelectedFile().getAbsolutePath();
-//                System.out.println("fn = " + fn);
                 userScreen(fc.getSelectedFile().getName());
-  //              System.out.println("fn 2 = " + fn);
                 parameterUpdate("fileName", fn);
 
-    //            System.out.println("fn 3 = " + fn);
 
                 setParameter((LoadSoundPanel.fileName), fn);
                 setParameter((LoadSound.fileName), fn);
 
-                System.out.println("filename after setParameter is " + fileName + " or " + fn);
                 lastDir = fc.getSelectedFile().getPath();
             }
         } catch (SecurityException ex) {
@@ -125,12 +121,6 @@ public class LoadSoundPanel extends ParameterPanel {
 
         songSizeInSamples = bufferLengthInFrames;
         System.out.println("songSizeInSamples = " + songSizeInSamples);
-
-        /** System.out.println("Format : " + format);
-         System.out.println("Audio Encoding : " + format.getEncoding());
-         System.out.println("Number Of Samples : " + samples);
-         System.out.println("Conversion : " + convertSampsToMSec);
-         System.out.println("BUFSIZE =" + bufSize); */
 
         final JSlider slider = new JSlider();
         final JTextField text = new JTextField(String.valueOf(bufSize));
@@ -171,8 +161,8 @@ public class LoadSoundPanel extends ParameterPanel {
                 }
             }
         });
-        JLabel fname = new JLabel(
-                fileName + " : " + duration + " seconds in length (" + bufferLengthInFrames + " samples)");
+        JLabel fname = new JLabel(fileName + " : " + duration + " seconds in length (" + bufferLengthInFrames + " "
+                + "samples)");
         JLabel formatLab = new JLabel("Format : " + LoadSound.format.toString());
 
         JLabel stream = new JLabel("Or Stream Audio As Follows :", JLabel.CENTER);
@@ -249,21 +239,19 @@ public class LoadSoundPanel extends ParameterPanel {
             outputSizeInSamples = songSizeInSamples;
             System.out.println("Single chunk");
         } else {
-            System.out.println("it says here that there should NOT!!!!! be one chunk....");
             outputSizeInSamples = (long) ((slider.getValue() / 1000.0) * LoadSound.format.getSampleRate());
             System.out.println("outputSizeInSamples" + outputSizeInSamples);
+            System.out.println("slider.getValue() = " + slider.getValue());
 
             numberOfChunks = (int) (songSizeInSamples / outputSizeInSamples);
-            System.out.println("numberOfChunks " + numberOfChunks);
+
             if ((songSizeInSamples % outputSizeInSamples) > 0) {
                 ++numberOfChunks;
             }
         }
 
         long by = (long) (frameSizeInBytes * outputSizeInSamples);
-
-        //System.out.println("erm, test?");
-        System.out.println("number of chunks = " + numberOfChunks);
+        System.out.println("Number of chunks = " + numberOfChunks);
 
         //parameterUpdate("bufSize", (Object)by);
         LoadSound.bufSize = (by);

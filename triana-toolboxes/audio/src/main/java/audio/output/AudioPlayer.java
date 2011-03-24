@@ -17,7 +17,7 @@ import javax.sound.sampled.SourceDataLine;
 public class AudioPlayer extends Thread {
 
     public boolean stop;
-    private boolean finished = true;
+    boolean finished = true;
     private Vector bytes = new Vector();
     private final SourceDataLine outputChannel;
     byte[] bytedata;
@@ -49,12 +49,12 @@ public class AudioPlayer extends Thread {
     public void run() {
         stop = false;
 
-        //System.out.println("bytes.size() = " + bytes.size());
         while (true) {
             if (bytes.size() > 0) {
                 byteArray = (byte[]) bytes.remove(0);
                 try {
                     outputChannel.write(byteArray, 0, byteArray.length);
+                    //System.out.println("i'm outputting here");
                 }
                 catch (Exception e) {
                     e.printStackTrace();
