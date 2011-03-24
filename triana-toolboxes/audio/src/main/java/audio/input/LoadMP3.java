@@ -98,9 +98,10 @@ public class LoadMP3 extends Unit {
             if (bytes == null) {
                 bytes = new byte[(int) bufSize];
             }
+            Vector<Byte> bytesVector = new Vector<Byte>();
 
             byte[] newbytes = new byte[(int) bufSize];
-            Vector<Byte> bytesVector = new Vector<Byte>();
+
             //ArrayList arrayList = new ArrayList;
 
             int increment = 0;
@@ -110,29 +111,13 @@ public class LoadMP3 extends Unit {
             System.out.println("CHECKING 1!");
 
                 try {
-                    long newtest = din.getFrameLength();
-                    long newtest2 = din.getFormat().getSampleSizeInBits();
-
-
-                    System.out.println("din.getFrameLength() = " + newtest);
-                    System.out.println("din.getFormat().getSampleSizeInBits() = " + newtest2);
-
                     bytesread = din.read(bytes, 0, (int) bufSize);
-                    System.out.println("bytesread 1 = " + bytesread);
 
                     while (bytesread != -1) {
-                        //if (bytesread != bufSize) {
                         for (int i = 0; i < bytesread; ++i) {
-
                             bytesVector.add(bytes[i]);
-
-//                            newbytes[i] = bytes[i];
-//
                         }
-
 	                    bytesread = din.read(bytes, 0, (int) bufSize);
-
-                        System.out.println("bytesread 2 = " + bytesread);
                     }
                 }
                 catch (Exception e) {
@@ -140,32 +125,16 @@ public class LoadMP3 extends Unit {
                     //    System.out.println("QUICKTEST CATCH");
                 }
 
-
-                //bytesVector.copyInto(bytes);
-
-            for (int i = 0; i < bytesVector.size(); ++i) {
-                //System.out.println("printing each bytes vector element = " + bytesVector.elementAt(i));
-                //bytes[i] = bytesVector.elementAt(i);
-                 bytes[i] = bytesVector.get(i);
-//
-////                bytes[i] = data[i];
-//                                if (newbytes[i] != 0){
-//                                    System.out.println("newbytes [i] = " + newbytes[i]);
-//                                }
+            if (numberOfChunks == 1){
+                for (int i = 0; i < bytesVector.size(); ++i) {
+                    bytes[i] = bytesVector.get(i);
+                }
+           }
+            if (numberOfChunks > 1){
+                for (int i = 0; i < bytesVector.size(); ++i) {
+                    bytes[i] = bytesVector.get(i);
+                }
             }
-
-//            if (bytesread != bufSize) {
-//                newbytes = new byte[(int) bufSize];
-//                System.out.println("THIS IS A TEST");
-//                System.out.println("bytesread = "  + bytesread);
-//                for (int i = 0; i < bufSize; ++i) {
-//                    newbytes[i] = bytes[i];
-//                    //System.out.println("newbytes [i] = " + newbytes[i]);
-//                }
-
-//            }
-
-            //bytesVector.copyInto(data);
 
             int channels = decodedFormat.getChannels();
             ma = new MultipleAudio(channels);
@@ -224,9 +193,9 @@ public class LoadMP3 extends Unit {
                             vals[i] = ((short) (((bytes[chan2 + (i * channels2)] & 0xFF) << 8) |
                                     ((bytes[chan2 + (i * channels2) + 1] & 0xFF))));
 
-                            if(vals[i] != 0){
-                               System.out.print(" vals = " + vals[i]);
-                            }
+//                            if(vals[i] != 0){
+//                               System.out.print(" vals = " + vals[i]);
+//                            }
                         }
                         //System.out.print(" vals is big endian and length = " + vals.length);
                     } else {
@@ -327,41 +296,6 @@ public class LoadMP3 extends Unit {
             ErrorDialog.show("Audio file " + file.getAbsolutePath());
         }
     }
-
-    private static void rawplay(AudioFormat targetFormat, AudioInputStream din) throws IOException, LineUnavailableException {
-
-        byte[] data = new byte[(int)bufSize];
-        SourceDataLine line = getLine(targetFormat);
-
-        if (line != null){
-            // Start
-            line.start();
-            int nBytesRead = 0, nBytesWritten = 0;
-            while (nBytesRead != -1) {
-                nBytesRead = din.read(data, 0, data.length);
-                System.out.println("nBytesRead" + nBytesRead);
-                if (nBytesRead != -1){
-                    nBytesWritten = line.write(data, 0, nBytesRead);
-                }
-            }
-            System.out.println("nBytesRead = " + nBytesRead);
-            System.out.println("nBytesWritten = " + nBytesWritten );
-            // Stop
-            line.drain();
-            line.stop();
-            line.close();
-            din.close();
-        }
-    }
-
-    private static SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
-        SourceDataLine res = null;
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-        res = (SourceDataLine) AudioSystem.getLine(info);
-        res.open(audioFormat);
-        return res;
-    }
-
 
     /**
      * Called when the unit is created. Initialises the unit's properties and parameters.
