@@ -46,44 +46,44 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
     JRadioButton urlButton = new JRadioButton(manual, false);
     JRadioButton runLocalButton = new JRadioButton(local, false);
 
-    private void setParams(){
+    private void setParams() {
         getTask().setParameter(dax, daxField.getText());
         getTask().setParameter(prop, propField.getText());
-        getTask().setParameter(rc, scField.getText());
-        getTask().setParameter(sites, tcField.getText());
-        getTask().setParameter(tc, rcField.getText());
+        getTask().setParameter(rc, rcField.getText());
+        getTask().setParameter(sites, scField.getText());
+        getTask().setParameter(tc, tcField.getText());
         getTask().setParameter("manualURL", urlField.getText());
         getTask().setParameter("locationService", locationService);
 
     }
 
-    private void getParams(){
-        try{
-            daxField.setText((String)getParameter(dax));
-            propField.setText((String)getParameter(prop));
-            scField.setText((String)getParameter(sites));
-            tcField.setText((String)getParameter(tc));
-            rcField.setText((String)getParameter(rc));
+    private void getParams() {
+        try {
+            daxField.setText((String) getParameter(dax));
+            propField.setText((String) getParameter(prop));
+            scField.setText((String) getParameter(sites));
+            tcField.setText((String) getParameter(tc));
+            rcField.setText((String) getParameter(rc));
 
             Object locationObject = getParameter("locationService");
-            if(locationObject instanceof String && locationObject != null){
-                locationService = (String)locationObject;
+            if (locationObject instanceof String && locationObject != null) {
+                locationService = (String) locationObject;
                 System.out.println("LocationService : " + locationService);
-                if(radioMap.containsKey(locationService)){
+                if (radioMap.containsKey(locationService)) {
                     System.out.println("Setting radioButton " + locationService + " to true.");
                     radioMap.get(locationService).setSelected(true);
                 }
-            }else{
+            } else {
                 locationService = auto;
             }
 
             Object urlObject = getParameter("manualURL");
-            if(urlObject instanceof String && urlObject != null && !((String)urlObject).equals("")){
-                urlField.setText((String)urlObject);
-            }else{
+            if (urlObject instanceof String && urlObject != null && !((String) urlObject).equals("")) {
+                urlField.setText((String) urlObject);
+            } else {
                 urlField.setText("http://localhost:8080/remotecontrol");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Error loading parameters\n ");
             e.printStackTrace();
         }
@@ -91,7 +91,7 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
 
     }
 
-    private void fillMaps(){
+    private void fillMaps() {
         locationMap.put(dax, daxField);
         locationMap.put(prop, propField);
         locationMap.put(sites, scField);
@@ -103,12 +103,17 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
         radioMap.put(local, runLocalButton);
     }
 
-    private void apply(){
+    private void apply() {
         setParams();
     }
 
-    public void applyClicked(){apply();}
-    public void okClicked(){apply();}
+    public void applyClicked() {
+        apply();
+    }
+
+    public void okClicked() {
+        apply();
+    }
 
     @Override
     public void init() {
@@ -118,8 +123,8 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
         JPanel searchPane = new JPanel();
         searchPane.setLayout(new BorderLayout());
         searchPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Pegasus Location"));
-        JPanel searchButtonPane = new JPanel(new GridLayout(3,1));
-        JPanel searchLabelPane = new JPanel(new GridLayout(3,1));
+        JPanel searchButtonPane = new JPanel(new GridLayout(3, 1));
+        JPanel searchLabelPane = new JPanel(new GridLayout(3, 1));
 
 
 //        JRadioButton jmdnsButton = new JRadioButton("AUTO ", (locationService.equals(auto)));
@@ -149,7 +154,7 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
         searchPane.add(searchButtonPane, BorderLayout.WEST);
         searchPane.add(searchLabelPane, BorderLayout.CENTER);
 
-        JPanel selectionsPane = new JPanel(new GridLayout(5,3));
+        JPanel selectionsPane = new JPanel(new GridLayout(5, 3));
         selectionsPane.setBorder(javax.swing.BorderFactory.createTitledBorder("File locations"));
 
         JPanel daxFieldPane = new JPanel(new BorderLayout());
@@ -191,8 +196,8 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
         JButton createSiteButton = new JButton("Create");
         createSiteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                File sitesFile = (File)SitesCreator.getFile();
-                if(sitesFile != null && sitesFile.exists()){
+                File sitesFile = (File) SitesCreator.getFile();
+                if (sitesFile != null && sitesFile.exists()) {
                     locationMap.get(sites).setText(sitesFile.getAbsolutePath());
                 }
             }
@@ -235,7 +240,7 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if(locationMap.containsKey(ae.getActionCommand())){
+        if (locationMap.containsKey(ae.getActionCommand())) {
             JFileChooser chooser = new JFileChooser();
             chooser.setMultiSelectionEnabled(false);
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -247,11 +252,11 @@ public class DaxToPegasusPanel extends ParameterPanel implements ActionListener 
                     filePath = f.getAbsolutePath();
                 }
             }
-            if(filePath != null){
+            if (filePath != null) {
                 (locationMap.get(ae.getActionCommand())).setText(filePath);
             }
         }
-        if(radioMap.containsKey(ae.getActionCommand())){
+        if (radioMap.containsKey(ae.getActionCommand())) {
             locationService = ae.getActionCommand();
             System.out.println("LocationService : " + locationService);
 
@@ -272,11 +277,11 @@ class SitesCreator extends JDialog {
     private JTextField globusLocationField;
 
 
-    public SitesCreator(){
+    public SitesCreator() {
         this.setModal(true);
         this.setLocationRelativeTo(this.getOwner());
 
-        JPanel mainPanel = new JPanel(new GridLayout(9,2));
+        JPanel mainPanel = new JPanel(new GridLayout(9, 2));
 
         mainPanel.add(new JLabel("Cluster Name"));
         clusterNameField = new JTextField("Name");
@@ -311,15 +316,15 @@ class SitesCreator extends JDialog {
         mainPanel.add(globusLocationField);
 
         JButton ok = new JButton("Ok");
-        ok.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        ok.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 okPressed();
             }
         });
 
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
@@ -367,7 +372,7 @@ class SitesCreator extends JDialog {
                 "        </head-fs>\n" +
                 "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
                 "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >" + pegasusDir + "</profile>\n" +
-                "        <profile namespace=\"env\" key=\"GLOBUS_LOCATION\" >" + globusLocation +"</profile>\n" +
+                "        <profile namespace=\"env\" key=\"GLOBUS_LOCATION\" >" + globusLocation + "</profile>\n" +
                 "    </site>\n" +
                 "</sitecatalog>";
 
@@ -376,12 +381,12 @@ class SitesCreator extends JDialog {
         dispose();
     }
 
-    public static Object getFile(){
+    public static Object getFile() {
         SitesCreator sitesCreator = new SitesCreator();
         return sitesCreator.getReturnValue();
     }
 
-    private Object getReturnValue(){
+    private Object getReturnValue() {
         return sitesFile;
     }
 }
