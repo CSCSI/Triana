@@ -86,15 +86,15 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.trianacode</groupId>
-            <artifactId>dax</artifactId>
-            <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>
-                /Users/ian/Work-Mac/Work/triana4/triana-pegasus/src/main/java/org/trianacode/pegasus/dax/adag/dax.jar
-            </systemPath>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.trianacode</groupId>-->
+        <!--<artifactId>dax</artifactId>-->
+        <!--<version>${project.version}</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>-->
+        <!--/Users/ian/Work-Mac/Work/triana4/triana-pegasus/src/main/java/org/trianacode/pegasus/dax/adag/dax.jar-->
+        <!--</systemPath>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>colette-maven-repos</groupId>
