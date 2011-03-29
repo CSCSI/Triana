@@ -21,14 +21,14 @@ import java.util.List;
 
 
 /**
-* Created by IntelliJ IDEA.
-* User: ian
-* Date: Nov 30, 2010
-* Time: 2:34:25 PM
-* To change this template use File | Settings | File Templates.
-*/
+ * Created by IntelliJ IDEA.
+ * User: ian
+ * Date: Nov 30, 2010
+ * Time: 2:34:25 PM
+ * To change this template use File | Settings | File Templates.
+ */
 
-@Tool(panelClass="org.trianacode.pegasus.dax.DaxToPegasusPanel")
+@Tool(panelClass = "org.trianacode.pegasus.dax.DaxToPegasusPanel")
 public class DaxToPegasusUnit {
 
     ProgressPopup popup;
@@ -51,41 +51,41 @@ public class DaxToPegasusUnit {
 
 
     @Process
-    public void process(File file){
+    public void process(File file) {
         popup = new ProgressPopup("Finding Pegasus", 30);
         log("Uploading file " + file.getName() + " to Pegasus.");
 
-        if(file.exists() && file.canRead()){
+        if (file.exists() && file.canRead()) {
             daxLocation = file.getAbsolutePath();
         }
 
-        if(getAndCheckFiles() && zipFile != null){
+        if (getAndCheckFiles() && zipFile != null) {
             popup.addText("All files good.");
             log("All files good");
 
             popup.addText("Pegasus locating : " + locationService);
-            if(locationService.equals("AUTO")){
+            if (locationService.equals("AUTO")) {
                 log("Auto");
                 ServiceInfo pegasusInfo = FindPegasus.findPegasus(20000, popup);
 
-                if(pegasusInfo != null){
+                if (pegasusInfo != null) {
                     popup.addText("Sending to Pegasus");
                     sendToPegasus(pegasusInfo);
                     popup.addText("Finished");
                 }
             }
-            if(locationService.equals("URL")){
+            if (locationService.equals("URL")) {
                 log("Manual");
                 sendToPegasus(manualURL);
             }
-            if(locationService.equals("LOCAL")){
+            if (locationService.equals("LOCAL")) {
                 String condor_env = System.getenv("CONDOR_CONFIG");
                 System.out.println("CONDOR_CONFIG : " + condor_env);
                 popup.addText("CONDOR_CONFIG : " + condor_env);
-                if(condor_env.equals("")){
+                if (condor_env.equals("")) {
                     log("CONDOR_CONFIG environment variable not set");
                     popup.addText("CONDOR_CONFIG environment variable not set.");
-                }else{
+                } else {
                     log("Running pegasus-plan locally");
                     runLocal();
                 }
@@ -105,10 +105,10 @@ public class DaxToPegasusUnit {
         return checkExists(files);
     }
 
-    private boolean checkExists(ArrayList files){
+    private boolean checkExists(ArrayList files) {
         for (Object file : files) {
             String location = (String) file;
-            File f = new File((String)file);
+            File f = new File((String) file);
             if (!f.exists() && f.canRead()) {
                 log("File " + location + " doesn't exist.");
                 popup.addTextNoProgress("Error : file " + location + " not found");
@@ -195,15 +195,16 @@ public class DaxToPegasusUnit {
     /**
      * Sends dax related data to the pegasus server defined by the JmDNS search
      * If service not found on predicted port (normally 8080), will try 8081, 8082...8090.
+     *
      * @param info
      */
-    private void sendToPegasus(ServiceInfo info){
+    private void sendToPegasus(ServiceInfo info) {
         popup.addText("Setting properties.");
         boolean foundAndSent = false;
         int attempt = 0;
         int port = info.getPort();
 
-        while( !foundAndSent && attempt < 10) {
+        while (!foundAndSent && attempt < 10) {
             String url = ("http://" + info.getHostAddress() + ":" + port);
             log("Pegasus found at address " + url + ". Trying port " + port);
 //            String[] args = {url + "/remotecontrol",
@@ -215,16 +216,16 @@ public class DaxToPegasusUnit {
 //            Response ret = usePegasusBonjourClient(args);
 
             Response ret = SendPegasusZip.sendFile(url + "/remotecontrol", zipFile);
-            if(ret == null){
+            if (ret == null) {
                 System.out.println("Sent, but some error occurred. Received null");
-            }else{
+            } else {
                 if (ret.getOutcome().equals("Not Found")) {
                     System.out.println("Sent zip, received : " + ret.toString());
                     popup.addText(ret.toString());
                     log("Pegasus not responding on port " + port + "\n");
                     port++;
-                } else{
-                    if(ret.getOutcome().equals("Accepted")){
+                } else {
+                    if (ret.getOutcome().equals("Accepted")) {
                         System.out.println("Sent zip, received : " + ret.toString());
                         popup.addText(ret.toString());
                     }
@@ -236,16 +237,20 @@ public class DaxToPegasusUnit {
             attempt++;
         }
         log("Waiting");
-        try {Thread.sleep(10000);}catch(InterruptedException e) {}
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+        }
         log("Done");
 
     }
 
     /**
      * Sends dax related data to a user specified, manually entered url
+     *
      * @param url
      */
-    private void sendToPegasus(String url){
+    private void sendToPegasus(String url) {
         popup.addText("Setting properties.");
 //        String[] args = {url,
 //                this.getPropertiesLocation(),
@@ -258,21 +263,24 @@ public class DaxToPegasusUnit {
 //        ret = usePegasusBonjourClient(args);
 //
         Response ret = SendPegasusZip.sendFile(url + "/remotecontrol", zipFile);
-        if(ret != null){
-            if(ret.getOutcome().equals("Not Found")){
+        if (ret != null) {
+            if (ret.getOutcome().equals("Not Found")) {
                 log("Service could not be found");
                 popup.addTextNoProgress("Service could not be found at this address.");
-            }else{
+            } else {
                 log("Connection opened and info sent.");
                 popup.addText("Connection opened and info sent.");
 
             }
             popup.addText(ret.toString());
-        }else{
+        } else {
             log("Fail");
         }
         log("Waiting");
-        try {Thread.sleep(10000);}catch(InterruptedException e) {}
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+        }
         log("Done");
 
     }
@@ -307,13 +315,13 @@ public class DaxToPegasusUnit {
         return sitesLocation;
     }
 
-    private void log(String s){
+    private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
     }
 
-    private void runLocal(){
+    private void runLocal() {
         log("Running locally");
         List commmandStrVector = new ArrayList();
         String outputDir = System.getProperty("user.dir") + "/pegasus_output";
@@ -328,10 +336,10 @@ public class DaxToPegasusUnit {
 //                " --output local" + " --dax " + daxLocation +" --submit";
 
         String cmd = "pegasus-plan" +
-                " -D pegasus.user.properties=" + System.getProperty("user.dir") + File.separator +"properties" +
+                " -D pegasus.user.properties=" + System.getProperty("user.dir") + File.separator + "properties" +
                 " --sites condorpool" +
                 " --dir " + outputDir +
-                " --output local" + " --dax " + daxLocation +" --submit";
+                " --output local" + " --dax " + daxLocation + " --submit";
 
         log("Running : " + cmd);
         popup.addText("Running : " + cmd);
@@ -343,8 +351,7 @@ public class DaxToPegasusUnit {
     }
 
 
-
-    private void runExec(String cmd){
+    private void runExec(String cmd) {
         try {
             Runtime runtime = Runtime.getRuntime();
             java.lang.Process process = runtime.exec(cmd);  // execute command
@@ -372,7 +379,9 @@ public class DaxToPegasusUnit {
 
             log("Output from Executable :\n\n" + out.toString());
             log("Errors from Executable :\n\n" + errLog);
-        } catch (Exception e){e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
