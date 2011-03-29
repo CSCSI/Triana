@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.trianacode</groupId>
         <artifactId>triana</artifactId>
@@ -6,10 +7,37 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>triana-shiwa</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>Triana Shiwa</name>
     <version>4.0.1-SNAPSHOT</version>
     <url>http://www.trianacode.org</url>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>lib</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <excludeGroupIds>
+                                oro,org.trianacode,org.thinginitself,log4j,org.trianacode,org.apache.velocity,commons-logging,commons-lang,commons-collections
+                            </excludeGroupIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -23,5 +51,20 @@
             <artifactId>iwir</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.shiwa.desktop</groupId>
+            <artifactId>shiwa-desktop-gui</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>colette-maven-repos</id>
+            <name>colette</name>
+            <url>http://colette.cs.cf.ac.uk/maven</url>
+        </repository>
+    </repositories>
+
+
 </project>
