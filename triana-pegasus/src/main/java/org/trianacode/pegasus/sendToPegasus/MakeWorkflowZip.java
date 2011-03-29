@@ -1,6 +1,9 @@
 package org.trianacode.pegasus.sendToPegasus;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
@@ -48,15 +51,18 @@ public class MakeWorkflowZip {
             for (int i = 0; i < source.length; i++) {
                 System.out.println("Adding file " + source[i]);
 
-                FileInputStream in = new FileInputStream(source[i]);
-                File entryFile = new File(source[i]);
-                out.putNextEntry(new ZipEntry(entryFile.getName()));
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
+                if (new File(source[i]).exists()) {
+
+                    FileInputStream in = new FileInputStream(source[i]);
+                    File entryFile = new File(source[i]);
+                    out.putNextEntry(new ZipEntry(entryFile.getName()));
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    out.closeEntry();
+                    in.close();
                 }
-                out.closeEntry();
-                in.close();
             }
             out.close();
         } catch (IOException e) {
