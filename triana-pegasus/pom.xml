@@ -15,7 +15,8 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.trianacode</groupId>
         <artifactId>triana</artifactId>
@@ -84,15 +85,43 @@
             <version>2.4.3</version>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>jmdns</groupId>-->
-        <!--<artifactId>jmdns</artifactId>-->
-        <!--<version>3.1.6</version>-->
-        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.trianacode</groupId>
+            <artifactId>dax</artifactId>
+            <version>${project.version}</version>
+            <scope>system</scope>
+            <systemPath>
+                /Users/ian/Work-Mac/Work/triana4/triana-pegasus/src/main/java/org/trianacode/pegasus/dax/adag/dax.jar
+            </systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>colette-maven-repos</groupId>
+            <artifactId>dax</artifactId>
+            <version>3.0.1</version>
+        </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>colette-maven-repos</id>
+            <name>colette</name>
+            <url>http://colette.cs.cf.ac.uk/maven</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
-        <downloadUrl>scm:svn:https://jmdns.svn.sourceforge.net/svnroot/jmdns/tags/jmdns-3.2.2</downloadUrl>
+        <repository>
+            <id>colette-maven-repos</id>
+            <name>Triana Maven Repository</name>
+            <url>scp://colette.cs.cf.ac.uk:/var/www/maven</url>
+        </repository>
+        <!--<repository>-->
+        <!--<id>trianacode-maven-repos</id>-->
+        <!--<name>Triana Maven Repository</name>-->
+        <!--<url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>-->
+        <!--</repository>-->
     </distributionManagement>
 
 </project>
