@@ -32,9 +32,9 @@ public class FileLoader {
             if (file.exists()) {
                 return file;
             }
-            return null;
+
         }
-        return new File("./diamond.dax");
+        return null;
     }
 
     @CustomGUIComponent
