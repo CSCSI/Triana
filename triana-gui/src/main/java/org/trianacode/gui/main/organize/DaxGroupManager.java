@@ -15,16 +15,16 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 public class DaxGroupManager {
-    Vector<DaxGroupObject> groups = new Vector();
-    Vector<DaxUnitObject> objects = new Vector();
-    ArrayList<DaxUnitObject> specialTasks = new ArrayList();
+    Vector<DaxGroupObject> groups = new Vector<DaxGroupObject>();
+    Vector<DaxUnitObject> objects = new Vector<DaxUnitObject>();
+    ArrayList<DaxUnitObject> specialTasks = new ArrayList<DaxUnitObject>();
 
     DaxGrid daxGrid = new DaxGrid();
 
-    public DaxUnitObject addTask(Task t, int level){
+    public DaxUnitObject addTask(Task t, int level) {
 
-        for(DaxUnitObject d : objects){
-            if(d.getTask() == t){
+        for (DaxUnitObject d : objects) {
+            if (d.getTask() == t) {
                 return d;
             }
         }
@@ -32,10 +32,9 @@ public class DaxGroupManager {
         DaxUnitObject duo = new DaxUnitObject(t);
 
         DaxLevel daxLevel = daxGrid.getLevel(level);
-        if(daxLevel != null){
+        if (daxLevel != null) {
             daxLevel.addUnit(duo);
-        }
-        else{
+        } else {
             daxLevel = new DaxLevel();
             daxLevel.addUnit(duo);
             daxGrid.addLevel(daxLevel);
@@ -49,42 +48,44 @@ public class DaxGroupManager {
         return duo;
     }
 
-    private int numberOfGroupedUnits(){
+    private int numberOfGroupedUnits() {
         return groups.size();
     }
 
-    public DaxUnitObject getDUOforTask(Task t){
-        for(DaxUnitObject d : objects){
-            if(d.getTask() == t){
+    public DaxUnitObject getDUOforTask(Task t) {
+        for (DaxUnitObject d : objects) {
+            if (d.getTask() == t) {
                 return d;
             }
         }
         return null;
     }
 
-    public void setParams(DaxUnitObject duo){
+    public void setParams(DaxUnitObject duo) {
         duo.setParams();
     }
 
-    private void addSpecialTask(DaxUnitObject t){
+    private void addSpecialTask(DaxUnitObject t) {
         specialTasks.add(t);
     }
 
     public void placeSpecialTasks() {
         log("\n\nRearranging special tasks");
-        for(DaxUnitObject duo : specialTasks){
-            Task [] nextTasks = DaxOrganize.getNextTasks(duo.getTask());
-            Task aNextTask = nextTasks[0];
-            DaxUnitObject nextduo = getDUOforTask(aNextTask);
-            int nextduoLevel = nextduo.getLevel().getLevelNumber();
+        for (DaxUnitObject duo : specialTasks) {
+            Task[] nextTasks = DaxOrganize.getNextTasks(duo.getTask());
+            if (nextTasks.length > 0) {
+                Task aNextTask = nextTasks[0];
+                DaxUnitObject nextduo = getDUOforTask(aNextTask);
+                int nextduoLevel = nextduo.getLevel().getLevelNumber();
 
-            log("Task after root task " + duo.getTask() + " is level " + nextduoLevel);
+                log("Task after root task " + duo.getTask() + " is level " + nextduoLevel);
 
-            if(nextduoLevel != duo.getLevel().getLevelNumber()){
-                duo.leaveLevel();
-                daxGrid.getLevel(nextduoLevel - 1).addUnit(duo);
-                setParams(duo);
+                if (nextduoLevel != duo.getLevel().getLevelNumber()) {
+                    duo.leaveLevel();
+                    daxGrid.getLevel(nextduoLevel - 1).addUnit(duo);
+                    setParams(duo);
 
+                }
             }
         }
     }
@@ -94,28 +95,28 @@ public class DaxGroupManager {
     }
 
     public void setRoots(Task[] roots) {
-        for(Task t : roots){
+        for (Task t : roots) {
             DaxUnitObject duo = getDUOforTask(t);
-            if(duo != null){
+            if (duo != null) {
                 addSpecialTask(duo);
             }
         }
 
-        for(Task t : roots){
+        for (Task t : roots) {
             DaxUnitObject duo = getDUOforTask(t);
-            if(duo != null){
-                if(duo.getTask().getOutputNodeCount() > 5){
+            if (duo != null) {
+                if (duo.getTask().getOutputNodeCount() > 5) {
                     addSpecialTask(duo);
                 }
             }
         }
     }
 
-    public void tidyUp(){
+    public void tidyUp() {
         log("Grid has " + daxGrid.numberOfRows() + " rows, " +
-                + daxGrid.numberOfLevels() +" levels (columns)");
+                +daxGrid.numberOfLevels() + " levels (columns)");
 
-        for( int i = 0; i < daxGrid.numberOfLevels() ; i++){
+        for (int i = 0; i < daxGrid.numberOfLevels(); i++) {
             DaxLevel l = daxGrid.getLevel(i);
             l.tidyupRows();
 
@@ -128,9 +129,9 @@ public class DaxGroupManager {
         return daxGrid;
     }
 
-    private void log(String text){
+    private void log(String text) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
-   //     System.out.println(text);
+        //     System.out.println(text);
     }
 }

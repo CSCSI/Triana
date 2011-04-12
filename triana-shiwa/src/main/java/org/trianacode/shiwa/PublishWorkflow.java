@@ -24,7 +24,7 @@ public class PublishWorkflow extends AbstractAction {
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
-        System.out.println("Hello World");
+        System.out.println("Publishing Workflow");
 
         ApplicationFrame frame = GUIEnv.getApplicationFrame();
         TaskGraph tg = frame.getSelectedTaskgraph();

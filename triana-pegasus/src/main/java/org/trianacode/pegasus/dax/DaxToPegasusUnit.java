@@ -6,16 +6,14 @@ import org.trianacode.annotation.Parameter;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.pegasus.extras.BareBonesBrowserLaunch;
 import org.trianacode.pegasus.extras.ProgressPopup;
 import org.trianacode.pegasus.sendToPegasus.FindPegasus;
 import org.trianacode.pegasus.sendToPegasus.MakeWorkflowZip;
 import org.trianacode.pegasus.sendToPegasus.SendPegasusZip;
 
 import javax.jmdns.ServiceInfo;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +88,7 @@ public class DaxToPegasusUnit {
                     runLocal();
                 }
             }
-            popup.finish();
+            //           popup.finish();
         }
     }
 
@@ -125,72 +123,7 @@ public class DaxToPegasusUnit {
 
         return true;
     }
-//
-//    private ServiceInfo findPegasus(long timeout){
-//        log("Trying to find services with JmDNS");
-//        JmDNS jmdns = null;
-//        ServiceInfo pegasusInfo = null;
-//        boolean found = false;
-//
-//        try {
-//            jmdns = JmDNS.create(InetAddress.getLocalHost());
-//            String typeString = "_http._tcp.local.";
-//            PegasusListener pl = new PegasusListener(jmdns, typeString);
-//            jmdns.addServiceListener(typeString, pl);
-//
-//            long startTime = System.currentTimeMillis();
-//            long timeNow = 0;
-//
-//            popup.addText("Scanning network for Pegasus installations.");
-//            popup.setUnsureTime();
-//            while(!pl.foundSomething() && timeNow < (startTime + timeout)){
-//                log("Nothing found, waiting again.");
-//                try {Thread.sleep(1000);}catch(InterruptedException e) {}
-//                timeNow = System.currentTimeMillis();
-//            }
-//
-//            if(pl.foundSomething()){
-//                for (Object o : pl.getServices()) {
-//                    ServiceInfo info = (ServiceInfo) o;
-//                    log("\n       Found service : " + info.getName() +
-//                            "\n     Address " + info.getURL() +
-//                            "\n     " + info.getHostAddress() +
-//                            //                  "\n     " + info.getDomain() +
-//                            "\n     " + info.getInetAddress() +
-//                            "\n     " + info.getPort() +
-//                            "\n     " + info.getServer() +
-//                            //                  "\n     " + info.getApplication() +
-//                            "\n      " + info.toString() + "\n");
-//                    if (info.getName().toLowerCase().contains("pegasus")) {
-//                        popup.addText("Found Pegasus : " + info.getURL());
-//                        pegasusInfo = info;
-//
-//                        found = true;
-//                    }
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            log("Something broke.");
-//            popup.addTextNoProgress("Networking error");
-//        } finally{
-//            if (jmdns != null) {
-//                try {
-//                    jmdns.close();
-//                } catch(IOException e){e.printStackTrace();}
-//                popup.addText("Closing JmDNS");
-//            }
-//        }
-//
-//        if(found){
-//            return pegasusInfo;
-//        }else{
-//            log("Pegasus is hiding... can't find it.");
-//            popup.addText("Couldn't find Pegasus on local network.");
-//            return null;
-//        }
-//    }
+
 
     /**
      * Sends dax related data to the pegasus server defined by the JmDNS search
@@ -219,6 +152,34 @@ public class DaxToPegasusUnit {
             if (ret == null) {
                 System.out.println("Sent, but some error occurred. Received null");
             } else {
+                try {
+
+                    int responseCode = ret.getContext().getResponseCode();
+                    if (responseCode == 200) {
+                        System.out.println("TriPeg reports success queueing workflow on pegasus");
+                    } else {
+                        System.out.println("Error reported from TriPeg server");
+                    }
+
+                    InputStream stream = ret.getContext().getResponseEntity().getInputStream();
+                    StringBuffer out = new StringBuffer();
+                    byte[] b = new byte[4096];
+                    for (int n; (n = stream.read(b)) != -1;) {
+                        out.append(new String(b, 0, n));
+                    }
+                    String link = out.toString();
+
+
+                    link = link.replaceAll("\\+", "%2B");
+                    System.out.println("Received streamable : " + link);
+                    link = url + "/remotecontrol?file=" + link;
+                    popup.addText("Link : " + link);
+
+                    BareBonesBrowserLaunch.openURL(link);
+
+                } catch (Exception e) {
+                    System.out.println("Failed to get response entity");
+                }
                 if (ret.getOutcome().equals("Not Found")) {
                     System.out.println("Sent zip, received : " + ret.toString());
                     popup.addText(ret.toString());
@@ -262,12 +223,34 @@ public class DaxToPegasusUnit {
 //        Response ret = null;
 //        ret = usePegasusBonjourClient(args);
 //
-        Response ret = SendPegasusZip.sendFile(url + "/remotecontrol", zipFile);
+        url += "/remotecontrol";
+        log("Trying pegasus at " + url);
+        Response ret = SendPegasusZip.sendFile(url, zipFile);
         if (ret != null) {
             if (ret.getOutcome().equals("Not Found")) {
                 log("Service could not be found");
                 popup.addTextNoProgress("Service could not be found at this address.");
             } else {
+                try {
+                    InputStream stream = ret.getContext().getResponseEntity().getInputStream();
+                    StringBuffer out = new StringBuffer();
+                    byte[] b = new byte[4096];
+                    for (int n; (n = stream.read(b)) != -1;) {
+                        out.append(new String(b, 0, n));
+                    }
+                    String link = out.toString();
+
+
+                    link = link.replaceAll("\\+", "%2B");
+                    System.out.println("Received streamable : " + link);
+                    link = url + "?file=" + link;
+                    popup.addText("Link : " + link);
+
+                    BareBonesBrowserLaunch.openURL(link);
+
+                } catch (Exception e) {
+                    System.out.println("Failed to get response entity");
+                }
                 log("Connection opened and info sent.");
                 popup.addText("Connection opened and info sent.");
 
@@ -285,15 +268,6 @@ public class DaxToPegasusUnit {
 
     }
 
-//    private Response usePegasusBonjourClient(String[] args){
-//        PegasusBonjourClient pbc = new PegasusBonjourClient();
-//        popup.addText("Parsing args : " + args[0]);
-//        Response ret = pbc.parse(args);
-//        if (ret != null) {
-//            System.out.println("Response : " + ret.toString());
-//        }
-//        return ret;
-//    }
 
     public String getPropertiesLocation() {
         return propLocation;
@@ -402,3 +376,80 @@ public class DaxToPegasusUnit {
 //}
 
 
+//
+//    private ServiceInfo findPegasus(long timeout){
+//        log("Trying to find services with JmDNS");
+//        JmDNS jmdns = null;
+//        ServiceInfo pegasusInfo = null;
+//        boolean found = false;
+//
+//        try {
+//            jmdns = JmDNS.create(InetAddress.getLocalHost());
+//            String typeString = "_http._tcp.local.";
+//            PegasusListener pl = new PegasusListener(jmdns, typeString);
+//            jmdns.addServiceListener(typeString, pl);
+//
+//            long startTime = System.currentTimeMillis();
+//            long timeNow = 0;
+//
+//            popup.addText("Scanning network for Pegasus installations.");
+//            popup.setUnsureTime();
+//            while(!pl.foundSomething() && timeNow < (startTime + timeout)){
+//                log("Nothing found, waiting again.");
+//                try {Thread.sleep(1000);}catch(InterruptedException e) {}
+//                timeNow = System.currentTimeMillis();
+//            }
+//
+//            if(pl.foundSomething()){
+//                for (Object o : pl.getServices()) {
+//                    ServiceInfo info = (ServiceInfo) o;
+//                    log("\n       Found service : " + info.getName() +
+//                            "\n     Address " + info.getURL() +
+//                            "\n     " + info.getHostAddress() +
+//                            //                  "\n     " + info.getDomain() +
+//                            "\n     " + info.getInetAddress() +
+//                            "\n     " + info.getPort() +
+//                            "\n     " + info.getServer() +
+//                            //                  "\n     " + info.getApplication() +
+//                            "\n      " + info.toString() + "\n");
+//                    if (info.getName().toLowerCase().contains("pegasus")) {
+//                        popup.addText("Found Pegasus : " + info.getURL());
+//                        pegasusInfo = info;
+//
+//                        found = true;
+//                    }
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            log("Something broke.");
+//            popup.addTextNoProgress("Networking error");
+//        } finally{
+//            if (jmdns != null) {
+//                try {
+//                    jmdns.close();
+//                } catch(IOException e){e.printStackTrace();}
+//                popup.addText("Closing JmDNS");
+//            }
+//        }
+//
+//        if(found){
+//            return pegasusInfo;
+//        }else{
+//            log("Pegasus is hiding... can't find it.");
+//            popup.addText("Couldn't find Pegasus on local network.");
+//            return null;
+//        }
+//    }
+
+
+//    private Response usePegasusBonjourClient(String[] args){
+//        PegasusBonjourClient pbc = new PegasusBonjourClient();
+//        popup.addText("Parsing args : " + args[0]);
+//        Response ret = pbc.parse(args);
+//        if (ret != null) {
+//            System.out.println("Response : " + ret.toString());
+//        }
+//        return ret;
+//    }

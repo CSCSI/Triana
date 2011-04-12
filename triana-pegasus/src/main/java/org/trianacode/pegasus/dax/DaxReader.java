@@ -79,8 +79,8 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     private void reset() {
         file = null;
         doc = null;
-        toolVector = new ArrayList();
-        files = new ArrayList();
+        toolVector = new ArrayList<DaxJobHolder>();
+        files = new ArrayList<DaxFileHolder>();
     }
 
     @Override
@@ -88,16 +88,20 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         log("importWorkflow called.");
         setFile(file);
         NodeList jobList = getJobInfo();
-
-        Vector<DaxJobHolder> jobHolders = getJobHoldersFromNodeList(jobList);
-        listAllJobs(jobHolders);
-
-        TaskGraph tg = null;
         if (jobList != null) {
-            tg = createTaskGraph(jobList, properties);
-            tg.setToolName(file.getName());
+
+            Vector<DaxJobHolder> jobHolders = getJobHoldersFromNodeList(jobList);
+            listAllJobs(jobHolders);
+
+            TaskGraph tg = null;
+            if (jobList != null) {
+                tg = createTaskGraph(jobList, properties);
+                tg.setToolName(file.getName());
+            }
+            return tg;
+        } else {
+            return null;
         }
-        return tg;
     }
 
     private void listAllJobs(Vector<DaxJobHolder> jobs) {
@@ -135,6 +139,9 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
             jobList = getNodeListFromTag("job");
             log("There are " + jobList.getLength() + " jobs listed in the DAX");
 
+        } else {
+            log("XML does not contain job items, is this a valid dax?");
+            return null;
         }
         return jobList;
     }
@@ -612,8 +619,7 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
             doc = db.parse(bufferedInput);
             doc.getDocumentElement().normalize();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
         }
     }
@@ -689,6 +695,6 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
     private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //System.out.println(s);
+        System.out.println(s);
     }
 }

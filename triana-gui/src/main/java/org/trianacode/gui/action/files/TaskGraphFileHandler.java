@@ -135,16 +135,13 @@ public class TaskGraphFileHandler implements SelectionManager {
             if (updateRecent) {
                 GUIEnv.getApplicationFrame().getTrianaMenuBar().updateRecentMenu(file);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             b = false;
             e.printStackTrace(System.out);
-        }
-        finally {
+        } finally {
             try {
                 writer.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace(System.out);
                 b = false;
             }
@@ -207,8 +204,7 @@ public class TaskGraphFileHandler implements SelectionManager {
             if (updateRecent) {
                 GUIEnv.getApplicationFrame().getTrianaMenuBar().updateRecentMenu(file.getAbsolutePath());
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println(file + " : not found");
         }
 
@@ -220,9 +216,9 @@ public class TaskGraphFileHandler implements SelectionManager {
                 tool.setDefinitionPath(file.toURI().toURL());
                 TaskGraph initgraph = null;
                 if (runnable) {
-                    GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
+                    initgraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
                 } else {
-                    GUIEnv.getApplicationFrame().addNoExecParentTaskGraphPanel((TaskGraph) tool);
+                    initgraph = GUIEnv.getApplicationFrame().addNoExecParentTaskGraphPanel((TaskGraph) tool);
                 }
                 return initgraph;
             } else {
@@ -230,22 +226,18 @@ public class TaskGraphFileHandler implements SelectionManager {
                         "Error: " + file.getName() + " is not a valid taskgraph file", "Open Error",
                         JOptionPane.ERROR_MESSAGE, GUIEnv.getTrianaIcon());
             }
-        }
-        catch (TaskGraphException except) {
+        } catch (TaskGraphException except) {
             new ErrorDialog(Env.getString("inputError"), except.getMessage());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println(e.getMessage() + " in file: " + file);
             e.printStackTrace(System.out);
-        }
-        finally {
+        } finally {
             if (progressBar != null) {
                 progressBar.disposeProgressBar();
             }
             try {
                 reader.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace(System.out);
             }
         }
@@ -280,15 +272,12 @@ public class TaskGraphFileHandler implements SelectionManager {
                         filename = fc.getSelectedFile().getName();
                         progressBar = new TrianaProgressBar("loading: " + filename, false);
                         GUIEnv.getApplicationFrame().addParentTaskGraphPanel(chooser.importWorkflow());
-                    }
-                    catch (TaskGraphException except) {
+                    } catch (TaskGraphException except) {
                         new ErrorDialog(Env.getString("inputError"), except.getMessage());
-                    }
-                    catch (IOException e) {
+                    } catch (IOException e) {
                         System.out.println(e.getMessage() + " in file: " + filename);
                         e.printStackTrace(System.out);
-                    }
-                    finally {
+                    } finally {
                         if (progressBar != null) {
                             progressBar.disposeProgressBar();
                         }
@@ -324,16 +313,13 @@ public class TaskGraphFileHandler implements SelectionManager {
 
                         pb = new TrianaProgressBar("exporting: " + filename, false);
                         chooser.exportWorkflow(GUIEnv.getApplicationFrame().getSelectedTaskGraphPanel().getTaskGraph());
-                    }
-                    catch (IOException e) {
+                    } catch (IOException e) {
                         ErrorDialog.show("Error Exporting TaskGraph", e.getMessage());
                         e.printStackTrace();
-                    }
-                    catch (TaskGraphException e) {
+                    } catch (TaskGraphException e) {
                         ErrorDialog.show("Error Exporting TaskGraph", e.getMessage());
                         e.printStackTrace();
-                    }
-                    finally {
+                    } finally {
                         if (pb != null) {
                             pb.disposeProgressBar();
                         }
@@ -385,23 +371,19 @@ public class TaskGraphFileHandler implements SelectionManager {
                                             writer.writeComponent(tool);
                                             tooltable.refreshLocation(UrlUtils.toURL(toolfile), handler.getToolBox());
                                         }
-                                    }
-                                    catch (IOException e) {
+                                    } catch (IOException e) {
                                         e.printStackTrace(System.out);
                                     }
 
                                 }
 
                             }
-                        }
-                        catch (TaskGraphException except) {
+                        } catch (TaskGraphException except) {
                             new ErrorDialog(Env.getString("inputError"), except.getMessage());
-                        }
-                        catch (IOException e) {
+                        } catch (IOException e) {
                             System.out.println(e.getMessage() + " in file: " + filename);
                             e.printStackTrace(System.out);
-                        }
-                        finally {
+                        } finally {
                             if (progressBar != null) {
                                 progressBar.disposeProgressBar();
                             }

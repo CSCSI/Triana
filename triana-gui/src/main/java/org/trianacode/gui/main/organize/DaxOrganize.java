@@ -2,13 +2,16 @@ package org.trianacode.gui.main.organize;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.gui.main.imp.ForShowTool;
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,21 +23,22 @@ import java.util.HashMap;
 public class DaxOrganize {
     DaxGroupManager dgm = new DaxGroupManager();
 
-    private void log(String text){
+    private void log(String text) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
-  //      System.out.println(text);
+//        System.out.println(text);
     }
 
-    public DaxOrganize(final TaskGraph t){
+    public DaxOrganize(final TaskGraph t) {
 //        Thread thread = new Thread(){
 //            public void run(){
 //
-        HashMap levels = new HashMap();
+        log("Using dax organise");
+        HashMap levels = new HashMap<Task, Integer>();
 
         Task[] roots = getRootTasks(t);
 
-        recurse( levels, roots, 0);
+        recurse(levels, roots, 0);
 
         dgm.setRoots(roots);
         dgm.placeSpecialTasks();
@@ -47,72 +51,113 @@ public class DaxOrganize {
 //        thread.start();
     }
 
-    private  void recurse(HashMap h, Task[] ts, int level){
+    private void recurse(HashMap h, Task[] ts, int level) {
         log("\n\nGrid has " + dgm.getGrid().numberOfLevels() + " levels.");
-        if(ts.length > 0){
-            for(Task task : ts){
+        if (ts.length > 0) {
+            for (Task task : ts) {
                 recLevel(h, task, level);
                 Task[] nextLevel = getNextTasks(task);
-                recurse(h, nextLevel, level+1);
+                recurse(h, nextLevel, level + 1);
             }
         }
     }
 
-    private void recLevel( HashMap h, Task t, int level){
+    private void recLevel(HashMap h, Task t, int level) {
         log("Task " + t.getToolName() + " is on level " + level);
 
         DaxUnitObject duo = dgm.getDUOforTask(t);
-        if(duo == null){
+        if (duo == null) {
             duo = dgm.addTask(t, level);
 
-        }
-        else{
+        } else {
             int currentSetLevel = duo.getLevel().getLevelNumber();
             log("Task " + t.getToolName() + " already has a DaxUnitObject. " +
                     "Previously stored level :" + currentSetLevel + ", this route gives level : " + level);
-            if(level > currentSetLevel){
+            if (level > currentSetLevel) {
                 duo.leaveLevel();
                 dgm.getGrid().getLevel(level).addUnit(duo);
                 dgm.setParams(duo);
-            }
-            else{
+            } else {
                 log("Left task " + t.getToolName() + " on level " + duo.getLevel().getLevelNumber());
             }
         }
-        h.put(t,level);
+        h.put(t, level);
     }
 
-    public static Task[] getNextTasks(Task t){
-        ArrayList nextTasks = new ArrayList();
+    public static Task[] getNextTasks(Task t) {
+        ArrayList<Task> nextTasks = new ArrayList<Task>();
         Node[] outputNodes = t.getDataOutputNodes();
-        for( Node node : outputNodes){
-            if(node.isConnected()){
+        for (Node node : outputNodes) {
+            if (node.isConnected()) {
                 Cable c = node.getCable();
-                if (c != null){
+                if (c != null) {
                     Node cableOutputNode = c.getReceivingNode();
-                    if( cableOutputNode != null){
+                    if (cableOutputNode != null) {
                         Task attachedTask = cableOutputNode.getTask();
                         nextTasks.add(attachedTask);
                     }
                 }
             }
         }
-        return (Task[])nextTasks.toArray(new Task[nextTasks.size()]);
+        return (Task[]) nextTasks.toArray(new Task[nextTasks.size()]);
     }
 
-    private Task[] getRootTasks(TaskGraph t){
-        Task[] allTasks = t.getTasks(false);
-        ArrayList rootTasks = new ArrayList();
+    private Task[] getRootTasks(TaskGraph taskGraph) {
+        Node[] rootNodeArray = taskGraph.getInputNodes();
+        log("Input nodes : " + rootNodeArray.length);
+        ArrayList<Node> rootNodes = new ArrayList<Node>(Arrays.asList(rootNodeArray));
+        log("Input nodes : " + rootNodes.size());
 
-        for(Task task : allTasks){
+        for (Iterator<Node> iterator = rootNodes.iterator(); iterator.hasNext();) {
+            Node next = iterator.next();
+            if (next.isConnected()) {
+                Cable cable = next.getCable();
+                Node node = cable.getReceivingNode();
+                System.out.println("Incoming node connected to " + node.toString() + " on task " + node.getTask().getToolName());
+            } else {
+                System.out.println("Node " + next.toString() + " is not connected");
+            }
+        }
+
+        Task[] allTasks = taskGraph.getTasks(false);
+        ArrayList<Task> rootTasks = new ArrayList<Task>();
+
+        for (Task task : allTasks) {
             int numberInputNodes = task.getDataInputNodeCount();
-            if (numberInputNodes == 0){
+            if (numberInputNodes == 0) {
                 rootTasks.add(task);
+            }
+
+            log("\n" + task.getToolName());
+            for (Node node : task.getInputNodes()) {
+                log("An input node");
+                if (node.isConnected()) {
+                    log("Node is connected");
+                    Cable nodeCable = node.getCable();
+                    Task sendingTask = nodeCable.getSendingTask();
+                    if (sendingTask != null) {
+                        log("Task " + task.getToolName() + " receives from " + sendingTask.toString());
+                        if (node.isConnected() && sendingTask instanceof ForShowTool) {
+                            log("For show tool");
+                        }
+                    } else {
+                        log("Task " + task.getToolName() + " has a node but no sending task");
+                    }
+                } else {
+                    log("Node not connected apparently...");
+                    rootTasks.add(task);
+                    if (node.isTopLevelNode()) {
+                        log("is top level node");
+                    }
+                }
+                if (rootNodes.contains(node)) {
+                    System.out.println(node.toString() + " Could be a proper dummynode");
+                }
             }
         }
 
         log("Root tasks : " + rootTasks);
-        return (Task[])rootTasks.toArray(new Task[rootTasks.size()]);
+        return (Task[]) rootTasks.toArray(new Task[rootTasks.size()]);
     }
 
 }
