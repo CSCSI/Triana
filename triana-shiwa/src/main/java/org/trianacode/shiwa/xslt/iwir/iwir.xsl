@@ -31,10 +31,12 @@
         <xsl:variable name="groupName" select="@name"/>
 
         <inportnum>
-            <xsl:value-of select="count(inputPort[1])"/>
+            <!--<xsl:value-of select="count(inputPort[1])"/>-->
+            <xsl:value-of select="count(child::inputPorts/descendant::inputPort)"/>
         </inportnum>
         <outportnum>
-            <xsl:value-of select="count(outputPort[1])"/>
+            <!--<xsl:value-of select="count(outputPort[1])"/>-->
+            <xsl:value-of select="count(child::outputPorts/descendant::outputPort)"/>
         </outportnum>
 
         <xsl:for-each select="inputPorts">

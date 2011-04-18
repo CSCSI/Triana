@@ -4,6 +4,7 @@ package org.trianacode.shiwa;
 import org.shiwa.fgi.iwir.*;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -57,8 +58,13 @@ public class IwirWriter {
 
         String root = "triana-shiwa/src/main/java/org/trianacode/shiwa/xslt/";
         File output = new File(root + "iwir/iwir.xml");
-        iwir.asXMLFile(output);
-        System.out.println("Wrote iwir to " + output.getAbsolutePath());
+        try {
+            iwir.asXMLFile(output);
+            System.out.println("Wrote iwir to " + output.getAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("Failed to write file.");
+            e.printStackTrace();
+        }
 
 //           org.shiwa.fgi.iwir.examples.CrossProduct.main(new String[0]);
     }
