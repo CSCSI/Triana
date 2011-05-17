@@ -126,6 +126,11 @@ public class AnnotatedUnitWrapper extends Unit {
                 setOutputPolicy(COPY_OUTPUT);
             }
         }
+        if (toolDesc.isTaskConscious()) {
+            TaskConscious tc = (TaskConscious) annotated;
+            tc.setTask(getTask());
+        }
+
     }
 
     public void reset() {
@@ -244,10 +249,6 @@ public class AnnotatedUnitWrapper extends Unit {
             na.setOutputNodeCount(connectedOuts);
             na.setTaskName(getTask().getQualifiedTaskName());
             na.setTaskSubtitle(getTask().getSubTitle());
-        }
-        if (toolDesc.isTaskConscious()) {
-            TaskConscious tc = (TaskConscious) annotated;
-            tc.setTask(getTask());
         }
 
         List<Object> ins = new ArrayList<Object>();
