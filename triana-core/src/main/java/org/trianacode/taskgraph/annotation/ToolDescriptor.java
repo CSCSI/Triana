@@ -21,6 +21,7 @@ public class ToolDescriptor {
     private Method customGuiComponent;
     private String panelClass;
     private boolean taskAware = false;
+    private boolean taskConscious = false;
 
     public Object getAnnotated() {
         return annotated;
@@ -30,6 +31,9 @@ public class ToolDescriptor {
         this.annotated = annotated;
         if (annotated instanceof TaskAware) {
             taskAware = true;
+        }
+        if (annotated instanceof TaskConscious) {
+            taskConscious = true;
         }
     }
 
@@ -101,4 +105,7 @@ public class ToolDescriptor {
         return taskAware;
     }
 
+    public boolean isTaskConscious() {
+        return taskConscious;
+    }
 }

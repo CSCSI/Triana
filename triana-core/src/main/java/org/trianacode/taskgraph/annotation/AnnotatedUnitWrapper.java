@@ -245,6 +245,10 @@ public class AnnotatedUnitWrapper extends Unit {
             na.setTaskName(getTask().getQualifiedTaskName());
             na.setTaskSubtitle(getTask().getSubTitle());
         }
+        if (toolDesc.isTaskConscious()) {
+            TaskConscious tc = (TaskConscious) annotated;
+            tc.setTask(getTask());
+        }
 
         List<Object> ins = new ArrayList<Object>();
         if (methodDesc.isGather()) {
