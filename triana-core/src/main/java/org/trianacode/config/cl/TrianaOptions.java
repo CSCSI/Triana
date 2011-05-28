@@ -20,6 +20,8 @@ public class TrianaOptions {
     public static final Option EXTRA_TOOLBOXES_OPTION = new Option("x", "extra-toolboxes", "add toolboxes to be resolved");
     public static final Option EXTRA_MODULES_OPTION = new Option("m", "extra-modules", "add module paths");
     public static final Option HELP_OPTION = new Option("h", "help", "prints this message");
+    public static final Option SUPPRESS_DEFAULT_TOOLBOXES = new Option("sdt", "suppress-default-toolboxes", "start triana with no default, only those given with -x");
+    public static final Option CREATE_AND_SUBMIT_DAX = new Option("dax", "submit-to-org.trianacode.pegasus.gui", "takes a workflow, creates a dax, and submits to org.trianacode.pegasus.gui");
 
     public static Option[] TRIANA_OPTIONS = {
             NO_GUI_OPTION,
@@ -33,7 +35,9 @@ public class TrianaOptions {
             RESOLVE_THREAD_OPTION,
             EXTRA_TOOLBOXES_OPTION,
             EXTRA_MODULES_OPTION,
-            HELP_OPTION
+            HELP_OPTION,
+            SUPPRESS_DEFAULT_TOOLBOXES,
+            CREATE_AND_SUBMIT_DAX
     };
 
     public static boolean hasOption(ArgumentParser parsed, Option o) {

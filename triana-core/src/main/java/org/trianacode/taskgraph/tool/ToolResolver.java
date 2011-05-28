@@ -40,9 +40,11 @@ public class ToolResolver implements ToolMetadataResolver {
     private List<ToolListener> listeners = new ArrayList<ToolListener>();
 
     private TrianaProperties properties;
+    private boolean suppressDefaultToolboxes = false;
 
-    public ToolResolver(TrianaProperties properties) {
+    public ToolResolver(TrianaProperties properties, boolean suppressDefaultToolboxes) {
         this.properties = properties;
+        this.suppressDefaultToolboxes = suppressDefaultToolboxes;
     }
 
     public long getResolveInterval() {
@@ -504,15 +506,17 @@ public class ToolResolver implements ToolMetadataResolver {
      */
     public void loadToolboxes(List<String> extras) throws Exception {
 
-        String[] toolboxPaths;
+        String[] toolboxPaths = new String[0];
 
         String toolboxPathsCSV = properties.getProperty(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY);
 
-        if ((toolboxPathsCSV == null) || (toolboxPathsCSV.equals("")))
-            toolboxPaths = createDefaultToolboxes();
-        else
-            toolboxPaths = csvToStringArray(toolboxPathsCSV);
-
+        if(!suppressDefaultToolboxes){
+            if ((toolboxPathsCSV == null) || (toolboxPathsCSV.equals(""))){
+                toolboxPaths = createDefaultToolboxes();
+            }else{
+                toolboxPaths = csvToStringArray(toolboxPathsCSV);
+            }
+        }
 
         for (String toolboxPath : toolboxPaths) {
             Toolbox t = createToolbox(toolboxPath);

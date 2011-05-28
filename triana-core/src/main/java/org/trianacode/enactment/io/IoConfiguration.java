@@ -66,7 +66,7 @@ public class IoConfiguration {
         inputs.add(mapping);
     }
 
-    public List<IoMapping> getOuputs() {
+    public List<IoMapping> getOutputs() {
         return outputs;
     }
 }

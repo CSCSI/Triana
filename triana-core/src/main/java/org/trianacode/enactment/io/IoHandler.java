@@ -130,7 +130,7 @@ public class IoHandler {
             mps.appendChild(serializeMapping(handler, mapping, map));
         }
         mps = handler.element("outputPorts");
-        mappings = config.getOuputs();
+        mappings = config.getOutputs();
         root.appendChild(mps);
         for (IoMapping mapping : mappings) {
             Element map = handler.element("outputPort");
@@ -156,7 +156,8 @@ public class IoHandler {
         DocumentHandler handler = new DocumentHandler(in);
         Element root = handler.root();
         if (!root.getTagName().equals("configuration")) {
-            throw new IOException("unknonw element:" + root.getTagName());
+            System.out.println("root tag not recognised.");
+            throw new IOException("unknown element:" + root.getTagName());
         }
         String toolname = root.getAttribute("toolName");
         String ver = root.getAttribute("toolVersion");

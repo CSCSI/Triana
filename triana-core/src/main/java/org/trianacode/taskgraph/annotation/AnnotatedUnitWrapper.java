@@ -88,6 +88,12 @@ public class AnnotatedUnitWrapper extends Unit {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        if (toolDesc.isTaskConscious()) {
+            TaskConscious tc = (TaskConscious) annotated;
+            tc.setTask(getTask());
+        }
+
         String gl = sb.toString();
         if (gl.length() > 0) {
             debug("AnnotatedUnitWrapper.init guiLines:" + gl);
@@ -126,10 +132,7 @@ public class AnnotatedUnitWrapper extends Unit {
                 setOutputPolicy(COPY_OUTPUT);
             }
         }
-        if (toolDesc.isTaskConscious()) {
-            TaskConscious tc = (TaskConscious) annotated;
-            tc.setTask(getTask());
-        }
+
 
     }
 

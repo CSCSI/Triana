@@ -11,8 +11,10 @@ import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoTypeHandler;
 import org.trianacode.enactment.io.NodeMappings;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.pegasus.CommandLinePegasus;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -106,14 +108,21 @@ public class Exec implements ExecutionListener {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
                     System.exit(1);
+                }else{
+                    if(vals.hasOption("dax")){
+                        new Exec(pid).createAndSubmitDax(wfs.get(0), data, args);
+                    }
+                    else{
+                        new Exec(pid).executeWorkflow(wfs.get(0), data, args);
+                    }
                 }
-                new Exec(pid).executeWorkflow(wfs.get(0), data);
             } else {
                 if (pid != null) {
                     int val = readFile(pid);
                     System.out.println(statusToString(val));
                     System.exit(0);
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,6 +190,7 @@ public class Exec implements ExecutionListener {
         } else {
             script = "./" + script + ".sh";
         }
+        System.out.println(bin.getCanonicalPath());
         List<String> args = new ArrayList<String>();
         args.add(script);
         args.add("-e");
@@ -195,19 +205,45 @@ public class Exec implements ExecutionListener {
         return pid;
     }
 
-    private void executeWorkflow(String wf, String data) throws Exception {
+    private void executeWorkflow(String wf, String data, String[] args) throws Exception {
 
         File f = new File(wf);
         if (!f.exists()) {
             System.out.println("Cannot find workflow file:" + wf);
             System.exit(1);
         }
-        TrianaInstance engine = new TrianaInstance();
+        TrianaInstance engine = new TrianaInstance(args);
         engine.init();
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
         execute(tool, data);
 
+    }
+
+    private void createAndSubmitDax(String workflow, String data, String[] args) throws Exception{
+        System.out.println("\nWill attempt to create and submit dax\n");
+        File f = new File(workflow);
+        if (!f.exists()) {
+            System.out.println("Cannot find workflow file: " + workflow);
+            System.exit(1);
+        }
+
+        TrianaInstance engine = new TrianaInstance(args);
+    //    engine.setReresolve(false);
+        engine.init();
+
+        XMLReader reader = new XMLReader(new FileReader(f));
+        Tool tool = reader.readComponent(engine.getProperties());
+        if(tool instanceof TaskGraph){
+ //           System.out.println("Inputs : " + tool.getDataInputNodeCount() + " Outputs : " + tool.getDataOutputNodeCount());
+//            TaskGraph taskGraph = (TaskGraph) tool;
+            CommandLinePegasus.initTaskgraph(engine, (TaskGraph)tool);
+
+            execute(tool, data);
+        }else {
+            System.out.println("Input file not a valid workflow");
+            System.exit(1);
+        }
     }
 
     public void execute(final Tool tool, final String data) throws Exception {
@@ -320,7 +356,6 @@ public class Exec implements ExecutionListener {
             log.info("Receiver.processBundle env key=" + s);
             log.info("Receiver.processBundle env val=" + env.get(s));
         }*/
-
         pb = pb.directory(runDir);
         Process process = pb.start();
 

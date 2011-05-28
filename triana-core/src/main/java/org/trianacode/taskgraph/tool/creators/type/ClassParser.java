@@ -388,7 +388,7 @@ public class ClassParser {
     public static void main(String[] args) {
         try {
             Map<String, ClassHierarchy> hiers = new ClassParser().readFile(
-                    "/Users/scmabh/work/projects/triana/code/triana/triana-pegasus/target/classes/org/trianacode/pegasus/dax/FileUnit.class");
+                    "/Users/scmabh/work/projects/triana/code/triana/triana-org.trianacode.pegasus.gui/target/classes/org/trianacode/org.trianacode.pegasus.gui/dax/FileUnit.class");
             for (String hier : hiers.keySet()) {
                 System.out.println(hiers.get(hier));
             }

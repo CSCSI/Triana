@@ -74,6 +74,7 @@ public class TrianaInstance {
     private boolean runServer = false;
     private boolean reresolve = false;
 
+    private boolean suppressDefaultToolboxes = false;
 
     public TrianaInstance() throws IOException {
         this(null);
@@ -119,6 +120,13 @@ public class TrianaInstance {
             propertyLoader = new PropertyLoader(this, p);
         }
         props = propertyLoader.getProperties();
+
+        //  This is to give the option to only load toolboxes given at the command line. No defaults to be selected.
+        if(TrianaOptions.hasOption(parser, TrianaOptions.SUPPRESS_DEFAULT_TOOLBOXES)){
+            System.out.println("Default toolboxes suppressed");
+            props.put(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY, "");
+            suppressDefaultToolboxes = true;
+        }
     }
 
     public void init(TrianaInstanceProgressListener progress, boolean resolve) throws IOException {
@@ -129,7 +137,7 @@ public class TrianaInstance {
 
         //load modules first - this just adds stuff to the class path
         initModules(modulePaths);
-        toolResolver = new ToolResolver(props);
+        toolResolver = new ToolResolver(props, suppressDefaultToolboxes);
         toolTable = new ToolTableImpl(toolResolver);
 
 
@@ -150,7 +158,12 @@ public class TrianaInstance {
             if (progress != null) {
                 progress.showCurrentProgress("Searching for local tools");
             }
-            toolResolver.resolve(reresolve, extraToolboxes);
+            try{
+                System.out.println("Extra toolboxes : " + extraToolboxes.toString());
+                toolResolver.resolve(reresolve, extraToolboxes);
+            }catch (Throwable throwable){
+                System.out.println("Error in toolResolver.resolve()" + throwable.getCause().toString());
+            }
         }
         if (progress != null && runServer) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
@@ -251,6 +264,7 @@ public class TrianaInstance {
                     Module m = new Module(file);
                     modules.add(m);
                     ClassLoaders.addClassLoader(m.getClassLoader());
+                    System.out.println(m.getName() + " " + m.getPath());
                 } catch (Exception e) {
                     log.error(e);
                 }
