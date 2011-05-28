@@ -176,7 +176,7 @@ public class IwirCreator {
 //            Executable exec = new Executable(fileName, jobChunk.getJobName(), "1.0");
 //            exec.setArchitecture(Executable.ARCH.X86).setOS(Executable.OS.LINUX);
 //            exec.setInstalled(true);
-//            exec.addPhysicalFile("file:///home/triana-pegasus/pegasus-wms-3.0.1/bin/keg", "condorpool");
+//            exec.addPhysicalFile("file:///home/triana-org.trianacode.pegasus.gui/org.trianacode.pegasus.gui-wms-3.0.1/bin/keg", "condorpool");
 //            execs.put(jobChunk.getJobName(), exec);
 //
 //        }

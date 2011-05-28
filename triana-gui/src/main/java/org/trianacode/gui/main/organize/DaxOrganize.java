@@ -23,7 +23,7 @@ import java.util.Iterator;
 public class DaxOrganize {
     DaxGroupManager dgm = new DaxGroupManager();
 
-    private void log(String text) {
+    private static void log(String text) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
 //        System.out.println(text);
@@ -102,7 +102,7 @@ public class DaxOrganize {
         return (Task[]) nextTasks.toArray(new Task[nextTasks.size()]);
     }
 
-    private Task[] getRootTasks(TaskGraph taskGraph) {
+    private static Task[] getRootTasks(TaskGraph taskGraph) {
         Node[] rootNodeArray = taskGraph.getInputNodes();
         log("Input nodes : " + rootNodeArray.length);
         ArrayList<Node> rootNodes = new ArrayList<Node>(Arrays.asList(rootNodeArray));

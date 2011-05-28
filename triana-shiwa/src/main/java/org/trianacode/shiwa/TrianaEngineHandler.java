@@ -34,12 +34,12 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     @Override
     public String getEngineVersion(Set<String> version) {
-        return "http://shiwa-workflow.eu/concepts#triana3-24,http://shiwa-workflow.eu/concepts#triana2-10";
+        return "triana3-24";
     }
 
     @Override
     public String getWorkflowLanguage(Set<String> languages) {
-        return "http://shiwa-workflow.eu/concepts#triana-taskgraph";
+        return "triana-taskgraph";
     }
 
     @Override
@@ -89,9 +89,11 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         ArrayList<InputPort> inputs = new ArrayList<InputPort>();
         for (int i = 0; i < task.getDataInputNodeCount(); i++) {
             String s = task.getDataInputTypes(i)[0];
-            InputPort in = new InputPort("" + i);
+            InputPort in = new InputPort("i" + i);
             in.setTitle("InputPort " + i);
-            in.setDataType(s);
+//            in.setDataType(s);
+            in.setDataType(ObjectToSchema.getSchemaURIString(s));
+
             in.setDescription("Input port for a Triana unit. Expects data of type " + s);
             inputs.add(in);
         }
@@ -101,11 +103,14 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     private ArrayList<OutputPort> getOutputPorts() {
         ArrayList<OutputPort> outputs = new ArrayList<OutputPort>();
         for (int i = 0; i < task.getDataOutputNodeCount(); i++) {
-            String[] ss = task.getDataOutputTypes(i);
-            OutputPort out = new OutputPort("" + i);
-            out.setTitle("InputPort " + i);
-            out.setDataType(ss[0]);
-            out.setDescription("Output port for a Triana unit. Produces data of type " + ss[0]);
+            String s = task.getDataOutputTypes(i)[0];
+            OutputPort out = new OutputPort("o" + i);
+            out.setTitle("OutputPort " + i);
+//            out.setDataType(s);
+
+            out.setDataType(ObjectToSchema.getSchemaURIString(s));
+
+            out.setDescription("Output port for a Triana unit. Produces data of type " + s);
             outputs.add(out);
         }
         return outputs;
