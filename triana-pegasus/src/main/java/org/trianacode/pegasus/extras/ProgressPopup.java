@@ -22,40 +22,43 @@ public class ProgressPopup extends JDialog {
 
     public ProgressPopup(String title, int numberOfTasks){
 
-        this.setLocationRelativeTo(this.getOwner());
+        Window parentWindow = this.getOwner();
+        if(parentWindow != null){
+            this.setLocationRelativeTo(parentWindow);
 
-        bitSize = (int)Math.ceil(100/numberOfTasks);
+            bitSize = (int)Math.ceil(100/numberOfTasks);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BorderLayout());
 
-        textArea = new JTextArea(15, 40);
-        textArea.setLineWrap(true);
-        JScrollPane scroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        DefaultCaret c = (DefaultCaret)textArea.getCaret();
-        c.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        bar = new JProgressBar(0, 100);
-        bar.setSize(50, 200);
+            textArea = new JTextArea(15, 40);
+            textArea.setLineWrap(true);
+            JScrollPane scroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            DefaultCaret c = (DefaultCaret)textArea.getCaret();
+            c.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+            bar = new JProgressBar(0, 100);
+            bar.setSize(50, 200);
 
-        JButton close = new JButton("Close");
-        close.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent actionEvent) {
-                done = true;
-                finish();
-            }
-        });
+            JButton close = new JButton("Close");
+            close.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent actionEvent) {
+                    done = true;
+                    finish();
+                }
+            });
 
-        mainPanel.add(bar, BorderLayout.NORTH);
-        mainPanel.add(scroll, BorderLayout.CENTER);
-        mainPanel.add(close, BorderLayout.SOUTH);
+            mainPanel.add(bar, BorderLayout.NORTH);
+            mainPanel.add(scroll, BorderLayout.CENTER);
+            mainPanel.add(close, BorderLayout.SOUTH);
 
-        addTextNoProgress("Begin");
+            addTextNoProgress("Begin");
 
-        mainPanel.setSize(200, 100);
-        this.add(mainPanel);
-        this.setTitle(title);
-        this.pack();
-        this.setVisible(true);
+            mainPanel.setSize(200, 100);
+            this.add(mainPanel);
+            this.setTitle(title);
+            this.pack();
+            this.setVisible(true);
+        }
     }
 
     public void setUnsureTime(){

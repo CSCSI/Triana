@@ -1,13 +1,14 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
-import org.trianacode.annotation.CheckboxParameter;
-import org.trianacode.annotation.Parameter;
-import org.trianacode.annotation.TextFieldParameter;
-import org.trianacode.annotation.Tool;
+import org.trianacode.annotation.*;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.pegasus.string.PatternCollection;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,27 +20,26 @@ import java.util.UUID;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass = "org.trianacode.pegasus.dax.FileUnitPanel", renderingHints = {"DAX File"})
-public class FileUnit {
+@Tool //(renderingHints = {"DAX File"})
+public class FileUnit implements TaskConscious, Displayer{
 
     @Parameter
-    private String programmaticParam = "This is a file";
+    public String fileLocation = "";
     @Parameter
-    private String fileLocation = "";
+    public String fileProtocol = "";
     @Parameter
-    private String fileProtocol = "";
+    public int numberOfFiles = 1;
     @Parameter
-    private int numberOfFiles = 1;
-    @Parameter
-    private PatternCollection namingPattern = null;
+    public PatternCollection namingPattern = null;
 
     @TextFieldParameter
-    private String fileName = "a.txt";
+    public String fileName = "a.txt";
 
     @CheckboxParameter
-    private boolean collection = false;
+    public boolean collection = false;
     @CheckboxParameter
-    private boolean one2one = false;
+    public boolean one2one = false;
+    public Task task;
 
     @org.trianacode.annotation.Process(gather = true)
     public UUID fileUnitProcess(List in) {
@@ -57,7 +57,6 @@ public class FileUnit {
         log("setting files one2one as " + one2one);
         thisFile.setOne2one(one2one);
 
-        //    GUIEnv.getApplicationFrame().getSelectedTaskgraph().getToolName();
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
 
@@ -109,6 +108,90 @@ public class FileUnit {
             log("No jobs enter fileUnit : " + thisFile.getFilename());
         }
 
+        return thisFile.getUuid();
+    }
+
+/**
+     * Various getting and setting of parameters
+     *
+     * @return
+     */
+
+    public PatternCollection getNamingPattern() {
+        Object o = task.getParameter("namingPattern");
+        if (o instanceof PatternCollection) {
+            log("Found : " + o.toString());
+            return (PatternCollection) o;
+        }
+        return null;
+    }
+
+    public boolean isCollection() {
+        if (task.getParameter("collection").equals(true)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isOne2one() {
+        if (task.getParameter("one2one").equals(true)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getNumberOfFiles() {
+        Object o = task.getParameter("numberOfFiles");
+        if (o != null) {
+            int value = (Integer) o;
+            if (value > 1) {
+                return value;
+            }
+            return 1;
+        }
+        return 1;
+    }
+
+    public String getFileLocation() {
+        Object o = task.getParameter("fileLocation");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return "";
+    }
+
+    public String getFileProtocol() {
+        Object o = task.getParameter("fileProtocol");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return "";
+    }
+
+    private void log(String s) {
+        Log log = Loggers.DEV_LOGGER;
+        log.debug(s);
+        System.out.println(s);
+    }
+
+    @CustomGUIComponent
+    public Component getComponent(){
+        return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
+    }
+
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    @Override
+    public void displayMessage(String string) {
+        log(string);
+    }
+}
+
 //
 //        List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
 //
@@ -156,13 +239,3 @@ public class FileUnit {
 //
 
         //     register.listAll();
-        return thisFile.getUuid();
-    }
-
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        System.out.println(s);
-    }
-
-}

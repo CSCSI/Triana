@@ -2,7 +2,7 @@ package org.trianacode.pegasus.sendToPegasus;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.pegasus.extras.ProgressPopup;
+import org.trianacode.pegasus.dax.Displayer;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
@@ -25,7 +25,7 @@ public class FindPegasus {
         System.out.println(s);
     }
 
-    public static ServiceInfo findPegasus(long timeout, ProgressPopup popup){
+    public static ServiceInfo findPegasus(long timeout, Displayer displayer){
 
         log("Trying to find services with JmDNS");
         JmDNS jmdns = null;
@@ -41,9 +41,8 @@ public class FindPegasus {
             long startTime = System.currentTimeMillis();
             long timeNow = 0;
 
-            if(popup != null){
-                popup.addText("Scanning network for Pegasus installations.");
-                popup.setUnsureTime();
+            if(displayer != null){
+                displayer.displayMessage("Scanning network for Pegasus installations.");
             }
             while(!pl.foundSomething() && timeNow < (startTime + timeout)){
                 log("Nothing found, waiting again.");
@@ -63,9 +62,9 @@ public class FindPegasus {
                             "\n     " + info.getServer() +
                             //                  "\n     " + info.getApplication() +
                             "\n      " + info.toString() + "\n");
-                    if (info.getName().toLowerCase().contains("pegasus")) {
-                        if(popup != null){
-                            popup.addText("Found Pegasus : " + info.getURL());
+                    if (info.getName().toLowerCase().contains("org.trianacode.pegasus.gui")) {
+                        if(displayer != null){
+                            displayer.displayMessage("Found Pegasus : " + info.getURL());
                         }
                         pegasusInfo = info;
                         found = true;
@@ -76,16 +75,16 @@ public class FindPegasus {
         } catch (Exception e) {
             e.printStackTrace();
             log("Something broke.");
-            if(popup != null){
-                popup.addTextNoProgress("Networking error");
+            if(displayer != null){
+                displayer.displayMessage("Networking error");
             }
         } finally{
             if (jmdns != null) {
                 try {
                     jmdns.close();
                 } catch(IOException e){e.printStackTrace();}
-                if(popup != null){
-                    popup.addText("Closing JmDNS");
+                if(displayer != null){
+                    displayer.displayMessage("Closing JmDNS");
                 }
             }
         }
@@ -94,7 +93,9 @@ public class FindPegasus {
             return pegasusInfo;
         }else{
             log("Pegasus is hiding... can't find it.");
-            popup.addText("Couldn't find Pegasus on local network.");
+            if(displayer != null){
+                displayer.displayMessage("Couldn't find Pegasus on local network.");
+            }
             return null;
         }
     }

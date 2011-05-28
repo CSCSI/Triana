@@ -4,7 +4,11 @@ import org.apache.commons.logging.Log;
 import org.trianacode.annotation.*;
 import org.trianacode.annotation.Process;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,45 +21,63 @@ import java.util.UUID;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass = "org.trianacode.pegasus.dax.JobUnitPanel", renderingHints = {"DAX Job"}, minimumInputs = 1)
-public class JobUnit {
+@Tool
+public class JobUnit implements TaskConscious, Displayer{
 
 
-    @Parameter
-    private String programmaticParam = "This is a process";
-    @Parameter
-    private int numberOfJobs = 1;
-    @Parameter
-    private int fileInputsPerJob = 1;
-    @Parameter
-    private int connectPattern = 0;
+    public static final int AUTO_CONNECT = 0;
+    public static final int SCATTER_CONNECT = 1;
+    public static final int ONE2ONE_CONNECT = 2;
+    public static final int SPREAD_CONNECT = 3;
 
-    @TextFieldParameter
-    private String jobName = "a_process";
+//    @Parameter
+    public int numberOfJobs = 1;
+//    @Parameter
+    public int fileInputsPerJob = 1;
+//    @Parameter
+    public int connectPattern = 0;
 
-    @TextFieldParameter
-    private String args = "an_argument";
+//    @TextFieldParameter
+    public String jobName = "a_process";
 
-    @CheckboxParameter
-    private boolean collection = false;
+//    @TextFieldParameter
+    public String args = "an_argument";
 
-    public String getArgs() {
-        return args;
+//    @CheckboxParameter
+    public boolean collection = false;
+
+    public boolean autoConnect = true;
+    public String exec = "ls";
+
+    private Task task;
+
+    public JobUnit(String exec, boolean collection, boolean autoConnect, int numberOfJobs, int fileInputsPerJob, int connectPattern) {
+        this.exec = exec;
+        this.collection = collection;
+        this.autoConnect = autoConnect;
+        this.numberOfJobs = numberOfJobs;
+        this.fileInputsPerJob = fileInputsPerJob;
+        this.connectPattern = connectPattern;
     }
-
-    public void setName(String name) {
-        this.jobName = name;
-    }
+//
+//    public String getArgs() {
+//        return args;
+//    }
+//
+//    public void setName(String name) {
+//        this.jobName = name;
+//    }
 
     @Process(gather = true)
     public UUID process(List in) {
+        UUID thisUUID = UUID.randomUUID();
         log("Job : " + jobName + " Collection = " + collection + " Number of jobs : " + numberOfJobs);
 
         DaxJobChunk thisJob = new DaxJobChunk();
 
         thisJob.setJobName(jobName);
         thisJob.setJobArgs(args);
-        thisJob.setUuid(UUID.randomUUID());
+        thisJob.setUuid(thisUUID);
         thisJob.setCollection(collection);
         thisJob.setNumberOfJobs(numberOfJobs);
         thisJob.setFileInputsPerJob(fileInputsPerJob);
@@ -104,13 +126,102 @@ public class JobUnit {
         }
 
         thisJob.addArgBuilder(ab);
-        return thisJob.getUuid();
+        return thisUUID;
+    }
+
+    public void getParams() {
+        if(task != null){
+            collection = isCollection();
+            numberOfJobs = getNumberOfJobs();
+            connectPattern = getConnectPattern();
+            fileInputsPerJob = getFileInputsPerJob();
+        }
+    }
+
+    public void setParams() {
+        if(task != null){
+            task.setParameter("args", args);
+            task.setParameter("numberOfJobs", numberOfJobs);
+            task.setParameter("fileInputsPerJob", fileInputsPerJob);
+            task.setParameter("collection", collection);
+            task.setParameter("connectPattern", connectPattern);
+        }
+    }
+
+    public boolean isCollection() {
+        Object o = task.getParameter("collection");
+        log("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        if (o.equals(true)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getNumberOfJobs() {
+        Object o = task.getParameter("numberOfJobs");
+        log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        if (o != null) {
+            int value = (Integer) o;
+            if (value > 1) {
+                return value;
+            }
+            return 1;
+        }
+        return 1;
+    }
+
+    public int getFileInputsPerJob() {
+        Object o = task.getParameter("fileInputsPerJob");
+        log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+        if (o != null) {
+            int value = (Integer) o;
+            if (value > 1) {
+                return value;
+            }
+            return 1;
+        }
+        return 1;
+    }
+
+    public int getConnectPattern() {
+        Object o = task.getParameter("connectPattern");
+        if (o != null) {
+            int value = (Integer) o;
+            switch (value) {
+                case 0:
+                    return AUTO_CONNECT;
+                case 1:
+                    return SCATTER_CONNECT;
+                case 2:
+                    return ONE2ONE_CONNECT;
+                case 3:
+                    return SPREAD_CONNECT;
+            }
+        }
+        return AUTO_CONNECT;
+    }
+
+
+    @CustomGUIComponent
+    public Component getComponent(){
+        return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
     }
 
     private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
+    }
+
+    @Override
+    public void displayMessage(String string) {
+        log(string);
+    }
+
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
     }
 }
 

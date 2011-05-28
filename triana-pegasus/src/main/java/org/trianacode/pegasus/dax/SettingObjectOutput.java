@@ -16,7 +16,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 
-@Tool(panelClass = "org.trianacode.pegasus.dax.SettingObjectOutputPanel")
+@Tool(panelClass = "org.trianacode.org.trianacode.pegasus.gui.dax.SettingObjectOutputPanel")
 public class SettingObjectOutput {
 
     @Parameter

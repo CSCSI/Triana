@@ -6,13 +6,11 @@ import edu.isi.pegasus.planner.dax.Executable;
 import edu.isi.pegasus.planner.dax.File;
 import edu.isi.pegasus.planner.dax.Job;
 import org.apache.commons.logging.Log;
-import org.trianacode.annotation.CheckboxParameter;
+import org.trianacode.annotation.*;
 import org.trianacode.annotation.Process;
-import org.trianacode.annotation.TextFieldParameter;
-import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,21 +27,22 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  * <p/>
  * DO NOT USE org.griphyn FOR THIS CLASS
- * use isi.pegasus. for v3.0.1 compatibility.
+ * use isi.org.trianacode.pegasus.gui. for v3.0.1 compatibility.
  */
 
-@Tool(panelClass = "org.trianacode.pegasus.dax.DaxCreatorV3Panel")
-public class DaxCreatorV3 {
+@Tool //(panelClass = "org.trianacode.org.trianacode.pegasus.gui.dax.DaxCreatorV3Panel")
+public class DaxCreatorV3 implements TaskConscious {
     private static final int AUTO_CONNECT = 0;
     private static final int SCATTER_CONNECT = 1;
     private static final int ONE2ONE_CONNECT = 2;
     private static final int SPREAD_CONNECT = 3;
     public int idNumber = 0;
+    private Task task;
 
     private ArrayList<String> PFLarray = new ArrayList<String>();
 
     @CheckboxParameter
-    private boolean demo = false;
+    public boolean demo = false;
 
     @TextFieldParameter
     private String fileName = "output";
@@ -55,8 +54,11 @@ public class DaxCreatorV3 {
         DaxRegister register = DaxRegister.getDaxRegister();
 
         java.io.File daxFile = null;
+        //       ApplicationFrame frame = GUIEnv.getApplicationFrame();
         try {
-            GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //         if(frame != null){
+            //           frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //     }
             //  daxFromInList(in);
             daxFile = daxFromRegister(register);
         } catch (Exception e) {
@@ -65,14 +67,21 @@ public class DaxCreatorV3 {
         } finally {
             register.clear();
             log("Cleared register");
-            GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            //         if(frame != null){
+            //             frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            //         }
         }
         return daxFile;
     }
 
+    @CustomGUIComponent
+    public Component getComponent(){
+        return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
+    }
+
     private void daxFromInList(List in) {
 
-        //needs to be in the new isi.pegasus
+        //needs to be in the new isi.org.trianacode.pegasus.gui
         // NOT org.griphyn
 
         ADAG dax = new ADAG(fileName);
@@ -592,39 +601,21 @@ public class DaxCreatorV3 {
 
 
     private java.io.File writeDax(ADAG dax) {
-        //      log("\nADAG has " + dax.getJobCount() + " jobs in.");
-
-        //      if(dax.getJobCount() > 0 ){
-
-        //       FileWriter fw = null;
-        //           fw = new FileWriter(fileName + ".dax");
         dax.writeToFile(fileName + ".dax");
-        //    dax.writeToSTDOUT();
-
         log("File " + fileName + " saved.\n");
-
-//        }else{
-//            log("No jobs in DAX, will not create file. (Avoids overwrite)");
-//        }
 
         java.io.File daxFile = new java.io.File(fileName + ".dax");
 
-        if (demo && daxFile.exists() && daxFile.canRead()) {
-            log("Displaying demo of " + daxFile.getAbsolutePath());
-            DaxReader dr = new DaxReader();
-            try {
-                TaskGraph t = dr.importWorkflow(daxFile, GUIEnv.getApplicationFrame().getEngine().getProperties());
-                TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
-            } catch (Exception e) {
-                log("Error opening *" + fileName + "* demo taskgraph : " + e);
-                e.printStackTrace();
-            }
-        } else {
-            log("Not displaying demo, or file not found/accessible : " + daxFile.getAbsolutePath());
-        }
-        GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Dax saved : " + fileName);
 
+
+
+
+        //Cursor change
+//        ApplicationFrame frame = GUIEnv.getApplicationFrame();
+//        if(frame != null){
+//            frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//            JOptionPane.showMessageDialog(frame, "Dax saved : " + fileName);
+//        }
         return daxFile;
     }
 
@@ -634,4 +625,10 @@ public class DaxCreatorV3 {
         log.debug(s);
         System.out.println(s);
     }
+
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
 }

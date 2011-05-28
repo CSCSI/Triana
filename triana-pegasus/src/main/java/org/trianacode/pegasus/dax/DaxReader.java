@@ -3,10 +3,6 @@ package org.trianacode.pegasus.dax;
 import org.apache.commons.logging.Log;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.gui.extensions.AbstractFormatFilter;
-import org.trianacode.gui.extensions.TaskGraphImporterInterface;
-import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.main.organize.TaskGraphOrganize;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.Proxy;
@@ -19,11 +15,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.awt.*;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,12 +33,17 @@ import java.util.Vector;
  * Time: 2:07:26 PM
  * To change this template use File | Settings | File Templates.
  */
-public class DaxReader extends AbstractFormatFilter implements TaskGraphImporterInterface {
+public class DaxReader{
 
     private File file = null;
     private Document doc = null;
     private ArrayList<DaxJobHolder> toolVector = new ArrayList<DaxJobHolder>();
     private ArrayList<DaxFileHolder> files = new ArrayList<DaxFileHolder>();
+    private String daxPackage = "org.trianacode.pegasus.gui.guiUnits";
+    private String daxFileUnitName = "DaxFile";
+    private String daxJobUnitName = "DaxJob";
+
+    public DaxReader() {}
 
     public static void main(String[] args) {
         String filename = "";
@@ -62,18 +60,10 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         getJobInfo();
     }
 
-    public void DaxReaderWithChooser() {
-        JFileChooser fc = new JFileChooser();
-        if (fc.showOpenDialog(GUIEnv.getApplicationFrame()) == JFileChooser.APPROVE_OPTION) {
-            setFile(fc.getSelectedFile());
-            NodeList jobList = getJobInfo();
-            if (jobList != null) {
-                createTaskGraph(jobList, GUIEnv.getApplicationFrame().getEngine().getProperties());
-            }
-        }
-    }
-
-    public DaxReader() {
+    public DaxReader(String daxPackage, String file, String job) {
+        this.daxPackage = daxPackage;
+        this.daxFileUnitName = file;
+        this.daxJobUnitName = job;
     }
 
     private void reset() {
@@ -83,7 +73,6 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         files = new ArrayList<DaxFileHolder>();
     }
 
-    @Override
     public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException {
         log("importWorkflow called.");
         setFile(file);
@@ -233,7 +222,6 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         log("Attached Cables. Trying to organize taskgraph.");
         //    tg = combineUnits(tg);
 
-        TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
 
         return tg;
 
@@ -520,8 +508,8 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         try {
             tool.setDataInputNodeCount(inputNodes);
             tool.setDataOutputNodeCount(outputNodes);
-            tool.setToolPackage("org.trianacode.pegasus.dax");
-            tool.setProxy(makeProxy("JobUnit", "org.trianacode.pegasus.dax"));
+            tool.setToolPackage(daxPackage);
+            tool.setProxy(makeProxy(daxJobUnitName, daxPackage));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -568,8 +556,8 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
         try {
             tool.setDataInputNodeCount(inputNodes);
             tool.setDataOutputNodeCount(outputNodes);
-            tool.setToolPackage("org.trianacode.pegasus.dax");
-            tool.setProxy(makeProxy("FileUnit", "org.trianacode.pegasus.dax"));
+            tool.setToolPackage(daxPackage);
+            tool.setProxy(makeProxy(daxFileUnitName, daxPackage));
         } catch (TaskException e) {
             e.printStackTrace();
         }
@@ -661,35 +649,6 @@ public class DaxReader extends AbstractFormatFilter implements TaskGraphImporter
 
         }
         return listString;
-    }
-
-    @Override
-    public String getFilterDescription() {
-        return null;
-    }
-
-    @Override
-    public FileFilter[] getChoosableFileFilters() {
-        return new FileFilter[0];
-    }
-
-    @Override
-    public FileFilter getDefaultFileFilter() {
-        return null;
-    }
-
-    @Override
-    public boolean hasOptions() {
-        return false;
-    }
-
-    @Override
-    public int showOptionsDialog(Component parent) {
-        return 0;
-    }
-
-    public String toString() {
-        return "DaxReader";
     }
 
     private void log(String s) {
