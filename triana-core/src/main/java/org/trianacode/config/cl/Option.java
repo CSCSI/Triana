@@ -11,6 +11,7 @@ public class Option {
     private String value;
     private String description;
     private boolean multiple = false;
+    private boolean requiresValue = false;
 
     public Option(String shortOpt, String longOpt, String description) {
         this(shortOpt, longOpt, null, description);
@@ -21,10 +22,10 @@ public class Option {
     }
 
     public Option(String shortOpt, String longOpt, String value, String description) {
-        this(shortOpt, longOpt, value, description, false);
+        this(shortOpt, longOpt, value, description, false, value != null && value.length() > 0);
     }
 
-    public Option(String shortOpt, String longOpt, String value, String description, boolean multiple) {
+    public Option(String shortOpt, String longOpt, String value, String description, boolean multiple, boolean requiresValue) {
         if (shortOpt == null || shortOpt.length() == 0) {
             throw new IllegalArgumentException("Option must have a short option");
         }
@@ -39,6 +40,7 @@ public class Option {
         this.value = value;
         this.description = description;
         this.multiple = multiple;
+        this.requiresValue = requiresValue;
     }
 
     public String getShortOpt() {
@@ -47,6 +49,10 @@ public class Option {
 
     public String getValue() {
         return value;
+    }
+
+    public boolean isRequiresValue() {
+        return requiresValue;
     }
 
     public String getLongOpt() {

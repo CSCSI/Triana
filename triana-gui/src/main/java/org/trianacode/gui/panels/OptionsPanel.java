@@ -58,6 +58,7 @@
  */
 package org.trianacode.gui.panels;
 
+import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.gui.SpringUtilities;
 import org.trianacode.gui.hci.GUIEnv;
@@ -117,7 +118,8 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     private JPanel externalPanel;
 
     private JTextField modulesTextField;
-    private TrianaProperties properties;
+    private JTextField moduleTextField;
+    private TrianaInstance engine;
 
     public void okClicked() {
         GUIEnv.getApplicationFrame().repaintWorkspace();
@@ -154,7 +156,7 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
      */
     private JPanel getGeneralPanel() {
         if (generalPanel == null) {
-            JPanel panel = new JPanel(new GridLayout(8, 1));
+            JPanel panel = new JPanel(new GridLayout(9, 1));
             autoconnectChk = addCheckBox(panel, Env.getString("autoConnect"), GUIEnv.isAutoConnect());
             restoreChk = addCheckBox(panel, Env.getString("restoreLast"), GUIEnv.restoreLast());
             enableTipsChk = addCheckBox(panel, Env.getString("showToolTips"), GUIEnv.showPopUpDescriptions());
@@ -163,9 +165,9 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
             showNodeEditIconsChk = addCheckBox(panel, Env.getString("showNodeEditIcons"), GUIEnv.showNodeEditIcons());
             convertToDoubleChk = addCheckBox(panel, Env.getString("convertToDouble"), Env.getConvertToDouble());
             smoothCables = addCheckBox(panel, "Smooth Cables", GUIEnv.isSmoothCables());
-            this.properties = GUIEnv.getApplicationFrame().getEngine().getProperties();
+            this.engine = GUIEnv.getApplicationFrame().getEngine();
 
-            String modulesRoot = properties.getProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY);
+            String modulesRoot = engine.getProperties().getProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY);
             if (modulesRoot == null) {
                 modulesRoot = "";
             }
@@ -183,6 +185,20 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
             browseButton.setMargin(new Insets(6, 4, 2, 4));
             intern.add(browseButton, BorderLayout.EAST);
             panel.add(intern);
+
+
+            moduleTextField = new JTextField(20);
+            JPanel intern1 = new JPanel(new BorderLayout());
+            intern1.setBorder(new EmptyBorder(0, 3, 0, 3));
+            intern1.add(new JLabel("New Module: "), BorderLayout.WEST);
+            intern1.add(moduleTextField, BorderLayout.CENTER);
+
+            JButton browseButton1 = new JButton(GUIEnv.getIcon("dots.png"));
+            browseButton1.setActionCommand("module");
+            browseButton1.addActionListener(this);
+            browseButton1.setMargin(new Insets(6, 4, 2, 4));
+            intern1.add(browseButton1, BorderLayout.EAST);
+            panel.add(intern1);
 
             generalPanel = new JPanel(new BorderLayout());
             generalPanel.add(panel, BorderLayout.NORTH);
@@ -510,15 +526,22 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             if (e.getActionCommand().equals("modulesRoot")) {
-                if (properties != null) {
+                if (engine != null) {
                     modulesTextField.setText(chooser.getSelectedFile().getAbsolutePath());
                     modulesTextField.setCaretPosition(0);
-                    properties.setProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY, modulesTextField.getText().trim());
+                    engine.getProperties().setProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY, modulesTextField.getText().trim());
                     try {
-                        properties.saveProperties();
+                        engine.getProperties().saveProperties();
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
+                }
+            } else if (e.getActionCommand().equals("module")) {
+                if (engine != null) {
+                    moduleTextField.setText(chooser.getSelectedFile().getAbsolutePath());
+                    moduleTextField.setCaretPosition(0);
+                    engine.loadModule(moduleTextField.getText().trim());
+
                 }
             }
         }

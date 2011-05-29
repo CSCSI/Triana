@@ -1,4 +1,4 @@
-package org.trianacode.module;
+package org.trianacode.config;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
@@ -20,7 +20,11 @@ public class ModuleClassLoader extends URLClassLoader {
 
     static Log log = Loggers.TOOL_LOGGER;
 
-    private File root = null;
+    private static ModuleClassLoader instance = new ModuleClassLoader();
+
+    public static ModuleClassLoader getInstance() {
+        return instance;
+    }
 
     public ModuleClassLoader(ClassLoader classLoader) {
         super(new URL[0], classLoader);
@@ -31,10 +35,10 @@ public class ModuleClassLoader extends URLClassLoader {
     }
 
     public void addModule(URL module) {
-        addModule(module, true, false);
+        addModule(module, false);
     }
 
-    private void addModule(URL module, boolean first, boolean descend) {
+    private void addModule(URL module, boolean descend) {
         if (UrlUtils.isFile(module)) {
 
             try {
@@ -42,9 +46,7 @@ public class ModuleClassLoader extends URLClassLoader {
                 if (!mod.exists() || mod.getName().startsWith(".")) {
                     return;
                 }
-                if (first) {
-                    root = mod;
-                }
+
                 if (mod.isDirectory()) {
                     File[] files = mod.listFiles();
                     if (files == null) {
@@ -60,19 +62,19 @@ public class ModuleClassLoader extends URLClassLoader {
                                 addPath(file.getAbsolutePath());
                             } else if (name.equals("doc")) {
                                 addPath(file.getAbsolutePath());
-                                addModule(file.toURI().toURL(), false, true);
+                                addModule(file.toURI().toURL(), true);
                             } else if (name.equals("src")) {
                                 continue;
                             } else if (name.equals("CVS")) {
                                 continue;
                             } else if (name.equals("nativ")) {
                                 addPath(file.getAbsolutePath());
-                                addModule(file.toURI().toURL(), false, true);
+                                addModule(file.toURI().toURL(), true);
                             } else {
                                 if (descend) {
                                     addPath(file.getAbsolutePath());
                                 }
-                                addModule(file.toURI().toURL(), false, descend);
+                                addModule(file.toURI().toURL(), descend);
                             }
                         } else {
                             if (name.endsWith(".jar")) {
@@ -105,13 +107,6 @@ public class ModuleClassLoader extends URLClassLoader {
         log.debug(" MODULE CLASS LOADER:" + module + " CLASSPATH:" + getClassPath());
     }
 
-    public File getFile(String relativePath) {
-        File f = new File(root, relativePath);
-        if (f.exists() && f.length() > 0) {
-            return f;
-        }
-        return null;
-    }
 
     private void addPath(String path) {
         File f = new File(path);

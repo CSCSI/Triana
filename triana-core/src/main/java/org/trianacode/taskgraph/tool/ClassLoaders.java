@@ -17,8 +17,8 @@
 package org.trianacode.taskgraph.tool;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.ModuleClassLoader;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.module.ModuleClassLoader;
 
 import java.io.IOException;
 import java.io.InputStream;

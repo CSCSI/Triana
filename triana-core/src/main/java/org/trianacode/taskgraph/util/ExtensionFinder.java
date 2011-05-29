@@ -17,8 +17,8 @@
 package org.trianacode.taskgraph.util;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.ModuleClassLoader;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.module.ModuleClassLoader;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.ToolClassLoader;
 

@@ -2,10 +2,10 @@ package org.trianacode.pegasus;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
+import org.trianacode.config.ModuleClassLoader;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.module.ModuleClassLoader;
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
@@ -59,7 +59,7 @@ public class CommandLinePegasus {
         Task creatorTask = null;
         Task submitTask = null;
 //        if(creatorClass != null && submitClass != null){
-        try{
+        try {
             ToolImp creatorTool = new ToolImp(engine.getProperties());
             //            initTool(creatorTool, creatorClass.getCanonicalName(), creatorClass.getPackage().getName(), 0, 1);
             initTool(creatorTool, "DaxCreatorV3", pegasusPackage, 1, 1);
@@ -74,9 +74,8 @@ public class CommandLinePegasus {
             submitTask.addParameterInputNode("manualURL");
 
 
-
 //      If daxCreator and daxSubmit tasks were able to be instatiated, connect them together.
-            if(creatorTask != null && submitTask != null){
+            if (creatorTask != null && submitTask != null) {
                 try {
 
                     taskGraph.connect(creatorTask.getDataOutputNode(0), submitTask.getDataInputNode(0));
@@ -85,30 +84,30 @@ public class CommandLinePegasus {
                     log("Failed to connect task cables");
                     e.printStackTrace();
                 }
-            }else {
+            } else {
                 log("Tasks were null, not connected.");
             }
 
             Node childNode = getTaskgraphChildNode(taskGraph);
-            if(childNode != null){
+            if (childNode != null) {
                 taskGraph.connect(childNode, creatorTask.getDataInputNode(0));
-            }else{
+            } else {
                 log("No child node available to attach daxCreator to.");
             }
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 //        }else {
 //            log("Class loaders failed to load dax classes");
 //        }
 
-        try{
+        try {
             BufferedWriter fileWriter = new BufferedWriter(new FileWriter("/Users/ian/pegterm.xml"));
             XMLWriter writer = new XMLWriter(fileWriter);
             writer.writeComponent(taskGraph);
-        }catch (Exception e){
+        } catch (Exception e) {
             log("Failed to write modified xml file");
             e.printStackTrace();
         }
@@ -128,10 +127,10 @@ public class CommandLinePegasus {
         }
     }
 
-    private static Node getTaskgraphChildNode(TaskGraph taskGraph){
+    private static Node getTaskgraphChildNode(TaskGraph taskGraph) {
 // Find a child task on the taskgraph to attach the daxCreator to, and connect it
         Node childNode = null;
-        try{
+        try {
             Task[] tasks = taskGraph.getTasks(false);
             ArrayList<Task> childTasks = new ArrayList<Task>();
             for (Task task : tasks) {
@@ -140,21 +139,21 @@ public class CommandLinePegasus {
                 }
             }
             log("These are the child tasks of the taskgraph (will use the first discovered): ");
-            for(Task task : childTasks){
+            for (Task task : childTasks) {
                 log(task.getToolName());
             }
 
-            if(childTasks.size() > 0){
+            if (childTasks.size() > 0) {
                 childNode = childTasks.get(0).addDataOutputNode();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log("Failed to add node to child leaf of taskgraph");
         }
 
         return childNode;
     }
 
-    private static void investigateClassLoaders(TrianaInstance engine){
+    private static void investigateClassLoaders(TrianaInstance engine) {
         log("\nClass loaders");
         List<ToolClassLoader> toolClasses = ClassLoaders.getToolClassLoaders();
         for (ToolClassLoader next : toolClasses) {
@@ -163,7 +162,7 @@ public class CommandLinePegasus {
             for (String s : next.getClassPathList()) {
                 log(s);
             }
-            for (String s : next.getLibPaths()){
+            for (String s : next.getLibPaths()) {
                 log(s);
             }
 
@@ -177,45 +176,45 @@ public class CommandLinePegasus {
         List<ModuleClassLoader> modulesClasses = ClassLoaders.getModuleClassLoaders();
         for (ModuleClassLoader next : modulesClasses) {
             log(next.getClassPath());
-            for(String s : next.getClassPathList()){
+            for (String s : next.getClassPathList()) {
                 log(s);
             }
         }
 
         log("Local tools from resolver");
-        for(Tool tool : engine.getToolResolver().getTools()){
+        for (Tool tool : engine.getToolResolver().getTools()) {
             log(tool.getQualifiedToolName());
         }
 
         log("Resolver registy contents");
         Collection<ToolMetadataResolver> resolvers = ResolverRegistry.getResolvers();
-        for(ToolMetadataResolver resolver : resolvers){
+        for (ToolMetadataResolver resolver : resolvers) {
             log(resolver.getName());
         }
 
         log("Toolboxes from ToolTable");
-        for(Toolbox toolbox : engine.getToolTable().getToolBoxes()){
+        for (Toolbox toolbox : engine.getToolTable().getToolBoxes()) {
             log("Toolbox : " + toolbox.getPath());
-            for(Tool tool : toolbox.getTools()){
+            for (Tool tool : toolbox.getTools()) {
                 log(tool.getQualifiedToolName());
             }
         }
 
         log("Toolboxes from ToolResolver");
-        for(Toolbox toolbox : engine.getToolResolver().getToolboxes()){
+        for (Toolbox toolbox : engine.getToolResolver().getToolboxes()) {
             log("Toolbox : " + toolbox.getPath());
-            for(Tool tool : toolbox.getTools()){
+            for (Tool tool : toolbox.getTools()) {
                 log(tool.getQualifiedToolName());
             }
         }
 
-        try{
+        try {
             log("Messing with system classloader");
             Enumeration urls = ClassLoader.getSystemClassLoader().getResources(pegasusPackage + ".DaxCreatorV3");
-            while(urls.hasMoreElements()){
+            while (urls.hasMoreElements()) {
                 log(urls.nextElement().toString());
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             log("Error screwing around with system classloader");
         }
 

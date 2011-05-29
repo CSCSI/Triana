@@ -58,14 +58,14 @@
  */
 package org.trianacode.taskgraph.imp;
 
-import java.util.ArrayList;
-
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.event.CableEvent;
 import org.trianacode.taskgraph.event.CableListener;
+
+import java.util.ArrayList;
 
 /**
  * A cable linking two Tasks in a TaskGraphImp. The Tasks are linked through their input/output Nodes.
@@ -280,6 +280,7 @@ public class CableImp implements Cable {
     }
 
     /**
+     * ~«
      * Notifies all the cable listeners that a the cable has been disconnected.
      */
     private void notifyCableDisconnected() {

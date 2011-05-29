@@ -325,7 +325,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     private synchronized void notifyExecutionRequest() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
-        ExecutionEvent event = new ExecutionEvent(ExecutionState.SCHEDULED, this);
+        ExecutionEvent event = new ExecutionEvent(getExecutionState(), this);
 
         for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionRequested(event);
@@ -345,7 +345,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
     private synchronized void notifyExecutionFinished() {
         ExecutionListener[] listeners = (ExecutionListener[]) execlisteners
                 .toArray(new ExecutionListener[execlisteners.size()]);
-        ExecutionEvent event = new ExecutionEvent(ExecutionState.COMPLETE, this);
+        ExecutionEvent event = new ExecutionEvent(getExecutionState(), this);
 
         for (int count = 0; count < listeners.length; count++) {
             listeners[count].executionFinished(event);

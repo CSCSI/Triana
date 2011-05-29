@@ -242,7 +242,7 @@ public class Locations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logger.info("Triana runHome : " + runHome);
+        logger.debug("Triana runHome : " + runHome);
         return runHome;
     }
 

@@ -2,6 +2,7 @@ package org.trianacode;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.config.Locations;
+import org.trianacode.config.ModuleClassLoader;
 import org.trianacode.config.PropertyLoader;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.config.cl.ArgumentParser;
@@ -11,7 +12,6 @@ import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.http.HTTPServices;
-import org.trianacode.module.Module;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -69,7 +69,6 @@ public class TrianaInstance {
     private List<Class> extensionClasses = new ArrayList<Class>();
     private List<String> extraToolboxes = new ArrayList<String>();
     private List<String> modulePaths = new ArrayList<String>();
-    private List<Module> modules = new ArrayList<Module>();
 
     private boolean runServer = false;
     private boolean reresolve = false;
@@ -122,7 +121,7 @@ public class TrianaInstance {
         props = propertyLoader.getProperties();
 
         //  This is to give the option to only load toolboxes given at the command line. No defaults to be selected.
-        if(TrianaOptions.hasOption(parser, TrianaOptions.SUPPRESS_DEFAULT_TOOLBOXES)){
+        if (TrianaOptions.hasOption(parser, TrianaOptions.SUPPRESS_DEFAULT_TOOLBOXES)) {
             System.out.println("Default toolboxes suppressed");
             props.put(TrianaProperties.TOOLBOX_SEARCH_PATH_PROPERTY, "");
             suppressDefaultToolboxes = true;
@@ -158,10 +157,10 @@ public class TrianaInstance {
             if (progress != null) {
                 progress.showCurrentProgress("Searching for local tools");
             }
-            try{
+            try {
                 System.out.println("Extra toolboxes : " + extraToolboxes.toString());
                 toolResolver.resolve(reresolve, extraToolboxes);
-            }catch (Throwable throwable){
+            } catch (Throwable throwable) {
                 System.out.println("Error in toolResolver.resolve()" + throwable.getCause().toString());
             }
         }
@@ -235,6 +234,7 @@ public class TrianaInstance {
     }
 
     private void initModules(List<String> modulePaths) {
+        ClassLoaders.addClassLoader(ModuleClassLoader.getInstance());
         String moduleRoot = props.getProperty(TrianaProperties.MODULE_SEARCH_PATH_PROPERTY);
         if (moduleRoot != null) {
             File f = new File(moduleRoot);
@@ -246,30 +246,26 @@ public class TrianaInstance {
                     }
                 });
                 for (File file : files) {
-                    try {
-                        Module m = new Module(file);
-                        modules.add(m);
-                        ClassLoaders.addClassLoader(m.getClassLoader());
-                    } catch (Exception e) {
-                        log.error(e);
-                    }
-
+                    loadModule(file.getAbsolutePath());
                 }
             }
         }
         for (String modulePath : modulePaths) {
-            File file = new File(modulePath);
-            if (file.exists() && file.isDirectory()) {
-                try {
-                    Module m = new Module(file);
-                    modules.add(m);
-                    ClassLoaders.addClassLoader(m.getClassLoader());
-                    System.out.println(m.getName() + " " + m.getPath());
-                } catch (Exception e) {
-                    log.error(e);
-                }
+            loadModule(modulePath);
+        }
+
+    }
+
+    public void loadModule(String path) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            try {
+                ModuleClassLoader.getInstance().addModule(file.toURI().toURL());
+            } catch (Exception e) {
+                log.error(e);
             }
         }
+
     }
 
     public boolean isRunServer() {
@@ -360,8 +356,7 @@ public class TrianaInstance {
                 Method shutdownHook = java.lang.Runtime.class
                         .getMethod("addShutdownHook", new Class[]{java.lang.Thread.class});
                 shutdownHook.invoke(Runtime.getRuntime(), new Object[]{this});
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

@@ -17,6 +17,7 @@
 package org.trianacode.taskgraph.tool;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.config.ModuleClassLoader;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.util.UrlUtils;
 
@@ -49,7 +50,7 @@ public class ToolClassLoader extends URLClassLoader {
     }
 
     public ToolClassLoader() {
-        this(ClassLoader.getSystemClassLoader());
+        this(ModuleClassLoader.getInstance());
     }
 
 

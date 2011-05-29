@@ -1,30 +1,19 @@
 package audio.input;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import org.trianacode.gui.Display;
+import org.trianacode.gui.panels.ParameterPanel;
+import triana.types.util.Str;
+
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import org.trianacode.gui.Display;
-import org.trianacode.gui.panels.ParameterPanel;
-import triana.types.util.Str;
 
 /**
  * $POPUP_DESCRIPTION
@@ -85,7 +74,7 @@ public class LoadSoundPanel extends ParameterPanel {
                 LoadSound.createAudioInputStream(fc.getSelectedFile());
 
                 String fn = fc.getSelectedFile().getAbsolutePath();
-                userScreen(fc.getSelectedFile().getName());
+                //userScreen(fc.getSelectedFile().getName());
                 parameterUpdate("fileName", fn);
 
 

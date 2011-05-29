@@ -69,7 +69,7 @@ public class OptionsHandler {
                         }
                     }
                     if (known) {
-                        if (option.getValue() != null && option.getValue().length() > 0) {
+                        if (option.isRequiresValue()) {
                             if (args.get(s) == null || args.get(s).size() == 0) {
                                 throw new ArgumentParsingException("Option " + s + " requires argument '" + option.getValue() + "'");
                             }
@@ -98,11 +98,16 @@ public class OptionsHandler {
             String v = "";
             if (option.getValue() != null && option.getValue().length() > 0) {
                 v = option.getValue();
-                if (!v.startsWith("<") && !v.endsWith(">")) {
-                    v = "<" + v + ">";
+                if (option.isRequiresValue()) {
+                    if (!v.startsWith("<") && !v.endsWith(">")) {
+                        v = "<" + v + ">";
+                    }
+                } else {
+                    if (!v.startsWith("[") && !v.endsWith("]")) {
+                        v = "[" + v + "]";
+                    }
                 }
             }
-
             sb.append("-")
                     .append(option.getShortOpt())
                     .append(" ");
@@ -110,12 +115,43 @@ public class OptionsHandler {
                 sb.append(" --").append(option.getLongOpt());
             }
             sb.append(" ")
-                    .append(v)
-                    .append("\n\t\t")
-                    .append(option.getDescription())
-                    .append("\n\t");
+                    .append(v);
+            if (option.getDescription() != null && option.getDescription().length() > 0) {
+                sb.append("\n\t\t");
+                List<String> segs = split(option.getDescription(), 120);
+                for (int i = 0; i < segs.size() - 1; i++) {
+                    String seg = segs.get(i);
+                    sb.append(seg).append("\n\t\t");
+                }
+                sb.append(segs.get(segs.size() - 1)).append("\n\t");
+            } else {
+                sb.append("\n");
+            }
         }
         return sb.toString();
     }
+
+    private static List<String> split(String text, int size) {
+        List<String> ret = new ArrayList<String>();
+        int start = 0;
+        while (start < text.length()) {
+            int nextSeg = start + size;
+            StringBuilder sb = new StringBuilder();
+            sb.append(text.substring(start, Math.min(text.length(), nextSeg)).trim());
+            while (nextSeg < text.length()) {
+                char c = text.charAt(nextSeg);
+                if (c != ' ' && c != '\n' && c != '\t') {
+                    sb.append(c);
+                    nextSeg++;
+                } else {
+                    break;
+                }
+            }
+            start = nextSeg;
+            ret.add(sb.toString());
+        }
+        return ret;
+    }
+
 
 }
