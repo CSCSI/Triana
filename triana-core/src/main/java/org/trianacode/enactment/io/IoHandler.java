@@ -272,6 +272,6 @@ public class IoHandler {
             System.out.println("    val:" + mapping.getIoType().getValue());
             System.out.println("    ref:" + mapping.getIoType().isReference());
         }
-        testMappings(ioc, "/Users/scmabh/work/projects/triana/code/triana/triana-toolboxes/common/regexTG1.xml");
+        //testMappings(ioc, "/Users/scmabh/work/projects/triana/code/triana/triana-toolboxes/common/regexTG1.xml");
     }
 }
