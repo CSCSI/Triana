@@ -1,2 +1,2 @@
-org.trianacode.pegasus.dax.DaxFileComponentModel
-org.trianacode.pegasus.dax.DaxJobComponentModel
+org.trianacode.pegasus.gui.models.DaxFileComponentModel
+org.trianacode.pegasus.gui.models.DaxJobComponentModel
