@@ -53,6 +53,10 @@ public class PatternCollection implements StringPattern, Serializable {
     }
 
     public String toString() {
+        String concat = "";
+        for (StringPattern string : patterns) {
+            concat.concat(string.toString());
+        }
         return patterns.toString();
     }
 

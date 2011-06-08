@@ -1,7 +1,9 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
-import org.trianacode.annotation.*;
+import org.trianacode.annotation.CustomGUIComponent;
+import org.trianacode.annotation.Parameter;
+import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.pegasus.string.PatternCollection;
 import org.trianacode.taskgraph.Task;
@@ -21,10 +23,12 @@ import java.util.UUID;
  */
 
 @Tool //(renderingHints = {"DAX File"})
-public class FileUnit implements TaskConscious, Displayer{
+public class FileUnit implements TaskConscious, Displayer {
 
     @Parameter
     public String fileLocation = "";
+    public String locationString = "";   //wtf?
+
     @Parameter
     public String fileProtocol = "";
     @Parameter
@@ -32,12 +36,10 @@ public class FileUnit implements TaskConscious, Displayer{
     @Parameter
     public PatternCollection namingPattern = null;
 
-    @TextFieldParameter
+
     public String fileName = "a.txt";
 
-    @CheckboxParameter
     public boolean collection = false;
-    @CheckboxParameter
     public boolean one2one = false;
     public Task task;
 
@@ -111,11 +113,52 @@ public class FileUnit implements TaskConscious, Displayer{
         return thisFile.getUuid();
     }
 
-/**
+    public void setParams() {
+        if (task != null) {
+            task.setParameter("numberOfFiles", numberOfFiles);
+            task.setParameter("collection", collection);
+            task.setParameter("one2one", one2one);
+
+            task.setParameter("fileLocation", locationString);
+            task.setParameter("fileProtocol", fileProtocol);
+
+            if (namingPattern != null) {
+                task.setParameter("namingPattern", namingPattern);
+            }
+        }
+    }
+
+    public void getParams() {
+        if (task != null) {
+            fileName = getFileName();
+            collection = isCollection();
+            numberOfFiles = getNumberOfFiles();
+            namingPattern = getNamingPattern();
+            one2one = isOne2one();
+            locationString = getFileLocation();
+            fileProtocol = getFileProtocol();
+        }
+    }
+
+    /**
      * Various getting and setting of parameters
-     *
-     * @return
      */
+    public void changeToolName(String name) {
+        fileName = name;
+        if (task != null) {
+            log("Changing tool " + task.getToolName() + " to : " + name);
+            task.setParameter("fileName", name);
+            task.setToolName(name);
+        }
+    }
+
+    private String getFileName() {
+        Object o = task.getParameter("fileName");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return fileName;
+    }
 
     public PatternCollection getNamingPattern() {
         Object o = task.getParameter("namingPattern");
@@ -127,19 +170,23 @@ public class FileUnit implements TaskConscious, Displayer{
     }
 
     public boolean isCollection() {
-        if (task.getParameter("collection").equals(true)) {
-            return true;
-        } else {
-            return false;
+        Object o = task.getParameter("collection");
+        if (o != null) {
+            if (o instanceof Boolean) {
+                return (Boolean) o;
+            }
         }
+        return false;
     }
 
     public boolean isOne2one() {
-        if (task.getParameter("one2one").equals(true)) {
-            return true;
-        } else {
-            return false;
+        Object o = task.getParameter("one2one");
+        if (o != null) {
+            if (o instanceof Boolean) {
+                return (Boolean) o;
+            }
         }
+        return false;
     }
 
     public int getNumberOfFiles() {
@@ -177,13 +224,14 @@ public class FileUnit implements TaskConscious, Displayer{
     }
 
     @CustomGUIComponent
-    public Component getComponent(){
+    public Component getComponent() {
         return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
     }
 
     @Override
     public void setTask(Task task) {
         this.task = task;
+        getParams();
     }
 
     @Override
@@ -238,4 +286,4 @@ public class FileUnit implements TaskConscious, Displayer{
 //
 //
 
-        //     register.listAll();
+//     register.listAll();

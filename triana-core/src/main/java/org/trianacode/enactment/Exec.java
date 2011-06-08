@@ -108,11 +108,10 @@ public class Exec implements ExecutionListener {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
                     System.exit(1);
-                }else{
-                    if(vals.hasOption("dax")){
+                } else {
+                    if (vals.hasOption("dax")) {
                         new Exec(pid).createAndSubmitDax(wfs.get(0), data, args);
-                    }
-                    else{
+                    } else {
                         new Exec(pid).executeWorkflow(wfs.get(0), data, args);
                     }
                 }
@@ -220,7 +219,7 @@ public class Exec implements ExecutionListener {
 
     }
 
-    private void createAndSubmitDax(String workflow, String data, String[] args) throws Exception{
+    private void createAndSubmitDax(String workflow, String data, String[] args) throws Exception {
         System.out.println("\nWill attempt to create and submit dax\n");
         File f = new File(workflow);
         if (!f.exists()) {
@@ -229,18 +228,18 @@ public class Exec implements ExecutionListener {
         }
 
         TrianaInstance engine = new TrianaInstance(args);
-    //    engine.setReresolve(false);
+        //    engine.setReresolve(false);
         engine.init();
 
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
-        if(tool instanceof TaskGraph){
- //           System.out.println("Inputs : " + tool.getDataInputNodeCount() + " Outputs : " + tool.getDataOutputNodeCount());
+        if (tool instanceof TaskGraph) {
+            //           System.out.println("Inputs : " + tool.getDataInputNodeCount() + " Outputs : " + tool.getDataOutputNodeCount());
 //            TaskGraph taskGraph = (TaskGraph) tool;
-            CommandLinePegasus.initTaskgraph(engine, (TaskGraph)tool);
+            CommandLinePegasus.initTaskgraph(engine, (TaskGraph) tool);
 
             execute(tool, data);
-        }else {
+        } else {
             System.out.println("Input file not a valid workflow");
             System.exit(1);
         }
@@ -260,6 +259,7 @@ public class Exec implements ExecutionListener {
             IoHandler handler = new IoHandler();
             IoConfiguration ioc = handler.deserialize(new FileInputStream(conf));
             mappings = handler.map(ioc, runner.getTaskGraph());
+            System.out.println("Data mappings size : " + mappings.getMap().size());
         }
         runner.runTaskGraph();
         if (mappings != null) {
@@ -267,9 +267,12 @@ public class Exec implements ExecutionListener {
             while (it.hasNext()) {
                 Integer integer = it.next();
                 Object val = mappings.getValue(integer);
+                System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
                 runner.sendInputData(integer, val);
                 System.out.println("Exec.execute sent input data");
             }
+        } else {
+            System.out.println("Mappings was null");
         }
 
         while (!runner.isFinished()) {

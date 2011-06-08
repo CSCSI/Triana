@@ -1,8 +1,9 @@
 package org.trianacode.pegasus.dax;
 
 import org.apache.commons.logging.Log;
-import org.trianacode.annotation.*;
+import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Process;
+import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.annotation.TaskConscious;
@@ -22,44 +23,34 @@ import java.util.UUID;
  */
 
 @Tool
-public class JobUnit implements TaskConscious, Displayer{
-
+public class JobUnit implements TaskConscious, Displayer {
 
     public static final int AUTO_CONNECT = 0;
     public static final int SCATTER_CONNECT = 1;
     public static final int ONE2ONE_CONNECT = 2;
     public static final int SPREAD_CONNECT = 3;
 
-//    @Parameter
+    //    @Parameter
     public int numberOfJobs = 1;
-//    @Parameter
+    //    @Parameter
     public int fileInputsPerJob = 1;
-//    @Parameter
+    //    @Parameter
     public int connectPattern = 0;
 
-//    @TextFieldParameter
+    //    @TextFieldParameter
     public String jobName = "a_process";
 
-//    @TextFieldParameter
+    //    @TextFieldParameter
     public String args = "an_argument";
 
-//    @CheckboxParameter
+    //    @CheckboxParameter
     public boolean collection = false;
 
     public boolean autoConnect = true;
     public String exec = "ls";
 
-    private Task task;
+    public Task task;
 
-    public JobUnit(String exec, boolean collection, boolean autoConnect, int numberOfJobs, int fileInputsPerJob, int connectPattern) {
-        this.exec = exec;
-        this.collection = collection;
-        this.autoConnect = autoConnect;
-        this.numberOfJobs = numberOfJobs;
-        this.fileInputsPerJob = fileInputsPerJob;
-        this.connectPattern = connectPattern;
-    }
-//
 //    public String getArgs() {
 //        return args;
 //    }
@@ -67,6 +58,12 @@ public class JobUnit implements TaskConscious, Displayer{
 //    public void setName(String name) {
 //        this.jobName = name;
 //    }
+
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
+        getParams();
+    }
 
     @Process(gather = true)
     public UUID process(List in) {
@@ -130,7 +127,8 @@ public class JobUnit implements TaskConscious, Displayer{
     }
 
     public void getParams() {
-        if(task != null){
+        if (task != null) {
+            jobName = getJobName();
             collection = isCollection();
             numberOfJobs = getNumberOfJobs();
             connectPattern = getConnectPattern();
@@ -139,7 +137,7 @@ public class JobUnit implements TaskConscious, Displayer{
     }
 
     public void setParams() {
-        if(task != null){
+        if (task != null) {
             task.setParameter("args", args);
             task.setParameter("numberOfJobs", numberOfJobs);
             task.setParameter("fileInputsPerJob", fileInputsPerJob);
@@ -148,20 +146,35 @@ public class JobUnit implements TaskConscious, Displayer{
         }
     }
 
+    public void changeToolName(String name) {
+        if (task != null) {
+            log("Changing tool " + task.getToolName() + " to : " + name);
+            task.setParameter("jobName", name);
+            task.setToolName(name);
+        }
+    }
+
+    private String getJobName() {
+        Object o = task.getParameter("jobName");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return jobName;
+    }
+
     public boolean isCollection() {
         Object o = task.getParameter("collection");
-        log("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
-        if (o.equals(true)) {
-            return true;
-        } else {
-            return false;
+        if (o != null) {
+            log("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+            return o.equals(true);
         }
+        return false;
     }
 
     public int getNumberOfJobs() {
         Object o = task.getParameter("numberOfJobs");
-        log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if (o != null) {
+            log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
             int value = (Integer) o;
             if (value > 1) {
                 return value;
@@ -173,8 +186,8 @@ public class JobUnit implements TaskConscious, Displayer{
 
     public int getFileInputsPerJob() {
         Object o = task.getParameter("fileInputsPerJob");
-        log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
         if (o != null) {
+            log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
             int value = (Integer) o;
             if (value > 1) {
                 return value;
@@ -204,7 +217,7 @@ public class JobUnit implements TaskConscious, Displayer{
 
 
     @CustomGUIComponent
-    public Component getComponent(){
+    public Component getComponent() {
         return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
     }
 
@@ -217,11 +230,6 @@ public class JobUnit implements TaskConscious, Displayer{
     @Override
     public void displayMessage(String string) {
         log(string);
-    }
-
-    @Override
-    public void setTask(Task task) {
-        this.task = task;
     }
 }
 

@@ -301,22 +301,24 @@ public class ClassParser {
         for (int k = 0; k < clsAttr; k++) {
             int ref = stream.readUnsignedShort();
             UTF8Constant constant = names.get(ref);
-            String[] classes = constant.getClasses();
-            if (classes[0].equals("RuntimeVisibleAnnotations")) {
-                stream.readInt();
-                int annoslength = stream.readUnsignedShort();
-                for (int an = 0; an < annoslength; an++) {
-                    int annoName = stream.readUnsignedShort();
-                    UTF8Constant anno = names.get(annoName);
-                    if (anno.getClasses()[0].equals("org/trianacode/annotation/Tool")) {
-                        hier.setAnnotated(true);
+            if (constant != null) {
+                String[] classes = constant.getClasses();
+                if (classes[0].equals("RuntimeVisibleAnnotations")) {
+                    stream.readInt();
+                    int annoslength = stream.readUnsignedShort();
+                    for (int an = 0; an < annoslength; an++) {
+                        int annoName = stream.readUnsignedShort();
+                        UTF8Constant anno = names.get(annoName);
+                        if (anno.getClasses()[0].equals("org/trianacode/annotation/Tool")) {
+                            hier.setAnnotated(true);
+                        }
+                        drainAnnotation(stream);
                     }
-                    drainAnnotation(stream);
-                }
-            } else {
-                int attrLength = stream.readInt();
-                for (int z = 0; z < attrLength; z++) {
-                    stream.readByte();
+                } else {
+                    int attrLength = stream.readInt();
+                    for (int z = 0; z < attrLength; z++) {
+                        stream.readByte();
+                    }
                 }
             }
         }

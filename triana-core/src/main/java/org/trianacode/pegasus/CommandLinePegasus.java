@@ -2,7 +2,6 @@ package org.trianacode.pegasus;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
-import org.trianacode.config.ModuleClassLoader;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
@@ -68,10 +67,10 @@ public class CommandLinePegasus {
             ToolImp submitTool = new ToolImp(engine.getProperties());
             //            initTool(submitTool, submitClass.getCanonicalName(), submitClass.getPackage().getName(), 1, 0);
             initTool(submitTool, "DaxToPegasusUnit", pegasusPackage, 1, 0);
-            submitTool.setParameter("locationService", "AUTO");
+            submitTool.setParameter("locationService", "URL");
 
             submitTask = taskGraph.createTask(submitTool);
-            submitTask.addParameterInputNode("manualURL");
+            submitTask.addParameterInputNode("manualURL").setTriggerNode(false);
 
 
 //      If daxCreator and daxSubmit tasks were able to be instatiated, connect them together.
@@ -89,7 +88,7 @@ public class CommandLinePegasus {
             }
 
             Node childNode = getTaskgraphChildNode(taskGraph);
-            if (childNode != null) {
+            if (childNode != null && childNode.getTask() != submitTask) {
                 taskGraph.connect(childNode, creatorTask.getDataInputNode(0));
             } else {
                 log("No child node available to attach daxCreator to.");
@@ -169,15 +168,6 @@ public class CommandLinePegasus {
             URL[] urls = next.getURLs();
             for (URL url : urls) {
                 log(url.toString());
-            }
-        }
-
-        log("\nModule class loaders");
-        List<ModuleClassLoader> modulesClasses = ClassLoaders.getModuleClassLoaders();
-        for (ModuleClassLoader next : modulesClasses) {
-            log(next.getClassPath());
-            for (String s : next.getClassPathList()) {
-                log(s);
             }
         }
 

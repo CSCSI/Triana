@@ -21,21 +21,25 @@ public class DaxFileChunk implements Serializable {
     private boolean isCollection = false;
     private boolean one2one = false;
     private UUID uuid = null;
-    private Vector<DaxJobChunk> inJobChunks = new Vector();
-    private Vector<DaxJobChunk> outJobChunks = new Vector();
+    private Vector<DaxJobChunk> inJobChunks = new Vector<DaxJobChunk>();
+    private Vector<DaxJobChunk> outJobChunks = new Vector<DaxJobChunk>();
     private int numberOfFiles = 1;
     private PatternCollection namePattern = null;
     private int counter = 0;
     private String fileLocation = "";
     private String fileProtocol;
 
+
+    // Use Carefully!! This method has the potential to never return the same filename twice.
+    // Call reset once you're done listing auto-generated names, to begin the pattern again.
     public String getFilename() {
         if (namePattern == null || !isCollection) {
-            log("returning filename");
+            log("returning filename from fileChunk : " + filename);
             return filename;
         } else {
-            log("returning next patterned name");
-            return namePattern.next();
+            String nextFilename = namePattern.next();
+            log("returning next patterned name : " + nextFilename);
+            return nextFilename;
         }
     }
 
@@ -129,14 +133,13 @@ public class DaxFileChunk implements Serializable {
     }
 
     public void setNamePattern(PatternCollection namePattern) {
-        log("Setting pattern in fileChunk to : " + namePattern);
         this.namePattern = namePattern;
     }
 
     private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        //     System.out.println(s);
+        System.out.println(s);
     }
 
     public boolean isOne2one() {

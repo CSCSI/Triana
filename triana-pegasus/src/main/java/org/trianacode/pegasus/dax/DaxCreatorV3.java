@@ -37,7 +37,7 @@ public class DaxCreatorV3 implements TaskConscious {
     private static final int ONE2ONE_CONNECT = 2;
     private static final int SPREAD_CONNECT = 3;
     public int idNumber = 0;
-    private Task task;
+    public Task task;
 
     private ArrayList<String> PFLarray = new ArrayList<String>();
 
@@ -75,7 +75,7 @@ public class DaxCreatorV3 implements TaskConscious {
     }
 
     @CustomGUIComponent
-    public Component getComponent(){
+    public Component getComponent() {
         return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
     }
 
@@ -225,6 +225,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
                         if (!fileLocation.equals("") && !fileProtocol.equals("")) {
                             PFLarray.add(fileLocation + java.io.File.separator + filename);
+                            System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
                             file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
                             dax.addFile(file);
 
@@ -250,6 +251,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
                     if (!fileLocation.equals("") && !fileProtocol.equals("")) {
                         PFLarray.add(fileLocation + java.io.File.separator + filename);
+                        System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
                         file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
                         dax.addFile(file);
 
@@ -548,11 +550,12 @@ public class DaxCreatorV3 implements TaskConscious {
 
     private void addOutputs(Job job, DaxJobChunk jobChunk) {
         List outFiles = jobChunk.getOutFileChunks();
+        log("\nAdding outputs to job : " + jobChunk.getJobName() + " with " + jobChunk.getOutFileChunks().size() + " outputs.");
         for (int j = 0; j < outFiles.size(); j++) {
+            log("Output " + j + " :");
             DaxFileChunk chunk = (DaxFileChunk) outFiles.get(j);
-            log("Job has " + chunk.getNumberOfFiles() + " outputs.");
             if (chunk.isCollection()) {
-                chunk.resetNextCounter();
+//                chunk.resetNextCounter();
                 log("Jobs output file is a collection");
                 if (chunk.isOne2one()) {
 
@@ -596,18 +599,17 @@ public class DaxCreatorV3 implements TaskConscious {
                 job.uses(outputFile, File.LINK.output);
                 job.addArgument("-o ").addArgument(outputFile);
             }
+            log("Finished with job " + job.getId() + " named : " + job.getName() + "\n");
         }
     }
 
 
     private java.io.File writeDax(ADAG dax) {
+
         dax.writeToFile(fileName + ".dax");
         log("File " + fileName + " saved.\n");
 
         java.io.File daxFile = new java.io.File(fileName + ".dax");
-
-
-
 
 
         //Cursor change

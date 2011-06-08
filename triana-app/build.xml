@@ -11,6 +11,7 @@
     <property name="anno-classes" value="../triana-annotation/target/classes"/>
     <property name="types-classes" value="../triana-types/target/classes"/>
     <property name="pegasus-classes" value="../triana-pegasus/target/classes"/>
+    <property name="pegasus-gui-classes" value="../triana-pegasus-gui/classes"/>
     <property name="toolboxes" value="../triana-toolboxes"/>
 
     <target name="triana-app">

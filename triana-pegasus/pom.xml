@@ -92,7 +92,7 @@
         <!--<version>${project.version}</version>-->
         <!--<scope>system</scope>-->
         <!--<systemPath>-->
-        <!--/Users/ian/Work-Mac/Work/triana4/triana-pegasus/src/main/java/org/trianacode/pegasus/dax/adag/dax.jar-->
+        <!--/Users/ian/Work-Mac/Work/triana4/triana-org.trianacode.pegasus.gui/src/main/java/org/trianacode/org.trianacode.pegasus.gui/dax/adag/dax.jar-->
         <!--</systemPath>-->
         <!--</dependency>-->
 
