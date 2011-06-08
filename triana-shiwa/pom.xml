@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -74,6 +74,10 @@
             <id>colette-maven-repos</id>
             <name>colette</name>
             <url>http://colette.cs.cf.ac.uk/maven</url>
+        </repository>
+        <repository>
+            <id>trianacode-maven-repos</id>
+            <url>http://trianacode.org/maven</url>
         </repository>
     </repositories>
 

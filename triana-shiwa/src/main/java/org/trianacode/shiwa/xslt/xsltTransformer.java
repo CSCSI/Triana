@@ -17,16 +17,26 @@ import java.io.File;
  */
 public class xsltTransformer {
 
-    public xsltTransformer(String in, String out, String transformer) {
+    public xsltTransformer() {
+    }
+
+    public static void doTransform(String in, String out, String transformer) {
+        StreamSource streamSource = new StreamSource(new File(in));
+        StreamSource transformerSource = new StreamSource(new File(transformer));
+        StreamResult streamResult = new StreamResult(new File(out));
+
+        doTransform(streamSource, transformerSource, streamResult);
+    }
+
+    public static void doTransform(StreamSource streamSource, StreamSource transformerSource, StreamResult streamResult) {
         try {
             TransformerFactory tFactory = TransformerFactory.newInstance();
-            Transformer transform = tFactory.newTransformer(new StreamSource(new File(transformer)));
+            Transformer transform = tFactory.newTransformer(transformerSource);
 
-            transform.transform(new StreamSource(new File(in)), new StreamResult(new File(out)));
-            System.out.println("Done");
+            transform.transform(streamSource, streamResult);
+            System.out.println("Success with transform : " + transformerSource.getSystemId());
         } catch (Exception e) {
-            System.out.println("Fail");
-            e.printStackTrace();
+            System.out.println("Fail : " + e.getMessage());
         }
     }
 
@@ -34,8 +44,8 @@ public class xsltTransformer {
         String root = "triana-shiwa/src/main/java/org/trianacode/shiwa/xslt/";
 
         new IwirWriter();
-        new xsltTransformer(root + "iwir/iwir.xml", root + "iwir/outputTemp.xml", root + "iwir/removeNamespace.xsl");
-        new xsltTransformer(root + "iwir/outputTemp.xml", root + "iwir/output.xml", root + "iwir/iwir.xsl");
+        xsltTransformer.doTransform(root + "iwir/iwir.xml", root + "iwir/outputTemp.xml", root + "iwir/removeNamespace.xsl");
+        xsltTransformer.doTransform(root + "iwir/outputTemp.xml", root + "iwir/output.xml", root + "iwir/iwir.xsl");
 
     }
 }

@@ -34,8 +34,8 @@ public class IwirImporter {
         for (Object object : in) {
             System.out.println("Incoming object");
             if (object instanceof File) {
-                new xsltTransformer(root + "iwir/iwir.xml", root + "iwir/outputTemp.xml", root + "iwir/removeNamespace.xsl");
-                new xsltTransformer(root + "iwir/outputTemp.xml", filePath, root + "iwir/iwir.xsl");
+                xsltTransformer.doTransform(root + "iwir/iwir.xml", root + "iwir/outputTemp.xml", root + "iwir/removeNamespace.xsl");
+                xsltTransformer.doTransform(root + "iwir/outputTemp.xml", filePath, root + "iwir/iwir.xsl");
 
                 TaskGraph t = TaskGraphFileHandler.openTaskgraph(new File(filePath), true);
                 TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);

@@ -1,18 +1,17 @@
 package org.trianacode.shiwa;
 
-import org.shiwa.desktop.data.configuration.Configuration;
-import org.shiwa.desktop.data.workflow.description.Dependency;
 import org.shiwa.desktop.data.workflow.description.InputPort;
 import org.shiwa.desktop.data.workflow.description.OutputPort;
 import org.shiwa.desktop.data.workflow.description.Signature;
 import org.shiwa.desktop.data.workflow.transfer.WorkflowEngineHandler;
 import org.trianacode.TrianaInstance;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.ser.XMLWriter;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,7 +33,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     @Override
     public String getEngineVersion(Set<String> version) {
-        return "triana3-24";
+        return "triana";
     }
 
     @Override
@@ -45,16 +44,38 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     @Override
     public Signature getSignature() {
         Signature signature = new Signature();
-        signature.setTitle(task.getToolName());
-        signature.setInputPorts(getInputPorts());
-        signature.setOutputPorts(getOutputPorts());
+        signature.setName(task.getToolName());
+        setInputPorts(signature);
+        setOutputPorts(signature);
+//        signature.setInputPorts(getInputPorts());
+//        signature.setOutputPorts(getOutputPorts());
         return signature;
     }
 
-    @Override
-    public List<Dependency> getDependencies() {
-        //    return new ArrayList<Dependency>();
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    private void setOutputPorts(Signature signature) {
+        for (int i = 0; i < task.getDataOutputNodeCount(); i++) {
+            String s = task.getDataOutputTypes(i)[0];
+//            out.setDescription("Output port for a Triana unit. Produces data of type " + s);
+            signature.addOutput("OutputPort " + i, ObjectToSchema.getSchemaURIString(s));
+        }
+    }
+
+    private void setInputPorts(Signature signature) {
+        for (int i = 0; i < task.getDataInputNodeCount(); i++) {
+            String s = task.getDataInputTypes(i)[0];
+
+            Node node = task.getDataInputNode(i);
+
+            if (node.isConnected()) {
+                Cable cable = node.getCable();
+                System.out.println("Input node " + i + " is type : " + cable.getType());
+                String inputObject = "";
+                signature.addInputReference("InputPort " + i, ObjectToSchema.getSchemaURIString(s), inputObject);
+
+            } else {
+                signature.addInput("InputPort " + i, ObjectToSchema.getSchemaURIString(s));
+            }
+        }
     }
 
     @Override
@@ -76,13 +97,8 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     }
 
     @Override
-    public String getWorkflowDefinitionPath() {
-        return task.getToolName() + ".xml";
-    }
-
-    @Override
-    public Configuration getConfiguration(List<InputPort> inputPorts, List<Dependency> dependencies) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public String getWorkflowDefinitionName() {
+        return task.getQualifiedTaskName();
     }
 
     private ArrayList<InputPort> getInputPorts() {

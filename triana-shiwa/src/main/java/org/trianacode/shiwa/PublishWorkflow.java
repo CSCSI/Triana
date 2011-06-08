@@ -37,6 +37,7 @@ public class PublishWorkflow extends AbstractAction {
             JPanel popup = new SHIWADesktopPanel(teh);
 
             DisplayDialog dialog = new DisplayDialog(popup);
+
         } else {
             JOptionPane.showMessageDialog(frame, "No taskgraph selected");
         }
