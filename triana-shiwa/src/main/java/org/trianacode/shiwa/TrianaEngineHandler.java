@@ -4,12 +4,17 @@ import org.shiwa.desktop.data.workflow.description.InputPort;
 import org.shiwa.desktop.data.workflow.description.OutputPort;
 import org.shiwa.desktop.data.workflow.description.Signature;
 import org.shiwa.desktop.data.workflow.transfer.WorkflowEngineHandler;
+import org.shiwa.desktop.gui.SHIWADesktopPanel;
 import org.trianacode.TrianaInstance;
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
+import org.trianacode.taskgraph.tool.Tool;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Set;
@@ -29,6 +34,31 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     public TrianaEngineHandler(TrianaInstance instance, Task task) {
         this.instance = instance;
         this.task = task;
+    }
+
+    public static void main(String[] args) throws IOException, TaskGraphException {
+        String wf = args[0];
+        File f = new File(wf);
+
+        if (!f.exists()) {
+            System.out.println("Cannot find workflow file:" + wf);
+            System.exit(1);
+        }
+
+        String[] engineArgs = new String[args.length - 1];
+        System.arraycopy(args, 1, engineArgs, 0, args.length - 1);
+
+        TrianaInstance engine = new TrianaInstance(engineArgs);
+        engine.init();
+        XMLReader reader = new XMLReader(new FileReader(f));
+        Tool tool = reader.readComponent(engine.getProperties());
+
+        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler(engine, (Task) tool));
+        JFrame jFrame = new JFrame();
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.add(jPanel);
+        jFrame.pack();
+        jFrame.setVisible(true);
     }
 
     @Override
