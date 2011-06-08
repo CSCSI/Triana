@@ -32,7 +32,7 @@ public class PublishWorkflow extends AbstractAction {
         if (tg != null) {
             TrianaInstance instance = frame.getEngine();
 
-            TrianaEngineHandler teh = new TrianaEngineHandler(instance, tg);
+            TrianaEngineHandler teh = new TrianaEngineHandler(tg);
 
             JPanel popup = new SHIWADesktopPanel(teh);
 

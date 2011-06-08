@@ -28,11 +28,9 @@ import java.util.Set;
  */
 public class TrianaEngineHandler implements WorkflowEngineHandler {
 
-    private TrianaInstance instance;
     private Task task;
 
-    public TrianaEngineHandler(TrianaInstance instance, Task task) {
-        this.instance = instance;
+    public TrianaEngineHandler(Task task) {
         this.task = task;
     }
 
@@ -53,7 +51,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
-        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler(engine, (Task) tool));
+        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler((Task) tool));
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.add(jPanel);
