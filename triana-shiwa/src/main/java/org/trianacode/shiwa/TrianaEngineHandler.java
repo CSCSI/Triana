@@ -1,13 +1,15 @@
 package org.trianacode.shiwa;
 
-import org.shiwa.desktop.data.workflow.description.InputPort;
-import org.shiwa.desktop.data.workflow.description.OutputPort;
+import org.shiwa.desktop.data.workflow.description.Port;
 import org.shiwa.desktop.data.workflow.description.Signature;
 import org.shiwa.desktop.data.workflow.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
 import org.trianacode.TrianaInstance;
-import org.trianacode.taskgraph.Cable;
-import org.trianacode.taskgraph.Node;
+import org.trianacode.config.TrianaProperties;
+import org.trianacode.enactment.Exec;
+import org.trianacode.enactment.io.IoConfiguration;
+import org.trianacode.enactment.io.IoMapping;
+import org.trianacode.enactment.io.IoType;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
@@ -17,6 +19,7 @@ import org.trianacode.taskgraph.tool.Tool;
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,9 +32,73 @@ import java.util.Set;
 public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     private Task task;
+    private Signature loadedSignature;
 
     public TrianaEngineHandler(Task task) {
         this.task = task;
+    }
+
+    @Override
+    public String getEngineName(Set<String> engines) {
+        return "triana";
+    }
+
+    @Override
+    public String getEngineVersion() {
+        return (String) task.getProperties().get(TrianaProperties.VERSION);
+    }
+
+    @Override
+    public String getWorkflowLanguage(Set<String> languages) {
+        return "triana-taskgraph";
+    }
+
+    @Override
+    public Signature getSignature() {
+        Signature signature = new Signature();
+        signature.setName(task.getToolName());
+        setInputPorts(signature);
+        setOutputPorts(signature);
+
+        setLoadedSignature(signature);
+        return signature;
+    }
+
+    private void setOutputPorts(Signature signature) {
+        for (int i = 0; i < task.getDataOutputNodeCount(); i++) {
+            String s = task.getDataOutputTypes(i)[0];
+            signature.addOutput("OutputPort_" + i, ObjectToSchema.getSchemaURIString(s));
+        }
+    }
+
+    private void setInputPorts(Signature signature) {
+        for (int i = 0; i < task.getDataInputNodeCount(); i++) {
+            String s = task.getDataInputTypes(i)[0];
+            signature.addInput("InputPort_" + i, s);
+        }
+    }
+
+    @Override
+    public InputStream getWorkflowDefinition() {
+        try {
+            File temp = File.createTempFile("publishedTaskgraphTemp", ".xml");
+            temp.deleteOnExit();
+            XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(temp)));
+            writer.writeComponent(task);
+            writer.close();
+            System.out.println("Sending temp file inputstream");
+            return new FileInputStream(temp);
+
+        } catch (Exception e) {
+            System.out.println("Failed to create temp xml file for output to shiwa-desktop : ");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public String getWorkflowDefinitionName() {
+        return task.getQualifiedTaskName();
     }
 
     public static void main(String[] args) throws IOException, TaskGraphException {
@@ -59,104 +126,43 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         jFrame.setVisible(true);
     }
 
-    @Override
-    public String getEngineVersion(Set<String> version) {
-        return "triana";
-    }
+    public void setLoadedSignature(Signature signature) {
+        this.loadedSignature = signature;
+        ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
-    @Override
-    public String getWorkflowLanguage(Set<String> languages) {
-        return "triana-taskgraph";
-    }
 
-    @Override
-    public Signature getSignature() {
-        Signature signature = new Signature();
-        signature.setName(task.getToolName());
-        setInputPorts(signature);
-        setOutputPorts(signature);
-//        signature.setInputPorts(getInputPorts());
-//        signature.setOutputPorts(getOutputPorts());
-        return signature;
-    }
+        List<Port> inputPorts = signature.getInputs();
+        for (Port inputPort : inputPorts) {
+            if (inputPort.getValue() != null) {
+                String portName = inputPort.getName();
+                String portNumberString = portName.substring(portName.indexOf("_") + 1);
 
-    private void setOutputPorts(Signature signature) {
-        for (int i = 0; i < task.getDataOutputNodeCount(); i++) {
-            String s = task.getDataOutputTypes(i)[0];
-//            out.setDescription("Output port for a Triana unit. Produces data of type " + s);
-            signature.addOutput("OutputPort " + i, ObjectToSchema.getSchemaURIString(s));
-        }
-    }
+                String value = inputPort.getValue();
+                boolean reference = inputPort.isReference();
 
-    private void setInputPorts(Signature signature) {
-        for (int i = 0; i < task.getDataInputNodeCount(); i++) {
-            String s = task.getDataInputTypes(i)[0];
 
-            Node node = task.getDataInputNode(i);
-
-            if (node.isConnected()) {
-                Cable cable = node.getCable();
-                System.out.println("Input node " + i + " is type : " + cable.getType());
-                String inputObject = "";
-                signature.addInputReference("InputPort " + i, ObjectToSchema.getSchemaURIString(s), inputObject);
-
-            } else {
-                signature.addInput("InputPort " + i, ObjectToSchema.getSchemaURIString(s));
+                IoMapping ioMapping = new IoMapping(new IoType(value, "String", reference), portNumberString);
+                inputMappings.add(ioMapping);
             }
         }
-    }
 
-    @Override
-    public InputStream getWorkflowDefinition() {
+        IoConfiguration conf = new IoConfiguration(signature.getName(), "0.1", inputMappings, new ArrayList<IoMapping>());
+
+        List<IoMapping> mappings = conf.getInputs();
+        for (IoMapping mapping : mappings) {
+            System.out.println("  mapping:");
+            System.out.println("    name:" + mapping.getNodeName());
+            System.out.println("    type:" + mapping.getIoType().getType());
+            System.out.println("    val:" + mapping.getIoType().getValue());
+            System.out.println("    ref:" + mapping.getIoType().isReference());
+        }
+
+        Exec exec = new Exec(null);
         try {
-            File temp = File.createTempFile("publishedTaskgraphTemp", ".xml");
-            temp.deleteOnExit();
-            XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(temp)));
-            writer.writeComponent(task);
-            writer.close();
-            System.out.println("Sending temp file inputstream");
-            return new FileInputStream(temp);
-
+            exec.execute(task, conf);
         } catch (Exception e) {
-            System.out.println("Failed to create temp xml file for output to shiwa-desktop : ");
             e.printStackTrace();
-            return null;
         }
-    }
 
-    @Override
-    public String getWorkflowDefinitionName() {
-        return task.getQualifiedTaskName();
-    }
-
-    private ArrayList<InputPort> getInputPorts() {
-        ArrayList<InputPort> inputs = new ArrayList<InputPort>();
-        for (int i = 0; i < task.getDataInputNodeCount(); i++) {
-            String s = task.getDataInputTypes(i)[0];
-            InputPort in = new InputPort("i" + i);
-            in.setTitle("InputPort " + i);
-//            in.setDataType(s);
-            in.setDataType(ObjectToSchema.getSchemaURIString(s));
-
-            in.setDescription("Input port for a Triana unit. Expects data of type " + s);
-            inputs.add(in);
-        }
-        return inputs;
-    }
-
-    private ArrayList<OutputPort> getOutputPorts() {
-        ArrayList<OutputPort> outputs = new ArrayList<OutputPort>();
-        for (int i = 0; i < task.getDataOutputNodeCount(); i++) {
-            String s = task.getDataOutputTypes(i)[0];
-            OutputPort out = new OutputPort("o" + i);
-            out.setTitle("OutputPort " + i);
-//            out.setDataType(s);
-
-            out.setDataType(ObjectToSchema.getSchemaURIString(s));
-
-            out.setDescription("Output port for a Triana unit. Produces data of type " + s);
-            outputs.add(out);
-        }
-        return outputs;
     }
 }

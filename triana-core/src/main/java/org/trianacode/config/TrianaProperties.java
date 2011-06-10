@@ -23,7 +23,7 @@ public class TrianaProperties extends Properties {
                     "overriding, which needs to be taken into account\n";
 
     public static String DOMAIN = "org.trianacode";
-
+    public static final String VERSION = "4";
 
     // SEARCH PATHS comma separated file list of property files.
 
@@ -102,6 +102,7 @@ public class TrianaProperties extends Properties {
 
     public static Properties getDefaultConfiguration() {
         Properties properties = new Properties();
+        properties.put(VERSION, "4");
 
         properties.put(Locations.DEFAULT_PROPERTY_FILE, Locations.getApplicationDataDir() + File.separator + DOMAIN + ".properties");
         // PROPERTY_FILE_LIST is null
