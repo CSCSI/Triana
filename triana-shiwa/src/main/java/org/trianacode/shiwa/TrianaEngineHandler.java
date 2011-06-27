@@ -1,8 +1,8 @@
 package org.trianacode.shiwa;
 
-import org.shiwa.desktop.data.workflow.description.Port;
-import org.shiwa.desktop.data.workflow.description.Signature;
-import org.shiwa.desktop.data.workflow.transfer.WorkflowEngineHandler;
+import org.shiwa.desktop.data.description.handler.Port;
+import org.shiwa.desktop.data.description.handler.Signature;
+import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
