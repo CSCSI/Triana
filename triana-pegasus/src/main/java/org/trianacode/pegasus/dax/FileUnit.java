@@ -26,8 +26,9 @@ import java.util.UUID;
 public class FileUnit implements TaskConscious, Displayer {
 
     @Parameter
-    public String fileLocation = "";
     public String locationString = "";   //wtf?
+    @Parameter
+    public boolean physicalFile = false;
 
     @Parameter
     public String fileProtocol = "";
@@ -50,7 +51,8 @@ public class FileUnit implements TaskConscious, Displayer {
         DaxFileChunk thisFile = new DaxFileChunk();
 
         thisFile.setFilename(fileName);
-        thisFile.setFileLocation(fileLocation);
+        thisFile.setPhysicalFile(physicalFile);
+        thisFile.setFileLocation(locationString);
         thisFile.setFileProtocol(fileProtocol);
         thisFile.setUuid(UUID.randomUUID());
         thisFile.setCollection(collection);
@@ -119,6 +121,7 @@ public class FileUnit implements TaskConscious, Displayer {
             task.setParameter("collection", collection);
             task.setParameter("one2one", one2one);
 
+            task.setParameter("physicalFile", physicalFile);
             task.setParameter("fileLocation", locationString);
             task.setParameter("fileProtocol", fileProtocol);
 
@@ -135,6 +138,7 @@ public class FileUnit implements TaskConscious, Displayer {
             numberOfFiles = getNumberOfFiles();
             namingPattern = getNamingPattern();
             one2one = isOne2one();
+            physicalFile = isPhysicalFile();
             locationString = getFileLocation();
             fileProtocol = getFileProtocol();
         }
@@ -199,6 +203,16 @@ public class FileUnit implements TaskConscious, Displayer {
             return 1;
         }
         return 1;
+    }
+
+    private boolean isPhysicalFile() {
+        Object o = task.getParameter("physicalFile");
+        if (o != null) {
+            if (o instanceof Boolean) {
+                return (Boolean) o;
+            }
+        }
+        return false;
     }
 
     public String getFileLocation() {

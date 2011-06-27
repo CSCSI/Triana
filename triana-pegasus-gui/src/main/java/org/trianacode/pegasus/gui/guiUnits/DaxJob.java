@@ -188,7 +188,11 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
 
     public void apply() {
         changeToolName(nameField.getText());
+        jobName = nameField.getText();
         args = argsField.getText();
+        if(!collection){
+            connectPattern = DaxJob.AUTO_CONNECT;
+        }
         setParams();
     }
 

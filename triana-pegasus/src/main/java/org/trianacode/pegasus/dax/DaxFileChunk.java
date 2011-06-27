@@ -27,7 +27,8 @@ public class DaxFileChunk implements Serializable {
     private PatternCollection namePattern = null;
     private int counter = 0;
     private String fileLocation = "";
-    private String fileProtocol;
+    private String fileProtocol = "";
+    private boolean physicalFile = false;
 
 
     // Use Carefully!! This method has the potential to never return the same filename twice.
@@ -164,5 +165,13 @@ public class DaxFileChunk implements Serializable {
 
     public void setFileProtocol(String fileProtocol) {
         this.fileProtocol = fileProtocol;
+    }
+
+    public boolean isPhysicalFile() {
+        return physicalFile;
+    }
+
+    public void setPhysicalFile(boolean physicalFile) {
+        this.physicalFile = physicalFile;
     }
 }

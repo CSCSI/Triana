@@ -494,6 +494,9 @@ public class TaskGraphFileHandler implements SelectionManager {
         if (result == TFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();
             if (f != null) {
+                if(taskgraph.getToolName().startsWith("Untitled")){
+                    taskgraph.setToolName(f.getName());
+                }
                 backGroundSaveTaskGraph(taskgraph, f.getAbsolutePath(), tools, true);
                 writeFile = true;
             }

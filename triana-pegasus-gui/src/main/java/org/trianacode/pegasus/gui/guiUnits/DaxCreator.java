@@ -117,6 +117,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         JPanel demoPanel = new JPanel();
         JLabel demoLabel = new JLabel("Demo? : ");
         demoCheck = new JCheckBox();
+        demoCheck.setSelected(demo);
         demoCheck.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ie) {
                 if (demoCheck.isSelected()) {

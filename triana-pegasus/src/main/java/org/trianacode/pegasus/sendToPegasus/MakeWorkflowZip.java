@@ -23,6 +23,7 @@ public class MakeWorkflowZip {
         zipProperties.put("rc", new File(rc).getName());
         zipProperties.put("sites", new File(sites).getName());
         zipProperties.put("tc", new File(tc).getName());
+        zipProperties.put("runTool", "RunPegasus");
 
         File zipPropertiesTemp = File.createTempFile("zipProperties", "xml");
         zipProperties.storeToXML(new FileOutputStream(zipPropertiesTemp), "zipProperties");

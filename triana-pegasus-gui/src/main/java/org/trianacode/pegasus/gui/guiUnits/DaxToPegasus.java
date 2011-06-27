@@ -39,8 +39,11 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
 
     @Process
     public void fakeProcess(File file) {
+        popup = new ProgressPopup("Finding Pegasus", 30);
         setParams();
         process(file);
+        popup.finish();
+        popup = null;
     }
 
 
@@ -104,9 +107,8 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
     public void displayMessage(String string) {
         if (popup == null) {
             popup = new ProgressPopup("Finding Pegasus", 30);
-        } else {
-            popup.addText(string);
         }
+        popup.addText(string);
     }
 
     @CustomGUIComponent

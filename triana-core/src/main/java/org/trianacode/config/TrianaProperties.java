@@ -23,7 +23,7 @@ public class TrianaProperties extends Properties {
                     "overriding, which needs to be taken into account\n";
 
     public static String DOMAIN = "org.trianacode";
-    public static final String VERSION = "4";
+    public static String VERSION = DOMAIN + ".version";
 
     // SEARCH PATHS comma separated file list of property files.
 

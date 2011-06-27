@@ -70,15 +70,16 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
     }
 
     private void apply() {
-        if (locationCheck.isSelected()) {
+        if (physicalFile) {
             fileProtocol = (String) locationTypeCombo.getSelectedItem();
             locationString = locationField.getText();
             System.out.println("PFL : " + fileProtocol + locationString + File.separator + nameField.getText());
         } else {
             System.out.println("File does not have a physical location");
         }
-
-
+        if(!collection){
+            one2one = false;
+        }
         changeToolName(nameField.getText());
         fillFileListArea();
         setParams();
@@ -111,7 +112,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         locationPanel = new JPanel(new BorderLayout());
 
         final JPanel locationCheckPanel = new JPanel(new BorderLayout());
-        locationCheck = new JCheckBox("Set location : ", !locationString.equals(""));
+        locationCheck = new JCheckBox("Set location : ", physicalFile);
         locationCheck.addItemListener(fileActionPerformer);
         locationCheckPanel.add(locationCheck, BorderLayout.WEST);
 
@@ -305,9 +306,11 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
             }
             if (itemEvent.getSource().equals(locationCheck)) {
                 if (locationCheck.isSelected()) {
+                    physicalFile = true;
                     setEnabling(locationPanel, true);
                     locationField.requestFocus();
                 } else {
+                    physicalFile = false;
                     setEnabling(locationPanel, false);
                 }
             }

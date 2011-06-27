@@ -39,7 +39,7 @@ public class DaxCreatorV3 implements TaskConscious {
     public int idNumber = 0;
     public Task task;
 
-    private ArrayList<String> PFLarray = new ArrayList<String>();
+    private ArrayList<String> PFLarray;
 
     @CheckboxParameter
     public boolean demo = false;
@@ -49,6 +49,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
     @Process(gather = true)
     public java.io.File process(List in) {
+        PFLarray = new ArrayList<String>();
         log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         DaxRegister register = DaxRegister.getDaxRegister();
@@ -95,7 +96,7 @@ public class DaxCreatorV3 implements TaskConscious {
                     String jobName = "Process";
                     String id = "0000000" + (j + 1);
                     id = ("ID" + id.substring(id.length() - 7));
-                    Job job = new Job(id, jobName);
+                    Job job = new Job(id, fileName, jobName, "1.0");
                     job.addArgument(inChunk.getJobArgs());
 
 
@@ -223,7 +224,7 @@ public class DaxCreatorV3 implements TaskConscious {
                         String fileProtocol = chunk.getFileProtocol();
                         File file = new File(filename);
 
-                        if (!fileLocation.equals("") && !fileProtocol.equals("")) {
+                        if (chunk.isPhysicalFile()) {
                             PFLarray.add(fileLocation + java.io.File.separator + filename);
                             System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
                             file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
@@ -249,7 +250,7 @@ public class DaxCreatorV3 implements TaskConscious {
                     String fileProtocol = chunk.getFileProtocol();
                     File file = new File(filename);
 
-                    if (!fileLocation.equals("") && !fileProtocol.equals("")) {
+                    if (chunk.isPhysicalFile()) {
                         PFLarray.add(fileLocation + java.io.File.separator + filename);
                         System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
                         file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
@@ -354,20 +355,32 @@ public class DaxCreatorV3 implements TaskConscious {
             }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
-            Job job = new Job(id, jobName);
+            Job job = new Job(id, fileName, jobName, "1.0");
             job.addArgument(jobChunk.getJobArgs());
 
 
             for (int j = 0; j < filesPerJob[i]; j++) {
                 if (fcs.size() > 0) {
-                    java.util.Random rand = new java.util.Random();
-                    int r = rand.nextInt(fcs.size());
 
-                    DaxFileChunk fc = fcs.get(r);
-                    fcs.remove(r);
+//                    java.util.Random rand = new java.util.Random();
+//                    int r = rand.nextInt(fcs.size());
+
+                    DaxFileChunk chunk = fcs.get(0);
+                    fcs.remove(0);
 //                    job.uses(new File(fc.getNextFilename()), File.LINK.input);
+//                    job.uses(new File(fc.getFilename()), File.LINK.input);
 
-                    job.uses(new File(fc.getFilename()), File.LINK.input);
+                    String filename = chunk.getFilename();
+                    String fileLocation = chunk.getFileLocation();
+                    String fileProtocol = chunk.getFileProtocol();
+                    File file = new File(filename);
+
+                    if (chunk.isPhysicalFile()) {
+                        PFLarray.add(fileLocation + java.io.File.separator + filename);
+                        System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
+                        file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+                        dax.addFile(file);
+                    }
                 }
             }
 
@@ -436,19 +449,28 @@ public class DaxCreatorV3 implements TaskConscious {
             }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
-            Job job = new Job(id, jobName);
+            Job job = new Job(id, fileName, jobName, "1.0");
             job.addArgument(jobChunk.getJobArgs());
 
             for (int j = offset; j < (offset + numberInputsPerJob); j++) {
                 if (j < numberInputFiles) {
-                    DaxFileChunk fc = fcs.get(j);
+                    DaxFileChunk chunk = fcs.get(j);
 //                    String filename = fc.getNextFilename();
-                    String filename = fc.getFilename();
+//                    String filename = fc.getFilename();
+//                    log("Adding file : " + filename + " to job : " + i + " (Job : " + j + " of " + numberInputFiles + ")");
 
-                    log("Adding file : " + filename + " to job : " + i +
-                            " (Job : " + j + " of " + numberInputFiles + ")");
+                    String filename = chunk.getFilename();
+                    String fileLocation = chunk.getFileLocation();
+                    String fileProtocol = chunk.getFileProtocol();
+                    File file = new File(filename);
 
-                    job.uses(new File(filename), File.LINK.input);
+                    if (chunk.isPhysicalFile()) {
+                        PFLarray.add(fileLocation + java.io.File.separator + filename);
+                        System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
+                        file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+                        dax.addFile(file);
+                    }
+                    job.uses(file, File.LINK.input);
                 }
             }
             offset = offset + (int) numberInputsPerJob;
@@ -511,7 +533,7 @@ public class DaxCreatorV3 implements TaskConscious {
             }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
-            Job job = new Job(id, jobName);
+            Job job = new Job(id, fileName, jobName, "1.0");
             job.addArgument(jobChunk.getJobArgs());
 
 //            String fileName = fc.getFilename();
@@ -530,12 +552,36 @@ public class DaxCreatorV3 implements TaskConscious {
                     if (dfc.isCollection()) {
                         for (int j = 0; j < dfc.getNumberOfFiles(); j++) {
 //                            job.uses(new File(dfc.getNextFilename()), File.LINK.input);
-                            job.uses(new File(dfc.getFilename()), File.LINK.input);
+
+                            String filename = dfc.getFilename();
+                            String fileLocation = dfc.getFileLocation();
+                            String fileProtocol = dfc.getFileProtocol();
+                            File file = new File(filename);
+
+                            if (dfc.isPhysicalFile()) {
+                                PFLarray.add(fileLocation + java.io.File.separator + filename);
+                                System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
+                                file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+                                dax.addFile(file);
+                            }
+
+                            job.uses(file, File.LINK.input);
 
                         }
                         dfc.resetNextCounter();
                     } else {
-                        job.uses(new File(dfc.getFilename()), File.LINK.input);
+                        String filename = dfc.getFilename();
+                        String fileLocation = dfc.getFileLocation();
+                        String fileProtocol = dfc.getFileProtocol();
+                        File file = new File(filename);
+
+                        if (dfc.isPhysicalFile()) {
+                            PFLarray.add(fileLocation + java.io.File.separator + filename);
+                            System.out.println(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
+                            file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+                            dax.addFile(file);
+                        }
+                        job.uses(file, File.LINK.input);
                     }
                 }
             }
@@ -631,6 +677,14 @@ public class DaxCreatorV3 implements TaskConscious {
     @Override
     public void setTask(Task task) {
         this.task = task;
+        this.demo = getDemoParam();
     }
 
+    private boolean getDemoParam() {
+        Object o = task.getParameter("demo");
+        if (o != null) {
+            return o.equals(true);
+        }
+        return false;
+    }
 }

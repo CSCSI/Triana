@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,6 +30,7 @@ public class TabManager implements DesktopViewManager, ChangeListener {
     private TabView selected;
     private java.util.List<TabView> tabs = new ArrayList<TabView>();
     private java.util.List<DesktopViewListener> listeners = new ArrayList<DesktopViewListener>();
+    private HashMap<TabView, JLabel> headerLabelMap = new HashMap<TabView, JLabel>();
 
     private static TabManager manager = new TabManager();
 
@@ -58,6 +60,7 @@ public class TabManager implements DesktopViewManager, ChangeListener {
         }
         JPanel tabHeader = new JPanel(new BorderLayout());
         JLabel nameLab = new JLabel(name);
+        headerLabelMap.put(tab, nameLab);
         nameLab.setBorder(new EmptyBorder(0, 0, 0, 0));
         tabHeader.setOpaque(false);
         tabHeader.add(nameLab, BorderLayout.CENTER);
@@ -92,6 +95,7 @@ public class TabManager implements DesktopViewManager, ChangeListener {
         }
         if (tab instanceof TabView) {
             tabs.remove(tab);
+            headerLabelMap.remove(tab);
             tabbedPane.remove((TabView) tab);
         }
 
@@ -168,7 +172,13 @@ public class TabManager implements DesktopViewManager, ChangeListener {
     @Override
     public void setTitle(DesktopView view, String title) {
         if (view instanceof TabView) {
-            ((TabView) view).setTitle(title);
+            TabView tabView = ((TabView) view);
+            tabView.setTitle(title);
+
+            JLabel label = headerLabelMap.get(tabView);
+            if(label != null){
+                label.setText(title);
+            }
         }
     }
 
@@ -177,6 +187,7 @@ public class TabManager implements DesktopViewManager, ChangeListener {
         tabbedPane.removeAll();
         tabs.clear();
         listeners.clear();
+        headerLabelMap.clear();
         selected = null;
     }
 

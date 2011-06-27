@@ -100,6 +100,7 @@ public class SaveAsFileAction extends AbstractAction implements ActionDisplayOpt
             if (TaskGraphFileHandler.saveTaskGraphAsFile(selectionHandler.getSelectedTaskgraph(), tools)) {
                 DesktopView view = GUIEnv.getDesktopViewFor(selectionHandler.getSelectedTaskgraph());
                 if (view != null) {
+                    GUIEnv.getApplicationFrame().getDesktopViewManager().setTitle(view, selectionHandler.getSelectedTaskgraph().getToolName());
                     TaskGraphPanel panel = view.getTaskgraphPanel();
                     if ((panel != null) && (panel.getContainer().getLayout() instanceof ZoomLayout)) {
                         ZoomLayout layout = (ZoomLayout) panel.getContainer().getLayout();

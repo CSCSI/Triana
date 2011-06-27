@@ -320,6 +320,8 @@ public class ClassParser {
                         stream.readByte();
                     }
                 }
+            }else {
+                System.out.println("Found a null in classparser : " + path);
             }
         }
 
