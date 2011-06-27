@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><IWIR version="1.1" wfname="iwir">
+  <blockScope name="rootBlockScopeUntitled1">
+    <inputPorts/>
+    <body>
+      <task name="Task" tasktype="Consumer">
+        <inputPorts/>
+        <outputPorts/>
+      </task>
+      <task name="Task1" tasktype="Consumer">
+        <inputPorts/>
+        <outputPorts/>
+      </task>
+      <task name="Task2" tasktype="Consumer">
+        <inputPorts/>
+        <outputPorts/>
+      </task>
+    </body>
+    <outputPorts/>
+    <links/>
+  </blockScope>
+</IWIR>
