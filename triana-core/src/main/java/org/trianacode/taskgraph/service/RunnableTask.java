@@ -587,18 +587,15 @@ public class RunnableTask extends AbstractRunnableTask
                     output(node, toOutput, true);
                 }
             }
-        }
-        catch (NotSerializableException except) {
+        } catch (NotSerializableException except) {
             // TODO
             except.printStackTrace();
             //throw(new RuntimeException(Env.getString("serializeError") + ": " + except.getMessage()));
-        }
-        catch (IOException except) {
+        } catch (IOException except) {
             // TODO
             except.printStackTrace();
             //throw(new RuntimeException(Env.getString("outputError") + ": " + except.getMessage()));
-        }
-        catch (ClassNotFoundException except) {
+        } catch (ClassNotFoundException except) {
             // TODO
             except.printStackTrace();
             //throw(new RuntimeException(Env.getString("outputError") + ": " + except.getMessage()));
@@ -834,9 +831,9 @@ public class RunnableTask extends AbstractRunnableTask
             log.info("RUNNING " + getQualifiedToolName());
             waitPause();
             try {
+
                 unit.process();
-            }
-            catch (Exception except) {
+            } catch (Exception except) {
                 log.warn("Exception thrown invoking process() on Unit:", except);
             }
 
@@ -846,21 +843,16 @@ public class RunnableTask extends AbstractRunnableTask
                 System.err
                         .println("ERROR RUNNING " + getQualifiedTaskName() + " (" + getParameter(ERROR_MESSAGE) + ")");
             }
-        }
-        catch (OutOfRangeException ore) {
+        } catch (OutOfRangeException ore) {
             notifyError(ore);
-        }
-        catch (EmptyingException ee) {
-        }
-        catch (NotCompatibleException nce) {
+        } catch (EmptyingException ee) {
+        } catch (NotCompatibleException nce) {
             notifyError(nce);
-        }
-        catch (OutOfMemoryError ep) {
+        } catch (OutOfMemoryError ep) {
             notifyError(ep);
             System.runFinalization();
             System.gc();
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             notifyError(e);
         }
     }

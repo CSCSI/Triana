@@ -7,6 +7,7 @@ import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.tool.Toolbox;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * @author Andrew Harrison
@@ -270,6 +271,15 @@ public class PoisonTask implements Task {
 
     @Override
     public void setContextProperty(String name, Object value) {
+    }
+
+    @Override
+    public void setDeclaredNodeProperties(List<String> props) {
+    }
+
+    @Override
+    public List<String> getDeclaredNodeProperties() {
+        return null;
     }
 
 

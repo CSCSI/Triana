@@ -66,6 +66,7 @@ import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A task within a taskgraph.
@@ -1049,6 +1050,37 @@ public class TaskImp extends ToolImp implements Task {
     @Override
     public void setContextProperty(String name, Object value) {
         context.setProperty(name, value);
+    }
+
+    @Override
+    public void setDeclaredNodeProperties(List<String> props) {
+        if (props == null || props.size() == 0) {
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String prop : props) {
+            if (prop.indexOf(",") > -1) {
+                throw new IllegalArgumentException("Commas are not allowed in node property names");
+            }
+            sb.append(prop).append(",");
+        }
+        setParameter(NODE_PROPERTIES, sb.toString());
+    }
+
+    @Override
+    public List<String> getDeclaredNodeProperties() {
+        String props = (String) getParameter(NODE_PROPERTIES);
+        List<String> ret = new ArrayList<String>();
+        if (props == null || props.length() == 0) {
+            return ret;
+        }
+        String[] ps = props.split(",");
+        for (String p : ps) {
+            if (p.length() > 0) {
+                ret.add(p);
+            }
+        }
+        return ret;
     }
 
     public void setSubTitle(String subtext) {

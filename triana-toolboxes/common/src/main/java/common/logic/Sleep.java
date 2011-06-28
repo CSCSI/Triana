@@ -20,7 +20,9 @@ public class Sleep {
     public List<Object> sleep(List<Object> in) {
         synchronized (this) {
             try {
-                wait(period * 1000);
+                if (period > 0) {
+                    wait(period * 1000);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

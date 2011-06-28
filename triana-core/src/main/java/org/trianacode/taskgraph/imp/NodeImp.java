@@ -63,6 +63,8 @@ import org.trianacode.taskgraph.event.NodeEvent;
 import org.trianacode.taskgraph.event.NodeListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An input/output NodeCable associated with a Task.
@@ -97,6 +99,8 @@ public class NodeImp implements NodeListener, Node {
      * A flag indicating whether this is an input node
      */
     private boolean input;
+
+    private Map<String, String> properties = new HashMap<String, String>();
 
 
     /**
@@ -610,4 +614,15 @@ public class NodeImp implements NodeListener, Node {
             task = null;
         }
     }
+
+    @Override
+    public void setProperty(String key, String value) {
+        properties.put(key, value);
+    }
+
+    @Override
+    public String getProperty(String key) {
+        return properties.get(key);
+    }
+
 }

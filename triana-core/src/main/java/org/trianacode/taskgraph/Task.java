@@ -61,6 +61,8 @@ package org.trianacode.taskgraph;
 import org.trianacode.taskgraph.event.TaskListener;
 import org.trianacode.taskgraph.tool.Tool;
 
+import java.util.List;
+
 /**
  * The interface to tasks within a taskgraph
  *
@@ -83,6 +85,9 @@ public interface Task extends Tool {
     public static final String GUI_Y = "guiY";
     public static final String DEPRECATED_GUI_XPOS = "guiXPos"; // deprecated
     public static final String DEPRECATED_GUI_YPOS = "guiYPos"; // deprecated
+
+    public static final String NODE_PROPERTIES = "nodeProperties";
+
 
     public static final String EXECUTION_REQUEST_COUNT = "executionRequestCount";
     public static final String EXECUTION_COUNT = "executionCount";
@@ -369,6 +374,10 @@ public interface Task extends Tool {
     public Object getContextProperty(String name);
 
     public void setContextProperty(String name, Object value);
+
+    public void setDeclaredNodeProperties(List<String> props);
+
+    public List<String> getDeclaredNodeProperties();
 
 
 }

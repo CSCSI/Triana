@@ -29,11 +29,7 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphUtils;
 import org.trianacode.taskgraph.Unit;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.service.SchedulerException;
 import org.trianacode.taskgraph.tool.ClassLoaders;
 
@@ -332,7 +328,7 @@ public class Loop extends Unit implements TaskListener {
         setHelpFileLocation("Loop.html");
 
         // Define initial value and type of parameters
-        defineParameter("conditionUnit", "Common.Logic.DefaultExitCondition", USER_ACCESSIBLE);
+        defineParameter("conditionUnit", "common.logic.DefaultExitCondition", USER_ACCESSIBLE);
         defineParameter("enabled", "false", USER_ACCESSIBLE);
         defineParameter("iterations", "0", USER_ACCESSIBLE);
         defineParameter("totalIterations", "0", USER_ACCESSIBLE);
