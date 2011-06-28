@@ -278,6 +278,10 @@ public class PoisonTask implements Task {
     }
 
     @Override
+    public void addDeclaredNodeProperty(String prop) {
+    }
+
+    @Override
     public List<String> getDeclaredNodeProperties() {
         return null;
     }

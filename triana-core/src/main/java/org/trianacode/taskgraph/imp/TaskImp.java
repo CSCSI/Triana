@@ -217,7 +217,7 @@ public class TaskImp extends ToolImp implements Task {
                     this.setParameterType(params[count], paramtype);
                 }
             }
-
+            addDeclaredNodeProperty(NODE_NAME);
 
         } catch (NodeException except) {
             throw (new TaskException(except));
@@ -1065,6 +1065,23 @@ public class TaskImp extends ToolImp implements Task {
             sb.append(prop).append(",");
         }
         setParameter(NODE_PROPERTIES, sb.toString());
+    }
+
+    @Override
+    public void addDeclaredNodeProperty(String prop) {
+        if (prop.indexOf(",") > -1) {
+            throw new IllegalArgumentException("Commas are not allowed in node property names");
+        }
+        String props = (String) getParameter(NODE_PROPERTIES);
+        if (props == null || props.length() == 0) {
+            setParameter(NODE_PROPERTIES, prop + ",");
+        }
+        if (props.endsWith(",")) {
+            props += prop;
+        } else {
+            props += "," + prop;
+        }
+        setParameter(NODE_PROPERTIES, props);
     }
 
     @Override
