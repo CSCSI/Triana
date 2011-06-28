@@ -14,6 +14,8 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -71,32 +73,70 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     @Override
     public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException {
 
-        importIWIR(file, properties);
+        try {
+            return importIWIR(file, properties);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return null;
     }
 
 
 
-    private TaskGraph importIWIR(File file, TrianaProperties properties) throws FileNotFoundException, TaskException {
-        IWIR iwir = new IWIR(file);
+    private TaskGraph importIWIR(File file, TrianaProperties properties){
+
+        IWIR iwir;
+        try {
+            iwir = new IWIR(file);
+        } catch (FileNotFoundException e) {
+            System.out.println("Failed to load IWIR from file");
+            return null;
+        }
 
         AbstractTask rootTask = iwir.getTask();
         List<AbstractTask> rootTaskChildren = rootTask.getChildren();
 
+        TaskGraph taskGraph = null;
+        try {
+            taskGraph = TaskGraphManager.createTaskGraph();
+            taskGraph.setToolName(rootTask.getName());
 
-        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
-        for (AbstractTask abstractTask : rootTaskChildren) {
-            TaskHolder taskHolder = TaskHolderFactory.getTaskHolderFactory().getTaskHolder(abstractTask);
+            for (AbstractTask abstractTask : rootTaskChildren) {
+                TaskHolder taskHolder = TaskHolderFactory.getTaskHolderFactory().getTaskHolder(abstractTask);
 
-            ToolImp tool = new ToolImp(properties);
-            tool.setToolName(taskHolder.getIWIRTask().getName());
-            tool.setDataInputNodeCount(taskHolder.getIWIRTask().getInputPorts().size());
-            tool.setDataOutputNodeCount(taskHolder.getIWIRTask().getOutputPorts().size());
-            taskGraph.createTask(tool);
+                try {
+                    Tool tool = initTool(taskHolder, properties);
+                    taskGraph.createTask(tool);
+                } catch (TaskException e) {
+                    System.out.println("Failed to set nodes on tool");
+                } catch (ProxyInstantiationException e) {
+                    System.out.println("Failed to create proxy for tool");
+                }
+            }
+
+            for(AbstractTask abstractTask : rootTaskChildren){
+            }
+
+        } catch (TaskException e) {
+            System.out.println("Failed to create empty taskgraph");
         }
 
-        return null;
+        DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
+
+        return taskGraph;
+    }
+
+
+    private ToolImp initTool(TaskHolder taskHolder, TrianaProperties properties) throws TaskException, ProxyInstantiationException {
+        ToolImp tool = new ToolImp(properties);
+        tool.setProxy(new JavaProxy(taskHolder.getClass().getSimpleName(), taskHolder.getClass().getPackage().getName()));
+        tool.setToolName(taskHolder.getIWIRTask().getName());
+        tool.setToolPackage(taskHolder.getClass().getPackage().getName());
+
+        tool.setDataInputNodeCount(taskHolder.getIWIRTask().getInputPorts().size());
+        tool.setDataOutputNodeCount(taskHolder.getIWIRTask().getOutputPorts().size());
+        return tool;
     }
 
 

@@ -20,28 +20,30 @@ public class TaskHolderFactory {
     }
 
     public TaskHolder getTaskHolder(AbstractTask iwirTask){
+        TaskHolder taskHolder = null;
         if(iwirTask instanceof ForEachTask){
-            return new ForEachTaskHolder();
+            taskHolder = new ForEachTaskHolder();
         }
         if(iwirTask instanceof ForTask){
-            return new ForEachTaskHolder();
+            taskHolder = new ForEachTaskHolder();
         }
         if(iwirTask instanceof IfTask){
-            return new ForEachTaskHolder();
+            taskHolder = new ForEachTaskHolder();
         }
         if(iwirTask instanceof ParallelForEachTask){
-            return new ForEachTaskHolder();
+            taskHolder = new ForEachTaskHolder();
         }
         if(iwirTask instanceof ParallelForTask){
-            return new ForEachTaskHolder();
+            taskHolder = new ForEachTaskHolder();
         }
         if(iwirTask instanceof WhileTask){
-            return new ForEachTaskHolder();
+            taskHolder = new ForEachTaskHolder();
         }
-        if(iwirTask instanceof Task){
-            return new AtomicTaskHolder();
+        if(taskHolder == null){
+            taskHolder = new AtomicTaskHolder();
         }
-        return null;
+        taskHolder.setIWIRTask(iwirTask);
+        return taskHolder;
     }
 
 
