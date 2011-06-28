@@ -7,8 +7,13 @@ import org.trianacode.gui.extensions.AbstractFormatFilter;
 import org.trianacode.gui.extensions.TaskGraphImporterInterface;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.organize.DaxOrganize;
+import org.trianacode.shiwa.iwir.tasks.TaskHolder;
+import org.trianacode.shiwa.iwir.tasks.TaskHolderFactory;
+import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -17,6 +22,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
 import java.io.*;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -60,14 +66,40 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         return "IwirReader";
     }
 
+
+
     @Override
     public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException {
 
-    //    importUsingXSLT(file, properties);
-    //  importUsingDOM(file, properties);
+        importIWIR(file, properties);
 
         return null;
     }
+
+
+
+    private TaskGraph importIWIR(File file, TrianaProperties properties) throws FileNotFoundException, TaskException {
+        IWIR iwir = new IWIR(file);
+
+        AbstractTask rootTask = iwir.getTask();
+        List<AbstractTask> rootTaskChildren = rootTask.getChildren();
+
+
+        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
+        for (AbstractTask abstractTask : rootTaskChildren) {
+            TaskHolder taskHolder = TaskHolderFactory.getTaskHolderFactory().getTaskHolder(abstractTask);
+
+            ToolImp tool = new ToolImp(properties);
+            tool.setToolName(taskHolder.getIWIRTask().getName());
+            tool.setDataInputNodeCount(taskHolder.getIWIRTask().getInputPorts().size());
+            tool.setDataOutputNodeCount(taskHolder.getIWIRTask().getOutputPorts().size());
+            taskGraph.createTask(tool);
+        }
+
+        return null;
+    }
+
+
 
     private TaskGraph parseTool(File file) {
         XMLReader reader;
@@ -93,16 +125,6 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
             return null;
         }
     }
-
-    private TaskGraph importUsingDOM(File file, TrianaProperties properties) throws FileNotFoundException {
-        IWIR iwir = new IWIR(file);
-
-        AbstractTask rootTask = iwir.getTask();
-   //     List rootTaskChildren = rootTask.getChildren();
-
-        return null;
-    }
-
     private TaskGraph importUsingXSLT(File file, TrianaProperties properties) throws IOException {
         String root = "triana-shiwa/src/main/java/org/trianacode/shiwa/xslt/iwir/";
 

@@ -107,7 +107,7 @@
         <dependency>
             <groupId>pegasus.nodeps</groupId>
             <artifactId>pegasus</artifactId>
-            <version>2.4.3</version>
+            <version>3.0.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -121,32 +121,32 @@
         <!--</systemPath>-->
         <!--</dependency>-->
 
-        <dependency>
-            <groupId>colette-maven-repos</groupId>
-            <artifactId>dax</artifactId>
-            <version>3.0.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>colette-maven-repos</groupId>-->
+            <!--<artifactId>dax</artifactId>-->
+            <!--<version>3.0.1</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <repositories>
-        <repository>
-            <id>colette-maven-repos</id>
-            <name>colette</name>
-            <url>http://colette.cs.cf.ac.uk:7050/maven</url>
-        </repository>
+        <!--<repository>-->
+            <!--<id>colette-maven-repos</id>-->
+            <!--<name>colette</name>-->
+            <!--<url>http://colette.cs.cf.ac.uk:7050/maven</url>-->
+        <!--</repository>-->
     </repositories>
 
     <distributionManagement>
-        <repository>
-            <id>colette-maven-repos</id>
-            <name>Triana Maven Repository</name>
-            <url>scp://colette.cs.cf.ac.uk:/var/www/maven</url>
-        </repository>
         <!--<repository>-->
-        <!--<id>trianacode-maven-repos</id>-->
-        <!--<name>Triana Maven Repository</name>-->
-        <!--<url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>-->
+            <!--<id>colette-maven-repos</id>-->
+            <!--<name>Triana Maven Repository</name>-->
+            <!--<url>scp://colette.cs.cf.ac.uk:/var/www/maven</url>-->
         <!--</repository>-->
+        <repository>
+        <id>trianacode-maven-repos</id>
+        <name>Triana Maven Repository</name>
+        <url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>
+        </repository>
     </distributionManagement>
 
 </project>

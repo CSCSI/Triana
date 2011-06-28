@@ -80,16 +80,16 @@
         <dependency>
             <groupId>org.shiwa.fgi</groupId>
             <artifactId>iwir</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.3</version>
         </dependency>
     </dependencies>
 
     <repositories>
-        <repository>
-            <id>colette-maven-repos</id>
-            <name>colette</name>
-            <url>http://colette.cs.cf.ac.uk:7050/maven</url>
-        </repository>
+        <!--<repository>-->
+            <!--<id>colette-maven-repos</id>-->
+            <!--<name>colette</name>-->
+            <!--<url>http://colette.cs.cf.ac.uk:7050/maven</url>-->
+        <!--</repository>-->
         <repository>
             <id>trianacode-maven-repos</id>
             <url>http://trianacode.org/maven</url>
