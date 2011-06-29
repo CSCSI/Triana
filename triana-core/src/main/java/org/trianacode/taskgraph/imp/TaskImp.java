@@ -1075,6 +1075,7 @@ public class TaskImp extends ToolImp implements Task {
         String props = (String) getParameter(NODE_PROPERTIES);
         if (props == null || props.length() == 0) {
             setParameter(NODE_PROPERTIES, prop + ",");
+            return;
         }
         if (props.endsWith(",")) {
             props += prop;
