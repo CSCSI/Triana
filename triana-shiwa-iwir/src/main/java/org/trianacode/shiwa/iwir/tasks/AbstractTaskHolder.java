@@ -11,23 +11,28 @@ import org.trianacode.taskgraph.Unit;
  * Time: 14:49
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractTaskHolder extends Unit implements TaskHolder{
+public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
     Executable executable;
     AbstractTask abstractTask;
 
-    public Executable getExecutable(){
+    public Executable getExecutable() {
         return executable;
     }
 
-    public void setExecutable(Executable executable){
+    public void setExecutable(Executable executable) {
         this.executable = executable;
     }
 
-    public AbstractTask getIWIRTask(){
+    public AbstractTask getIWIRTask() {
         return abstractTask;
     }
 
-    public void setIWIRTask(AbstractTask abstractTask){
+    public void setIWIRTask(AbstractTask abstractTask) {
         this.abstractTask = abstractTask;
     }
+
+    public void init() {
+        setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());
+    }
 }
+

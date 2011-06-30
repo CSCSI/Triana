@@ -227,5 +227,5 @@ public interface Node {
 
     public String getProperty(String key);
 
-
+    public String getName();
 }

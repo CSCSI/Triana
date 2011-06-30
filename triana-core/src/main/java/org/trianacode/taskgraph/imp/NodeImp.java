@@ -625,4 +625,15 @@ public class NodeImp implements NodeListener, Node {
         return properties.get(key);
     }
 
+    public String getName() {
+        String name = task.getQualifiedTaskName();
+        if (this.isInputNode()) {
+            name += ".in";
+        } else {
+            name += ".out";
+        }
+        name += getNodeIndex();
+        return name;
+    }
+
 }
