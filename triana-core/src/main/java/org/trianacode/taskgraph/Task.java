@@ -87,7 +87,6 @@ public interface Task extends Tool {
     public static final String DEPRECATED_GUI_YPOS = "guiYPos"; // deprecated
 
     public static final String NODE_PROPERTIES = "nodeProperties";
-    public static final String NODE_NAME = "nodeName";
 
 
     public static final String EXECUTION_REQUEST_COUNT = "executionRequestCount";

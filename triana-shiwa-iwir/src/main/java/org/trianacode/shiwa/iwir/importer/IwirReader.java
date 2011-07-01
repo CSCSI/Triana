@@ -8,11 +8,10 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.organize.DaxOrganize;
 import org.trianacode.shiwa.iwir.tasks.TaskHolder;
 import org.trianacode.shiwa.iwir.tasks.TaskHolderFactory;
-import org.trianacode.taskgraph.TaskException;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
-import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
@@ -23,7 +22,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,33 +35,38 @@ import java.util.List;
  */
 public class IwirReader extends AbstractFormatFilter implements TaskGraphImporterInterface {
 
+    private TrianaProperties trianaProperties;
+    List<Task> allTrianaTasks;
+    Map<String, AbstractTask> allAbstractTasks;
+
+
     public IwirReader() {
 
     }
 
     @Override
     public String getFilterDescription() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public FileFilter[] getChoosableFileFilters() {
-        return new FileFilter[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new FileFilter[0];
     }
 
     @Override
     public FileFilter getDefaultFileFilter() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public boolean hasOptions() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public int showOptionsDialog(Component parent) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     public String toString() {
@@ -82,6 +88,9 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
 
     private TaskGraph importIWIR(File file, TrianaProperties properties) {
+        this.trianaProperties = properties;
+        allTrianaTasks = new ArrayList<Task>();
+        allAbstractTasks = new HashMap<String, AbstractTask>();
 
         IWIR iwir;
         try {
@@ -93,7 +102,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
         AbstractTask rootTask = iwir.getTask();
         TaskGraph taskGraph = createTaskGraph(rootTask.getName());
-        List<AbstractTask> allTasks = recurseAbstractTasks(taskGraph, rootTask);
+        List<AbstractTask> endAbstractTasks = recurseAbstractTasks(taskGraph, rootTask);
 
 
         DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
@@ -106,11 +115,12 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
         if (rootTask.getChildren().size() > 0) {
             TaskGraph innerTaskGraph = createTaskGraph(rootTask.getName());
+            allAbstractTasks.put(rootTask.getUniqueId(), rootTask);
             for (AbstractTask task : rootTask.getChildren()) {
                 addTaskHolderToTaskgraph(innerTaskGraph, task);
                 tasks.addAll(recurseAbstractTasks(innerTaskGraph, task));
             }
-            DaxOrganize daxOrganize = new DaxOrganize(innerTaskGraph);
+
             addTaskgraph(taskGraph, innerTaskGraph);
         } else {
             addTaskHolderToTaskgraph(taskGraph, rootTask);
@@ -119,31 +129,20 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         return tasks;
     }
 
-    private void addTaskHolderToTaskgraph(TaskGraph taskGraph, AbstractTask abstractTask) {
-//        describeAbstractTask(abstractTask);
+    private Task addTaskHolderToTaskgraph(TaskGraph taskGraph, AbstractTask abstractTask) {
 
-        System.out.println("AbstractTask : " + abstractTask.getUniqueId());
-
-        boolean shouldAddTask = true;
-        for (org.trianacode.taskgraph.Task trianaTask : taskGraph.getTasks(true)) {
-            if (trianaTask instanceof TaskHolder) {
-                AbstractTask iwirTask = ((TaskHolder) trianaTask).getIWIRTask();
-                System.out.println("Checking to see if : " + abstractTask.getUniqueId() +
-                        " = " + iwirTask.getUniqueId());
-                if (abstractTask.getUniqueId().equals(iwirTask.getUniqueId())) {
-                    shouldAddTask = false;
-                }
-            } else {
-                System.out.println("Task isn't a toolholder : " + trianaTask.getDisplayName());
-            }
-        }
-
-        if (shouldAddTask) {
-            TaskHolder taskHolder = TaskHolderFactory.getTaskHolderFactory().getTaskHolder(abstractTask);
-
-            Tool tool = initTool(taskHolder, taskGraph.getProperties());
+        if (shouldAddAbstractTask(taskGraph, abstractTask)) {
             try {
-                taskGraph.createTask(tool);
+                TaskHolder taskHolder = TaskHolderFactory.getTaskHolderFactory().getTaskHolder(abstractTask);
+                Tool tool = initTool(taskHolder);
+
+                Task task = taskGraph.createTask(tool);
+                allTrianaTasks.add(task);
+                allAbstractTasks.put(abstractTask.getUniqueId(), abstractTask);
+                resolveNodes(taskGraph, task);
+
+                return task;
+
             } catch (TaskException e) {
                 System.out.println("Failed to add tool to taskgraph.");
                 e.printStackTrace();
@@ -152,6 +151,42 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
             System.out.println("IWIR task with this unique id already exists." +
                     " Will not duplicate : " + abstractTask.getUniqueId());
         }
+        return null;
+    }
+
+    private boolean shouldAddAbstractTask(TaskGraph taskGraph, AbstractTask abstractTask) {
+//        boolean shouldAddTask = true;
+//        for (org.trianacode.taskgraph.Task trianaTask : taskGraph.getTasks(true)) {
+//
+//            AbstractTask iwirTask = getIWIRTaskFromTrianaTool(trianaTask);
+//            if(iwirTask != null){
+//                System.out.println("Checking to see if : " + abstractTask.getUniqueId() +
+//                        " = " + iwirTask.getUniqueId());
+//                if (abstractTask.getUniqueId().equals(iwirTask.getUniqueId())) {
+//                    shouldAddTask = false;
+//                }
+//            }
+//        }
+//        return shouldAddTask;
+
+        return !allAbstractTasks.containsKey(abstractTask.getUniqueId());
+    }
+
+    private AbstractTask getIWIRTaskFromTrianaTool(Tool trianaTool) {
+        if (trianaTool.getProxy() instanceof JavaProxy) {
+            Unit unit = ((JavaProxy) trianaTool.getProxy()).getUnit();
+            if (unit instanceof TaskHolder) {
+                AbstractTask iwirTask = ((TaskHolder) unit).getIWIRTask();
+                if (iwirTask != null) {
+                    return iwirTask;
+                } else {
+                    System.out.println("IWIR task is null in TaskHolder unit.");
+                }
+            } else {
+                System.out.println("Task isn't a toolholder : " + trianaTool.getDisplayName());
+            }
+        }
+        return null;
     }
 
     private TaskGraph createTaskGraph(String name) {
@@ -159,6 +194,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         try {
             taskGraph = TaskGraphManager.createTaskGraph();
             taskGraph.setToolName(name);
+
         } catch (TaskException e) {
             e.printStackTrace();
         }
@@ -167,10 +203,32 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
     private void addTaskgraph(TaskGraph parent, TaskGraph child) {
         try {
+//            TaskLayoutUtils.resolveGroupNodes(child);
+            DaxOrganize daxOrganize = new DaxOrganize(child);
             parent.createTask(child);
         } catch (TaskException e) {
             System.out.println("Failed to add inner taskgraph (group) to taskgraph.");
             e.printStackTrace();
+        } catch (TaskGraphException e) {
+            System.out.println("Failed to resolve group nodes.");
+            e.printStackTrace();
+        }
+    }
+
+    private void resolveNodes(TaskGraph taskgraph, Task task) {
+        for (Node node : task.getInputNodes()) {
+            try {
+                taskgraph.addDataInputNode(node);
+            } catch (NodeException e) {
+                e.printStackTrace();
+            }
+        }
+        for (Node node : task.getOutputNodes()) {
+            try {
+                taskgraph.addDataOutputNode(node);
+            } catch (NodeException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -194,11 +252,14 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
     }
 
-    private ToolImp initTool(TaskHolder taskHolder, TrianaProperties properties) {
+    private ToolImp initTool(TaskHolder taskHolder) {
         ToolImp tool = null;
+        ProxyFactory.initProxyFactory();
         try {
-            tool = new ToolImp(properties);
-            tool.setProxy(new JavaProxy(taskHolder.getClass().getSimpleName(), taskHolder.getClass().getPackage().getName()));
+            tool = new ToolImp(trianaProperties);
+
+            tool.setProxy(new JavaProxy(taskHolder, taskHolder.getClass().getSimpleName(), taskHolder.getClass().getPackage().getName()));
+
             tool.setToolName(taskHolder.getIWIRTask().getName());
             tool.setToolPackage(taskHolder.getClass().getPackage().getName());
 
@@ -331,7 +392,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         forEach2.addLoopElement(new LoopElement("collB", new CollectionType(
                 SimpleType.FILE)));
 
-        Task a = new Task("A", "consumer");
+        org.shiwa.fgi.iwir.Task a = new org.shiwa.fgi.iwir.Task("A", "consumer");
         a.addInputPort(new InputPort("elementA", SimpleType.FILE));
         a.addInputPort(new InputPort("elementB", SimpleType.FILE));
         a.addOutputPort(new OutputPort("res", SimpleType.FILE));

@@ -217,7 +217,6 @@ public class TaskImp extends ToolImp implements Task {
                     this.setParameterType(params[count], paramtype);
                 }
             }
-            addDeclaredNodeProperty(NODE_NAME);
 
         } catch (NodeException except) {
             throw (new TaskException(except));

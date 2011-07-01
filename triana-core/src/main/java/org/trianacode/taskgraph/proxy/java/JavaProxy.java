@@ -160,7 +160,7 @@ public class JavaProxy implements Proxy {
     }
 
     private Unit createUnit(Object o) throws ProxyInstantiationException {
-        System.out.println("JavaProxy.createUnit ENTER with object " + o.getClass());
+//        System.out.println("JavaProxy.createUnit ENTER with object " + o.getClass());
         if (o instanceof Unit) {
             return (Unit) o;
         } else {
