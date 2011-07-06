@@ -4,12 +4,15 @@ import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.Tool;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,13 +22,17 @@ import java.io.File;
  * To change this template use File | Settings | File Templates.
  */
 @Tool
-public class FileLoader {
+public class FileLoader implements TaskConscious {
 
     //   @TextFieldParameter
     private String filePath = "";
+    private Task task;
 
-    @Process
-    public File process() {
+    @Process(gather = true)
+    public File process(List list) {
+        if (list.get(0) instanceof String) {
+            filePath = (String) list.get(0);
+        }
 
         if (!filePath.equals("")) {
             File file = new File(filePath);
@@ -67,6 +74,11 @@ public class FileLoader {
 
         mainPane.add(locationPanel);
         return mainPane;
+    }
+
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
     }
 }
 

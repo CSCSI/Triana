@@ -2,6 +2,7 @@ package org.trianacode.shiwa;
 
 import org.shiwa.desktop.data.description.handler.Port;
 import org.shiwa.desktop.data.description.handler.Signature;
+import org.shiwa.desktop.data.transfer.SHIWADesktopExecutionListener;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
 import org.trianacode.TrianaInstance;
@@ -10,7 +11,9 @@ import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
@@ -29,13 +32,15 @@ import java.util.Set;
  * Time: 12:56
  * To change this template use File | Settings | File Templates.
  */
-public class TrianaEngineHandler implements WorkflowEngineHandler {
+public class TrianaEngineHandler implements WorkflowEngineHandler, SHIWADesktopExecutionListener {
 
     private Task task;
     private Signature loadedSignature;
+    private TrianaInstance trianaInstance;
 
-    public TrianaEngineHandler(Task task) {
+    public TrianaEngineHandler(Task task, TrianaInstance trianaInstance) {
         this.task = task;
+        this.trianaInstance = trianaInstance;
     }
 
     @Override
@@ -60,7 +65,6 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         setInputPorts(signature);
         setOutputPorts(signature);
 
-        setLoadedSignature(signature);
         return signature;
     }
 
@@ -86,11 +90,11 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
             XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(temp)));
             writer.writeComponent(task);
             writer.close();
-            System.out.println("Sending temp file inputstream");
+            System.out.println("Sending taskgraph to ShiwaDesktop.");
             return new FileInputStream(temp);
 
         } catch (Exception e) {
-            System.out.println("Failed to create temp xml file for output to shiwa-desktop : ");
+            System.out.println("Failed to create temp xml for output to shiwa-desktop : ");
             e.printStackTrace();
             return null;
         }
@@ -118,7 +122,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
-        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler((Task) tool));
+        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler((Task) tool, engine));
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.add(jPanel);
@@ -126,7 +130,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         jFrame.setVisible(true);
     }
 
-    public void setLoadedSignature(Signature signature) {
+    public void setLoadedSignature(Task loadedTask, Signature signature) {
         this.loadedSignature = signature;
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
@@ -141,13 +145,17 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
                 boolean reference = inputPort.isReference();
 
 
-                IoMapping ioMapping = new IoMapping(new IoType(value, "String", reference), portNumberString);
+                IoMapping ioMapping = new IoMapping(new IoType(value, "string", reference), portNumberString);
                 inputMappings.add(ioMapping);
             }
         }
 
-        IoConfiguration conf = new IoConfiguration(signature.getName(), "0.1", inputMappings, new ArrayList<IoMapping>());
+        IoConfiguration conf = new IoConfiguration(loadedTask.getQualifiedToolName(), "0.1", inputMappings, new ArrayList<IoMapping>());
 
+
+        System.out.println("\nTask name : " + loadedTask.getDisplayName() +
+                "\n Qualified name : " + loadedTask.getQualifiedToolName()
+        );
         List<IoMapping> mappings = conf.getInputs();
         for (IoMapping mapping : mappings) {
             System.out.println("  mapping:");
@@ -159,7 +167,28 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
         Exec exec = new Exec(null);
         try {
-            exec.execute(task, conf);
+            exec.execute(loadedTask, conf);
+        } catch (Exception e) {
+            System.out.println("Failed to load workflow back to Triana");
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void digestWorkflow(File file, Signature signature) {
+        try {
+            System.out.println("Importing a bundle");
+            XMLReader reader = new XMLReader(new FileReader(file));
+            Tool tool = reader.readComponent(trianaInstance.getProperties());
+
+            if (signature.hasConfiguration()) {
+                setLoadedSignature((Task) tool, signature);
+            } else {
+                if (GUIEnv.getApplicationFrame() != null && tool instanceof TaskGraph) {
+                    GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

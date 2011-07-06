@@ -1,4 +1,4 @@
-package org.trianacode.shiwa.iwir.tasks;
+package org.trianacode.shiwa.iwir.tasks.factory;
 
 import org.shiwa.fgi.iwir.AbstractTask;
 import org.trianacode.shiwa.iwir.execute.Executable;
@@ -33,6 +33,14 @@ public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
 
     public void init() {
         setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());
+    }
+
+    public String[] getInputTypes() {
+        return new String[]{"java.lang.Object"};
+    }
+
+    public String[] getOutputTypes() {
+        return new String[]{"java.lang.Object"};
     }
 }
 

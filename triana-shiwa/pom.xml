@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>org.trianacode.tripeg</groupId>-->
@@ -101,9 +101,9 @@
 
     <repositories>
         <!--<repository>-->
-            <!--<id>colette-maven-repos</id>-->
-            <!--<name>colette</name>-->
-            <!--<url>http://colette.cs.cf.ac.uk:7050/maven</url>-->
+        <!--<id>colette-maven-repos</id>-->
+        <!--<name>colette</name>-->
+        <!--<url>http://colette.cs.cf.ac.uk:7050/maven</url>-->
         <!--</repository>-->
         <repository>
             <id>trianacode-maven-repos</id>

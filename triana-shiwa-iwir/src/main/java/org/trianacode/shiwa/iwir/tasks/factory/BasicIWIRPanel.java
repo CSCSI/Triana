@@ -1,4 +1,4 @@
-package org.trianacode.shiwa.iwir.tasks;
+package org.trianacode.shiwa.iwir.tasks.factory;
 
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.taskgraph.Node;

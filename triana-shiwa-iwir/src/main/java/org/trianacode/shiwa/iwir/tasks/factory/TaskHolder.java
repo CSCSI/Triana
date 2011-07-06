@@ -1,4 +1,4 @@
-package org.trianacode.shiwa.iwir.tasks;
+package org.trianacode.shiwa.iwir.tasks.factory;
 
 import org.shiwa.fgi.iwir.AbstractTask;
 import org.trianacode.shiwa.iwir.execute.Executable;

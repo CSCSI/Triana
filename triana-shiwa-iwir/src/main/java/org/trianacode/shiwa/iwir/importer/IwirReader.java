@@ -6,8 +6,8 @@ import org.trianacode.gui.extensions.AbstractFormatFilter;
 import org.trianacode.gui.extensions.TaskGraphImporterInterface;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.organize.DaxOrganize;
-import org.trianacode.shiwa.iwir.tasks.TaskHolder;
-import org.trianacode.shiwa.iwir.tasks.TaskHolderFactory;
+import org.trianacode.shiwa.iwir.tasks.factory.TaskHolder;
+import org.trianacode.shiwa.iwir.tasks.factory.TaskHolderFactory;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.imp.ToolImp;
@@ -101,9 +101,15 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         }
 
         AbstractTask rootTask = iwir.getTask();
-        TaskGraph taskGraph = createTaskGraph(rootTask.getName());
+        TaskGraph taskGraph = createTaskGraph(iwir.getWfname());
         List<AbstractTask> endAbstractTasks = recurseAbstractTasks(taskGraph, rootTask);
+        System.out.println(allAbstractTasks.size() == endAbstractTasks.size());
+        System.out.println(allAbstractTasks.size() == allTrianaTasks.size());
 
+        for (AbstractTask task : endAbstractTasks) {
+            for (AbstractPort port : task.getAllInputPorts()) {
+            }
+        }
 
         DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
         return taskGraph;
@@ -114,8 +120,18 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         tasks.add(rootTask);
 
         if (rootTask.getChildren().size() > 0) {
+            System.out.println("\nRoot task " +
+                    rootTask.getUniqueId() +
+                    " has " +
+                    rootTask.getChildren().size() +
+                    " children.");
+
             TaskGraph innerTaskGraph = createTaskGraph(rootTask.getName());
-            allAbstractTasks.put(rootTask.getUniqueId(), rootTask);
+            addTaskHolderToTaskgraph(innerTaskGraph, rootTask);
+
+            for (AbstractTask task : rootTask.getChildren()) {
+                System.out.println("Child task : " + task.getUniqueId());
+            }
             for (AbstractTask task : rootTask.getChildren()) {
                 addTaskHolderToTaskgraph(innerTaskGraph, task);
                 tasks.addAll(recurseAbstractTasks(innerTaskGraph, task));
@@ -130,6 +146,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     }
 
     private Task addTaskHolderToTaskgraph(TaskGraph taskGraph, AbstractTask abstractTask) {
+        System.out.println("    Checking " + abstractTask.getUniqueId());
 
         if (shouldAddAbstractTask(taskGraph, abstractTask)) {
             try {
@@ -137,9 +154,10 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                 Tool tool = initTool(taskHolder);
 
                 Task task = taskGraph.createTask(tool);
+                System.out.println("Adding abstract task " + abstractTask.getUniqueId() + " to taskgraph " + taskGraph.getToolName());
                 allTrianaTasks.add(task);
                 allAbstractTasks.put(abstractTask.getUniqueId(), abstractTask);
-                resolveNodes(taskGraph, task);
+//                resolveNodes(taskGraph, task);
 
                 return task;
 
@@ -148,8 +166,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                 e.printStackTrace();
             }
         } else {
-            System.out.println("IWIR task with this unique id already exists." +
-                    " Will not duplicate : " + abstractTask.getUniqueId());
+            System.out.println("Abstract task with unique id " + abstractTask.getUniqueId() + " already exists, will not duplicate.");
         }
         return null;
     }
@@ -232,6 +249,27 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         }
     }
 
+    private void setNodeTypes(Tool tool) {
+
+        String[] inputTypes = new String[tool.getDataInputNodeCount()];
+        for (int nodeCount = 0; nodeCount < tool.getDataInputNodeCount(); nodeCount++) {
+            inputTypes[nodeCount] = (Object.class.getCanonicalName());
+        }
+        tool.setDataInputTypes(inputTypes);
+        for (String string : tool.getDataInputTypes()) {
+            System.out.println(string);
+        }
+
+        String[] outputTypes = new String[tool.getDataOutputNodeCount()];
+        for (int nodeCount = 0; nodeCount < tool.getDataOutputNodeCount(); nodeCount++) {
+            outputTypes[nodeCount] = (Object.class.getCanonicalName());
+        }
+        tool.setDataOutputTypes(outputTypes);
+        for (String string : tool.getDataOutputTypes()) {
+            System.out.println(string);
+        }
+    }
+
 
     private void describeAbstractTask(AbstractTask abstractTask) {
         System.out.println("\nIWIR abstractTask, Name : " + abstractTask.getName());
@@ -262,7 +300,6 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
             tool.setToolName(taskHolder.getIWIRTask().getName());
             tool.setToolPackage(taskHolder.getClass().getPackage().getName());
-
             tool.setDataInputNodeCount(taskHolder.getIWIRTask().getInputPorts().size());
             tool.setDataOutputNodeCount(taskHolder.getIWIRTask().getOutputPorts().size());
         } catch (Exception e) {
