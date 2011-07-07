@@ -11,30 +11,31 @@ import java.awt.event.ActionEvent;
 /**
  * Created by IntelliJ IDEA.
  * User: ian
- * Date: 22/02/2011
- * Time: 14:36
+ * Date: 06/07/2011
+ * Time: 14:21
  * To change this template use File | Settings | File Templates.
  */
-public class PublishWorkflow extends AbstractAction {
+public class DownloadWorkflow extends AbstractAction {
 
-    public PublishWorkflow() {
-        putValue(SHORT_DESCRIPTION, "Publish");
-        putValue(NAME, "Publish");
+    public DownloadWorkflow() {
+        putValue(SHORT_DESCRIPTION, "Download Workflow");
+        putValue(NAME, "Download Workflow");
     }
 
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        System.out.println("Publishing Workflow");
+        System.out.println("Downloading Workflow");
 
         ApplicationFrame frame = GUIEnv.getApplicationFrame();
         TaskGraph tg = frame.getSelectedTaskgraph();
 
         if (tg != null) {
 
-            TrianaEngineHandler teh = new TrianaEngineHandler(tg, frame.getEngine());
+            TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine());
 
+            JPanel popup = new SHIWADesktopPanel();
+            ((SHIWADesktopPanel) popup).addSHIWADesktopListener(tsl);
 
-            JPanel popup = new SHIWADesktopPanel(teh);
-            ((SHIWADesktopPanel) popup).addSHIWADesktopListener(new TrianaShiwaListener(frame.getEngine()));
             DisplayDialog dialog = new DisplayDialog(popup);
 
         } else {

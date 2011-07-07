@@ -1,17 +1,16 @@
 package imageproc.output;
 
-import java.awt.Image;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-
-import javax.swing.JFileChooser;
 import org.trianacode.gui.panels.FilePanel;
-import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.TrianaImage;
 import triana.types.TrianaPixelMap;
 import triana.types.image.GifEncoder;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 
 /**
  * A WriteGIF unit to ..
@@ -32,8 +31,9 @@ public class WriteGIF extends Unit {
         Image image = trimage.getImage();
 
         if ((imageName == null) || (imageName.equals(""))) {
-            ErrorDialog.show("No output file chosen in " + getTask().getToolName() + " please choose one now");
-            doubleClick();
+            imageName = "output.gif";
+//            ErrorDialog.show("No output file chosen in " + getTask().getToolName() + " please choose one now");
+//            doubleClick();
         }
 
         BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(imageName));
@@ -68,8 +68,8 @@ public class WriteGIF extends Unit {
         setMinimumInputNodes(1);
         setMaximumInputNodes(Integer.MAX_VALUE);
 
-        setDefaultOutputNodes(1);
-        setMinimumOutputNodes(1);
+        setDefaultOutputNodes(0);
+        setMinimumOutputNodes(0);
         setMaximumOutputNodes(Integer.MAX_VALUE);
     }
 
@@ -140,8 +140,7 @@ public class WriteGIF extends Unit {
     }
 
     /**
-     *
-     * @returns the location of the help file for this unit.  
+     * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {
         return "WriteGIF.html";

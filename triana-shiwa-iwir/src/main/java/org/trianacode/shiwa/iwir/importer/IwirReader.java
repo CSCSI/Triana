@@ -108,6 +108,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
         for (AbstractTask task : endAbstractTasks) {
             for (AbstractPort port : task.getAllInputPorts()) {
+
             }
         }
 
@@ -127,13 +128,15 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                     " children.");
 
             TaskGraph innerTaskGraph = createTaskGraph(rootTask.getName());
-            addTaskHolderToTaskgraph(innerTaskGraph, rootTask);
+            if (AbstractCompoundTask.class.isAssignableFrom(rootTask.getClass())) {
+                System.out.println("Root task : " + rootTask.getUniqueId() + " is loopy.");
+                addTaskHolderToTaskgraph(innerTaskGraph, rootTask);
+            }
 
             for (AbstractTask task : rootTask.getChildren()) {
                 System.out.println("Child task : " + task.getUniqueId());
             }
             for (AbstractTask task : rootTask.getChildren()) {
-                addTaskHolderToTaskgraph(innerTaskGraph, task);
                 tasks.addAll(recurseAbstractTasks(innerTaskGraph, task));
             }
 
