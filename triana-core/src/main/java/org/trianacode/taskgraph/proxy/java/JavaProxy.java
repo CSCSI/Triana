@@ -90,7 +90,11 @@ public class JavaProxy implements Proxy {
 
         this.unitname = unitname;
         this.unitpackage = unitpackage;
-        this.unit = createUnit(unit);
+        try {
+            this.unit = createUnit(unit);
+        } catch (ProxyInstantiationException e) {
+            createUnit();
+        }
     }
 
 

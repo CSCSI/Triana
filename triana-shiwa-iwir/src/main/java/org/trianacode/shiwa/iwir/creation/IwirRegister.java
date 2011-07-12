@@ -1,8 +1,10 @@
 package org.trianacode.shiwa.iwir.creation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.shiwa.fgi.iwir.AbstractTask;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,56 +16,37 @@ import java.util.UUID;
 
 public class IwirRegister {
     private static IwirRegister register = new IwirRegister();
-    List<String> files = new ArrayList();
-    List<String> jobs = new ArrayList();
-    List<IwirTaskChunk> taskChunks = new ArrayList();
+    Map<String, AbstractTask> abstractTasks;
 
     private IwirRegister() {
+        abstractTasks = new HashMap<String, AbstractTask>();
     }
 
-    public static IwirRegister getDaxRegister() {
+    public static IwirRegister getIwirRegister() {
         return register;
     }
 
     public synchronized void listAll() {
         log("+++++++++++++++++++++++++++++++LIST ALL +++++++++++++++++++++++++");
-        for (IwirTaskChunk chunk : taskChunks) {
-            chunk.listChunks();
+        for (AbstractTask task : abstractTasks.values()) {
+            System.out.println("Abstract task : " + task);
         }
     }
 
-    public synchronized void addTask(IwirTaskChunk thisFile) {
-        boolean duplicate = false;
-        for (IwirTaskChunk chunk : taskChunks) {
-            if (chunk == thisFile) {
-                duplicate = true;
-                log("Found a duplicate");
-            }
-        }
-        if (!duplicate) {
-            taskChunks.add(thisFile);
-        }
-        //    listAll();
+    public Collection<AbstractTask> getRegisteredTasks() {
+        return abstractTasks.values();
     }
 
-    public synchronized List<IwirTaskChunk> getTaskChunks() {
-        return taskChunks;
+    public synchronized void addTask(AbstractTask task) {
+        abstractTasks.put(task.getUniqueId(), task);
     }
 
-    public synchronized IwirTaskChunk getTaskChunkFromUUID(UUID uuid) {
-        for (IwirTaskChunk chunk : taskChunks) {
-            UUID toCheck = chunk.getUuid();
-            //      log("Checking : " + uuid + " with : " + toCheck );
-            if (uuid.equals(toCheck)) {
-                log("Register returning : " + chunk.getTaskName());
-                return chunk;
-            }
-        }
-        return null;
+    public AbstractTask getTaskFromUniqueID(String id) {
+        return abstractTasks.get(id);
     }
 
     public void clear() {
-        taskChunks.clear();
+        abstractTasks.clear();
     }
 
     private void log(String s) {

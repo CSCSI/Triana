@@ -12,6 +12,7 @@ import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.http.HTTPServices;
+import org.trianacode.messenger.ErrorTracker;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -57,6 +58,7 @@ public class TrianaInstance {
 
     private HTTPServices httpServices;
     private ToolResolver toolResolver;
+    private ErrorTracker errorTracker;
 
     private Map<Class, Set<Object>> extensions = new HashMap<Class, Set<Object>>();
     private TrianaProperties props;
@@ -87,6 +89,7 @@ public class TrianaInstance {
      * @throws Exception
      */
     public TrianaInstance(String[] args) throws IOException {
+        errorTracker = ErrorTracker.getMessageBus();
         executorService.allowCoreThreadTimeOut(true);
         if (args == null) {
             args = new String[0];
@@ -347,6 +350,10 @@ public class TrianaInstance {
 
     public void execute(Runnable runnable) {
         executorService.execute(runnable);
+    }
+
+    public ErrorTracker getMessageBus() {
+        return errorTracker;
     }
 
     private class ShutdownHook extends Thread {

@@ -7,6 +7,7 @@ import org.trianacode.annotation.Tool;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.shiwa.iwir.importer.IwirReader;
 import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 
 @Tool(panelClass = "org.trianacode.shiwa.iwirTools.creation.IwirCreatorPanel")
-public class IwirCreator {
+public class IwirCreator implements TaskConscious {
     private static final int AUTO_CONNECT = 0;
     private static final int SCATTER_CONNECT = 1;
     private static final int ONE2ONE_CONNECT = 2;
@@ -36,19 +37,22 @@ public class IwirCreator {
     private boolean demo = false;
 
     @TextFieldParameter
-    private String fileName = "output";
+    private String fileName = "output_iwir.xml";
+
+    private org.trianacode.taskgraph.Task task;
+
 
     @org.trianacode.annotation.Process(gather = true)
     public java.io.File process(List in) {
         log("IwirCreator");
         log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
-        IwirRegister register = IwirRegister.getDaxRegister();
+        IwirRegister register = IwirRegister.getIwirRegister();
 
-        java.io.File daxFile = null;
+        java.io.File iwirFile = null;
         try {
             GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            daxFile = daxFromRegister(register);
+            iwirFile = iwirFromTaskGraph(task.getParent(), fileName);
         } catch (Exception e) {
             log("Failed at something : " + e + "\n\n");
             e.printStackTrace();
@@ -57,7 +61,25 @@ public class IwirCreator {
             log("Cleared register");
             GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
-        return daxFile;
+        if (iwirFile != null) {
+            if (demo && iwirFile.exists() && iwirFile.canRead()) {
+                log("Displaying demo of " + iwirFile.getAbsolutePath());
+                IwirReader dr = new IwirReader();
+                try {
+                    TaskGraph t = dr.importWorkflow(iwirFile, GUIEnv.getApplicationFrame().getEngine().getProperties());
+                    TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
+                } catch (Exception e) {
+                    log("Error opening *" + this.fileName + "* demo taskgraph : " + e);
+                    e.printStackTrace();
+                }
+            } else {
+                log("Not displaying demo, or file not found/accessible : " + iwirFile.getAbsolutePath());
+            }
+        }
+        GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "IWIR saved : " + this.fileName);
+
+        return iwirFile;
     }
 
     private void log(String s) {
@@ -66,72 +88,117 @@ public class IwirCreator {
         System.out.println(s);
     }
 
-    private java.io.File daxFromRegister(IwirRegister register) {
-        register.listAll();
-        idNumber = 0;
+    public static java.io.File iwirFromTaskGraph(TaskGraph taskGraph, String fileName) {
         IWIR iwir = new IWIR(fileName);
+        BlockScope rootTask = new BlockScope("FIXMETODO");
+        iwir.setTask(rootTask);
 
-        addTasks(iwir, register);
+        addGenericTrianaTasks(rootTask, taskGraph);
         System.out.println(iwir.asXMLString());
-        return writeIwir(iwir);
+        return writeIwir(iwir, fileName);
     }
 
-    private void addTasks(IWIR iwir, IwirRegister register) {
-
-        //baseline blockscope for taskgraph
-        String taskGraphName = GUIEnv.getApplicationFrame().getSelectedTaskgraph().getToolName();
-        BlockScope rootBlockScope = new BlockScope("rootBlockScope" + taskGraphName);
-
-        // Set up tasks and ports. Port names are input/output + -taskname- +
-        List taskChunks = register.getTaskChunks();
-        int iter = 0;
-        for (Object next : taskChunks) {
-            IwirTaskChunk chunk = (IwirTaskChunk) next;
-            Task task = new Task(chunk.getTaskName() + "-" + iter, "Consumer");
-
-            int numInputs = chunk.getInTaskChunks().size();
-            System.out.println("Chunk " + task.getName() + " should have " + numInputs + " inputs.");
-            for (int i = 0; i < numInputs; i++) {
-                InputPort inputPort = new InputPort("input-" + task.getName() + "-" + i, SimpleType.FILE);
-                task.addInputPort(inputPort);
-//                System.out.println(task.getOutputPorts().size() + " inputs.");
-            }
-
-            int numOutputs = chunk.getOutTaskChunks().size();
-            System.out.println("Chunk " + task.getName() + " should have " + numOutputs + " outputs.");
-            for (int i = 0; i < numOutputs; i++) {
-                OutputPort outputPort = new OutputPort("output-" + task.getName() + "-" + i, SimpleType.FILE);
-                task.addOutputPort(outputPort);
-//                System.out.println(task.getOutputPorts().size() + " outputs.");
-            }
-
-            rootBlockScope.addTask(task);
-            iter++;
+    private static java.io.File writeIwir(IWIR iwir, String fileName) {
+        java.io.File iwirFile = new java.io.File(fileName + ".xml");
+        try {
+            iwir.asXMLFile(iwirFile);
+            System.out.println("Wrote " + iwirFile.getCanonicalPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        for (Object next : taskChunks) {
-            IwirTaskChunk chunk = (IwirTaskChunk) next;
-            Task task = new Task(chunk.getTaskName() + "-" + iter, "Consumer");
-
-            int numInputs = chunk.getInTaskChunks().size();
-            for (int i = 0; i < numInputs; i++) {
-                InputPort inputPort = new InputPort("input-" + task.getName() + "-" + i, SimpleType.FILE);
-                task.addInputPort(inputPort);
-            }
-
-            int numOutputs = chunk.getOutTaskChunks().size();
-            for (int i = 0; i < numOutputs; i++) {
-                OutputPort outputPort = new OutputPort("output-" + task.getName() + "-" + i, SimpleType.FILE);
-                task.addOutputPort(outputPort);
-            }
-
-            rootBlockScope.addTask(task);
-            iter++;
-        }
-
-
-        iwir.setTask(rootBlockScope);
+        return iwirFile;
     }
+
+    private static void addGenericTrianaTasks(AbstractCompoundLoopTask rootTask, TaskGraph taskGraph) {
+        org.trianacode.taskgraph.Task[] allTrianaTasks = taskGraph.getTasks(true);
+        for (org.trianacode.taskgraph.Task task : allTrianaTasks) {
+            if (AbstractTask.class.isAssignableFrom(task.getClass())) {
+                System.out.println("Oh crap, this is more complicated than I thought...");
+            } else {
+
+                AbstractTask addedTask = null;
+                if (task instanceof TaskGraph) {
+                    addedTask = new BlockScope(task.getQualifiedToolName());
+                    initIWIRTask(addedTask, task);
+                    rootTask.addTask(addedTask);
+                    addGenericTrianaTasks((BlockScope) addedTask, (TaskGraph) task);
+                } else {
+                    addedTask = new Task(task.getQualifiedToolName(), "hey look, its a string");
+                    initIWIRTask(addedTask, task);
+                    rootTask.addTask(addedTask);
+                }
+
+            }
+        }
+    }
+
+    private static void initIWIRTask(AbstractTask addedTask, org.trianacode.taskgraph.Task task) {
+//TODO - more fucking node connecting!!!!!
+
+//        for(Node inNode : task.getDataInputNodes()){
+//            addedTask.addInputPort(new InputPort(inNode.getName(), "string"));
+//        }
+//        for(Node outNode : task.getDataOutputNodes()){
+//            addedTask.addOutputPort(new OutputPort(outNode.getName(), "string"));
+//        }
+    }
+
+//    private void addIWIRTasks(IWIR iwir, IwirRegister register) {
+//
+//        //baseline blockscope for taskgraph
+//        String taskGraphName = GUIEnv.getApplicationFrame().getSelectedTaskgraph().getToolName();
+//        BlockScope rootBlockScope = new BlockScope("rootBlockScope" + taskGraphName);
+//
+//        // Set up tasks and ports. Port names are input/output + -taskname- +
+//        Collection<AbstractTask> taskChunks = register.getRegisteredTasks();
+//        int iter = 0;
+//        for (Object next : taskChunks) {
+//            IwirTaskChunk chunk = (IwirTaskChunk) next;
+//            Task task = new Task(chunk.getTaskName() + "-" + iter, "Consumer");
+//
+//            int numInputs = chunk.getInTaskChunks().size();
+//            System.out.println("Chunk " + task.getName() + " should have " + numInputs + " inputs.");
+//            for (int i = 0; i < numInputs; i++) {
+//                InputPort inputPort = new InputPort("input-" + task.getName() + "-" + i, SimpleType.FILE);
+//                task.addInputPort(inputPort);
+////                System.out.println(task.getOutputPorts().size() + " inputs.");
+//            }
+//
+//            int numOutputs = chunk.getOutTaskChunks().size();
+//            System.out.println("Chunk " + task.getName() + " should have " + numOutputs + " outputs.");
+//            for (int i = 0; i < numOutputs; i++) {
+//                OutputPort outputPort = new OutputPort("output-" + task.getName() + "-" + i, SimpleType.FILE);
+//                task.addOutputPort(outputPort);
+////                System.out.println(task.getOutputPorts().size() + " outputs.");
+//            }
+//
+//            rootBlockScope.addTask(task);
+//            iter++;
+//        }
+//
+//        for (Object next : taskChunks) {
+//            IwirTaskChunk chunk = (IwirTaskChunk) next;
+//            Task task = new Task(chunk.getTaskName() + "-" + iter, "Consumer");
+//
+//            int numInputs = chunk.getInTaskChunks().size();
+//            for (int i = 0; i < numInputs; i++) {
+//                InputPort inputPort = new InputPort("input-" + task.getName() + "-" + i, SimpleType.FILE);
+//                task.addInputPort(inputPort);
+//            }
+//
+//            int numOutputs = chunk.getOutTaskChunks().size();
+//            for (int i = 0; i < numOutputs; i++) {
+//                OutputPort outputPort = new OutputPort("output-" + task.getName() + "-" + i, SimpleType.FILE);
+//                task.addOutputPort(outputPort);
+//            }
+//
+//            rootBlockScope.addTask(task);
+//            iter++;
+//        }
+//
+//
+//        iwir.setTask(rootBlockScope);
+//    }
 
     //        HashMap<String, Executable> execs = new HashMap<String, Executable>();
 //
@@ -606,36 +673,9 @@ public class IwirCreator {
 //    }
 //
 //
-    private java.io.File writeIwir(IWIR iwir) {
-        java.io.File iwirFile = new java.io.File(fileName + ".xml");
 
-        try {
-            iwir.asXMLFile(iwirFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        log("File " + fileName + " saved.\n");
-
-
-        if (demo && iwirFile.exists() && iwirFile.canRead()) {
-            log("Displaying demo of " + iwirFile.getAbsolutePath());
-            IwirReader dr = new IwirReader();
-            try {
-                TaskGraph t = dr.importWorkflow(iwirFile, GUIEnv.getApplicationFrame().getEngine().getProperties());
-                TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
-            } catch (Exception e) {
-                log("Error opening *" + fileName + "* demo taskgraph : " + e);
-                e.printStackTrace();
-            }
-        } else {
-            log("Not displaying demo, or file not found/accessible : " + iwirFile.getAbsolutePath());
-        }
-        GUIEnv.getApplicationFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Dax saved : " + fileName);
-
-        return iwirFile;
+    @Override
+    public void setTask(org.trianacode.taskgraph.Task task) {
+        this.task = task;
     }
-
-
 }

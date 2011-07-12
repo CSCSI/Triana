@@ -112,9 +112,11 @@ public class DaxFileChunk implements Serializable {
         for (DaxJobChunk c : inJobChunks) {
             log(" ******* File : " + getFilename() + " has input : " + c.getJobName());
         }
+        resetNextCounter();
         for (DaxJobChunk c : outJobChunks) {
             log(" ******* File : " + getFilename() + " has output : " + c.getJobName());
         }
+        resetNextCounter();
     }
 
     public void setNumberOfFiles(int numberOfFiles) {

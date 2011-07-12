@@ -1,6 +1,7 @@
 package org.trianacode.shiwa.iwir.tasks.factory;
 
 import org.shiwa.fgi.iwir.AbstractTask;
+import org.trianacode.shiwa.iwir.creation.IwirRegister;
 import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.taskgraph.Unit;
 
@@ -41,6 +42,10 @@ public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
 
     public String[] getOutputTypes() {
         return new String[]{"java.lang.Object"};
+    }
+
+    public void registerIWIRTask(AbstractTask abstractTask) {
+        IwirRegister.getIwirRegister().addTask(abstractTask);
     }
 }
 

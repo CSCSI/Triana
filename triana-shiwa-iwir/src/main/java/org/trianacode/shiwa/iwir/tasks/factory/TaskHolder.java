@@ -19,4 +19,6 @@ public interface TaskHolder {
     public AbstractTask getIWIRTask();
 
     public void setIWIRTask(AbstractTask abstractTask);
+
+    public void registerIWIRTask(AbstractTask abstractTask);
 }

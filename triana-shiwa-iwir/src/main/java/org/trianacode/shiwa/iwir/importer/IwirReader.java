@@ -128,7 +128,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                     " children.");
 
             TaskGraph innerTaskGraph = createTaskGraph(rootTask.getName());
-            if (AbstractCompoundTask.class.isAssignableFrom(rootTask.getClass())) {
+            if (AbstractCompoundTask.class.isAssignableFrom(rootTask.getClass()) && !BlockScope.class.isAssignableFrom(rootTask.getClass())) {
                 System.out.println("Root task : " + rootTask.getUniqueId() + " is loopy.");
                 addTaskHolderToTaskgraph(innerTaskGraph, rootTask);
             }
@@ -160,7 +160,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                 System.out.println("Adding abstract task " + abstractTask.getUniqueId() + " to taskgraph " + taskGraph.getToolName());
                 allTrianaTasks.add(task);
                 allAbstractTasks.put(abstractTask.getUniqueId(), abstractTask);
-//                resolveNodes(taskGraph, task);
+                resolveNodes(taskGraph, task);
 
                 return task;
 

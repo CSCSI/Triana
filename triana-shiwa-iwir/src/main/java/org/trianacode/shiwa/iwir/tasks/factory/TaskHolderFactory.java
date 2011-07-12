@@ -45,6 +45,7 @@ public class TaskHolderFactory {
             taskHolder = new AtomicTaskHolder();
         }
         taskHolder.setIWIRTask(iwirTask);
+        taskHolder.registerIWIRTask(iwirTask);
         return taskHolder;
     }
 
