@@ -71,6 +71,9 @@
         <antcall target="toolbox">
             <param name="toolbox" value="gftgu"/>
         </antcall>
+        <antcall target="toolbox">
+            <param name="toolbox" value="iwir"/>
+        </antcall>
         <antcall target="dev-toolboxes"/>
         <mkdir dir="dist/modules"/>
         <antcall target="module">

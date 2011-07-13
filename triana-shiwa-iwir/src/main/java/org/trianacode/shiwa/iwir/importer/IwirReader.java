@@ -109,7 +109,13 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         List<AbstractTask> endAbstractTasks = recurseAbstractTasks(taskGraph, rootTask);
         System.out.println(allAbstractTasks.size() == endAbstractTasks.size());
         System.out.println(allAbstractTasks.size() == allTrianaTasks.size());
+        attachCables(endAbstractTasks);
 
+        DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
+        return taskGraph;
+    }
+
+    public void attachCables(List<AbstractTask> endAbstractTasks) {
         for (AbstractTask task : endAbstractTasks) {
             if (AbstractCompoundTask.class.isAssignableFrom(task.getClass())) {
                 AbstractCompoundTask abstractCompoundTask = (AbstractCompoundTask) task;
@@ -124,31 +130,37 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                         Node inputNode = nodePortTranslator.getNodeForAbstractPort(toPort);
                         Node outputNode = nodePortTranslator.getNodeForAbstractPort(fromPort);
 
-                        try {
-                            System.out.println("IWIR Connecting from : " + from + " To : " + to);
+                        if (inputNode != null && outputNode != null) {
+
+                            System.out.println("\nIWIR Connecting from : " + from + " To : " + to);
                             System.out.println("TRIANA Connecting from : " + outputNode.getName() + " To : " + inputNode.getName());
-                            TaskGraph scopedTaskGraph = outputNode.getTask().getParent();
-                            System.out.println("TaskGraph in scope is : " + scopedTaskGraph.getToolName());
-                            //TODO is this reasonable?
-                            Cable cable = scopedTaskGraph.connect(outputNode, inputNode);
-                            System.out.println("Cable connected : " + cable.isConnected());
-                        } catch (Exception e) {
-                            System.out.println("Problem attaching cable : " + e.getMessage());
-                            e.printStackTrace();
-                        } catch (Error err) {
-                            System.out.println("Error somewhere : " + err.getMessage());
+
+                            TaskGraph outputScopedTaskGraph = outputNode.getTask().getParent();
+                            TaskGraph inputScopedTaskGraph = inputNode.getTask().getParent();
+                            if (outputScopedTaskGraph == inputScopedTaskGraph) {
+                                try {
+
+                                    System.out.println("    TaskGraph in scope is : " + outputScopedTaskGraph.getToolName());
+                                    //TODO is this reasonable?
+                                    Cable cable = outputScopedTaskGraph.connect(outputNode, inputNode);
+                                    System.out.println("Cable connected : " + cable.isConnected());
+                                } catch (Exception e) {
+                                    System.out.println("*** *** Problem attaching cable : " + e.getMessage());
+                                    e.printStackTrace();
+                                } catch (Error err) {
+                                    System.out.println("** ** Error somewhere : " + err.getMessage());
+                                }
+                            } else {
+                                //TODO this is an issue..
+                                System.out.println("    Nodes are in different taskgraph scopes");
+                            }
                         }
 
                     }
                 }
-                for (AbstractPort port : task.getAllInputPorts()) {
-
-                }
             }
         }
 
-        DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
-        return taskGraph;
     }
 
     private List<AbstractTask> recurseAbstractTasks(TaskGraph taskGraph, AbstractTask rootTask) {

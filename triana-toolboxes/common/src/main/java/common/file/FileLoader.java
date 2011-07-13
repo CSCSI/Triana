@@ -30,8 +30,10 @@ public class FileLoader implements TaskConscious {
 
     @Process(gather = true)
     public File process(List list) {
-        if (list.get(0) instanceof String) {
-            filePath = (String) list.get(0);
+        if (list.size() > 0) {
+            if (list.get(0) instanceof String) {
+                filePath = (String) list.get(0);
+            }
         }
 
         if (!filePath.equals("")) {
