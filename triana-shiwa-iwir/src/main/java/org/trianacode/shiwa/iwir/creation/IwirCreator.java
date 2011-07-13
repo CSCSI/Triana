@@ -6,6 +6,9 @@ import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.shiwa.iwir.importer.IwirReader;
+import org.trianacode.shiwa.iwir.tasks.factory.AbstractTaskHolder;
+import org.trianacode.taskgraph.Cable;
+import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 
@@ -110,37 +113,62 @@ public class IwirCreator implements TaskConscious {
     }
 
     private static void addGenericTrianaTasks(AbstractCompoundLoopTask rootTask, TaskGraph taskGraph) {
+        NodePortTranslator nodePortTranslator = new NodePortTranslator();
+
         org.trianacode.taskgraph.Task[] allTrianaTasks = taskGraph.getTasks(true);
         for (org.trianacode.taskgraph.Task task : allTrianaTasks) {
-            if (AbstractTask.class.isAssignableFrom(task.getClass())) {
+            if (AbstractTaskHolder.class.isAssignableFrom(task.getClass())) {
                 System.out.println("Oh crap, this is more complicated than I thought...");
             } else {
 
                 AbstractTask addedTask = null;
                 if (task instanceof TaskGraph) {
                     addedTask = new BlockScope(task.getQualifiedToolName());
-                    initIWIRTask(addedTask, task);
+                    addAndRecordPorts(addedTask, task, nodePortTranslator);
                     rootTask.addTask(addedTask);
                     addGenericTrianaTasks((BlockScope) addedTask, (TaskGraph) task);
                 } else {
                     addedTask = new Task(task.getQualifiedToolName(), "hey look, its a string");
-                    initIWIRTask(addedTask, task);
+                    addAndRecordPorts(addedTask, task, nodePortTranslator);
                     rootTask.addTask(addedTask);
                 }
 
             }
         }
+
+        // find and connect them up
+        for (AbstractTask abstractTask : rootTask.getBodyTasks()) {
+            for (AbstractPort inputPort : abstractTask.getAllInputPorts()) {
+                Node startNode = nodePortTranslator.getNodeForAbstractPort(inputPort);
+                Cable cable = startNode.getCable();
+                Node endNode = cable.getSendingNode();
+                AbstractPort outputPort = nodePortTranslator.getAbstractPortForNode(endNode);
+
+                rootTask.addLink(outputPort, inputPort);
+            }
+        }
     }
 
-    private static void initIWIRTask(AbstractTask addedTask, org.trianacode.taskgraph.Task task) {
+    private static void addAndRecordPorts(AbstractTask addedTask, org.trianacode.taskgraph.Task task, NodePortTranslator nodePortTranslator) {
 //TODO - more fucking node connecting!!!!!
 
-//        for(Node inNode : task.getDataInputNodes()){
-//            addedTask.addInputPort(new InputPort(inNode.getName(), "string"));
-//        }
-//        for(Node outNode : task.getDataOutputNodes()){
-//            addedTask.addOutputPort(new OutputPort(outNode.getName(), "string"));
-//        }
+        //ok, here's the plan. create an abstract port for every node, store a node proxy which links them.
+        // from the node, get the cable, and get the next node.
+        // then get the port for that node. connect the two ports together, and hope that they're within scope.
+
+
+        for (Node inNode : task.getDataInputNodes()) {
+            InputPort inputPort = new InputPort(inNode.getName(), "string");
+            addedTask.addInputPort(inputPort);
+
+            nodePortTranslator.addNodeProxy(new NodeProxy(inNode, inputPort));
+        }
+        for (Node outNode : task.getDataOutputNodes()) {
+            OutputPort outputPort = new OutputPort(outNode.getName(), "string");
+            addedTask.addOutputPort(outputPort);
+
+            nodePortTranslator.addNodeProxy(new NodeProxy(outNode, outputPort));
+        }
     }
 
 //    private void addIWIRTasks(IWIR iwir, IwirRegister register) {

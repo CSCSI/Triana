@@ -1,6 +1,7 @@
 package org.trianacode.shiwa;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,9 +14,14 @@ public class DisplayDialog extends JDialog {
     public DisplayDialog(JPanel panel) {
         //     this.setModal(true);
         this.setTitle("Shiwa Desktop");
-        this.setLocationRelativeTo(this.getOwner());
+        this.setLocationRelativeTo(null);
         this.add(panel);
         this.pack();
+
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final int x = (screenSize.width - this.getWidth()) / 2;
+        final int y = (screenSize.height - this.getHeight()) / 2;
+        this.setLocation(x, y);
         this.setVisible(true);
     }
 }

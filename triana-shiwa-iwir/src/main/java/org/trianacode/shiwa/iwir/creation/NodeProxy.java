@@ -1,4 +1,7 @@
-package org.trianacode.shiwa.iwirTools.creation;
+package org.trianacode.shiwa.iwir.creation;
+
+import org.shiwa.fgi.iwir.AbstractPort;
+import org.trianacode.taskgraph.Node;
 
 /**
  * Created by IntelliJ IDEA.
@@ -7,7 +10,7 @@ package org.trianacode.shiwa.iwirTools.creation;
  * Time: 16:34
  * To change this template use File | Settings | File Templates.
  */
-public class IwirNode {
+public class NodeProxy {
 
     private String name;
     private int nodeNumber;
@@ -17,18 +20,25 @@ public class IwirNode {
     private int type;
     private static int inputNode = 0;
     private static int outputNode = 1;
+    private AbstractPort abstractPort;
+    private Node node;
 
-    public IwirNode(String name, int nodeNumber, boolean attached, int type, String externalNode) {
+    public NodeProxy(String name, int nodeNumber, boolean attached, int type, String externalNode) {
         this.name = name;
         this.nodeNumber = nodeNumber;
         this.attached = attached;
         this.type = type;
-        if (type == IwirNode.inputNode) {
+        if (type == NodeProxy.inputNode) {
             this.from = externalNode;
         }
-        if (type == IwirNode.outputNode) {
+        if (type == NodeProxy.outputNode) {
             this.to = externalNode;
         }
+    }
+
+    public NodeProxy(Node node, AbstractPort abstractPort) {
+        this.node = node;
+        this.abstractPort = abstractPort;
     }
 
     public String getName() {
@@ -76,8 +86,16 @@ public class IwirNode {
     }
 
     public void setType(int type) {
-        if (type == IwirNode.inputNode || type == IwirNode.outputNode) {
+        if (type == NodeProxy.inputNode || type == NodeProxy.outputNode) {
             this.type = type;
         }
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public AbstractPort getAbstractPort() {
+        return abstractPort;
     }
 }
