@@ -9,8 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,27 +21,32 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Tool
-public class FileLoader {
+public class TextFileReader {
 
-    //   @TextFieldParameter
     private String filePath = "";
 
-    @Process(gather = true)
-    public File process(List list) {
-        if (list.size() > 0) {
-            if (list.get(0) instanceof String) {
-                filePath = (String) list.get(0);
-            }
-        }
+    @Process
+    public String process() {
 
         if (!filePath.equals("")) {
             File file = new File(filePath);
             if (file.exists()) {
-                return file;
+                try {
+                    BufferedReader reader = new BufferedReader(new java.io.FileReader(file));
+                    String line;
+                    StringBuilder sb = new StringBuilder();
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line).append("\n");
+                    }
+                    return sb.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return "";
             }
 
         }
-        return null;
+        return "";
     }
 
     @CustomGUIComponent
@@ -75,6 +81,5 @@ public class FileLoader {
         mainPane.add(locationPanel);
         return mainPane;
     }
-
 }
 
