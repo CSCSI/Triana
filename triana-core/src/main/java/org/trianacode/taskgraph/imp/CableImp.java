@@ -280,7 +280,6 @@ public class CableImp implements Cable {
     }
 
     /**
-     * ~«
      * Notifies all the cable listeners that a the cable has been disconnected.
      */
     private void notifyCableDisconnected() {
