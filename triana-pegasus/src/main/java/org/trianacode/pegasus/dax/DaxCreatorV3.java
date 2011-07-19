@@ -26,7 +26,6 @@ import java.util.Vector;
  * Time: 9:27:14 PM
  * To change this template use File | Settings | File Templates.
  * <p/>
- * DO NOT USE org.griphyn FOR THIS CLASS
  * use isi.org.trianacode.pegasus.gui. for v3.0.1 compatibility.
  */
 
@@ -83,7 +82,6 @@ public class DaxCreatorV3 implements TaskConscious {
     private void daxFromInList(List in) {
 
         //needs to be in the new isi.org.trianacode.pegasus.gui
-        // NOT org.griphyn
 
         ADAG dax = new ADAG(fileName);
 

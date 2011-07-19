@@ -309,10 +309,12 @@ public class ClassParser {
                     for (int an = 0; an < annoslength; an++) {
                         int annoName = stream.readUnsignedShort();
                         UTF8Constant anno = names.get(annoName);
-                        if (anno.getClasses()[0].equals("org/trianacode/annotation/Tool")) {
-                            hier.setAnnotated(true);
+                        if (anno != null) {
+                            if (anno.getClasses()[0].equals("org/trianacode/annotation/Tool")) {
+                                hier.setAnnotated(true);
+                            }
+                            drainAnnotation(stream);
                         }
-                        drainAnnotation(stream);
                     }
                 } else {
                     int attrLength = stream.readInt();
@@ -320,8 +322,8 @@ public class ClassParser {
                         stream.readByte();
                     }
                 }
-            }else {
-                System.out.println("Found a null in classparser : " + path);
+            } else {
+                System.out.println("Found a null in classparser : " + hier.getName());
             }
         }
 

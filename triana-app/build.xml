@@ -75,26 +75,26 @@
             <param name="toolbox" value="iwir"/>
         </antcall>
         <antcall target="dev-toolboxes"/>
-        <mkdir dir="dist/modules"/>
-        <antcall target="module">
-            <param name="module" value="triana-pegasus"/>
-            <param name="targetModule" value="pegasus"/>
-        </antcall>
+        <!--<mkdir dir="dist/modules"/>-->
+        <!--<antcall target="module">-->
+        <!--<param name="module" value="triana-pegasus"/>-->
+        <!--<param name="targetModule" value="pegasus"/>-->
+        <!--</antcall>-->
     </target>
 
-    <target name="module">
-        <mkdir dir="dist/modules/${targetModule}"/>
-        <copy todir="dist/modules/${targetModule}" overwrite="yes">
-            <fileset dir="../${module}" includes="lib/**"/>
-            <fileset dir="../${module}" includes="doc/**"/>
-        </copy>
-        <copy todir="dist/modules/${targetModule}" overwrite="yes">
-            <fileset dir="../${module}" includes="xml/**"/>
-        </copy>
-        <copy todir="dist/modules/${targetModule}" overwrite="yes">
-            <fileset dir="../${module}/target" includes="*.jar"/>
-        </copy>
-    </target>
+    <!--<target name="module">-->
+    <!--<mkdir dir="dist/modules/${targetModule}"/>-->
+    <!--<copy todir="dist/modules/${targetModule}" overwrite="yes">-->
+    <!--<fileset dir="../${module}" includes="lib/**"/>-->
+    <!--<fileset dir="../${module}" includes="doc/**"/>-->
+    <!--</copy>-->
+    <!--<copy todir="dist/modules/${targetModule}" overwrite="yes">-->
+    <!--<fileset dir="../${module}" includes="xml/**"/>-->
+    <!--</copy>-->
+    <!--<copy todir="dist/modules/${targetModule}" overwrite="yes">-->
+    <!--<fileset dir="../${module}/target" includes="*.jar"/>-->
+    <!--</copy>-->
+    <!--</target>-->
 
 
     <target name="toolbox">

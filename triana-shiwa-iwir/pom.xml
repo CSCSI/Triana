@@ -44,9 +44,9 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--<mainClass></mainClass>-->
-                        <!--</manifest>-->
+                    <!--<manifest>-->
+                    <!--<mainClass></mainClass>-->
+                    <!--</manifest>-->
                     <!--</archive>-->
                 </configuration>
                 <executions>
@@ -72,11 +72,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>colette-maven-repos</groupId>-->
-            <!--<artifactId>xstream</artifactId>-->
-            <!--<version>1.3.1</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.shiwa.fgi</groupId>
             <artifactId>iwir</artifactId>
@@ -85,11 +80,6 @@
     </dependencies>
 
     <repositories>
-        <!--<repository>-->
-            <!--<id>colette-maven-repos</id>-->
-            <!--<name>colette</name>-->
-            <!--<url>http://colette.cs.cf.ac.uk:7050/maven</url>-->
-        <!--</repository>-->
         <repository>
             <id>trianacode-maven-repos</id>
             <url>http://trianacode.org/maven</url>

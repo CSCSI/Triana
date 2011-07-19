@@ -72,9 +72,9 @@ public class DaxGroupManager {
     public void placeSpecialTasks() {
         log("\n\nRearranging special tasks");
         for (DaxUnitObject duo : specialTasks) {
-            Task[] nextTasks = DaxOrganize.getNextTasks(duo.getTask());
-            if (nextTasks.length > 0) {
-                Task aNextTask = nextTasks[0];
+            ArrayList<Task> nextTasks = DaxOrganize.getNextTasks(duo.getTask());
+            if (nextTasks.size() > 0) {
+                Task aNextTask = nextTasks.get(0);
                 DaxUnitObject nextduo = getDUOforTask(aNextTask);
                 int nextduoLevel = nextduo.getLevel().getLevelNumber();
 
@@ -94,7 +94,7 @@ public class DaxGroupManager {
         return specialTasks;
     }
 
-    public void setRoots(Task[] roots) {
+    public void setRoots(ArrayList<Task> roots) {
         for (Task t : roots) {
             DaxUnitObject duo = getDUOforTask(t);
             if (duo != null) {

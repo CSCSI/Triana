@@ -110,42 +110,16 @@
             <version>3.0.0</version>
             <scope>compile</scope>
         </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>org.trianacode</groupId>-->
-        <!--<artifactId>dax</artifactId>-->
-        <!--<version>${project.version}</version>-->
-        <!--<scope>system</scope>-->
-        <!--<systemPath>-->
-        <!--/Users/ian/Work-Mac/Work/triana4/triana-org.trianacode.pegasus.gui/src/main/java/org/trianacode/org.trianacode.pegasus.gui/dax/adag/dax.jar-->
-        <!--</systemPath>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>colette-maven-repos</groupId>-->
-            <!--<artifactId>dax</artifactId>-->
-            <!--<version>3.0.1</version>-->
-        <!--</dependency>-->
     </dependencies>
 
     <repositories>
-        <!--<repository>-->
-            <!--<id>colette-maven-repos</id>-->
-            <!--<name>colette</name>-->
-            <!--<url>http://colette.cs.cf.ac.uk:7050/maven</url>-->
-        <!--</repository>-->
     </repositories>
 
     <distributionManagement>
-        <!--<repository>-->
-            <!--<id>colette-maven-repos</id>-->
-            <!--<name>Triana Maven Repository</name>-->
-            <!--<url>scp://colette.cs.cf.ac.uk:/var/www/maven</url>-->
-        <!--</repository>-->
         <repository>
-        <id>trianacode-maven-repos</id>
-        <name>Triana Maven Repository</name>
-        <url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>
+            <id>trianacode-maven-repos</id>
+            <name>Triana Maven Repository</name>
+            <url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>
         </repository>
     </distributionManagement>
 

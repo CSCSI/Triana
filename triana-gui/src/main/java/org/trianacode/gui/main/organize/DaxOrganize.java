@@ -36,7 +36,7 @@ public class DaxOrganize {
         log("Using dax organise");
         HashMap levels = new HashMap<Task, Integer>();
 
-        Task[] roots = getRootTasks(t);
+        ArrayList<Task> roots = getRootTasks(t);
 
         recurse(levels, roots, 0);
 
@@ -51,12 +51,21 @@ public class DaxOrganize {
 //        thread.start();
     }
 
-    private void recurse(HashMap h, Task[] ts, int level) {
+    private void recurse(HashMap h, ArrayList<Task> ts, int level) {
         log("\n\nGrid has " + dgm.getGrid().numberOfLevels() + " levels.");
-        if (ts.length > 0) {
+        if (ts.size() > 0) {
             for (Task task : ts) {
                 recLevel(h, task, level);
-                Task[] nextLevel = getNextTasks(task);
+                ArrayList<Task> nextLevel = getNextTasks(task);
+//
+//                Node[] inputNodes = task.getDataInputNodes();
+//                for(Node node : inputNodes){
+//                    if(nextLevel.contains(node.getCable().getSendingTask())){
+//                        System.out.println("Task : " + task.getToolName());
+//                        ts.remove(task);
+//                    }
+//                }
+
                 recurse(h, nextLevel, level + 1);
             }
         }
@@ -84,7 +93,7 @@ public class DaxOrganize {
         h.put(t, level);
     }
 
-    public static Task[] getNextTasks(Task t) {
+    public static ArrayList<Task> getNextTasks(Task t) {
         ArrayList<Task> nextTasks = new ArrayList<Task>();
         Node[] outputNodes = t.getDataOutputNodes();
         for (Node node : outputNodes) {
@@ -99,10 +108,11 @@ public class DaxOrganize {
                 }
             }
         }
-        return (Task[]) nextTasks.toArray(new Task[nextTasks.size()]);
+//        return (Task[]) nextTasks.toArray(new Task[nextTasks.size()]);
+        return nextTasks;
     }
 
-    private static Task[] getRootTasks(TaskGraph taskGraph) {
+    private static ArrayList<Task> getRootTasks(TaskGraph taskGraph) {
         Node[] rootNodeArray = taskGraph.getInputNodes();
         log("Input nodes : " + rootNodeArray.length);
         ArrayList<Node> rootNodes = new ArrayList<Node>(Arrays.asList(rootNodeArray));
@@ -157,7 +167,8 @@ public class DaxOrganize {
         }
 
         log("Root tasks : " + rootTasks);
-        return (Task[]) rootTasks.toArray(new Task[rootTasks.size()]);
+//        return (Task[]) rootTasks.toArray(new Task[rootTasks.size()]);
+        return rootTasks;
     }
 
 }

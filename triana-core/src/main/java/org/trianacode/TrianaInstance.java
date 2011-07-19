@@ -147,7 +147,6 @@ public class TrianaInstance {
         TaskGraphManager.initTaskGraphManager(props);
         TaskGraphManager.initToolTable(toolTable);
         initObjectDeserializers();
-        initExtensions(extensionClasses);
 
 
         httpServices = new HTTPServices();
@@ -167,6 +166,9 @@ public class TrianaInstance {
                 System.out.println("Error in toolResolver.resolve()" + throwable.getCause().toString());
             }
         }
+
+        initExtensions(extensionClasses);
+
         if (progress != null && runServer) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
         }

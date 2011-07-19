@@ -452,20 +452,24 @@ public class FileToolbox implements Toolbox {
      * @throws Exception
      */
     private List<Tool> processClass(URL url) throws Exception {
-        ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
-        log.debug("ToolResolver.add class hierarchy:" + ch);
-        if (ch == null) {
-            ch = TypesMap.getAnnotated(url.toString());
-        }
-        log.debug("ToolResolver.add class hierarchy after trying annotations:" + ch + " for url "
-                + url);
-
-        if (ch != null) {
-            Tool tool = createTool(ch.getName());
-            if (tool != null) {
-
-                return Arrays.asList(tool);
+        try {
+            ClassHierarchy ch = TypesMap.isType(url.toString(), Unit.class.getName());
+            log.debug("ToolResolver.add class hierarchy:" + ch);
+            if (ch == null) {
+                ch = TypesMap.getAnnotated(url.toString());
             }
+            log.debug("ToolResolver.add class hierarchy after trying annotations:" + ch + " for url "
+                    + url);
+
+            if (ch != null) {
+                Tool tool = createTool(ch.getName());
+                if (tool != null) {
+
+                    return Arrays.asList(tool);
+                }
+            }
+        } catch (Error error) {
+            System.out.println(url.toString() + " " + error.getLocalizedMessage());
         }
         return new ArrayList<Tool>();
     }
