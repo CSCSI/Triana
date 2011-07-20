@@ -1,4 +1,4 @@
-package org.trianacode.shiwa.iwir.importer;
+package org.trianacode.shiwa.iwir.test;
 
 
 import org.shiwa.fgi.iwir.*;

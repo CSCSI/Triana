@@ -1,4 +1,6 @@
-package org.trianacode.shiwa.iwir.importer;
+package org.trianacode.shiwa.iwir.xslt.iwir;
+
+import org.trianacode.shiwa.iwir.test.IwirWriter;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
