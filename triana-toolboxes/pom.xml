@@ -57,7 +57,6 @@
         <module>audio</module>
         <module>math</module>
         <module>gftgu</module>
-        <module>iwir</module>
     </modules>
 
 </project>
