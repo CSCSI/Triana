@@ -60,9 +60,10 @@
         <module>triana-pegasus</module>
         <module>triana-pegasus-gui</module>
         <module>triana-toolboxes</module>
-        <module>triana-app</module>
         <module>triana-shiwa</module>
         <module>triana-shiwa-iwir</module>
+        <module>triana-app</module>
+
     </modules>
 
 </project>
