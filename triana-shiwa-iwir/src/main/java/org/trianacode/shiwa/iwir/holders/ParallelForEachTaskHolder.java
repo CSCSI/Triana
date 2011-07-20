@@ -64,7 +64,7 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
                     addedTasks.add(addedTask);
                 }
             } else {
-                Unit unit = parallelUnit.getClass().getConstructor(getClass()).newInstance(this);
+                Unit unit = parallelUnit.getClass().newInstance();
                 Task addedTask = addAndConnectUnit(unit, inputData);
                 addedTasks.add(addedTask);
             }
