@@ -113,6 +113,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         attachCables(endAbstractTasks);
 
         DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
+        nodePortTranslator.listAll();
         return taskGraph;
     }
 
@@ -178,12 +179,13 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
             TaskGraph innerTaskGraph = createTaskGraph(rootTask.getName());
             if (AbstractCompoundTask.class.isAssignableFrom(rootTask.getClass()) && !BlockScope.class.isAssignableFrom(rootTask.getClass())) {
                 System.out.println("Root task : " + rootTask.getUniqueId() + " is loopy.");
-                addTaskHolderToTaskgraph(innerTaskGraph, rootTask);
+                Task controlTask = addTaskHolderToTaskgraph(innerTaskGraph, rootTask);
+                resolveNodes(innerTaskGraph, controlTask);
             }
 
-            for (AbstractTask task : rootTask.getChildren()) {
-                System.out.println("Child task : " + task.getUniqueId());
-            }
+//            for (AbstractTask task : rootTask.getChildren()) {
+//                System.out.println("Child task : " + task.getUniqueId());
+//            }
             for (AbstractTask task : rootTask.getChildren()) {
                 tasks.addAll(recurseAbstractTasks(innerTaskGraph, task));
             }
@@ -210,8 +212,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                 allAbstractTasks.put(abstractTask.getUniqueId(), abstractTask);
 
                 recordAbstractPorts(abstractTask, task);
-                // optimism
-                //            resolveNodes(taskGraph, task);
+
 
                 return task;
 
@@ -226,10 +227,12 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     }
 
     private void recordAbstractPorts(AbstractTask abstractTask, Task task) {
+        System.out.println("\nRecording ports for task : " + task.getDisplayName() + " abstract :" + abstractTask.getUniqueId());
         for (AbstractPort abstractPort : abstractTask.getInputPorts()) {
             Node inNode = null;
             try {
                 inNode = task.addDataInputNode();
+//                System.out.println("    Triana node : " + inNode.getName());
             } catch (NodeException e) {
                 e.printStackTrace();
             }
@@ -239,6 +242,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
             Node outNode = null;
             try {
                 outNode = task.addDataOutputNode();
+//                System.out.println("    Triana node : " + outNode.getName());
             } catch (NodeException e) {
                 e.printStackTrace();
             }
@@ -247,20 +251,6 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     }
 
     private boolean shouldAddAbstractTask(TaskGraph taskGraph, AbstractTask abstractTask) {
-//        boolean shouldAddTask = true;
-//        for (org.trianacode.taskgraph.Task trianaTask : taskGraph.getTasks(true)) {
-//
-//            AbstractTask iwirTask = getIWIRTaskFromTrianaTool(trianaTask);
-//            if(iwirTask != null){
-//                System.out.println("Checking to see if : " + abstractTask.getUniqueId() +
-//                        " = " + iwirTask.getUniqueId());
-//                if (abstractTask.getUniqueId().equals(iwirTask.getUniqueId())) {
-//                    shouldAddTask = false;
-//                }
-//            }
-//        }
-//        return shouldAddTask;
-
         return !allAbstractTasks.containsKey(abstractTask.getUniqueId());
     }
 
@@ -355,15 +345,15 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         for (AbstractPort abstractPort : abstractTask.getInputPorts()) {
             System.out.println("Input port :" +
                     "\n     PortName : " + abstractPort.getName() +
-                    "\n     UniqueID : " + abstractPort.getUniqueId() +
-                    "\n     PortType : " + abstractPort.getPortType().name()
+                    "\n     UniqueID : " + abstractPort.getUniqueId()
+//                    "\n     PortType : " + abstractPort.getPortType().name()
             );
         }
         for (AbstractPort abstractPort : abstractTask.getOutputPorts()) {
             System.out.println("Output port :" +
                     "\n     PortName : " + abstractPort.getName() +
-                    "\n     UniqueID : " + abstractPort.getUniqueId() +
-                    "\n     PortType : " + abstractPort.getPortType().name()
+                    "\n     UniqueID : " + abstractPort.getUniqueId()
+//                    "\n     PortType : " + abstractPort.getPortType().name()
             );
         }
 
@@ -470,66 +460,4 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     }
 
 
-    private IWIR testIwir() {
-
-        IWIR crossProduct = null;
-        try {
-            crossProduct = build();
-
-            // to stdout
-            System.out.println(crossProduct.asXMLString());
-
-            // to file
-            crossProduct.asXMLFile(new File("crossProduct.xml"));
-
-            // form file
-            crossProduct = new IWIR(new File("crossProduct.xml"));
-
-            // to stdout
-            System.out.println(crossProduct.asXMLString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return crossProduct;
-
-    }
-
-    private IWIR build() {
-        IWIR i = new IWIR("crossProduct");
-
-        ParallelForEachTask forEach1 = new ParallelForEachTask("foreach1");
-        forEach1.addInputPort(new InputPort("collB", new CollectionType(
-                SimpleType.FILE)));
-        forEach1.addLoopElement(new LoopElement("collA", new CollectionType(
-                SimpleType.FILE)));
-
-        ParallelForEachTask forEach2 = new ParallelForEachTask("foreach2");
-        forEach2.addInputPort(new InputPort("elementA", SimpleType.FILE));
-        forEach2.addLoopElement(new LoopElement("collB", new CollectionType(
-                SimpleType.FILE)));
-
-        org.shiwa.fgi.iwir.Task a = new org.shiwa.fgi.iwir.Task("A", "consumer");
-        a.addInputPort(new InputPort("elementA", SimpleType.FILE));
-        a.addInputPort(new InputPort("elementB", SimpleType.FILE));
-        a.addOutputPort(new OutputPort("res", SimpleType.FILE));
-
-        forEach2.addTask(a);
-        forEach2.addOutputPort(new OutputPort("res", new CollectionType(
-                SimpleType.FILE)));
-        forEach2.addLink(forEach2.getPort("elementA"), a.getPort("elementA"));
-        forEach2.addLink(forEach2.getPort("collB"), a.getPort("elementB"));
-        forEach2.addLink(a.getPort("res"), forEach2.getPort("res"));
-
-        forEach1.addTask(forEach2);
-        forEach1.addOutputPort(new OutputPort("res", new CollectionType(
-                new CollectionType(SimpleType.FILE))));
-        forEach1.addLink(forEach1.getPort("collA"),
-                forEach2.getPort("elementA"));
-        forEach1.addLink(forEach1.getPort("collB"), forEach2.getPort("collB"));
-        forEach1.addLink(forEach2.getPort("res"), forEach1.getPort("res"));
-
-        i.setTask(forEach1);
-
-        return i;
-    }
 }
