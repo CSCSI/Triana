@@ -181,9 +181,9 @@ public class Locations {
         File f = Locations.runHome();
         File p;
         if (isJarred()) {
-            p = new File(f.getParentFile(), "modules");
+            p = new File(f.getParentFile(), "toolboxes");
         } else {
-            p = new File(f, "modules");
+            p = new File(f, "toolboxes");
         }
         if (p != null) {
             return p.getAbsolutePath();
