@@ -112,7 +112,7 @@ public class IwirCreator implements TaskConscious {
         return iwirFile;
     }
 
-    private static void addGenericTrianaTasks(AbstractCompoundLoopTask rootTask, TaskGraph taskGraph) {
+    private static void addGenericTrianaTasks(AbstractSimpleCompoundTask rootTask, TaskGraph taskGraph) {
         NodePortTranslator nodePortTranslator = new NodePortTranslator();
 
         org.trianacode.taskgraph.Task[] allTrianaTasks = taskGraph.getTasks(true);
