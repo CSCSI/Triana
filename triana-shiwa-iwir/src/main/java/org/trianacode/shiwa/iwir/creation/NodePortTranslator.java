@@ -4,6 +4,7 @@ import org.shiwa.fgi.iwir.AbstractPort;
 import org.trianacode.taskgraph.Node;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -29,6 +30,10 @@ public class NodePortTranslator {
         portNodeHashMap.put(nodeProxy.getAbstractPort(), nodeProxy.getNode());
         nodeAbstractPortHashMap.put(nodeProxy.getNode(), nodeProxy.getAbstractPort());
         nodeProxies.add(nodeProxy);
+
+        System.out.println("\n\n\nRecording  abstract : " + nodeProxy.getAbstractPort().getUniqueId() + " node : " + nodeProxy.getNode().getName());
+
+        listAll();
     }
 
     public Node getNodeForAbstractPort(AbstractPort abstractPort) {
@@ -37,5 +42,20 @@ public class NodePortTranslator {
 
     public AbstractPort getAbstractPortForNode(Node node) {
         return nodeAbstractPortHashMap.get(node);
+    }
+
+    public void listAll() {
+        System.out.println("\n*** Listing all node stuff, abstract key");
+        for (Map.Entry entry : portNodeHashMap.entrySet()) {
+            AbstractPort abstractPort = (AbstractPort) entry.getKey();
+            Node node = (Node) entry.getValue();
+            System.out.println(abstractPort.getUniqueId() + " " + node.getName());
+        }
+        System.out.println("\n***Node key");
+        for (Map.Entry entry : nodeAbstractPortHashMap.entrySet()) {
+            AbstractPort abstractPort = (AbstractPort) entry.getValue();
+            Node node = (Node) entry.getKey();
+            System.out.println(node.getName() + " " + abstractPort.getUniqueId());
+        }
     }
 }
