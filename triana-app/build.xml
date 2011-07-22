@@ -140,6 +140,22 @@
         <antcall target="dev-toolbox">
             <param name="toolbox" value="gftgu"/>
         </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolboxes" value="../"/>
+            <param name="toolbox" value="triana-shiwa"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolboxes" value="../"/>
+            <param name="toolbox" value="triana-shiwa-iwir"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolboxes" value="../"/>
+            <param name="toolbox" value="triana-pegasus"/>
+        </antcall>
+        <antcall target="dev-toolbox">
+            <param name="toolboxes" value="../"/>
+            <param name="toolbox" value="triana-pegasus-gui"/>
+        </antcall>
     </target>
 
     <target name="dev-toolbox">
