@@ -21,7 +21,8 @@ public class URITest {
         System.out.println(file.getCanonicalPath());
         System.out.println(file.getName());
         System.out.println(file.toURI());
-        System.out.println(file.toURI().toURL());
+        System.out.println(file.toURI().toURL().getAuthority());
+        System.out.println(file.toURI().toURL().getPath());
         System.out.println(file.toURI().toASCIIString());
         System.out.println(file.toURI().toString());
         System.out.println(file.toURI().toURL().toExternalForm());
