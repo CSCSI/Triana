@@ -108,62 +108,15 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         AbstractTask rootTask = iwir.getTask();
         TaskGraph taskGraph = createTaskGraph(iwir.getWfname());
         List<AbstractTask> endAbstractTasks = recurseAbstractTasks(taskGraph, rootTask);
-        System.out.println(allAbstractTasks.size() == endAbstractTasks.size());
-        System.out.println(allAbstractTasks.size() == allTrianaTasks.size());
+
+//        System.out.println(allAbstractTasks.size() == endAbstractTasks.size());
+//        System.out.println(allAbstractTasks.size() == allTrianaTasks.size());
         attachCables(endAbstractTasks);
 
         DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
-        nodePortTranslator.listAll();
         return taskGraph;
     }
 
-    public void attachCables(List<AbstractTask> endAbstractTasks) {
-        for (AbstractTask task : endAbstractTasks) {
-            if (AbstractCompoundTask.class.isAssignableFrom(task.getClass())) {
-                AbstractCompoundTask abstractCompoundTask = (AbstractCompoundTask) task;
-                List<AbstractLink> links = abstractCompoundTask.getLinks();
-                for (AbstractLink link : links) {
-                    String from = link.getFrom();
-                    String to = link.getTo();
-                    if (DataLink.class.isAssignableFrom(link.getClass())) {
-                        AbstractPort fromPort = ((DataLink) link).getFromPort();
-                        AbstractPort toPort = ((DataLink) link).getToPort();
-
-                        Node inputNode = nodePortTranslator.getNodeForAbstractPort(toPort);
-                        Node outputNode = nodePortTranslator.getNodeForAbstractPort(fromPort);
-
-                        if (inputNode != null && outputNode != null) {
-
-                            System.out.println("\nIWIR Connecting from : " + from + " To : " + to);
-                            System.out.println("TRIANA Connecting from : " + outputNode.getName() + " To : " + inputNode.getName());
-
-                            TaskGraph outputScopedTaskGraph = outputNode.getTask().getParent();
-                            TaskGraph inputScopedTaskGraph = inputNode.getTask().getParent();
-                            if (outputScopedTaskGraph == inputScopedTaskGraph) {
-                                try {
-
-                                    System.out.println("    TaskGraph in scope is : " + outputScopedTaskGraph.getToolName());
-                                    //TODO is this reasonable?
-                                    Cable cable = outputScopedTaskGraph.connect(outputNode, inputNode);
-                                    System.out.println("Cable connected : " + cable.isConnected());
-                                } catch (Exception e) {
-                                    System.out.println("*** *** Problem attaching cable : " + e.getMessage());
-                                    e.printStackTrace();
-                                } catch (Error err) {
-                                    System.out.println("** ** Error somewhere : " + err.getMessage());
-                                }
-                            } else {
-                                //TODO this is an issue..
-                                System.out.println("    Nodes are in different taskgraph scopes");
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-    }
 
     private List<AbstractTask> recurseAbstractTasks(TaskGraph taskGraph, AbstractTask rootTask) {
         List<AbstractTask> tasks = new ArrayList<AbstractTask>();
@@ -196,6 +149,76 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         }
 
         return tasks;
+    }
+
+    public void attachCables(List<AbstractTask> endAbstractTasks) {
+        System.out.println("Attaching cables");
+        for (AbstractTask task : endAbstractTasks) {
+            if (AbstractCompoundTask.class.isAssignableFrom(task.getClass())) {
+                AbstractCompoundTask abstractCompoundTask = (AbstractCompoundTask) task;
+                List<AbstractLink> links = abstractCompoundTask.getLinks();
+                for (AbstractLink link : links) {
+                    String from = link.getFrom();
+                    String to = link.getTo();
+                    if (DataLink.class.isAssignableFrom(link.getClass())) {
+                        AbstractPort fromPort = ((DataLink) link).getFromPort();
+                        AbstractPort toPort = ((DataLink) link).getToPort();
+
+                        Node inputNode = nodePortTranslator.getNodeForAbstractPort(toPort.getUniqueId());
+                        Node outputNode = nodePortTranslator.getNodeForAbstractPort(fromPort.getUniqueId());
+
+                        if (inputNode != null && outputNode != null) {
+
+                            System.out.println("\nIWIR Connecting from : " + from + " To : " + to);
+                            System.out.println("TRIANA Connecting from : " + outputNode.getName() + " To : " + inputNode.getName());
+
+                            TaskGraph outputScopedTaskGraph = outputNode.getTask().getParent();
+                            TaskGraph inputScopedTaskGraph = inputNode.getTask().getParent();
+                            if (outputScopedTaskGraph == inputScopedTaskGraph) {
+                                try {
+
+                                    System.out.println("    TaskGraph in scope is : " + outputScopedTaskGraph.getToolName());
+                                    //TODO is this reasonable?
+                                    Cable cable = outputScopedTaskGraph.connect(outputNode, inputNode);
+                                    System.out.println("Cable connected : " + cable.isConnected());
+                                } catch (Exception e) {
+                                    System.out.println("*** *** Problem attaching cable : " + e.getMessage());
+                                    e.printStackTrace();
+                                } catch (Error err) {
+                                    System.out.println("** ** Error somewhere : " + err.getMessage());
+                                }
+                            } else {
+                                //TODO this is an issue.. Fairly random if this pans out.
+                                System.out.println("    Nodes are in different taskgraph scopes");
+
+                                if (outputScopedTaskGraph.getParent() == inputScopedTaskGraph) {
+                                    try {
+                                        Node scopeOutputNode = outputScopedTaskGraph.addDataOutputNode(outputNode);
+                                        inputScopedTaskGraph.connect(scopeOutputNode, inputNode);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                if (inputScopedTaskGraph.getParent() == outputScopedTaskGraph) {
+                                    try {
+                                        Node scopeInputNode = inputScopedTaskGraph.addDataInputNode(inputNode);
+                                        outputScopedTaskGraph.connect(outputNode, scopeInputNode);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+
+                            }
+                        } else {
+                            System.out.println("Error getting node info from nodePortTranslator : ");
+                        }
+
+                    }
+                }
+            }
+        }
+
     }
 
     private Task addTaskHolderToTaskgraph(TaskGraph taskGraph, AbstractTask abstractTask) {
