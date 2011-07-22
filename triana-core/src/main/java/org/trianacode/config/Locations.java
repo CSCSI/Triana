@@ -143,7 +143,7 @@ public class Locations {
         if (Locations.isJarred()) {
             File f = Locations.runHome();
             File p = f.getParentFile().getParentFile().getParentFile();
-            return p.getAbsolutePath();
+            return p.toURI().getPath();
         } else {
             return Locations.runHome().getAbsolutePath(); // is this correct?
         }
@@ -195,7 +195,7 @@ public class Locations {
         File f = Locations.runHome();
 
         if (Locations.isJarred()) {
-            return f.getAbsolutePath();
+            return f.toURI().getPath();
         } else {
             File p = new File(f, "triana-core");
             p = new File(p, "target");
