@@ -1,9 +1,9 @@
 package org.trianacode.shiwa;
 
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
+import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -15,11 +15,18 @@ import java.awt.event.ActionEvent;
  * Time: 14:21
  * To change this template use File | Settings | File Templates.
  */
-public class DownloadWorkflow extends AbstractAction {
+public class DownloadWorkflow extends AbstractAction implements ActionDisplayOptions {
 
     public DownloadWorkflow() {
+        this(ActionDisplayOptions.DISPLAY_BOTH);
+    }
+
+    public DownloadWorkflow(int displayOption) {
         putValue(SHORT_DESCRIPTION, "Download Workflow");
         putValue(NAME, "Download Workflow");
+        if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
+            putValue(SMALL_ICON, GUIEnv.getIcon("download_small.png"));
+        }
     }
 
     @Override
@@ -27,19 +34,13 @@ public class DownloadWorkflow extends AbstractAction {
         System.out.println("Downloading Workflow");
 
         ApplicationFrame frame = GUIEnv.getApplicationFrame();
-        TaskGraph tg = frame.getSelectedTaskgraph();
 
-        if (tg != null) {
+        TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine());
 
-            TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine());
+        JPanel popup = new SHIWADesktopPanel();
+        ((SHIWADesktopPanel) popup).addSHIWADesktopListener(tsl);
 
-            JPanel popup = new SHIWADesktopPanel();
-            ((SHIWADesktopPanel) popup).addSHIWADesktopListener(tsl);
+        DisplayDialog dialog = new DisplayDialog(popup);
 
-            DisplayDialog dialog = new DisplayDialog(popup);
-
-        } else {
-            JOptionPane.showMessageDialog(frame, "No taskgraph selected");
-        }
     }
 }

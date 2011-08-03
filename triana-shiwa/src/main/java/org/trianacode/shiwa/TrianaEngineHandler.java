@@ -25,12 +25,14 @@ import java.util.Set;
 public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     private Task task;
-    private Signature loadedSignature;
+    private InputStream displayImage;
+    //    private Signature loadedSignature;
     private TrianaInstance trianaInstance;
 
-    public TrianaEngineHandler(Task task, TrianaInstance trianaInstance) {
+    public TrianaEngineHandler(Task task, TrianaInstance trianaInstance, InputStream displayImage) {
         this.task = task;
         this.trianaInstance = trianaInstance;
+        this.displayImage = displayImage;
     }
 
     @Override
@@ -95,6 +97,17 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         return task.getQualifiedTaskName();
     }
 
+    @Override
+    public InputStream getDisplayImage() {
+        System.out.println("Sending display image to ShiwaDesktop");
+        return displayImage;
+    }
+
+    @Override
+    public String getDisplayImageName() {
+        return task.getQualifiedTaskName() + "-image.jpg";
+    }
+
     public static void main(String[] args) throws IOException, TaskGraphException {
         String wf = args[0];
         File f = new File(wf);
@@ -112,7 +125,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
-        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler((Task) tool, engine));
+        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler((Task) tool, engine, null));
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.add(jPanel);

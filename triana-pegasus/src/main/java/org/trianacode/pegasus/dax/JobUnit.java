@@ -224,7 +224,7 @@ public class JobUnit implements TaskConscious, Displayer {
     private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
-        System.out.println(s);
+        //    System.out.println(s);
     }
 
     @Override
