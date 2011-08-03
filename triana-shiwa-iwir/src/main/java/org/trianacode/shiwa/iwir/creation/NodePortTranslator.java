@@ -34,17 +34,29 @@ public class NodePortTranslator {
         abstractPortHashMap.put(nodeProxy.getAbstractPort().getUniqueId(), nodeProxy.getAbstractPort());
         nodeProxies.add(nodeProxy);
 
-        System.out.println("\n\nRecording  abstract : " + nodeProxy.getAbstractPort().getUniqueId() + " node : " + nodeProxy.getNode().getName());
+        System.out.println("    Recording  abstract : " + nodeProxy.getAbstractPort().getUniqueId() + " node : " + nodeProxy.getNode().getName());
 
 //        listAll();
     }
 
     public Node getNodeForAbstractPort(String abstractPortID) {
-        return portNodeHashMap.get(abstractPortID);
+        Node node = portNodeHashMap.get(abstractPortID);
+        if (node != null) {
+            return node;
+        } else {
+            System.out.println("Error finding node for " + abstractPortID);
+            return null;
+        }
     }
 
     public AbstractPort getAbstractPortForNode(Node node) {
-        return abstractPortHashMap.get(nodeAbstractPortIDHashMap.get(node));
+        AbstractPort abstractPort = abstractPortHashMap.get(nodeAbstractPortIDHashMap.get(node));
+        if (abstractPort != null) {
+            return abstractPort;
+        } else {
+            System.out.println("Error finding abstractPort for " + node.getName());
+            return null;
+        }
     }
 
     public void listAll() {
