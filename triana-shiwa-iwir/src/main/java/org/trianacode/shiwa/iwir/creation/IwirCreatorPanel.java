@@ -1,4 +1,4 @@
-package org.trianacode.shiwa.iwirTools.creation;
+package org.trianacode.shiwa.iwir.creation;
 
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.ParameterPanel;
