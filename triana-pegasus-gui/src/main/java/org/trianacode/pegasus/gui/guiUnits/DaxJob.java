@@ -6,6 +6,7 @@ import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.pegasus.dax.Displayer;
 import org.trianacode.pegasus.dax.JobUnit;
+import org.trianacode.pegasus.gui.models.DaxJobComponentModel;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import javax.swing.*;
@@ -24,7 +25,7 @@ import java.util.UUID;
  * Time: 12:39
  * To change this template use File | Settings | File Templates.
  */
-@Tool(renderingHints = {"DAX Job"}, minimumInputs = 1, minimumOutputs = 1)
+@Tool(renderingHints = {DaxJobComponentModel.DAX_JOB_RENDERING_HINT}, minimumInputs = 1, minimumOutputs = 1)
 public class DaxJob extends JobUnit implements Displayer, TaskConscious {
 
 
@@ -190,7 +191,7 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
         changeToolName(nameField.getText());
         jobName = nameField.getText();
         args = argsField.getText();
-        if(!collection){
+        if (!collection) {
             connectPattern = DaxJob.AUTO_CONNECT;
         }
         setParams();

@@ -2,8 +2,6 @@ package org.trianacode.pegasus;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
-import org.trianacode.discovery.ResolverRegistry;
-import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.Node;
@@ -12,18 +10,11 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.Tool;
-import org.trianacode.taskgraph.tool.ToolClassLoader;
-import org.trianacode.taskgraph.tool.Toolbox;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -150,64 +141,6 @@ public class CommandLinePegasus {
         }
 
         return childNode;
-    }
-
-    private static void investigateClassLoaders(TrianaInstance engine) {
-        log("\nClass loaders");
-        List<ToolClassLoader> toolClasses = ClassLoaders.getToolClassLoaders();
-        for (ToolClassLoader next : toolClasses) {
-            log(next.getClassPath());
-
-            for (String s : next.getClassPathList()) {
-                log(s);
-            }
-            for (String s : next.getLibPaths()) {
-                log(s);
-            }
-
-            URL[] urls = next.getURLs();
-            for (URL url : urls) {
-                log(url.toString());
-            }
-        }
-
-        log("Local tools from resolver");
-        for (Tool tool : engine.getToolResolver().getTools()) {
-            log(tool.getQualifiedToolName());
-        }
-
-        log("Resolver registy contents");
-        Collection<ToolMetadataResolver> resolvers = ResolverRegistry.getResolvers();
-        for (ToolMetadataResolver resolver : resolvers) {
-            log(resolver.getName());
-        }
-
-        log("Toolboxes from ToolTable");
-        for (Toolbox toolbox : engine.getToolTable().getToolBoxes()) {
-            log("Toolbox : " + toolbox.getPath());
-            for (Tool tool : toolbox.getTools()) {
-                log(tool.getQualifiedToolName());
-            }
-        }
-
-        log("Toolboxes from ToolResolver");
-        for (Toolbox toolbox : engine.getToolResolver().getToolboxes()) {
-            log("Toolbox : " + toolbox.getPath());
-            for (Tool tool : toolbox.getTools()) {
-                log(tool.getQualifiedToolName());
-            }
-        }
-
-        try {
-            log("Messing with system classloader");
-            Enumeration urls = ClassLoader.getSystemClassLoader().getResources(pegasusPackage + ".DaxCreatorV3");
-            while (urls.hasMoreElements()) {
-                log(urls.nextElement().toString());
-            }
-        } catch (Exception e) {
-            log("Error screwing around with system classloader");
-        }
-
     }
 
     private static void log(String s) {

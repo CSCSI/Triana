@@ -2,7 +2,9 @@ package org.trianacode.shiwa.iwir.holders;
 
 import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.factory.AbstractTaskHolder;
+import org.trianacode.shiwa.iwir.factory.models.IWIRControlComponentModel;
 import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.imp.RenderingHintImp;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
@@ -23,11 +25,24 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
     private Tool parallelTask;
     ArrayList<Object> allInputs;
     HashMap<Task, Node> attachments;
+    TaskGraph parent;
 
     //add arraylists to hold new nodes
 
+    public void init() {
+        super.init();
+        defineParameter("count", "0", Unit.USER_ACCESSIBLE);
+        setGUIBuilderV2Info("Loops $title count IntScroller 0 100 0");
+        getTask().addRenderingHint(
+                new RenderingHintImp(
+                        IWIRControlComponentModel.IWIR_CONTROL_RENDERING_HINT, false
+                )
+        );
+    }
+
     @Override
     public void process() throws Exception {
+        parent = this.getTask().getParent();
 
         ArrayList<Task> addedTasks = new ArrayList<Task>();
 
@@ -53,19 +68,22 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         }
 
         attachments = new HashMap<Task, Node>();
-        for (Object inputData : allInputs) {
+        for (int i = 0; i < allInputs.size(); i++) {
+            Object inputData = allInputs.get(i);
             if (inputData instanceof List) {
                 System.out.println("\nRuntime task creator will attempt to add : " + ((List) inputData).size());
 
                 for (Object inputFromList : (List) inputData) {
 
                     Unit unit = parallelUnit.getClass().newInstance();
-                    Task addedTask = addAndConnectUnit(unit, inputFromList);
+                    Task addedTask = createTask(unit);
+                    connectTask(addedTask);
                     addedTasks.add(addedTask);
                 }
             } else {
                 Unit unit = parallelUnit.getClass().newInstance();
-                Task addedTask = addAndConnectUnit(unit, inputData);
+                Task addedTask = createTask(unit);
+                connectTask(addedTask);
                 addedTasks.add(addedTask);
             }
         }
@@ -117,39 +135,44 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
                 Node thisTaskInputNode = this.getTask().addDataInputNode();
                 System.out.println("Added input node : " + thisTaskInputNode.getNodeIndex());
                 Node nextTaskOutputNode = newTask.addDataOutputNode();
-                Cable loopBackCable = this.getTask().getParent().connect(nextTaskOutputNode, thisTaskInputNode);
+                Cable loopBackCable = parent.connect(nextTaskOutputNode, thisTaskInputNode);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private Task addAndConnectUnit(Unit unit, Object data) {
-        TaskGraph parent = this.getTask().getParent();
+    public Task createTask(Unit unit) {
+        return createTask(createTool(unit));
+    }
 
-        org.trianacode.taskgraph.tool.Tool tool = initTool(unit);
+    private Task createTask(Tool tool) {
         Task newTask = null;
         try {
             newTask = parent.createTask(tool);
+            newTask.setParameter(Task.GUI_X, this.getParameter(Task.GUI_X));
+            newTask.setParameter(Task.GUI_Y, this.getParameter(Task.GUI_Y));
+        } catch (TaskException e) {
+            e.printStackTrace();
+        }
+        return newTask;
+    }
 
+    private void connectTask(Task newTask) {
+        try {
             Node thisTaskOutputNode = this.getTask().addDataOutputNode();
             System.out.println("Added output node : " + thisTaskOutputNode.getNodeIndex());
             Node nextTaskInputNode = newTask.addDataInputNode();
             Cable dataOutCable = parent.connect(thisTaskOutputNode, nextTaskInputNode);
 
-            if (dataOutCable.isConnected() && data != null) {
+            if (dataOutCable.isConnected()) {
                 attachments.put(newTask, thisTaskOutputNode);
-//                outputAtNode(thisTaskOutputNode.getNodeIndex(), data);
             }
-
-        } catch (TaskException e) {
-            e.printStackTrace();
         } catch (CableException e) {
-            System.out.println("Failed to add cable");
+            e.printStackTrace();
+        } catch (NodeException e) {
             e.printStackTrace();
         }
-
-        return newTask;
     }
 
     private Task addAndConnectTool(Tool tool, Object data) {
@@ -180,7 +203,7 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         return newTask;
     }
 
-    private ToolImp initTool(Unit unit) {
+    private ToolImp createTool(Unit unit) {
         ToolImp tool = null;
         ProxyFactory.initProxyFactory();
         try {

@@ -4,26 +4,23 @@ import org.shiwa.fgi.iwir.*;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.gui.extensions.AbstractFormatFilter;
 import org.trianacode.gui.extensions.TaskGraphImporterInterface;
-import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.organize.DaxOrganize;
 import org.trianacode.shiwa.iwir.creation.NodePortTranslator;
 import org.trianacode.shiwa.iwir.creation.NodeProxy;
 import org.trianacode.shiwa.iwir.factory.TaskHolder;
 import org.trianacode.shiwa.iwir.factory.TaskHolderFactory;
-import org.trianacode.shiwa.iwir.xslt.iwir.xsltTransformer;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.imp.ToolImp;
-import org.trianacode.taskgraph.proxy.ProxyFactory;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.ser.XMLReader;
+import org.trianacode.taskgraph.service.RunnableTaskFactory;
 import org.trianacode.taskgraph.tool.Tool;
 
 import javax.swing.filechooser.FileFilter;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +37,8 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
     private TrianaProperties trianaProperties;
     List<Task> allTrianaTasks;
-    Map<String, AbstractTask> allAbstractTasks;
+    List<AbstractTask> allAbstractTasks;
+    Map<String, AbstractTask> abstractTaskMap;
     NodePortTranslator nodePortTranslator;
 
 
@@ -94,8 +92,9 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     private TaskGraph importIWIR(File file, TrianaProperties properties) {
         this.trianaProperties = properties;
         allTrianaTasks = new ArrayList<Task>();
-        allAbstractTasks = new HashMap<String, AbstractTask>();
+        abstractTaskMap = new HashMap<String, AbstractTask>();
         nodePortTranslator = new NodePortTranslator();
+        allAbstractTasks = new ArrayList<AbstractTask>();
 
         IWIR iwir;
         try {
@@ -107,18 +106,19 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
         AbstractTask rootTask = iwir.getTask();
         TaskGraph taskGraph = createTaskGraph(iwir.getWfname());
-        List<AbstractTask> endAbstractTasks = recurseAbstractTasks(taskGraph, rootTask);
+//        List<AbstractTask> endAbstractTasks = recurseAbstractTasks(taskGraph, rootTask, null);
+        recurseAbstractTasks(taskGraph, rootTask, null);
 
 //        System.out.println(allAbstractTasks.size() == endAbstractTasks.size());
 //        System.out.println(allAbstractTasks.size() == allTrianaTasks.size());
-        attachCables(endAbstractTasks);
+        attachCables(allAbstractTasks);
 
         DaxOrganize daxOrganize = new DaxOrganize(taskGraph);
         return taskGraph;
     }
 
 
-    private List<AbstractTask> recurseAbstractTasks(TaskGraph taskGraph, AbstractTask rootTask) {
+    private List<AbstractTask> recurseAbstractTasks(TaskGraph taskGraph, AbstractTask rootTask, Task controlTask) {
         List<AbstractTask> tasks = new ArrayList<AbstractTask>();
         tasks.add(rootTask);
 
@@ -129,91 +129,156 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
                     rootTask.getChildren().size() +
                     " children.");
 
-            TaskGraph innerTaskGraph = createTaskGraph(rootTask.getName());
+            //          TaskGraph innerTaskGraph = createTaskGraph(rootTask.getName());
             if (AbstractCompoundTask.class.isAssignableFrom(rootTask.getClass()) && !BlockScope.class.isAssignableFrom(rootTask.getClass())) {
                 System.out.println("Root task : " + rootTask.getUniqueId() + " is loopy.");
-                Task controlTask = addTaskHolderToTaskgraph(innerTaskGraph, rootTask);
-                resolveNodes(innerTaskGraph, controlTask);
+//                Task innerControlTask = addTaskHolderToTaskgraph(innerTaskGraph, rootTask, true);
+//                connectControlTask(rootTask, innerTaskGraph, innerControlTask);
+                Task innerControlTask = addTaskHolderToTaskgraph(taskGraph, rootTask, true);
+                connectControlTask(rootTask, taskGraph, innerControlTask);
+
+
+            } else {
+
+                for (AbstractTask task : rootTask.getChildren()) {
+//                    recurseAbstractTasks(innerTaskGraph, task, null);
+                    recurseAbstractTasks(taskGraph, task, null);
+                }
             }
 
-//            for (AbstractTask task : rootTask.getChildren()) {
-//                System.out.println("Child task : " + task.getUniqueId());
-//            }
-            for (AbstractTask task : rootTask.getChildren()) {
-                tasks.addAll(recurseAbstractTasks(innerTaskGraph, task));
-            }
-
-            addTaskgraph(taskGraph, innerTaskGraph);
+//           addTaskgraph(taskGraph, innerTaskGraph);
         } else {
-            addTaskHolderToTaskgraph(taskGraph, rootTask);
-        }
+            addTaskHolderToTaskgraph(taskGraph, rootTask, false);
 
+        }
+        allAbstractTasks.addAll(tasks);
         return tasks;
     }
 
+    private void connectControlTask(AbstractTask rootTask, TaskGraph innerTaskGraph, Task innerControlTask) {
+        for (AbstractTask task : rootTask.getChildren()) {
+//                allAbstractTasks.addAll(recurseAbstractTasks(innerTaskGraph, task, innerControlTask));
+            recurseAbstractTasks(innerTaskGraph, task, innerControlTask);
+        }
+        System.out.println("Control task with abstract : " + rootTask.getUniqueId());
+
+        if (rootTask instanceof ParallelForEachTask) {
+
+        }
+        if (rootTask instanceof IfTask) {
+            IfTask ifTask = (IfTask) rootTask;
+            for (AbstractLink link : ifTask.getDataLinks()) {
+                try {
+                    attachCableFromAbstractLink(link);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+//        try{
+//            taskGraph.connect(controlTask.addDataOutputNode(), addedTask.addDataInputNode());
+//            taskGraph.connect(addedTask.addDataOutputNode(), controlTask.addDataInputNode());
+//        } catch (Exception e){}
+    }
+
+    private Cable attachCableFromAbstractLink(AbstractLink link) throws NodeException, CableException {
+        Cable cable = null;
+        String from = link.getFrom();
+        String to = link.getTo();
+        if (DataLink.class.isAssignableFrom(link.getClass())) {
+            AbstractPort fromPort = ((DataLink) link).getFromPort();
+            AbstractPort toPort = ((DataLink) link).getToPort();
+            System.out.println("\nIWIR Connecting from : " + from + " To : " + to);
+
+            Node inputNode = nodePortTranslator.getNodeForAbstractPort(toPort.getUniqueId());
+            Node outputNode = nodePortTranslator.getNodeForAbstractPort(fromPort.getUniqueId());
+
+            if (inputNode != null && outputNode != null) {
+                System.out.println("TRIANA Connecting from : " + outputNode.getName() + " To : " + inputNode.getName());
+
+                if (inputNode.isInputNode() && outputNode.isOutputNode()) {
+
+                    if (inScope(outputNode, inputNode)) {
+                        System.out.println("    TaskGraph in scope is : " + getNodesTaskGraph(outputNode).getToolName());
+
+
+                        //TODO is this reasonable?
+                        cable = connectCable(getNodesTaskGraph(outputNode), outputNode, inputNode);
+
+                    } else {
+                        //TODO this is an issue.. Fairly random if this pans out.
+                        attachOutOfScopeNodes(outputNode, inputNode);
+
+                    }
+                } else {
+                    //      correctNodeType(outputNode, inputNode);
+                }
+            } else {
+                if (inputNode == null && outputNode != null) {
+                    System.out.println(toPort.getUniqueId() + " needs to be created");
+                    getNodesTaskGraph(outputNode).addDataOutputNode(outputNode);
+                    System.out.println("Taskgraph output node added");
+                }
+
+                if (outputNode == null && inputNode != null) {
+                    System.out.println(fromPort.getUniqueId() + " needs to be created");
+                    getNodesTaskGraph(inputNode).addDataInputNode(inputNode);
+                    System.out.println("Taskgraph input node added");
+                }
+            }
+
+        }
+        return cable;
+    }
+
+    private void correctNodeType(Node outputNode, Node inputNode) throws NodeException {
+        System.out.println("Error : An output is supposed to connect to an input!");
+        if (inputNode.isOutputNode()) {
+            System.out.println("Input node is an output node");
+            Node newInputNode = inputNode.getTask().addDataInputNode();
+            if (inScope(outputNode, newInputNode)) {
+                connectCable(getNodesTaskGraph(newInputNode), outputNode, newInputNode);
+            } else {
+                attachOutOfScopeNodes(outputNode, newInputNode);
+                System.out.println("New inputNode is not in scope of output node");
+            }
+
+        }
+        if (outputNode.isInputNode()) {
+            System.out.println("Output node is an input node");
+            Node newOutputNode = outputNode.getTask().addDataOutputNode();
+            if (inScope(newOutputNode, inputNode)) {
+                connectCable(getNodesTaskGraph(newOutputNode), newOutputNode, inputNode);
+            } else {
+                System.out.println("New outputNode is not in scope of input node");
+                attachOutOfScopeNodes(newOutputNode, inputNode);
+            }
+            //                     outputNode.getTask().removeDataInputNode(outputNode);
+        }
+    }
+
+
+    private TaskGraph getNodesTaskGraph(Node node) {
+        return node.getTask().getParent();
+    }
+
+    private boolean inScope(Node outputNode, Node inputNode) {
+        return getNodesTaskGraph(outputNode) == getNodesTaskGraph(inputNode);
+    }
+
     public void attachCables(List<AbstractTask> endAbstractTasks) {
-        System.out.println("Attaching cables");
+        System.out.println("*********Attaching cables");
         for (AbstractTask task : endAbstractTasks) {
             if (AbstractCompoundTask.class.isAssignableFrom(task.getClass())) {
                 AbstractCompoundTask abstractCompoundTask = (AbstractCompoundTask) task;
                 List<AbstractLink> links = abstractCompoundTask.getLinks();
                 for (AbstractLink link : links) {
-                    String from = link.getFrom();
-                    String to = link.getTo();
-                    if (DataLink.class.isAssignableFrom(link.getClass())) {
-                        AbstractPort fromPort = ((DataLink) link).getFromPort();
-                        AbstractPort toPort = ((DataLink) link).getToPort();
-
-                        Node inputNode = nodePortTranslator.getNodeForAbstractPort(toPort.getUniqueId());
-                        Node outputNode = nodePortTranslator.getNodeForAbstractPort(fromPort.getUniqueId());
-
-                        if (inputNode != null && outputNode != null) {
-
-                            System.out.println("\nIWIR Connecting from : " + from + " To : " + to);
-                            System.out.println("TRIANA Connecting from : " + outputNode.getName() + " To : " + inputNode.getName());
-
-                            TaskGraph outputScopedTaskGraph = outputNode.getTask().getParent();
-                            TaskGraph inputScopedTaskGraph = inputNode.getTask().getParent();
-                            if (outputScopedTaskGraph == inputScopedTaskGraph) {
-                                try {
-
-                                    System.out.println("    TaskGraph in scope is : " + outputScopedTaskGraph.getToolName());
-                                    //TODO is this reasonable?
-                                    Cable cable = outputScopedTaskGraph.connect(outputNode, inputNode);
-                                    System.out.println("Cable connected : " + cable.isConnected());
-                                } catch (Exception e) {
-                                    System.out.println("*** *** Problem attaching cable : " + e.getMessage());
-                                    e.printStackTrace();
-                                } catch (Error err) {
-                                    System.out.println("** ** Error somewhere : " + err.getMessage());
-                                }
-                            } else {
-                                //TODO this is an issue.. Fairly random if this pans out.
-                                System.out.println("    Nodes are in different taskgraph scopes");
-
-                                if (outputScopedTaskGraph.getParent() == inputScopedTaskGraph) {
-                                    try {
-                                        Node scopeOutputNode = outputScopedTaskGraph.addDataOutputNode(outputNode);
-                                        inputScopedTaskGraph.connect(scopeOutputNode, inputNode);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                if (inputScopedTaskGraph.getParent() == outputScopedTaskGraph) {
-                                    try {
-                                        Node scopeInputNode = inputScopedTaskGraph.addDataInputNode(inputNode);
-                                        outputScopedTaskGraph.connect(outputNode, scopeInputNode);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-
-                            }
-                        } else {
-                            System.out.println("Error getting node info from nodePortTranslator : ");
-                        }
-
+                    try {
+                        attachCableFromAbstractLink(link);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -221,21 +286,66 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
     }
 
-    private Task addTaskHolderToTaskgraph(TaskGraph taskGraph, AbstractTask abstractTask) {
-        System.out.println("    Checking " + abstractTask.getUniqueId());
+
+    private Cable connectCable(TaskGraph taskGraph, Node outputNode, Node inputNode) {
+        Cable cable = null;
+        try {
+            cable = taskGraph.connect(outputNode, inputNode);
+            System.out.println("Cable connected : " +
+                    cable.isConnected() + " " +
+                    cable.getSendingNode().getName() + " " +
+                    cable.getReceivingNode().getName());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return cable;
+    }
+
+
+    private void attachOutOfScopeNodes(Node outputNode, Node inputNode) throws NodeException {
+        System.out.println("    Nodes are in different taskgraph scopes");
+        TaskGraph outputScopedTaskGraph = getNodesTaskGraph(outputNode);
+        TaskGraph inputScopedTaskGraph = getNodesTaskGraph(inputNode);
+
+        if (outputScopedTaskGraph.getParent() == inputScopedTaskGraph) {
+            System.out.println("output nodes taskgraph is inside input nodes taskgraph. ");
+            Node scopeOutputNode = outputScopedTaskGraph.addDataOutputNode(outputNode);
+            //          connectCable(outputScopedTaskGraph, outputNode, scopeOutputNode);
+//            connectCable(inputScopedTaskGraph, scopeOutputNode, inputNode);
+
+        }
+        if (inputScopedTaskGraph.getParent() == outputScopedTaskGraph) {
+            System.out.println("input nodes taskgraph is inside output nodes taskgraph.");
+            Node scopeInputNode = inputScopedTaskGraph.addDataInputNode(inputNode);
+            //           connectCable(inputScopedTaskGraph, scopeInputNode, inputNode);
+//            connectCable(outputScopedTaskGraph, outputNode, scopeInputNode);
+        }
+    }
+
+
+    private Task addTaskHolderToTaskgraph(TaskGraph taskGraph, AbstractTask abstractTask, boolean control) {
+//        System.out.println("\n\nChecking " + abstractTask.getUniqueId());
 
         if (shouldAddAbstractTask(taskGraph, abstractTask)) {
             try {
                 TaskHolder taskHolder = TaskHolderFactory.getTaskHolderFactory().getTaskHolder(abstractTask);
                 Tool tool = initTool(taskHolder);
 
+//                RunnableTaskFactory runnableTaskFactory = new RunnableTaskFactory();
+//                Task task = runnableTaskFactory.createTask(tool, taskGraph, true);
+//                taskGraph.createTask(task, true);
                 Task task = taskGraph.createTask(tool);
                 System.out.println("Adding abstract task " + abstractTask.getUniqueId() + " to taskgraph " + taskGraph.getToolName());
+                System.out.println("Control = " + control);
                 allTrianaTasks.add(task);
-                allAbstractTasks.put(abstractTask.getUniqueId(), abstractTask);
+                abstractTaskMap.put(abstractTask.getUniqueId(), abstractTask);
 
-                recordAbstractPorts(abstractTask, task);
+                if (control) {
 
+                    //             recordControlPorts(abstractTask, taskGraph, task);
+                } else {
+                    recordAbstractPorts(abstractTask, task);
+                }
 
                 return task;
 
@@ -249,8 +359,33 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
         return null;
     }
 
+
+    private void recordControlPorts(AbstractTask abstractTask, TaskGraph taskGraph, Task task) {
+        System.out.println("    Recording ports for control task : " + task.getQualifiedTaskName() + " abstract :" + abstractTask.getUniqueId());
+
+
+        for (AbstractPort abstractPort : abstractTask.getInputPorts()) {
+            Node inNode = null;
+            try {
+                inNode = taskGraph.addDataInputNode(task.addDataInputNode());
+            } catch (NodeException e) {
+                e.printStackTrace();
+            }
+            nodePortTranslator.addNodeProxy(new NodeProxy(inNode, abstractPort));
+        }
+        for (AbstractPort abstractPort : abstractTask.getOutputPorts()) {
+            Node outNode = null;
+            try {
+                outNode = taskGraph.addDataOutputNode(task.addDataOutputNode());
+            } catch (NodeException e) {
+                e.printStackTrace();
+            }
+            nodePortTranslator.addNodeProxy(new NodeProxy(outNode, abstractPort));
+        }
+    }
+
     private void recordAbstractPorts(AbstractTask abstractTask, Task task) {
-        System.out.println("\nRecording ports for task : " + task.getDisplayName() + " abstract :" + abstractTask.getUniqueId());
+        System.out.println("    Recording ports for task : " + task.getQualifiedTaskName() + " abstract :" + abstractTask.getUniqueId());
         for (AbstractPort abstractPort : abstractTask.getInputPorts()) {
             Node inNode = null;
             try {
@@ -274,7 +409,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     }
 
     private boolean shouldAddAbstractTask(TaskGraph taskGraph, AbstractTask abstractTask) {
-        return !allAbstractTasks.containsKey(abstractTask.getUniqueId());
+        return !abstractTaskMap.containsKey(abstractTask.getUniqueId());
     }
 
     private AbstractTask getIWIRTaskFromTrianaTool(Tool trianaTool) {
@@ -297,7 +432,9 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     private TaskGraph createTaskGraph(String name) {
         TaskGraph taskGraph = null;
         try {
-            taskGraph = TaskGraphManager.createTaskGraph();
+            TaskGraph initTaskGraph = TaskGraphManager.createTaskGraph();
+            taskGraph = (TaskGraph) TaskGraphManager.createTask(initTaskGraph, RunnableTaskFactory.DEFAULT_FACTORY_NAME, false);
+
             taskGraph.setToolName(name);
 
         } catch (TaskException e) {
@@ -308,7 +445,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
     private void addTaskgraph(TaskGraph parent, TaskGraph child) {
         try {
-//            TaskLayoutUtils.resolveGroupNodes(child);
+//            TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.GRAPH_ORGANIZE, parent);
             DaxOrganize daxOrganize = new DaxOrganize(child);
             parent.createTask(child);
         } catch (TaskException e) {
@@ -384,7 +521,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 
     private ToolImp initTool(TaskHolder taskHolder) {
         ToolImp tool = null;
-        ProxyFactory.initProxyFactory();
+        //       ProxyFactory.initProxyFactory();
         try {
             tool = new ToolImp(trianaProperties);
 
@@ -402,85 +539,85 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     }
 
 
-    private TaskGraph parseTool(File file) {
-        XMLReader reader;
-        Tool tool = null;
-        if (file.exists()) {
-            try {
-                BufferedReader filereader = new BufferedReader(new FileReader(file));
-                reader = new XMLReader(filereader);
-                System.out.println("Reading tool from file : " + file.getCanonicalPath());
-                tool = reader.readComponent(GUIEnv.getApplicationFrame().getEngine().getProperties());
+//    private TaskGraph parseTool(File file) {
+//        XMLReader reader;
+//        Tool tool = null;
+//        if (file.exists()) {
+//            try {
+//                BufferedReader filereader = new BufferedReader(new FileReader(file));
+//                reader = new XMLReader(filereader);
+//                System.out.println("Reading tool from file : " + file.getCanonicalPath());
+//                tool = reader.readComponent(GUIEnv.getApplicationFrame().getEngine().getProperties());
+//
+//            } catch (IOException e) {
+//                System.out.println(file + " : not found");
+//            } catch (TaskGraphException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        if (tool instanceof TaskGraph) {
+//            TaskGraph tg = (TaskGraph) tool;
+//            DaxOrganize daxOrganize = new DaxOrganize(tg);
+//            return tg;
+//        } else {
+//            return null;
+//        }
+//    }
 
-            } catch (IOException e) {
-                System.out.println(file + " : not found");
-            } catch (TaskGraphException e) {
-                e.printStackTrace();
-            }
-        }
-        if (tool instanceof TaskGraph) {
-            TaskGraph tg = (TaskGraph) tool;
-            DaxOrganize daxOrganize = new DaxOrganize(tg);
-            return tg;
-        } else {
-            return null;
-        }
-    }
-
-    private TaskGraph importUsingXSLT(File file, TrianaProperties properties) throws IOException {
-        String root = "triana-shiwa/src/main/java/org/trianacode/shiwa/xslt/iwir/";
-
-        if (file.exists() && file.canRead()) {
-            String iwirPath = file.getAbsolutePath();
-            String removeNamespacePath = root + "removeNamespace.xsl";
-            String iwirTaskgraphTransformerPath = root + "iwir.xsl";
-            String tempFileName = file.getName() + "-outputTemp.xml";
-            String taskgraphFileName = file.getName() + "-taskgraph";
-
-            File removeNamespace = new File(removeNamespacePath);
-            File iwirTaskgraphTransformer = new File(iwirTaskgraphTransformerPath);
-
-            if (removeNamespace.exists() && iwirTaskgraphTransformer.exists()) {
-
-                xsltTransformer.doTransform(iwirPath, tempFileName, removeNamespacePath);
-                System.out.println("Stripped namespace");
-
-                xsltTransformer.doTransform(tempFileName, taskgraphFileName + ".xml", iwirTaskgraphTransformerPath);
-                System.out.println("Created taskgraph file " + taskgraphFileName + ".xml");
-
-                return parseTool(new File(taskgraphFileName + ".xml"));
-            } else {
-                System.out.println("Transform file not available. Attempting to use file from classloader");
-
-
-                StreamSource iwirFile = new StreamSource(file);
-                InputStream removeNamespaceTransformerInputStream = this.getClass().getResourceAsStream("/removeNamespace.xsl");
-                StreamSource removeNamespaceTransformerSource = new StreamSource(removeNamespaceTransformerInputStream);
-                InputStream transformerInputStream = this.getClass().getResourceAsStream("/iwir.xsl");
-                StreamSource transformerSource = new StreamSource(transformerInputStream);
-
-                if (removeNamespaceTransformerInputStream == null && transformerInputStream == null) {
-
-                    System.out.println("Could not read from xslt transformer sources.");
-                } else {
-
-                    File removedNamespaceFile = File.createTempFile(taskgraphFileName + "sansNamespace", ".xml");
-                    StreamResult streamResult = new StreamResult(removeNamespacePath);
-                    xsltTransformer.doTransform(iwirFile, removeNamespaceTransformerSource, streamResult);
-                    System.out.println("Created namespace-less file : " + removeNamespacePath);
-
-                    StreamSource removedNamespaceSource = new StreamSource(removedNamespaceFile);
-                    File taskgraphTempFile = File.createTempFile(taskgraphFileName, ".xml");
-                    StreamResult taskgraphStreamResult = new StreamResult(taskgraphTempFile);
-                    xsltTransformer.doTransform(removedNamespaceSource, transformerSource, taskgraphStreamResult);
-                    System.out.println("Created taskgraph from iwir : " + taskgraphFileName + ".xml");
-
-                    return parseTool(taskgraphTempFile);
-                }
-            }
-        }
-        return null;
-    }
+//    private TaskGraph importUsingXSLT(File file, TrianaProperties properties) throws IOException {
+//        String root = "triana-shiwa/src/main/java/org/trianacode/shiwa/xslt/iwir/";
+//
+//        if (file.exists() && file.canRead()) {
+//            String iwirPath = file.getAbsolutePath();
+//            String removeNamespacePath = root + "removeNamespace.xsl";
+//            String iwirTaskgraphTransformerPath = root + "iwir.xsl";
+//            String tempFileName = file.getName() + "-outputTemp.xml";
+//            String taskgraphFileName = file.getName() + "-taskgraph";
+//
+//            File removeNamespace = new File(removeNamespacePath);
+//            File iwirTaskgraphTransformer = new File(iwirTaskgraphTransformerPath);
+//
+//            if (removeNamespace.exists() && iwirTaskgraphTransformer.exists()) {
+//
+//                xsltTransformer.doTransform(iwirPath, tempFileName, removeNamespacePath);
+//                System.out.println("Stripped namespace");
+//
+//                xsltTransformer.doTransform(tempFileName, taskgraphFileName + ".xml", iwirTaskgraphTransformerPath);
+//                System.out.println("Created taskgraph file " + taskgraphFileName + ".xml");
+//
+//                return parseTool(new File(taskgraphFileName + ".xml"));
+//            } else {
+//                System.out.println("Transform file not available. Attempting to use file from classloader");
+//
+//
+//                StreamSource iwirFile = new StreamSource(file);
+//                InputStream removeNamespaceTransformerInputStream = this.getClass().getResourceAsStream("/removeNamespace.xsl");
+//                StreamSource removeNamespaceTransformerSource = new StreamSource(removeNamespaceTransformerInputStream);
+//                InputStream transformerInputStream = this.getClass().getResourceAsStream("/iwir.xsl");
+//                StreamSource transformerSource = new StreamSource(transformerInputStream);
+//
+//                if (removeNamespaceTransformerInputStream == null && transformerInputStream == null) {
+//
+//                    System.out.println("Could not read from xslt transformer sources.");
+//                } else {
+//
+//                    File removedNamespaceFile = File.createTempFile(taskgraphFileName + "sansNamespace", ".xml");
+//                    StreamResult streamResult = new StreamResult(removeNamespacePath);
+//                    xsltTransformer.doTransform(iwirFile, removeNamespaceTransformerSource, streamResult);
+//                    System.out.println("Created namespace-less file : " + removeNamespacePath);
+//
+//                    StreamSource removedNamespaceSource = new StreamSource(removedNamespaceFile);
+//                    File taskgraphTempFile = File.createTempFile(taskgraphFileName, ".xml");
+//                    StreamResult taskgraphStreamResult = new StreamResult(taskgraphTempFile);
+//                    xsltTransformer.doTransform(removedNamespaceSource, transformerSource, taskgraphStreamResult);
+//                    System.out.println("Created taskgraph from iwir : " + taskgraphFileName + ".xml");
+//
+//                    return parseTool(taskgraphTempFile);
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
 
 }

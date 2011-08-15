@@ -16,11 +16,18 @@
 
 package org.trianacode.gui.service;
 
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.enactment.io.IoConfiguration;
+import org.trianacode.enactment.io.IoHandler;
+import org.trianacode.enactment.io.NodeMappings;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
+import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.service.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -91,8 +98,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
                     } else {
                         handleCancel(result, null);
                     }
-                }
-                catch (SchedulerException except) {
+                } catch (SchedulerException except) {
                     except.printStackTrace();
                 }
             }
@@ -127,6 +133,109 @@ public class LocalServer implements TrianaClient, TrianaServer {
         });
     }
 
+    @Override
+    public void run(final IoConfiguration ioConfiguration) throws ClientException {
+        taskgraph.getProperties().getEngine().execute(new Runnable() {
+            public void run() {
+                ArrayList<Task> dummyTasks = new ArrayList<Task>();
+                try {
+                    IoHandler handler = new IoHandler();
+                    NodeMappings mappings = handler.map(ioConfiguration, taskgraph);
+
+                    if (mappings != null) {
+                        Node[] inputNodes = new Node[taskgraph.getInputNodeCount()];
+                        for (int i = 0; i < taskgraph.getInputNodes().length; i++) {
+                            Node inputNode = taskgraph.getInputNode(i);
+                            inputNodes[i] = inputNode.getTopLevelNode();
+                        }
+                        System.out.println("Data mappings size : " + mappings.getMap().size());
+                        Iterator<Integer> it = mappings.iterator();
+                        while (it.hasNext()) {
+                            Integer integer = it.next();
+                            Object val = mappings.getValue(integer);
+                            System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
+                            Task varTask = getVarTask(taskgraph, val);
+                            Node taskNode = inputNodes[integer];
+
+                            taskgraph.connect(varTask.getDataOutputNode(0), taskNode);
+                            dummyTasks.add(varTask);
+                        }
+                    } else {
+                        System.out.println("Mappings was null");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+//        run();
+
+                int result = WorkflowActionManager.CANCEL;
+                try {
+                    result = WorkflowActionManager.authorizeWorkflowAction(WorkflowActions.RUN_ACTION, taskgraph,
+                            scheduler.getExecutionState());
+                } catch (WorkflowException except) {
+                    except.printStackTrace();
+                }
+                try {
+                    if (result == WorkflowActionManager.AUTHORIZE) {
+                        scheduler.runTaskGraph();
+                    } else {
+                        handleCancel(result, null);
+                    }
+                } catch (SchedulerException except) {
+                    except.printStackTrace();
+                }
+
+
+                while (!isFinished(taskgraph)) {
+                    synchronized (this) {
+                        try {
+                            wait(100);
+                        } catch (InterruptedException e) {
+
+                        }
+                    }
+                }
+
+                for (Task dummyTask : dummyTasks) {
+                    taskgraph.removeTask(dummyTask);
+                }
+                try {
+                    TaskLayoutUtils.resolveGroupNodes(taskgraph);
+                } catch (TaskGraphException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private Task getVarTask(TaskGraph taskgraph, Object variable) throws TaskException, ProxyInstantiationException {
+        ToolImp varTool = new ToolImp(taskgraph.getProperties());
+        varTool.setDataOutputNodeCount(1);
+        varTool.setToolPackage(VariableDummyUnit.class.getPackage().getName());
+        varTool.setProxy(new JavaProxy(VariableDummyUnit.class.getSimpleName(), VariableDummyUnit.class.getPackage().getName()));
+        varTool.setParameter("variable", variable);
+        varTool.setToolName("DummyTool");
+        return taskgraph.createTask(varTool);
+    }
+
+    private boolean isFinished(TaskGraph taskgraph) {
+        Task[] tasks = taskgraph.getTasks(true);
+        boolean finished = true;
+
+        for (int count = 0; (count < tasks.length) && (finished); count++) {
+            if (tasks[count] instanceof RunnableInstance) {
+                finished = finished && ((tasks[count]).getExecutionState()
+                        == ExecutionState.COMPLETE);
+            }
+
+            if (tasks[count] instanceof TaskGraph) {
+                finished = finished && isFinished((TaskGraph) tasks[count]);
+            }
+        }
+
+        return finished;
+    }
 
     /**
      * Sends a message to the sever to run the specified task within a running taskgraph

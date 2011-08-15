@@ -59,6 +59,7 @@
 package org.trianacode.taskgraph.service;
 
 import org.trianacode.enactment.logging.ExecutionStateLogger;
+import org.trianacode.enactment.logging.StampedeLogger;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
@@ -84,6 +85,7 @@ public class Scheduler implements SchedulerInterface {
     private HistoryClipIn history;
 
     private ExecutionStateLogger logger = new ExecutionStateLogger();
+    private StampedeLogger stampedeLogger = new StampedeLogger();
 
 
     /**
@@ -91,6 +93,7 @@ public class Scheduler implements SchedulerInterface {
      */
     public Scheduler(TaskGraph taskgraph) {
         this.taskgraph = taskgraph;
+        addExecutionListener(stampedeLogger);
     }
 
 

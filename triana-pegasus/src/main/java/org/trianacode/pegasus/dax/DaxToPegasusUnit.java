@@ -70,46 +70,53 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
 
 
     @Process
-    public void process(File file) {
+    public void process(Object object) {
 
-        log("Uploading file " + file.getName() + " to Pegasus.");
-
-        if (file.exists() && file.canRead()) {
-            daxLocation = file.getAbsolutePath();
+        File file = null;
+        if (object instanceof File) {
+            file = (File) object;
         }
+        if (object instanceof String) {
+            file = new File((String) object);
+        }
+        if (file != null) {
+            log("Uploading file " + file.getName() + " to Pegasus.");
+            if (file.exists() && file.canRead()) {
+                daxLocation = file.getAbsolutePath();
+            }
 
-        if (getAndCheckFiles() && zipFile != null) {
-            displayMessage("All files good.");
-            log("All files good");
+            if (getAndCheckFiles() && zipFile != null) {
+                displayMessage("All files good.");
+                log("All files good");
 
-            displayMessage("Pegasus locating : " + locationService);
-            if (locationService.equals("AUTO")) {
-                log("Auto");
-                ServiceInfo pegasusInfo = FindPegasus.findPegasus(20000, this);
+                displayMessage("Pegasus locating : " + locationService);
+                if (locationService.equals("AUTO")) {
+                    log("Auto");
+                    ServiceInfo pegasusInfo = FindPegasus.findPegasus(20000, this);
 
-                if (pegasusInfo != null) {
-                    displayMessage("Sending to Pegasus");
-                    sendToPegasus(pegasusInfo);
-                    displayMessage("Finished");
+                    if (pegasusInfo != null) {
+                        displayMessage("Sending to Pegasus");
+                        sendToPegasus(pegasusInfo);
+                        displayMessage("Finished");
+                    }
+                }
+                if (locationService.equals("URL")) {
+                    log("Manual *" + manualURL + "*");
+                    sendToPegasus(manualURL);
+                }
+                if (locationService.equals("LOCAL")) {
+                    String condor_env = System.getenv("CONDOR_CONFIG");
+                    System.out.println("CONDOR_CONFIG : " + condor_env);
+                    displayMessage("CONDOR_CONFIG : " + condor_env);
+                    if (condor_env.equals("")) {
+                        log("CONDOR_CONFIG environment variable not set");
+                        displayMessage("CONDOR_CONFIG environment variable not set.");
+                    } else {
+                        log("Running org.trianacode.pegasus.gui-plan locally");
+                        runLocal();
+                    }
                 }
             }
-            if (locationService.equals("URL")) {
-                log("Manual *" + manualURL + "*");
-                sendToPegasus(manualURL);
-            }
-            if (locationService.equals("LOCAL")) {
-                String condor_env = System.getenv("CONDOR_CONFIG");
-                System.out.println("CONDOR_CONFIG : " + condor_env);
-                displayMessage("CONDOR_CONFIG : " + condor_env);
-                if (condor_env.equals("")) {
-                    log("CONDOR_CONFIG environment variable not set");
-                    displayMessage("CONDOR_CONFIG environment variable not set.");
-                } else {
-                    log("Running org.trianacode.pegasus.gui-plan locally");
-                    runLocal();
-                }
-            }
-            //           popup.finish();
         }
     }
 

@@ -1,8 +1,10 @@
 package org.trianacode.shiwa.iwir.holders;
 
+import org.trianacode.shiwa.iwir.factory.models.IWIRControlComponentModel;
 import org.trianacode.shiwa.iwir.logic.AbstractLoop;
 import org.trianacode.shiwa.iwir.logic.Condition;
 import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.imp.RenderingHintImp;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,6 +26,11 @@ public class ForTaskHolder extends AbstractLoop {
         super.init();
         defineParameter("count", "0", Unit.USER_ACCESSIBLE);
         setGUIBuilderV2Info("Loops $title count IntScroller 0 100 0");
+        getTask().addRenderingHint(
+                new RenderingHintImp(
+                        IWIRControlComponentModel.IWIR_CONTROL_RENDERING_HINT, false
+                )
+        );
     }
 
     public void parameterUpdate(String paramname, Object value) {

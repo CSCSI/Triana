@@ -13,7 +13,22 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
 
     @Override
     public void process() throws Exception {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        if (getInputNodeCount() > 0) {
+            Object[] inputs = new Object[getInputNodeCount()];
+            for (int i = 0; i < getInputNodeCount(); i++) {
+                inputs[i] = getInputAtNode(i);
+            }
+            Object[] outputs = new Object[getOutputNodeCount()];
+            getExecutable().run(inputs, outputs);
+
+            for (int j = 0; j < outputs.length; j++) {
+                outputAtNode(j, outputs[j]);
+            }
+
+        } else {
+            getExecutable().run();
+        }
     }
 
 }

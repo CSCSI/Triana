@@ -5,6 +5,7 @@ import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.files.ImageAction;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.panels.DisplayDialog;
 import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
@@ -39,30 +40,32 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
     public void actionPerformed(ActionEvent actionEvent) {
         System.out.println("Publishing Workflow");
 
-        ApplicationFrame frame = GUIEnv.getApplicationFrame();
-        TaskGraph tg = frame.getSelectedTaskgraph();
-
-        if (tg != null) {
+        final ApplicationFrame frame = GUIEnv.getApplicationFrame();
+        final TaskGraph tg = frame.getSelectedTaskgraph();
+        if (tg == null || tg.getTasks(false).length == 0) {
+            JOptionPane.showMessageDialog(frame, "No taskgraph selected," +
+                    " or currently selected taskgraph has no tasks");
+        } else {
+            System.out.println(tg.getQualifiedTaskName());
 
             InputStream displayStream = null;
             try {
                 File imageFile = File.createTempFile("image", ".jpg");
                 ImageAction.save(imageFile, 1, "jpg");
-                displayStream = new FileInputStream(imageFile);
-                System.out.println("Display image created : " + imageFile.toURI());
-
+                if (imageFile.length() > 0) {
+                    displayStream = new FileInputStream(imageFile);
+                    System.out.println("Display image created : " + imageFile.toURI());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             TrianaEngineHandler teh = new TrianaEngineHandler(tg, frame.getEngine(), displayStream);
 
-
             JPanel popup = new SHIWADesktopPanel(teh);
-            ((SHIWADesktopPanel) popup).addSHIWADesktopListener(new TrianaShiwaListener(frame.getEngine()));
-            DisplayDialog dialog = new DisplayDialog(popup);
+            DisplayDialog dialog = null;
+            ((SHIWADesktopPanel) popup).addSHIWADesktopListener(new TrianaShiwaListener(frame.getEngine(), dialog));
+            dialog = new DisplayDialog(popup, "SHIWA Desktop");
 
-        } else {
-            JOptionPane.showMessageDialog(frame, "No taskgraph selected");
         }
     }
 }

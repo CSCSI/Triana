@@ -1,6 +1,7 @@
 package org.trianacode.shiwa.iwir.factory;
 
 import org.shiwa.fgi.iwir.*;
+import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.holders.*;
 
 /**
@@ -46,6 +47,9 @@ public class TaskHolderFactory {
         }
         taskHolder.setIWIRTask(iwirTask);
         taskHolder.registerIWIRTask(iwirTask);
+
+        //TODO
+        taskHolder.setExecutable(new Executable());
         return taskHolder;
     }
 

@@ -140,11 +140,13 @@ public class IwirCreator implements TaskConscious {
         for (AbstractTask abstractTask : rootTask.getBodyTasks()) {
             for (AbstractPort inputPort : abstractTask.getAllInputPorts()) {
                 Node startNode = nodePortTranslator.getNodeForAbstractPort(inputPort.getUniqueId());
-                Cable cable = startNode.getCable();
-                Node endNode = cable.getSendingNode();
-                AbstractPort outputPort = nodePortTranslator.getAbstractPortForNode(endNode);
+                if (startNode != null) {
+                    Cable cable = startNode.getCable();
+                    Node endNode = cable.getSendingNode();
+                    AbstractPort outputPort = nodePortTranslator.getAbstractPortForNode(endNode);
 
-                rootTask.addLink(outputPort, inputPort);
+                    rootTask.addLink(outputPort, inputPort);
+                }
             }
         }
     }

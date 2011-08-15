@@ -16,6 +16,7 @@
 
 package org.trianacode.taskgraph.service;
 
+import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 import org.trianacode.taskgraph.tool.ToolTable;
 
@@ -56,6 +57,11 @@ public class NonRunnableClient implements TrianaClient {
      * Sends a message to the sever to run the taskgraph. The specfied history clip-ins is attached to every input task
      */
     public void run(HistoryClipIn history) throws ClientException {
+        throw (new ClientException("Client Error: Cannot run non-executable taskgraph"));
+    }
+
+    @Override
+    public void run(IoConfiguration ioConfiguration) throws ClientException {
         throw (new ClientException("Client Error: Cannot run non-executable taskgraph"));
     }
 

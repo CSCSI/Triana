@@ -34,6 +34,7 @@ public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
 
     public void init() {
         setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());
+
     }
 
     public String[] getInputTypes() {
@@ -47,5 +48,6 @@ public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
     public void registerIWIRTask(AbstractTask abstractTask) {
         IwirRegister.getIwirRegister().addTask(abstractTask);
     }
+
 }
 

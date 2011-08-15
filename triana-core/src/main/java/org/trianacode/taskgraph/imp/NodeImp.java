@@ -632,7 +632,7 @@ public class NodeImp implements NodeListener, Node {
         } else {
             name += ".out";
         }
-        name += getNodeIndex();
+        name += (getNodeIndex() + 1);
         return name;
     }
 

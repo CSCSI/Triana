@@ -1,7 +1,5 @@
 package imageproc.input;
 
-import org.trianacode.gui.util.Env;
-import org.trianacode.gui.windows.ErrorDialog;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.TrianaImage;
@@ -36,9 +34,9 @@ public class URLImage extends Unit {
         }
 
         if (trianaImage == null) {
-            ErrorDialog.show(null,
-                    getTask().getToolName() + ": " + Env.getString("ImageError"));
+            //       ErrorDialog.show(null, getTask().getToolName() + ": " + Env.getString("ImageError"));
             //stop();  // stops the scheduler and hence this process!
+            System.out.println("image error");
         } else {
             output(new TrianaPixelMap(trianaImage));
         }

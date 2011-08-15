@@ -16,6 +16,7 @@
 
 package org.trianacode.taskgraph.service;
 
+import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
 /**
@@ -37,6 +38,11 @@ public interface TrianaClient {
      */
     public void run(HistoryClipIn history) throws ClientException;
 
+
+    /**
+     * Sends a message to the server to run the taskgraph, with a configuration of inputs.
+     */
+    public void run(IoConfiguration ioConfiguration) throws ClientException;
 
     /**
      * Sends a message to the server to stop running the taskgraph.

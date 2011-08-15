@@ -4,15 +4,20 @@ import org.shiwa.desktop.data.description.handler.Port;
 import org.shiwa.desktop.data.description.handler.Signature;
 import org.shiwa.desktop.data.transfer.SHIWADesktopExecutionListener;
 import org.trianacode.TrianaInstance;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.TrianaRun;
 import org.trianacode.enactment.io.*;
+import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.gui.panels.DisplayDialog;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.imp.ToolImp;
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.service.SchedulerException;
+import org.trianacode.taskgraph.service.VariableDummyUnit;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
@@ -31,9 +36,11 @@ import java.util.List;
 public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
 
     private TrianaInstance trianaInstance;
+    private DisplayDialog dialog;
 
-    public TrianaShiwaListener(TrianaInstance trianaInstance) {
+    public TrianaShiwaListener(TrianaInstance trianaInstance, DisplayDialog dialog) {
         this.trianaInstance = trianaInstance;
+        this.dialog = dialog;
 
     }
 
@@ -71,50 +78,43 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
 
     @Override
     public void digestWorkflow(File file, Signature signature) {
+        System.out.println("Importing a bundle");
         try {
-            System.out.println("Importing a bundle");
-            XMLReader reader = new XMLReader(new FileReader(file));
-            Tool tool = reader.readComponent(trianaInstance.getProperties());
-
-            if (signature.hasConfiguration()) {
-                if (GUIEnv.getApplicationFrame() != null && tool instanceof TaskGraph) {
-                    GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
-                    executeWorkflowInGUI(tool.getQualifiedToolName(), tool, signature);
-                } else {
-                    System.out.println("No gui found, running headless");
-                    exec((Task) tool, getIOConfigFromSignature(((Task) tool).getQualifiedTaskName(), signature));
+            if (GUIEnv.getApplicationFrame() != null) {
+                TaskGraph taskGraph = TaskGraphFileHandler.openTaskgraph(file, true);
+                if (signature.hasConfiguration()) {
+                    createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
                 }
             } else {
-                if (GUIEnv.getApplicationFrame() != null && tool instanceof TaskGraph) {
-                    GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) tool);
+                System.out.println("No gui found, running headless");
+                XMLReader reader = new XMLReader(new FileReader(file));
+                Tool tool = reader.readComponent(trianaInstance.getProperties());
+                if (tool instanceof TaskGraph) {
+                    TaskGraph taskGraph = (TaskGraph) tool;
+                    exec(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedTaskName(), signature));
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void executeWorkflowInGUI(String toolName, Tool tool, Signature signature) throws TaskGraphException, SchedulerException {
         TrianaRun runner = new TrianaRun(tool);
-//        runner.getScheduler().addExecutionListener(this);
-
-        NodeMappings mappings = null;
-
-        IoHandler handler = new IoHandler();
         IoConfiguration ioc = getIOConfigFromSignature(toolName, signature);
-        mappings = handler.map(ioc, runner.getTaskGraph());
-        System.out.println("Data mappings size : " + mappings.getMap().size());
+        IoHandler handler = new IoHandler();
+        NodeMappings mappings = handler.map(ioc, runner.getTaskGraph());
 
         runner.runTaskGraph();
+
         if (mappings != null) {
+            System.out.println("Data mappings size : " + mappings.getMap().size());
             Iterator<Integer> it = mappings.iterator();
             while (it.hasNext()) {
                 Integer integer = it.next();
                 Object val = mappings.getValue(integer);
                 System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
                 runner.sendInputData(integer, val);
-                System.out.println("Exec.execute sent input data");
             }
         } else {
             System.out.println("Mappings was null");
@@ -129,21 +129,12 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
                 }
             }
         }
-//
-//        Node[] nodes = runner.getTaskGraph().getDataOutputNodes();
-//        for (Node node : nodes) {
-//            Object out = runner.receiveOutputData(0);
-//            Object o = null;
-//            if (out instanceof WorkflowDataPacket) {
-//                try {
-//                    DataBusInterface db = DataBus.getDataBus(((WorkflowDataPacket) out).getProtocol());
-//                    o = db.get((WorkflowDataPacket) out);
-//                } catch (DataNotResolvableException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            System.out.println("Exec.execute output:" + o);
-//        }
+
+        for (Node node : runner.getTaskGraph().getDataOutputNodes()) {
+            int nodeIndex = node.getAbsoluteNodeIndex();
+            Object out = runner.receiveOutputData(nodeIndex);
+            System.out.println("node " + nodeIndex + " output:" + out);
+        }
         runner.dispose();
 
     }
@@ -156,5 +147,59 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
             System.out.println("Failed to load workflow back to Triana");
             e.printStackTrace();
         }
+    }
+
+    private void createConfigUnit(TaskGraph taskgraph, IoConfiguration ioConfiguration) {
+        try {
+            IoHandler handler = new IoHandler();
+            NodeMappings mappings = handler.map(ioConfiguration, taskgraph);
+
+            if (mappings != null) {
+
+
+                Node[] inputNodes = new Node[taskgraph.getInputNodeCount()];
+                for (int i = 0; i < taskgraph.getInputNodes().length; i++) {
+                    Node inputNode = taskgraph.getInputNode(i);
+                    inputNodes[i] = inputNode.getTopLevelNode();
+                }
+                Task varTask = taskgraph.createTask(getVarTool(taskgraph.getProperties()));
+                varTask.setParameter("configSize", inputNodes.length);
+
+
+                System.out.println("Data mappings size : " + mappings.getMap().size());
+                Iterator<Integer> it = mappings.iterator();
+                while (it.hasNext()) {
+                    Integer integer = it.next();
+                    Object val = mappings.getValue(integer);
+                    System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
+                    Node taskNode = inputNodes[integer];
+                    Node addedNode = varTask.addDataOutputNode();
+
+                    taskgraph.connect(addedNode, taskNode);
+                    varTask.setParameter("var" + integer.toString(), val);
+                }
+
+                Object o = varTask.getParameter("configSize");
+                int configSize = 0;
+                if (o instanceof Integer) {
+                    configSize = (Integer) o;
+                }
+                System.out.println("Multiple output config task added " + configSize);
+
+            } else {
+                System.out.println("Mappings was null");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Tool getVarTool(TrianaProperties properties) throws TaskException, ProxyInstantiationException {
+        ToolImp varTool = new ToolImp(properties);
+        varTool.setToolPackage(VariableDummyUnit.class.getPackage().getName());
+        varTool.setProxy(new JavaProxy(VariableDummyUnit.class.getSimpleName(), VariableDummyUnit.class.getPackage().getName()));
+        varTool.setToolName("Configuration");
+        TaskLayoutUtils.setPosition(varTool, new TPoint(1, 1));
+        return varTool;
     }
 }

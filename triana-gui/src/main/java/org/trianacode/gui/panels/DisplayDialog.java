@@ -1,4 +1,4 @@
-package org.trianacode.shiwa;
+package org.trianacode.gui.panels;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +11,9 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class DisplayDialog extends JDialog {
-    public DisplayDialog(JPanel panel) {
+    public DisplayDialog(JPanel panel, String title) {
         //     this.setModal(true);
-        this.setTitle("Shiwa Desktop");
+        this.setTitle(title);
         this.setLocationRelativeTo(null);
         this.add(panel);
         this.pack();

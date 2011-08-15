@@ -56,7 +56,7 @@ public class IwirWriter {
         iwir.setTask(mainBlock);
         System.out.println(iwir.asXMLString());
 
-        String root = "triana-shiwa/src/main/java/org/trianacode/shiwa/xslt/";
+        String root = "triana-shiwa-iwir/src/main/java/org/trianacode/shiwa/iwir/xslt/";
         File output = new File(root + "iwir/iwir.xml");
         try {
             iwir.asXMLFile(output);
