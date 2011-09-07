@@ -33,7 +33,7 @@
    *********************************************************************************************** -->
 
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
 
     <!-- ================================= -->
     <!-- Preserve messages in a local file -->
@@ -60,13 +60,32 @@
 
     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.out"/>
-        <param name="Threshold" value="ALL"/>
+        <param name="Threshold" value="DEBUG"/>
         <layout class="org.apache.log4j.PatternLayout">
             <!-- The default pattern: Date Priority [Category] Message\n -->
             <param name="ConversionPattern" value="%d %-5p [%c] (%F:%L) %m%n"/>
         </layout>
     </appender>
 
+    <!--
+        Rabbit
+    -->
+    <appender name="RABBIT" class="org.trianacode.enactment.logging.appender.RabbitAppender">
+        <param name="HOST" value="colette.cs.cf.ac.uk"/>
+        <param name="PORT" value="7008"/>
+        <param name="USERNAME" value="guest"/>
+        <param name="PASSWORD" value="guest"/>
+        <param name="QUEUENAME" value="TestQueue"/>
+    </appender>
+
+    <appender name="DEVFILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${java.io.tmpdir}/trianalogs/triana.dev.log"/>
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="DEBUG"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%c] (%F:%L) %m%n"/>
+        </layout>
+    </appender>
 
     <!-- ====================== -->
     <!-- More Appender examples -->
@@ -158,6 +177,16 @@
         <priority value="ALL"/>
     </category>
 
+    <!--<category name="TRIANA.STAMPEDE" additivity="false">-->
+    <category name="TRIANA.STAMPEDE">
+        <appender-ref ref="RABBIT"/>
+    </category>
+
+    <category name="TRIANA.DEV" additivity="false">
+        <appender-ref ref="DEVFILE"/>
+        <priority value="DEBUG"/>
+    </category>
+
     <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
     <category name="org.apache">
         <priority value="WARN"/>
@@ -168,9 +197,11 @@
     <!-- ======================= -->
 
     <root>
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
+        <!--<appender-ref ref="RABBIT"/>-->
     </root>
+
 
 </log4j:configuration>
