@@ -98,19 +98,19 @@ public final class TypeChecking {
      */
     public static boolean isCompatibility(Class[] outTypes, Class[] inTypes) {
 
-//        log.info("TypeChecking.isCompatibility ENTER MATCH ");
+        log.debug("TypeChecking.isCompatibility ENTER MATCH ");
         for (Class outType : outTypes) {
-//            log.info("TypeChecking.isCompatibility OUTTYPE:" + outType);
+            log.debug("TypeChecking.isCompatibility OUTTYPE:" + outType);
         }
         for (Class inType : inTypes) {
-//            log.info("TypeChecking.isCompatibility INTYPE:" + inType);
+            log.debug("TypeChecking.isCompatibility INTYPE:" + inType);
         }
         boolean match = false;
 
         for (int outcount = 0; (!match) && (outcount < outTypes.length); ++outcount) {
             for (int incount = 0; (!match) && (incount < inTypes.length); ++incount) {
-//                log.info("TypeChecking.isCompatibility OUT:" + outTypes[outcount]);
-//                log.info("TypeChecking.isCompatibility IN:" + inTypes[incount]);
+                log.debug("TypeChecking.isCompatibility OUT:" + outTypes[outcount]);
+                log.debug("TypeChecking.isCompatibility IN:" + inTypes[incount]);
                 match = match || (outTypes[outcount].isAssignableFrom(inTypes[incount])) ||
                         (inTypes[incount].isAssignableFrom(outTypes[outcount]));
             }
@@ -134,7 +134,7 @@ public final class TypeChecking {
         Class sentType = sentObject.getClass();
 
         for (int count = 0; count < inTypes.length; ++count) {
-//            log.info("TypeChecking.isCompatible in:" + inTypes[count] + " out:" + sentType);
+            log.debug("TypeChecking.isCompatible in:" + inTypes[count] + " out:" + sentType);
             if (inTypes[count].isAssignableFrom(sentType)) {
                 return true;
             }
