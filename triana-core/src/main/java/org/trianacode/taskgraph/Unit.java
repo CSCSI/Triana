@@ -294,8 +294,12 @@ public abstract class Unit {
     /**
      * Stops the network running
      */
-    public final void notifyError(String message) {
+    public final void notifyError(String message, Throwable throwable) {
         getRunnableInterface().notifyError(message);
+    }
+
+    public final void notifyError(String message) {
+        notifyError(message, null);
     }
 
 

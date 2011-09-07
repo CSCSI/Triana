@@ -62,6 +62,7 @@ package org.trianacode.taskgraph.proxy.java;
 
 import org.trianacode.taskgraph.BeanUnit;
 import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.annotation.AnnotatedUnitWrapper;
 import org.trianacode.taskgraph.annotation.AnnotationProcessor;
 import org.trianacode.taskgraph.proxy.Proxy;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
@@ -165,7 +166,7 @@ public class JavaProxy implements Proxy {
 
     private Unit createUnit(Object o) throws ProxyInstantiationException {
 //        System.out.println("JavaProxy.createUnit ENTER with object " + o.getClass());
-        if (o instanceof Unit) {
+        if (o instanceof Unit && !(o instanceof AnnotatedUnitWrapper)) {
             return (Unit) o;
         } else {
             return AnnotationProcessor.createUnit(o);

@@ -19,6 +19,7 @@ package org.trianacode.gui.service;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.NodeMappings;
+import org.trianacode.enactment.logging.ExecutionStateLogger;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 import org.trianacode.taskgraph.imp.ToolImp;
@@ -61,6 +62,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
     public LocalServer(TaskGraph taskgraph) {
         this.taskgraph = taskgraph;
         this.scheduler = new Scheduler(taskgraph);
+        this.scheduler.addExecutionListener(new ExecutionStateLogger());
     }
 
     public LocalServer(TaskGraph taskgraph, SchedulerInterface scheduler) {
@@ -389,7 +391,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
      * Called be a runnable instance to notify that an error has occured
      */
     public void notifyError(RunnableInstance runnable, String message) {
-        scheduler.notifyError(runnable);
+        scheduler.notifyError(runnable, message);
     }
 
 

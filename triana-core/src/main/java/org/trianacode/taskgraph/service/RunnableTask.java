@@ -60,6 +60,9 @@ package org.trianacode.taskgraph.service;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.enactment.logging.stampede.LogDetail;
+import org.trianacode.enactment.logging.stampede.StampedeEvent;
+import org.trianacode.enactment.logging.stampede.StampedeLoggerInterface;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.ClipInBucket;
 import org.trianacode.taskgraph.clipin.ClipInStore;
@@ -88,7 +91,8 @@ import java.util.Hashtable;
 public class RunnableTask extends AbstractRunnableTask
         implements RunnableInstance, RunnableInterface, ControlInterface, Runnable {
 
-    private static Log log = Loggers.TOOL_LOGGER;
+    private static Log toolLog = Loggers.TOOL_LOGGER;
+    private static StampedeLoggerInterface stampedeLog = Loggers.STAMPEDE_LOGGER;
 
 
     // A internal string representing null
@@ -450,7 +454,7 @@ public class RunnableTask extends AbstractRunnableTask
 
         RunnableNode node = (RunnableNode) getDataInputNode(nodeNumber);
         if (!node.isConnected()) {
-            log.info("Node is not connected at input:" + nodeNumber);
+            toolLog.info("Node is not connected at input:" + nodeNumber);
             return null;
         }
         Object data = getInput(node);
@@ -540,6 +544,14 @@ public class RunnableTask extends AbstractRunnableTask
             }
         } else {
             data = mess;
+        }
+        if (data != null) {
+            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.UNIT_INPUT)
+                    .add(LogDetail.TASK, getQualifiedToolName())
+                    .add("NODE", node.getName())
+                    .add("DATA", data.toString())
+                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+            );
         }
         return data;
     }
@@ -658,7 +670,7 @@ public class RunnableTask extends AbstractRunnableTask
     void output(RunnableNodeInterface node, Object data, boolean blocking) {
 
 
-        log.debug("RunnableTask.output ENTER with data:" + data);
+        toolLog.debug("RunnableTask.output ENTER with data:" + data);
         if (!node.isParameterNode()) {
             waitPause();
 
@@ -677,9 +689,15 @@ public class RunnableTask extends AbstractRunnableTask
 
             //HTTPServices.getWorkflowServer().addDataResource(packet.getDataLocation().getPath(), (Serializable) data);
 
-            log.debug("RunnableTask.output ENTER URL = " + packet.getDataLocation());
+            toolLog.debug("RunnableTask.output ENTER URL = " + packet.getDataLocation());
             DataMessage mess = new DataMessage(packet, extract);
 
+            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.UNIT_OUTPUT)
+                    .add(LogDetail.TASK, getQualifiedToolName())
+                    .add("NODE", node.getName())
+                    .add("DATA", data.toString())
+                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+            );
             if (blocking) {
                 ((OutputCable) node.getCable()).send(mess);
             } else {
@@ -828,20 +846,39 @@ public class RunnableTask extends AbstractRunnableTask
      */
     public void process() {
         try {
-            log.info("RUNNING " + getQualifiedToolName());
+            toolLog.info("RUNNING " + getQualifiedToolName());
+            stampedeLog.info(new StampedeEvent(LogDetail.RUNNING_TASK)
+                    .add(LogDetail.LEVEL, "INFO")
+                    .add(LogDetail.TASK, getQualifiedToolName())
+                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+            );
             waitPause();
             try {
 
                 unit.process();
             } catch (Exception except) {
-                log.warn("Exception thrown invoking process() on Unit:", except);
+                notifyError(except);
+                toolLog.warn("Exception thrown invoking process() on Unit:", except);
+                stampedeLog.warn(new StampedeEvent(LogDetail.EXCEPTION)
+                        .add(LogDetail.TASK, getQualifiedToolName())
+                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                );
             }
 
             if (!getExecutionState().equals(ExecutionState.ERROR)) {
-                log.info("FINISHED RUNNING " + getQualifiedTaskName());
+                toolLog.info("FINISHED RUNNING " + getQualifiedToolName());
+                stampedeLog.info(new StampedeEvent(LogDetail.FINISHED_TASK)
+                        .add(LogDetail.LEVEL, "INFO")
+                        .add(LogDetail.TASK, getQualifiedToolName())
+                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                );
             } else {
-                System.err
-                        .println("ERROR RUNNING " + getQualifiedTaskName() + " (" + getParameter(ERROR_MESSAGE) + ")");
+                stampedeLog.error(new StampedeEvent(LogDetail.ERROR)
+                        .add(LogDetail.TASK, getQualifiedToolName())
+                        .add("Error_File", stampedeLog.toString())
+                                //    .add(LogDetail.ERRMSG, (String) getParameter(ERROR_MESSAGE))
+                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                );
             }
         } catch (OutOfRangeException ore) {
             notifyError(ore);

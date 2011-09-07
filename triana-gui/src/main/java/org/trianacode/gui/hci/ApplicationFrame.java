@@ -90,6 +90,7 @@ import org.trianacode.gui.hci.color.ColorTable;
 import org.trianacode.gui.hci.color.RegisterableColorModel;
 import org.trianacode.gui.hci.tools.*;
 import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.gui.panels.MsgBoxErrorListener;
 import org.trianacode.gui.panels.ParameterPanelManager;
 import org.trianacode.gui.service.LocalServer;
 import org.trianacode.gui.service.WorkflowActionManager;
@@ -274,6 +275,7 @@ public class ApplicationFrame extends TrianaWindow
                     RegisterableToolComponentModel.class,
                     RegisterableColorModel.class);
             engine.init(this, false);
+            engine.getErrorTracker().addErrorListener(new MsgBoxErrorListener());
             tools = engine.getToolTable();
 
             initTools();

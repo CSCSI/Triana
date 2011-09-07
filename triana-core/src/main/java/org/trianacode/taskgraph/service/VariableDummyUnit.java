@@ -31,8 +31,12 @@ public class VariableDummyUnit extends Unit {
                 System.out.println("Output : " + val + " node : " + i);
                 outputAtNode(i, val);
             }
+        } else {
+            Object variableObject = getParameter("variable");
+            if (variableObject != null) {
+                output(variableObject);
+            }
         }
-        output(getParameter("variable"));
     }
 }
 

@@ -352,7 +352,7 @@ public class TrianaRun {
         }
 
         public void notifyError(RunnableInstance runnable, String message) {
-            scheduler.notifyError(runnable);
+            scheduler.notifyError(runnable, message);
         }
 
         /**

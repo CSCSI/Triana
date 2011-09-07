@@ -11,10 +11,8 @@ import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoTypeHandler;
 import org.trianacode.enactment.io.NodeMappings;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.pegasus.CommandLinePegasus;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -48,6 +46,7 @@ public class Exec implements ExecutionListener {
     private String pid = UUID.randomUUID().toString();
 
     private TrianaRun runner;
+    private static Set<Object> executionServices;
 
     public Exec(String pid) {
         if (pid != null && pid.length() > 0) {
@@ -109,11 +108,7 @@ public class Exec implements ExecutionListener {
                     System.out.println("Only one workflow can be specified.");
                     System.exit(1);
                 } else {
-                    if (vals.hasOption("dax")) {
-                        new Exec(pid).createAndSubmitDax(wfs.get(0), data, args);
-                    } else {
-                        new Exec(pid).executeWorkflow(wfs.get(0), data, args);
-                    }
+                    new Exec(pid).executeWorkflow(wfs.get(0), data, args);
                 }
             } else {
                 if (pid != null) {
@@ -126,6 +121,17 @@ public class Exec implements ExecutionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static ExecutionService getService(Set<Object> executionServices) {
+        for (Object service : executionServices) {
+            if (service instanceof ExecutionService) {
+                ExecutionService executionService = ((ExecutionService) service);
+                System.out.println("Found a service! " + executionService.getServiceName());
+                return (ExecutionService) service;
+            }
+        }
+        return null;
     }
 
     private static int commandToInt(String command) {
@@ -212,38 +218,49 @@ public class Exec implements ExecutionListener {
             System.exit(1);
         }
         TrianaInstance engine = new TrianaInstance(args);
-        engine.init();
-        XMLReader reader = new XMLReader(new FileReader(f));
-        Tool tool = reader.readComponent(engine.getProperties());
-        execute(tool, data);
-
-    }
-
-    private void createAndSubmitDax(String workflow, String data, String[] args) throws Exception {
-        System.out.println("\nWill attempt to create and submit dax\n");
-        File f = new File(workflow);
-        if (!f.exists()) {
-            System.out.println("Cannot find workflow file: " + workflow);
-            System.exit(1);
-        }
-
-        TrianaInstance engine = new TrianaInstance(args);
-        //    engine.setReresolve(false);
+        engine.addExtensionClass(ExecutionService.class);
         engine.init();
 
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
-        if (tool instanceof TaskGraph) {
-            //           System.out.println("Inputs : " + tool.getDataInputNodeCount() + " Outputs : " + tool.getDataOutputNodeCount());
-//            TaskGraph taskGraph = (TaskGraph) tool;
-            CommandLinePegasus.initTaskgraph(engine, (TaskGraph) tool);
 
-            execute(tool, data);
+        Set<Object> executionServices = engine.getExtensions(ExecutionService.class);
+        System.out.println("Possibly found " + executionServices.size() + " ExecutionServices");
+        ExecutionService executionService = getService(executionServices);
+        if (executionService != null) {
+            System.out.println("Running with " + executionService.getServiceName());
+            executionService.execute(this, wf, tool, data, args);
         } else {
-            System.out.println("Input file not a valid workflow");
-            System.exit(1);
+            execute(tool, data);
         }
+
     }
+
+//    private void createAndSubmitDax(String workflow, String data, String[] args) throws Exception {
+//        System.out.println("\nWill attempt to create and submit dax\n");
+//        File f = new File(workflow);
+//        if (!f.exists()) {
+//            System.out.println("Cannot find workflow file: " + workflow);
+//            System.exit(1);
+//        }
+//
+//        TrianaInstance engine = new TrianaInstance(args);
+//        //    engine.setReresolve(false);
+//        engine.init();
+//
+//        XMLReader reader = new XMLReader(new FileReader(f));
+//        Tool tool = reader.readComponent(engine.getProperties());
+//        if (tool instanceof TaskGraph) {
+//            //           System.out.println("Inputs : " + tool.getDataInputNodeCount() + " Outputs : " + tool.getDataOutputNodeCount());
+////            TaskGraph taskGraph = (TaskGraph) tool;
+//            CommandLinePegasus.initTaskgraph(engine, (TaskGraph) tool);
+//
+//            execute(tool, data);
+//        } else {
+//            System.out.println("Input file not a valid workflow");
+//            System.exit(1);
+//        }
+//    }
 
     public void execute(final Tool tool, final String data) throws Exception {
         runner = new TrianaRun(tool);

@@ -58,8 +58,9 @@
  */
 package org.trianacode.taskgraph.service;
 
-import org.trianacode.enactment.logging.ExecutionStateLogger;
-import org.trianacode.enactment.logging.StampedeLogger;
+import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.enactment.logging.stampede.LogDetail;
+import org.trianacode.enactment.logging.stampede.StampedeEvent;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
@@ -84,16 +85,16 @@ public class Scheduler implements SchedulerInterface {
      */
     private HistoryClipIn history;
 
-    private ExecutionStateLogger logger = new ExecutionStateLogger();
-    private StampedeLogger stampedeLogger = new StampedeLogger();
+    //    private ExecutionStateLogger logger = new ExecutionStateLogger();
 
 
     /**
      * Construct a scheduler for the given taskgraph and registers it with all the tasks in the taskgraph
+     *
+     * @param taskgraph
      */
     public Scheduler(TaskGraph taskgraph) {
         this.taskgraph = taskgraph;
-        addExecutionListener(stampedeLogger);
     }
 
 
@@ -215,7 +216,7 @@ public class Scheduler implements SchedulerInterface {
      *
      * @param cause the cause of the error
      */
-    public void notifyError(RunnableInstance cause) {
+    public void notifyError(RunnableInstance cause, String message) {
         stopTaskGraph(taskgraph);
         //taskgraph.removeExecutionListener(logger);
     }
@@ -276,6 +277,8 @@ public class Scheduler implements SchedulerInterface {
         if ((tgState != ExecutionState.ERROR) && (tgState != ExecutionState.RESETTING)) {
             tgState = ExecutionState.RUNNING;
 
+            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.RUNNING_WORKFLOW)
+                    .add(LogDetail.WF, tgraph.getQualifiedToolName()));
             wakeTask(tgraph);
         }
     }
@@ -388,6 +391,8 @@ public class Scheduler implements SchedulerInterface {
      * Stops all tasks for an error
      */
     private void stopTaskGraph(TaskGraph tgraph) {
+        Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.STOPPING_WORKFLOW)
+                .add(LogDetail.WF, tgraph.getQualifiedToolName()));
         tgState = ExecutionState.ERROR;
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
 

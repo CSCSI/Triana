@@ -120,7 +120,7 @@ public interface SchedulerInterface {
      *
      * @param cause the cause of the error
      */
-    public void notifyError(RunnableInstance cause);
+    public void notifyError(RunnableInstance cause, String message);
 
     public void addExecutionListener(ExecutionListener listener);
 

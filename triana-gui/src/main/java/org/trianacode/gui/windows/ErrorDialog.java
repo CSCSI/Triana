@@ -147,7 +147,7 @@ public class ErrorDialog implements Serializable {
      * with the full stack trace of the given exception. If the String text is null the just the Exception's trace is
      * output with no preceeding message
      */
-    public static void show(JFrame parent, String text, Exception e) {
+    public static void show(JFrame parent, String text, Throwable e) {
         StringWriter ss = new StringWriter();
         PrintWriter sr = new PrintWriter(ss);
         e.printStackTrace(sr);
@@ -169,8 +169,7 @@ public class ErrorDialog implements Serializable {
         try {
             sr.close();
             ss.close();
-        }
-        catch (Exception ee) {
+        } catch (Exception ee) {
         }
 
         if (disp) {

@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.trianacode.enactment.logging.stampede.StampedeLogger;
 
 /**
  * @author Andrew Harrison
@@ -56,6 +57,12 @@ public class Loggers {
      * logger for development.
      */
     public static final Log DEV_LOGGER = LogFactory.getLog("TRIANA.DEV");
+
+
+    /**
+     * logger for Stampede. See StampedeLogger, and pass StampedeEvents to it.
+     */
+    public static final StampedeLogger STAMPEDE_LOGGER = StampedeLogger.getLog();
 
     private static String[] LOG_NAMES = {
             "TRIANA",

@@ -11,8 +11,9 @@ import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.discovery.ResolverRegistry;
 import org.trianacode.discovery.ToolMetadataResolver;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.error.ErrorTracker;
+import org.trianacode.error.SystemOutErrorListener;
 import org.trianacode.http.HTTPServices;
-import org.trianacode.messenger.ErrorTracker;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -89,7 +90,8 @@ public class TrianaInstance {
      * @throws Exception
      */
     public TrianaInstance(String[] args) throws IOException {
-        errorTracker = ErrorTracker.getMessageBus();
+        errorTracker = ErrorTracker.getErrorTracker();
+        errorTracker.addErrorListener(new SystemOutErrorListener());
         executorService.allowCoreThreadTimeOut(true);
         if (args == null) {
             args = new String[0];
@@ -354,7 +356,7 @@ public class TrianaInstance {
         executorService.execute(runnable);
     }
 
-    public ErrorTracker getMessageBus() {
+    public ErrorTracker getErrorTracker() {
         return errorTracker;
     }
 

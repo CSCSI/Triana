@@ -60,6 +60,7 @@
 package org.trianacode.taskgraph.service;
 
 
+import org.trianacode.error.ErrorEvent;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.tool.Tool;
@@ -158,9 +159,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      * Called by subclass when execution is requested
      */
     protected void executionRequested() {
-        System.out.println("AbstractRunnableTask.executionRequested EXECUTION REQUESTED");
+        //   System.out.println("AbstractRunnableTask.executionRequested EXECUTION REQUESTED");
         waitPause();
-        System.out.println("AbstractRunnableTask.executionRequested DONE WITH WAIT PAUSE");
+        //   System.out.println("AbstractRunnableTask.executionRequested DONE WITH WAIT PAUSE");
 
         executionRequest++;
         setParameterType(EXECUTION_REQUEST_COUNT, TRANSIENT);
@@ -296,7 +297,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      */
     protected void waitPause() {
         while (getExecutionState().equals(ExecutionState.PAUSED)) {
-            System.out.println("AbstractRunnableTask.waitPause EXECUTION IS PAUSED. WAITING FOR 500 MILLIS!!!");
+            //        System.out.println("AbstractRunnableTask.waitPause EXECUTION IS PAUSED. WAITING FOR 500 MILLIS!!!");
             try {
                 Thread.sleep(500);
             } catch (InterruptedException except) {
@@ -310,6 +311,7 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      * stop and ask the user to sort the problem out before resuming.
      */
     public void notifyError(String message) throws NotifyErrorException {
+        broadcastError(message);
         TaskGraphManager.getTrianaServer(getParent()).notifyError(this, message);
         setExecutionState(ExecutionState.ERROR);
 
@@ -317,8 +319,14 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
             setParameterType(ERROR_MESSAGE, Tool.TRANSIENT);
             setParameter(ERROR_MESSAGE, message);
         }
+        //TODO wtf?
+//        throw (new NotifyErrorException(message));
+    }
 
-        throw (new NotifyErrorException(message));
+    private void broadcastError(String message) {
+        this.getProperties().getEngine().getErrorTracker().broadcastError(
+                new ErrorEvent(this, new Throwable(message), message)
+        );
     }
 
 
