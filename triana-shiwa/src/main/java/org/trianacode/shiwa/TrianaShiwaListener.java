@@ -1,5 +1,6 @@
 package org.trianacode.shiwa;
 
+import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.Port;
 import org.shiwa.desktop.data.description.handler.Signature;
 import org.shiwa.desktop.data.transfer.SHIWADesktopExecutionListener;
@@ -8,6 +9,7 @@ import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.TrianaRun;
 import org.trianacode.enactment.io.*;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.DisplayDialog;
@@ -37,6 +39,8 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
 
     private TrianaInstance trianaInstance;
     private DisplayDialog dialog;
+    private static Log devLog = Loggers.DEV_LOGGER;
+
 
     public TrianaShiwaListener(TrianaInstance trianaInstance, DisplayDialog dialog) {
         this.trianaInstance = trianaInstance;
@@ -66,11 +70,11 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
 
         List<IoMapping> mappings = conf.getInputs();
         for (IoMapping mapping : mappings) {
-            System.out.println("  mapping:");
-            System.out.println("    name:" + mapping.getNodeName());
-            System.out.println("    type:" + mapping.getIoType().getType());
-            System.out.println("    val:" + mapping.getIoType().getValue());
-            System.out.println("    ref:" + mapping.getIoType().isReference());
+            devLog.debug("  mapping:");
+            devLog.debug("    name:" + mapping.getNodeName());
+            devLog.debug("    type:" + mapping.getIoType().getType());
+            devLog.debug("    val:" + mapping.getIoType().getValue());
+            devLog.debug("    ref:" + mapping.getIoType().isReference());
         }
 
         return conf;
@@ -78,7 +82,7 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
 
     @Override
     public void digestWorkflow(File file, Signature signature) {
-        System.out.println("Importing a bundle");
+        devLog.debug("Importing a bundle");
         try {
             if (GUIEnv.getApplicationFrame() != null) {
                 TaskGraph taskGraph = TaskGraphFileHandler.openTaskgraph(file, true);
@@ -86,7 +90,7 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
                     createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
                 }
             } else {
-                System.out.println("No gui found, running headless");
+                devLog.debug("No gui found, running headless");
                 XMLReader reader = new XMLReader(new FileReader(file));
                 Tool tool = reader.readComponent(trianaInstance.getProperties());
                 if (tool instanceof TaskGraph) {
@@ -108,16 +112,16 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
         runner.runTaskGraph();
 
         if (mappings != null) {
-            System.out.println("Data mappings size : " + mappings.getMap().size());
+            devLog.debug("Data mappings size : " + mappings.getMap().size());
             Iterator<Integer> it = mappings.iterator();
             while (it.hasNext()) {
                 Integer integer = it.next();
                 Object val = mappings.getValue(integer);
-                System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
+                devLog.debug("Data : " + val.toString() + " will be sent to input number " + integer);
                 runner.sendInputData(integer, val);
             }
         } else {
-            System.out.println("Mappings was null");
+            devLog.debug("Mappings was null");
         }
 
         while (!runner.isFinished()) {
@@ -133,7 +137,7 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
         for (Node node : runner.getTaskGraph().getDataOutputNodes()) {
             int nodeIndex = node.getAbsoluteNodeIndex();
             Object out = runner.receiveOutputData(nodeIndex);
-            System.out.println("node " + nodeIndex + " output:" + out);
+            devLog.debug("node " + nodeIndex + " output:" + out);
         }
         runner.dispose();
 
@@ -144,7 +148,7 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
         try {
             exec.execute(loadedTask, conf);
         } catch (Exception e) {
-            System.out.println("Failed to load workflow back to Triana");
+            devLog.debug("Failed to load workflow back to Triana");
             e.printStackTrace();
         }
     }
@@ -166,12 +170,12 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
                 varTask.setParameter("configSize", inputNodes.length);
 
 
-                System.out.println("Data mappings size : " + mappings.getMap().size());
+                devLog.debug("Data mappings size : " + mappings.getMap().size());
                 Iterator<Integer> it = mappings.iterator();
                 while (it.hasNext()) {
                     Integer integer = it.next();
                     Object val = mappings.getValue(integer);
-                    System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
+                    devLog.debug("Data : " + val.toString() + " will be sent to input number " + integer);
                     Node taskNode = inputNodes[integer];
                     Node addedNode = varTask.addDataOutputNode();
 
@@ -184,10 +188,10 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
                 if (o instanceof Integer) {
                     configSize = (Integer) o;
                 }
-                System.out.println("Multiple output config task added " + configSize);
+                devLog.debug("Multiple output config task added " + configSize);
 
             } else {
-                System.out.println("Mappings was null");
+                devLog.debug("Mappings was null");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -26,9 +26,9 @@ import java.util.UUID;
  * To change this template use File | Settings | File Templates.
  */
 @Tool(renderingHints = {DaxJobComponentModel.DAX_JOB_RENDERING_HINT}, minimumInputs = 1, minimumOutputs = 1)
-public class DaxJob extends JobUnit implements Displayer, TaskConscious {
+public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemListener, ActionListener {
 
-
+    private static Log devLog = Loggers.DEV_LOGGER;
     JPanel upperPanel; // = new JPanel(new GridLayout(4, 2, 5, 5));
     JPanel lowerPanel; // = new JPanel();
     JPanel lowerPanel1; // = new JPanel(new GridLayout(3, 1, 5, 5));
@@ -62,8 +62,8 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
         JPanel mainPane = new JPanel();
         mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
 
-        ActionPerformer actionPerformer = new ActionPerformer();
-        ItemPerformer itemPerformer = new ItemPerformer();
+//        JobActionPerformer actionPerformer = new JobActionPerformer();
+//        JobItemPerformer itemPerformer = new JobItemPerformer();
 
         upperPanel = new JPanel(new GridLayout(4, 2, 5, 5));
         upperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Job"));
@@ -93,7 +93,7 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
         upperPanel.add(argsField);
 
         collectionBox = new JCheckBox("Collection", collection);
-        collectionBox.addItemListener(itemPerformer);
+        collectionBox.addItemListener(this);
         upperPanel.add(collectionBox);
 
         collectLabel = new JLabel("");
@@ -126,10 +126,10 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
         radios.add(spreadCheck);
         radios.add(one2oneCheck);
 
-        autoCheck.addItemListener(itemPerformer);
-        scatterCheck.addItemListener(itemPerformer);
-        spreadCheck.addItemListener(itemPerformer);
-        one2oneCheck.addItemListener(itemPerformer);
+        autoCheck.addItemListener(this);
+        scatterCheck.addItemListener(this);
+        spreadCheck.addItemListener(this);
+        one2oneCheck.addItemListener(this);
 
         lowerPanel1.add(autoCheck);
         lowerPanel1.add(scatterCheck);
@@ -148,7 +148,7 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
         jobsCombo = new JComboBox(numbers);
         jobsCombo.setActionCommand("jobsCombo");
         jobsCombo.setSelectedItem("" + numberOfJobs);
-        jobsCombo.addActionListener(actionPerformer);
+        jobsCombo.addActionListener(this);
 
         lowerPanelAuto.add(numberJobsLabel);
         lowerPanelAuto.add(jobsCombo);
@@ -156,7 +156,7 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
         filesPerJobCombo = new JComboBox(numbers);
         filesPerJobCombo.setActionCommand("filesPerJobCombo");
         filesPerJobCombo.setSelectedItem("" + fileInputsPerJob);
-        filesPerJobCombo.addActionListener(actionPerformer);
+        filesPerJobCombo.addActionListener(this);
 
         lowerPanelScatter.add(numberInputFilesLabel);
         lowerPanelScatter.add(filesPerJobCombo);
@@ -175,13 +175,13 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
 
         String word = "no";
         if (task != null) {
-            word = task.getQualifiedTaskName();
+            word = task.getQualifiedToolName();
         }
         mainPane.add(new JLabel("Task? " + word));
 
         JButton apply = new JButton("Apply");
         apply.setActionCommand("apply");
-        apply.addActionListener(actionPerformer);
+        apply.addActionListener(this);
         mainPane.add(apply);
         return mainPane;
     }
@@ -207,81 +207,73 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious {
         }
     }
 
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-//        System.out.println(s);
-    }
-
     @Override
     public void displayMessage(String string) {
-        log(string);
+        devLog.debug(string);
     }
 
-    class ActionPerformer implements ActionListener {
-        public void actionPerformed(ActionEvent ae) {
-            System.out.println("An action ");
-            if (ae.getActionCommand().equals("apply")) {
-                apply();
+    public void actionPerformed(ActionEvent ae) {
+        devLog.debug("An action ");
+        if (ae.getActionCommand().equals("apply")) {
+            apply();
+        }
+        if (ae.getActionCommand().equals("jobsCombo")) {
+            numberOfJobs = Integer.parseInt((String) jobsCombo.getSelectedItem());
+            numberJobsLabel.setText("No. files : " + numberOfJobs);
+        }
+        if (ae.getActionCommand().equals("filesPerJobCombo")) {
+            fileInputsPerJob = Integer.parseInt((String) filesPerJobCombo.getSelectedItem());
+            numberInputFilesLabel.setText("No. files : " + fileInputsPerJob);
+        }
+    }
+
+
+    public void itemStateChanged(ItemEvent itemEvent) {
+        devLog.debug("An item");
+        if (itemEvent.getSource() == collectionBox) {
+            if (collectionBox.isSelected()) {
+                collectLabel.setText("Collection of jobs.");
+                collection = true;
+                setEnabling(lowerPanel, true);
+            } else {
+                collectLabel.setText("Not a collection");
+                collection = false;
+                setEnabling(lowerPanel, false);
             }
-            if (ae.getActionCommand().equals("jobsCombo")) {
-                numberOfJobs = Integer.parseInt((String) jobsCombo.getSelectedItem());
-                numberJobsLabel.setText("No. files : " + numberOfJobs);
+        }
+        if (itemEvent.getSource() == autoCheck) {
+            if (autoCheck.isSelected()) {
+                connectPattern = JobUnit.AUTO_CONNECT;
+                setEnabling(lowerPanelAuto, true);
+                setEnabling(lowerPanelScatter, false);
+                setEnabling(lowerPanelOne2One, false);
             }
-            if (ae.getActionCommand().equals("filesPerJobCombo")) {
-                fileInputsPerJob = Integer.parseInt((String) filesPerJobCombo.getSelectedItem());
-                numberInputFilesLabel.setText("No. files : " + fileInputsPerJob);
+        }
+
+        if (itemEvent.getSource() == scatterCheck) {
+            if (scatterCheck.isSelected()) {
+                connectPattern = JobUnit.SCATTER_CONNECT;
+                setEnabling(lowerPanelAuto, false);
+                setEnabling(lowerPanelScatter, true);
+                setEnabling(lowerPanelOne2One, false);
+            }
+        }
+        if (itemEvent.getSource() == spreadCheck) {
+            if (spreadCheck.isSelected()) {
+                connectPattern = JobUnit.SPREAD_CONNECT;
+                setEnabling(lowerPanelAuto, true);
+                setEnabling(lowerPanelScatter, false);
+                setEnabling(lowerPanelOne2One, false);
+            }
+        }
+        if (itemEvent.getSource() == one2oneCheck) {
+            if (one2oneCheck.isSelected()) {
+                connectPattern = JobUnit.ONE2ONE_CONNECT;
+                setEnabling(lowerPanelAuto, false);
+                setEnabling(lowerPanelScatter, false);
+                setEnabling(lowerPanelOne2One, true);
             }
         }
     }
 
-    class ItemPerformer implements ItemListener {
-        public void itemStateChanged(ItemEvent itemEvent) {
-            System.out.println("An item");
-            if (itemEvent.getSource() == collectionBox) {
-                if (collectionBox.isSelected()) {
-                    collectLabel.setText("Collection of jobs.");
-                    collection = true;
-                    setEnabling(lowerPanel, true);
-                } else {
-                    collectLabel.setText("Not a collection");
-                    collection = false;
-                    setEnabling(lowerPanel, false);
-                }
-            }
-            if (itemEvent.getSource() == autoCheck) {
-                if (autoCheck.isSelected()) {
-                    connectPattern = JobUnit.AUTO_CONNECT;
-                    setEnabling(lowerPanelAuto, true);
-                    setEnabling(lowerPanelScatter, false);
-                    setEnabling(lowerPanelOne2One, false);
-                }
-            }
-
-            if (itemEvent.getSource() == scatterCheck) {
-                if (scatterCheck.isSelected()) {
-                    connectPattern = JobUnit.SCATTER_CONNECT;
-                    setEnabling(lowerPanelAuto, false);
-                    setEnabling(lowerPanelScatter, true);
-                    setEnabling(lowerPanelOne2One, false);
-                }
-            }
-            if (itemEvent.getSource() == spreadCheck) {
-                if (spreadCheck.isSelected()) {
-                    connectPattern = JobUnit.SPREAD_CONNECT;
-                    setEnabling(lowerPanelAuto, true);
-                    setEnabling(lowerPanelScatter, false);
-                    setEnabling(lowerPanelOne2One, false);
-                }
-            }
-            if (itemEvent.getSource() == one2oneCheck) {
-                if (one2oneCheck.isSelected()) {
-                    connectPattern = JobUnit.ONE2ONE_CONNECT;
-                    setEnabling(lowerPanelAuto, false);
-                    setEnabling(lowerPanelScatter, false);
-                    setEnabling(lowerPanelOne2One, true);
-                }
-            }
-        }
-    }
 }

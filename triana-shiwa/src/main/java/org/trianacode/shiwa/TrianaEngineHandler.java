@@ -1,10 +1,12 @@
 package org.trianacode.shiwa;
 
+import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.Signature;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.ser.XMLReader;
@@ -23,6 +25,8 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class TrianaEngineHandler implements WorkflowEngineHandler {
+
+    private static Log devLog = Loggers.DEV_LOGGER;
 
     private Task task;
     private InputStream displayImage;
@@ -82,11 +86,11 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
             XMLWriter writer = new XMLWriter(new BufferedWriter(new FileWriter(temp)));
             writer.writeComponent(task);
             writer.close();
-            System.out.println("Sending taskgraph to ShiwaDesktop.");
+            devLog.debug("Sending taskgraph to ShiwaDesktop.");
             return new FileInputStream(temp);
 
         } catch (Exception e) {
-            System.out.println("Failed to create temp xml for output to shiwa-desktop : ");
+            devLog.debug("Failed to create temp xml for output to shiwa-desktop : ");
             e.printStackTrace();
             return null;
         }
@@ -99,7 +103,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     @Override
     public InputStream getDisplayImage() {
-        System.out.println("Sending display image to ShiwaDesktop");
+        devLog.debug("Sending display image to ShiwaDesktop");
         return displayImage;
     }
 
@@ -113,7 +117,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         File f = new File(wf);
 
         if (!f.exists()) {
-            System.out.println("Cannot find workflow file:" + wf);
+            devLog.debug("Cannot find workflow file:" + wf);
             System.exit(1);
         }
 

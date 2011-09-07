@@ -1,8 +1,10 @@
 package org.trianacode.pegasus.gui.guiUnits;
 
+import org.apache.commons.logging.Log;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.Tool;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.pegasus.dax.DaxToPegasusUnit;
 import org.trianacode.pegasus.dax.Displayer;
@@ -36,6 +38,8 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
     JRadioButton urlButton = new JRadioButton(manual, false);
     JRadioButton runLocalButton = new JRadioButton(local, false);
     private ProgressPopup popup;
+    private static Log devLog = Loggers.DEV_LOGGER;
+
 
     @Process
     public void fakeProcess(File file) {
@@ -70,9 +74,9 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
                 Object locationObject = task.getParameter("locationService");
                 if (locationObject instanceof String && locationObject != null) {
                     locationService = (String) locationObject;
-                    System.out.println("LocationService : " + locationService);
+                    devLog.debug("LocationService : " + locationService);
                     if (radioMap.containsKey(locationService)) {
-                        System.out.println("Setting radioButton " + locationService + " to true.");
+                        devLog.debug("Setting radioButton " + locationService + " to true.");
                         radioMap.get(locationService).setSelected(true);
                     }
                 } else {
@@ -86,7 +90,7 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
                     urlField.setText("http://localhost:8080/remotecontrol");
                 }
             } catch (Exception e) {
-                System.out.println("Error loading parameters\n ");
+                devLog.debug("Error loading parameters\n ");
                 e.printStackTrace();
             }
         }
@@ -247,7 +251,7 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
             }
             if (radioMap.containsKey(ae.getActionCommand())) {
                 locationService = ae.getActionCommand();
-                System.out.println("LocationService : " + locationService);
+                devLog.debug("LocationService : " + locationService);
 
             }
         }

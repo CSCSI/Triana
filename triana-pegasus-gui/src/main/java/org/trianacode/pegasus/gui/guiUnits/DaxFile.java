@@ -30,19 +30,20 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 @org.trianacode.annotation.Tool(renderingHints = {"DAX File"})
-public class DaxFile extends FileUnit implements TaskConscious, Displayer {
+public class DaxFile extends FileUnit implements TaskConscious, Displayer, ActionListener, ItemListener {
 
+    private static Log devLog = Loggers.DEV_LOGGER;
 
     File location;
 
-    JLabel collectLabel = new JLabel("");
-    JLabel iterLabel = new JLabel("");
-    JTextField nameField = new JTextField("");
-    JTextField locationField = new JTextField("");
-    JTextArea fileListArea = new JTextArea("Example filenames here..\n\n");
-    JPanel namePanel = new JPanel();
-    JPanel collectionPanel = new JPanel();
-    JComboBox namingPatternBox = new JComboBox();
+    JLabel collectLabel; // = new JLabel("");
+    JLabel iterLabel;  //= new JLabel("");
+    JTextField nameField; //= new JTextField("");
+    JTextField locationField; //= new JTextField("");
+    JTextArea fileListArea; //= new JTextArea("Example filenames here..\n\n");
+    private JPanel namePanel; //= new JPanel();
+    private JPanel collectionPanel; //= new JPanel();
+    JComboBox namingPatternBox; //= new JComboBox();
 //    PatternCollection namingPattern = null;
 
     JButton nameReset;
@@ -58,12 +59,6 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
     JPanel customNamePanel;
     JPanel locationPanel;
 
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        System.out.println(s);
-    }
-
     @org.trianacode.annotation.Process(gather = true)
     public UUID fakeProcess(List list) {
         return this.fileUnitProcess(list);
@@ -73,11 +68,11 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         if (physicalFile) {
             fileProtocol = (String) locationTypeCombo.getSelectedItem();
             locationString = locationField.getText();
-            System.out.println("PFL : " + fileProtocol + locationString + File.separator + nameField.getText());
+            devLog.debug("PFL : " + fileProtocol + locationString + File.separator + nameField.getText());
         } else {
-            System.out.println("File does not have a physical location");
+            devLog.debug("File does not have a physical location");
         }
-        if(!collection){
+        if (!collection) {
             one2one = false;
         }
         changeToolName(nameField.getText());
@@ -91,18 +86,16 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        FileActionPerformer fileActionPerformer = new FileActionPerformer();
+//        FileActionPerformer fileActionPerformer = new FileActionPerformer();
+//        FileItemPerformer fileItemPerformer = new FileItemPerformer();
 
-        nameField.setText(fileName);
-
+        nameField = new JTextField(fileName);
+//        nameField.setText(fileName);
+        namePanel = new JPanel(new BorderLayout());
         namePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File"));
-        namePanel.setLayout(new BorderLayout());
 
         JLabel nameLabel = new JLabel("File Name : ");
         namePanel.add(nameLabel, BorderLayout.WEST);
-//        if(task != null){
-//            changeToolName(task.getToolName());
-//        }
         namePanel.add(nameField, BorderLayout.CENTER);
 
 //          locationPanel
@@ -113,7 +106,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
 
         final JPanel locationCheckPanel = new JPanel(new BorderLayout());
         locationCheck = new JCheckBox("Set location : ", physicalFile);
-        locationCheck.addItemListener(fileActionPerformer);
+        locationCheck.addItemListener(this);
         locationCheckPanel.add(locationCheck, BorderLayout.WEST);
 
         locationButton = new JButton("...");
@@ -123,11 +116,12 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         if (!fileProtocol.equals("")) {
             locationTypeCombo.setSelectedItem(fileProtocol);
         }
-        locationTypeCombo.addActionListener(fileActionPerformer);
+        locationTypeCombo.addActionListener(this);
 
+        locationField = new JTextField("");
         locationField.setText(locationString);
         locationButton.setActionCommand("locationButton");
-        locationButton.addActionListener(fileActionPerformer);
+        locationButton.addActionListener(this);
 
         locationPanel.add(locationTypeCombo, BorderLayout.WEST);
         locationPanel.add(locationField, BorderLayout.CENTER);
@@ -141,6 +135,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         mainPanel.add(locationMainPanel);
 
         // collectionPanel
+        collectionPanel = new JPanel();
         collectionPanel.setLayout(new BoxLayout(collectionPanel, BoxLayout.Y_AXIS));
         collectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File Collection Options"));
 
@@ -151,7 +146,8 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         collection = isCollection();
         numberOfFiles = getNumberOfFiles();
         collectionCheck = new JCheckBox("Collection", collection);
-        collectionCheck.addItemListener(fileActionPerformer);
+        collectionCheck.addItemListener(this);
+        collectLabel = new JLabel("");
         if (collection) {
             collectLabel.setText("Collection of files.");
         } else {
@@ -162,7 +158,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         collectionPanel.add(collectionCheckPanel);
 
         one2oneCheck = new JCheckBox("One2one with previous jobs", one2one);
-        one2oneCheck.addItemListener(fileActionPerformer);
+        one2oneCheck.addItemListener(this);
         JPanel one2oneCheckPanel = new JPanel(new BorderLayout());
         one2oneCheckPanel.add(one2oneCheck);
         collectionPanel.add(one2oneCheckPanel);
@@ -176,7 +172,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         numbersCombo = new JComboBox(numbers);
         numbersCombo.setActionCommand("numbersCombo");
         numbersCombo.setSelectedItem("" + numberOfFiles);
-        numbersCombo.addActionListener(fileActionPerformer);
+        numbersCombo.addActionListener(this);
 
         numberFilesPanel.add(numberLabel, BorderLayout.WEST);
         numberFilesPanel.add(numbersCombo, BorderLayout.EAST);
@@ -186,11 +182,11 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         JLabel customLabel = new JLabel("Custom name :");
         namingButton = new JButton("Custom pattern...");
         namingButton.setActionCommand("namingButton");
-        namingButton.addActionListener(fileActionPerformer);
+        namingButton.addActionListener(this);
 
         nameReset = new JButton("Reset");
         nameReset.setActionCommand("nameReset");
-        nameReset.addActionListener(fileActionPerformer);
+        nameReset.addActionListener(this);
 
         customNamePanel.add(customLabel);
         customNamePanel.add(namingButton);
@@ -198,6 +194,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         collectionPanel.add(customNamePanel);
         setEnabling(customNamePanel, false);
 
+        fileListArea = new JTextArea("Example filenames here..\n\n");
         fileListArea.setRows(6);
         fileListArea.setEditable(false);
         JScrollPane sp = new JScrollPane(fileListArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -207,115 +204,118 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
         mainPanel.add(collectionPanel);
         String word = "no";
         if (task != null) {
-            word = task.getQualifiedTaskName();
+            word = task.toString();
         }
         mainPanel.add(new JLabel("Task? " + word));
 
         JButton apply = new JButton("Apply");
         apply.setActionCommand("apply");
-        apply.addActionListener(fileActionPerformer);
+        apply.addActionListener(this);
         mainPanel.add(apply);
+
         return mainPanel;
     }
 
-    class FileActionPerformer implements ActionListener, ItemListener {
-        public void actionPerformed(ActionEvent actionEvent) {
-            if (actionEvent.getActionCommand().equals("apply")) {
-                apply();
+    //  class FileActionPerformer implements ActionListener {
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getActionCommand().equals("apply")) {
+            apply();
+        }
+        if (actionEvent.getActionCommand().equals("nameReset")) {
+            namingPattern = null;
+            fillFileListArea();
+        }
+        if ((actionEvent.getActionCommand().equals("namingButton"))) {
+            int parts = 3;
+            if (namingPattern != null) {
+                parts = namingPattern.getPatternCollectionSize();
             }
-            if (actionEvent.getActionCommand().equals("nameReset")) {
-                namingPattern = null;
-                fillFileListArea();
+            namingPattern = (PatternCollection) NamingPanel.getValue(parts);
+            fillFileListArea();
+            if (namingPattern != null) {
+                devLog.debug("ChosenNamingPattern : " + namingPattern.toString());
             }
-            if ((actionEvent.getActionCommand().equals("namingButton"))) {
-                int parts = 3;
-                if (namingPattern != null) {
-                    parts = namingPattern.getPatternCollectionSize();
-                }
-                namingPattern = (PatternCollection) NamingPanel.getValue(parts);
-                fillFileListArea();
-                if (namingPattern != null) {
-                    log("ChosenNamingPattern : " + namingPattern.toString());
-                }
-            }
-            if (actionEvent.getActionCommand().equals("numbersCombo")) {
-                numberOfFiles = Integer.parseInt((String) numbersCombo.getSelectedItem());
-                numberLabel.setText("No. files : " + numberOfFiles);
-                fillFileListArea();
-            }
-            if (actionEvent.getActionCommand().equals("locationButton")) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setMultiSelectionEnabled(false);
-                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                int returnVal = chooser.showDialog(GUIEnv.getApplicationFrame(), "Select");
-                String filePath = null;
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    location = chooser.getSelectedFile();
-                    if (location != null) {
-                        locationField.setText(location.getParent());
-                        nameField.setText(location.getName());
+        }
+        if (actionEvent.getActionCommand().equals("numbersCombo")) {
+            numberOfFiles = Integer.parseInt((String) numbersCombo.getSelectedItem());
+            numberLabel.setText("No. files : " + numberOfFiles);
+            fillFileListArea();
+        }
+        if (actionEvent.getActionCommand().equals("locationButton")) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setMultiSelectionEnabled(false);
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int returnVal = chooser.showDialog(GUIEnv.getApplicationFrame(), "Select");
+            String filePath = null;
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                location = chooser.getSelectedFile();
+                if (location != null) {
+                    locationField.setText(location.getParent());
+                    nameField.setText(location.getName());
 //                        filePath = f.getAbsolutePath();
 //                        locationField.setText(filePath);
 //                        if(f.isFile()){
 //                            nameField.setText(f.getName());
 //                        }
-                    }
-                }
-            }
-            if (actionEvent.getActionCommand().equals("locationTypeCombo")) {
-                fileProtocol = (String) locationTypeCombo.getSelectedItem();
-                if (fileProtocol.equals("file://")) {
-                    locationButton.setVisible(true);
-                } else {
-                    locationButton.setVisible(false);
                 }
             }
         }
-
-        public void itemStateChanged(ItemEvent itemEvent) {
-            if (itemEvent.getSource().equals(one2oneCheck)) {
-                if (one2oneCheck.isSelected()) {
-                    one2one = true;
-                    setEnabling(numberFilesPanel, false);
-                    setEnabling(customNamePanel, false);
-                    setEnabling(fileListArea, false);
-                } else {
-                    one2one = false;
-                    setEnabling(numberFilesPanel, true);
-                    setEnabling(customNamePanel, true);
-                    setEnabling(fileListArea, true);
-                }
-            }
-            if (itemEvent.getSource().equals(collectionCheck)) {
-                if (collectionCheck.isSelected()) {
-                    collectLabel.setText("Collection of files.");
-                    collection = true;
-                    setEnabling(one2oneCheck, true);
-                    setEnabling(numberFilesPanel, true);
-                    setEnabling(customNamePanel, true);
-                    setEnabling(fileListArea, true);
-
-                } else {
-                    collectLabel.setText("Not a collection");
-                    collection = false;
-                    setEnabling(one2oneCheck, false);
-                    setEnabling(numberFilesPanel, false);
-                    setEnabling(customNamePanel, false);
-                    setEnabling(fileListArea, false);
-                }
-            }
-            if (itemEvent.getSource().equals(locationCheck)) {
-                if (locationCheck.isSelected()) {
-                    physicalFile = true;
-                    setEnabling(locationPanel, true);
-                    locationField.requestFocus();
-                } else {
-                    physicalFile = false;
-                    setEnabling(locationPanel, false);
-                }
+        if (actionEvent.getActionCommand().equals("locationTypeCombo")) {
+            fileProtocol = (String) locationTypeCombo.getSelectedItem();
+            if (fileProtocol.equals("file://")) {
+                locationButton.setVisible(true);
+            } else {
+                locationButton.setVisible(false);
             }
         }
     }
+    //  }
+
+    //   class FileItemPerformer implements ItemListener{
+    public void itemStateChanged(ItemEvent itemEvent) {
+        if (itemEvent.getSource().equals(one2oneCheck)) {
+            if (one2oneCheck.isSelected()) {
+                one2one = true;
+                setEnabling(numberFilesPanel, false);
+                setEnabling(customNamePanel, false);
+                setEnabling(fileListArea, false);
+            } else {
+                one2one = false;
+                setEnabling(numberFilesPanel, true);
+                setEnabling(customNamePanel, true);
+                setEnabling(fileListArea, true);
+            }
+        }
+        if (itemEvent.getSource().equals(collectionCheck)) {
+            if (collectionCheck.isSelected()) {
+                collectLabel.setText("Collection of files.");
+                collection = true;
+                setEnabling(one2oneCheck, true);
+                setEnabling(numberFilesPanel, true);
+                setEnabling(customNamePanel, true);
+                setEnabling(fileListArea, true);
+
+            } else {
+                collectLabel.setText("Not a collection");
+                collection = false;
+                setEnabling(one2oneCheck, false);
+                setEnabling(numberFilesPanel, false);
+                setEnabling(customNamePanel, false);
+                setEnabling(fileListArea, false);
+            }
+        }
+        if (itemEvent.getSource().equals(locationCheck)) {
+            if (locationCheck.isSelected()) {
+                physicalFile = true;
+                setEnabling(locationPanel, true);
+                locationField.requestFocus();
+            } else {
+                physicalFile = false;
+                setEnabling(locationPanel, false);
+            }
+        }
+    }
+    //   }
 
     public void setEnabling(Component c, boolean enable) {
         c.setEnabled(enable);
@@ -350,14 +350,14 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
 //        namingPattern.resetCount();
 //        fileListArea.setText("Files will be named : \n");
 //        for(int i = 0 ; i< numberOfFiles; i++){
-//            log("adding a filename to fileListArea");
+//            devLog.debug("adding a filename to fileListArea");
 //            fileListArea.append(namingPattern.next() + "\n");
 //        }
 //
 //        fileListArea.setText("Files will be named : \n");
 //        String name = (String)getParameter("fileName");
 //        for(int i = 0 ; i< numberOfFiles; i++){
-//            log("adding a name to fileListArea");
+//            devLog.debug("adding a name to fileListArea");
 //            fileListArea.append(name + "." + "\n");
 //        }
 
@@ -365,7 +365,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
 
     @Override
     public void displayMessage(String string) {
-        System.out.println(string);
+        devLog.debug(string);
     }
 }
 
@@ -374,6 +374,8 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer {
  */
 
 class NamingPanel extends JDialog {
+    private static Log devLog = Loggers.DEV_LOGGER;
+
     JPanel mainPanel = new JPanel();
     JLabel hi = new JLabel();
     JTextField name = new JTextField("");
@@ -522,10 +524,10 @@ class NamingPanel extends JDialog {
                     pc.add(new CharSequencePattern(nameParts.get(i)));
                 }
                 for (int i = 0; i < 5; i++) {
-                    System.out.println(pc.next());
+                    devLog.debug(pc.next());
                 }
 
-                log((pc.varies()) ? "Name iterates ok." : "Name does not iterate");
+                devLog.debug((pc.varies()) ? "Name iterates ok." : "Name does not iterate");
                 if (!pc.varies()) {
                     pc.add(new CounterPattern(0, 3, 1, 1));
                 }
@@ -536,7 +538,7 @@ class NamingPanel extends JDialog {
                 dispose();
             }
         } else {
-            log("name not complete");
+            devLog.debug("name not complete");
             JOptionPane.showMessageDialog(mainPanel,
                     "Name not complete.\nFill or remove empty part(s).",
                     "Name Error", JOptionPane.ERROR_MESSAGE);
@@ -551,7 +553,7 @@ class NamingPanel extends JDialog {
         lowerPanel.setLayout(new GridLayout(parts, 3, 5, 5));
 
         for (int i = 0; i < parts; i++) {
-            log("adding a line of choosers");
+            devLog.debug("adding a line of choosers");
             final int finalI = i;
 
             final JComboBox section = new JComboBox(patternOptions);
@@ -591,7 +593,7 @@ class NamingPanel extends JDialog {
     }
 
     private void setNamingPattern(PatternCollection pc) {
-        log("chosenNamingPattern : " + pc.toString());
+        devLog.debug("chosenNamingPattern : " + pc.toString());
         chosenNamingPattern = pc;
     }
 
@@ -618,7 +620,7 @@ class NamingPanel extends JDialog {
 
     private void addArrayToCombo(JComboBox box, String[] array) {
         for (int i = 0; i < array.length; i++) {
-            log("adding array to combobox");
+            devLog.debug("adding array to combobox");
             box.addItem(array[i]);
         }
     }
@@ -629,14 +631,14 @@ class NamingPanel extends JDialog {
 
     private void setSection(int i, String s) {
         if (i >= nameParts.size()) {
-            log("trying to set " + i + " nameParts is : " + nameParts.size());
+            devLog.debug("trying to set " + i + " nameParts is : " + nameParts.size());
             for (int j = nameParts.size(); j < (i + 1); j++) {
 
                 nameParts.add("");
             }
-            log("nameParts is now : " + nameParts.size());
+            devLog.debug("nameParts is now : " + nameParts.size());
         }
-        log("Setting namePart " + i + " as : " + s);
+        devLog.debug("Setting namePart " + i + " as : " + s);
         nameParts.setElementAt(s, i);
     }
 
@@ -674,11 +676,6 @@ class NamingPanel extends JDialog {
         return name.getText();
     }
 
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        System.out.println(s);
-    }
 }
 
 class helpFrame extends JFrame {

@@ -17,39 +17,42 @@ import java.util.UUID;
  */
 public class DaxRegister {
     private static DaxRegister register = new DaxRegister();
-    List<String> files = new ArrayList();
-    List<String> jobs = new ArrayList();
-    List<DaxFileChunk> fileChunks = new ArrayList();
+    List<String> files = new ArrayList<String>();
+    List<String> jobs = new ArrayList<String>();
+    List<DaxFileChunk> fileChunks = new ArrayList<DaxFileChunk>();
 
-    List<DaxJobChunk> jobChunks = new ArrayList();
+    List<DaxJobChunk> jobChunks = new ArrayList<DaxJobChunk>();
 
-    private DaxRegister(){}
+    Log devLog = Loggers.DEV_LOGGER;
 
-    public static DaxRegister getDaxRegister(){
+    private DaxRegister() {
+    }
+
+    public static DaxRegister getDaxRegister() {
         return register;
     }
 
-    public synchronized void listAll(){
-        log("+++++++++++++++++++++++++++++++LIST ALL +++++++++++++++++++++++++");
-        for(DaxJobChunk chunk : jobChunks){
+    public synchronized void listAll() {
+        devLog.debug("+++++++++++++++++++++++++++++++LIST ALL +++++++++++++++++++++++++");
+        for (DaxJobChunk chunk : jobChunks) {
             chunk.listChunks();
         }
-        for(DaxFileChunk chunk : fileChunks){
+        for (DaxFileChunk chunk : fileChunks) {
             chunk.listChunks();
         }
-        log("------------------------------END LIST ALL -----------------------");
+        devLog.debug("------------------------------END LIST ALL -----------------------");
 
     }
 
     public synchronized void addFile(DaxFileChunk thisFile) {
         boolean duplicate = false;
-        for(DaxFileChunk chunk : fileChunks){
-            if(chunk == thisFile){
+        for (DaxFileChunk chunk : fileChunks) {
+            if (chunk == thisFile) {
                 duplicate = true;
-                log("Found a duplicate");
+                devLog.debug("Found a duplicate");
             }
         }
-        if(!duplicate){
+        if (!duplicate) {
             fileChunks.add(thisFile);
         }
         //    listAll();
@@ -57,13 +60,13 @@ public class DaxRegister {
 
     public synchronized void addJob(DaxJobChunk thisJob) {
         boolean duplicate = false;
-        for(DaxJobChunk chunk : jobChunks){
-            if(chunk == thisJob){
+        for (DaxJobChunk chunk : jobChunks) {
+            if (chunk == thisJob) {
                 duplicate = true;
-                log("Found a duplicate");
+                devLog.debug("Found a duplicate");
             }
         }
-        if(!duplicate){
+        if (!duplicate) {
             jobChunks.add(thisJob);
         }
         //   listAll();
@@ -73,24 +76,24 @@ public class DaxRegister {
         return jobChunks;
     }
 
-    public synchronized DaxJobChunk getJobChunkFromUUID(UUID uuid){
-        for(DaxJobChunk chunk : jobChunks){
+    public synchronized DaxJobChunk getJobChunkFromUUID(UUID uuid) {
+        for (DaxJobChunk chunk : jobChunks) {
             UUID toCheck = chunk.getUuid();
-            //      log("Checking : " + uuid + " with : " + toCheck );
-            if(uuid.equals(toCheck)){
-                log("Register returning : " + chunk.getJobName());
+            //      devLog.debug"Checking : " + uuid + " with : " + toCheck );
+            if (uuid.equals(toCheck)) {
+                devLog.debug("Register returning : " + chunk.getJobName());
                 return chunk;
             }
         }
         return null;
     }
 
-    public synchronized DaxFileChunk getFileChunkFromUUID(UUID uuid){
-        for(DaxFileChunk chunk : fileChunks){
+    public synchronized DaxFileChunk getFileChunkFromUUID(UUID uuid) {
+        for (DaxFileChunk chunk : fileChunks) {
             UUID toCheck = chunk.getUuid();
-            //    log("Checking : " + uuid + " with : " + toCheck );
-            if(uuid.equals(toCheck)){
-                log("Register returning : " + chunk.getFilename());
+            //    devLog.debug"Checking : " + uuid + " with : " + toCheck );
+            if (uuid.equals(toCheck)) {
+                devLog.debug("Register returning : " + chunk.getFilename());
                 return chunk;
             }
         }
@@ -100,11 +103,5 @@ public class DaxRegister {
     public void clear() {
         fileChunks.clear();
         jobChunks.clear();
-    }
-
-    private void log(String s){
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        //System.out.println(s);
     }
 }

@@ -51,6 +51,8 @@ public class JobUnit implements TaskConscious, Displayer {
 
     public Task task;
 
+    private static Log devLog = Loggers.DEV_LOGGER;
+
 //    public String getArgs() {
 //        return args;
 //    }
@@ -68,7 +70,7 @@ public class JobUnit implements TaskConscious, Displayer {
     @Process(gather = true)
     public UUID process(List in) {
         UUID thisUUID = UUID.randomUUID();
-        log("Job : " + jobName + " Collection = " + collection + " Number of jobs : " + numberOfJobs);
+        devLog.debug("Job : " + jobName + " Collection = " + collection + " Number of jobs : " + numberOfJobs);
 
         DaxJobChunk thisJob = new DaxJobChunk();
 
@@ -83,7 +85,7 @@ public class JobUnit implements TaskConscious, Displayer {
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addJob(thisJob);
 
-        log("\nList into " + jobName + " is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+        devLog.debug("\nList into " + jobName + " is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         ArgBuilder ab = new ArgBuilder();
         ab.setInputSwitch("-i");
@@ -93,11 +95,11 @@ public class JobUnit implements TaskConscious, Displayer {
         for (Object object : in) {
             if (object instanceof DaxFileChunk) {
                 DaxFileChunk fileChunk = (DaxFileChunk) object;
-                log("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
+                devLog.debug("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
                 fileChunk.addOutJobChunk(thisJob);
                 //        fileChunk.listChunks();
 
-                log("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
+                devLog.debug("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
                 thisJob.addInFileChunk(fileChunk);
                 //        thisJob.listChunks();
             } else if (object instanceof UUID) {
@@ -106,19 +108,19 @@ public class JobUnit implements TaskConscious, Displayer {
 
                 if (fileChunk != null) {
 
-                    log("\nPrevious file was : " + fileChunk.getFilename() + "\n");
-                    log("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
+                    devLog.debug("\nPrevious file was : " + fileChunk.getFilename() + "\n");
+                    devLog.debug("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
                     fileChunk.addOutJobChunk(thisJob);
 
-                    log("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
+                    devLog.debug("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
                     thisJob.addInFileChunk(fileChunk);
                     ab.addInputFile(fileChunk.getFilename());
 
                 } else {
-                    log("FileChunk not found in register");
+                    devLog.debug("FileChunk not found in register");
                 }
             } else {
-                log("Cannot handle input : " + object.getClass().getName());
+                devLog.debug("Cannot handle input : " + object.getClass().getName());
             }
         }
 
@@ -148,7 +150,7 @@ public class JobUnit implements TaskConscious, Displayer {
 
     public void changeToolName(String name) {
         if (task != null) {
-            log("Changing tool " + task.getToolName() + " to : " + name);
+            devLog.debug("Changing tool " + task.getToolName() + " to : " + name);
             task.setParameter("jobName", name);
             task.setToolName(name);
         }
@@ -165,7 +167,7 @@ public class JobUnit implements TaskConscious, Displayer {
     public boolean isCollection() {
         Object o = task.getParameter("collection");
         if (o != null) {
-            log("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+            devLog.debug("Returned object from param *collection* : " + o.getClass().getCanonicalName() + " : " + o.toString());
             return o.equals(true);
         }
         return false;
@@ -174,7 +176,7 @@ public class JobUnit implements TaskConscious, Displayer {
     public int getNumberOfJobs() {
         Object o = task.getParameter("numberOfJobs");
         if (o != null) {
-            log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+            devLog.debug("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
             int value = (Integer) o;
             if (value > 1) {
                 return value;
@@ -187,7 +189,7 @@ public class JobUnit implements TaskConscious, Displayer {
     public int getFileInputsPerJob() {
         Object o = task.getParameter("fileInputsPerJob");
         if (o != null) {
-            log("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
+            devLog.debug("Returned object from param *numberOfJobs* : " + o.getClass().getCanonicalName() + " : " + o.toString());
             int value = (Integer) o;
             if (value > 1) {
                 return value;
@@ -221,15 +223,9 @@ public class JobUnit implements TaskConscious, Displayer {
         return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
     }
 
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        //    System.out.println(s);
-    }
-
     @Override
     public void displayMessage(String string) {
-        log(string);
+        devLog.debug(string);
     }
 }
 
@@ -249,38 +245,38 @@ List<DaxJobChunk> jcl = new ArrayList<DaxJobChunk>();
             for(int j = 0; j < innerList.size(); j++){
                 Object o2 = innerList.get(j);
                 if(o2 instanceof DaxJobChunk){
-                    log("Found a DaxJobChunk");
+                    devLog.debug("Found a DaxJobChunk");
                     if(j == (innerList.size() - 1)){
                         DaxJobChunk jobChunk = (DaxJobChunk) o2;
-                        log("This path through workflow includes " + jobChunk.getOutputFilename() + " before this job");
+                        devLog.debug("This path through workflow includes " + jobChunk.getOutputFilename() + " before this job");
                         fileStrings.add(jobChunk.getOutputFilename());
                     }
                     jcl.add((DaxJobChunk) o2);
                 }
                 else{
-                    log("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
+                    devLog.debug("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
                 }
             }
         }
         else{
-            log("Incoming list didn't contain a list, contains : " + o.getClass().toString());
+            devLog.debug("Incoming list didn't contain a list, contains : " + o.getClass().toString());
         }
     }
 
-log("Adding " + fileStrings.size() + " inputs to job.");
+devLog.debug("Adding " + fileStrings.size() + " inputs to job.");
 for(int i = 0; i < fileStrings.size(); i++){
     thisJob.addInFile((String)fileStrings.get(i));
 }
 
 thisJob.setJobArgs(args);
-log("Is collection : " + collection);
+devLog.debug("Is collection : " + collection);
 thisJob.setCollection(collection);
 
 
 
 jcl.add(thisJob);
 
-log("\nList out is size: " + jcl.size() + " contains : " + jcl.toString() + ".\n ");
+devLog.debug("\nList out is size: " + jcl.size() + " contains : " + jcl.toString() + ".\n ");
 
 return jcl;
 */

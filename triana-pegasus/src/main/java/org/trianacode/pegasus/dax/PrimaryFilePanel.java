@@ -1,5 +1,7 @@
 package org.trianacode.pegasus.dax;
 
+import org.trianacode.enactment.logging.Loggers;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,19 +26,19 @@ class PrimaryFilePanel extends JDialog implements ActionListener {
     String jobName = "";
     DaxFileChunk returnChunk = null;
 
-    public static Object getValue(String jobName, List list){
+    public static Object getValue(String jobName, List list) {
         PrimaryFilePanel pfp = new PrimaryFilePanel(jobName, list);
         return pfp.getReturnValue();
     }
 
-    private Object getReturnValue(){
+    private Object getReturnValue() {
         return returnChunk;
     }
 
-    public PrimaryFilePanel(String jobName, List l){
+    public PrimaryFilePanel(String jobName, List l) {
         this.chunks = l;
         this.jobName = jobName;
-        this.setSize(400,400);
+        this.setSize(400, 400);
         this.setModal(true);
         this.setLocationRelativeTo(this.getOwner());
 
@@ -50,12 +52,12 @@ class PrimaryFilePanel extends JDialog implements ActionListener {
         text.setWrapStyleWord(true);
         mainPanel.add(text);
 
-        JPanel radioPanel = new JPanel(new GridLayout(2,0));
+        JPanel radioPanel = new JPanel(new GridLayout(2, 0));
         returnChunk = chunks.get(0);
-        for(int i = 0; i < chunks.size(); i++){
+        for (int i = 0; i < chunks.size(); i++) {
             DaxFileChunk fc = chunks.get(i);
             JRadioButton radio = new JRadioButton(fc.getFilename() +
-                    " (" + fc.getNumberOfFiles() + " job" + ((fc.getNumberOfFiles() > 1) ? "s" : "" ) + " will be created)");
+                    " (" + fc.getNumberOfFiles() + " job" + ((fc.getNumberOfFiles() > 1) ? "s" : "") + " will be created)");
             radio.setActionCommand("" + i);
             radio.addActionListener(this);
             radioPanel.add(radio);
@@ -64,7 +66,7 @@ class PrimaryFilePanel extends JDialog implements ActionListener {
         mainPanel.add(radioPanel);
 
         JButton ok = new JButton("Ok");
-        ok.addActionListener(new ActionListener(){
+        ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 okPressed();
             }
@@ -78,8 +80,8 @@ class PrimaryFilePanel extends JDialog implements ActionListener {
 
     }
 
-    private void okPressed(){
-        if(returnChunk == null){
+    private void okPressed() {
+        if (returnChunk == null) {
             returnChunk = chunks.get(0);
         }
         dispose();
@@ -89,7 +91,7 @@ class PrimaryFilePanel extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         int i = Integer.parseInt(e.getActionCommand());
         returnChunk = chunks.get(i);
-        System.out.println("Setting " + returnChunk.getFilename() + " as primary file");
+        Loggers.DEV_LOGGER.debug("Setting " + returnChunk.getFilename() + " as primary file");
     }
 }
 

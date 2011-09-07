@@ -94,7 +94,6 @@
 //            locationString = locationField.getText() + File.separator + locationString;
 //        }
 //
-//        System.out.println("File location : " + locationString);
 //        this.getTask().setParameter("fileName", locationString);
 //        this.getTask().setParameter("demo", demo);
 //

@@ -52,6 +52,8 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
     public static final String manual = "URL";
     public static final String local = "LOCAL";
 
+    Log devLog = Loggers.DEV_LOGGER;
+
 
     @Parameter
     public String locationService = auto;
@@ -80,18 +82,18 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
             file = new File((String) object);
         }
         if (file != null) {
-            log("Uploading file " + file.getName() + " to Pegasus.");
+            devLog.debug("Uploading file " + file.getName() + " to Pegasus.");
             if (file.exists() && file.canRead()) {
                 daxLocation = file.getAbsolutePath();
             }
 
             if (getAndCheckFiles() && zipFile != null) {
                 displayMessage("All files good.");
-                log("All files good");
+                devLog.debug("All files good");
 
                 displayMessage("Pegasus locating : " + locationService);
                 if (locationService.equals("AUTO")) {
-                    log("Auto");
+                    devLog.debug("Auto");
                     ServiceInfo pegasusInfo = FindPegasus.findPegasus(20000, this);
 
                     if (pegasusInfo != null) {
@@ -101,7 +103,7 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
                     }
                 }
                 if (locationService.equals("URL")) {
-                    log("Manual *" + manualURL + "*");
+                    devLog.debug("Manual *" + manualURL + "*");
                     sendToPegasus(manualURL);
                 }
                 if (locationService.equals("LOCAL")) {
@@ -109,10 +111,10 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
                     System.out.println("CONDOR_CONFIG : " + condor_env);
                     displayMessage("CONDOR_CONFIG : " + condor_env);
                     if (condor_env.equals("")) {
-                        log("CONDOR_CONFIG environment variable not set");
+                        devLog.debug("CONDOR_CONFIG environment variable not set");
                         displayMessage("CONDOR_CONFIG environment variable not set.");
                     } else {
-                        log("Running org.trianacode.pegasus.gui-plan locally");
+                        devLog.debug("Running org.trianacode.pegasus.gui-plan locally");
                         runLocal();
                     }
                 }
@@ -127,7 +129,7 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
     }
 
     public void displayMessage(String string) {
-        log(string);
+        devLog.debug(string);
     }
 
     @Override
@@ -151,18 +153,18 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
             String location = (String) file;
             File f = new File((String) file);
             if (!f.exists() && f.canRead()) {
-                log("File " + location + " doesn't exist.");
+                devLog.debug("File " + location + " doesn't exist.");
                 displayMessage("Error : file " + location + " not found");
                 return false;
             }
         }
 
         try {
-            log("Writing zip");
+            devLog.debug("Writing zip");
             zipFile = MakeWorkflowZip.makeZip(this.getDaxLocation(), this.getPropertiesLocation(), this.getRcLocation(), this.getSitesLocation(), this.getTcLocation());
-            System.out.println("Zip created at location : " + zipFile.getCanonicalPath());
+            devLog.debug("Zip created at location : " + zipFile.getCanonicalPath());
         } catch (IOException e) {
-            log("Failed to make zip");
+            devLog.debug("Failed to make zip");
         }
 
         return true;
@@ -182,7 +184,7 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
 
         while (!foundAndSent && attempt < 10) {
             String url = ("http://" + info.getHostAddress() + ":" + port);
-            log("Pegasus found at address " + url + ". Trying port " + port);
+            devLog.debug("Pegasus found at address " + url + ". Trying port " + port);
 //            String[] args = {url + "/remotecontrol",
 //                    this.getPropertiesLocation(),
 //                    this.getDaxLocation(),
@@ -193,15 +195,15 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
 
             Response ret = SendPegasusZip.sendFile(url + "/remotecontrol", zipFile);
             if (ret == null) {
-                System.out.println("Sent, but some error occurred. Received null");
+                devLog.debug("Sent, but some error occurred. Received null");
             } else {
                 try {
 
                     int responseCode = ret.getContext().getResponseCode();
                     if (responseCode == 200) {
-                        System.out.println("TriPeg reports success queueing workflow on org.trianacode.pegasus.gui");
+                        devLog.debug("TriPeg reports success queueing workflow on pegasus");
                     } else {
-                        System.out.println("Error reported from TriPeg server");
+                        devLog.debug("Error reported from TriPeg server");
                     }
 
                     InputStream stream = ret.getContext().getResponseEntity().getInputStream();
@@ -214,38 +216,38 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
 
 
                     link = link.replaceAll("\\+", "%2B");
-                    System.out.println("Received streamable : " + link);
+                    devLog.debug("Received streamable : " + link);
                     link = url + "/remotecontrol?file=" + link;
                     displayMessage("Link : " + link);
 
                     BareBonesBrowserLaunch.openURL(link);
 
                 } catch (Exception e) {
-                    System.out.println("Failed to get response entity");
+                    devLog.debug("Failed to get response entity");
                 }
                 if (ret.getOutcome().equals("Not Found")) {
-                    System.out.println("Sent zip, received : " + ret.toString());
+                    devLog.debug("Sent zip, received : " + ret.toString());
                     displayMessage(ret.toString());
-                    log("Pegasus not responding on port " + port + "\n");
+                    devLog.debug("Pegasus not responding on port " + port + "\n");
                     port++;
                 } else {
                     if (ret.getOutcome().equals("Accepted")) {
-                        System.out.println("Sent zip, received : " + ret.toString());
+                        devLog.debug("Sent zip, received : " + ret.toString());
                         displayMessage(ret.toString());
                     }
                     foundAndSent = true;
                     displayMessage("Connection opened and info sent.");
-                    log("Connection opened and info sent.");
+                    devLog.debug("Connection opened and info sent.");
                 }
             }
             attempt++;
         }
-        log("Waiting");
+        devLog.debug("Waiting");
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
         }
-        log("Done");
+        devLog.debug("Done");
 
     }
 
@@ -261,20 +263,20 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
             int nodeInt = -1;
             for (ParameterNode node : nodes) {
                 if (node.getParameterName().equals("manualURL")) {
-                    System.out.println("Found parameterNode!!");
+                    devLog.debug("Found parameterNode!!");
                 }
             }
             Object urlParameter = task.getParameter("manualURL");
 
             if (urlParameter != null) {
                 url = (String) urlParameter;
-                System.out.println(url + " found in parameter manualURL");
+                devLog.debug(url + " found in parameter manualURL");
             } else {
-                System.out.println("parameter manualURL is null");
+                devLog.debug("parameter manualURL is null");
             }
 
         } else {
-            System.out.println("A url is already set - not reading from parameter node.");
+            devLog.debug("A url is already set - not reading from parameter node.");
         }
 
         displayMessage("Setting properties.");
@@ -289,11 +291,11 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
 //        ret = usePegasusBonjourClient(args);
 //
         url += "/remotecontrol";
-        log("Trying Pegasus at : " + url);
+        devLog.debug("Trying Pegasus at : " + url);
         Response ret = SendPegasusZip.sendFile(url, zipFile);
         if (ret != null) {
             if (ret.getOutcome().equals("Not Found")) {
-                log("Service could not be found");
+                devLog.debug("Service could not be found");
                 displayMessage("Service could not be found at this address.");
             } else {
                 try {
@@ -307,29 +309,29 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
 
 
                     link = link.replaceAll("\\+", "%2B");
-                    System.out.println("Received streamable : " + link);
+                    devLog.debug("Received streamable : " + link);
                     link = url + "?file=" + link;
                     displayMessage("Link : " + link);
 
                     BareBonesBrowserLaunch.openURL(link);
 
                 } catch (Exception e) {
-                    System.out.println("Failed to get response entity");
+                    devLog.debug("Failed to get response entity");
                 }
-                log("Connection opened and info sent.");
+                devLog.debug("Connection opened and info sent.");
                 displayMessage("Connection opened and info sent.");
 
             }
             displayMessage(ret.toString());
         } else {
-            log("Fail");
+            devLog.debug("Fail");
         }
-        log("Waiting");
+        devLog.debug("Waiting");
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
         }
-        log("Done");
+        devLog.debug("Done");
 
     }
 
@@ -353,14 +355,8 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
         return sitesLocation;
     }
 
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        System.out.println(s);
-    }
-
     private void runLocal() {
-        log("Running locally");
+        devLog.debug("Running locally");
         List commmandStrVector = new ArrayList();
         String outputDir = System.getProperty("user.dir") + "/pegasus_output";
 
@@ -379,7 +375,7 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
                 " --dir " + outputDir +
                 " --output local" + " --dax " + daxLocation + " --submit";
 
-        log("Running : " + cmd);
+        devLog.debug("Running : " + cmd);
         displayMessage("Running : " + cmd);
 
         runExec(cmd);
@@ -413,8 +409,8 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
             displayMessage("Errors : " + errLog);
             displayMessage("Done.");
 
-            log("Output from Executable :\n\n" + out.toString());
-            log("Errors from Executable :\n\n" + errLog);
+            devLog.debug("Output from Executable :\n\n" + out.toString());
+            devLog.debug("Errors from Executable :\n\n" + errLog);
         } catch (Exception e) {
             e.printStackTrace();
         }

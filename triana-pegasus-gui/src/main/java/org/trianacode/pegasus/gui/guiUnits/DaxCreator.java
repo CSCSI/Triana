@@ -1,7 +1,9 @@
 package org.trianacode.pegasus.gui.guiUnits;
 
+import org.apache.commons.logging.Log;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Tool;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.organize.TaskGraphOrganize;
 import org.trianacode.pegasus.dax.DaxCreatorV3;
@@ -33,6 +35,8 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
     private JTextField nameField;
     private JTextField locationField;
     private JCheckBox demoCheck;
+    private static Log devLog = Loggers.DEV_LOGGER;
+
 
     @org.trianacode.annotation.Process(gather = true)
     public File fakeProcess(List list) {
@@ -48,6 +52,9 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
                 TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
                 TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
 
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().edit(daxFile);
+                }
             } catch (Exception e) {
                 displayMessage("Error opening *" + daxFile.getName() + "* demo taskgraph : " + e);
                 e.printStackTrace();
@@ -66,7 +73,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
             locationString = locationField.getText() + java.io.File.separator + locationString;
         }
 
-        System.out.println("File location : " + locationString);
+        devLog.debug("File location : " + locationString);
         task.setParameter("fileName", locationString);
         task.setParameter("demo", demo);
 
@@ -137,6 +144,6 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
 
     @Override
     public void displayMessage(String string) {
-        System.out.println(string);
+        devLog.debug(string);
     }
 }

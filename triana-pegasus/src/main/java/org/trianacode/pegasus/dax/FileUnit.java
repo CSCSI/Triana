@@ -44,10 +44,12 @@ public class FileUnit implements TaskConscious, Displayer {
     public boolean one2one = false;
     public Task task;
 
+    private static Log devLog = Loggers.DEV_LOGGER;
+
     @org.trianacode.annotation.Process(gather = true)
     public UUID fileUnitProcess(List in) {
 
-        log("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
+        devLog.debug("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
         DaxFileChunk thisFile = new DaxFileChunk();
 
         thisFile.setFilename(fileName);
@@ -58,31 +60,31 @@ public class FileUnit implements TaskConscious, Displayer {
         thisFile.setCollection(collection);
         thisFile.setNumberOfFiles(numberOfFiles);
         thisFile.setNamePattern(namingPattern);
-        log("setting files one2one as " + one2one);
+        devLog.debug("setting files one2one as " + one2one);
         thisFile.setOne2one(one2one);
 
         DaxRegister register = DaxRegister.getDaxRegister();
         register.addFile(thisFile);
 
-        log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+        devLog.debug("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         for (Object object : in) {
             if (object instanceof DaxSettingObject) {
-                log("Found settings object");
+                devLog.debug("Found settings object");
                 DaxSettingObject dso = (DaxSettingObject) object;
                 int number = dso.getNumberFiles();
-                log("Found number of files from settings object : " + number);
+                devLog.debug("Found number of files from settings object : " + number);
                 thisFile.setNumberOfFiles(number);
                 numberOfFiles = number;
             } else if (object instanceof DaxJobChunk) {
                 DaxJobChunk jobChunk = (DaxJobChunk) object;
 
-                log("Previous job was : " + jobChunk.getJobName());
+                devLog.debug("Previous job was : " + jobChunk.getJobName());
 
-                log("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
+                devLog.debug("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
                 jobChunk.addOutFileChunk(thisFile);
 
-                log("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
+                devLog.debug("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                 thisFile.addInJobChunk(jobChunk);
 
             } else if (object instanceof UUID) {
@@ -91,25 +93,25 @@ public class FileUnit implements TaskConscious, Displayer {
 
                 if (jobChunk != null) {
 
-                    log("\nPrevious job was : " + jobChunk.getJobName() + "\n");
+                    devLog.debug("\nPrevious job was : " + jobChunk.getJobName() + "\n");
 
-                    log("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
+                    devLog.debug("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
                     jobChunk.addOutFileChunk(thisFile);
                     jobChunk.getArgBuilder().addOutputFile(fileName);
 
-                    log("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
+                    devLog.debug("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                     thisFile.addInJobChunk(jobChunk);
                 } else {
-                    log("jobChunk not found in register");
+                    devLog.debug("jobChunk not found in register");
                 }
             } else {
-                log("Cannot handle input : " + object.getClass().getName());
+                devLog.debug("Cannot handle input : " + object.getClass().getName());
             }
 
         }
 
         if (in.size() == 0) {
-            log("No jobs enter fileUnit : " + thisFile.getFilename());
+            devLog.debug("No jobs enter fileUnit : " + thisFile.getFilename());
         }
 
         return thisFile.getUuid();
@@ -150,9 +152,10 @@ public class FileUnit implements TaskConscious, Displayer {
     public void changeToolName(String name) {
         fileName = name;
         if (task != null) {
-            log("Changing tool " + task.getToolName() + " to : " + name);
+            devLog.debug("Changing tool " + task.getToolName() + " to : " + name);
             task.setParameter("fileName", name);
-            task.setToolName(name);
+//            task.setToolName(name);
+
         }
     }
 
@@ -167,7 +170,7 @@ public class FileUnit implements TaskConscious, Displayer {
     public PatternCollection getNamingPattern() {
         Object o = task.getParameter("namingPattern");
         if (o instanceof PatternCollection) {
-            log("Found : " + o.toString());
+            devLog.debug("Found : " + o.toString());
             return (PatternCollection) o;
         }
         return null;
@@ -231,12 +234,6 @@ public class FileUnit implements TaskConscious, Displayer {
         return "";
     }
 
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        System.out.println(s);
-    }
-
     @CustomGUIComponent
     public Component getComponent() {
         return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
@@ -250,7 +247,7 @@ public class FileUnit implements TaskConscious, Displayer {
 
     @Override
     public void displayMessage(String string) {
-        log(string);
+        devLog.debug(string);
     }
 }
 
@@ -267,30 +264,30 @@ public class FileUnit implements TaskConscious, Displayer {
 //                    for(int j = 0; j < innerList.size(); j++){
 //                        Object o2 = innerList.get(j);
 //                        if(o2 instanceof DaxJobChunk){
-//                            log("Found a DaxJobChunk");
+//                            devLog.debug("Found a DaxJobChunk");
 //                            if(j == (innerList.size() - 1)){
 //                                ((DaxJobChunk)o2).addOutFile(fileName);
 //                                ((DaxJobChunk)o2).addOutFileChunk(thisFile);
-//                                log("Added output file to job " + (i+1) + " of " + inList.size() + ".");
+//                                devLog.debug("Added output file to job " + (i+1) + " of " + inList.size() + ".");
 //                                ((DaxJobChunk) o2).setOutputFilename(fileName);
 //                                ((DaxJobChunk) o2).setOutputFileChunk(thisFile);
-//                                log("Telling the jobs before and after this fileUnit that this file was in between them");
+//                                devLog.debug("Telling the jobs before and after this fileUnit that this file was in between them");
 //                            }
 //                            jcl.add((DaxJobChunk) o2);
 //                        }
 //                        else{
-//                            log("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
+//                            devLog.debug("Found " + o2.getClass().toString() + " instead of a DaxJobChunk.");
 //                        }
 //                    }
 //
 //
 //                }
 //                else{
-//                    log("Incoming list didn't contain a list, contains : " + o.getClass().toString());
+//                    devLog.debug("Incoming list didn't contain a list, contains : " + o.getClass().toString());
 //                }
 //            }
 //            if(in.size() == 0){
-//                log("No jobs handed to this one. Creating job stub with this filename");
+//                devLog.debug("No jobs handed to this one. Creating job stub with this filename");
 //                DaxJobChunk jc = new DaxJobChunk();
 //                jc.setOutputFilename(fileName);
 //                jc.setStub(true);

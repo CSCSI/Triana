@@ -35,6 +35,8 @@ public class DaxJobChunk implements Serializable {
     private int fileInputsPerJob = 1;
     private ArgBuilder argBuilder;
 
+    Log devLog = Loggers.DEV_LOGGER;
+
     public String getJobName() {
         return jobName;
     }
@@ -142,10 +144,10 @@ public class DaxJobChunk implements Serializable {
 
     public void listChunks() {
         for (DaxFileChunk c : inFileChunks) {
-            log("Job : " + getJobName() + " has input : " + c.getFilename());
+            devLog.debug("Job : " + getJobName() + " has input : " + c.getFilename());
         }
         for (DaxFileChunk c : outFileChunks) {
-            log("Job : " + getJobName() + " has output : " + c.getFilename());
+            devLog.debug("Job : " + getJobName() + " has output : " + c.getFilename());
         }
     }
 
@@ -159,12 +161,6 @@ public class DaxJobChunk implements Serializable {
 
     public void setNumberOfJobs(int numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
-    }
-
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        //System.out.println(s);
     }
 
     public void setConnectPattern(int connectPattern) {

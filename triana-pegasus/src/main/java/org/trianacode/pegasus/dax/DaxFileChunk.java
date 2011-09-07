@@ -30,16 +30,18 @@ public class DaxFileChunk implements Serializable {
     private String fileProtocol = "";
     private boolean physicalFile = false;
 
+    Log devLog = Loggers.DEV_LOGGER;
+
 
     // Use Carefully!! This method has the potential to never return the same filename twice.
     // Call reset once you're done listing auto-generated names, to begin the pattern again.
     public String getFilename() {
         if (namePattern == null || !isCollection) {
-            log("returning filename from fileChunk : " + filename);
+            devLog.debug("returning filename from fileChunk : " + filename);
             return filename;
         } else {
             String nextFilename = namePattern.next();
-            log("returning next patterned name : " + nextFilename);
+            devLog.debug("returning next patterned name : " + nextFilename);
             return nextFilename;
         }
     }
@@ -110,11 +112,11 @@ public class DaxFileChunk implements Serializable {
 
     public void listChunks() {
         for (DaxJobChunk c : inJobChunks) {
-            log(" ******* File : " + getFilename() + " has input : " + c.getJobName());
+            devLog.debug(" ******* File : " + getFilename() + " has input : " + c.getJobName());
         }
         resetNextCounter();
         for (DaxJobChunk c : outJobChunks) {
-            log(" ******* File : " + getFilename() + " has output : " + c.getJobName());
+            devLog.debug(" ******* File : " + getFilename() + " has output : " + c.getJobName());
         }
         resetNextCounter();
     }
@@ -137,12 +139,6 @@ public class DaxFileChunk implements Serializable {
 
     public void setNamePattern(PatternCollection namePattern) {
         this.namePattern = namePattern;
-    }
-
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        System.out.println(s);
     }
 
     public boolean isOne2one() {

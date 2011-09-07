@@ -27,7 +27,7 @@ import java.util.List;
  */
 
 @Tool //(panelClass = "org.trianacode.org.trianacode.pegasus.gui.dax.ExecUnitPanel")
-public class ExecUnit implements TaskConscious{
+public class ExecUnit implements TaskConscious {
 
     public static final String numberOfFiles = "Number of files";
     public static final String namesOfFiles = "Names of files";
@@ -45,6 +45,8 @@ public class ExecUnit implements TaskConscious{
     @Parameter
     private String save_as = "";
     private Task task;
+
+    private static Log devLog = Loggers.DEV_LOGGER;
 
     @Process(gather = true)
     public DaxSettingObject process(List in) {
@@ -79,7 +81,7 @@ public class ExecUnit implements TaskConscious{
                     buffer.append((String) iterator.next());
                     buffer.append(" ");
                 }
-                log("ExecUnit.process invocation:" + buffer.toString());
+                devLog.info("ExecUnit.process invocation:" + buffer.toString());
 
                 try {
                     String[] cmdarray = (String[]) commmandStrVector.toArray(new String[commmandStrVector.size()]);
@@ -110,7 +112,7 @@ public class ExecUnit implements TaskConscious{
                 if (!errors) {
                     //        log("ExecUnit.process output:" + out.toString());
                 } else {
-                    log("ExecUnit.process err:" + errLog);
+                    devLog.info("ExecUnit.process err:" + errLog);
                 }
 
                 dso.addFullOutput(out.toString());
@@ -129,7 +131,7 @@ public class ExecUnit implements TaskConscious{
             } else {
 //                JOptionPane.showMessageDialog(GUIEnv.getApplicationFrame(), "Input file (" + input_file + ")for ExecUnit does not appear to exist.\n" +
 //                        ".dax file will be created, but may contain errors.", "Error", JOptionPane.WARNING_MESSAGE);
-                log("Input file for exec unit does not exist.");
+                devLog.warn("Input file for exec unit does not exist.");
                 return true;
             }
         }
@@ -137,9 +139,9 @@ public class ExecUnit implements TaskConscious{
 
     private void checkForData(String s) {
         if (s.contains(search_for)) {
-            log("Found : " + search_for);
+            devLog.debug("Found : " + search_for);
             String found = s.substring(search_for.length());
-            log("Adding : " + found);
+            devLog.debug("Adding : " + found);
 
             if (save_as.equals(ExecUnit.numberOfFiles)) {
                 dso.addObject(ExecUnit.numberOfFiles, found);
@@ -159,22 +161,15 @@ public class ExecUnit implements TaskConscious{
         }
     }
 
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
-        System.out.println(s);
-    }
-
-
     JTextField execField = new JTextField();
     JTextField fileField = new JTextField();
     JTextField execArgsField = new JTextField();
     JTextField searchField = new JTextField();
-    String[] options = {ExecUnit.numberOfFiles , ExecUnit.namesOfFiles};
+    String[] options = {ExecUnit.numberOfFiles, ExecUnit.namesOfFiles};
     JComboBox dropDown = new JComboBox(options);
 
 
-//    private HashMap map = new HashMap();
+    //    private HashMap map = new HashMap();
     private JPanel mainPanel;
 
 
@@ -197,8 +192,8 @@ public class ExecUnit implements TaskConscious{
         JPanel filePanel = new JPanel(new BorderLayout());
         filePanel.add(fileField, BorderLayout.CENTER);
         JButton fileButton = new JButton("...");
-        fileButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        fileButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setMultiSelectionEnabled(false);
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -208,7 +203,7 @@ public class ExecUnit implements TaskConscious{
                     if (f != null) {
                         String file = f.getPath();
                         try {
-                            System.out.println("File : " + f.getAbsolutePath() + f.getCanonicalPath() + f.getPath());
+                            devLog.info("File : " + f.getAbsolutePath() + f.getCanonicalPath() + f.getPath());
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -222,8 +217,8 @@ public class ExecUnit implements TaskConscious{
         JLabel execArgsLabel = new JLabel("Executable arguments : ");
 
         JButton helpButton = new JButton("Help");
-        helpButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        helpButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 new helpFrame();
             }
         });
@@ -247,24 +242,29 @@ public class ExecUnit implements TaskConscious{
         return mainPanel;
     }
 
-    public void applyClicked(){ apply(); }
-    public void okClicked(){ apply(); }
+    public void applyClicked() {
+        apply();
+    }
 
-    public void apply(){
+    public void okClicked() {
+        apply();
+    }
+
+    public void apply() {
 
         task.setParameter("executable", execField.getText());
         task.setParameter("input_file", fileField.getText());
         task.setParameter("executable_args", execArgsField.getText());
         task.setParameter("search_for", searchField.getText());
-        task.setParameter("save_as", (String)dropDown.getSelectedItem());
+        task.setParameter("save_as", (String) dropDown.getSelectedItem());
     }
 
-    private void getParams(){
-        execField.setText((String)task.getParameter("executable"));
-        fileField.setText((String)task.getParameter("input_file"));
-        execArgsField.setText((String)task.getParameter("executable_args"));
-        searchField.setText((String)task.getParameter("search_for"));
-        dropDown.setSelectedItem((String)task.getParameter("save_as"));
+    private void getParams() {
+        execField.setText((String) task.getParameter("executable"));
+        fileField.setText((String) task.getParameter("input_file"));
+        execArgsField.setText((String) task.getParameter("executable_args"));
+        searchField.setText((String) task.getParameter("search_for"));
+        dropDown.setSelectedItem((String) task.getParameter("save_as"));
     }
 
     @Override
@@ -272,8 +272,8 @@ public class ExecUnit implements TaskConscious{
         this.task = task;
     }
 
-    class helpFrame extends JFrame{
-        public helpFrame(){
+    class helpFrame extends JFrame {
+        public helpFrame() {
             this.setTitle("Help");
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -294,14 +294,14 @@ public class ExecUnit implements TaskConscious{
             panel.add(helpLabel);
             panel.add(scrollPane);
             JButton ok = new JButton("Ok");
-            ok.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e){
+            ok.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
                     dispose();
                 }
             });
             panel.add(ok);
             this.add(panel);
-            this.setSize(400,200);
+            this.setSize(400, 200);
             this.setVisible(true);
         }
     }

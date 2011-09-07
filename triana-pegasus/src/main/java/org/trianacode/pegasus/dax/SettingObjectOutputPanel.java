@@ -1,5 +1,7 @@
 package org.trianacode.pegasus.dax;
 
+import org.apache.commons.logging.Log;
+import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.panels.ParameterPanel;
 
 import javax.swing.*;
@@ -20,6 +22,8 @@ public class SettingObjectOutputPanel extends ParameterPanel {
 
     private JTextArea outputArea = new JTextArea();
     private HashMap map = new HashMap();
+    private static Log devLog = Loggers.DEV_LOGGER;
+
 
     @Override
     public void init() {
@@ -35,24 +39,24 @@ public class SettingObjectOutputPanel extends ParameterPanel {
 
         Set mapKeys = map.keySet();
 
-        for(Iterator i = mapKeys.iterator(); i.hasNext();){
+        for (Iterator i = mapKeys.iterator(); i.hasNext();) {
             Object o = i.next();
 
-            System.out.println("Key is of class : " + o.getClass());
+            devLog.debug("Key is of class : " + o.getClass());
 
             String string = o.toString();
             string += " : " + map.get(o);
-            System.out.println(string);
+            devLog.debug(string);
             outputArea.append("\n" + string);
 
         }
 
     }
 
-    private void getParams(){
+    private void getParams() {
         Object o = getTask().getParameter("map");
-        if(o instanceof HashMap){
-            map = (HashMap)o;
+        if (o instanceof HashMap) {
+            map = (HashMap) o;
         }
     }
 
