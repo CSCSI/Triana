@@ -34,9 +34,10 @@ public class URLImage extends Unit {
         }
 
         if (trianaImage == null) {
-            //       ErrorDialog.show(null, getTask().getToolName() + ": " + Env.getString("ImageError"));
+            //      ErrorDialog.show(null, getTask().getToolName() + ": " + Env.getString("ImageError"));
             //stop();  // stops the scheduler and hence this process!
             System.out.println("image error");
+            notifyError("Image Error", new Throwable("Image Error"));
         } else {
             output(new TrianaPixelMap(trianaImage));
         }
