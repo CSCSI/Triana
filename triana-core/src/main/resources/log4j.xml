@@ -33,7 +33,7 @@
    *********************************************************************************************** -->
 
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
     <!-- ================================= -->
     <!-- Preserve messages in a local file -->
