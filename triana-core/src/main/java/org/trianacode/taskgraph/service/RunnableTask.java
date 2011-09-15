@@ -78,6 +78,7 @@ import org.trianacode.taskgraph.tool.ToolTable;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -318,10 +319,13 @@ public class RunnableTask extends AbstractRunnableTask
      */
     public final synchronized void wakeUp() {
         boolean wakeup = true;
+
         Node[] nodes = getRequiredNodes();
         // Check if wake-ups have been received from all essential nodes.
         for (int count = 0; (count < nodes.length) && (wakeup); count++) {
+            toolLog.debug(Arrays.toString(nodes) + " are required. Awoken nodes are : " + wakeups);
             if (!wakeups.contains(nodes[count])) {
+                toolLog.debug("Awoken nodes are missing node " + nodes[count].getName());
                 wakeup = false;
             }
         }
@@ -338,6 +342,9 @@ public class RunnableTask extends AbstractRunnableTask
     public final synchronized void wakeUp(Node node) {
         if (isRequired(node)) {
             wakeups.add(node);
+            if (node.getParentNode() != null) {
+                wakeups.add(node.getParentNode());
+            }
             wakeUp();
         } else if (node.isParameterNode()) {
             receiveParameterValue(node);
@@ -546,7 +553,7 @@ public class RunnableTask extends AbstractRunnableTask
             data = mess;
         }
         if (data != null) {
-            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.UNIT_INPUT)
+            stampedeLog.info(new StampedeEvent(LogDetail.UNIT_INPUT)
                     .add(LogDetail.TASK, getQualifiedToolName())
                     .add("NODE", node.getName())
                     .add("DATA", data.toString())
@@ -692,7 +699,7 @@ public class RunnableTask extends AbstractRunnableTask
             toolLog.debug("RunnableTask.output ENTER URL = " + packet.getDataLocation());
             DataMessage mess = new DataMessage(packet, extract);
 
-            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.UNIT_OUTPUT)
+            stampedeLog.info(new StampedeEvent(LogDetail.UNIT_OUTPUT)
                     .add(LogDetail.TASK, getQualifiedToolName())
                     .add("NODE", node.getName())
                     .add("DATA", data.toString())
@@ -847,10 +854,20 @@ public class RunnableTask extends AbstractRunnableTask
     public void process() {
         try {
             toolLog.info("RUNNING " + getQualifiedToolName());
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String param : getParameterNames()) {
+                stringBuilder.append(param)
+                        .append(":")
+                        .append(getParameter(param))
+                        .append(",");
+            }
+
             stampedeLog.info(new StampedeEvent(LogDetail.RUNNING_TASK)
                     .add(LogDetail.LEVEL, "INFO")
                     .add(LogDetail.TASK, getQualifiedToolName())
                     .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                    .add(LogDetail.ALLPARAMS, stringBuilder.toString())
             );
             waitPause();
             try {

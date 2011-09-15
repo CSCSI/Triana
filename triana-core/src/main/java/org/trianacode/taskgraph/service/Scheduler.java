@@ -64,6 +64,8 @@ import org.trianacode.enactment.logging.stampede.StampedeEvent;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
+import java.util.UUID;
+
 /**
  * The scheduler is responsible for waking-up all the input tasks in a taskgraph when the taskgraph is run.
  *
@@ -84,6 +86,7 @@ public class Scheduler implements SchedulerInterface {
      * The history clipin
      */
     private HistoryClipIn history;
+    private UUID runUUID;
 
     //    private ExecutionStateLogger logger = new ExecutionStateLogger();
 
@@ -253,6 +256,9 @@ public class Scheduler implements SchedulerInterface {
                     }
                 }
             }
+            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.WAKING_TASK)
+                    .add(LogDetail.UUID, runUUID.toString())
+                    .add(LogDetail.WF, task.getQualifiedToolName()));
         }
     }
 
@@ -274,10 +280,12 @@ public class Scheduler implements SchedulerInterface {
      * Send all tasks in the task graph a wake up call (except the control task)
      */
     private void runTaskGraph(TaskGraph tgraph) {
+        runUUID = UUID.randomUUID();
         if ((tgState != ExecutionState.ERROR) && (tgState != ExecutionState.RESETTING)) {
             tgState = ExecutionState.RUNNING;
 
             Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.RUNNING_WORKFLOW)
+                    .add(LogDetail.UUID, runUUID.toString())
                     .add(LogDetail.WF, tgraph.getQualifiedToolName()));
             wakeTask(tgraph);
         }
@@ -392,6 +400,7 @@ public class Scheduler implements SchedulerInterface {
      */
     private void stopTaskGraph(TaskGraph tgraph) {
         Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.STOPPING_WORKFLOW)
+                .add(LogDetail.UUID, runUUID.toString())
                 .add(LogDetail.WF, tgraph.getQualifiedToolName()));
         tgState = ExecutionState.ERROR;
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
