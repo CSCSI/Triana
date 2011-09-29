@@ -11,6 +11,7 @@ import org.trianacode.taskgraph.Unit;
  */
 
 public class InOut extends Unit {
+
     public void process() throws Exception {
         Object input = getInputAtNode(0);
         System.out.println(input);
