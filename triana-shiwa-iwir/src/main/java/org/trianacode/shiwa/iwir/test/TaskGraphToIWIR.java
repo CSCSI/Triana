@@ -257,24 +257,36 @@ public class TaskGraphToIWIR {
     *   task. In IWIR these are different ports, and are connected with a link.
     * */
     private void addIWIRGraphNodes(TaskGraph taskGraph, BlockScope blockScope) {
+
         for (Node node : taskGraph.getInputNodes()) {
             System.out.println("\n" + node);
-            InputPort inputBlockPort = new InputPort("in" + (node.getNodeIndex() + 1), SimpleType.STRING);
+            System.out.println("top " + node.getTopLevelNode());
+            System.out.println("bottom " + node.getBottomLevelNode());
+            InputPort inputBlockPort = new InputPort("blockIn" + (node.getNodeIndex() + 1), SimpleType.STRING);
             blockScope.addInputPort(inputBlockPort);
 
-            Node scopeNode = node.getParentNode();
-            InputPort scopeInputPort = inputBlockPort;
-            while (scopeNode != node.getTopLevelNode()) {
 
-                InputPort inputPort = new InputPort("in" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
-                taskHashMap.get(scopeNode.getTask()).addInputPort(inputPort);
-
-                ((AbstractCompoundTask) scopeInputPort.getMyTask()).addLink(scopeInputPort, inputPort);
-
-                scopeInputPort = inputPort;
+            Node scopeNode = node.getBottomLevelNode();
+            InputPort scopePort = inputBlockPort;
+            while (scopeNode.getParentNode() != node.getTopLevelNode()) {
                 scopeNode = scopeNode.getParentNode();
+                InputPort newPort = new InputPort("scopeIn" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
+                taskHashMap.get(scopeNode.getTask()).addInputPort(newPort);
+                System.out.println(scopeNode);
+                ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(scopePort, newPort);
+                scopePort = newPort;
             }
+
+            Node topLevelNode = node.getTopLevelNode();
+            InputPort taskInputPort = new InputPort("taskIn" + (topLevelNode.getNodeIndex() + 1), SimpleType.STRING);
+
+            AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
+            iwirTask.addInputPort(taskInputPort);
+
+            ((AbstractCompoundTask) iwirTask.getParentTask()).addLink(scopePort, taskInputPort);
+
         }
+
 
         for (Node node : taskGraph.getOutputNodes()) {
             System.out.println("\n" + node);
