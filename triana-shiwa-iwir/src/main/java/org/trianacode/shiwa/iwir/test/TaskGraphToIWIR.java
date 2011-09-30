@@ -190,18 +190,22 @@ public class TaskGraphToIWIR {
 
 
                 if (sendingIwirTask.getParentTask() != receivingIwirTask.getParentTask()) {
-                    System.out.println("Out of scope");
-                    OutputPort outputPort = new OutputPort("out" + (sendingNode.getNodeIndex() + 1), SimpleType.STRING);
-                    sendingIwirTask.addOutputPort(outputPort);
+                    System.out.println("***Out of scope");
 
-                    System.out.println("Sending node " + sendingNode.getName());
-                    Node childNode = sendingNode;
-                    while (childNode.getChildNode() != null) {
+//                    AbstractCompoundTask sendingCompoundTask = ((AbstractCompoundTask)taskHashMap.get(
+//                            sendingNode.getTopLevelNode().getTask()).getParentTask());
+                    OutputPort outputPort = addOutputNodeChainToBlockScope(sendingNode);
 
-                        childNode = sendingNode.getChildNode();
-                        System.out.println("Child node " + childNode.getName());
-                    }
-//                    ((AbstractCompoundTask) taskHashMap.get( sendingNode.getChildNode().getTask()));
+//                    AbstractCompoundTask receivingCompoundTask = ((AbstractCompoundTask)taskHashMap.get(
+//                            receivingNode.getTopLevelNode().getTask()).getParentTask());
+                    InputPort inputPort = addInputNodeChainToBlockScope(receivingNode);
+
+                    AbstractCompoundTask topLevelCompoundTask = ((AbstractCompoundTask) outputPort.getMyTask().getParentTask());
+
+                    System.out.println("Linking in scope " + outputPort
+                            + " to " + inputPort + " scope "
+                            + topLevelCompoundTask);
+                    topLevelCompoundTask.addLink(outputPort, inputPort);
 
 
                 } else {
@@ -216,7 +220,7 @@ public class TaskGraphToIWIR {
 
             }
         }
-        addIWIRGraphNodes(taskGraph, blockScope);
+        addIWIRGraphNodes(taskGraph);
 
         return blockScope;
     }
@@ -251,100 +255,89 @@ public class TaskGraphToIWIR {
     }
 
 
-    /*
-    * This checks to see if the task has nodes connected to an input/output port on the taskgraph - ie it
-    *   is a node which needs to be replicated on the blockscope and connected to the input of the iwir
-    *   task. In IWIR these are different ports, and are connected with a link.
-    * */
-    private void addIWIRGraphNodes(TaskGraph taskGraph, BlockScope blockScope) {
+    private void addIWIRGraphNodes(TaskGraph taskGraph) {
 
         for (Node node : taskGraph.getInputNodes()) {
-            System.out.println("\n" + node);
-            System.out.println("top " + node.getTopLevelNode());
-            System.out.println("bottom " + node.getBottomLevelNode());
-            InputPort inputBlockPort = new InputPort("blockIn" + (node.getNodeIndex() + 1), SimpleType.STRING);
-            blockScope.addInputPort(inputBlockPort);
-
-
-            Node scopeNode = node.getBottomLevelNode();
-            InputPort scopePort = inputBlockPort;
-            while (scopeNode.getParentNode() != node.getTopLevelNode()) {
-                scopeNode = scopeNode.getParentNode();
-                InputPort newPort = new InputPort("scopeIn" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
-                taskHashMap.get(scopeNode.getTask()).addInputPort(newPort);
-                System.out.println(scopeNode);
-                ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(scopePort, newPort);
-                scopePort = newPort;
-            }
-
-            Node topLevelNode = node.getTopLevelNode();
-            InputPort taskInputPort = new InputPort("taskIn" + (topLevelNode.getNodeIndex() + 1), SimpleType.STRING);
-
-            AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
-            iwirTask.addInputPort(taskInputPort);
-
-            ((AbstractCompoundTask) iwirTask.getParentTask()).addLink(scopePort, taskInputPort);
-
+            addInputNodeChainToBlockScope(node);
         }
 
 
         for (Node node : taskGraph.getOutputNodes()) {
-            System.out.println("\n" + node);
-            System.out.println("top " + node.getTopLevelNode());
-            System.out.println("bottom " + node.getBottomLevelNode());
-            OutputPort outputBlockPort = new OutputPort("out" + (node.getNodeIndex() + 1), SimpleType.STRING);
-            blockScope.addOutputPort(outputBlockPort);
+            addOutputNodeChainToBlockScope(node);
+        }
+    }
 
+    private InputPort addInputNodeChainToBlockScope(Node node) {
+        System.out.println("\n Input chain with node : " + node);
+        System.out.println("top " + node.getTopLevelNode());
+        System.out.println("bottom " + node.getBottomLevelNode());
+        InputPort inputBlockPort = new InputPort("in" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.STRING);
+        taskHashMap.get(node.getBottomLevelTask()).addInputPort(inputBlockPort);
 
-            Node scopeNode = node.getBottomLevelNode();
-            OutputPort scopePort = outputBlockPort;
-            while (scopeNode.getParentNode() != node.getTopLevelNode()) {
-                scopeNode = scopeNode.getParentNode();
-                OutputPort newPort = new OutputPort("out" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
-                taskHashMap.get(scopeNode.getTask()).addOutputPort(newPort);
-                System.out.println(scopeNode);
-                ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(newPort, scopePort);
-                scopePort = newPort;
-            }
-
-            Node topLevelNode = node.getTopLevelNode();
-            OutputPort taskOutputPort = new OutputPort("out" + (topLevelNode.getNodeIndex() + 1), SimpleType.STRING);
-
-            AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
-            iwirTask.addOutputPort(taskOutputPort);
-
-            ((AbstractCompoundTask) iwirTask.getParentTask()).addLink(taskOutputPort, scopePort);
-
-
+        if (node.getTopLevelNode() == node.getBottomLevelNode()) {
+            System.out.println("Single node, no scope issues :)");
+            return inputBlockPort;
         }
 
+        Node scopeNode = node.getBottomLevelNode();
+        InputPort scopePort = inputBlockPort;
+        while (scopeNode.getParentNode() != node.getTopLevelNode()) {
+            scopeNode = scopeNode.getParentNode();
+            InputPort newPort = new InputPort("in" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
+            taskHashMap.get(scopeNode.getTask()).addInputPort(newPort);
+            System.out.println("added " + scopeNode + " to input chain");
+            ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(scopePort, newPort);
+            scopePort = newPort;
+        }
 
-//        for(Task task : taskGraph.getTasks(false)){
-//            AbstractTask iwirTask = taskHashMap.get(task);
-//            for (Node node : task.getDataInputNodes()) {
-//                if (node.getBottomLevelTask() == taskGraph) {
-//                    InputPort inputNodePort = new InputPort("in" + (node.getNodeIndex() + 1), SimpleType.STRING);
-//                    iwirTask.addInputPort(inputNodePort);
-//                    System.out.println("\nadded input " + inputNodePort.getUniqueId());
-//                    InputPort inputBlockPort = new InputPort("in" + (node.getNodeIndex() + 1), SimpleType.STRING);
-//                    blockScope.addInputPort(inputBlockPort);
-//                    System.out.println("added block input " + inputBlockPort.getUniqueId());
-//                    blockScope.addLink(inputBlockPort, inputNodePort);
-//                }
-//            }
-//
-//            for (Node node : task.getDataOutputNodes()) {
-//                if (node.getBottomLevelTask() == taskGraph) {
-//                    OutputPort outputNodePort = new OutputPort("out" + (node.getNodeIndex() +1), SimpleType.STRING);
-//                    iwirTask.addOutputPort(outputNodePort);
-//                    System.out.println("\nadded output " + outputNodePort.getUniqueId());
-//                    OutputPort outputBlockPort = new OutputPort("out" + (node.getNodeIndex() +1), SimpleType.STRING);
-//                    blockScope.addOutputPort(outputBlockPort);
-//                    System.out.println("added block output " + outputBlockPort.getUniqueId());
-//                    blockScope.addLink(outputNodePort, outputBlockPort);
-//                }
-//            }
-//        }
+        Node topLevelNode = node.getTopLevelNode();
+        InputPort taskInputPort = new InputPort("in" + (topLevelNode.getNodeIndex() + 1), SimpleType.STRING);
+
+        AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
+        iwirTask.addInputPort(taskInputPort);
+
+        System.out.println("Trying to add " + taskInputPort.getUniqueId()
+                + " to end of input chain - previous node "
+                + scopePort.getUniqueId());
+        ((AbstractCompoundTask) iwirTask.getParentTask()).addLink(scopePort, taskInputPort);
+
+        System.out.println("Returning " + inputBlockPort.getUniqueId());
+        return inputBlockPort;
+    }
+
+    private OutputPort addOutputNodeChainToBlockScope(Node node) {
+        System.out.println("\n Output chain with node : " + node);
+        System.out.println("top " + node.getTopLevelNode());
+        System.out.println("bottom " + node.getBottomLevelNode());
+        OutputPort outputBlockPort = new OutputPort("out" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.STRING);
+        taskHashMap.get(node.getBottomLevelTask()).addOutputPort(outputBlockPort);
+
+        if (node.getTopLevelNode() == node.getBottomLevelNode()) {
+            System.out.println("Single node, no scope issues :)");
+            return outputBlockPort;
+        }
+
+        Node scopeNode = node.getBottomLevelNode();
+        OutputPort scopePort = outputBlockPort;
+        while (scopeNode.getParentNode() != node.getTopLevelNode()) {
+            scopeNode = scopeNode.getParentNode();
+            OutputPort newPort = new OutputPort("out" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
+            taskHashMap.get(scopeNode.getTask()).addOutputPort(newPort);
+            System.out.println("added " + scopeNode + " to output chain");
+            ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(newPort, scopePort);
+            scopePort = newPort;
+        }
+
+        Node topLevelNode = node.getTopLevelNode();
+        OutputPort taskOutputPort = new OutputPort("out" + (topLevelNode.getNodeIndex() + 1), SimpleType.STRING);
+
+        AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
+        iwirTask.addOutputPort(taskOutputPort);
+
+        ((AbstractCompoundTask) iwirTask.getParentTask()).addLink(taskOutputPort, scopePort);
+
+        System.out.println("Returning " + outputBlockPort.getUniqueId());
+        return outputBlockPort;
     }
 
     private TaskGraph readTaskgraph(File file, TrianaInstance trianaInstance) throws IOException, TaskGraphException {
