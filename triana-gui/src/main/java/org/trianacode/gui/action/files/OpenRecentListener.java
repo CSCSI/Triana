@@ -91,7 +91,7 @@ public class OpenRecentListener implements ActionListener {
      * @return the short name to be displayed in the menu
      */
     public String addRecent(String fullName) {
-        StringTokenizer st = new StringTokenizer(Env.separator());
+        StringTokenizer st = new StringTokenizer(fullName, Env.separator());
         Vector<String> splitName = new Vector<String>();
         while (st.hasMoreTokens()) {
             splitName.add(st.nextToken());
@@ -114,7 +114,7 @@ public class OpenRecentListener implements ActionListener {
 
     public void removeRecent(String fullName) {
         if (itemTable.containsValue(fullName)) {
-            for (Enumeration enumeration = itemTable.keys(); enumeration.hasMoreElements();) {
+            for (Enumeration enumeration = itemTable.keys(); enumeration.hasMoreElements(); ) {
                 Object key = enumeration.nextElement();
                 if ((itemTable.get(key)).equals(fullName)) {
                     itemTable.remove(key);
