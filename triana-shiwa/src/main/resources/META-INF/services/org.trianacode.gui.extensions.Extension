@@ -1,2 +1,2 @@
-org.trianacode.shiwa.PublishWorkflowExtension
-org.trianacode.shiwa.DownloadWorkflowExtension
+org.trianacode.shiwa.handler.PublishWorkflowExtension
+org.trianacode.shiwa.handler.DownloadWorkflowExtension

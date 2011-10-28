@@ -1,1 +1,3 @@
 org.trianacode.shiwa.models.ShiwaColorModel
+org.trianacode.shiwa.iwir.factory.models.IWIRColorModel
+

@@ -76,6 +76,11 @@
             <artifactId>shiwa-desktop-gui</artifactId>
             <version>1.5-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.shiwa.fgi</groupId>
+            <artifactId>iwir</artifactId>
+            <version>1.1.4</version>
+        </dependency>
     </dependencies>
 
     <repositories>

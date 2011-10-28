@@ -1,4 +1,4 @@
-package org.trianacode.shiwa;
+package org.trianacode.shiwa.handler;
 
 import java.util.HashMap;
 
@@ -11,16 +11,16 @@ import java.util.HashMap;
  */
 public class ObjectToSchema {
 
-    public static String getSchemaURIString( Object object){
+    public static String getSchemaURIString(Object object) {
         String canonicalName = object.getClass().getCanonicalName();
         return getSchemaURIString(canonicalName);
     }
 
-    public static String getSchemaURIString( String canonicalName){
+    public static String getSchemaURIString(String canonicalName) {
         HashMap<String, String> knownObjects = new HashMap<String, String>();
         populateMap(knownObjects);
 
-        if (knownObjects.keySet().contains(canonicalName)){
+        if (knownObjects.keySet().contains(canonicalName)) {
             return knownObjects.get(canonicalName);
         }
 

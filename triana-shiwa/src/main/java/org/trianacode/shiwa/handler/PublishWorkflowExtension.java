@@ -1,4 +1,5 @@
-package org.trianacode.shiwa;
+package org.trianacode.shiwa.handler;
+
 
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.extensions.Extension;
@@ -10,29 +11,31 @@ import javax.swing.*;
 /**
  * Created by IntelliJ IDEA.
  * User: ian
- * Date: 06/07/2011
- * Time: 14:31
+ * Date: 22/02/2011
+ * Time: 14:37
  * To change this template use File | Settings | File Templates.
  */
-public class DownloadWorkflowExtension implements Extension {
+public class PublishWorkflowExtension implements Extension {
     @Override
     public void init(ToolSelectionHandler selhandler) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public Action getTreeAction(Tool tool) {
-        return null;
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public Action getWorkspaceAction(Task tool) {
-        return null;
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
 
     @Override
     public Action getWorkflowAction(int type) {
         if (type == Extension.TOOL_TYPE) {
-            return (Action) new DownloadWorkflow();
+            return (Action) new PublishWorkflow();
         } else return null;
     }
 }

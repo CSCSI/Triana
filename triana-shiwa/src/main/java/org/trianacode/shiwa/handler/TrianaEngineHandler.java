@@ -1,4 +1,4 @@
-package org.trianacode.shiwa;
+package org.trianacode.shiwa.handler;
 
 import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.Signature;
@@ -129,6 +129,10 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
+//        JPanel jPanel = new SHIWADesktopPanel(
+//                new TrianaEngineHandler((Task) tool, engine, null),
+//                SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR
+//        );
         JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler((Task) tool, engine, null));
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,4 +1,4 @@
-package org.trianacode.shiwa;
+package org.trianacode.shiwa.handler;
 
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
 import org.trianacode.gui.action.ActionDisplayOptions;
@@ -61,6 +61,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
             }
             TrianaEngineHandler teh = new TrianaEngineHandler(tg, frame.getEngine(), displayStream);
 
+//            JPanel popup = new SHIWADesktopPanel(teh, SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
             JPanel popup = new SHIWADesktopPanel(teh);
             DisplayDialog dialog = null;
             ((SHIWADesktopPanel) popup).addSHIWADesktopListener(new TrianaShiwaListener(frame.getEngine(), dialog));

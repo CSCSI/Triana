@@ -1,4 +1,4 @@
-package org.trianacode.shiwa;
+package org.trianacode.shiwa.handler;
 
 import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.Port;
@@ -176,8 +176,9 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
                     Integer integer = it.next();
                     Object val = mappings.getValue(integer);
                     devLog.debug("Data : " + val.toString() + " will be sent to input number " + integer);
-                    Node taskNode = inputNodes[integer];
+                    Node taskNode = getNodeInScope(inputNodes[integer], taskgraph);
                     Node addedNode = varTask.addDataOutputNode();
+
 
                     taskgraph.connect(addedNode, taskNode);
                     varTask.setParameter("var" + integer.toString(), val);
@@ -196,6 +197,14 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private Node getNodeInScope(Node inputNode, TaskGraph taskGraph) {
+        Node scopeNode = inputNode.getTopLevelNode();
+        while (scopeNode.getTask().getParent() != taskGraph && scopeNode != null) {
+            scopeNode = scopeNode.getChildNode();
+        }
+        return scopeNode;
     }
 
     private Tool getVarTool(TrianaProperties properties) throws TaskException, ProxyInstantiationException {
