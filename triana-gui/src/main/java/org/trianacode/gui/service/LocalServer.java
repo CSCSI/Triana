@@ -157,7 +157,7 @@ public class LocalServer implements TrianaClient, TrianaServer {
                             Object val = mappings.getValue(integer);
                             System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
                             Task varTask = getVarTask(taskgraph, val);
-                            Node taskNode = inputNodes[integer];
+                            Node taskNode = getNodeInScope(inputNodes[integer], varTask.getParent());
 
                             taskgraph.connect(varTask.getDataOutputNode(0), taskNode);
                             dummyTasks.add(varTask);
@@ -211,6 +211,14 @@ public class LocalServer implements TrianaClient, TrianaServer {
         });
     }
 
+    private Node getNodeInScope(Node inputNode, TaskGraph taskGraph) {
+        Node scopeNode = inputNode.getTopLevelNode();
+        while (scopeNode.getTask().getParent() != taskGraph && scopeNode != null) {
+            scopeNode = scopeNode.getChildNode();
+        }
+        return scopeNode;
+    }
+
     private Task getVarTask(TaskGraph taskgraph, Object variable) throws TaskException, ProxyInstantiationException {
         ToolImp varTool = new ToolImp(taskgraph.getProperties());
         varTool.setDataOutputNodeCount(1);
@@ -237,6 +245,10 @@ public class LocalServer implements TrianaClient, TrianaServer {
         }
 
         return finished;
+    }
+
+    public SchedulerInterface getSchedulerInterface() {
+        return scheduler;
     }
 
     /**

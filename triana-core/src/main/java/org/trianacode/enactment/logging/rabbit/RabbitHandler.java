@@ -1,8 +1,6 @@
 package org.trianacode.enactment.logging.rabbit;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
 import org.trianacode.enactment.logging.Loggers;
 
 import java.io.IOException;
@@ -39,6 +37,17 @@ public class RabbitHandler {
         factory.setPort(port);
         connection = factory.newConnection();
         channel = connection.createChannel();
+        channel.addShutdownListener(new ShutdownListener() {
+            @Override
+            public void shutdownCompleted(ShutdownSignalException e) {
+                try {
+                    Loggers.DEV_LOGGER.debug("Channel shutdown, tidying up");
+                    closeAll();
+                } catch (IOException e1) {
+                    Loggers.DEV_LOGGER.debug("Error shutting down Rabbit channel/connection");
+                }
+            }
+        });
         channel.queueDeclare(queueName, false, false, false, null);
         this.queueName = queueName;
         System.out.println("Connection made " + channel.toString());
@@ -47,6 +56,8 @@ public class RabbitHandler {
     private void closeAll() throws IOException {
         channel.close();
         connection.close();
+        channel = null;
+        connection = null;
     }
 
     public void sendLog(String string) throws IOException {

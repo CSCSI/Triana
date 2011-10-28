@@ -58,7 +58,10 @@
  */
 package org.trianacode.taskgraph.service;
 
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.enactment.logging.LoggingUtils;
+import org.trianacode.enactment.logging.runtimeLogging.RuntimeFileLog;
 import org.trianacode.enactment.logging.stampede.LogDetail;
 import org.trianacode.enactment.logging.stampede.StampedeEvent;
 import org.trianacode.taskgraph.*;
@@ -87,6 +90,7 @@ public class Scheduler implements SchedulerInterface {
      */
     private HistoryClipIn history;
     private UUID runUUID;
+    private RuntimeFileLog runtimeFileLog;
 
     //    private ExecutionStateLogger logger = new ExecutionStateLogger();
 
@@ -256,7 +260,7 @@ public class Scheduler implements SchedulerInterface {
                     }
                 }
             }
-            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.WAKING_TASK)
+            logStampedeEvent(new StampedeEvent(LogDetail.WAKING_TASK)
                     .add(LogDetail.UUID, runUUID.toString())
                     .add(LogDetail.WF, task.getQualifiedToolName()));
         }
@@ -281,12 +285,17 @@ public class Scheduler implements SchedulerInterface {
      */
     private void runTaskGraph(TaskGraph tgraph) {
         runUUID = UUID.randomUUID();
+        runtimeFileLog = new RuntimeFileLog(
+                tgraph.getProperties().getProperty(TrianaProperties.LOG_LOCATION), runUUID);
+
         if ((tgState != ExecutionState.ERROR) && (tgState != ExecutionState.RESETTING)) {
             tgState = ExecutionState.RUNNING;
 
-            Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.RUNNING_WORKFLOW)
+            logStampedeEvent(new StampedeEvent(LogDetail.RUNNING_WORKFLOW)
                     .add(LogDetail.UUID, runUUID.toString())
-                    .add(LogDetail.WF, tgraph.getQualifiedToolName()));
+                    .add(LogDetail.WF, tgraph.getQualifiedToolName())
+                    .add(LogDetail.LOG_FILE, runtimeFileLog.getLogFilePath())
+            );
             wakeTask(tgraph);
         }
     }
@@ -399,9 +408,10 @@ public class Scheduler implements SchedulerInterface {
      * Stops all tasks for an error
      */
     private void stopTaskGraph(TaskGraph tgraph) {
-        Loggers.STAMPEDE_LOGGER.info(new StampedeEvent(LogDetail.STOPPING_WORKFLOW)
+        logStampedeEvent(new StampedeEvent(LogDetail.STOPPING_WORKFLOW)
                 .add(LogDetail.UUID, runUUID.toString())
                 .add(LogDetail.WF, tgraph.getQualifiedToolName()));
+
         tgState = ExecutionState.ERROR;
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
 
@@ -411,6 +421,13 @@ public class Scheduler implements SchedulerInterface {
             }
         }
 
+    }
+
+    public void logStampedeEvent(StampedeEvent stampedeEvent) {
+        if (LoggingUtils.loggingToRabbitMQ(taskgraph.getProperties())) {
+            Loggers.STAMPEDE_LOGGER.info(stampedeEvent);
+        }
+        runtimeFileLog.info(stampedeEvent);
     }
 
 }

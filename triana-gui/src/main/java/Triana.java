@@ -85,6 +85,7 @@ public class Triana {
     public static final String ISOLATED_LOGGER = "i";
     public static final String WORKFLOW = "w";
     public static final String NOGUI = "n";
+    public static final String BUNDLE = "b";
 
     /**
      * non gui arguments
@@ -146,12 +147,13 @@ public class Triana {
         boolean exec = vals.hasOptionValue(EXECUTE);
         boolean server = vals.hasOption(SERVER);
         boolean workflow = vals.hasOptionValue(WORKFLOW);
+        boolean bundle = vals.hasOption(BUNDLE);
         if (runNoGui || pid) {
             if (!server) {
-                if (pid || exec || workflow) {
+                if (pid || exec || workflow || bundle) {
                     Exec.exec(args);
                 } else {
-                    System.out.println("Non-gui mode combined with non-server mode requires either a uuid, or a workflow");
+                    System.out.println("Non-gui mode combined with non-server mode requires either a uuid, a workflow, or a bundle");
                     System.out.println(parser.usage());
                     System.exit(0);
                 }

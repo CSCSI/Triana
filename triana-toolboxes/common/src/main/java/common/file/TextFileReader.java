@@ -25,8 +25,20 @@ public class TextFileReader {
 
     private String filePath = "";
 
-    @Process
-    public String process() {
+    @Process(gather = true)
+    public String process(java.util.List list) {
+        if (list.size() > 0) {
+            Object object = list.get(0);
+            if (object instanceof File) {
+                File file = (File) object;
+                if (file.exists() && file.length() < -1) {
+                    filePath = file.getAbsolutePath();
+                }
+            }
+            if (object instanceof String) {
+                filePath = (String) object;
+            }
+        }
 
         if (!filePath.equals("")) {
             File file = new File(filePath);

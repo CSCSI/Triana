@@ -267,6 +267,7 @@ public class FileToolbox implements Toolbox {
                     ret.put(tool.getQualifiedToolName(), tool);
                 }
             } catch (Exception e) {
+                System.out.println("Error in " + url.toString());
                 e.printStackTrace();
             }
         }

@@ -1,6 +1,6 @@
 package org.trianacode.enactment;
 
-import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.TrianaInstance;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,5 +22,5 @@ public interface ExecutionService {
 
     public String getDescription();
 
-    public void execute(Exec execEngine, String workflow, Tool tool, String data, String[] args) throws Exception;
+    public void execute(Exec execEngine, TrianaInstance engine, String workflow, Object workflowObject, Object inputData, String[] TrianaArgs) throws Exception;
 }

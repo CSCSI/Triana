@@ -74,6 +74,7 @@ import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.service.ClientException;
 import org.trianacode.taskgraph.service.TrianaClient;
+import org.trianacode.taskgraph.service.TypeChecking;
 
 import javax.swing.*;
 import java.awt.*;
@@ -81,6 +82,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Action class to handle all "run" actions.
@@ -148,8 +150,7 @@ public class RunAction extends AbstractAction implements ActionDisplayOptions {
     private void runWithInputs(TrianaClient client, ArrayList<Node> nodeArrayList) {
         NodeConfigPanel configPanel = createPanel(nodeArrayList, selhandler.getSelectedTaskgraph().getUltimateParent());
         showConfigWindow(configPanel);
-        boolean useConfig = configPanel.getStatus() == NodeConfigPanel.OK;
-        if (useConfig) {
+        if (configPanel.getStatus() == NodeConfigPanel.OK) {
             IoConfiguration configuration = configPanel.getIOConfiguration();
             //         run(client, configuration);
             try {
@@ -157,6 +158,9 @@ public class RunAction extends AbstractAction implements ActionDisplayOptions {
             } catch (ClientException e) {
                 e.printStackTrace();
             }
+        } else if (configPanel.getStatus() == NodeConfigPanel.INCOMPLETE) {
+            System.out.println("Incomplete input");
+
         }
     }
 
@@ -265,7 +269,8 @@ public class RunAction extends AbstractAction implements ActionDisplayOptions {
         private Node node;
         private JTextField inlineField;
         private JTextField urlField;
-        private JButton fileButton;
+        private JButton inlineFileButton;
+        private JButton urlFileButton;
         private String variable;
         private boolean url;
 
@@ -276,39 +281,55 @@ public class RunAction extends AbstractAction implements ActionDisplayOptions {
 
         public JPanel getPanel() {
             JPanel nodeConfig = new JPanel(new GridLayout(2, 1));
-            nodeConfig.setBorder(javax.swing.BorderFactory.createTitledBorder(node.getName()));
+            nodeConfig.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                    node.getName() + " "
+                            + Arrays.toString(
+                            TypeChecking.classForTrianaType(
+                                    node.getTask().getDataInputTypes(
+                                            node.getAbsoluteNodeIndex()
+                                    )
+                            )
+                    )));
             JPanel inlinePanel = new JPanel(new BorderLayout());
-            JPanel stringPanel = new JPanel(new BorderLayout());
+            JPanel urlPanel = new JPanel(new BorderLayout());
 
             ButtonGroup buttonGroup = new ButtonGroup();
-            JRadioButton inlineButton = new JRadioButton("Inline");
+            JRadioButton inlineButton = new JRadioButton("Inline String");
             inlineButton.addActionListener(this);
             inlineButton.setActionCommand("inline");
             inlineButton.setSelected(true);
             inlineField = new JTextField();
+            inlineField.requestFocus();
 
-            JRadioButton stringButton = new JRadioButton("URL");
-            stringButton.addActionListener(this);
-            stringButton.setActionCommand("url");
+            inlineFileButton = new JButton("...");
+            inlineFileButton.addActionListener(this);
+            inlineFileButton.setActionCommand("inlineFileButton");
+            inlineFileButton.setEnabled(true);
+
+            JRadioButton urlButton = new JRadioButton("File Reference - files contents will be read in");
+            urlButton.addActionListener(this);
+            urlButton.setActionCommand("url");
             urlField = new JTextField();
             urlField.setEnabled(false);
-            fileButton = new JButton("...");
-            fileButton.addActionListener(this);
-            fileButton.setActionCommand("fileButton");
-            fileButton.setEnabled(false);
+
+            urlFileButton = new JButton("...");
+            urlFileButton.addActionListener(this);
+            urlFileButton.setActionCommand("urlFileButton");
+            urlFileButton.setEnabled(false);
 
             buttonGroup.add(inlineButton);
-            buttonGroup.add(stringButton);
+            buttonGroup.add(urlButton);
 
-            inlinePanel.add(inlineButton, BorderLayout.WEST);
+            inlinePanel.add(inlineButton, BorderLayout.NORTH);
             inlinePanel.add(inlineField, BorderLayout.CENTER);
+            inlinePanel.add(inlineFileButton, BorderLayout.EAST);
 
-            stringPanel.add(stringButton, BorderLayout.WEST);
-            stringPanel.add(urlField, BorderLayout.CENTER);
-            stringPanel.add(fileButton, BorderLayout.EAST);
+            urlPanel.add(urlButton, BorderLayout.NORTH);
+            urlPanel.add(urlField, BorderLayout.CENTER);
+            urlPanel.add(urlFileButton, BorderLayout.EAST);
 
             nodeConfig.add(inlinePanel);
-            nodeConfig.add(stringPanel);
+            nodeConfig.add(urlPanel);
             return nodeConfig;
 
         }
@@ -327,16 +348,26 @@ public class RunAction extends AbstractAction implements ActionDisplayOptions {
             if (actionEvent.getActionCommand().equals("inline")) {
                 inlineField.setEnabled(true);
                 urlField.setEnabled(false);
-                fileButton.setEnabled(false);
+                inlineFileButton.setEnabled(true);
+                urlFileButton.setEnabled(false);
                 url = false;
             }
             if (actionEvent.getActionCommand().equals("url")) {
                 inlineField.setEnabled(false);
                 urlField.setEnabled(true);
-                fileButton.setEnabled(true);
+                urlFileButton.setEnabled(true);
+                inlineFileButton.setEnabled(false);
                 url = true;
             }
-            if (actionEvent.getActionCommand().equals("fileButton")) {
+            if (actionEvent.getActionCommand().equals("inlineFileButton")) {
+                JFileChooser jFileChooser = new JFileChooser();
+                int result = jFileChooser.showOpenDialog(GUIEnv.getApplicationFrame());
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File file = jFileChooser.getSelectedFile();
+                    inlineField.setText(file.toURI().getPath());
+                }
+            }
+            if (actionEvent.getActionCommand().equals("urlFileButton")) {
                 JFileChooser jFileChooser = new JFileChooser();
                 int result = jFileChooser.showOpenDialog(GUIEnv.getApplicationFrame());
                 if (result == JFileChooser.APPROVE_OPTION) {

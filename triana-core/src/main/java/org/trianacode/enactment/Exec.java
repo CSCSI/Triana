@@ -86,6 +86,16 @@ public class Exec implements ExecutionListener {
             }
             String pid = vals.getOptionValue("u");
             String data = vals.getOptionValue("d");
+
+            List<String> bundles = vals.getOptionValues("b");
+            if (bundles != null) {
+                if (bundles.size() != 1) {
+                    System.out.println("Only one bundle can be specified");
+                }
+                new Exec(pid).executeBundle(bundles.get(0), data, args);
+                System.exit(0);
+            }
+
             List<String> wfs = vals.getOptionValues("w");
             if (wfs != null) {
                 if (wfs.size() != 1) {
@@ -108,7 +118,7 @@ public class Exec implements ExecutionListener {
                     System.out.println("Only one workflow can be specified.");
                     System.exit(1);
                 } else {
-                    new Exec(pid).executeWorkflow(wfs.get(0), data, args);
+                    new Exec(pid).executeWorkflow(wfs.get(0), data, args, vals);
                 }
             } else {
                 if (pid != null) {
@@ -123,12 +133,49 @@ public class Exec implements ExecutionListener {
         }
     }
 
-    private static ExecutionService getService(Set<Object> executionServices) {
+    private void executeBundle(String bundlePath, String data, String[] args) throws Exception {
+        File f = new File(bundlePath);
+        if (!f.exists()) {
+            System.out.println("Cannot find bundle file:" + bundlePath);
+            System.exit(1);
+        }
+        TrianaInstance engine = new TrianaInstance(args);
+        engine.addExtensionClass(ExecutionService.class);
+        engine.init();
+
+        Set<Object> executionServices = engine.getExtensions(ExecutionService.class);
+        System.out.println("Found " + executionServices.size() + " ExecutionServices");
+        ExecutionService executionService = getService(executionServices, "bundle");
+
+        if (executionService != null) {
+            System.out.println("Running with " + executionService.getServiceName());
+            executionService.execute(this, engine, bundlePath, null, data, args);
+        } else {
+            System.out.println("Bundle executing service not found");
+        }
+    }
+
+    public ExecutionService getService(Set<Object> executionServices, OptionValues vals) {
         for (Object service : executionServices) {
             if (service instanceof ExecutionService) {
                 ExecutionService executionService = ((ExecutionService) service);
-                System.out.println("Found a service! " + executionService.getServiceName());
-                return (ExecutionService) service;
+                if (vals.hasOption(executionService.getShortOption())) {
+                    System.out.println("Returning service " + executionService.getShortOption());
+                    return (ExecutionService) service;
+                }
+            }
+        }
+        return null;
+    }
+
+    public ExecutionService getService(Set<Object> executionServices, String longOpt) {
+        for (Object service : executionServices) {
+            if (service instanceof ExecutionService) {
+                ExecutionService executionService = ((ExecutionService) service);
+                if (executionService.getLongOption().equals(longOpt)) {
+                    System.out.println("Returning service " + executionService.getShortOption());
+                    return (ExecutionService) service;
+                }
             }
         }
         return null;
@@ -210,7 +257,7 @@ public class Exec implements ExecutionListener {
         return pid;
     }
 
-    private void executeWorkflow(String wf, String data, String[] args) throws Exception {
+    private void executeWorkflow(String wf, String data, String[] args, OptionValues vals) throws Exception {
 
         File f = new File(wf);
         if (!f.exists()) {
@@ -225,11 +272,11 @@ public class Exec implements ExecutionListener {
         Tool tool = reader.readComponent(engine.getProperties());
 
         Set<Object> executionServices = engine.getExtensions(ExecutionService.class);
-        System.out.println("Possibly found " + executionServices.size() + " ExecutionServices");
-        ExecutionService executionService = getService(executionServices);
+        System.out.println("Found " + executionServices.size() + " ExecutionServices");
+        ExecutionService executionService = getService(executionServices, vals);
         if (executionService != null) {
             System.out.println("Running with " + executionService.getServiceName());
-            executionService.execute(this, wf, tool, data, args);
+            executionService.execute(this, engine, wf, tool, data, args);
         } else {
             execute(tool, data);
         }

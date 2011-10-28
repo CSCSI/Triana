@@ -60,6 +60,7 @@ package org.trianacode.gui.panels;
 
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
+import org.trianacode.enactment.logging.LoggingUtils;
 import org.trianacode.gui.SpringUtilities;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.hci.color.ColorManager;
@@ -104,26 +105,54 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
     private JCheckBox showNodeEditIconsChk;
     private JCheckBox convertToDoubleChk;
     private JCheckBox smoothCables;
+    private JCheckBox logInputValues;
+
     private JTextField htmlViewerTextField;
     private JTextField htmlEditorTextField;
     private JTextField codeEditorTextField;
     private JTextField javacTextField;
     private JCheckBox validateToolsChk;
+    private JCheckBox logToRabbitMQ;
     private JButton classpathButton;
     private ColorModel[] registeredColorModels;
     private Hashtable colorModelPanels = new Hashtable();
     private Dimension swatchSize = new Dimension(50, 20);
     private JPanel generalPanel;
-    private JPanel colorPanel;
-    private JPanel externalPanel;
 
+    private JPanel colorPanel;
+    private JPanel loggingPanel;
+    private JPanel externalPanel;
     private JTextField modulesTextField;
     private JTextField moduleTextField;
+    private JTextField loggingLocationField;
     private TrianaInstance engine;
 
     public void okClicked() {
+        updateProperties();
         GUIEnv.getApplicationFrame().repaintWorkspace();
         super.okClicked();
+    }
+
+    private void updateProperties() {
+        boolean changeMade = false;
+
+        String enteredText = loggingLocationField.getText().trim();
+        if (!enteredText.equals(engine.getProperties().getProperty(TrianaProperties.LOG_LOCATION))) {
+            File file = new File(enteredText);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            engine.getProperties().setProperty(TrianaProperties.LOG_LOCATION, loggingLocationField.getText().trim());
+            changeMade = true;
+        }
+
+        if (changeMade) {
+            try {
+                engine.getProperties().saveProperties();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
     }
 
     public OptionsPanel(ToolTable tools) {
@@ -146,6 +175,8 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
         tabs.addTab("General", getGeneralPanel());
         //tabs.addTab("External Tools", getExternalTools());
         tabs.addTab("Colours", getColourChooser());
+
+        tabs.addTab("Logging", getLoggingPanel());
 
         this.setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
@@ -247,6 +278,32 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
         return colorPanel;
     }
 
+    public JPanel getLoggingPanel() {
+        if (loggingPanel == null) {
+            loggingPanel = new JPanel();
+            loggingPanel.setLayout(new GridLayout(9, 1));
+            logInputValues = addCheckBox(loggingPanel, "Save input values", LoggingUtils.loggingInputs(engine.getProperties()));
+
+            JPanel rootFolderPanel = new JPanel(new BorderLayout());
+            JLabel loggingLocationLabel = new JLabel("Root log folder");
+            loggingLocationField = new JTextField();
+            loggingLocationField.setText(engine.getProperties().getProperty(TrianaProperties.LOG_LOCATION));
+            JButton rootButton = new JButton(GUIEnv.getIcon("dots.png"));
+            rootButton.setActionCommand("loggingFolder");
+            rootButton.addActionListener(this);
+            rootFolderPanel.add(loggingLocationLabel, BorderLayout.WEST);
+            rootFolderPanel.add(loggingLocationField, BorderLayout.CENTER);
+            rootFolderPanel.add(rootButton, BorderLayout.EAST);
+
+            loggingPanel.add(rootFolderPanel);
+
+            logToRabbitMQ = addCheckBox(loggingPanel, "Log to RabbitMQ", LoggingUtils.loggingToRabbitMQ(engine.getProperties()));
+
+        }
+
+        return loggingPanel;
+    }
+
     private JPanel getColorModelView(ColorModel registeredColorModel) {
         JPanel panel = (JPanel) colorModelPanels.get(registeredColorModel.getModelName());
         if (panel == null) {
@@ -287,6 +344,8 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
         GUIEnv.setNodeEditIcons(showNodeEditIconsChk.isSelected());
         GUIEnv.setSmoothCables(smoothCables.isSelected());
         Env.setConvertToDouble(convertToDoubleChk.isSelected());
+        LoggingUtils.setLogInputValues(engine.getProperties(), logInputValues.isSelected());
+        LoggingUtils.setLogToRabbitMQ(engine.getProperties(), logToRabbitMQ.isSelected());
 
 //        if (validateToolsChk.isSelected() && !testValidTool(htmlViewerTextField)) {
 //            invalidToolName = htmlViewerTextField.getText();
@@ -523,6 +582,13 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
                 chooser.setCurrentDirectory(f);
             }
         }
+        if (e.getActionCommand().equals("loggingFolder")) {
+            File f = new File(loggingLocationField.getText().trim());
+            if (f.exists()) {
+                chooser.setCurrentDirectory(f);
+            }
+        }
+
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             if (e.getActionCommand().equals("modulesRoot")) {
@@ -542,6 +608,14 @@ public class OptionsPanel extends ParameterPanel implements ActionListener, Wind
                     moduleTextField.setCaretPosition(0);
                     engine.loadModule(moduleTextField.getText().trim());
 
+                }
+            } else if (e.getActionCommand().equals("loggingFolder")) {
+                loggingLocationField.setText(chooser.getSelectedFile().getAbsolutePath());
+                engine.getProperties().setProperty(TrianaProperties.LOG_LOCATION, loggingLocationField.getText().trim());
+                try {
+                    engine.getProperties().saveProperties();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
             }
         }

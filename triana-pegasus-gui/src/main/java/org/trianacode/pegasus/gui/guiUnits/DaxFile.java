@@ -332,11 +332,25 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
      */
     private void fillFileListArea() {
         if (namingPattern == null) {
-            namingPattern = new PatternCollection("-");
-            CharSequencePattern a = new CharSequencePattern(nameField.getText());
-            CounterPattern b = new CounterPattern(0, 3, 1, 1);
-            namingPattern.add(a);
-            namingPattern.add(b);
+
+            String tempName = nameField.getText();
+            int separatorIndex = tempName.lastIndexOf(".");
+
+            if (separatorIndex == -1) {
+                namingPattern = new PatternCollection("-");
+                CharSequencePattern a = new CharSequencePattern(tempName);
+                CounterPattern b = new CounterPattern(0, 3, 1, 1);
+                namingPattern.add(a);
+                namingPattern.add(b);
+            } else {
+                namingPattern = new PatternCollection("");
+                CharSequencePattern a = new CharSequencePattern(tempName.substring(0, separatorIndex) + "-");
+                CounterPattern b = new CounterPattern(0, 3, 1, 1);
+                CharSequencePattern c = new CharSequencePattern(tempName.substring(separatorIndex, tempName.length()));
+                namingPattern.add(a);
+                namingPattern.add(b);
+                namingPattern.add(c);
+            }
         }
 
         namingPattern.resetCount();
@@ -344,6 +358,7 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
         for (int i = 0; i < numberOfFiles; i++) {
             fileListArea.append(namingPattern.next() + "\n");
         }
+        namingPattern.resetCount();
 
 //        iterLabel.setText("Filename " + (namingPattern.varies() ? "iterates well" : "does not vary, will +\"01\""));
 //        nameField.setText(namingPattern.next());

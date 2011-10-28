@@ -51,7 +51,7 @@ public class DaxCreatorV3 implements TaskConscious {
     @Process(gather = true)
     public java.io.File process(List in) {
         PFLarray = new ArrayList<String>();
-        log("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+        devLog.debug("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         DaxRegister register = DaxRegister.getDaxRegister();
 
@@ -64,11 +64,11 @@ public class DaxCreatorV3 implements TaskConscious {
             //  daxFromInList(in);
             daxFile = daxFromRegister(register);
         } catch (Exception e) {
-            log("Failed at something : " + e + "\n\n");
+            devLog.debug("Failed at something : " + e + "\n\n");
             e.printStackTrace();
         } finally {
             register.clear();
-            log("Cleared register");
+            devLog.debug("Cleared register");
             //         if(frame != null){
             //             frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             //         }
@@ -110,13 +110,13 @@ public class DaxCreatorV3 implements TaskConscious {
                         job.uses(new File((String) outFiles.get(i)), File.LINK.output);
                     }
                     dax.addJob(job);
-                    log("Added a job to ADAG.");
+                    devLog.debug("Added a job to ADAG.");
                 } else {
-                    log("Found a job stub, ignoring..");
+                    devLog.debug("Found a job stub, ignoring..");
 
                 }
             } else {
-                log("*** Found something that wasn't a DaxJobChunk in input List ***");
+                devLog.debug("*** Found something that wasn't a DaxJobChunk in input List ***");
             }
         }
 
@@ -137,24 +137,24 @@ public class DaxCreatorV3 implements TaskConscious {
             devLog.debug("******** " + jobChunk.getArgBuilder().getArgString());
             int pattern = jobChunk.getConnectPattern();
 
-            log("\nJob : " + jobChunk.getJobName());
+            devLog.debug("\nJob : " + jobChunk.getJobName());
             if (pattern == AUTO_CONNECT) {
-                log("auto_connect");
+                devLog.debug("auto_connect");
 
                 autoConnect(dax, jobChunk);
             }
             if (pattern == SCATTER_CONNECT) {
-                log("scatter_connect");
+                devLog.debug("scatter_connect");
 
                 scatterConnect(dax, jobChunk);
             }
             if (pattern == ONE2ONE_CONNECT) {
-                log("one2one_connect");
+                devLog.debug("one2one_connect");
 
                 one2oneConnect(dax, jobChunk);
             }
             if (pattern == SPREAD_CONNECT) {
-                log("spread_connect");
+                devLog.debug("spread_connect");
 
                 spreadConnect(dax, jobChunk);
             }
@@ -177,14 +177,14 @@ public class DaxCreatorV3 implements TaskConscious {
             dax.addExecutable(ex);
         }
 
-        log("\nFound files : " + PFLarray.toString());
+        devLog.debug("\nFound files : " + PFLarray.toString());
 
         return writeDax(dax);
 
     }
 
     private void autoConnect(ADAG dax, DaxJobChunk jobChunk) {
-        log("Job " + jobChunk.getJobName() + " has " + jobChunk.getNumberOfJobs() + " jobs.");
+        devLog.debug("Job " + jobChunk.getJobName() + " has " + jobChunk.getNumberOfJobs() + " jobs.");
 
         /**
          * Create a number of dax job objects, adding -xx if there is > 1 required.
@@ -210,12 +210,12 @@ public class DaxCreatorV3 implements TaskConscious {
                 chunk.resetNextCounter();
                 if (chunk.isCollection()) {
                     for (int m = 0; m < chunk.getNumberOfFiles(); m++) {
-                        //                   log("Job " + job.getId() + " named : "  + job.getName() + " has input : " + chunk.getFilename() + "-" + m);
+                        //                   devLog.debug("Job " + job.getId() + " named : "  + job.getName() + " has input : " + chunk.getFilename() + "-" + m);
 
                         if (chunk.getNamePattern() != null) {
-                            log("Collection has a naming pattern");
+                            devLog.debug("Collection has a naming pattern");
                         } else {
-                            log("Collection has no naming pattern, using *append int*");
+                            devLog.debug("Collection has no naming pattern, using *append int*");
                         }
 
                         //    String filename = chunk.getNextFilename();
@@ -238,7 +238,7 @@ public class DaxCreatorV3 implements TaskConscious {
                     chunk.resetNextCounter();
 
                 } else {
-//                   log("Job " + job.getId() + " named : " + job.getName() + " has input : " + chunk.getFilename());
+//                   devLog.debug("Job " + job.getId() + " named : " + job.getName() + " has input : " + chunk.getFilename());
 //                    job.uses(new File(chunk.getFilename()), File.LINK.input);
 //                    String fileLocation = chunk.getFileLocation();
 //                    if(!fileLocation.equals("")){
@@ -270,24 +270,24 @@ public class DaxCreatorV3 implements TaskConscious {
 //                DaxFileChunk chunk = (DaxFileChunk)outFiles.get(i);
 //                if(chunk.isCollection()){
 //                    for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-//                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + m);
+//                        devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + m);
 //
 //                        if(chunk.getNamePattern() != null){
-//                            log("Collection has a naming pattern");
+//                            devLog.debug("Collection has a naming pattern");
 //                        }else{
-//                            log("Collection has no naming pattern, using *append int*");
+//                            devLog.debug("Collection has no naming pattern, using *append int*");
 //                        }
 //
 //                        job.addUses(new Filename(chunk.getFilename() + "-" + m, 2));
 //                    }
 //                }
 //                else{
-//                    log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+//                    devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
 //                    job.addUses(new Filename(chunk.getFilename(), 2));
 //                }
 //            }
             dax.addJob(job);
-            log("Added job : " + job.getName() + " to ADAG.");
+            devLog.debug("Added job : " + job.getName() + " to ADAG.");
 
         }
     }
@@ -314,9 +314,9 @@ public class DaxCreatorV3 implements TaskConscious {
         int count = 0;
         for (int j = 0; j < filesPerJob.length; j++) {
             count = count + filesPerJob[j];
-            log("Job : " + j + " will have : " + filesPerJob[j] + " connected.");
+            devLog.debug("Job : " + j + " will have : " + filesPerJob[j] + " connected.");
         }
-        log("Should be total : " + files + " files. Assigned : " + count);
+        devLog.debug("Should be total : " + files + " files. Assigned : " + count);
 
         return filesPerJob;
     }
@@ -349,7 +349,7 @@ public class DaxCreatorV3 implements TaskConscious {
             String jobName = jobChunk.getJobName();
             if (numberJobs > 1) {
                 jobName = (jobName + "-" + n);
-                log("Jobs name is : " + jobName);
+                devLog.debug("Jobs name is : " + jobName);
                 n++;
             }
             String id = "0000000" + (idNumber);
@@ -390,24 +390,24 @@ public class DaxCreatorV3 implements TaskConscious {
 //                DaxFileChunk chunk = (DaxFileChunk)outFiles.get(j);
 //                if(chunk.isCollection()){
 //                    for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
-//                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + k);
+//                        devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + k);
 //
 //                        if(chunk.getNamePattern() != null){
-//                            log("Collection has a naming pattern");
+//                            devLog.debug("Collection has a naming pattern");
 //                        }else{
-//                            log("Collection has no naming pattern, using *append int*");
+//                            devLog.debug("Collection has no naming pattern, using *append int*");
 //                        }
 //
 //                        job.addUses(new Filename(chunk.getFilename() + "-" + k, 2));
 //                    }
 //                }
 //                else{
-//                    log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+//                    devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
 //                    job.addUses(new Filename(chunk.getFilename(), 2));
 //                }
 //            }
 
-            log("Adding job : " + job.getName() + " to dax");
+            devLog.debug("Adding job : " + job.getName() + " to dax");
             dax.addJob(job);
         }
 
@@ -430,20 +430,20 @@ public class DaxCreatorV3 implements TaskConscious {
         double number = Math.ceil(numberInputFiles / numberInputsPerJob);
         numberJobs = (int) number;
         jobChunk.setNumberOfJobs(numberJobs);
-        log("Double is : " + number + " Number is : " + numberJobs);
-        log("Files : " + numberInputFiles +
+        devLog.debug("Double is : " + number + " Number is : " + numberJobs);
+        devLog.debug("Files : " + numberInputFiles +
                 " Files/job : " + numberInputsPerJob + ". "
                 + numberJobs + " duplicates of " + jobChunk.getJobName());
 
         int offset = 0;
         for (int i = 0; i < numberJobs; i++) {
-            log("Sorting out job : " + i);
+            devLog.debug("Sorting out job : " + i);
             idNumber++;
 
             String jobName = jobChunk.getJobName();
             if (numberJobs > 1) {
                 jobName = (jobName + "-" + n);
-                log("Jobs name is : " + jobName);
+                devLog.debug("Jobs name is : " + jobName);
                 n++;
             }
             String id = "0000000" + (idNumber);
@@ -456,7 +456,7 @@ public class DaxCreatorV3 implements TaskConscious {
                     DaxFileChunk chunk = fcs.get(j);
 //                    String filename = fc.getNextFilename();
 //                    String filename = fc.getFilename();
-//                    log("Adding file : " + filename + " to job : " + i + " (Job : " + j + " of " + numberInputFiles + ")");
+//                    devLog.debug("Adding file : " + filename + " to job : " + i + " (Job : " + j + " of " + numberInputFiles + ")");
 
                     String filename = chunk.getFilename();
                     String fileLocation = chunk.getFileLocation();
@@ -481,19 +481,19 @@ public class DaxCreatorV3 implements TaskConscious {
 //                DaxFileChunk chunk = (DaxFileChunk)outFiles.get(j);
 //                if(chunk.isCollection()){
 //                    for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
-//                        log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + k);
+//                        devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + k);
 //
 //                        if(chunk.getNamePattern() != null){
-//                            log("Collection has a naming pattern");
+//                            devLog.debug("Collection has a naming pattern");
 //                        }else{
-//                            log("Collection has no naming pattern, using *append int*");
+//                            devLog.debug("Collection has no naming pattern, using *append int*");
 //                        }
 //
 //                        job.addUses(new Filename(chunk.getFilename() + "-" + k, 2));
 //                    }
 //                }
 //                else{
-//                    log("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+//                    devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
 //                    job.addUses(new Filename(chunk.getFilename(), 2));
 //                }
 //            }
@@ -517,7 +517,7 @@ public class DaxCreatorV3 implements TaskConscious {
         DaxFileChunk fc = pfc;
         fc.resetNextCounter();
 
-        log("Job has " + fc.getNumberOfFiles() + " inputs.");
+        devLog.debug("Job has " + fc.getNumberOfFiles() + " inputs.");
         if (fc.getNumberOfFiles() > jobChunk.getNumberOfJobs()) {
             jobChunk.setNumberOfJobs(fc.getNumberOfFiles());
         }
@@ -543,7 +543,7 @@ public class DaxCreatorV3 implements TaskConscious {
             //       fileName = fc.getNextFilename();
             String fileName = fc.getFilename();
 
-            log("Job has " + fileName + " as an input.");
+            devLog.debug("Job has " + fileName + " as an input.");
             job.uses(new File(fileName), File.LINK.input);
 
             for (DaxFileChunk dfc : fcs) {
@@ -588,63 +588,63 @@ public class DaxCreatorV3 implements TaskConscious {
             addOutputs(job, jobChunk);
 
             dax.addJob(job);
-            log("Added job : " + job.getName() + " to ADAG.");
+            devLog.debug("Added job : " + job.getName() + " to ADAG.");
         }
 
     }
 
     private void addOutputs(Job job, DaxJobChunk jobChunk) {
         List outFiles = jobChunk.getOutFileChunks();
-        log("\nAdding outputs to job : " + jobChunk.getJobName() + " with " + jobChunk.getOutFileChunks().size() + " outputs.");
+        devLog.debug("\nAdding outputs to job : " + jobChunk.getJobName() + " with " + jobChunk.getOutFileChunks().size() + " outputs.");
         for (int j = 0; j < outFiles.size(); j++) {
-            log("Output " + j + " :");
+            devLog.debug("Output " + j + " :");
             DaxFileChunk chunk = (DaxFileChunk) outFiles.get(j);
             if (chunk.isCollection()) {
 //                chunk.resetNextCounter();
-                log("Jobs output file is a collection");
+                devLog.debug("Jobs output file is a collection");
                 if (chunk.isOne2one()) {
 
-                    log("Building one2one output");
+                    devLog.debug("Building one2one output");
                     //                   chunk.setOne2one(true);
                     chunk.setNumberOfFiles(jobChunk.getNumberOfJobs());
 
-                    //                log("File " + chunk.getFilename() + " duplication set to " + chunk.getNumberOfFiles());
+                    //                devLog.debug("File " + chunk.getFilename() + " duplication set to " + chunk.getNumberOfFiles());
                     if (chunk.getNamePattern() != null) {
-                        log("Collection has a naming pattern");
+                        devLog.debug("Collection has a naming pattern");
                     } else {
-                        log("Collection has no naming pattern, using *append int*");
+                        devLog.debug("Collection has no naming pattern, using *append int*");
                     }
 //                    String filename = chunk.getNextFilename();
 
                     String filename = chunk.getFilename();
-                    log("Job " + job.getId() + " named : " + job.getName() + " has output : " + filename);
+                    devLog.debug("Job " + job.getId() + " named : " + job.getName() + " has output : " + filename);
                     job.uses(new File(filename), File.LINK.output);
                 } else {
-                    log("Not a one2one");
+                    devLog.debug("Not a one2one");
                     for (int k = 0; k < chunk.getNumberOfFiles(); k++) {
 
 //                        if(chunk.getNamePattern() != null){
-//                            log("Collection has a naming pattern");
+//                            devLog.debug("Collection has a naming pattern");
 //                        }else{
-//                            log("Collection has no naming pattern, using *append int*");
+//                            devLog.debug("Collection has no naming pattern, using *append int*");
 //                        }
 
 //                        String filename = chunk.getNextFilename();
 
                         String filename = chunk.getFilename();
-                        log("Job " + job.getId() + " named : " + job.getName() + " has output : " + filename);
+                        devLog.debug("Job " + job.getId() + " named : " + job.getName() + " has output : " + filename);
 
                         job.uses(new File(filename), File.LINK.output);
 
                     }
                 }
             } else {
-                //           log("Job " + job.getId() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
+                //           devLog.debug("Job " + job.getId() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
                 File outputFile = new File(chunk.getFilename());
                 job.uses(outputFile, File.LINK.output);
                 job.addArgument("-o ").addArgument(outputFile);
             }
-            log("Finished with job " + job.getId() + " named : " + job.getName() + "\n");
+            devLog.debug("Finished with job " + job.getId() + " named : " + job.getName() + "\n");
         }
     }
 
@@ -652,7 +652,7 @@ public class DaxCreatorV3 implements TaskConscious {
     private java.io.File writeDax(ADAG dax) {
 
         dax.writeToFile(fileName + ".dax");
-        log("File " + fileName + " saved.\n");
+        devLog.debug("File " + fileName + " saved.\n");
 
         java.io.File daxFile = new java.io.File(fileName + ".dax");
 
@@ -664,12 +664,6 @@ public class DaxCreatorV3 implements TaskConscious {
 //            JOptionPane.showMessageDialog(frame, "Dax saved : " + fileName);
 //        }
         return daxFile;
-    }
-
-
-    private void log(String s) {
-        Log log = Loggers.DEV_LOGGER;
-        log.debug(s);
     }
 
     @Override

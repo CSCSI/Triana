@@ -1,6 +1,7 @@
 package org.trianacode.config;
 
 import org.trianacode.TrianaInstance;
+import org.trianacode.enactment.logging.LoggingUtils;
 
 import java.io.*;
 import java.util.Enumeration;
@@ -30,6 +31,10 @@ public class TrianaProperties extends Properties {
     public static final String PROPERTY_SEARCH_PATH_PROPERTY = DOMAIN + ".property.search.path";
     public static final String TOOLBOX_SEARCH_PATH_PROPERTY = DOMAIN + ".toolbox.search.path";
     public static final String MODULE_SEARCH_PATH_PROPERTY = DOMAIN + ".module.search.path";
+
+    public static final String LOG_LOCATION = DOMAIN + ".logging.location";
+    public static final String LOGGING_INPUT_VALUES = DOMAIN + ".logInputValues";
+    public static final String LOG_TO_RABBITMQ = DOMAIN + ".logToRabbitMQ";
 
     public static final String TEMPLATE_SEARCH_PATH_PROPERTY = DOMAIN + ".template.search.path";
 
@@ -111,6 +116,10 @@ public class TrianaProperties extends Properties {
         properties.put(TOOLBOX_SEARCH_PATH_PROPERTY, Locations.getDefaultToolboxRoot());
         properties.put(MODULE_SEARCH_PATH_PROPERTY, Locations.getDefaultModuleRoot());
 
+        properties.put(LOG_LOCATION, LoggingUtils.getDefaultLocation());
+        properties.put(LOGGING_INPUT_VALUES, "true");
+        properties.put(LOG_TO_RABBITMQ, "false");
+
         // should we do this???
         // ANDREW: No - these will be on the classpath if classes/ is used or is in a jar
         // ANDREW: CHANGED THIS AND TOOLBOX SEARCH. THEY WERE MESSED UP AND CREATED DEPENDENCIES ON THE BUILD
@@ -182,7 +191,6 @@ public class TrianaProperties extends Properties {
      */
     public void saveProperties(String comments) throws IOException {
         File file = new File(Locations.getDefaultConfigFile());
-
         OutputStream outstream = new FileOutputStream(file);
 
         this.store(outstream, comments);

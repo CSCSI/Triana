@@ -60,6 +60,7 @@ package org.trianacode.taskgraph.service;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.enactment.logging.LoggingUtils;
 import org.trianacode.enactment.logging.stampede.LogDetail;
 import org.trianacode.enactment.logging.stampede.StampedeEvent;
 import org.trianacode.enactment.logging.stampede.StampedeLoggerInterface;
@@ -341,9 +342,12 @@ public class RunnableTask extends AbstractRunnableTask
      */
     public final synchronized void wakeUp(Node node) {
         if (isRequired(node)) {
-            wakeups.add(node);
-            if (node.getParentNode() != null) {
-                wakeups.add(node.getParentNode());
+            //          wakeups.add(node);
+            Node scopeNode = node.getTopLevelNode();
+            wakeups.add(scopeNode);
+            while (scopeNode.getChildNode() != null) {
+                scopeNode = scopeNode.getChildNode();
+                wakeups.add(scopeNode);
             }
             wakeUp();
         } else if (node.isParameterNode()) {
@@ -553,12 +557,21 @@ public class RunnableTask extends AbstractRunnableTask
             data = mess;
         }
         if (data != null) {
-            stampedeLog.info(new StampedeEvent(LogDetail.UNIT_INPUT)
-                    .add(LogDetail.TASK, getQualifiedToolName())
-                    .add("NODE", node.getName())
-                    .add("DATA", data.toString())
-                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-            );
+            if (LoggingUtils.loggingInputs(this.getProperties())) {
+                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
+                        .add(LogDetail.TASK, getQualifiedToolName())
+                        .add("NODE", node.getName())
+                        .add("DATA", data.toString())
+                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                );
+            } else {
+                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
+                        .add(LogDetail.TASK, getQualifiedToolName())
+                        .add("NODE", node.getName())
+                        .add("DATA_LENGTH", "" + data.toString().length())
+                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                );
+            }
         }
         return data;
     }
@@ -699,18 +712,41 @@ public class RunnableTask extends AbstractRunnableTask
             toolLog.debug("RunnableTask.output ENTER URL = " + packet.getDataLocation());
             DataMessage mess = new DataMessage(packet, extract);
 
-            stampedeLog.info(new StampedeEvent(LogDetail.UNIT_OUTPUT)
-                    .add(LogDetail.TASK, getQualifiedToolName())
-                    .add("NODE", node.getName())
-                    .add("DATA", data.toString())
-                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-            );
+
+            if (LoggingUtils.loggingInputs(this.getProperties())) {
+                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
+                        .add(LogDetail.TASK, getQualifiedToolName())
+                        .add("NODE", node.getName())
+                        .add("DATA", data.toString())
+                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                );
+            } else {
+                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
+                        .add(LogDetail.TASK, getQualifiedToolName())
+                        .add("NODE", node.getName())
+                        .add("DATA_LENGTH", "" + data.toString().length())
+                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                );
+            }
             if (blocking) {
                 ((OutputCable) node.getCable()).send(mess);
             } else {
                 ((OutputCable) node.getCable()).sendNonBlocking(mess);
             }
         }
+    }
+
+    private Scheduler getScheduler(TaskGraph taskGraph) {
+        TrianaServer trianaServer = TaskGraphManager.getTrianaServer(taskGraph);
+        SchedulerInterface scheduler = trianaServer.getSchedulerInterface();
+        if (scheduler instanceof Scheduler) {
+            return (Scheduler) scheduler;
+        }
+        return null;
+    }
+
+    private void logToSchedulerLogger(StampedeEvent stampedeEvent) {
+        getScheduler(this.getParent()).logStampedeEvent(stampedeEvent);
     }
 
 
@@ -863,7 +899,13 @@ public class RunnableTask extends AbstractRunnableTask
                         .append(",");
             }
 
-            stampedeLog.info(new StampedeEvent(LogDetail.RUNNING_TASK)
+//            stampedeLog.info(new StampedeEvent(LogDetail.RUNNING_TASK)
+//                    .add(LogDetail.LEVEL, "INFO")
+//                    .add(LogDetail.TASK, getQualifiedToolName())
+//                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+//                    .add(LogDetail.ALLPARAMS, stringBuilder.toString())
+//            );
+            logToSchedulerLogger(new StampedeEvent(LogDetail.RUNNING_TASK)
                     .add(LogDetail.LEVEL, "INFO")
                     .add(LogDetail.TASK, getQualifiedToolName())
                     .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
@@ -884,7 +926,7 @@ public class RunnableTask extends AbstractRunnableTask
 
             if (!getExecutionState().equals(ExecutionState.ERROR)) {
                 toolLog.info("FINISHED RUNNING " + getQualifiedToolName());
-                stampedeLog.info(new StampedeEvent(LogDetail.FINISHED_TASK)
+                logToSchedulerLogger(new StampedeEvent(LogDetail.FINISHED_TASK)
                         .add(LogDetail.LEVEL, "INFO")
                         .add(LogDetail.TASK, getQualifiedToolName())
                         .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())

@@ -25,6 +25,7 @@ public class TrianaOptions {
     public static final Option HELP_OPTION = new Option("h", "help", "prints this message.");
     public static final Option SUPPRESS_DEFAULT_TOOLBOXES = new Option("sdt", "suppress-default-toolboxes", "start triana with no default, only those given with -x");
     public static final Option CREATE_AND_SUBMIT_DAX = new Option("dax", "submit-to-pegasus", "Takes a workflow, creates a dax, and submits to Pegasus");
+    public static final Option EXECUTE_BUNDLE = new Option("b", "bundle", "Execute bundle");
 
     public static Option[] TRIANA_OPTIONS = {
             NO_GUI_OPTION,
@@ -41,7 +42,8 @@ public class TrianaOptions {
             EXTRA_MODULES_OPTION,
             HELP_OPTION,
             SUPPRESS_DEFAULT_TOOLBOXES,
-            CREATE_AND_SUBMIT_DAX
+            CREATE_AND_SUBMIT_DAX,
+            EXECUTE_BUNDLE
     };
 
     public static boolean hasOption(ArgumentParser parsed, Option o) {

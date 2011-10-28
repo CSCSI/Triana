@@ -329,8 +329,8 @@ public class AnnotatedUnitWrapper extends Unit {
         if (ret != null) {
             log("EXIT for task " + getTask().getQualifiedTaskName() + " outputted " + ret);
             output(ret);
+        } else {
+            log("EXIT for task " + getTask().getQualifiedTaskName() + " did not output ");
         }
-        log("EXIT for task " + getTask().getQualifiedTaskName() + " did not output ");
-
     }
 }

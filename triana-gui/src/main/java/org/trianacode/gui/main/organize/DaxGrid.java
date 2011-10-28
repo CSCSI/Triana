@@ -2,6 +2,7 @@ package org.trianacode.gui.main.organize;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.taskgraph.TaskGraph;
 
 import java.util.ArrayList;
 
@@ -14,47 +15,56 @@ import java.util.ArrayList;
  */
 public class DaxGrid {
     private ArrayList<DaxLevel> levels = new ArrayList();
+    private int numberOfTasks;
 
-    private void log(String text){
+    public DaxGrid(TaskGraph t) {
+        this.numberOfTasks = t.getTasks(true).length;
+    }
+
+    private void log(String text) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
-  //      System.out.println(text);
+        //      System.out.println(text);
     }
 
     public DaxLevel getLevel(int level) {
-        for(DaxLevel thisLevel : levels){
-            if (thisLevel.getLevelNumber() == level){
+        for (DaxLevel thisLevel : levels) {
+            if (thisLevel.getLevelNumber() == level) {
                 return thisLevel;
             }
         }
-        log("Level " + level + " doesn't exist. Creating new level.");
-
-        return addLevel(level);
+        if (level > numberOfTasks) {
+            log("Maximum number of levels " + numberOfTasks + " reached.");
+            return getLevel(numberOfTasks);
+        } else {
+            log("Level " + level + " doesn't exist. Creating new level.");
+            return addLevel(level);
+        }
     }
 
-    private DaxLevel addLevel (int level){
+    private DaxLevel addLevel(int level) {
         DaxLevel newLevel = new DaxLevel();
         newLevel.setLevelNumber(level);
         addLevel(newLevel);
         return newLevel;
     }
 
-    public void addLevel (DaxLevel newLevel){
+    public void addLevel(DaxLevel newLevel) {
         newLevel.setLevelNumber(newLevel.getLevelNumber());
         levels.add(newLevel);
         log("Added level " + newLevel.getLevelNumber() + ". " +
                 "There are now " + numberOfLevels() + " levels in the grid.");
     }
 
-    public int numberOfLevels(){
+    public int numberOfLevels() {
         return levels.size();
     }
 
-    public int numberOfRows(){
+    public int numberOfRows() {
         int rowMax = 0;
-        for(DaxLevel thisLevel : levels){
+        for (DaxLevel thisLevel : levels) {
             int levelRows = thisLevel.getFreeRow();
-            if( levelRows > rowMax){
+            if (levelRows > rowMax) {
                 rowMax = levelRows;
             }
         }

@@ -355,6 +355,10 @@ public class TrianaRun {
             scheduler.notifyError(runnable, message);
         }
 
+        public SchedulerInterface getSchedulerInterface() {
+            return scheduler;
+        }
+
         /**
          * Called by a control task to run the specified task within a running taskgraph
          */

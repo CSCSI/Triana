@@ -95,11 +95,11 @@ public class FileUnit implements TaskConscious, Displayer {
 
                     devLog.debug("\nPrevious job was : " + jobChunk.getJobName() + "\n");
 
-                    devLog.debug("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
+//                    devLog.debug("Adding : " + thisFile.getFilename() + " as an output to job : " + jobChunk.getJobName());
                     jobChunk.addOutFileChunk(thisFile);
                     jobChunk.getArgBuilder().addOutputFile(fileName);
 
-                    devLog.debug("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
+//                    devLog.debug("Adding : " + jobChunk.getJobName() + " as an input to file : " + thisFile.getFilename());
                     thisFile.addInJobChunk(jobChunk);
                 } else {
                     devLog.debug("jobChunk not found in register");
@@ -154,7 +154,7 @@ public class FileUnit implements TaskConscious, Displayer {
         if (task != null) {
             devLog.debug("Changing tool " + task.getToolName() + " to : " + name);
             task.setParameter("fileName", name);
-//            task.setToolName(name);
+            task.setToolName(name);
 
         }
     }

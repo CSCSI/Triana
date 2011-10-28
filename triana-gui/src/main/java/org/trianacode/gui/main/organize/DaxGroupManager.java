@@ -3,6 +3,7 @@ package org.trianacode.gui.main.organize;
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -19,7 +20,13 @@ public class DaxGroupManager {
     Vector<DaxUnitObject> objects = new Vector<DaxUnitObject>();
     ArrayList<DaxUnitObject> specialTasks = new ArrayList<DaxUnitObject>();
 
-    DaxGrid daxGrid = new DaxGrid();
+    DaxGrid daxGrid;
+    private int numberOfTasks = 0;
+
+    public DaxGroupManager(TaskGraph t) {
+
+        daxGrid = new DaxGrid(t);
+    }
 
     public DaxUnitObject addTask(Task t, int level) {
 
@@ -133,5 +140,13 @@ public class DaxGroupManager {
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
         //     System.out.println(text);
+    }
+
+    public void setNumberOfTasks(int numberOfTasks) {
+        this.numberOfTasks = numberOfTasks;
+    }
+
+    public int getNumberOfTasks() {
+        return numberOfTasks;
     }
 }

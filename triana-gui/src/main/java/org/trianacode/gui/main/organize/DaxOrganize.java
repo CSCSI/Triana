@@ -21,7 +21,7 @@ import java.util.Iterator;
  * To change this template use File | Settings | File Templates.
  */
 public class DaxOrganize {
-    DaxGroupManager dgm = new DaxGroupManager();
+    DaxGroupManager dgm;
 
     private static void log(String text) {
         Log log = Loggers.DEV_LOGGER;
@@ -30,6 +30,8 @@ public class DaxOrganize {
     }
 
     public DaxOrganize(final TaskGraph t) {
+        dgm = new DaxGroupManager(t);
+
 //        Thread thread = new Thread(){
 //            public void run(){
 //
@@ -39,7 +41,6 @@ public class DaxOrganize {
         ArrayList<Task> roots = getRootTasks(t);
 
         recurse(levels, roots, 0);
-
         dgm.setRoots(roots);
         dgm.placeSpecialTasks();
 
@@ -65,8 +66,9 @@ public class DaxOrganize {
 //                        ts.remove(task);
 //                    }
 //                }
-
-                recurse(h, nextLevel, level + 1);
+                if (level < dgm.getNumberOfTasks() + 1) {
+                    recurse(h, nextLevel, level + 1);
+                }
             }
         }
     }
@@ -118,7 +120,7 @@ public class DaxOrganize {
         ArrayList<Node> rootNodes = new ArrayList<Node>(Arrays.asList(rootNodeArray));
         log("Input nodes : " + rootNodes.size());
 
-        for (Iterator<Node> iterator = rootNodes.iterator(); iterator.hasNext();) {
+        for (Iterator<Node> iterator = rootNodes.iterator(); iterator.hasNext(); ) {
             Node next = iterator.next();
             if (next.isConnected()) {
                 Cable cable = next.getCable();

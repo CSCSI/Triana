@@ -236,6 +236,9 @@ public class TaskGraphFactoryImp implements TaskGraphFactory {
             }
 
         } catch (TaskGraphException except) {
+            System.out.println("Tool " + tool.getQualifiedToolName()
+                    + " is broken. Parent " + tool.getToolPackage() + " "
+                    + tool.getToolName());
             throw (new TaskException(except.getMessage(), except));
         }
 

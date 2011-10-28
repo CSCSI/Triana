@@ -334,11 +334,12 @@ public class TaskLayoutUtils {
                     addToNodeList(nodelist, nodes[nodecount]);
                 }
             }
-
-            for (Iterator iter = nodelist.iterator(); iter.hasNext();) {
-                grouptask.addDataInputNode((Node) iter.next());
-            }
         }
+        for (Iterator iter = nodelist.iterator(); iter.hasNext(); ) {
+            System.out.println("Resolving " +
+                    grouptask.addDataInputNode((Node) iter.next()));
+        }
+
 
         nodelist.clear();
 
@@ -351,7 +352,7 @@ public class TaskLayoutUtils {
                 }
             }
 
-            for (Iterator iter = nodelist.iterator(); iter.hasNext();) {
+            for (Iterator iter = nodelist.iterator(); iter.hasNext(); ) {
                 grouptask.addDataOutputNode((Node) iter.next());
             }
         }

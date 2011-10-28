@@ -71,6 +71,8 @@ import org.trianacode.taskgraph.Task;
  */
 public interface TrianaServer {
 
+    public SchedulerInterface getSchedulerInterface();
+
     /**
      * Called by a control task to run the specified task within a running taskgraph
      */
