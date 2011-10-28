@@ -198,7 +198,7 @@
 
     <root>
         <level value="DEBUG"/>
-        <appender-ref ref="CONSOLE"/>
+        <!--<appender-ref ref="CONSOLE"/>-->
         <appender-ref ref="FILE"/>
         <!--<appender-ref ref="RABBIT"/>-->
     </root>
