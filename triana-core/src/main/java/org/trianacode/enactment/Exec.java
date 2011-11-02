@@ -1,5 +1,6 @@
 package org.trianacode.enactment;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
 import org.trianacode.config.cl.ArgumentParsingException;
@@ -46,7 +47,6 @@ public class Exec implements ExecutionListener {
     private String pid = UUID.randomUUID().toString();
 
     private TrianaRun runner;
-    private static Set<Object> executionServices;
 
     public Exec(String pid) {
         if (pid != null && pid.length() > 0) {
@@ -59,10 +59,11 @@ public class Exec implements ExecutionListener {
     }
 
     public static void main(String[] args) {
-        exec(args);
+        int exitNumber = exec(args);
+        System.exit(exitNumber);
     }
 
-    public static void exec(String[] args) {
+    public static int exec(String[] args) {
         cleanPids();
         try {
             OptionsHandler parser = new OptionsHandler("Exec", TrianaOptions.TRIANA_OPTIONS);
@@ -72,7 +73,8 @@ public class Exec implements ExecutionListener {
             } catch (ArgumentParsingException e) {
                 System.out.println(e.getMessage());
                 System.out.println(parser.usage());
-                System.exit(0);
+                return 0;
+//                System.exit(0);
             }
             String logLevel = vals.getOptionValue("l");
 
@@ -91,19 +93,23 @@ public class Exec implements ExecutionListener {
             if (bundles != null) {
                 if (bundles.size() != 1) {
                     System.out.println("Only one bundle can be specified");
+                    return 1;
                 }
                 new Exec(pid).executeBundle(bundles.get(0), data, args);
-                System.exit(0);
+                return 0;
+//                System.exit(0);
             }
 
             List<String> wfs = vals.getOptionValues("w");
             if (wfs != null) {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
-                    System.exit(1);
+                    return 1;
+//                    System.exit(1);
                 }
-                System.out.println(new Exec(pid).executeFile(wfs.get(0), data));
-                System.exit(0);
+                System.out.println("Executed : " + new Exec(pid).executeFile(wfs.get(0), data));
+                return 0;
+//                System.exit(0);
             }
 //            String com = vals.getOptionValue("c");
 //            if (com != null && pid != null) {
@@ -116,21 +122,25 @@ public class Exec implements ExecutionListener {
             if (wfs != null) {
                 if (wfs.size() != 1) {
                     System.out.println("Only one workflow can be specified.");
-                    System.exit(1);
+                    return 1;
+//                    System.exit(1);
                 } else {
                     new Exec(pid).executeWorkflow(wfs.get(0), data, args, vals);
+                    return 0;
                 }
             } else {
                 if (pid != null) {
                     int val = readFile(pid);
                     System.out.println(statusToString(val));
-                    System.exit(0);
+                    return 0;
+//                    System.exit(0);
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("Fell off end of options, or major error occurred.");
+        return 1;
     }
 
     private void executeBundle(String bundlePath, String data, String[] args) throws Exception {
@@ -153,6 +163,7 @@ public class Exec implements ExecutionListener {
         } else {
             System.out.println("Bundle executing service not found");
         }
+        engine.shutdown(0);
     }
 
     public ExecutionService getService(Set<Object> executionServices, OptionValues vals) {
@@ -165,6 +176,7 @@ public class Exec implements ExecutionListener {
                 }
             }
         }
+        System.out.println("No executionService requested");
         return null;
     }
 
@@ -253,7 +265,9 @@ public class Exec implements ExecutionListener {
             args.add("-d");
             args.add(data);
         }
-        runProcess(args, bin);
+        System.out.println(ArrayUtils.toString(args));
+        execProcess(args, bin);
+//        runProcess(args, bin);
         return pid;
     }
 
@@ -278,43 +292,18 @@ public class Exec implements ExecutionListener {
             System.out.println("Running with " + executionService.getServiceName());
             executionService.execute(this, engine, wf, tool, data, args);
         } else {
+            System.out.println("Running in vanilla mode : no ExecutionService");
             execute(tool, data);
         }
-
+        engine.shutdown(0);
     }
-
-//    private void createAndSubmitDax(String workflow, String data, String[] args) throws Exception {
-//        System.out.println("\nWill attempt to create and submit dax\n");
-//        File f = new File(workflow);
-//        if (!f.exists()) {
-//            System.out.println("Cannot find workflow file: " + workflow);
-//            System.exit(1);
-//        }
-//
-//        TrianaInstance engine = new TrianaInstance(args);
-//        //    engine.setReresolve(false);
-//        engine.init();
-//
-//        XMLReader reader = new XMLReader(new FileReader(f));
-//        Tool tool = reader.readComponent(engine.getProperties());
-//        if (tool instanceof TaskGraph) {
-//            //           System.out.println("Inputs : " + tool.getDataInputNodeCount() + " Outputs : " + tool.getDataOutputNodeCount());
-////            TaskGraph taskGraph = (TaskGraph) tool;
-//            CommandLinePegasus.initTaskgraph(engine, (TaskGraph) tool);
-//
-//            execute(tool, data);
-//        } else {
-//            System.out.println("Input file not a valid workflow");
-//            System.exit(1);
-//        }
-//    }
 
     public void execute(final Tool tool, final String data) throws Exception {
         runner = new TrianaRun(tool);
         runner.getScheduler().addExecutionListener(this);
-
         NodeMappings mappings = null;
         if (data != null) {
+            System.out.println("Config file : " + data);
             File conf = new File(data);
             if (!conf.exists()) {
                 System.out.println("Cannot find data configuration file:" + data);
@@ -333,12 +322,10 @@ public class Exec implements ExecutionListener {
                 Object val = mappings.getValue(integer);
                 System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
                 runner.sendInputData(integer, val);
-                System.out.println("Exec.execute sent input data");
             }
         } else {
             System.out.println("Mappings was null");
         }
-
         while (!runner.isFinished()) {
             synchronized (this) {
                 try {
@@ -361,94 +348,72 @@ public class Exec implements ExecutionListener {
                     e.printStackTrace();
                 }
             }
-            System.out.println("Exec.execute output:" + o);
+            System.out.println("Exec.execute output node " + node.getName() + " data : " + o);
         }
         runner.dispose();
-
     }
 
-    public void execute(final Tool tool, final IoConfiguration ioc) throws Exception {
-        runner = new TrianaRun(tool);
-        runner.getScheduler().addExecutionListener(this);
+    private int execProcess(List<String> optionsStrings, File bin) {
+        String[] args = new String[optionsStrings.size()];
 
-        NodeMappings mappings = null;
-        if (ioc != null) {
-            IoHandler handler = new IoHandler();
-            mappings = handler.map(ioc, runner.getTaskGraph());
-        }
-        runner.runTaskGraph();
-        if (mappings != null) {
-            Iterator<Integer> it = mappings.iterator();
-            while (it.hasNext()) {
-                Integer integer = it.next();
-                Object val = mappings.getValue(integer);
-                runner.sendInputData(integer, val);
-            }
+        for (int i = 0; i < optionsStrings.size(); i++) {
+            args[i] = optionsStrings.get(i);
         }
 
-        while (!runner.isFinished()) {
-            synchronized (this) {
-                try {
-                    wait(100);
-                } catch (InterruptedException e) {
+        try {
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec(args, new String[]{}, bin);
+            StreamToOutput err = new StreamToOutput(process.getInputStream(), "err");
+            err.start();
+            StreamToOutput out = new StreamToOutput(process.getInputStream(), "std.out");
+            out.start();
 
-                }
-            }
+            int returnCode = process.waitFor();
+            System.out.println("Runtime process finished with code " + returnCode);
+            return returnCode;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        Node[] nodes = runner.getTaskGraph().getDataOutputNodes();
-        for (int i = 0; i < nodes.length; i++) {
-
-            Object out = runner.receiveOutputData(i);
-            Object o = null;
-            if (out instanceof WorkflowDataPacket) {
-                try {
-                    DataBusInterface db = DataBus.getDataBus(((WorkflowDataPacket) out).getProtocol());
-                    o = db.get((WorkflowDataPacket) out);
-                } catch (DataNotResolvableException e) {
-                    continue;
-                }
-            }
-            writeData(o, i);
-        }
-        runner.dispose();
-
+        return -1;
     }
 
+    class StreamToOutput implements Runnable {
 
-    private void runProcess(List<String> args, File runDir) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(args);
-        /*Map<String, String> env = pb.environment();
-        for (String s : env.keySet()) {
-            log.info("Receiver.processBundle env key=" + s);
-            log.info("Receiver.processBundle env val=" + env.get(s));
-        }*/
-        pb = pb.directory(runDir);
-        Process process = pb.start();
+        private InputStream inputStream;
+        private String description;
+        private Thread thread;
+        private BufferedReader inreader;
 
-//        InputStream in = process.getInputStream();
-//        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-//        byte[] bytes1 = new byte[512];
-//        int c1;
-//        while ((c1 = in.read(bytes1)) > -1) {
-//            stdout.write(bytes1, 0, c1);
-//        }
-//        String msg = new String(stdout.toByteArray());
-//        if (msg.length() > 0) {
-//            System.out.println(msg);
-//        }
-//
-//        InputStream err = process.getErrorStream();
-//        ByteArrayOutputStream errlog = new ByteArrayOutputStream();
-//        byte[] bytes = new byte[512];
-//        int c;
-//        while ((c = err.read(bytes)) > -1) {
-//            errlog.write(bytes, 0, c);
-//        }
-//        msg = new String(errlog.toByteArray());
-//        if (msg.length() > 0) {
-//            System.out.println("Exec.runProcess result from error stream:" + msg );
-//        }
+        public StreamToOutput(InputStream inputStream, String description) {
+            this.inputStream = inputStream;
+            this.description = description;
+            inreader = new BufferedReader(new InputStreamReader(inputStream));
+
+        }
+
+        public void start() {
+            thread = new Thread(this);
+            thread.run();
+        }
+
+        @Override
+        public void run() {
+            try {
+                String str;
+                while ((str = inreader.readLine()) != null) {
+                    System.out.println(str);
+                }
+            } catch (IOException e) {
+                System.out.println("Error with stream " + description + " closing");
+            } finally {
+                try {
+                    inreader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Closed streamReader " + description);
+            }
+        }
     }
 
     public InputStream readData(String name) throws FileNotFoundException {
@@ -654,5 +619,40 @@ public class Exec implements ExecutionListener {
             }
         }
 
+    }
+
+    private void runProcess(List<String> args, File runDir) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder(args);
+        /*Map<String, String> env = pb.environment();
+        for (String s : env.keySet()) {
+            log.info("Receiver.processBundle env key=" + s);
+            log.info("Receiver.processBundle env val=" + env.get(s));
+        }*/
+        pb = pb.directory(runDir);
+        Process process = pb.start();
+
+//        InputStream in = process.getInputStream();
+//        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+//        byte[] bytes1 = new byte[512];
+//        int c1;
+//        while ((c1 = in.read(bytes1)) > -1) {
+//            stdout.write(bytes1, 0, c1);
+//        }
+//        String msg = new String(stdout.toByteArray());
+//        if (msg.length() > 0) {
+//            System.out.println(msg);
+//        }
+//
+//        InputStream err = process.getErrorStream();
+//        ByteArrayOutputStream errlog = new ByteArrayOutputStream();
+//        byte[] bytes = new byte[512];
+//        int c;
+//        while ((c = err.read(bytes)) > -1) {
+//            errlog.write(bytes, 0, c);
+//        }
+//        msg = new String(errlog.toByteArray());
+//        if (msg.length() > 0) {
+//            System.out.println("Exec.runProcess result from error stream:" + msg );
+//        }
     }
 }

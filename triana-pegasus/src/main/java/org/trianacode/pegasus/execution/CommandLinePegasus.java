@@ -5,17 +5,11 @@ import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.ExecutionService;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.taskgraph.CableException;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
-import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
 
 /**
@@ -55,7 +49,7 @@ public class CommandLinePegasus implements ExecutionService {
         devLog.debug("\nWill attempt to create and submit dax\n");
 
         if (tool instanceof TaskGraph) {
-            initTaskgraph((TaskGraph) tool);
+            initTaskgraph((TaskGraph) tool, true);
             executeEngine.execute((TaskGraph) tool, (String) data);
         } else {
             devLog.debug("Input file not a valid workflow");
@@ -63,20 +57,34 @@ public class CommandLinePegasus implements ExecutionService {
         }
     }
 
-    public static Tool initTaskgraph(TaskGraph taskGraph) {
+    public static Tool initTaskgraph(TaskGraph taskGraph, boolean submit) throws CableException, TaskException {
+        if (submit) {
+            return createAndSubmit(taskGraph);
+        } else {
+            return createOnly(taskGraph);
+        }
+    }
+
+    private static Tool createOnly(TaskGraph taskGraph) throws TaskException, CableException {
+
+        Node childNode = getTaskgraphChildNode(taskGraph);
+        if (childNode != null) {
+
+            ToolImp creatorTool = new ToolImp(taskGraph.getProperties());
+            initTool(creatorTool, "DaxCreatorV3", pegasusPackage, 1, 0);
+            Task creatorTask = taskGraph.createTask(creatorTool);
+
+            taskGraph.connect(childNode, creatorTask.getDataInputNode(0));
+        }
+        return taskGraph;
+    }
+
+    public static Tool createAndSubmit(TaskGraph taskGraph) {
         devLog.debug("\nBegin init taskgraph for dax create/ submit.");
 
         Task creatorTask = null;
         Task submitTask = null;
-//        if(creatorClass != null && submitClass != null){
         try {
-
-            Node childNode = getTaskgraphChildNode(taskGraph);
-            if (childNode != null && childNode.getTask() != submitTask) {
-                taskGraph.connect(childNode, creatorTask.getDataInputNode(0));
-            } else {
-                devLog.debug("No child node available to attach daxCreator to.");
-            }
 
             ToolImp creatorTool = new ToolImp(taskGraph.getProperties());
             //            initTool(creatorTool, creatorClass.getCanonicalName(), creatorClass.getPackage().getName(), 0, 1);
@@ -102,6 +110,14 @@ public class CommandLinePegasus implements ExecutionService {
                     devLog.debug("Failed to connect task cables");
                     e.printStackTrace();
                 }
+
+                Node childNode = getTaskgraphChildNode(taskGraph);
+                if (childNode != null && childNode.getTask() != submitTask) {
+                    taskGraph.connect(childNode, creatorTask.getDataInputNode(0));
+                } else {
+                    devLog.debug("No child node available to attach daxCreator to.");
+                }
+
             } else {
                 devLog.debug("Tasks were null, not connected.");
             }
@@ -110,14 +126,6 @@ public class CommandLinePegasus implements ExecutionService {
             e.printStackTrace();
         }
 
-        try {
-            BufferedWriter fileWriter = new BufferedWriter(new FileWriter("/Users/ian/pegterm.xml"));
-            XMLWriter writer = new XMLWriter(fileWriter);
-            writer.writeComponent(taskGraph);
-        } catch (Exception e) {
-            devLog.debug("Failed to write modified xml file");
-            e.printStackTrace();
-        }
         devLog.debug("Taskgraph initialised");
         return (Tool) taskGraph;
     }
@@ -152,11 +160,15 @@ public class CommandLinePegasus implements ExecutionService {
 
             if (childTasks.size() > 0) {
                 childNode = childTasks.get(0).addDataOutputNode();
+            } else {
+                if (taskGraph.getOutputNodeCount() > 0) {
+                    childNode = taskGraph.getOutputNode(0).getTopLevelTask().addDataOutputNode();
+                }
             }
         } catch (Exception e) {
             devLog.debug("Failed to add node to child leaf of taskgraph");
         }
-
+        System.out.println("Child node " + childNode);
         return childNode;
     }
 }

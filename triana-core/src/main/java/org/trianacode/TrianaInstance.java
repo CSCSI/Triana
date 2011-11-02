@@ -360,6 +360,13 @@ public class TrianaInstance {
         return errorTracker;
     }
 
+    public void shutdown(int exitCode) {
+        toolResolver.shutdown();
+        executorService.shutdown();
+        httpServices.stopServices();
+        System.exit(exitCode);
+    }
+
     private class ShutdownHook extends Thread {
 
         private void add() {

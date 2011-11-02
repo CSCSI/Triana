@@ -25,6 +25,15 @@ public class HTTPServices {
 
     }
 
+    public void stopServices() {
+        try {
+            workflowServer.stop();
+            httpEngine.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public TrianaHttpServer getWorkflowServer() {
         return workflowServer;
     }

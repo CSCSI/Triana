@@ -653,6 +653,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
         dax.writeToFile(fileName + ".dax");
         devLog.debug("File " + fileName + " saved.\n");
+        System.out.println(fileName + " saved.");
 
         java.io.File daxFile = new java.io.File(fileName + ".dax");
 

@@ -151,7 +151,8 @@ public class Triana {
         if (runNoGui || pid) {
             if (!server) {
                 if (pid || exec || workflow || bundle) {
-                    Exec.exec(args);
+
+                    System.exit(Exec.exec(args));
                 } else {
                     System.out.println("Non-gui mode combined with non-server mode requires either a uuid, a workflow, or a bundle");
                     System.out.println(parser.usage());

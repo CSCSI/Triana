@@ -48,6 +48,7 @@ public class FileUnit implements TaskConscious, Displayer {
 
     @org.trianacode.annotation.Process(gather = true)
     public UUID fileUnitProcess(List in) {
+        fileName = task.getToolName();
 
         devLog.debug("File : " + fileName + " Collection = " + collection + " Number of files : " + numberOfFiles);
         DaxFileChunk thisFile = new DaxFileChunk();

@@ -19,17 +19,15 @@ import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.ExecutionService;
 import org.trianacode.enactment.io.IoConfiguration;
+import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
 import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +41,8 @@ import java.util.List;
 public class TrianaBundleExecution implements ExecutionService {
     private ArrayList<Configuration> configurationList;
     private ArrayList<WorkflowImplementation> workflowImplementations;
-    private IoConfiguration ioConfiguration;
+    File configFile;
+    Tool tool;
 
     @Override
     public String getServiceName() {
@@ -74,21 +73,15 @@ public class TrianaBundleExecution implements ExecutionService {
         if (workflowImplementation != null) {
             if (configurationList.size() > 0) {
                 Signature signature = buildSignature(workflowImplementation, configurationList.get(0));
-                ioConfiguration = getIOConfigFromSignature(signature);
+                configFile = getIOConfigFromSignature(signature);
+
             }
 
             byte[] definitionBytes = workflowImplementation.getDefinition().getBytes();
 
             if (workflowImplementation.getEngine().equalsIgnoreCase("Triana")) {
                 XMLReader reader = new XMLReader(new InputStreamReader(new ByteArrayInputStream(definitionBytes)));
-                Tool tool = reader.readComponent(engine.getProperties());
-                if (tool != null) {
-                    if (ioConfiguration != null) {
-                        execEngine.execute(tool, ioConfiguration);
-                    } else {
-                        execEngine.execute(tool, (String) null);
-                    }
-                }
+                tool = reader.readComponent(engine.getProperties());
 
             } else if (workflowImplementation.getLanguage().getShortId().equalsIgnoreCase("IWIR")) {
 
@@ -100,22 +93,26 @@ public class TrianaBundleExecution implements ExecutionService {
 
                 IWIR iwir = new IWIR(definitionTempFile);
                 ImportIwir iwirImporter = new ImportIwir();
-                TaskGraph taskGraph = iwirImporter.taskFromIwir(iwir);
-
-//                taskGraph.setToolName(workflowImplementation.getDefinition().getFilename());
+                tool = iwirImporter.taskFromIwir(iwir);
 
                 System.out.println("Definition name " + workflowImplementation.getDefinition().getFilename());
-                System.out.println("Toolname " + taskGraph.getToolName());
-                taskGraph.setToolName(workflowImplementation.getDefinition().getFilename());
-                System.out.println("Toolname " + taskGraph.getToolName());
+                System.out.println("Toolname " + tool.getToolName());
+                tool.setToolName(workflowImplementation.getDefinition().getFilename());
+                System.out.println("Toolname " + tool.getToolName());
 
-                if (taskGraph != null) {
-                    execEngine.execute(taskGraph, ioConfiguration);
-                }
             } else {
                 System.out.println("Bundle contains IWIR workflow, but no importer is present");
                 System.exit(1);
             }
+
+            if (tool != null) {
+                if (configFile != null) {
+                    execEngine.execute(tool, configFile.getAbsolutePath());
+                } else {
+                    execEngine.execute(tool, "");
+                }
+            }
+
         }
     }
 
@@ -197,7 +194,7 @@ public class TrianaBundleExecution implements ExecutionService {
         return signature;
     }
 
-    private IoConfiguration getIOConfigFromSignature(Signature signature) {
+    private File getIOConfigFromSignature(Signature signature) throws IOException {
 
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
@@ -227,7 +224,12 @@ public class TrianaBundleExecution implements ExecutionService {
             System.out.println("    ref:" + mapping.getIoType().isReference());
         }
 
-        return conf;
+        DocumentHandler documentHandler = new DocumentHandler();
+        new IoHandler().serialize(documentHandler, conf);
+        File tempConfFile = File.createTempFile(conf.getToolName() + "_confFile", ".dat");
+        documentHandler.output(new FileWriter(tempConfFile), true);
+
+        return tempConfFile;
     }
 
     private void initBundle(SHIWABundle bundle) throws SHIWADesktopIOException {
