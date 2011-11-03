@@ -17,6 +17,7 @@ import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
+import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.service.SchedulerException;
 import org.trianacode.taskgraph.service.VariableDummyUnit;
@@ -24,6 +25,8 @@ import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -143,10 +146,16 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
 
     }
 
-    private void exec(Task loadedTask, IoConfiguration conf) {
+    private void exec(Task loadedTask, IoConfiguration conf) throws IOException {
+        DocumentHandler documentHandler = new DocumentHandler();
+        new IoHandler().serialize(documentHandler, conf);
+        File tempConfFile = File.createTempFile(conf.getToolName() + "_confFile", ".dat");
+        documentHandler.output(new FileWriter(tempConfFile), true);
+
+
         Exec exec = new Exec(null);
         try {
-            exec.execute(loadedTask, conf);
+            exec.execute(loadedTask, tempConfFile.getAbsolutePath());
         } catch (Exception e) {
             devLog.debug("Failed to load workflow back to Triana");
             e.printStackTrace();

@@ -26,6 +26,8 @@ public class TrianaOptions {
     public static final Option SUPPRESS_DEFAULT_TOOLBOXES = new Option("sdt", "suppress-default-toolboxes", "start triana with no default, only those given with -x");
     public static final Option CREATE_AND_SUBMIT_DAX = new Option("dax", "submit-to-pegasus", "Takes a workflow, creates a dax, and submits to Pegasus");
     public static final Option EXECUTE_BUNDLE = new Option("b", "bundle", "Execute bundle");
+    public static final Option OUTPUT_FORMAT = new Option("f", "output-format", "The format the workflow will be produced as after processing.");
+    public static final Option CONVERT_WORKFLOW = new Option("c", "convert-workflow", "languages", "No execution, converts between workflow languages", true, true);
 
     public static Option[] TRIANA_OPTIONS = {
             NO_GUI_OPTION,
@@ -43,7 +45,9 @@ public class TrianaOptions {
             HELP_OPTION,
             SUPPRESS_DEFAULT_TOOLBOXES,
             CREATE_AND_SUBMIT_DAX,
-            EXECUTE_BUNDLE
+            EXECUTE_BUNDLE,
+            OUTPUT_FORMAT,
+            CONVERT_WORKFLOW
     };
 
     public static boolean hasOption(ArgumentParser parsed, Option o) {

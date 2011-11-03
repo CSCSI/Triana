@@ -1,7 +1,10 @@
 package org.trianacode.pegasus.converter;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
+import org.trianacode.enactment.Exec;
+import org.trianacode.enactment.ExecutionService;
 import org.trianacode.pegasus.dax.FileUnit;
 import org.trianacode.pegasus.dax.JobUnit;
 import org.trianacode.taskgraph.*;
@@ -12,6 +15,8 @@ import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -21,7 +26,7 @@ import java.util.Collection;
  * Time: 15:16
  * To change this template use File | Settings | File Templates.
  */
-public class DaxifyTaskGraph {
+public class DaxifyTaskGraph implements ExecutionService {
 
     public TaskGraph convert(TaskGraph taskGraph) {
         try {
@@ -233,5 +238,49 @@ public class DaxifyTaskGraph {
         tool.setToolName(name);
         System.out.println("New task, name : " + tool.getToolName());
         return tool;
+    }
+
+    @Override
+    public String getServiceName() {
+        return "taskgraph-to-daxJobs";
+    }
+
+    @Override
+    public String getLongOption() {
+        return "taskgraph-to-daxJobs";
+    }
+
+    @Override
+    public String getShortOption() {
+        return "daxJobs";
+    }
+
+    @Override
+    public String getDescription() {
+        return "An intermediary stage between a taskgraph and a dax, where units must input/output files.";
+    }
+
+    @Override
+    public void execute(Exec execEngine, TrianaInstance engine, String workflow, Object workflowObject, Object inputData, String[] TrianaArgs) throws Exception {
+    }
+
+    @Override
+    public Tool getTool(TrianaInstance instance, String workflowFilePath) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object getWorkflow(Tool tool) {
+        return convert((TaskGraph) tool);
+    }
+
+    @Override
+    public File getWorkflowFile(Tool tool) {
+        return null;
+    }
+
+    @Override
+    public File getConfigFile() throws IOException {
+        return null;
     }
 }

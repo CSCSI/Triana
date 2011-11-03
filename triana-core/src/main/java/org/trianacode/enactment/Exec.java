@@ -107,7 +107,7 @@ public class Exec implements ExecutionListener {
                     return 1;
 //                    System.exit(1);
                 }
-                System.out.println("Executed : " + new Exec(pid).executeFile(wfs.get(0), data));
+                System.out.println("Executed : " + new Exec(pid).executeNewTriana(wfs.get(0), data));
                 return 0;
 //                System.exit(0);
             }
@@ -125,7 +125,7 @@ public class Exec implements ExecutionListener {
                     return 1;
 //                    System.exit(1);
                 } else {
-                    new Exec(pid).executeWorkflow(wfs.get(0), data, args, vals);
+                    new Exec(pid).executeWorkflowFile(wfs.get(0), data, args, vals);
                     return 0;
                 }
             } else {
@@ -153,9 +153,7 @@ public class Exec implements ExecutionListener {
         engine.addExtensionClass(ExecutionService.class);
         engine.init();
 
-        Set<Object> executionServices = engine.getExtensions(ExecutionService.class);
-        System.out.println("Found " + executionServices.size() + " ExecutionServices");
-        ExecutionService executionService = getService(executionServices, "bundle");
+        ExecutionService executionService = ExecutionUtils.getService(engine, "bundle");
 
         if (executionService != null) {
             System.out.println("Running with " + executionService.getServiceName());
@@ -166,32 +164,6 @@ public class Exec implements ExecutionListener {
         engine.shutdown(0);
     }
 
-    public ExecutionService getService(Set<Object> executionServices, OptionValues vals) {
-        for (Object service : executionServices) {
-            if (service instanceof ExecutionService) {
-                ExecutionService executionService = ((ExecutionService) service);
-                if (vals.hasOption(executionService.getShortOption())) {
-                    System.out.println("Returning service " + executionService.getShortOption());
-                    return (ExecutionService) service;
-                }
-            }
-        }
-        System.out.println("No executionService requested");
-        return null;
-    }
-
-    public ExecutionService getService(Set<Object> executionServices, String longOpt) {
-        for (Object service : executionServices) {
-            if (service instanceof ExecutionService) {
-                ExecutionService executionService = ((ExecutionService) service);
-                if (executionService.getLongOption().equals(longOpt)) {
-                    System.out.println("Returning service " + executionService.getShortOption());
-                    return (ExecutionService) service;
-                }
-            }
-        }
-        return null;
-    }
 
     private static int commandToInt(String command) {
         if (command.equalsIgnoreCase("pause")) {
@@ -229,7 +201,7 @@ public class Exec implements ExecutionListener {
         }
     }
 
-    private String executeFile(String wf, String data) throws IOException {
+    private String executeNewTriana(String wf, String data) throws IOException {
         File f = new File(wf);
         if (!f.exists()) {
             return "Workflow File cannot be found:" + wf;
@@ -271,7 +243,7 @@ public class Exec implements ExecutionListener {
         return pid;
     }
 
-    private void executeWorkflow(String wf, String data, String[] args, OptionValues vals) throws Exception {
+    private void executeWorkflowFile(String wf, String data, String[] args, OptionValues vals) throws Exception {
 
         File f = new File(wf);
         if (!f.exists()) {
@@ -285,9 +257,7 @@ public class Exec implements ExecutionListener {
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
-        Set<Object> executionServices = engine.getExtensions(ExecutionService.class);
-        System.out.println("Found " + executionServices.size() + " ExecutionServices");
-        ExecutionService executionService = getService(executionServices, vals);
+        ExecutionService executionService = ExecutionUtils.getService(engine, vals);
         if (executionService != null) {
             System.out.println("Running with " + executionService.getServiceName());
             executionService.execute(this, engine, wf, tool, data, args);

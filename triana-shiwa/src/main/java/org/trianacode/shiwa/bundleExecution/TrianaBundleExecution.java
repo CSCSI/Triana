@@ -23,6 +23,8 @@ import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
 import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
+import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
@@ -43,6 +45,7 @@ public class TrianaBundleExecution implements ExecutionService {
     private ArrayList<WorkflowImplementation> workflowImplementations;
     File configFile;
     Tool tool;
+    private WorkflowImplementation workflowImplementation;
 
     @Override
     public String getServiceName() {
@@ -65,23 +68,32 @@ public class TrianaBundleExecution implements ExecutionService {
     }
 
     @Override
-    public void execute(Exec execEngine, TrianaInstance engine, String bundlePath, Object workflowObject, Object inputData, String[] args) throws Exception {
-        SHIWABundle shiwaBundle = new SHIWABundle(new File(bundlePath));
+    public void execute(Exec execEngine, TrianaInstance instance, String bundlePath, Object workflowObject, Object inputData, String[] args) throws Exception {
+        tool = getTool(instance, bundlePath);
+        configFile = getConfigFile();
+
+        if (tool != null) {
+            if (configFile != null) {
+                execEngine.execute(tool, configFile.getAbsolutePath());
+            } else {
+                execEngine.execute(tool, null);
+            }
+        }
+    }
+
+    @Override
+    public Tool getTool(TrianaInstance instance, String workflowFilePath) throws IOException, TaskGraphException, ProxyInstantiationException {
+        SHIWABundle shiwaBundle = new SHIWABundle(new File(workflowFilePath));
         initBundle(shiwaBundle);
 
-        WorkflowImplementation workflowImplementation = chooseImp();
+        workflowImplementation = chooseImp();
         if (workflowImplementation != null) {
-            if (configurationList.size() > 0) {
-                Signature signature = buildSignature(workflowImplementation, configurationList.get(0));
-                configFile = getIOConfigFromSignature(signature);
-
-            }
 
             byte[] definitionBytes = workflowImplementation.getDefinition().getBytes();
 
             if (workflowImplementation.getEngine().equalsIgnoreCase("Triana")) {
                 XMLReader reader = new XMLReader(new InputStreamReader(new ByteArrayInputStream(definitionBytes)));
-                tool = reader.readComponent(engine.getProperties());
+                tool = reader.readComponent(instance.getProperties());
 
             } else if (workflowImplementation.getLanguage().getShortId().equalsIgnoreCase("IWIR")) {
 
@@ -102,18 +114,31 @@ public class TrianaBundleExecution implements ExecutionService {
 
             } else {
                 System.out.println("Bundle contains IWIR workflow, but no importer is present");
-                System.exit(1);
+//                System.exit(1);
             }
-
-            if (tool != null) {
-                if (configFile != null) {
-                    execEngine.execute(tool, configFile.getAbsolutePath());
-                } else {
-                    execEngine.execute(tool, "");
-                }
-            }
-
         }
+        return tool;
+    }
+
+    @Override
+    public Object getWorkflow(Tool tool) {
+        return null;
+    }
+
+    @Override
+    public File getWorkflowFile(Tool tool) {
+        return null;
+    }
+
+    @Override
+    public File getConfigFile() throws IOException {
+        if (workflowImplementation == null || configurationList.size() < 1) {
+            return null;
+        } else {
+            Signature signature = buildSignature(workflowImplementation, configurationList.get(0));
+            configFile = getIOConfigFromSignature(signature);
+        }
+        return configFile;
     }
 
     private WorkflowImplementation chooseImp() {
@@ -132,7 +157,6 @@ public class TrianaBundleExecution implements ExecutionService {
                 }
             }
         }
-
         return chosenImp;
     }
 

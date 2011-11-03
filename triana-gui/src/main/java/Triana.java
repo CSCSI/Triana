@@ -65,6 +65,7 @@ import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.OptionValues;
 import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
+import org.trianacode.enactment.Convert;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.ApplicationFrame;
@@ -148,8 +149,11 @@ public class Triana {
         boolean server = vals.hasOption(SERVER);
         boolean workflow = vals.hasOptionValue(WORKFLOW);
         boolean bundle = vals.hasOption(BUNDLE);
+        boolean convert = vals.hasOption(TrianaOptions.CONVERT_WORKFLOW.getShortOpt());
         if (runNoGui || pid) {
-            if (!server) {
+            if (convert) {
+                Convert.convert(args);
+            } else if (!server) {
                 if (pid || exec || workflow || bundle) {
 
                     System.exit(Exec.exec(args));

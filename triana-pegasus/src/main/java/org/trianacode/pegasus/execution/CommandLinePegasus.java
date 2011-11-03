@@ -10,6 +10,8 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +33,7 @@ public class CommandLinePegasus implements ExecutionService {
 
     @Override
     public String getLongOption() {
-        return "submit-to-pegasus";
+        return "taskgraph-to-dax";
     }
 
     @Override
@@ -41,7 +43,7 @@ public class CommandLinePegasus implements ExecutionService {
 
     @Override
     public String getDescription() {
-        return "Takes a workflow, creates a dax, and submits to Pegasus";
+        return "Takes a workflow and creates a dax.";
     }
 
     @Override
@@ -53,8 +55,28 @@ public class CommandLinePegasus implements ExecutionService {
             executeEngine.execute((TaskGraph) tool, (String) data);
         } else {
             devLog.debug("Input file not a valid workflow");
-            System.exit(1);
+//            System.exit(1);
         }
+    }
+
+    @Override
+    public Tool getTool(TrianaInstance instance, String workflowFilePath) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object getWorkflow(Tool tool) {
+        return null;
+    }
+
+    @Override
+    public File getWorkflowFile(Tool tool) {
+        return null;
+    }
+
+    @Override
+    public File getConfigFile() throws IOException {
+        return null;
     }
 
     public static Tool initTaskgraph(TaskGraph taskGraph, boolean submit) throws CableException, TaskException {
