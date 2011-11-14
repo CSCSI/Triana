@@ -13,12 +13,11 @@ import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
+import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolResolver;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 
 /**
@@ -102,7 +101,12 @@ public class ExecutionTarget extends TargetResource {
             inst.execute(new Runnable() {
                 public void run() {
                     try {
-                        exec.execute(task, config);
+                        //TODO hack!
+                        DocumentHandler documentHandler = new DocumentHandler();
+                        new IoHandler().serialize(documentHandler, config);
+                        File tempConfFile = File.createTempFile(config.getToolName() + "_confFile", ".dat");
+                        documentHandler.output(new FileWriter(tempConfFile), true);
+                        exec.execute(task, tempConfFile.getAbsolutePath());
                     } catch (Exception e) {
                         e.printStackTrace();   // TODO
                     }

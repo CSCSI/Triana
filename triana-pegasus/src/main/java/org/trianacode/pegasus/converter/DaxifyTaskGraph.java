@@ -1,22 +1,17 @@
 package org.trianacode.pegasus.converter;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.trianacode.TrianaInstance;
-import org.trianacode.config.TrianaProperties;
-import org.trianacode.enactment.Exec;
-import org.trianacode.enactment.ExecutionService;
+import org.trianacode.enactment.AddonUtils;
+import org.trianacode.enactment.addon.ConversionAddon;
 import org.trianacode.pegasus.dax.FileUnit;
 import org.trianacode.pegasus.dax.JobUnit;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
-import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
-import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -26,7 +21,7 @@ import java.util.Collection;
  * Time: 15:16
  * To change this template use File | Settings | File Templates.
  */
-public class DaxifyTaskGraph implements ExecutionService {
+public class DaxifyTaskGraph implements ConversionAddon {
 
     public TaskGraph convert(TaskGraph taskGraph) {
         try {
@@ -111,6 +106,8 @@ public class DaxifyTaskGraph implements ExecutionService {
                     } else {
                         clonenode = clone.getTask(taskgraph.getTask(node).getToolName())
                                 .getDataInputNode(node.getNodeIndex());
+                        System.out.println(clonenode.getName());
+//                        addFileUnit(null, clone, taskgraph);
                     }
 
                     clone.setGroupNodeParent(clone.getDataInputNode(count), clonenode);
@@ -170,17 +167,19 @@ public class DaxifyTaskGraph implements ExecutionService {
     private void addFileUnit(Node sendnode, Node recnode, TaskGraph clone) throws CableException {
         try {
             Task fileTask = new TaskImp(
-                    makeTool(FileUnit.class, "" + Math.random() * 100, clone.getProperties()),
+                    AddonUtils.makeTool(FileUnit.class, "" + Math.random() * 100, clone.getProperties()),
                     new TaskFactoryImp(),
                     false
             );
 
             Task task = clone.createTask(fileTask, false);
 
-            Node inNode = task.addDataInputNode();
-            Node outNode = task.addDataOutputNode();
+            if (sendnode != null) {
+                Node inNode = task.addDataInputNode();
+                clone.connect(sendnode, inNode);
+            }
 
-            clone.connect(sendnode, inNode);
+            Node outNode = task.addDataOutputNode();
             clone.connect(outNode, recnode);
         } catch (TaskException e) {
             e.printStackTrace();
@@ -192,7 +191,7 @@ public class DaxifyTaskGraph implements ExecutionService {
     private Task initDaxTask(Task task, Class clazz) {
         Tool tool = null;
         try {
-            tool = makeTool(clazz, task.getToolName(), task.getProperties());
+            tool = AddonUtils.makeTool(clazz, task.getToolName(), task.getProperties());
         } catch (ProxyInstantiationException e) {
             e.printStackTrace();
         } catch (TaskException e) {
@@ -228,16 +227,9 @@ public class DaxifyTaskGraph implements ExecutionService {
             }
             count++;
         }
-        //Todo - probably something technical and frustrating...
-    }
 
-    private Tool makeTool(Class clazz, String name, TrianaProperties properties) throws ProxyInstantiationException, TaskException {
-        Tool tool = new ToolImp(properties);
-        tool.setProxy(new JavaProxy(clazz.getSimpleName(), clazz.getPackage().getName()));
-        tool.setToolPackage(clazz.getPackage().getName());
-        tool.setToolName(name);
-        System.out.println("New task, name : " + tool.getToolName());
-        return tool;
+        daxTask.setParameter(JobUnit.TRIANA_TOOL, task.getQualifiedToolName());
+        //Todo - probably something technical and frustrating...
     }
 
     @Override
@@ -261,26 +253,22 @@ public class DaxifyTaskGraph implements ExecutionService {
     }
 
     @Override
-    public void execute(Exec execEngine, TrianaInstance engine, String workflow, Object workflowObject, Object inputData, String[] TrianaArgs) throws Exception {
-    }
-
-    @Override
-    public Tool getTool(TrianaInstance instance, String workflowFilePath) throws Exception {
+    public Object toolToWorkflow(Tool tool) {
         return null;
     }
 
     @Override
-    public Object getWorkflow(Tool tool) {
-        return convert((TaskGraph) tool);
-    }
-
-    @Override
-    public File getWorkflowFile(Tool tool) {
+    public Tool workflowToTool(Object workflowObject) {
         return null;
     }
 
     @Override
-    public File getConfigFile() throws IOException {
+    public Tool processWorkflow(Tool workflow) {
+        return convert((TaskGraph) workflow);
+    }
+
+    @Override
+    public File toolToWorkflowFile(Tool tool, String filePath) {
         return null;
     }
 }

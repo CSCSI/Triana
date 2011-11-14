@@ -2,6 +2,7 @@ package org.trianacode.shiwa.iwir.importer.utils;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.shiwa.fgi.iwir.*;
+import org.trianacode.enactment.AddonUtils;
 import org.trianacode.shiwa.iwir.factory.TaskHolder;
 import org.trianacode.shiwa.iwir.factory.TaskHolderFactory;
 import org.trianacode.shiwa.test.InOut;
@@ -169,7 +170,7 @@ public class ImportIwir {
                     type = "InOut";
                 }
                 Task trianaTask = taskGraph.createTask(
-                        ToolUtils.makeTool(
+                        AddonUtils.makeTool(
                                 clazz, iwirTask.getName(), taskGraph.getProperties()
                         )
                 );

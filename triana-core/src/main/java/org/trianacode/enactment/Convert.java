@@ -6,6 +6,9 @@ import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.OptionValues;
 import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
+import org.trianacode.enactment.addon.CLIaddon;
+import org.trianacode.enactment.addon.ConversionAddon;
+import org.trianacode.enactment.addon.ExecutionAddon;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.tool.Tool;
@@ -45,15 +48,18 @@ public class Convert {
         }
 
         TrianaInstance engine = new TrianaInstance(args);
-        engine.addExtensionClass(ExecutionService.class);
+        engine.addExtensionClass(CLIaddon.class);
         engine.init();
+
+        Thread.sleep(1000);
 
         Tool tool = null;
 
         List<String> bundleInput = vals.getOptionValues(TrianaOptions.EXECUTE_BUNDLE.getShortOpt());
         if (bundleInput != null) {
-            ExecutionService executionService = ExecutionUtils.getService(engine, "bundle");
-            tool = executionService.getTool(engine, bundleInput.get(0));
+            ExecutionAddon executionAddon = AddonUtils.getExecutionAddon(engine, "bundle");
+            System.out.println("Unbundling with " + executionAddon.getServiceName());
+            tool = executionAddon.getTool(engine, bundleInput.get(0));
         } else {
             List<String> workflowInput = vals.getOptionValues(TrianaOptions.WORKFLOW_OPTION.getShortOpt());
             if (workflowInput != null) {
@@ -64,34 +70,56 @@ public class Convert {
         if (tool == null) {
             System.out.println("No input specified");
             System.exit(1);
-        }
+        } else {
 
-        List<String> conversion = vals.getOptionValues("c");
-        if (conversion != null) {
-            String conversionString = conversion.get(0).toLowerCase();
+            List<String> conversion = vals.getOptionValues("c");
+            if (conversion != null) {
+                String conversionString = conversion.get(0).toLowerCase();
 
-            if (conversionString.equals(IWIR_FORMAT)) {
+                if (conversionString.equals(IWIR_FORMAT)) {
 
-            } else if (conversionString.equals(DAX_FORMAT)) {
-                ExecutionService executionService = ExecutionUtils.getService(engine, "taskgraph-to-daxJobs");
-                Tool daxifiedTaskgraph = (Tool) executionService.getWorkflow(tool);
-            } else {
-                conversionString = TASKGRAPH_FORMAT;
+                    ConversionAddon conversionAddon = AddonUtils.getConversionAddon(engine, "taskgraph-to-iwir");
 
-                File temp = File.createTempFile("publishedTaskgraphTemp", ".xml");
-                temp.deleteOnExit();
 
-                XMLWriter outWriter = new XMLWriter(new PrintWriter(System.out));
-                outWriter.writeComponent(tool);
+                } else if (conversionString.equals(DAX_FORMAT)) {
 
-                XMLWriter fileWriter = new XMLWriter(new PrintWriter(temp));
-                fileWriter.writeComponent(tool);
-                System.out.println("File created : " + temp.getAbsolutePath());
+                    System.out.println("Will create dax file");
+
+                    ConversionAddon daxifyAddon = (ConversionAddon) AddonUtils.getService(engine, "taskgraph-to-daxJobs");
+                    ConversionAddon daxAddon = (ConversionAddon) AddonUtils.getService(engine, "convert-dax");
+                    if (daxifyAddon != null && daxAddon != null) {
+
+                        Tool daxifiedTaskgraph = (Tool) daxifyAddon.processWorkflow(tool);
+                        System.out.println("Daxified taskgraph");
+                        File daxFile = daxAddon.toolToWorkflowFile(daxifiedTaskgraph, "exampleDax.xml");
+                        System.out.println("Created dax file " + daxFile.getAbsolutePath());
+                    } else {
+                        System.out.println("Couldn't find required addons to create dax");
+                    }
+
+                } else {
+
+                    conversionString = TASKGRAPH_FORMAT;
+
+                    File temp = File.createTempFile("publishedTaskgraphTemp", ".xml");
+                    temp.deleteOnExit();
+
+                    XMLWriter outWriter = new XMLWriter(new PrintWriter(System.out));
+                    outWriter.writeComponent(tool);
+                    XMLWriter fileWriter = new XMLWriter(new PrintWriter(temp));
+                    fileWriter.writeComponent(tool);
+                    System.out.println("File created : " + temp.getAbsolutePath());
+
+                }
+                engine.shutdown(0);
+
+                if (conversion.size() > 1) {
+                    if (conversion.get(1).toLowerCase().equals("bundle")) {
+                        System.out.println("Will bundle outputs");
+                    }
+                }
             }
-            engine.shutdown(0);
         }
-
-
     }
 
 }

@@ -52,6 +52,7 @@ public class JobUnit implements TaskConscious, Displayer {
     public Task task;
 
     private static Log devLog = Loggers.DEV_LOGGER;
+    public static final String TRIANA_TOOL = "triana_tool";
 
 //    public String getArgs() {
 //        return args;
@@ -69,6 +70,12 @@ public class JobUnit implements TaskConscious, Displayer {
 
     @Process(gather = true)
     public UUID process(List in) {
+
+        if (task.getParameter(TRIANA_TOOL) != null) {
+            jobName = (String) task.getParameter(TRIANA_TOOL);
+            args = "triana.sh -n -U " + jobName;
+        }
+
         UUID thisUUID = UUID.randomUUID();
         devLog.debug("Job : " + jobName + " Collection = " + collection + " Number of jobs : " + numberOfJobs);
 
@@ -88,8 +95,8 @@ public class JobUnit implements TaskConscious, Displayer {
         devLog.debug("\nList into " + jobName + " is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         ArgBuilder ab = new ArgBuilder();
-        ab.setInputSwitch("-i");
-        ab.setOutputSwitch("-o");
+        ab.setInputSwitch("-I");
+        ab.setOutputSwitch("-O");
         ab.setArgString(args);
 
         for (Object object : in) {

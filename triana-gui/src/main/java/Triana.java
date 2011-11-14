@@ -67,6 +67,7 @@ import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.Convert;
 import org.trianacode.enactment.Exec;
+import org.trianacode.enactment.RunUnit;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.hci.ApplicationFrame;
 
@@ -143,6 +144,8 @@ public class Triana {
                 Loggers.setLogLevel(logLevel);
             }
         }
+
+        boolean runUnit = vals.hasOption(TrianaOptions.RUN_UNIT.getShortOpt());
         boolean runNoGui = vals.hasOption(NOGUI);
         boolean pid = vals.hasOptionValue(UUID);
         boolean exec = vals.hasOptionValue(EXECUTE);
@@ -150,7 +153,11 @@ public class Triana {
         boolean workflow = vals.hasOptionValue(WORKFLOW);
         boolean bundle = vals.hasOption(BUNDLE);
         boolean convert = vals.hasOption(TrianaOptions.CONVERT_WORKFLOW.getShortOpt());
-        if (runNoGui || pid) {
+        if (runNoGui || pid || runUnit) {
+            if (runUnit) {
+                new RunUnit(args);
+                System.exit(0);
+            }
             if (convert) {
                 Convert.convert(args);
             } else if (!server) {

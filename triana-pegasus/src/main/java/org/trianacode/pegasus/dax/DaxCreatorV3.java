@@ -169,7 +169,8 @@ public class DaxCreatorV3 implements TaskConscious {
             Executable exec = new Executable(fileName, jobChunk.getJobName(), "1.0");
             exec.setArchitecture(Executable.ARCH.X86).setOS(Executable.OS.LINUX);
             exec.setInstalled(true);
-            exec.addPhysicalFile("file:///home/triana-pegasus/pegasus-wms-3.0.1/bin/keg", "condorpool");
+//            exec.addPhysicalFile("file:///home/triana-pegasus/pegasus-wms-3.0.1/bin/keg", "condorpool");
+            exec.addPhysicalFile("file:///usr/bin/gnome-terminal", "condorpool");
             execs.put(jobChunk.getJobName(), exec);
 
         }
@@ -232,7 +233,8 @@ public class DaxCreatorV3 implements TaskConscious {
 
                         }
                         job.uses(file, File.LINK.input);
-                        job.addArgument("-i ").addArgument(file);
+//                        job.addArgument("-i ").addArgument(file);
+                        job.addArgument(jobChunk.getArgBuilder().inputSwitch).addArgument(file);
 
                     }
                     chunk.resetNextCounter();
@@ -258,7 +260,8 @@ public class DaxCreatorV3 implements TaskConscious {
 
                     }
                     job.uses(file, File.LINK.input);
-                    job.addArgument("-i ").addArgument(file);
+//                    job.addArgument("-i ").addArgument(file);
+                    job.addArgument(jobChunk.getArgBuilder().inputSwitch).addArgument(file);
 
                 }
             }
@@ -642,7 +645,8 @@ public class DaxCreatorV3 implements TaskConscious {
                 //           devLog.debug("Job " + job.getId() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
                 File outputFile = new File(chunk.getFilename());
                 job.uses(outputFile, File.LINK.output);
-                job.addArgument("-o ").addArgument(outputFile);
+//                job.addArgument("-o ").addArgument(outputFile);
+                job.addArgument(jobChunk.getArgBuilder().outputSwitch).addArgument(outputFile);
             }
             devLog.debug("Finished with job " + job.getId() + " named : " + job.getName() + "\n");
         }

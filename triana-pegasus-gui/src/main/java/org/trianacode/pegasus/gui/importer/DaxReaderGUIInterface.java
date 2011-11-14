@@ -61,7 +61,11 @@ public class DaxReaderGUIInterface extends AbstractFormatFilter implements TaskG
         );
         TaskGraph tg = daxReader.importWorkflow(file, properties);
 
-        TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
+        try {
+            TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
+        } catch (Exception e) {
+            System.out.println("Organise failed.");
+        }
 
         return tg;
     }

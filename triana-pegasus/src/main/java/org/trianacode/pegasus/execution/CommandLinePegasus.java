@@ -3,7 +3,7 @@ package org.trianacode.pegasus.execution;
 import org.apache.commons.logging.Log;
 import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.Exec;
-import org.trianacode.enactment.ExecutionService;
+import org.trianacode.enactment.addon.ExecutionAddon;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.ToolImp;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Time: 18:14
  * To change this template use File | Settings | File Templates.
  */
-public class CommandLinePegasus implements ExecutionService {
+public class CommandLinePegasus implements ExecutionAddon {
 
     private static String pegasusPackage = "org.trianacode.pegasus.dax";
     private static Log devLog = Loggers.DEV_LOGGER;
@@ -47,11 +47,11 @@ public class CommandLinePegasus implements ExecutionService {
     }
 
     @Override
-    public void execute(Exec executeEngine, TrianaInstance engine, String workflow, Object tool, Object data, String[] args) throws Exception {
+    public void execute(Exec executeEngine, TrianaInstance engine, String daxFilePath, Object tool, Object data, String[] args) throws Exception {
         devLog.debug("\nWill attempt to create and submit dax\n");
 
         if (tool instanceof TaskGraph) {
-            initTaskgraph((TaskGraph) tool, true);
+            initTaskgraph((TaskGraph) tool, daxFilePath, true);
             executeEngine.execute((TaskGraph) tool, (String) data);
         } else {
             devLog.debug("Input file not a valid workflow");
@@ -65,35 +65,28 @@ public class CommandLinePegasus implements ExecutionService {
     }
 
     @Override
-    public Object getWorkflow(Tool tool) {
-        return null;
-    }
-
-    @Override
-    public File getWorkflowFile(Tool tool) {
-        return null;
-    }
-
-    @Override
     public File getConfigFile() throws IOException {
         return null;
     }
 
-    public static Tool initTaskgraph(TaskGraph taskGraph, boolean submit) throws CableException, TaskException {
+    public static Tool initTaskgraph(TaskGraph taskGraph, String daxFilePath, boolean submit) throws CableException, TaskException {
         if (submit) {
-            return createAndSubmit(taskGraph);
+            return createAndSubmit(taskGraph, daxFilePath);
         } else {
-            return createOnly(taskGraph);
+            return createOnly(taskGraph, daxFilePath);
         }
     }
 
-    private static Tool createOnly(TaskGraph taskGraph) throws TaskException, CableException {
+    private static Tool createOnly(TaskGraph taskGraph, String daxFilePath) throws TaskException, CableException {
 
         Node childNode = getTaskgraphChildNode(taskGraph);
         if (childNode != null) {
 
             ToolImp creatorTool = new ToolImp(taskGraph.getProperties());
             initTool(creatorTool, "DaxCreatorV3", pegasusPackage, 1, 0);
+            if (daxFilePath != null || daxFilePath.equals("")) {
+                creatorTool.setParameter("fileName", daxFilePath);
+            }
             Task creatorTask = taskGraph.createTask(creatorTool);
 
             taskGraph.connect(childNode, creatorTask.getDataInputNode(0));
@@ -101,7 +94,7 @@ public class CommandLinePegasus implements ExecutionService {
         return taskGraph;
     }
 
-    public static Tool createAndSubmit(TaskGraph taskGraph) {
+    public static Tool createAndSubmit(TaskGraph taskGraph, String daxFilePath) {
         devLog.debug("\nBegin init taskgraph for dax create/ submit.");
 
         Task creatorTask = null;

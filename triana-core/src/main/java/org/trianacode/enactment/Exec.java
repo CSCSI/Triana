@@ -7,6 +7,8 @@ import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.OptionValues;
 import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
+import org.trianacode.enactment.addon.CLIaddon;
+import org.trianacode.enactment.addon.ExecutionAddon;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoTypeHandler;
@@ -137,7 +139,7 @@ public class Exec implements ExecutionListener {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         System.out.println("Fell off end of options, or major error occurred.");
         return 1;
@@ -150,14 +152,16 @@ public class Exec implements ExecutionListener {
             System.exit(1);
         }
         TrianaInstance engine = new TrianaInstance(args);
-        engine.addExtensionClass(ExecutionService.class);
+        engine.addExtensionClass(CLIaddon.class);
         engine.init();
 
-        ExecutionService executionService = ExecutionUtils.getService(engine, "bundle");
+        Thread.sleep(3000);
 
-        if (executionService != null) {
-            System.out.println("Running with " + executionService.getServiceName());
-            executionService.execute(this, engine, bundlePath, null, data, args);
+        ExecutionAddon executionAddon = AddonUtils.getExecutionAddon(engine, "bundle");
+
+        if (executionAddon != null) {
+            System.out.println("Running with " + executionAddon.getServiceName());
+            executionAddon.execute(this, engine, bundlePath, null, data, args);
         } else {
             System.out.println("Bundle executing service not found");
         }
@@ -251,18 +255,18 @@ public class Exec implements ExecutionListener {
             System.exit(1);
         }
         TrianaInstance engine = new TrianaInstance(args);
-        engine.addExtensionClass(ExecutionService.class);
+        engine.addExtensionClass(CLIaddon.class);
         engine.init();
 
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
-        ExecutionService executionService = ExecutionUtils.getService(engine, vals);
-        if (executionService != null) {
-            System.out.println("Running with " + executionService.getServiceName());
-            executionService.execute(this, engine, wf, tool, data, args);
+        ExecutionAddon executionAddon = (ExecutionAddon) AddonUtils.getService(engine, vals);
+        if (executionAddon != null) {
+            System.out.println("Running with " + executionAddon.getServiceName());
+            executionAddon.execute(this, engine, wf, tool, data, args);
         } else {
-            System.out.println("Running in vanilla mode : no ExecutionService");
+            System.out.println("Running in vanilla mode : no ExecutionAddon");
             execute(tool, data);
         }
         engine.shutdown(0);
@@ -588,41 +592,5 @@ public class Exec implements ExecutionListener {
                 file.delete();
             }
         }
-
-    }
-
-    private void runProcess(List<String> args, File runDir) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(args);
-        /*Map<String, String> env = pb.environment();
-        for (String s : env.keySet()) {
-            log.info("Receiver.processBundle env key=" + s);
-            log.info("Receiver.processBundle env val=" + env.get(s));
-        }*/
-        pb = pb.directory(runDir);
-        Process process = pb.start();
-
-//        InputStream in = process.getInputStream();
-//        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-//        byte[] bytes1 = new byte[512];
-//        int c1;
-//        while ((c1 = in.read(bytes1)) > -1) {
-//            stdout.write(bytes1, 0, c1);
-//        }
-//        String msg = new String(stdout.toByteArray());
-//        if (msg.length() > 0) {
-//            System.out.println(msg);
-//        }
-//
-//        InputStream err = process.getErrorStream();
-//        ByteArrayOutputStream errlog = new ByteArrayOutputStream();
-//        byte[] bytes = new byte[512];
-//        int c;
-//        while ((c = err.read(bytes)) > -1) {
-//            errlog.write(bytes, 0, c);
-//        }
-//        msg = new String(errlog.toByteArray());
-//        if (msg.length() > 0) {
-//            System.out.println("Exec.runProcess result from error stream:" + msg );
-//        }
     }
 }

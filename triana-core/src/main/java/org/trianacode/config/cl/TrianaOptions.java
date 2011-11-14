@@ -23,11 +23,15 @@ public class TrianaOptions {
     public static final Option EXTRA_TOOLBOXES_OPTION = new Option("x", "extra-toolboxes", "add toolboxes to be resolved.");
     public static final Option EXTRA_MODULES_OPTION = new Option("m", "extra-modules", "add module paths.");
     public static final Option HELP_OPTION = new Option("h", "help", "prints this message.");
+
     public static final Option SUPPRESS_DEFAULT_TOOLBOXES = new Option("sdt", "suppress-default-toolboxes", "start triana with no default, only those given with -x");
     public static final Option CREATE_AND_SUBMIT_DAX = new Option("dax", "submit-to-pegasus", "Takes a workflow, creates a dax, and submits to Pegasus");
     public static final Option EXECUTE_BUNDLE = new Option("b", "bundle", "Execute bundle");
     public static final Option OUTPUT_FORMAT = new Option("f", "output-format", "The format the workflow will be produced as after processing.");
+    public static final Option RUN_UNIT = new Option("U", "execute-unit", "Execute a single unit, from the package name");
     public static final Option CONVERT_WORKFLOW = new Option("c", "convert-workflow", "languages", "No execution, converts between workflow languages", true, true);
+    public static final Option INPUT_FILES = new Option("I", "input-files", "input files", "Serialized objects, one per file per input port", true, false);
+    public static final Option OUTPUT_FILES = new Option("O", "output-files", "output-files", "The files the output objects will be serialized to, one file per output object", true, false);
 
     public static Option[] TRIANA_OPTIONS = {
             NO_GUI_OPTION,
@@ -47,7 +51,10 @@ public class TrianaOptions {
             CREATE_AND_SUBMIT_DAX,
             EXECUTE_BUNDLE,
             OUTPUT_FORMAT,
-            CONVERT_WORKFLOW
+            CONVERT_WORKFLOW,
+            RUN_UNIT,
+            INPUT_FILES,
+            OUTPUT_FILES
     };
 
     public static boolean hasOption(ArgumentParser parsed, Option o) {

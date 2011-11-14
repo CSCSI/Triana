@@ -66,9 +66,10 @@ public class DaxOrganize {
 //                        ts.remove(task);
 //                    }
 //                }
-                if (level < dgm.getNumberOfTasks() + 1) {
-                    recurse(h, nextLevel, level + 1);
-                }
+                //TODO figure out how to stop infinite loops
+//                if (level < dgm.getNumberOfTasks() + 1) {
+                recurse(h, nextLevel, level + 1);
+//                }
             }
         }
     }
