@@ -46,7 +46,7 @@ public class AddonUtils {
         for (Object service : getCLIaddons(engine)) {
             if (service instanceof CLIaddon) {
                 CLIaddon addon = ((CLIaddon) service);
-//                System.out.println("Comparing " + addon.getLongOption()  + ":" + longOpt);
+                System.out.println("Comparing " + addon.getLongOption() + ":" + longOpt);
                 if (addon.getLongOption().equals(longOpt)) {
                     System.out.println(addon.getLongOption());
                     System.out.println("Returning service " + addon.getShortOption());
@@ -82,7 +82,7 @@ public class AddonUtils {
         tool.setProxy(new JavaProxy(simpleName, packageName));
         tool.setToolPackage(packageName);
         tool.setToolName(name);
-        System.out.println("New task : " + tool.getToolName());
+        System.out.println("New : " + tool.getToolName() + " " + packageName + "." + simpleName);
         return tool;
     }
 

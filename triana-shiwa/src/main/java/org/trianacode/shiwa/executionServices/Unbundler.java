@@ -216,7 +216,6 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
                 String value = inputPort.getValue();
                 boolean reference = inputPort.isReference();
 
-
                 IoMapping ioMapping = new IoMapping(new IoType(value, "string", reference), portNumberString);
                 inputMappings.add(ioMapping);
             }

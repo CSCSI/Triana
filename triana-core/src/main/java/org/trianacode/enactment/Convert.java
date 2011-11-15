@@ -54,12 +54,15 @@ public class Convert {
         Thread.sleep(1000);
 
         Tool tool = null;
+        File configFile = null;
 
         List<String> bundleInput = vals.getOptionValues(TrianaOptions.EXECUTE_BUNDLE.getShortOpt());
         if (bundleInput != null) {
             ExecutionAddon executionAddon = AddonUtils.getExecutionAddon(engine, "bundle");
             System.out.println("Unbundling with " + executionAddon.getServiceName());
             tool = executionAddon.getTool(engine, bundleInput.get(0));
+            configFile = executionAddon.getConfigFile();
+
         } else {
             List<String> workflowInput = vals.getOptionValues(TrianaOptions.WORKFLOW_OPTION.getShortOpt());
             if (workflowInput != null) {
@@ -68,7 +71,7 @@ public class Convert {
             }
         }
         if (tool == null) {
-            System.out.println("No input specified");
+            System.out.println("No Tool found or created.");
             System.exit(1);
         } else {
 
@@ -91,7 +94,7 @@ public class Convert {
 
                         Tool daxifiedTaskgraph = (Tool) daxifyAddon.processWorkflow(tool);
                         System.out.println("Daxified taskgraph");
-                        File daxFile = daxAddon.toolToWorkflowFile(daxifiedTaskgraph, "exampleDax.xml");
+                        File daxFile = daxAddon.toolToWorkflowFile(daxifiedTaskgraph, configFile, "exampleDax.dax");
                         System.out.println("Created dax file " + daxFile.getAbsolutePath());
                     } else {
                         System.out.println("Couldn't find required addons to create dax");

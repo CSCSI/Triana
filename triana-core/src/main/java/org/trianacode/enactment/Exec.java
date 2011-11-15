@@ -16,6 +16,7 @@ import org.trianacode.enactment.io.NodeMappings;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.databus.DataBus;
 import org.trianacode.taskgraph.databus.DataBusInterface;
@@ -258,6 +259,8 @@ public class Exec implements ExecutionListener {
         engine.addExtensionClass(CLIaddon.class);
         engine.init();
 
+        Thread.sleep(3000);
+
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
@@ -299,6 +302,7 @@ public class Exec implements ExecutionListener {
             }
         } else {
             System.out.println("Mappings was null");
+            System.out.println(((TaskGraph) tool).getDataInputNodeCount() + " inputs.");
         }
         while (!runner.isFinished()) {
             synchronized (this) {

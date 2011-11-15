@@ -25,25 +25,28 @@ import java.util.UUID;
 @Tool //(renderingHints = {"DAX File"})
 public class FileUnit implements TaskConscious, Displayer {
 
+    public static final String PHYSICAL_FILE = "physicalFile";
+    public static final String FILE_URL = "locationString";
+
     @Parameter
     public String locationString = "";   //wtf?
+
     @Parameter
     public boolean physicalFile = false;
-
     @Parameter
     public String fileProtocol = "";
     @Parameter
     public int numberOfFiles = 1;
+
+
     @Parameter
     public PatternCollection namingPattern = null;
 
-
     public String fileName = "a.txt";
-
     public boolean collection = false;
     public boolean one2one = false;
-    public Task task;
 
+    public Task task;
     private static Log devLog = Loggers.DEV_LOGGER;
 
     @org.trianacode.annotation.Process(gather = true)
@@ -55,6 +58,7 @@ public class FileUnit implements TaskConscious, Displayer {
 
         thisFile.setFilename(fileName);
         thisFile.setPhysicalFile(physicalFile);
+        System.out.println("File location " + thisFile.getFileLocation());
         thisFile.setFileLocation(locationString);
         thisFile.setFileProtocol(fileProtocol);
         thisFile.setUuid(UUID.randomUUID());
@@ -124,8 +128,8 @@ public class FileUnit implements TaskConscious, Displayer {
             task.setParameter("collection", collection);
             task.setParameter("one2one", one2one);
 
-            task.setParameter("physicalFile", physicalFile);
-            task.setParameter("fileLocation", locationString);
+            task.setParameter(PHYSICAL_FILE, physicalFile);
+            task.setParameter(FILE_URL, locationString);
             task.setParameter("fileProtocol", fileProtocol);
 
             if (namingPattern != null) {
@@ -210,7 +214,7 @@ public class FileUnit implements TaskConscious, Displayer {
     }
 
     private boolean isPhysicalFile() {
-        Object o = task.getParameter("physicalFile");
+        Object o = task.getParameter(PHYSICAL_FILE);
         if (o != null) {
             if (o instanceof Boolean) {
                 return (Boolean) o;
@@ -220,7 +224,7 @@ public class FileUnit implements TaskConscious, Displayer {
     }
 
     public String getFileLocation() {
-        Object o = task.getParameter("fileLocation");
+        Object o = task.getParameter(FILE_URL);
         if (o != null && !((String) o).equals("")) {
             return (String) o;
         }

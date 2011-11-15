@@ -106,8 +106,6 @@ public class DaxifyTaskGraph implements ConversionAddon {
                     } else {
                         clonenode = clone.getTask(taskgraph.getTask(node).getToolName())
                                 .getDataInputNode(node.getNodeIndex());
-                        System.out.println(clonenode.getName());
-//                        addFileUnit(null, clone, taskgraph);
                     }
 
                     clone.setGroupNodeParent(clone.getDataInputNode(count), clonenode);
@@ -268,7 +266,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
     }
 
     @Override
-    public File toolToWorkflowFile(Tool tool, String filePath) {
+    public File toolToWorkflowFile(Tool tool, File configFile, String filePath) {
         return null;
     }
 }

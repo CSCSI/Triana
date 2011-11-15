@@ -1,24 +1,30 @@
 package org.trianacode.pegasus.converter;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.addon.ConversionAddon;
+import org.trianacode.enactment.io.IoConfiguration;
+import org.trianacode.enactment.io.IoHandler;
+import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.pegasus.dax.FileUnit;
 import org.trianacode.pegasus.execution.CommandLinePegasus;
 import org.trianacode.pegasus.extras.DaxUtils;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.imp.TaskFactoryImp;
+import org.trianacode.taskgraph.imp.TaskImp;
+import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.ser.XMLWriter;
 import org.trianacode.taskgraph.service.ClientException;
 import org.trianacode.taskgraph.tool.Tool;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -49,11 +55,11 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
             JOptionPane.showMessageDialog(frame, "No taskgraph selected," +
                     " or currently selected taskgraph has no tasks");
         } else {
-            convert(tg, "untitledDax.xml");
+            convert(tg, "untitledDax.xml", null);
         }
     }
 
-    public void convert(final TaskGraph tg, final String daxFilePath) {
+    public void convert(final TaskGraph tg, final String daxFilePath, final File configFile) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -69,7 +75,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
                         e.printStackTrace();
                     }
 
-                    int errorNumber = runDaxCreatorWorkflow(daxifiedTaskGraph);
+                    int errorNumber = runDaxCreatorWorkflow(daxifiedTaskGraph, configFile);
                     System.out.println(errorNumber);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -81,19 +87,110 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
 
     }
 
-    private int runDaxCreatorWorkflow(Tool daxifiedTaskGraph) throws IOException {
+    private int runDaxCreatorWorkflow(Tool daxifiedTaskGraph, File configFile) throws IOException, TaskGraphException {
+        addInputsToDaxifiedTaskGraph((TaskGraph) daxifiedTaskGraph, configFile);
+
         File file = saveTaskGraph((TaskGraph) daxifiedTaskGraph, daxifiedTaskGraph.getToolName());
-        File configFile = DaxUtils.createDummyIOConfigFile((TaskGraph) daxifiedTaskGraph);
-        String[] args = new String[5];
-        args[0] = "-n";
-        args[1] = "-w";
-        args[2] = file.getAbsolutePath();
-        args[3] = "-d";
-        args[4] = configFile.getAbsolutePath();
+        ArrayList<String> optionsStrings = new ArrayList<String>();
+        optionsStrings.add("-n");
+        optionsStrings.add("-w");
+        optionsStrings.add(file.getAbsolutePath());
+
+        if (daxifiedTaskGraph.getDataInputNodeCount() > 0) {
+            configFile = DaxUtils.createDummyIOConfigFile((TaskGraph) daxifiedTaskGraph);
+            optionsStrings.add("-d");
+            optionsStrings.add(configFile.getAbsolutePath());
+        }
+
+        String[] args = new String[optionsStrings.size()];
+        for (int i = 0; i < optionsStrings.size(); i++) {
+            args[i] = optionsStrings.get(i);
+        }
 
         System.out.println(ArrayUtils.toString(args));
         int errorNumber = Exec.exec(args);
         return errorNumber;
+    }
+
+    private void addInputsToDaxifiedTaskGraph(TaskGraph daxifiedTaskGraph, File conf) throws IOException, TaskGraphException {
+        if (!conf.exists()) {
+        } else {
+            IoHandler handler = new IoHandler();
+            IoConfiguration ioc = handler.deserialize(new FileInputStream(conf));
+
+            for (IoMapping mapping : ioc.getInputs()) {
+                System.out.println(mapping.getNodeName() + " has data "
+                        + mapping.getIoType().getType()
+                        + " : "
+                        + mapping.getIoType().getValue()
+                        + " reference : "
+                        + mapping.getIoType().isReference()
+                );
+            }
+
+
+            Node[] inputTaskNodes = new Node[daxifiedTaskGraph.getDataInputNodeCount()];
+            for (int i = 0; i < daxifiedTaskGraph.getDataInputNodeCount(); i++) {
+                Node taskgraphNode = daxifiedTaskGraph.getDataInputNode(i);
+                System.out.println(taskgraphNode.getNodeIndex() +
+                        " " + taskgraphNode.getName() +
+                        " " + taskgraphNode.getTopLevelNode().getName() +
+                        " " + taskgraphNode.getBottomLevelNode().getName()
+                );
+
+                IoMapping mapping = ioc.getInputs().get(i);
+                if (!mapping.getIoType().isReference()) {
+
+                    Node taskNode = taskgraphNode.getTopLevelNode();
+                    inputTaskNodes[i] = taskNode;
+                }
+            }
+
+            for (int j = 0; j < inputTaskNodes.length; j++) {
+                if (j <= ioc.getInputs().size()) {
+                    Node taskNode = inputTaskNodes[j];
+                    taskNode.disconnect();
+                    Task task = addFileUnit(null,
+                            taskNode,
+                            taskNode.getTask().getParent()
+                    );
+
+                    if (task != null) {
+                        String url = ioc.getInputs().get(j).getIoType().getValue();
+                        task.setParameter(FileUnit.FILE_URL, url);
+                        task.setParameter(FileUnit.PHYSICAL_FILE, true);
+                        System.out.println(task.getParameter(FileUnit.PHYSICAL_FILE));
+                    }
+                }
+            }
+        }
+    }
+
+    private Task addFileUnit(Node sendnode, Node recnode, TaskGraph clone) throws CableException {
+        Task fileTask = null;
+        Task task = null;
+        try {
+            fileTask = new TaskImp(
+                    AddonUtils.makeTool(FileUnit.class, "" + Math.random() * 100, clone.getProperties()),
+                    new TaskFactoryImp(),
+                    false
+            );
+
+            task = clone.createTask(fileTask, false);
+
+            if (sendnode != null) {
+                Node inNode = task.addDataInputNode();
+                clone.connect(sendnode, inNode);
+            }
+
+            Node outNode = task.addDataOutputNode();
+            clone.connect(outNode, recnode);
+        } catch (TaskException e) {
+            e.printStackTrace();
+        } catch (ProxyInstantiationException e) {
+            e.printStackTrace();
+        }
+        return task;
     }
 
     private File saveTaskGraph(TaskGraph daxifiedTaskGraph, String tempFilePath) {
@@ -125,9 +222,9 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
     }
 
     @Override
-    public File toolToWorkflowFile(Tool tool, String filePath) throws Exception {
+    public File toolToWorkflowFile(Tool tool, File configFile, String filePath) throws Exception {
         CommandLinePegasus.initTaskgraph((TaskGraph) tool, filePath, false);
-        runDaxCreatorWorkflow(tool);
+        runDaxCreatorWorkflow(tool, configFile);
         return new File(filePath);
     }
 

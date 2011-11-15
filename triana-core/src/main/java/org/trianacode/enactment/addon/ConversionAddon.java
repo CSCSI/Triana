@@ -18,5 +18,5 @@ public interface ConversionAddon extends CLIaddon {
 
     public Tool processWorkflow(Tool workflow);
 
-    File toolToWorkflowFile(Tool tool, String filePath) throws Exception;
+    File toolToWorkflowFile(Tool tool, File configFile, String filePath) throws Exception;
 }
