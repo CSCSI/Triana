@@ -2,7 +2,6 @@ package org.trianacode.enactment;
 
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
-import org.trianacode.config.cl.OptionValues;
 import org.trianacode.enactment.addon.CLIaddon;
 import org.trianacode.enactment.addon.ConversionAddon;
 import org.trianacode.enactment.addon.ExecutionAddon;
@@ -28,19 +27,19 @@ public class AddonUtils {
         return addons;
     }
 
-    public static CLIaddon getService(TrianaInstance engine, OptionValues vals) {
-        for (Object service : getCLIaddons(engine)) {
-            if (service instanceof CLIaddon) {
-                CLIaddon addon = ((CLIaddon) service);
-                if (vals.hasOption(addon.getShortOption())) {
-                    System.out.println("Returning service " + addon.getShortOption());
-                    return (CLIaddon) service;
-                }
-            }
-        }
-        System.out.println("No executionService requested");
-        return null;
-    }
+//    public static CLIaddon getService(TrianaInstance engine, OptionValues vals) {
+//        for (Object service : getCLIaddons(engine)) {
+//            if (service instanceof CLIaddon) {
+//                CLIaddon addon = ((CLIaddon) service);
+//                if (vals.hasOption(addon.getShortOption())) {
+//                    System.out.println("Returning service " + addon.getShortOption());
+//                    return (CLIaddon) service;
+//                }
+//            }
+//        }
+//        System.out.println("No executionService requested");
+//        return null;
+//    }
 
     public static CLIaddon getService(TrianaInstance engine, String longOpt) {
         for (Object service : getCLIaddons(engine)) {
@@ -49,7 +48,7 @@ public class AddonUtils {
                 System.out.println("Comparing " + addon.getLongOption() + ":" + longOpt);
                 if (addon.getLongOption().equals(longOpt)) {
                     System.out.println(addon.getLongOption());
-                    System.out.println("Returning service " + addon.getShortOption());
+                    System.out.println("Returning service " + addon.getLongOption());
                     return (CLIaddon) service;
                 }
             }
@@ -61,16 +60,20 @@ public class AddonUtils {
         CLIaddon i = getService(engine, longOpt);
         if (i instanceof ConversionAddon) {
             return (ConversionAddon) i;
+        } else {
+            System.out.println("Addon is not a ConvertionAddon, or no Addon found");
+            return null;
         }
-        return null;
     }
 
     public static ExecutionAddon getExecutionAddon(TrianaInstance engine, String longOpt) {
         CLIaddon i = getService(engine, longOpt);
         if (i instanceof ExecutionAddon) {
             return (ExecutionAddon) i;
+        } else {
+            System.out.println("Service found not an ExecutionAddon");
+            return null;
         }
-        return null;
     }
 
     public static Tool makeTool(Class clazz, String name, TrianaProperties properties) throws ProxyInstantiationException, TaskException {

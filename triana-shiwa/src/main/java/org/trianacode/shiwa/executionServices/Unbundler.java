@@ -1,6 +1,7 @@
 package org.trianacode.shiwa.executionServices;
 
 import org.shiwa.desktop.data.description.SHIWABundle;
+import org.shiwa.desktop.data.description.bundle.BundleFile;
 import org.shiwa.desktop.data.description.core.AbstractWorkflow;
 import org.shiwa.desktop.data.description.core.Configuration;
 import org.shiwa.desktop.data.description.core.WorkflowImplementation;
@@ -13,6 +14,7 @@ import org.shiwa.desktop.data.description.resource.ReferableResource;
 import org.shiwa.desktop.data.description.workflow.Dependency;
 import org.shiwa.desktop.data.description.workflow.InputPort;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
+import org.shiwa.desktop.data.util.DataUtils;
 import org.shiwa.desktop.data.util.SHIWADesktopIOException;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
@@ -48,15 +50,16 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
     Tool tool;
     private WorkflowImplementation workflowImplementation;
     private boolean bundleInit = false;
+    private SHIWABundle shiwaBundle;
 
     @Override
     public String getServiceName() {
-        return "Bundle Executor";
+        return "UnBundler";
     }
 
     @Override
     public String getLongOption() {
-        return "bundle";
+        return "unbundle";
     }
 
     @Override
@@ -241,7 +244,7 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
     }
 
     private void initBundle(String workflowFilePath) throws SHIWADesktopIOException {
-        SHIWABundle shiwaBundle = new SHIWABundle(new File(workflowFilePath));
+        shiwaBundle = new SHIWABundle(new File(workflowFilePath));
         shiwaBundle.init();
 
         workflowImplementations = new ArrayList<WorkflowImplementation>();
@@ -293,12 +296,49 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
     }
 
     @Override
+    public void setWorkflowFile(String bundlePath, File file) throws IOException {
+        if (!bundleInit) {
+            initBundle(bundlePath);
+        }
+
+        boolean previousDef = false;
+        String language = "";
+        byte[] defBytes = null;
+
+        if (workflowImplementation != null) {
+            if (workflowImplementation.getDefinition() != null) {
+                language = workflowImplementation.getLanguage().getShortId();
+                defBytes = workflowImplementation.getDefinition().getBytes();
+                previousDef = true;
+            }
+
+            BundleFile definitionBundleFile = new BundleFile(new FileInputStream(file), file.getName());
+            workflowImplementation.setDefinition(definitionBundleFile);
+
+            if (previousDef) {
+                BundleFile backupDefinition = new BundleFile(language, defBytes, "", BundleFile.FileType.BUNDLE_FILE);
+                workflowImplementation.getBundleFiles().add(backupDefinition);
+            }
+        }
+
+    }
+
+    @Override
     public File getConfigFile(String bundlePath) {
         return null;
     }
 
     @Override
     public Object getWorkflowObject(String bundlePath) {
+        return null;
+    }
+
+    @Override
+    public File saveBundle(String fileName) throws IOException {
+        if (bundleInit) {
+            shiwaBundle.getAggregatedResource().setBaseURI(DataUtils.BASE_URI);
+            DataUtils.bundle(new File(fileName), shiwaBundle.getAggregatedResource());
+        }
         return null;
     }
 }

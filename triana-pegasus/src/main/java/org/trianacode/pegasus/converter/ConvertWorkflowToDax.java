@@ -159,7 +159,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
                         String url = ioc.getInputs().get(j).getIoType().getValue();
                         task.setParameter(FileUnit.FILE_URL, url);
                         task.setParameter(FileUnit.PHYSICAL_FILE, true);
-                        System.out.println(task.getParameter(FileUnit.PHYSICAL_FILE));
+                        System.out.println(task.getParameter(FileUnit.FILE_URL));
                     }
                 }
             }

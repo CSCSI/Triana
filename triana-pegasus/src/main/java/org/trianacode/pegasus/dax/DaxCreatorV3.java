@@ -219,27 +219,21 @@ public class DaxCreatorV3 implements TaskConscious {
                             devLog.debug("Collection has no naming pattern, using *append int*");
                         }
 
-                        //    String filename = chunk.getNextFilename();
-                        String filename = chunk.getFilename();
-                        String fileLocation = chunk.getFileLocation();
-                        String fileProtocol = chunk.getFileProtocol();
-                        File file = new File(filename);
-
+                        addFileToJob(dax, jobChunk, job, chunk, File.LINK.input);
+//                        //    String filename = chunk.getNextFilename();
+//                        String filename = chunk.getFilename();
+//                        String fileLocation = chunk.getFileLocation();
+//                        String fileProtocol = chunk.getFileProtocol();
+//                        File file = new File(filename);
+//
 //                        if (chunk.isPhysicalFile()) {
-//                            PFLarray.add(fileLocation + java.io.File.separator + filename);
-//                            devLog.debug(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
-//                            file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+//                            PFLarray.add(fileLocation);
+//                            devLog.debug(fileLocation + " added to dax");
+//                            file.addPhysicalFile(fileLocation, "condorpool");
 //                            dax.addFile(file);
 //                        }
-                        if (chunk.isPhysicalFile()) {
-                            PFLarray.add(fileLocation);
-                            devLog.debug(fileLocation + " added to dax");
-                            file.addPhysicalFile(fileLocation, "condorpool");
-                            dax.addFile(file);
-                        }
-                        job.uses(file, File.LINK.input);
-//                        job.addArgument("-i ").addArgument(file);
-                        job.addArgument(jobChunk.getArgBuilder().inputSwitch).addArgument(file);
+//                        job.uses(file, File.LINK.input);
+//                        job.addArgument(jobChunk.getArgBuilder().inputSwitch).addArgument(file);
 
                     }
                     chunk.resetNextCounter();
@@ -251,58 +245,50 @@ public class DaxCreatorV3 implements TaskConscious {
 //                    if(!fileLocation.equals("")){
 //                        PFLarray.add(fileLocation + java.io.File.separator + chunk.getFilename());
 //                    }
+                    addFileToJob(dax, jobChunk, job, chunk, File.LINK.input);
 
-                    String filename = chunk.getFilename();
-                    String fileLocation = chunk.getFileLocation();
-                    String fileProtocol = chunk.getFileProtocol();
-                    File file = new File(filename);
-
+//                    String filename = chunk.getFilename();
+//                    String fileLocation = chunk.getFileLocation();
+//                    String fileProtocol = chunk.getFileProtocol();
+//                    File file = new File(filename);
+//
 //                    if (chunk.isPhysicalFile()) {
-//                        PFLarray.add(fileLocation + java.io.File.separator + filename);
-//                        devLog.debug(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
-//                        file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+//                        PFLarray.add(fileLocation);
+//                        devLog.debug(fileLocation + " added to dax");
+//                        file.addPhysicalFile(fileLocation, "condorpool");
 //                        dax.addFile(file);
 //                    }
-                    if (chunk.isPhysicalFile()) {
-                        PFLarray.add(fileLocation);
-                        devLog.debug(fileLocation + " added to dax");
-                        file.addPhysicalFile(fileLocation, "condorpool");
-                        dax.addFile(file);
-                    }
-                    job.uses(file, File.LINK.input);
-//                    job.addArgument("-i ").addArgument(file);
-                    job.addArgument(jobChunk.getArgBuilder().inputSwitch).addArgument(file);
+//                    job.uses(file, File.LINK.input);
+////                    job.addArgument("-i ").addArgument(file);
+//                    job.addArgument(jobChunk.getArgBuilder().inputSwitch).addArgument(file);
 
                 }
             }
 
             addOutputs(job, jobChunk);
-
-//            List outFiles = jobChunk.getOutFileChunks();
-//            for(int i = 0; i < outFiles.size(); i++){
-//                DaxFileChunk chunk = (DaxFileChunk)outFiles.get(i);
-//                if(chunk.isCollection()){
-//                    for(int m = 0 ; m < chunk.getNumberOfFiles(); m++){
-//                        devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + m);
-//
-//                        if(chunk.getNamePattern() != null){
-//                            devLog.debug("Collection has a naming pattern");
-//                        }else{
-//                            devLog.debug("Collection has no naming pattern, using *append int*");
-//                        }
-//
-//                        job.addUses(new Filename(chunk.getFilename() + "-" + m, 2));
-//                    }
-//                }
-//                else{
-//                    devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
-//                    job.addUses(new Filename(chunk.getFilename(), 2));
-//                }
-//            }
             dax.addJob(job);
             devLog.debug("Added job : " + job.getName() + " to ADAG.");
 
         }
+    }
+
+    private void addFileToJob(ADAG dax, DaxJobChunk jobChunk, Job job, DaxFileChunk fileChunk, File.LINK link) {
+        //    String filename = chunk.getNextFilename();
+        String filename = fileChunk.getFilename();
+        String fileLocation = fileChunk.getFileLocation();
+//        String fileProtocol = fileChunk.getFileProtocol();
+        File file = new File(filename);
+
+        if (fileChunk.isPhysicalFile()) {
+            PFLarray.add(fileLocation);
+            devLog.debug(fileLocation + " added to dax");
+            file.addPhysicalFile(fileLocation, "condorpool");
+            dax.addFile(file);
+        }
+        file.setRegister(false);
+        file.setTransfer(File.TRANSFER.OPTIONAL);
+        job.uses(file, File.LINK.input);
+        job.addArgument(jobChunk.getArgBuilder().inputSwitch).addArgument(file);
     }
 
     private void one2oneOutput(ADAG dax, DaxJobChunk jobChunk) {
@@ -382,23 +368,18 @@ public class DaxCreatorV3 implements TaskConscious {
 //                    job.uses(new File(fc.getNextFilename()), File.LINK.input);
 //                    job.uses(new File(fc.getFilename()), File.LINK.input);
 
-                    String filename = chunk.getFilename();
-                    String fileLocation = chunk.getFileLocation();
-                    String fileProtocol = chunk.getFileProtocol();
-                    File file = new File(filename);
-
+                    addFileToJob(dax, jobChunk, job, chunk, File.LINK.input);
+//                    String filename = chunk.getFilename();
+//                    String fileLocation = chunk.getFileLocation();
+//                    String fileProtocol = chunk.getFileProtocol();
+//                    File file = new File(filename);
+//
 //                    if (chunk.isPhysicalFile()) {
-//                        PFLarray.add(fileLocation + java.io.File.separator + filename);
-//                        devLog.debug(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
-//                        file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+//                        PFLarray.add(fileLocation);
+//                        devLog.debug(fileLocation + " added to dax");
+//                        file.addPhysicalFile(fileLocation, "condorpool");
 //                        dax.addFile(file);
 //                    }
-                    if (chunk.isPhysicalFile()) {
-                        PFLarray.add(fileLocation);
-                        devLog.debug(fileLocation + " added to dax");
-                        file.addPhysicalFile(fileLocation, "condorpool");
-                        dax.addFile(file);
-                    }
                 }
             }
 
@@ -477,51 +458,24 @@ public class DaxCreatorV3 implements TaskConscious {
 //                    String filename = fc.getFilename();
 //                    devLog.debug("Adding file : " + filename + " to job : " + i + " (Job : " + j + " of " + numberInputFiles + ")");
 
-                    String filename = chunk.getFilename();
-                    String fileLocation = chunk.getFileLocation();
-                    String fileProtocol = chunk.getFileProtocol();
-                    File file = new File(filename);
-
+                    addFileToJob(dax, jobChunk, job, chunk, File.LINK.input);
+//                    String filename = chunk.getFilename();
+//                    String fileLocation = chunk.getFileLocation();
+//                    String fileProtocol = chunk.getFileProtocol();
+//                    File file = new File(filename);
+//
 //                    if (chunk.isPhysicalFile()) {
-//                        PFLarray.add(fileLocation + java.io.File.separator + filename);
-//                        devLog.debug(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
-//                        file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+//                        PFLarray.add(fileLocation);
+//                        devLog.debug(fileLocation + " added to dax");
+//                        file.addPhysicalFile(fileLocation, "condorpool");
 //                        dax.addFile(file);
 //                    }
-                    if (chunk.isPhysicalFile()) {
-                        PFLarray.add(fileLocation);
-                        devLog.debug(fileLocation + " added to dax");
-                        file.addPhysicalFile(fileLocation, "condorpool");
-                        dax.addFile(file);
-                    }
-                    job.uses(file, File.LINK.input);
+//                    job.uses(file, File.LINK.input);
                 }
             }
             offset = offset + (int) numberInputsPerJob;
 
             addOutputs(job, jobChunk);
-
-//            List outFiles = jobChunk.getOutFileChunks();
-//            for(int j = 0; j < outFiles.size(); j++){
-//                DaxFileChunk chunk = (DaxFileChunk)outFiles.get(j);
-//                if(chunk.isCollection()){
-//                    for(int k = 0 ; k < chunk.getNumberOfFiles(); k++){
-//                        devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename() + "-" + k);
-//
-//                        if(chunk.getNamePattern() != null){
-//                            devLog.debug("Collection has a naming pattern");
-//                        }else{
-//                            devLog.debug("Collection has no naming pattern, using *append int*");
-//                        }
-//
-//                        job.addUses(new Filename(chunk.getFilename() + "-" + k, 2));
-//                    }
-//                }
-//                else{
-//                    devLog.debug("Job " + job.getID() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
-//                    job.addUses(new Filename(chunk.getFilename(), 2));
-//                }
-//            }
 
             dax.addJob(job);
         }
@@ -577,47 +531,39 @@ public class DaxCreatorV3 implements TaskConscious {
                         for (int j = 0; j < dfc.getNumberOfFiles(); j++) {
 //                            job.uses(new File(dfc.getNextFilename()), File.LINK.input);
 
-                            String filename = dfc.getFilename();
-                            String fileLocation = dfc.getFileLocation();
-                            String fileProtocol = dfc.getFileProtocol();
-                            File file = new File(filename);
+                            addFileToJob(dax, jobChunk, job, dfc, File.LINK.input);
 
+//                            String filename = dfc.getFilename();
+//                            String fileLocation = dfc.getFileLocation();
+//                            String fileProtocol = dfc.getFileProtocol();
+//                            File file = new File(filename);
+//
 //                            if (dfc.isPhysicalFile()) {
-//                                PFLarray.add(fileLocation + java.io.File.separator + filename);
-//                                devLog.debug(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
-//                                file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+//                                PFLarray.add(fileLocation);
+//                                devLog.debug(fileLocation + " added to dax");
+//                                file.addPhysicalFile(fileLocation, "condorpool");
+//
 //                                dax.addFile(file);
 //                            }
-                            if (dfc.isPhysicalFile()) {
-                                PFLarray.add(fileLocation);
-                                devLog.debug(fileLocation + " added to dax");
-                                file.addPhysicalFile(fileLocation, "condorpool");
-                                dax.addFile(file);
-                            }
-
-                            job.uses(file, File.LINK.input);
+//                            job.uses(file, File.LINK.input);
 
                         }
                         dfc.resetNextCounter();
                     } else {
-                        String filename = dfc.getFilename();
-                        String fileLocation = dfc.getFileLocation();
-                        String fileProtocol = dfc.getFileProtocol();
-                        File file = new File(filename);
+                        addFileToJob(dax, jobChunk, job, dfc, File.LINK.input);
 
+//                        String filename = dfc.getFilename();
+//                        String fileLocation = dfc.getFileLocation();
+//                        String fileProtocol = dfc.getFileProtocol();
+//                        File file = new File(filename);
+//
 //                        if (dfc.isPhysicalFile()) {
-//                            PFLarray.add(fileLocation + java.io.File.separator + filename);
-//                            devLog.debug(fileProtocol + fileLocation + java.io.File.separator + filename + " added to dax");
-//                            file.addPhysicalFile(fileProtocol + fileLocation + java.io.File.separator + filename, "condorpool");
+//                            PFLarray.add(fileLocation);
+//                            devLog.debug(fileLocation + " added to dax");
+//                            file.addPhysicalFile(fileLocation, "condorpool");
 //                            dax.addFile(file);
 //                        }
-                        if (dfc.isPhysicalFile()) {
-                            PFLarray.add(fileLocation);
-                            devLog.debug(fileLocation + " added to dax");
-                            file.addPhysicalFile(fileLocation, "condorpool");
-                            dax.addFile(file);
-                        }
-                        job.uses(file, File.LINK.input);
+//                        job.uses(file, File.LINK.input);
                     }
                 }
             }
@@ -655,7 +601,11 @@ public class DaxCreatorV3 implements TaskConscious {
 
                     String filename = chunk.getFilename();
                     devLog.debug("Job " + job.getId() + " named : " + job.getName() + " has output : " + filename);
-                    job.uses(new File(filename), File.LINK.output);
+
+                    File outputFile = new File(filename);
+                    outputFile.setTransfer(File.TRANSFER.OPTIONAL);
+                    outputFile.setRegister(false);
+                    job.uses(outputFile, File.LINK.output);
                 } else {
                     devLog.debug("Not a one2one");
                     for (int k = 0; k < chunk.getNumberOfFiles(); k++) {
@@ -670,14 +620,18 @@ public class DaxCreatorV3 implements TaskConscious {
 
                         String filename = chunk.getFilename();
                         devLog.debug("Job " + job.getId() + " named : " + job.getName() + " has output : " + filename);
-
-                        job.uses(new File(filename), File.LINK.output);
+                        File outputFile = new File(filename);
+                        outputFile.setRegister(false);
+                        outputFile.setTransfer(File.TRANSFER.OPTIONAL);
+                        job.uses(outputFile, File.LINK.output);
 
                     }
                 }
             } else {
                 //           devLog.debug("Job " + job.getId() + " named : "  + job.getName() + " has output : " + chunk.getFilename());
                 File outputFile = new File(chunk.getFilename());
+                outputFile.setTransfer(File.TRANSFER.OPTIONAL);
+                outputFile.setRegister(false);
                 job.uses(outputFile, File.LINK.output);
 //                job.addArgument("-o ").addArgument(outputFile);
                 job.addArgument(jobChunk.getArgBuilder().outputSwitch).addArgument(outputFile);
@@ -695,13 +649,6 @@ public class DaxCreatorV3 implements TaskConscious {
 
         java.io.File daxFile = new java.io.File(fileName);
 
-
-        //Cursor change
-//        ApplicationFrame frame = GUIEnv.getApplicationFrame();
-//        if(frame != null){
-//            frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-//            JOptionPane.showMessageDialog(frame, "Dax saved : " + fileName);
-//        }
         return daxFile;
     }
 

@@ -14,8 +14,12 @@ public interface BundleAddon extends CLIaddon {
 
     public File getWorkflowFile(String bundlePath) throws IOException;
 
+    public void setWorkflowFile(String bundlePath, File file) throws IOException;
+
     public File getConfigFile(String bundlePath);
 
     public Object getWorkflowObject(String bundlePath);
+
+    public File saveBundle(String fileName) throws IOException;
 
 }

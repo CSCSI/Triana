@@ -3,6 +3,7 @@ package org.trianacode.enactment.addon;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +13,7 @@ import java.io.File;
  * To change this template use File | Settings | File Templates.
  */
 public interface ConversionAddon extends CLIaddon {
-    public Object toolToWorkflow(Tool tool);
+    public Object toolToWorkflow(Tool tool) throws IOException;
 
     public Tool workflowToTool(Object workflowObject);
 

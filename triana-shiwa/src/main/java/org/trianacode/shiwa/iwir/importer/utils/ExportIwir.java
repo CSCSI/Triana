@@ -39,7 +39,7 @@ public class ExportIwir {
         return file;
     }
 
-    private BlockScope taskGraphToBlockScope(TaskGraph taskGraph) {
+    public BlockScope taskGraphToBlockScope(TaskGraph taskGraph) {
         BlockScope blockScope = recordTasksAndCables(taskGraph);
 
         System.out.println("\nTasks " + taskHashMap.toString());

@@ -259,19 +259,17 @@ public class Exec implements ExecutionListener {
         engine.addExtensionClass(CLIaddon.class);
         engine.init();
 
-        Thread.sleep(3000);
-
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
 
-        ExecutionAddon executionAddon = (ExecutionAddon) AddonUtils.getService(engine, vals);
-        if (executionAddon != null) {
-            System.out.println("Running with " + executionAddon.getServiceName());
-            executionAddon.execute(this, engine, wf, tool, data, args);
-        } else {
-            System.out.println("Running in vanilla mode : no ExecutionAddon");
-            execute(tool, data);
-        }
+//        ExecutionAddon executionAddon = (ExecutionAddon) AddonUtils.getService(engine, vals);
+//        if (executionAddon != null) {
+//            System.out.println("Running with " + executionAddon.getServiceName());
+//            executionAddon.execute(this, engine, wf, tool, data, args);
+//        } else {
+//            System.out.println("Running in vanilla mode : no ExecutionAddon");
+        execute(tool, data);
+//        }
         engine.shutdown(0);
     }
 
@@ -301,15 +299,15 @@ public class Exec implements ExecutionListener {
                 runner.sendInputData(integer, val);
             }
         } else {
-            System.out.println("Mappings was null");
-            System.out.println(((TaskGraph) tool).getDataInputNodeCount() + " inputs.");
+            System.out.println("No input file mappings "
+                    + ((TaskGraph) tool).getInputNodeCount()
+                    + " data input nodes.");
         }
         while (!runner.isFinished()) {
             synchronized (this) {
                 try {
                     wait(100);
                 } catch (InterruptedException e) {
-
                 }
             }
         }

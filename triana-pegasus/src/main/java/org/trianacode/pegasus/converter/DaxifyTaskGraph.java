@@ -227,6 +227,11 @@ public class DaxifyTaskGraph implements ConversionAddon {
         }
 
         daxTask.setParameter(JobUnit.TRIANA_TOOL, task.getQualifiedToolName());
+
+        for (String paramName : task.getParameterNames()) {
+            Object value = task.getParameter(paramName);
+            daxTask.setParameter(paramName, value);
+        }
         //Todo - probably something technical and frustrating...
     }
 
