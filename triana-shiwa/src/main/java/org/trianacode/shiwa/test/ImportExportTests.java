@@ -3,6 +3,7 @@ package org.trianacode.shiwa.test;
 import org.apache.commons.lang.ArrayUtils;
 import org.shiwa.fgi.iwir.*;
 import org.trianacode.TrianaInstance;
+import org.trianacode.enactment.AddonUtils;
 import org.trianacode.shiwa.iwir.factory.TaskHolder;
 import org.trianacode.shiwa.iwir.factory.TaskHolderFactory;
 import org.trianacode.shiwa.iwir.importer.utils.TaskTypeToTool;
@@ -84,7 +85,7 @@ public class ImportExportTests {
         Class clazz = TaskTypeToTool.getTaskFromType("InOut");
 //        Task taska = outerTaskGraph.createTask(makeTool(clazz, "InOuta", outerTaskGraph.getProperties()));
 //        Task taskb = middleTaskGraph.createTask(makeTool(clazz, "InOutb", middleTaskGraph.getProperties()));
-        Task taskc = innerTaskGraph.createTask(ToolUtils.makeTool(clazz, "InOutc", innerTaskGraph.getProperties()));
+        Task taskc = innerTaskGraph.createTask(AddonUtils.makeTool(clazz, "InOutc", innerTaskGraph.getProperties()));
 
         middleTaskGraph.createTask(innerTaskGraph);
         outerTaskGraph.createTask(middleTaskGraph);
@@ -310,16 +311,16 @@ public class ImportExportTests {
 
     private TaskGraph fillTaskgraph(TaskGraph taskGraph) throws IOException, TaskException, ProxyInstantiationException, CableException {
 
-        Tool tool0 = ToolUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
+        Tool tool0 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
         Task task0 = taskGraph.createTask(tool0);
         task0.setParameter("TaskType", "InOut");
         taskGraph.addDataInputNode(task0.addDataInputNode());
 
-        Tool tool1 = ToolUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
+        Tool tool1 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
         Task task1 = taskGraph.createTask(tool1);
         task1.setParameter("TaskType", "InOut");
 
-        Tool tool2 = ToolUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
+        Tool tool2 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
         Task task2 = taskGraph.createTask(tool2);
         task2.setParameter("TaskType", "InOut");
         taskGraph.addDataOutputNode(task2.addDataOutputNode());
@@ -505,7 +506,7 @@ public class ImportExportTests {
                     type = "InOut";
                 }
                 Task trianaTask = taskGraph.createTask(
-                        ToolUtils.makeTool(
+                        AddonUtils.makeTool(
                                 clazz, iwirTask.getName(), taskGraph.getProperties()
                         )
                 );
