@@ -24,7 +24,7 @@ import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 19/05/2011
  * Time: 22:00
  * To change this template use File | Settings | File Templates.
@@ -277,13 +277,13 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
             if (one2oneCheck.isSelected()) {
                 one2one = true;
                 setEnabling(numberFilesPanel, false);
-                setEnabling(customNamePanel, false);
-                setEnabling(fileListArea, false);
+//                setEnabling(customNamePanel, false);
+//                setEnabling(fileListArea, false);
             } else {
                 one2one = false;
                 setEnabling(numberFilesPanel, true);
-                setEnabling(customNamePanel, true);
-                setEnabling(fileListArea, true);
+//                setEnabling(customNamePanel, true);
+//                setEnabling(fileListArea, true);
             }
         }
         if (itemEvent.getSource().equals(collectionCheck)) {
@@ -684,6 +684,9 @@ class NamingPanel extends JDialog {
             name += "XXX";
         }
 
+        if (name.endsWith(sep) && !nameParts.contains(sep)) {
+            name = name.substring(0, name.lastIndexOf(sep));
+        }
         return name;
     }
 

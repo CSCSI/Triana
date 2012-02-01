@@ -19,7 +19,7 @@ import java.io.File;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 19/05/2011
  * Time: 21:49
  * To change this template use File | Settings | File Templates.

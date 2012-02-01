@@ -2,19 +2,24 @@ package org.trianacode.shiwa.iwir.importer.utils;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.shiwa.fgi.iwir.*;
+import org.trianacode.shiwa.iwir.execute.Executable;
+import org.trianacode.shiwa.iwir.factory.TaskHolder;
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.proxy.java.JavaConstants;
+import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 25/10/2011
  * Time: 15:22
  * To change this template use File | Settings | File Templates.
@@ -112,12 +117,35 @@ public class ExportIwir {
                 // TODO correct wild optimism
                 blockScope.addTask(recordTasksAndCables((TaskGraph) task));
             } else {
-                Object typeObject = task.getParameter("TaskType");
-                String type = "";
-                if (typeObject != null) {
-                    type = (String) typeObject;
+                String tasktype;
+                if (!(task instanceof TaskHolder)) {
+                    Map<String, Object> map = task.getProxy().getInstanceDetails();
+
+                    Object unitPackage = map.get(JavaConstants.UNIT_PACKAGE);
+                    Object unitName = map.get(JavaConstants.UNIT_NAME);
+                    System.out.println(unitPackage + " " + unitName);
+                    if (unitName != null && unitPackage != null) {
+                        tasktype = unitPackage.toString() + "." + unitName.toString();
+                    } else {
+                        tasktype = "";
+                    }
+                } else {
+                    Object taskTypeObject = task.getParameter(Executable.TASKTYPE);
+                    if (taskTypeObject != null) {
+                        tasktype = (String) taskTypeObject;
+                    } else {
+                        tasktype = "";
+                    }
                 }
-                org.shiwa.fgi.iwir.Task iwirTask = new org.shiwa.fgi.iwir.Task(task.getToolName().replaceAll(" ", "_"), type);
+
+                org.shiwa.fgi.iwir.Task iwirTask = new org.shiwa.fgi.iwir.Task(task.getToolName().replaceAll(" ", "_"), tasktype);
+                for (String name : task.getParameterNames()) {
+                    String type = task.getParameterType(name);
+                    if (type.equals(Tool.USER_ACCESSIBLE)) {
+                        iwirTask.addProperty(new Property(name, task.getParameter(name).toString()));
+                    }
+                }
+
                 taskHashMap.put(task, iwirTask);
                 blockScope.addTask(iwirTask);
             }

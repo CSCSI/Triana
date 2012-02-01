@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 15/08/2011
  * Time: 10:15
  * To change this template use File | Settings | File Templates.

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Sep 17, 2010
  * Time: 4:47:50 PM
  * To change this template use File | Settings | File Templates.
@@ -81,7 +81,7 @@ public class DaxRegister {
             UUID toCheck = chunk.getUuid();
             //      devLog.debug"Checking : " + uuid + " with : " + toCheck );
             if (uuid.equals(toCheck)) {
-                devLog.debug("Register returning : " + chunk.getJobName());
+//                devLog.debug("Register returning : " + chunk.getJobName());
                 return chunk;
             }
         }
@@ -93,7 +93,7 @@ public class DaxRegister {
             UUID toCheck = chunk.getUuid();
             //    devLog.debug"Checking : " + uuid + " with : " + toCheck );
             if (uuid.equals(toCheck)) {
-                devLog.debug("Register returning : " + chunk.getFilename());
+//                devLog.debug("Register returning : " + chunk.getFilename());
                 return chunk;
             }
         }

@@ -28,12 +28,17 @@ import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 28/10/2011
  * Time: 15:35
  * To change this template use File | Settings | File Templates.
  */
 public class ConvertWorkflowToDax extends AbstractAction implements ActionDisplayOptions, ConversionAddon {
+
+    @Override
+    public String toString() {
+        return "DAX";
+    }
 
     public ConvertWorkflowToDax() {
         this(DISPLAY_BOTH);
@@ -113,7 +118,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
     }
 
     private void addInputsToDaxifiedTaskGraph(TaskGraph daxifiedTaskGraph, File conf) throws IOException, TaskGraphException {
-        if (!conf.exists()) {
+        if (conf == null || !conf.exists()) {
         } else {
             IoHandler handler = new IoHandler();
             IoConfiguration ioc = handler.deserialize(new FileInputStream(conf));
@@ -226,6 +231,16 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         CommandLinePegasus.initTaskgraph((TaskGraph) tool, filePath, false);
         runDaxCreatorWorkflow(tool, configFile);
         return new File(filePath);
+    }
+
+    @Override
+    public InputStream toolToWorkflowFileInputStream(Tool tool) {
+        try {
+            return new FileInputStream(toolToWorkflowFile(tool, null, File.createTempFile("tmp", "tmp").getAbsolutePath()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 10/11/2011
  * Time: 18:28
  * To change this template use File | Settings | File Templates.

@@ -1,18 +1,21 @@
 package org.trianacode.shiwa.handler;
 
 import org.apache.commons.logging.Log;
-import org.shiwa.desktop.data.description.handler.Port;
-import org.shiwa.desktop.data.description.handler.Signature;
+import org.shiwa.desktop.data.description.handler.TransferPort;
+import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.transfer.SHIWADesktopExecutionListener;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
+import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.TrianaRun;
+import org.trianacode.enactment.addon.ConversionAddon;
 import org.trianacode.enactment.io.*;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.DisplayDialog;
+import org.trianacode.shiwa.utils.WorkflowUtils;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
@@ -33,7 +36,7 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 06/07/2011
  * Time: 14:22
  * To change this template use File | Settings | File Templates.
@@ -51,21 +54,27 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
 
     }
 
-    public IoConfiguration getIOConfigFromSignature(String name, Signature signature) {
+    public IoConfiguration getIOConfigFromSignature(String name, TransferSignature signature) {
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
-        List<Port> inputPorts = signature.getInputs();
-        for (Port inputPort : inputPorts) {
+        List<TransferPort> inputPorts = signature.getInputs();
+        int portNumber = 0;
+        for (TransferPort inputPort : inputPorts) {
             if (inputPort.getValue() != null) {
                 String portName = inputPort.getName();
-                String portNumberString = portName.substring(portName.indexOf("_") + 1);
+//                String portNumberString = portName.substring(portName.indexOf("_") + 1);
+                String portNumberString = String.valueOf(portNumber);
 
                 String value = inputPort.getValue();
-                boolean reference = inputPort.isReference();
-
-
+                boolean reference;
+                if (inputPort.getValueType() == TransferSignature.ValueType.BUNDLED_FILE) {
+                    reference = true;
+                } else {
+                    reference = false;
+                }
                 IoMapping ioMapping = new IoMapping(new IoType(value, "string", reference), portNumberString);
                 inputMappings.add(ioMapping);
+                portNumber++;
             }
         }
 
@@ -84,14 +93,32 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
     }
 
     @Override
-    public void digestWorkflow(File file, Signature signature) {
+    public void digestWorkflow(File file, TransferSignature signature) {
         devLog.debug("Importing a bundle");
         try {
             if (GUIEnv.getApplicationFrame() != null) {
-                TaskGraph taskGraph = TaskGraphFileHandler.openTaskgraph(file, true);
+                String workflowType = WorkflowUtils.getWorkflowType(file, signature);
+                TaskGraph taskGraph;
+                if (workflowType.equals(AddonUtils.TASKGRAPH_FORMAT)) {
+                    taskGraph = TaskGraphFileHandler.openTaskgraph(file, true);
+                } else if (workflowType.equals(AddonUtils.IWIR_FORMAT)) {
+                    ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(trianaInstance, "IWIR-To-Task", ConversionAddon.class);
+                    if (conversionAddon != null) {
+                        taskGraph = (TaskGraph) conversionAddon.workflowToTool(file);
+                        taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+                    } else {
+                        System.out.println("FAil");
+                        return;
+                    }
+                } else {
+                    System.out.println("Fails");
+                    return;
+                }
+
                 if (signature.hasConfiguration()) {
                     createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
                 }
+
             } else {
                 devLog.debug("No gui found, running headless");
                 XMLReader reader = new XMLReader(new FileReader(file));
@@ -106,7 +133,8 @@ public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
         }
     }
 
-    private void executeWorkflowInGUI(String toolName, Tool tool, Signature signature) throws TaskGraphException, SchedulerException {
+
+    private void executeWorkflowInGUI(String toolName, Tool tool, TransferSignature signature) throws TaskGraphException, SchedulerException {
         TrianaRun runner = new TrianaRun(tool);
         IoConfiguration ioc = getIOConfigFromSignature(toolName, signature);
         IoHandler handler = new IoHandler();

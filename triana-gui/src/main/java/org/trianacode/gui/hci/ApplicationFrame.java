@@ -64,6 +64,7 @@ import org.trianacode.TrianaInstanceProgressListener;
 import org.trianacode.config.Locations;
 import org.trianacode.config.cl.ArgumentParser;
 import org.trianacode.config.cl.TrianaOptions;
+import org.trianacode.enactment.addon.CLIaddon;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.*;
 import org.trianacode.gui.action.clipboard.CopyAction;
@@ -269,6 +270,7 @@ public class ApplicationFrame extends TrianaWindow
 
             engine = new TrianaInstance(args);
             engine.addExtensionClasses(Extension.class,
+                    CLIaddon.class,
                     TaskGraphExporterInterface.class,
                     TaskGraphImporterInterface.class,
                     ToolImporterInterface.class,

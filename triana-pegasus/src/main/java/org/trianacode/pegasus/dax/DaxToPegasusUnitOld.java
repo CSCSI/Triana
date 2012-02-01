@@ -21,7 +21,7 @@
 //
 ///**
 //* Created by IntelliJ IDEA.
-//* User: ian
+//* User: Ian Harvey
 //* Date: Nov 30, 2010
 //* Time: 2:34:25 PM
 //* To change this template use File | Settings | File Templates.

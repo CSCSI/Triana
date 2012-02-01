@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Nov 10, 2010
  * Time: 5:27:58 PM
  * To change this template use File | Settings | File Templates.
@@ -176,7 +176,7 @@ public class TabManager implements DesktopViewManager, ChangeListener {
             tabView.setTitle(title);
 
             JLabel label = headerLabelMap.get(tabView);
-            if(label != null){
+            if (label != null) {
                 label.setText(title);
             }
         }

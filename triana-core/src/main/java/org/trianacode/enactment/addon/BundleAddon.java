@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 07/11/2011
  * Time: 12:44
  * To change this template use File | Settings | File Templates.

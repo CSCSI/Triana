@@ -21,7 +21,7 @@ import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Jan 17, 2011
  * Time: 9:27:14 PM
  * To change this template use File | Settings | File Templates.
@@ -204,7 +204,7 @@ public class DaxCreatorV3 implements TaskConscious {
             job.addArgument(jobChunk.getJobArgs());
 
 
-            jobChunk.listChunks();
+//            jobChunk.listChunks();
             List inFiles = jobChunk.getInFileChunks();
             for (int i = 0; i < inFiles.size(); i++) {
                 DaxFileChunk chunk = (DaxFileChunk) inFiles.get(i);
@@ -583,6 +583,8 @@ public class DaxCreatorV3 implements TaskConscious {
             devLog.debug("Output " + j + " :");
             DaxFileChunk chunk = (DaxFileChunk) outFiles.get(j);
             if (chunk.isCollection()) {
+
+                //TODO fix file naming on collections
 //                chunk.resetNextCounter();
                 devLog.debug("Jobs output file is a collection");
                 if (chunk.isOne2one()) {
@@ -590,6 +592,7 @@ public class DaxCreatorV3 implements TaskConscious {
                     devLog.debug("Building one2one output");
                     //                   chunk.setOne2one(true);
                     chunk.setNumberOfFiles(jobChunk.getNumberOfJobs());
+                    System.out.println("One2One file will have x files : " + chunk.getNumberOfFiles());
 
                     //                devLog.debug("File " + chunk.getFilename() + " duplication set to " + chunk.getNumberOfFiles());
                     if (chunk.getNamePattern() != null) {

@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Aug 20, 2010
  * Time: 12:49:06 PM
  * To change this template use File | Settings | File Templates.
@@ -63,22 +63,22 @@ public class DaxFileHolder {
         this.trianaToolName = trianaToolName;
     }
 
-    public void addJobIn(int node, String id){
+    public void addJobIn(int node, String id) {
         jobsIn.put(node, id);
-        numInputNodes ++;
+        numInputNodes++;
     }
 
-    public void addJobOut(int node, String id){
+    public void addJobOut(int node, String id) {
         jobsOut.put(node, id);
         numOutputNodes++;
     }
 
-    public String getJobAtInNode(int node){
-        return (String)jobsIn.get(node);
+    public String getJobAtInNode(int node) {
+        return (String) jobsIn.get(node);
     }
 
-    public String getJobAtOutNode(int node){
-        return (String)jobsOut.get(node);
+    public String getJobAtOutNode(int node) {
+        return (String) jobsOut.get(node);
     }
 
     public int getFreeInNode() {
@@ -89,13 +89,13 @@ public class DaxFileHolder {
         return jobsOut.size();
     }
 
-    public int getUnconnectedInNode(){
-        connectedInNodes ++;
-        return (connectedInNodes-1);
+    public int getUnconnectedInNode() {
+        connectedInNodes++;
+        return (connectedInNodes - 1);
     }
 
-    public int getUnconnectedOutNode(){
-        connectedOutNodes ++;
-        return (connectedOutNodes -1);
+    public int getUnconnectedOutNode() {
+        connectedOutNodes++;
+        return (connectedOutNodes - 1);
     }
 }

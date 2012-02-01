@@ -6,7 +6,7 @@ import org.trianacode.taskgraph.Task;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Nov 25, 2010
  * Time: 9:14:18 AM
  * To change this template use File | Settings | File Templates.
@@ -17,9 +17,10 @@ public class DaxUnitObject {
     private int row;
     private Task task;
 
-    private DaxUnitObject(){}
+    private DaxUnitObject() {
+    }
 
-    public DaxUnitObject(Task t){
+    public DaxUnitObject(Task t) {
         setTask(t);
     }
 
@@ -47,7 +48,7 @@ public class DaxUnitObject {
         return task;
     }
 
-    public String toString(){
+    public String toString() {
         return getTask().getToolName();
     }
 
@@ -57,7 +58,7 @@ public class DaxUnitObject {
 
     public void setParams() {
         Task t = getTask();
-        String levelValue = String.valueOf(getLevel().getLevelNumber() * 2.5);
+        String levelValue = String.valueOf(getLevel().getLevelNumber() * 2.3);
         String rowValue = String.valueOf(getRow() * 1.5);
 
         log("Setting value to level: " + levelValue + " row: " + rowValue);
@@ -66,9 +67,9 @@ public class DaxUnitObject {
         t.setParameter(Task.GUI_Y, rowValue);
     }
 
-    private void log(String text){
+    private void log(String text) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(text);
-  //      System.out.println(text);
+        //      System.out.println(text);
     }
 }

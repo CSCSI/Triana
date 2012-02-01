@@ -12,18 +12,40 @@ import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 28/10/2011
  * Time: 15:16
  * To change this template use File | Settings | File Templates.
  */
 public class DaxifyTaskGraph implements ConversionAddon {
 
+    private Class fileUnitClass;
+    private Class jobUnitClass;
+
+    @Override
+    public String toString() {
+        return "DAX";
+    }
+
+    public TaskGraph convert(Class fileUnitClass, Class jobUnitClass, TaskGraph taskGraph) {
+        this.fileUnitClass = fileUnitClass;
+        this.jobUnitClass = jobUnitClass;
+        try {
+            return daxifyTaskGraph(taskGraph, TaskFactory.DEFAULT_FACTORY_NAME, false, false, false);
+        } catch (TaskGraphException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public TaskGraph convert(TaskGraph taskGraph) {
+        fileUnitClass = FileUnit.class;
+        jobUnitClass = JobUnit.class;
         try {
             return daxifyTaskGraph(taskGraph, TaskFactory.DEFAULT_FACTORY_NAME, false, false, false);
         } catch (TaskGraphException e) {
@@ -46,7 +68,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
                 if (task1 instanceof TaskGraph) {
                     clone.createTask(daxifyTaskGraph((TaskGraph) task1, TaskFactory.DEFAULT_FACTORY_NAME, false, false, false));
                 } else {
-                    Task daxTask = initDaxTask(task1, JobUnit.class);
+                    Task daxTask = initDaxTask(task1, jobUnitClass);
                     clone.createTask(daxTask, prestasks);
                 }
             }
@@ -152,6 +174,12 @@ public class DaxifyTaskGraph implements ConversionAddon {
             }
 
 
+            if (clone.getInputNodeCount() > 0) {
+                for (Node inputNode : clone.getInputNodes()) {
+                    addFileUnit(null, inputNode.getTopLevelNode(), clone);
+                }
+            }
+
             return clone;
         } catch (ClassCastException except) {
             except.printStackTrace();
@@ -165,7 +193,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
     private void addFileUnit(Node sendnode, Node recnode, TaskGraph clone) throws CableException {
         try {
             Task fileTask = new TaskImp(
-                    AddonUtils.makeTool(FileUnit.class, "" + Math.random() * 100, clone.getProperties()),
+                    AddonUtils.makeTool(fileUnitClass, "" + Math.random() * 100, clone.getProperties()),
                     new TaskFactoryImp(),
                     false
             );
@@ -247,7 +275,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
 
     @Override
     public String getShortOption() {
-        return "daxJobs";
+        return "dax";
     }
 
     @Override
@@ -272,6 +300,11 @@ public class DaxifyTaskGraph implements ConversionAddon {
 
     @Override
     public File toolToWorkflowFile(Tool tool, File configFile, String filePath) {
+        return null;
+    }
+
+    @Override
+    public InputStream toolToWorkflowFileInputStream(Tool tool) {
         return null;
     }
 }

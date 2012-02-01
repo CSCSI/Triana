@@ -1,11 +1,19 @@
 package org.trianacode.shiwa.handler;
 
+import org.shiwa.desktop.data.description.handler.TransferSignature;
+import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
+import org.shiwa.fgi.iwir.BlockScope;
+import org.shiwa.fgi.iwir.IWIR;
+import org.trianacode.TrianaInstance;
+import org.trianacode.enactment.AddonUtils;
+import org.trianacode.enactment.addon.ConversionAddon;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.files.ImageAction;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.DisplayDialog;
+import org.trianacode.shiwa.iwir.importer.utils.ExportIwir;
 import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
@@ -14,11 +22,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 22/02/2011
  * Time: 14:36
  * To change this template use File | Settings | File Templates.
@@ -38,13 +48,24 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
-        System.out.println("Publishing Workflow");
+
 
         final ApplicationFrame frame = GUIEnv.getApplicationFrame();
         final TaskGraph tg = frame.getSelectedTaskgraph();
+
+        WorkflowEngineHandler handler = buildHandler(tg);
+        if (handler != null) {
+            publish(handler, frame.getEngine());
+        }
+    }
+
+    public static WorkflowEngineHandler buildHandler(TaskGraph tg) {
+        System.out.println("Publishing Workflow");
+
         if (tg == null || tg.getTasks(false).length == 0) {
-            JOptionPane.showMessageDialog(frame, "No taskgraph selected," +
+            JOptionPane.showMessageDialog(null, "No taskgraph selected," +
                     " or currently selected taskgraph has no tasks");
+            return null;
         } else {
             System.out.println(tg.getQualifiedTaskName());
 
@@ -59,14 +80,62 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            TrianaEngineHandler teh = new TrianaEngineHandler(tg, frame.getEngine(), displayStream);
 
-//            JPanel popup = new SHIWADesktopPanel(teh, SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
-            JPanel popup = new SHIWADesktopPanel(teh);
-            DisplayDialog dialog = null;
-            ((SHIWADesktopPanel) popup).addSHIWADesktopListener(new TrianaShiwaListener(frame.getEngine(), dialog));
-            dialog = new DisplayDialog(popup, "SHIWA Desktop");
+            ArrayList<ConversionAddon> converters = new ArrayList<ConversionAddon>();
+            Set<Object> addons = AddonUtils.getCLIaddons(GUIEnv.getApplicationFrame().getEngine());
+            for (Object addon : addons) {
+                if (addon instanceof ConversionAddon) {
+                    converters.add((ConversionAddon) addon);
+                }
+            }
 
+            Object[] choices = new Object[converters.size() + 1];
+            choices[0] = "taskgraph";
+            for (int i = 0; i < converters.size(); i++) {
+                ConversionAddon addon = converters.get(i);
+//                choices[i] = addon.getShortOption();
+                choices[i + 1] = addon;
+            }
+            Object addon = JOptionPane.showInputDialog(GUIEnv.getApplicationFrame(),
+                    "Please select the format for the workflow definition to be submitted in.",
+                    "Select Definition Type",
+                    JOptionPane.OK_OPTION,
+                    null,
+                    choices,
+                    choices[0]);
+
+            if (addon != null) {
+                TransferSignature signature = new TransferSignature();
+                if (!(addon instanceof ConversionAddon)) {
+                    return new TrianaEngineHandler(tg, tg.getProperties().getEngine(), displayStream);
+                } else if (addon.toString().equals("iwir")) {
+                    ExportIwir exportIwir = new ExportIwir();
+                    BlockScope blockscope = exportIwir.taskGraphToBlockScope(tg);
+                    IWIR iwir = new IWIR(tg.getToolName());
+                    iwir.setTask(blockscope);
+                    return new TrianaIWIRHandler(iwir, displayStream);
+
+                } else {
+                    InputStream definitionStream = ((ConversionAddon) addon).toolToWorkflowFileInputStream(tg);
+                    GenericWorkflowHandler handler = new GenericWorkflowHandler(definitionStream, displayStream);
+                    handler.setSignature(signature);
+                    handler.setLanguage(addon.toString());
+                    handler.setDefinitionName(tg.getToolName());
+
+                    return handler;
+                }
+            } else {
+                return null;
+            }
         }
+    }
+
+    public static void publish(WorkflowEngineHandler handler, TrianaInstance engine) {
+        JPanel popup = new SHIWADesktopPanel(handler, SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
+        DisplayDialog dialog = null;
+        ((SHIWADesktopPanel) popup).addSHIWADesktopListener(new TrianaShiwaListener(engine, dialog));
+        dialog = new DisplayDialog(popup, "SHIWA Desktop");
+
+
     }
 }

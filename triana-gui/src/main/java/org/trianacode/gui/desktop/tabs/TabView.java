@@ -8,7 +8,7 @@ import java.awt.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Nov 10, 2010
  * Time: 5:47:54 PM
  * To change this template use File | Settings | File Templates.

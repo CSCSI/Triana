@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Nov 25, 2010
  * Time: 8:56:29 AM
  * To change this template use File | Settings | File Templates.

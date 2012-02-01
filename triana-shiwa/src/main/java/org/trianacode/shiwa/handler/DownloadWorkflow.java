@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 06/07/2011
  * Time: 14:21
  * To change this template use File | Settings | File Templates.
@@ -40,7 +40,7 @@ public class DownloadWorkflow extends AbstractAction implements ActionDisplayOpt
         TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine(), dialog);
 
 //        SHIWADesktopPanel popup = new SHIWADesktopPanel(SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
-        SHIWADesktopPanel popup = new SHIWADesktopPanel();
+        SHIWADesktopPanel popup = new SHIWADesktopPanel(SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
         popup.addSHIWADesktopListener(tsl);
 //        popup.fetchBundle();
         dialog = new DisplayDialog(popup, "SHIWA Desktop");

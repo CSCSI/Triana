@@ -4,15 +4,17 @@ import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 04/11/2011
  * Time: 14:36
  * To change this template use File | Settings | File Templates.
  */
 public interface ConversionAddon extends CLIaddon {
+
     public Object toolToWorkflow(Tool tool) throws IOException;
 
     public Tool workflowToTool(Object workflowObject);
@@ -20,4 +22,6 @@ public interface ConversionAddon extends CLIaddon {
     public Tool processWorkflow(Tool workflow);
 
     File toolToWorkflowFile(Tool tool, File configFile, String filePath) throws Exception;
+
+    InputStream toolToWorkflowFileInputStream(Tool tool);
 }

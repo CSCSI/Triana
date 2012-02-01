@@ -8,7 +8,7 @@ import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 24/10/2011
  * Time: 14:52
  * To change this template use File | Settings | File Templates.

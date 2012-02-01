@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 18/10/2011
  * Time: 14:59
  * To change this template use File | Settings | File Templates.

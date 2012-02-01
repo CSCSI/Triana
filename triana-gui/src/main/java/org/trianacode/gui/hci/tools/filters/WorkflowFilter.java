@@ -5,7 +5,7 @@ import org.trianacode.taskgraph.tool.Tool;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Oct 29, 2010
  * Time: 5:23:00 PM
  * To change this template use File | Settings | File Templates.
@@ -21,7 +21,7 @@ public class WorkflowFilter implements ToolFilter {
         return getName();
     }
 
-    public String toString(){
+    public String toString() {
         return getName();
     }
 

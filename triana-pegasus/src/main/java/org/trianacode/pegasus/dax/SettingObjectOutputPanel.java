@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Dec 10, 2010
  * Time: 1:09:17 PM
  * To change this template use File | Settings | File Templates.
@@ -39,7 +39,7 @@ public class SettingObjectOutputPanel extends ParameterPanel {
 
         Set mapKeys = map.keySet();
 
-        for (Iterator i = mapKeys.iterator(); i.hasNext();) {
+        for (Iterator i = mapKeys.iterator(); i.hasNext(); ) {
             Object o = i.next();
 
             devLog.debug("Key is of class : " + o.getClass());

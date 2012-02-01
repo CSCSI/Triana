@@ -5,13 +5,11 @@ import org.shiwa.desktop.data.description.bundle.BundleFile;
 import org.shiwa.desktop.data.description.core.AbstractWorkflow;
 import org.shiwa.desktop.data.description.core.Configuration;
 import org.shiwa.desktop.data.description.core.WorkflowImplementation;
-import org.shiwa.desktop.data.description.handler.Constraint;
-import org.shiwa.desktop.data.description.handler.Port;
-import org.shiwa.desktop.data.description.handler.Signature;
+import org.shiwa.desktop.data.description.handler.TransferPort;
+import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.description.resource.AggregatedResource;
 import org.shiwa.desktop.data.description.resource.ConfigurationResource;
 import org.shiwa.desktop.data.description.resource.ReferableResource;
-import org.shiwa.desktop.data.description.workflow.Dependency;
 import org.shiwa.desktop.data.description.workflow.InputPort;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
 import org.shiwa.desktop.data.util.DataUtils;
@@ -36,9 +34,11 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//import org.shiwa.desktop.data.description.handler.Dependency;
+
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 27/10/2011
  * Time: 13:45
  * To change this template use File | Settings | File Templates.
@@ -123,7 +123,7 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
         if (workflowImplementation == null || configurationList.size() < 1) {
             return null;
         } else {
-            Signature signature = buildSignature(workflowImplementation, configurationList.get(0));
+            TransferSignature signature = buildSignature(workflowImplementation, configurationList.get(0));
             configFile = getIOConfigFromSignature(signature);
         }
         return configFile;
@@ -148,8 +148,8 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
         return chosenImp;
     }
 
-    private Signature buildSignature(WorkflowImplementation workflow, Configuration configuration) {
-        Signature signature = new Signature();
+    private TransferSignature buildSignature(WorkflowImplementation workflow, Configuration configuration) {
+        TransferSignature signature = new TransferSignature();
 
         signature.setName(workflow.getDefinition().getFilename());
         System.out.println("Signatures name " + signature.getName());
@@ -182,23 +182,25 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
             }
         }
 
-        for (Dependency dependency : workflow.getDependencies()) {
-            Constraint constraint = new Constraint(dependency.getTitle(), dependency.getDataType(), dependency.getDescription());
-
-            if (configuration != null) {
-                for (ConfigurationResource dependencyRef : configuration.getResources()) {
-                    if (dependencyRef.getReferableResource() == dependency) {
-                        if (dependencyRef.getRefType() == ConfigurationResource.RefTypes.FILE_REF) {
-                            constraint.setValueReference(dependencyRef.getValue());
-                        } else {
-                            constraint.setValue(dependencyRef.getValue());
-                        }
-                    }
-                }
-            }
-
-            signature.addConstraint(constraint);
-        }
+//        for (Dependency dependency : workflow.getDependencies()) {
+////            Constraint constraint = new Constraint(dependency.getTitle(), dependency.getDataType(), dependency.getDescription());
+//            Dependency constraint = new Dependency(dependency.getTitle(), dependency.getDataType(), dependency.getDescription());
+//
+//            if (configuration != null) {
+//                for (ConfigurationResource dependencyRef : configuration.getResources()) {
+//                    if (dependencyRef.getReferableResource() == dependency) {
+//                        if (dependencyRef.getRefType() == ConfigurationResource.RefTypes.FILE_REF) {
+////                            constraint.setValueReference(dependencyRef.getValue());
+//                            constraint.setValueType(TransferSignature.ValueType.BUNDLED_FILE);
+//                        } else {
+//                            constraint.setValue(dependencyRef.getValue());
+//                        }
+//                    }
+//                }
+//            }
+//
+//            signature.addConstraint(constraint);
+//        }
 
         if (configuration != null) {
             signature.setHasConfiguration(true);
@@ -206,18 +208,18 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
         return signature;
     }
 
-    private File getIOConfigFromSignature(Signature signature) throws IOException {
+    private File getIOConfigFromSignature(TransferSignature signature) throws IOException {
 
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
-        List<Port> inputPorts = signature.getInputs();
-        for (Port inputPort : inputPorts) {
+        List<TransferPort> inputPorts = signature.getInputs();
+        for (TransferPort inputPort : inputPorts) {
             if (inputPort.getValue() != null) {
                 String portName = inputPort.getName();
                 String portNumberString = portName.substring(portName.indexOf("_") + 1);
 
                 String value = inputPort.getValue();
-                boolean reference = inputPort.isReference();
+                boolean reference = inputPort.getValueType() == TransferSignature.ValueType.BUNDLED_FILE;
 
                 IoMapping ioMapping = new IoMapping(new IoType(value, "string", reference), portNumberString);
                 inputMappings.add(ioMapping);

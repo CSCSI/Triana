@@ -1,18 +1,21 @@
 package org.trianacode.shiwa.iwir.holders;
 
+import org.shiwa.fgi.iwir.WhileTask;
 import org.trianacode.shiwa.iwir.factory.AbstractTaskHolder;
+import org.trianacode.shiwa.iwir.factory.BasicIWIRPanel;
 import org.trianacode.shiwa.iwir.factory.models.IWIRControlComponentModel;
-import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.imp.RenderingHintImp;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 09/03/2011
  * Time: 14:33
  * To change this template use File | Settings | File Templates.
  */
 public class WhileTaskHolder extends AbstractTaskHolder {
+
+    private String readableCondition = "";
 
     @Override
     public void process() throws Exception {
@@ -21,12 +24,24 @@ public class WhileTaskHolder extends AbstractTaskHolder {
 
     public void init() {
         super.init();
-        defineParameter("count", "0", Unit.USER_ACCESSIBLE);
-        setGUIBuilderV2Info("Loops $title count IntScroller 0 100 0");
+//        defineParameter("count", "0", Unit.USER_ACCESSIBLE);
+//        setGUIBuilderV2Info("Loops $title count IntScroller 0 100 0");
         getTask().addRenderingHint(
                 new RenderingHintImp(
                         IWIRControlComponentModel.IWIR_CONTROL_RENDERING_HINT, false
                 )
         );
+        setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());
+        setParameterPanelInstantiate(ON_USER_ACCESS);
+
+    }
+
+    public boolean conditionSatisfied() {
+        return ((WhileTask) getIWIRTask()).getCondition().eval();
+    }
+
+    public void setReadableCondition(String readableCondition) {
+        setParameter(BasicIWIRPanel.CONDITION, readableCondition);
+
     }
 }

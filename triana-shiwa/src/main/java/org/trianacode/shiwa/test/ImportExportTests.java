@@ -3,7 +3,6 @@ package org.trianacode.shiwa.test;
 import org.apache.commons.lang.ArrayUtils;
 import org.shiwa.fgi.iwir.*;
 import org.trianacode.TrianaInstance;
-import org.trianacode.enactment.AddonUtils;
 import org.trianacode.shiwa.iwir.factory.TaskHolder;
 import org.trianacode.shiwa.iwir.factory.TaskHolderFactory;
 import org.trianacode.shiwa.iwir.importer.utils.TaskTypeToTool;
@@ -22,7 +21,7 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 23/09/2011
  * Time: 15:19
  * To change this template use File | Settings | File Templates.
@@ -50,31 +49,31 @@ public class ImportExportTests {
 
         TaskGraph graphInGraph = testGraphInGraph();
 
-        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
+//        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
 
-        fillTaskgraph(taskGraph);
+//        fillTaskgraph(taskGraph);
 
-        File file = createTaskGraphFile(taskGraph, "initialTriana.xml");
+        File file = createTaskGraphFile(graphInGraph, "initialTriana.xml");
 
-        TaskGraph readTaskgraph = readTaskgraph(new File("../xml/aaaScopeChecker.xml"), trianaInstance);
-//        TaskGraph readTaskgraph = readTaskgraph(file, trianaInstance);
-
-        BlockScope blockScope = taskGraphToIWIR(readTaskgraph);
-
-        File iwirFile = writeIWIR(blockScope, "taskToIWIR.xml");
-
-        File blockScopeFile = new File("../xml/blockscope.xml");
-
-//        IWIR iwir = readIWIR(iwirFile);
-        IWIR iwir = readIWIR(blockScopeFile);
-
-
-        TaskGraph iwirTaskGraph = taskFromIwir(iwir);
-
-        createTaskGraphFile(iwirTaskGraph, "iwirToTaskgraph.xml");
+//        TaskGraph readTaskgraph = readTaskgraph(new File("../xml/aaaScopeChecker.xml"), trianaInstance);
+////        TaskGraph readTaskgraph = readTaskgraph(file, trianaInstance);
+//
+//        BlockScope blockScope = taskGraphToIWIR(readTaskgraph);
+//
+//        File iwirFile = writeIWIR(blockScope, "taskToIWIR.xml");
+//
+//        File blockScopeFile = new File("../xml/blockscope.xml");
+//
+////        IWIR iwir = readIWIR(iwirFile);
+//        IWIR iwir = readIWIR(blockScopeFile);
+//
+//
+//        TaskGraph iwirTaskGraph = taskFromIwir(iwir);
+//
+//        createTaskGraphFile(iwirTaskGraph, "iwirToTaskgraph.xml");
     }
 
-    private TaskGraph testGraphInGraph() throws TaskException, IOException, ProxyInstantiationException {
+    private TaskGraph testGraphInGraph() throws TaskException, IOException, ProxyInstantiationException, CableException {
         TaskGraph outerTaskGraph = TaskGraphManager.createTaskGraph();
         outerTaskGraph.setToolName("outer");
         TaskGraph middleTaskGraph = TaskGraphManager.createTaskGraph();
@@ -82,15 +81,35 @@ public class ImportExportTests {
         TaskGraph innerTaskGraph = TaskGraphManager.createTaskGraph();
         innerTaskGraph.setToolName("inner");
 
-        Class clazz = TaskTypeToTool.getTaskFromType("InOut");
-//        Task taska = outerTaskGraph.createTask(makeTool(clazz, "InOuta", outerTaskGraph.getProperties()));
-//        Task taskb = middleTaskGraph.createTask(makeTool(clazz, "InOutb", middleTaskGraph.getProperties()));
-        Task taskc = innerTaskGraph.createTask(AddonUtils.makeTool(clazz, "InOutc", innerTaskGraph.getProperties()));
 
-        middleTaskGraph.createTask(innerTaskGraph);
-        outerTaskGraph.createTask(middleTaskGraph);
+        Tool toola = TaskTypeToTool.getToolFromType("InOut", "InOuta", outerTaskGraph.getProperties());
+        Task taska = outerTaskGraph.createTask(toola, true);
 
-        innerTaskGraph.addDataInputNode(taskc.addDataInputNode());
+
+        TaskGraph middle = (TaskGraph) outerTaskGraph.createTask(middleTaskGraph, true);
+        Tool toolb = TaskTypeToTool.getToolFromType("InOut", "InOutb", middleTaskGraph.getProperties());
+        Task taskb = middle.createTask(toolb, true);
+        middle.addDataInputNode(taskb.addDataInputNode());
+        middle.addDataOutputNode(taskb.addDataOutputNode());
+
+
+        TaskGraph inner = (TaskGraph) middle.createTask(innerTaskGraph, true);
+        Tool toolc = TaskTypeToTool.getToolFromType("InOut", "InOutc", innerTaskGraph.getProperties());
+        Task taskc = inner.createTask(toolc, true);
+
+        Tool toold = TaskTypeToTool.getToolFromType("InOut", "InOutd", innerTaskGraph.getProperties());
+        Task taskd = inner.createTask(toold, true);
+
+
+        Node cinNode = taskc.addDataInputNode();
+        Node coutNode = taskc.addDataOutputNode();
+
+        Node dinNode = taskd.addDataInputNode();
+        Node doutNode = taskd.addDataOutputNode();
+
+        inner.connect(coutNode, dinNode);
+
+
 //
 //        Node parentNode;
 //        Task scopeTask = taskc;
@@ -109,7 +128,7 @@ public class ImportExportTests {
 //        innerTaskGraph.addDataInputNode(taskc.addDataInputNode());
 
         createTaskGraphFile(outerTaskGraph, "testOuter.xml");
-//        System.exit(1);
+        System.exit(1);
         return outerTaskGraph;
     }
 
@@ -309,28 +328,28 @@ public class ImportExportTests {
         return (TaskGraph) tool;
     }
 
-    private TaskGraph fillTaskgraph(TaskGraph taskGraph) throws IOException, TaskException, ProxyInstantiationException, CableException {
-
-        Tool tool0 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
-        Task task0 = taskGraph.createTask(tool0);
-        task0.setParameter("TaskType", "InOut");
-        taskGraph.addDataInputNode(task0.addDataInputNode());
-
-        Tool tool1 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
-        Task task1 = taskGraph.createTask(tool1);
-        task1.setParameter("TaskType", "InOut");
-
-        Tool tool2 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
-        Task task2 = taskGraph.createTask(tool2);
-        task2.setParameter("TaskType", "InOut");
-        taskGraph.addDataOutputNode(task2.addDataOutputNode());
-
-        taskGraph.connect(task0.addDataOutputNode(), task1.addDataInputNode());
-        taskGraph.connect(task1.addDataOutputNode(), task2.addDataInputNode());
-
-        taskGraph.setToolName("TestTaskgraph");
-        return taskGraph;
-    }
+//    private TaskGraph fillTaskgraph(TaskGraph taskGraph) throws IOException, TaskException, ProxyInstantiationException, CableException {
+//
+//        Tool tool0 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
+//        Task task0 = taskGraph.createTask(tool0);
+//        task0.setParameter("TaskType", "InOut");
+//        taskGraph.addDataInputNode(task0.addDataInputNode());
+//
+//        Tool tool1 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
+//        Task task1 = taskGraph.createTask(tool1);
+//        task1.setParameter("TaskType", "InOut");
+//
+//        Tool tool2 = AddonUtils.makeTool(TaskTypeToTool.getTaskFromType("InOut"), "InOut", taskGraph.getProperties());
+//        Task task2 = taskGraph.createTask(tool2);
+//        task2.setParameter("TaskType", "InOut");
+//        taskGraph.addDataOutputNode(task2.addDataOutputNode());
+//
+//        taskGraph.connect(task0.addDataOutputNode(), task1.addDataInputNode());
+//        taskGraph.connect(task1.addDataOutputNode(), task2.addDataInputNode());
+//
+//        taskGraph.setToolName("TestTaskgraph");
+//        return taskGraph;
+//    }
 
     private File createTaskGraphFile(TaskGraph taskGraph, String path) throws IOException {
         File outputFile = new File(path);
@@ -500,16 +519,20 @@ public class ImportExportTests {
         for (AbstractTask iwirTask : mainTask.getChildren()) {
             if (iwirTask instanceof org.shiwa.fgi.iwir.Task) {
                 String type = ((org.shiwa.fgi.iwir.Task) iwirTask).getTasktype();
-                Class clazz = TaskTypeToTool.getTaskFromType(type);
-                if (clazz == null) {
-                    clazz = InOut.class;
-                    type = "InOut";
-                }
-                Task trianaTask = taskGraph.createTask(
-                        AddonUtils.makeTool(
-                                clazz, iwirTask.getName(), taskGraph.getProperties()
-                        )
-                );
+                Tool toola = TaskTypeToTool.getToolFromType("InOut", "InOuta", taskGraph.getProperties());
+                Task trianaTask = taskGraph.createTask(toola);
+
+//                Class clazz = TaskTypeToTool.getTaskFromType(type);
+//                if (clazz == null) {
+//                    clazz = InOut.class;
+//                    type = "InOut";
+//                }
+//                Task trianaTask = taskGraph.createTask(
+//                        AddonUtils.makeTool(
+//                                clazz, iwirTask.getName(), taskGraph.getProperties()
+//                        )
+//                );
+
                 trianaTask.setParameter("TaskType", type);
                 abstractHashMap.put(iwirTask, trianaTask);
             } else {

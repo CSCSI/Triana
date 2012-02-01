@@ -2,7 +2,7 @@ package org.trianacode.pegasus.extras;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 01/04/2011
  * Time: 17:40
  * To change this template use File | Settings | File Templates.

@@ -10,7 +10,7 @@ import javax.swing.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 22/02/2011
  * Time: 14:37
  * To change this template use File | Settings | File Templates.

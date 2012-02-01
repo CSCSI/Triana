@@ -1,7 +1,7 @@
 package org.trianacode.shiwa.handler;
 
 import org.apache.commons.logging.Log;
-import org.shiwa.desktop.data.description.handler.Signature;
+import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktopPanel;
 import org.trianacode.TrianaInstance;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 24/02/2011
  * Time: 12:56
  * To change this template use File | Settings | File Templates.
@@ -30,7 +30,6 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     private Task task;
     private InputStream displayImage;
-    //    private Signature loadedSignature;
     private TrianaInstance trianaInstance;
 
     public TrianaEngineHandler(Task task, TrianaInstance trianaInstance, InputStream displayImage) {
@@ -55,8 +54,8 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     }
 
     @Override
-    public Signature getSignature() {
-        Signature signature = new Signature();
+    public TransferSignature getSignature() {
+        TransferSignature signature = new TransferSignature();
         signature.setName(task.getToolName());
         setInputPorts(signature);
         setOutputPorts(signature);
@@ -64,14 +63,14 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         return signature;
     }
 
-    private void setOutputPorts(Signature signature) {
+    private void setOutputPorts(TransferSignature signature) {
         for (int i = 0; i < task.getDataOutputNodeCount(); i++) {
             String s = task.getDataOutputTypes(i)[0];
             signature.addOutput("OutputPort_" + i, ObjectToSchema.getSchemaURIString(s));
         }
     }
 
-    private void setInputPorts(Signature signature) {
+    private void setInputPorts(TransferSignature signature) {
         for (int i = 0; i < task.getDataInputNodeCount(); i++) {
             String s = task.getDataInputTypes(i)[0];
             signature.addInput("InputPort_" + i, s);
@@ -133,7 +132,10 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 //                new TrianaEngineHandler((Task) tool, engine, null),
 //                SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR
 //        );
-        JPanel jPanel = new SHIWADesktopPanel(new TrianaEngineHandler((Task) tool, engine, null));
+        JPanel jPanel = new SHIWADesktopPanel(
+                new TrianaEngineHandler((Task) tool, engine, null),
+                SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR
+        );
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.add(jPanel);

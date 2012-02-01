@@ -10,7 +10,7 @@ import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Aug 31, 2010
  * Time: 11:04:10 AM
  * To change this template use File | Settings | File Templates.

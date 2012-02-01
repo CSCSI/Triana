@@ -1,1 +1,3 @@
 org.trianacode.shiwa.iwir.importer.IwirReader
+org.trianacode.shiwa.bundle.BundleReader
+

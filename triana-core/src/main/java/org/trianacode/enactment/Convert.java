@@ -22,16 +22,13 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 03/11/2011
  * Time: 12:15
  * To change this template use File | Settings | File Templates.
  */
 public class Convert {
 
-    public static final String TASKGRAPH_FORMAT = "taskgraph";
-    public static final String IWIR_FORMAT = "iwir";
-    public static final String DAX_FORMAT = "dax";
     private Tool tool;
     private File configFile;
     private String bundleInputPath;
@@ -54,20 +51,23 @@ public class Convert {
             if (conversion != null) {
                 String conversionString = conversion.get(0).toLowerCase();
 
-                if (conversionString.equals(IWIR_FORMAT)) {
+                if (conversionString.equals(AddonUtils.IWIR_FORMAT)) {
 
-                    ConversionAddon conversionAddon = AddonUtils.getConversionAddon(engine, "taskgraph-to-iwir");
+                    ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(
+                            engine, "iwir-converter", ConversionAddon.class
+                    );
+
                     if (conversionAddon != null) {
                         File iwirFile = conversionAddon.toolToWorkflowFile(tool, configFile, "tempFile.xml");
                         System.out.println("Created iwir file : " + iwirFile.getAbsolutePath());
                     }
 
-                } else if (conversionString.equals(DAX_FORMAT)) {
+                } else if (conversionString.equals(AddonUtils.DAX_FORMAT)) {
 
                     System.out.println("Will create dax file");
 
-                    ConversionAddon daxifyAddon = (ConversionAddon) AddonUtils.getService(engine, "taskgraph-to-daxJobs");
-                    ConversionAddon daxAddon = (ConversionAddon) AddonUtils.getService(engine, "convert-dax");
+                    ConversionAddon daxifyAddon = (ConversionAddon) AddonUtils.getService(engine, "taskgraph-to-daxJobs", ConversionAddon.class);
+                    ConversionAddon daxAddon = (ConversionAddon) AddonUtils.getService(engine, "convert-dax", ConversionAddon.class);
                     if (daxifyAddon != null && daxAddon != null) {
 
                         Tool daxifiedTaskgraph = (Tool) daxifyAddon.processWorkflow(tool);
@@ -80,7 +80,7 @@ public class Convert {
 
                 } else {
 
-                    conversionString = TASKGRAPH_FORMAT;
+                    conversionString = AddonUtils.TASKGRAPH_FORMAT;
 
                     outputConvertedFile = File.createTempFile("publishedTaskgraphTemp", ".xml");
 
@@ -110,7 +110,7 @@ public class Convert {
 
         } else {
             System.out.println("Producing bundle output");
-            BundleAddon bundleAddon = (BundleAddon) AddonUtils.getExecutionAddon(engine, "unbundle");
+            BundleAddon bundleAddon = (BundleAddon) AddonUtils.getService(engine, "unbundle", BundleAddon.class);
             bundleAddon.setWorkflowFile(bundleInputPath, outputConvertedFile);
             bundleAddon.saveBundle("BundleOutput.zip");
             System.out.println("Bundled");
@@ -120,16 +120,28 @@ public class Convert {
     private void initTool(TrianaInstance engine, OptionValues vals) throws Exception {
         List<String> bundleInputs = vals.getOptionValues(TrianaOptions.EXECUTE_BUNDLE.getShortOpt());
         if (bundleInputs != null) {
-            ExecutionAddon executionAddon = AddonUtils.getExecutionAddon(engine, "unbundle");
+            ExecutionAddon executionAddon = (ExecutionAddon) AddonUtils.getService(engine, "unbundle", ExecutionAddon.class);
             System.out.println("Unbundling with " + executionAddon.getServiceName());
             bundleInputPath = bundleInputs.get(0);
             tool = executionAddon.getTool(engine, bundleInputPath);
             configFile = executionAddon.getConfigFile();
         } else {
             List<String> workflowInput = vals.getOptionValues(TrianaOptions.WORKFLOW_OPTION.getShortOpt());
+            String type = null;
             if (workflowInput != null) {
+                type = AddonUtils.getWorkflowType(new File(workflowInput.get(0)));
+            }
+
+            if (type == null) {
+                return;
+            } else if (type.equals(AddonUtils.TASKGRAPH_FORMAT)) {
                 XMLReader reader = new XMLReader(new FileReader(workflowInput.get(0)));
                 tool = reader.readComponent(engine.getProperties());
+            } else if (type.equals(AddonUtils.IWIR_FORMAT)) {
+                ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(engine, "iwir-converter", ConversionAddon.class);
+                if (conversionAddon != null) {
+                    tool = conversionAddon.workflowToTool(workflowInput.get(0));
+                }
             }
         }
     }

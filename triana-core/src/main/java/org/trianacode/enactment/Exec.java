@@ -158,7 +158,7 @@ public class Exec implements ExecutionListener {
 
         Thread.sleep(3000);
 
-        ExecutionAddon executionAddon = AddonUtils.getExecutionAddon(engine, "bundle");
+        ExecutionAddon executionAddon = (ExecutionAddon) AddonUtils.getService(engine, "bundle", ExecutionAddon.class);
 
         if (executionAddon != null) {
             System.out.println("Running with " + executionAddon.getServiceName());
@@ -261,15 +261,7 @@ public class Exec implements ExecutionListener {
 
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
-
-//        ExecutionAddon executionAddon = (ExecutionAddon) AddonUtils.getService(engine, vals);
-//        if (executionAddon != null) {
-//            System.out.println("Running with " + executionAddon.getServiceName());
-//            executionAddon.execute(this, engine, wf, tool, data, args);
-//        } else {
-//            System.out.println("Running in vanilla mode : no ExecutionAddon");
         execute(tool, data);
-//        }
         engine.shutdown(0);
     }
 
@@ -363,7 +355,7 @@ public class Exec implements ExecutionListener {
         public StreamToOutput(InputStream inputStream, String description) {
             this.inputStream = inputStream;
             this.description = description;
-            inreader = new BufferedReader(new InputStreamReader(inputStream));
+            inreader = new BufferedReader(new InputStreamReader(this.inputStream));
 
         }
 

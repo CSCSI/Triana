@@ -1,6 +1,5 @@
 package org.trianacode.shiwa.iwir.holders;
 
-import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.factory.AbstractTaskHolder;
 import org.trianacode.shiwa.iwir.factory.models.IWIRControlComponentModel;
 import org.trianacode.taskgraph.*;
@@ -16,7 +15,7 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 09/03/2011
  * Time: 14:33
  * To change this template use File | Settings | File Templates.
@@ -50,7 +49,8 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         Unit parallelUnit = new AtomicTaskHolder();
 
         //assuming theres an executable which can do something.
-        ((AtomicTaskHolder) parallelUnit).setExecutable(new Executable());
+
+//        ((AtomicTaskHolder) parallelUnit).setExecutable(new Executable());
 
 
         int parallelNumber = 0;

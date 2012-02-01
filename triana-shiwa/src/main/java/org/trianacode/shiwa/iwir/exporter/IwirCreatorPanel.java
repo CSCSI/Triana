@@ -13,7 +13,7 @@ import java.io.File;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 14/04/2011
  * Time: 12:05
  * To change this template use File | Settings | File Templates.

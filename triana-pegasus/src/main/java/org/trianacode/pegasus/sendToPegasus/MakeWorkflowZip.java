@@ -10,7 +10,7 @@ import java.util.zip.ZipEntry;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 07/03/2011
  * Time: 11:46
  * To change this template use File | Settings | File Templates.

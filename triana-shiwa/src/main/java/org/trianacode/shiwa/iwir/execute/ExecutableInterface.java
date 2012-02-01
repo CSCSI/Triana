@@ -2,7 +2,7 @@ package org.trianacode.shiwa.iwir.execute;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 12/08/2011
  * Time: 10:08
  * To change this template use File | Settings | File Templates.

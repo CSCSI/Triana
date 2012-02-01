@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Jan 19, 2011
  * Time: 2:24:36 PM
  * To change this template use File | Settings | File Templates.
@@ -20,13 +20,15 @@ public class PegasusListener implements ServiceListener {
     String mdns_type;
     private ArrayList<ServiceInfo> services;
 
-    public PegasusListener(JmDNS jmdns, String mdns_type){
+    public PegasusListener(JmDNS jmdns, String mdns_type) {
         this.jmdns = jmdns;
         this.mdns_type = mdns_type;
         services = new ArrayList<ServiceInfo>();
     }
 
-    public ArrayList getServices(){return services;}
+    public ArrayList getServices() {
+        return services;
+    }
 
     public void serviceAdded(ServiceEvent event) {
         log("\nService added : " + event.getName());
@@ -45,16 +47,15 @@ public class PegasusListener implements ServiceListener {
         refreshList();
     }
 
-    public boolean foundSomething(){
-        if(services.size() > 0){
+    public boolean foundSomething() {
+        if (services.size() > 0) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
-    private void listInfo(ServiceEvent event){
+    private void listInfo(ServiceEvent event) {
         ServiceInfo info = event.getInfo();
         System.out.println("Event : " + event.getName() +
                 "\nType : " + event.getType() +
@@ -69,16 +70,19 @@ public class PegasusListener implements ServiceListener {
         );
     }
 
-    private void refreshList(){
+    private void refreshList() {
         ServiceInfo[] infos = jmdns.list(mdns_type);
         if (infos != null && infos.length > 0) {
             ArrayList<ServiceInfo> temp = new ArrayList<ServiceInfo>();
-            for (int i = 0; i < infos.length; i++) { temp.add(infos[i]);}
+            for (int i = 0; i < infos.length; i++) {
+                temp.add(infos[i]);
+            }
             services = temp;
         }
     }
 
-    private void log(String s){;
+    private void log(String s) {
+        ;
         System.out.println(s);
     }
 }

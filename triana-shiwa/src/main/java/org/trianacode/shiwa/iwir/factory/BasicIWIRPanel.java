@@ -8,6 +8,8 @@ import java.awt.*;
 
 public class BasicIWIRPanel extends ParameterPanel {
 
+    public static final String CONDITION = "condition";
+
     @Override
     public void init() {
         setLayout(new GridLayout(1, 1));
@@ -24,8 +26,19 @@ public class BasicIWIRPanel extends ParameterPanel {
         jPanel.add(jTextArea);
         jTextArea.append(getDescription());
 
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new GridLayout(1, 1));
+
+        String condition = (String) getTask().getParameter(CONDITION);
+        if (condition != null) {
+            System.out.println(condition);
+            infoPanel.add(new JLabel(condition));
+        }
+
+        jPanel.add(infoPanel);
         this.add(jPanel);
     }
+
 
     private String getDescription() {
         String inputNodeString = "";

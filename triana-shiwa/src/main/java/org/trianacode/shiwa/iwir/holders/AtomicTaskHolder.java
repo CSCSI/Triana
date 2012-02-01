@@ -4,7 +4,7 @@ import org.trianacode.shiwa.iwir.factory.AbstractTaskHolder;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 09/03/2011
  * Time: 14:33
  * To change this template use File | Settings | File Templates.

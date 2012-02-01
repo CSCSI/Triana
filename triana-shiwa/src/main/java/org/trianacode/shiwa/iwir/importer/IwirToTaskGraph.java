@@ -9,6 +9,7 @@ import org.trianacode.shiwa.iwir.exporter.NodePortTranslator;
 import org.trianacode.shiwa.iwir.exporter.NodeProxy;
 import org.trianacode.shiwa.iwir.factory.TaskHolder;
 import org.trianacode.shiwa.iwir.factory.TaskHolderFactory;
+import org.trianacode.shiwa.iwir.holders.WhileTaskHolder;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.imp.ToolImp;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 24/10/2011
  * Time: 14:43
  * To change this template use File | Settings | File Templates.
@@ -117,6 +118,25 @@ public class IwirToTaskGraph {
                     e.printStackTrace();
                 }
             }
+        }
+
+        if (rootTask instanceof WhileTask) {
+            WhileTaskHolder whileTaskHolder = (WhileTaskHolder) innerControlTask;
+            WhileTask whileTask = (WhileTask) rootTask;
+
+            for (AbstractPort port : whileTask.getAllInputPorts()) {
+                if (port instanceof LoopPort) {
+
+                }
+                if (port instanceof InputPort) {
+                    try {
+                        innerTaskGraph.addDataInputNode(innerControlTask.addDataInputNode());
+                    } catch (NodeException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            whileTaskHolder.setReadableCondition(whileTask.getCondition().getConditionAsString());
         }
     }
 

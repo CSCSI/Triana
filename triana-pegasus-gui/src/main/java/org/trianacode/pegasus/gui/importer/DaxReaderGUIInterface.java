@@ -17,7 +17,7 @@ import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 19/05/2011
  * Time: 15:15
  * To change this template use File | Settings | File Templates.

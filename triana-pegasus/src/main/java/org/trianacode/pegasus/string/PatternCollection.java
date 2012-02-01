@@ -62,8 +62,9 @@ public class PatternCollection implements StringPattern, Serializable {
 
     public boolean varies() {
         boolean varies = false;
-        for (Iterator i = patterns.iterator(); i.hasNext();) {
+        for (Iterator i = patterns.iterator(); i.hasNext(); ) {
             Object o = i.next();
+            System.out.println(o.getClass().getCanonicalName());
             if (!(o instanceof CharSequencePattern)) {
                 varies = true;
             }

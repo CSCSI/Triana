@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Feb 4, 2011
  * Time: 2:13:58 PM
  * To change this template use File | Settings | File Templates.

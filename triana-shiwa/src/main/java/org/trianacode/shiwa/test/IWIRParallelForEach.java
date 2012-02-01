@@ -4,7 +4,7 @@ import org.shiwa.fgi.iwir.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 15/07/2011
  * Time: 15:18
  * To change this template use File | Settings | File Templates.

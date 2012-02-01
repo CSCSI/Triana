@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Nov 30, 2010
  * Time: 2:34:25 PM
  * To change this template use File | Settings | File Templates.
@@ -209,7 +209,7 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
                     InputStream stream = ret.getContext().getResponseEntity().getInputStream();
                     StringBuffer out = new StringBuffer();
                     byte[] b = new byte[4096];
-                    for (int n; (n = stream.read(b)) != -1;) {
+                    for (int n; (n = stream.read(b)) != -1; ) {
                         out.append(new String(b, 0, n));
                     }
                     String link = out.toString();
@@ -302,7 +302,7 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
                     InputStream stream = ret.getContext().getResponseEntity().getInputStream();
                     StringBuffer out = new StringBuffer();
                     byte[] b = new byte[4096];
-                    for (int n; (n = stream.read(b)) != -1;) {
+                    for (int n; (n = stream.read(b)) != -1; ) {
                         out.append(new String(b, 0, n));
                     }
                     String link = out.toString();

@@ -104,7 +104,10 @@ public class IoHandler {
                             TypeChecking.classForTrianaType(intypes));
 
                     if (!compatible) {
-                        throw new TaskGraphException("input types are not compatible:" + type + " is not compatible with " + Arrays.asList(intypes));
+                        throw new TaskGraphException("input types are not compatible:" + type +
+                                " is not compatible with " + Arrays.asList(intypes) +
+                                " expected by " + task + " (" + task.getQualifiedTaskName() + ")"
+                        );
                     }
                     ret.addMapping(node.getNodeIndex(), o);
                 }

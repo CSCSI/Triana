@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 13/07/2011
  * Time: 14:26
  * To change this template use File | Settings | File Templates.

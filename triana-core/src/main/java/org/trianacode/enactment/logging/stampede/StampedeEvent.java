@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 01/09/2011
  * Time: 17:19
  * To change this template use File | Settings | File Templates.

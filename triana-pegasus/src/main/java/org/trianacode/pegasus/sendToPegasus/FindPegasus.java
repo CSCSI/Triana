@@ -11,7 +11,7 @@ import java.net.InetAddress;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 07/03/2011
  * Time: 10:48
  * To change this template use File | Settings | File Templates.
@@ -19,13 +19,13 @@ import java.net.InetAddress;
 public class FindPegasus {
 
 
-    private static void log(String s){
+    private static void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
     }
 
-    public static ServiceInfo findPegasus(long timeout, Displayer displayer){
+    public static ServiceInfo findPegasus(long timeout, Displayer displayer) {
 
         log("Trying to find services with JmDNS");
         JmDNS jmdns = null;
@@ -41,16 +41,19 @@ public class FindPegasus {
             long startTime = System.currentTimeMillis();
             long timeNow = 0;
 
-            if(displayer != null){
+            if (displayer != null) {
                 displayer.displayMessage("Scanning network for Pegasus installations.");
             }
-            while(!pl.foundSomething() && timeNow < (startTime + timeout)){
+            while (!pl.foundSomething() && timeNow < (startTime + timeout)) {
                 log("Nothing found, waiting again.");
-                try {Thread.sleep(1000);}catch(InterruptedException e) {}
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
                 timeNow = System.currentTimeMillis();
             }
 
-            if(pl.foundSomething()){
+            if (pl.foundSomething()) {
                 for (Object o : pl.getServices()) {
                     ServiceInfo info = (ServiceInfo) o;
                     log("\n       Found service : " + info.getName() +
@@ -63,7 +66,7 @@ public class FindPegasus {
                             //                  "\n     " + info.getApplication() +
                             "\n      " + info.toString() + "\n");
                     if (info.getName().toLowerCase().contains("org.trianacode.pegasus.gui")) {
-                        if(displayer != null){
+                        if (displayer != null) {
                             displayer.displayMessage("Found Pegasus : " + info.getURL());
                         }
                         pegasusInfo = info;
@@ -75,25 +78,27 @@ public class FindPegasus {
         } catch (Exception e) {
             e.printStackTrace();
             log("Something broke.");
-            if(displayer != null){
+            if (displayer != null) {
                 displayer.displayMessage("Networking error");
             }
-        } finally{
+        } finally {
             if (jmdns != null) {
                 try {
                     jmdns.close();
-                } catch(IOException e){e.printStackTrace();}
-                if(displayer != null){
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (displayer != null) {
                     displayer.displayMessage("Closing JmDNS");
                 }
             }
         }
 
-        if(found){
+        if (found) {
             return pegasusInfo;
-        }else{
+        } else {
             log("Pegasus is hiding... can't find it.");
-            if(displayer != null){
+            if (displayer != null) {
                 displayer.displayMessage("Couldn't find Pegasus on local network.");
             }
             return null;

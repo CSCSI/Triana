@@ -5,7 +5,7 @@ import org.trianacode.taskgraph.Node;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 15/04/2011
  * Time: 16:34
  * To change this template use File | Settings | File Templates.

@@ -11,7 +11,7 @@ import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Aug 24, 2010
  * Time: 1:14:10 PM
  * To change this template use File | Settings | File Templates.
@@ -144,10 +144,10 @@ public class DaxJobChunk implements Serializable {
 
     public void listChunks() {
         for (DaxFileChunk c : inFileChunks) {
-            devLog.debug("Job : " + getJobName() + " has input : " + c.getFilename());
+//            devLog.debug("Job : " + getJobName() + " has input : " + c.getFilename());
         }
         for (DaxFileChunk c : outFileChunks) {
-            devLog.debug("Job : " + getJobName() + " has output : " + c.getFilename());
+//            devLog.debug("Job : " + getJobName() + " has output : " + c.getFilename());
         }
     }
 

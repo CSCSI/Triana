@@ -10,7 +10,7 @@ import java.awt.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Sep 9, 2010
  * Time: 1:39:45 PM
  * To change this template use File | Settings | File Templates.

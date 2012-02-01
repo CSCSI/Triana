@@ -10,15 +10,15 @@ import java.io.File;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 22/02/2011
  * Time: 16:03
  * To change this template use File | Settings | File Templates.
  */
 public class SendPegasusZip {
 
-    public static Response sendFile(String httpAddress, File file){
-        try{
+    public static Response sendFile(String httpAddress, File file) {
+        try {
             RequestContext c = new RequestContext(httpAddress);
 
             c.setResource(new Resource(new StreamableFile(file)));
@@ -26,7 +26,7 @@ public class SendPegasusZip {
             Response ret = peer.post(c);
             System.out.println("Received reply :" + ret.toString());
             return ret;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Sending failure");
             return null;
         }

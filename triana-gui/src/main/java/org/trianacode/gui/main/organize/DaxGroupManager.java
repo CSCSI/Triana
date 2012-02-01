@@ -10,7 +10,7 @@ import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Nov 25, 2010
  * Time: 9:15:02 AM
  * To change this template use File | Settings | File Templates.

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Aug 19, 2010
  * Time: 11:08:09 AM
  * To change this template use File | Settings | File Templates.
@@ -115,11 +115,11 @@ public class JobUnit implements TaskConscious, Displayer {
 
                 if (fileChunk != null) {
 
-                    devLog.debug("\nPrevious file was : " + fileChunk.getFilename() + "\n");
-                    devLog.debug("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
+//                    devLog.debug("\nPrevious file was : " + fileChunk.getFilename() + "\n");
+//                    devLog.debug("Adding : " + thisJob.getJobName() + " as an output to file : " + fileChunk.getFilename());
                     fileChunk.addOutJobChunk(thisJob);
 
-                    devLog.debug("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
+//                    devLog.debug("Adding : " + fileChunk.getFilename() + " as an input to job : " + thisJob.getJobName());
                     thisJob.addInFileChunk(fileChunk);
                     ab.addInputFile(fileChunk.getFilename());
 

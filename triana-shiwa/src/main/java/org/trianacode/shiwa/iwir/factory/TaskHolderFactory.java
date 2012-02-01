@@ -6,7 +6,7 @@ import org.trianacode.shiwa.iwir.holders.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 24/06/2011
  * Time: 15:09
  * To change this template use File | Settings | File Templates.
@@ -44,12 +44,15 @@ public class TaskHolderFactory {
         }
         if (taskHolder == null) {
             taskHolder = new AtomicTaskHolder();
+            if (iwirTask instanceof Task) {
+                String taskType = ((Task) iwirTask).getTasktype();
+                taskHolder.setExecutable(new Executable(taskType));
+            }
         }
         taskHolder.setIWIRTask(iwirTask);
         taskHolder.registerIWIRTask(iwirTask);
 
         //TODO
-        taskHolder.setExecutable(new Executable());
         return taskHolder;
     }
 

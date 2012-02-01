@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Aug 20, 2010
  * Time: 12:49:06 PM
  * To change this template use File | Settings | File Templates.
@@ -34,7 +34,7 @@ public class DaxJobHolder {
     public String getToolname() {
         return toolname;
     }
-    
+
     public void setToolname(String toolname) {
         this.toolname = toolname;
     }
@@ -80,20 +80,20 @@ public class DaxJobHolder {
         this.jobID = jobID;
     }
 
-    public void addFileIn(int node, String link){
+    public void addFileIn(int node, String link) {
         filesIn.put(node, link);
     }
 
-    public void addFileOut(int node, String link){
+    public void addFileOut(int node, String link) {
         filesOut.put(node, link);
     }
 
-    public String getLinkAtInNode(int node){
-        return (String)filesIn.get(node);
+    public String getLinkAtInNode(int node) {
+        return (String) filesIn.get(node);
     }
 
-    public String getLinkAtOutNode(int node){
-        return (String)filesOut.get(node);
+    public String getLinkAtOutNode(int node) {
+        return (String) filesOut.get(node);
     }
 
     public boolean isCollection() {

@@ -7,7 +7,7 @@ import org.trianacode.taskgraph.Unit;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 24/06/2011
  * Time: 14:49
  * To change this template use File | Settings | File Templates.
@@ -22,6 +22,7 @@ public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
 
     public void setExecutable(Executable executable) {
         this.executable = executable;
+        this.setParameter(Executable.TASKTYPE, executable.getTaskType());
     }
 
     public AbstractTask getIWIRTask() {
@@ -34,7 +35,7 @@ public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
 
     public void init() {
         setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());
-
+        setParameterPanelInstantiate(ON_TASK_INSTANTATION);
     }
 
     public String[] getInputTypes() {

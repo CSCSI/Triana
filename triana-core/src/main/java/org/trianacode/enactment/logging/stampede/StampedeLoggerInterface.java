@@ -2,7 +2,7 @@ package org.trianacode.enactment.logging.stampede;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 05/09/2011
  * Time: 10:30
  * To change this template use File | Settings | File Templates.

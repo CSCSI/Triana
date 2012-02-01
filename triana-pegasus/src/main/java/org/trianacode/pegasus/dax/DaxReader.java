@@ -28,7 +28,7 @@ import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Aug 18, 2010
  * Time: 2:07:26 PM
  * To change this template use File | Settings | File Templates.
@@ -180,7 +180,7 @@ public class DaxReader {
         }
 
         findFiles();
-        for (Iterator iter = files.iterator(); iter.hasNext();) {
+        for (Iterator iter = files.iterator(); iter.hasNext(); ) {
             DaxFileHolder dfh = (DaxFileHolder) (iter.next());
             ToolImp tool = new ToolImp(properties);
             initFileTool(tool, dfh);
@@ -209,7 +209,7 @@ public class DaxReader {
         }
 
 
-        for (Iterator iter = toolVector.iterator(); iter.hasNext();) {
+        for (Iterator iter = toolVector.iterator(); iter.hasNext(); ) {
             DaxJobHolder djh = (DaxJobHolder) (iter.next());
             for (int i = 0; i < djh.getNumInputNodes(); i++) {
                 devLog.debug("Job : " + djh.getToolname() + " has file : " + djh.getLinkAtInNode(i) +
@@ -317,7 +317,7 @@ public class DaxReader {
      * @param tg
      */
     private void attachCables(TaskGraph tg) {
-        for (Iterator iter = toolVector.iterator(); iter.hasNext();) {
+        for (Iterator iter = toolVector.iterator(); iter.hasNext(); ) {
             DaxJobHolder djh = (DaxJobHolder) iter.next();
             Task jobTask = getTaskFromTool(djh.getTool());
             if (jobTask == null) {
@@ -327,7 +327,7 @@ public class DaxReader {
             for (int i = 0; i < djh.getNumInputNodes(); i++) {
                 String link = djh.getLinkAtInNode(i);
                 org.trianacode.taskgraph.Node fileNode = null;
-                for (Iterator iter2 = files.iterator(); iter2.hasNext();) {
+                for (Iterator iter2 = files.iterator(); iter2.hasNext(); ) {
                     DaxFileHolder dfh = (DaxFileHolder) iter2.next();
                     if (dfh.getFilename().equals(link)) {
                         //  String filesJobID = dfh.getJobAtOutNode(0);
@@ -349,7 +349,7 @@ public class DaxReader {
             for (int i = 0; i < djh.getNumOutputNodes(); i++) {
                 String link = djh.getLinkAtOutNode(i);
                 org.trianacode.taskgraph.Node fileNode = null;
-                for (Iterator iter2 = files.iterator(); iter2.hasNext();) {
+                for (Iterator iter2 = files.iterator(); iter2.hasNext(); ) {
                     DaxFileHolder dfh = (DaxFileHolder) iter2.next();
                     if (dfh.getFilename().equals(link)) {
                         //  String filesJobID = dfh.getJobAtInNode(0);
@@ -412,7 +412,7 @@ public class DaxReader {
 
                         files.add(dfh);
                     } else {
-                        for (Iterator iter = files.iterator(); iter.hasNext();) {
+                        for (Iterator iter = files.iterator(); iter.hasNext(); ) {
                             DaxFileHolder dfh = (DaxFileHolder) iter.next();
                             if (dfh.getFilename().equals(fileName)) {
                                 String parentID = getNodeAttributeValue(jobNode, "id");
@@ -443,7 +443,7 @@ public class DaxReader {
      */
     private void listKnownFileData() {
         devLog.debug("\n**** System knows this about files:");
-        for (Iterator i = files.iterator(); i.hasNext();) {
+        for (Iterator i = files.iterator(); i.hasNext(); ) {
             DaxFileHolder dfh = (DaxFileHolder) (i.next());
             for (int j = 0; j < dfh.getNumInputNodes(); j++) {
                 devLog.debug("File : " + dfh.getFilename() + " has job : " + dfh.getJobAtInNode(j) + " at input node " + j);

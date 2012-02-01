@@ -3,18 +3,15 @@ package org.trianacode.enactment.logging.appender;
 import gov.lbl.netlogger.LogMessage;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
-import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.enactment.logging.rabbit.RabbitHandler;
 import org.trianacode.enactment.logging.stampede.LogDetail;
 import org.trianacode.enactment.logging.stampede.StampedeEvent;
-import org.trianacode.error.ErrorEvent;
-import org.trianacode.error.ErrorTracker;
 
 import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: 24/08/2011
  * Time: 17:52
  * To change this template use File | Settings | File Templates.
@@ -26,8 +23,10 @@ public class RabbitAppender extends AppenderSkeleton {
     public String USERNAME = "name";
     public String PASSWORD = "password";
     public String QUEUENAME = "queuename";
+    private RabbitHandler handler;
 
     public RabbitAppender() {
+        handler = RabbitHandler.getRabbitHandler();
     }
 
     public int getPORT() {
@@ -71,13 +70,9 @@ public class RabbitAppender extends AppenderSkeleton {
     }
 
     private void ensureReady() {
-        if (!RabbitHandler.getRabbitHandler().isReady()) {
-            try {
-                RabbitHandler.getRabbitHandler().initConnection(HOST, PORT, USERNAME, PASSWORD, QUEUENAME);
-            } catch (IOException e) {
-                Loggers.CONFIG_LOGGER.error("Rabbit init error");
-                ErrorTracker.getErrorTracker().broadcastError(new ErrorEvent(null, e, "Rabbit init error"));
-            }
+        if (handler.getStatus() == RabbitHandler.Status.NOT_READY) {
+            handler.setConnectionInfo(HOST, PORT, USERNAME, PASSWORD, QUEUENAME);
+            handler.initConnection();
         }
     }
 
@@ -103,9 +98,11 @@ public class RabbitAppender extends AppenderSkeleton {
         ensureReady();
 
         try {
-            RabbitHandler.getRabbitHandler().sendLog(logString);
+            handler.sendLog(logString);
         } catch (IOException e) {
             System.out.println("Remove appender");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
     }

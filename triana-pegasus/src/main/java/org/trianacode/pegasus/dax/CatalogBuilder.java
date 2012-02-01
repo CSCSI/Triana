@@ -6,14 +6,14 @@ import java.io.File;
 
 /**
  * Created by IntelliJ IDEA.
- * User: ian
+ * User: Ian Harvey
  * Date: Jan 21, 2011
  * Time: 11:52:38 AM
  * To change this template use File | Settings | File Templates.
  */
 public class CatalogBuilder {
 
-     public static void buildPropertiesFile(String topDir) {
+    public static void buildPropertiesFile(String topDir) {
         String propertiesFileContents = "org.trianacode.pegasus.gui.catalog.site=XML3\n" +
                 "org.trianacode.pegasus.gui.catalog.site.file=" + topDir + File.separator + "sites.xml\n" +
                 "\n" +
@@ -36,7 +36,7 @@ public class CatalogBuilder {
                 "        <head-fs>\n" +
                 "            <scratch>\n" +
                 "                <shared>\n" +
-                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir +"/outputs\"/>\n" +
+                "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"" + topDir + "/outputs\"/>\n" +
                 "                    <internal-mount-point mount-point=\"" + topDir + "/work/outputs\" free-size=\"100G\" total-size=\"30G\"/>\n" +
                 "                </shared>\n" +
                 "            </scratch>\n" +
@@ -74,7 +74,7 @@ public class CatalogBuilder {
                 "    </site>\n" +
                 "</sitecatalog>";
 
-        new FileBuilder(topDir + File.separator  + "sites.xml", sitesContent);
+        new FileBuilder(topDir + File.separator + "sites.xml", sitesContent);
     }
 
 }
