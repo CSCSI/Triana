@@ -39,7 +39,10 @@ public class DownloadWorkflow extends AbstractAction implements ActionDisplayOpt
         DisplayDialog dialog = null;
         TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine(), dialog);
 
-        SHIWADesktopOpener shiwaDesktopOpener = new SHIWADesktopOpener(tsl);
+        SHIWADesktopOpener shiwaDesktopOpener = new SHIWADesktopOpener();
+        tsl.setReceivedListener(shiwaDesktopOpener);
+        shiwaDesktopOpener.addExecutionListener(tsl);
+        shiwaDesktopOpener.open(null);
 
 //        SHIWADesktop shiwaDesktop = new SHIWADesktop(SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
 //        shiwaDesktop.addSHIWADesktopListener(tsl);

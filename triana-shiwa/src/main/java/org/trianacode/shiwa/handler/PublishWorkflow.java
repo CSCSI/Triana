@@ -3,7 +3,6 @@ package org.trianacode.shiwa.handler;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktop;
-import org.shiwa.fgi.iwir.BlockScope;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.AddonUtils;
@@ -110,9 +109,9 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
                     return new TrianaEngineHandler(tg, tg.getProperties().getEngine(), displayStream);
                 } else if (addon.toString().equals("iwir")) {
                     ExportIwir exportIwir = new ExportIwir();
-                    BlockScope blockscope = exportIwir.taskGraphToBlockScope(tg);
+                    //BlockScope blockscope = exportIwir.taskGraphToBlockScope(tg);
                     IWIR iwir = new IWIR(tg.getToolName());
-                    iwir.setTask(blockscope);
+                    //iwir.setTask(blockscope);
                     return new TrianaIWIRHandler(iwir, displayStream);
 
                 } else {
@@ -133,7 +132,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
     public static void publish(WorkflowEngineHandler handler, TrianaInstance engine) {
         SHIWADesktop shiwaDesktop = new SHIWADesktop(handler, SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
         DisplayDialog dialog = null;
-        shiwaDesktop.addSHIWADesktopListener(new TrianaShiwaListener(engine, dialog));
+        shiwaDesktop.addExecutionListener(new TrianaShiwaListener(engine, dialog));
         dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop");
 
 

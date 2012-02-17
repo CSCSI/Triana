@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.TransferPort;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.transfer.ExecutionListener;
+import org.shiwa.desktop.gui.util.listener.DefaultBundleReceivedListener;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.AddonUtils;
@@ -46,6 +47,8 @@ public class TrianaShiwaListener implements ExecutionListener {
     private TrianaInstance trianaInstance;
     private DisplayDialog dialog;
     private static Log devLog = Loggers.DEV_LOGGER;
+
+    private DefaultBundleReceivedListener receivedListener = null;
 
 
     public TrianaShiwaListener(TrianaInstance trianaInstance, DisplayDialog dialog) {
@@ -95,6 +98,11 @@ public class TrianaShiwaListener implements ExecutionListener {
     @Override
     public void digestWorkflow(File file, TransferSignature signature) {
         devLog.debug("Importing a bundle");
+
+        if (receivedListener != null) {
+            receivedListener.dispose();
+        }
+
         try {
             if (GUIEnv.getApplicationFrame() != null) {
                 String workflowType = WorkflowUtils.getWorkflowType(file, signature);
@@ -234,6 +242,10 @@ public class TrianaShiwaListener implements ExecutionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setReceivedListener(DefaultBundleReceivedListener receivedListener) {
+        this.receivedListener = receivedListener;
     }
 
     private Node getNodeInScope(Node inputNode, TaskGraph taskGraph) {
