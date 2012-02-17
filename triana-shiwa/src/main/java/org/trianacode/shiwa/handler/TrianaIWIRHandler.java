@@ -35,7 +35,7 @@ public class TrianaIWIRHandler implements WorkflowEngineHandler {
 
     @Override
     public String getEngineVersion() {
-        return "4";
+        return "4.0";
     }
 
     @Override

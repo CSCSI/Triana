@@ -31,6 +31,7 @@ public class WhileTaskHolder extends AbstractTaskHolder {
                         IWIRControlComponentModel.IWIR_CONTROL_RENDERING_HINT, false
                 )
         );
+        setReadableCondition(((WhileTask) getIWIRTask()).getCondition().getConditionAsString());
         setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());
         setParameterPanelInstantiate(ON_USER_ACCESS);
 

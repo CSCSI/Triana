@@ -1,6 +1,6 @@
 package org.trianacode.shiwa.handler;
 
-import org.shiwa.desktop.gui.SHIWADesktopPanel;
+import org.shiwa.desktop.gui.SHIWADesktopOpener;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
@@ -39,11 +39,12 @@ public class DownloadWorkflow extends AbstractAction implements ActionDisplayOpt
         DisplayDialog dialog = null;
         TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine(), dialog);
 
-//        SHIWADesktopPanel popup = new SHIWADesktopPanel(SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
-        SHIWADesktopPanel popup = new SHIWADesktopPanel(SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
-        popup.addSHIWADesktopListener(tsl);
-//        popup.fetchBundle();
-        dialog = new DisplayDialog(popup, "SHIWA Desktop");
+        SHIWADesktopOpener shiwaDesktopOpener = new SHIWADesktopOpener(tsl);
+
+//        SHIWADesktop shiwaDesktop = new SHIWADesktop(SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
+//        shiwaDesktop.addSHIWADesktopListener(tsl);
+
+//        dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop");
 
     }
 }

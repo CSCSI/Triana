@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.5-SNAPSHOT</version>
+            <version>1.5-BETA</version>
         </dependency>
         <dependency>
             <groupId>org.shiwa.fgi</groupId>

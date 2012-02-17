@@ -32,7 +32,7 @@ public class BasicIWIRPanel extends ParameterPanel {
         String condition = (String) getTask().getParameter(CONDITION);
         if (condition != null) {
             System.out.println(condition);
-            infoPanel.add(new JLabel(condition));
+            infoPanel.add(new JLabel("Condition : " + condition));
         }
 
         jPanel.add(infoPanel);

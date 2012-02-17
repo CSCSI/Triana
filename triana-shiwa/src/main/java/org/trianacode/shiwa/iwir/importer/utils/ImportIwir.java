@@ -215,6 +215,22 @@ public class ImportIwir {
 //            taskGraph.createTask(ToolUtils.initTool(taskHolder, taskGraph.getProperties()));
             abstractHashMap.put(mainTask, controlTask);
 
+            for (AbstractPort port : mainTask.getAllInputPorts()) {
+                if (port instanceof InputPort) {
+                    tg.addDataInputNode(controlTask.addDataInputNode());
+                }
+                if (port instanceof LoopPort) {
+                    controlTask.addParameterInputNode("loop");
+                }
+            }
+            for (AbstractPort port : mainTask.getAllOutputPorts()) {
+                if (port instanceof OutputPort) {
+                    tg.addDataOutputNode(controlTask.addDataOutputNode());
+                }
+                if (port instanceof LoopPort) {
+                    controlTask.addParameterOutputNode("loop");
+                }
+            }
         }
 
         for (AbstractTask iwirTask : mainTask.getChildren()) {
@@ -225,7 +241,7 @@ public class ImportIwir {
 //                Tool newTask = TaskTypeToTool.getToolFromType(type, iwirTask.getName(), taskGraph.getProperties());
 
                 Task trianaTask = tg.createTask(newTask);
-                trianaTask.setToolName(type);
+                trianaTask.setToolName(iwirTask.getName());
 //                Task trianaTask = taskGraph.createTask( newTask );
                 trianaTask.setParameter(Executable.TASKTYPE, type);
                 for (Property property : iwirTask.getProperties()) {
@@ -239,6 +255,7 @@ public class ImportIwir {
                     TaskGraph innerTaskGraph = TaskGraphManager.createTaskGraph();
                     TaskGraph concreteTaskGraph = (TaskGraph) tg.createTask(innerTaskGraph);
                     recordAbstractTasksAndDataLinks(iwirTask, concreteTaskGraph);
+
 //                    TaskGraph innerTaskGraph = recordAbstractTasksAndDataLinks(iwirTask);
 //                    TaskGraph concreteTaskGraph = (TaskGraph) taskGraph.createTask(innerTaskGraph);
                 }

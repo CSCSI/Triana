@@ -2,7 +2,7 @@ package org.trianacode.shiwa.handler;
 
 import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
-import org.shiwa.desktop.gui.SHIWADesktopPanel;
+import org.shiwa.desktop.gui.SHIWADesktop;
 import org.shiwa.fgi.iwir.BlockScope;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
@@ -131,10 +131,10 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
     }
 
     public static void publish(WorkflowEngineHandler handler, TrianaInstance engine) {
-        JPanel popup = new SHIWADesktopPanel(handler, SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR);
+        SHIWADesktop shiwaDesktop = new SHIWADesktop(handler, SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
         DisplayDialog dialog = null;
-        ((SHIWADesktopPanel) popup).addSHIWADesktopListener(new TrianaShiwaListener(engine, dialog));
-        dialog = new DisplayDialog(popup, "SHIWA Desktop");
+        shiwaDesktop.addSHIWADesktopListener(new TrianaShiwaListener(engine, dialog));
+        dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop");
 
 
     }

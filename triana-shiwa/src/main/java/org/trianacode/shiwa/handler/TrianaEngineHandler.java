@@ -3,7 +3,7 @@ package org.trianacode.shiwa.handler;
 import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
-import org.shiwa.desktop.gui.SHIWADesktopPanel;
+import org.shiwa.desktop.gui.SHIWADesktop;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.Loggers;
@@ -132,13 +132,13 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 //                new TrianaEngineHandler((Task) tool, engine, null),
 //                SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR
 //        );
-        JPanel jPanel = new SHIWADesktopPanel(
+        SHIWADesktop shiwaDesktop = new SHIWADesktop(
                 new TrianaEngineHandler((Task) tool, engine, null),
-                SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR
+                SHIWADesktop.ButtonOption.SHOW_TOOLBAR
         );
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.add(jPanel);
+        jFrame.add(shiwaDesktop.getPanel());
         jFrame.pack();
         jFrame.setVisible(true);
     }

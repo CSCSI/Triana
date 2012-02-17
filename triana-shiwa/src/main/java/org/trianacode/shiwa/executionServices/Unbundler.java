@@ -13,7 +13,7 @@ import org.shiwa.desktop.data.description.resource.ReferableResource;
 import org.shiwa.desktop.data.description.workflow.InputPort;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
 import org.shiwa.desktop.data.util.DataUtils;
-import org.shiwa.desktop.data.util.SHIWADesktopIOException;
+import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.Exec;
@@ -247,7 +247,6 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
 
     private void initBundle(String workflowFilePath) throws SHIWADesktopIOException {
         shiwaBundle = new SHIWABundle(new File(workflowFilePath));
-        shiwaBundle.init();
 
         workflowImplementations = new ArrayList<WorkflowImplementation>();
 

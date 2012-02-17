@@ -3,7 +3,7 @@ package org.trianacode.shiwa.handler;
 import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.TransferPort;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
-import org.shiwa.desktop.data.transfer.SHIWADesktopExecutionListener;
+import org.shiwa.desktop.data.transfer.ExecutionListener;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.AddonUtils;
@@ -41,7 +41,7 @@ import java.util.List;
  * Time: 14:22
  * To change this template use File | Settings | File Templates.
  */
-public class TrianaShiwaListener implements SHIWADesktopExecutionListener {
+public class TrianaShiwaListener implements ExecutionListener {
 
     private TrianaInstance trianaInstance;
     private DisplayDialog dialog;
