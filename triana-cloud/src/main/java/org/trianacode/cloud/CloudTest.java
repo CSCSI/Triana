@@ -68,7 +68,6 @@ public class CloudTest {
 
 //        templateOptions.overrideLoginUserWith("ec2-user");
 //        templateOptions.authorizePublicKey(publicKey);
-//        templateOptions.overrideCredentialsWith(new Credentials("ec2-user", "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApgg+hrCqP3uaCJO2Vp+yMQwVvKmHWJ+79jiEVXQu0vdetVxsW1XuUhLAbx8ds28SLGpRJ7ocz/LxhwfH0hg2X3i7PSUWlibSyCFk3aK5Sk+IJmhxaP6nLjlzBb6typKhD8mW+kYovg+t/L+h/WYgz017p1OxgGNvUWd5+ZwjQKm3v8TC9yhPOMGSu7fF6505ivV9IokllD5UOz5tomTVvVUE2oinEGxpnLis1yCnH/Od0bfrMWyC57mi3MYA/89zOxE+ncljGZWRFRATl7J6WzEqKXau+hrNsypyFoFHhTC4lQQOjzRvZhPcx7zJBO2JwRqZAqIKuU+M+7mf/z1Yrw=="));
 //        templateOptions.installPrivateKey();
 
         print("Template credential : "
@@ -287,7 +286,6 @@ public class CloudTest {
 
     public static void main(String[] args) {
 
-        new CloudTest("AKIAINTQNTX4BGC2BNKQ", "IqaxUaC9EstFMVVCIGL8x38hXbOHeOp8H9jxKuC9");
     }
 
 
