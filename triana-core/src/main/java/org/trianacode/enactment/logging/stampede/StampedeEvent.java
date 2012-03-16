@@ -20,6 +20,11 @@ public class StampedeEvent {
         this.eventName = eventName;
     }
 
+    public StampedeEvent(String eventName) {
+        eventDetails = new ArrayList<LogDetail>();
+        this.eventName = eventName;
+    }
+
     public StampedeEvent addLogDetail(LogDetail logDetail) {
         eventDetails.add(logDetail);
         return this;

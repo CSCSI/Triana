@@ -82,6 +82,7 @@ public class ExtensionFinder {
                 }
             }
         }
+        System.out.println("Paths : " + Arrays.toString(searchDirs.toArray()));
     }
 
 
@@ -101,7 +102,35 @@ public class ExtensionFinder {
                 }
             }
         }
+
+
+//        for(Class clazz : ret.keySet()){
+//            System.out.println(clazz.getCanonicalName() + " : " + ret.get(clazz));
+//        }
+
+        // CHECKS for duplicated instances of the same classes, and keeps just one of each.
+        // If in future it is found that multiple instances of the same extension interface
+        // implementation is required, just delete the block below and return the ret HashMap.
+//        Map<Class, Set<Object>> noDups = new HashMap<Class, Set<Object>>();
+//        for(Class clazz : ret.keySet()){
+//            Set<Object> provs = ret.get(clazz);
+//            Set<Object> noDupProvs = new HashSet<Object>();
+//            for(Object obj : provs){
+//                boolean dup = false;
+//                for(Object object : noDupProvs){
+//                    if(object.getClass() == obj.getClass()){
+//                        dup = true;
+//                    }
+//                }
+//                if(!dup){
+//                    noDupProvs.add(obj);
+//                }
+//            }
+//            noDups.put(clazz, noDupProvs);
+//        }
+
         return ret;
+//        return noDups;
     }
 
     public static Set<Object> services(Class provider) {

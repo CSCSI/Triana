@@ -33,6 +33,7 @@ public class StreamToOutput implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Reading stream : " + description);
         try {
             String str;
             while ((str = inreader.readLine()) != null) {

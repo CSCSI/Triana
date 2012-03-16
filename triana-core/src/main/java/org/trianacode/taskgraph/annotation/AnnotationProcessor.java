@@ -237,6 +237,7 @@ public class AnnotationProcessor {
                     md.setFlatten(willFlatten);
                     md.setInputs(inputs);
                     md.setOutputs(outputs);
+                    md.setMultipleOutputNodes(p.multipleOutputNodes());
 
                 }
             }

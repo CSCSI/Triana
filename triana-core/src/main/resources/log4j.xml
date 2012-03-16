@@ -71,11 +71,17 @@
         Rabbit
     -->
     <appender name="RABBIT" class="org.trianacode.enactment.logging.appender.RabbitAppender">
-        <param name="HOST" value="colette.cs.cf.ac.uk"/>
-        <param name="PORT" value="7008"/>
-        <param name="USERNAME" value="guest"/>
-        <param name="PASSWORD" value="guest"/>
-        <param name="QUEUENAME" value="TestQueue"/>
+        <!--<param name="HOST" value="colette.cs.cf.ac.uk"/>-->
+        <!--<param name="PORT" value="7008"/>-->
+        <!--<param name="USERNAME" value="guest"/>-->
+        <!--<param name="PASSWORD" value="guest"/>-->
+        <!--<param name="QUEUENAME" value="TestQueue"/>-->
+        <param name="HOST" value="s-vmc.cs.cf.ac.uk"/>
+        <param name="PORT" value="7000"/>
+        <param name="USERNAME" value="stampede"/>
+        <param name="PASSWORD" value="logging"/>
+        <!--<param name="QUEUENAME" value="Stampede"/>-->
+        <param name="EXCHANGENAME" value="ex_stampede"/>
     </appender>
 
     <appender name="DEVFILE" class="org.apache.log4j.RollingFileAppender">
@@ -183,8 +189,8 @@
     </category>
 
     <category name="TRIANA.DEV" additivity="false">
-        <appender-ref ref="DEVFILE"/>
         <priority value="DEBUG"/>
+        <appender-ref ref="DEVFILE"/>
     </category>
 
     <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->

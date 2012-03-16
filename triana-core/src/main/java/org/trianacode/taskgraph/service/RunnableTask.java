@@ -78,10 +78,9 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+import java.util.*;
 
 /**
  * An extension to Task that allows the underlying OldUnit to be instantiated and run.
@@ -162,7 +161,6 @@ public class RunnableTask extends AbstractRunnableTask
      * a flag indicating whether the thread doesn't exist, is processing or is unstable.
      */
     private Integer threadstate = NO_THREAD;
-
 
     protected RunnableTask(Tool task, TaskFactory factory, boolean preserveinst) throws TaskException {
 
@@ -558,19 +556,19 @@ public class RunnableTask extends AbstractRunnableTask
         }
         if (data != null) {
             if (LoggingUtils.loggingInputs(this.getProperties())) {
-                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
-                        .add(LogDetail.TASK, getQualifiedToolName())
-                        .add("NODE", node.getName())
-                        .add("DATA", data.toString())
-                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-                );
+//                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
+//                        .add(LogDetail.TASK, getQualifiedToolName())
+//                        .add("NODE", node.getName())
+//                        .add("DATA", data.toString())
+//                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+//                );
             } else {
-                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
-                        .add(LogDetail.TASK, getQualifiedToolName())
-                        .add("NODE", node.getName())
-                        .add("DATA_LENGTH", "" + data.toString().length())
-                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-                );
+//                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
+//                        .add(LogDetail.TASK, getQualifiedToolName())
+//                        .add("NODE", node.getName())
+//                        .add("DATA_LENGTH", "" + data.toString().length())
+//                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+//                );
             }
         }
         return data;
@@ -620,6 +618,7 @@ public class RunnableTask extends AbstractRunnableTask
                 }
             }
         } catch (NotSerializableException except) {
+            System.out.println("Object " + data.getClass().getCanonicalName() + " is not serializable.");
             // TODO
             except.printStackTrace();
             //throw(new RuntimeException(Env.getString("serializeError") + ": " + except.getMessage()));
@@ -714,19 +713,19 @@ public class RunnableTask extends AbstractRunnableTask
 
 
             if (LoggingUtils.loggingInputs(this.getProperties())) {
-                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
-                        .add(LogDetail.TASK, getQualifiedToolName())
-                        .add("NODE", node.getName())
-                        .add("DATA", data.toString())
-                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-                );
+//                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
+//                        .add(LogDetail.TASK, getQualifiedToolName())
+//                        .add("NODE", node.getName())
+//                        .add("DATA", data.toString())
+//                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+//                );
             } else {
-                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
-                        .add(LogDetail.TASK, getQualifiedToolName())
-                        .add("NODE", node.getName())
-                        .add("DATA_LENGTH", "" + data.toString().length())
-                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-                );
+//                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
+//                        .add(LogDetail.TASK, getQualifiedToolName())
+//                        .add("NODE", node.getName())
+//                        .add("DATA_LENGTH", "" + data.toString().length())
+//                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+//                );
             }
             if (blocking) {
                 ((OutputCable) node.getCable()).send(mess);
@@ -892,25 +891,37 @@ public class RunnableTask extends AbstractRunnableTask
             toolLog.info("RUNNING " + getQualifiedToolName());
 
             StringBuilder stringBuilder = new StringBuilder();
-            for (String param : getParameterNames()) {
+            stringBuilder.append("\"");
+            for (String param : this.getParameterNames()) {
                 stringBuilder.append(param)
                         .append(":")
-                        .append(getParameter(param))
+                        .append(this.getParameter(param))
                         .append(",");
             }
+            stringBuilder.append("\"");
 
-//            stampedeLog.info(new StampedeEvent(LogDetail.RUNNING_TASK)
-//                    .add(LogDetail.LEVEL, "INFO")
-//                    .add(LogDetail.TASK, getQualifiedToolName())
-//                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-//                    .add(LogDetail.ALLPARAMS, stringBuilder.toString())
-//            );
-            logToSchedulerLogger(new StampedeEvent(LogDetail.RUNNING_TASK)
-                    .add(LogDetail.LEVEL, "INFO")
-                    .add(LogDetail.TASK, getQualifiedToolName())
-                    .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-                    .add(LogDetail.ALLPARAMS, stringBuilder.toString())
-            );
+            String hostname;
+            try {
+                hostname = Inet4Address.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                hostname = "localhost";
+            }
+
+            Scheduler scheduler = this.getScheduler(this.getParent());
+            if (scheduler != null) {
+
+//                logToSchedulerLogger(scheduler.addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_START)
+//                        .add(LogDetail.STD_OUT_FILE, scheduler.runtimeFileLog.getLogFilePath())
+//                        .add(LogDetail.STD_ERR_FILE, scheduler.runtimeFileLog.getLogFilePath()),
+//                        this));
+                logToSchedulerLogger(scheduler.addBaseEventDetails(new StampedeEvent(LogDetail.INVOCATION_START)
+                        .add(LogDetail.UNIT_INST_ID, String.valueOf(scheduler.getTaskNumber(this)))
+                        .add(LogDetail.UNIT_ID, this.getQualifiedToolName())
+                        .add(LogDetail.INVOCATION_ID, "1")));
+            }
+
+            long startTime = new Date().getTime() / 1000;
+
             waitPause();
             try {
 
@@ -918,27 +929,61 @@ public class RunnableTask extends AbstractRunnableTask
             } catch (Exception except) {
                 notifyError(except);
                 toolLog.warn("Exception thrown invoking process() on Unit:", except);
-                stampedeLog.warn(new StampedeEvent(LogDetail.EXCEPTION)
-                        .add(LogDetail.TASK, getQualifiedToolName())
-                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-                );
             }
 
-            if (!getExecutionState().equals(ExecutionState.ERROR)) {
-                toolLog.info("FINISHED RUNNING " + getQualifiedToolName());
-                logToSchedulerLogger(new StampedeEvent(LogDetail.FINISHED_TASK)
-                        .add(LogDetail.LEVEL, "INFO")
-                        .add(LogDetail.TASK, getQualifiedToolName())
-                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+
+            if (scheduler != null) {
+                logToSchedulerLogger(scheduler.addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_TERM)
+                        .add(LogDetail.STATUS, "0"),
+                        this)
                 );
-            } else {
-                stampedeLog.error(new StampedeEvent(LogDetail.ERROR)
-                        .add(LogDetail.TASK, getQualifiedToolName())
-                        .add("Error_File", stampedeLog.toString())
-                                //    .add(LogDetail.ERRMSG, (String) getParameter(ERROR_MESSAGE))
-                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+                long duration = (new Date().getTime() / 1000) - startTime;
+                if (duration == 0) {
+                    duration = 1;
+                }
+
+                StampedeEvent invEnd = new StampedeEvent(LogDetail.INVOCATION_END);
+                scheduler.addBaseEventDetails(invEnd)
+                        .add(LogDetail.UNIT_INST_ID, String.valueOf(scheduler.getTaskNumber(this)))
+                        .add(LogDetail.INVOCATION_ID, "1")
+                        .add(LogDetail.UNIT_ID, "unit:" + this.getQualifiedToolName())
+                        .add(LogDetail.START_TIME, String.valueOf(startTime))
+                        .add(LogDetail.DURATION, String.valueOf(duration))
+                        .add(LogDetail.TRANSFORMATION, this.getQualifiedTaskName())
+                        .add(LogDetail.EXECUTABLE, "Triana")
+                        .add(LogDetail.ARGS, stringBuilder.toString().replaceAll("[\n\r]", ""))
+                        .add(LogDetail.TASK_ID, this.getQualifiedTaskName()
+                        );
+
+                logToSchedulerLogger(scheduler.addBaseJobInstDetails(new StampedeEvent(LogDetail.HOST), this)
+                        .add(LogDetail.SITE, "localhost")
+                        .add(LogDetail.HOSTNAME, hostname)
+                        .add(LogDetail.IP_ADDRESS, "127.0.0.1")
                 );
+
+//                StampedeEvent endJob = new StampedeEvent(LogDetail.JOB_END);
+//                scheduler.addSchedJobInstDetails(endJob, this)
+//                        .add(LogDetail.STD_OUT_FILE, scheduler.runtimeFileLog.getLogFilePath())
+//                        .add(LogDetail.STD_ERR_FILE, scheduler.runtimeFileLog.getLogFilePath())
+//                        .add(LogDetail.SITE, hostname)
+//                        .add(LogDetail.MULTIPLIER, "1");
+
+                if (!getExecutionState().equals(ExecutionState.ERROR)) {
+                    toolLog.info("FINISHED RUNNING " + getQualifiedToolName());
+//                    endJob.add(LogDetail.STATUS, "-1");
+//                    endJob.add(LogDetail.EXIT_CODE, "1");
+                    invEnd.add(LogDetail.EXIT_CODE, "0");
+
+                } else {
+//                    endJob.add(LogDetail.STATUS, "0");
+//                    endJob.add(LogDetail.EXIT_CODE, "0");
+                    invEnd.add(LogDetail.EXIT_CODE, "1");
+                }
+
+                logToSchedulerLogger(invEnd);
+//                logToSchedulerLogger(endJob);
             }
+
         } catch (OutOfRangeException ore) {
             notifyError(ore);
         } catch (EmptyingException ee) {

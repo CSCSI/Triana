@@ -15,6 +15,7 @@ public class MethodDescriptor {
     private boolean gather;
     private boolean flatten;
     private boolean isArray = false;
+    private boolean multipleOutputNodes;
 
     public Method getMethod() {
         return method;
@@ -62,5 +63,13 @@ public class MethodDescriptor {
 
     public void setArray(boolean array) {
         isArray = array;
+    }
+
+    public void setMultipleOutputNodes(boolean multipleOutputNodes) {
+        this.multipleOutputNodes = multipleOutputNodes;
+    }
+
+    public boolean isMultipleOutputNodes() {
+        return multipleOutputNodes;
     }
 }

@@ -104,6 +104,8 @@ public class FileToolbox implements Toolbox {
         this.properties = properties;
         this.type = FileToolboxLoader.LOCAL_TYPE;
         this.name = name;
+
+        System.out.println("Tool : " + name + " Path : " + path);
     }
 
 
@@ -263,7 +265,9 @@ public class FileToolbox implements Toolbox {
         for (URL url : urls) {
             try {
                 List<Tool> tools = resolveTools(url);
+//                System.out.println("Tool url : " + url);
                 for (Tool tool : tools) {
+//                    System.out.println("Tool path : " + tool.getDefinitionPath().getPath());
                     ret.put(tool.getQualifiedToolName(), tool);
                 }
             } catch (Exception e) {

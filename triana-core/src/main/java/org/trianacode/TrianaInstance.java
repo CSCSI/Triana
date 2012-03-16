@@ -141,6 +141,8 @@ public class TrianaInstance {
 
         //load modules first - this just adds stuff to the class path
         initModules(modulePaths);
+
+        initExtensions(extensionClasses);
         toolResolver = new ToolResolver(props, suppressDefaultToolboxes);
         toolTable = new ToolTableImpl(toolResolver);
 
@@ -162,14 +164,12 @@ public class TrianaInstance {
                 progress.showCurrentProgress("Searching for local tools");
             }
             try {
-                System.out.println("Extra toolboxes : " + extraToolboxes.toString());
                 toolResolver.resolve(reresolve, extraToolboxes);
             } catch (Throwable throwable) {
                 System.out.println("Error in toolResolver.resolve()" + throwable.getCause().toString());
             }
         }
 
-        initExtensions(extensionClasses);
 
         if (progress != null && runServer) {
             progress.showCurrentProgress("Started Discovery and HTTP Services");
@@ -364,7 +364,9 @@ public class TrianaInstance {
         toolResolver.shutdown();
         executorService.shutdown();
         httpServices.stopServices();
-        System.exit(exitCode);
+        if (exitCode > -1) {
+            System.exit(exitCode);
+        }
     }
 
     private class ShutdownHook extends Thread {

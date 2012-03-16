@@ -78,8 +78,15 @@ public class RunUnit {
         runner.runTaskGraph();
 
         for (int i = 0; i < inputFiles.size(); i++) {
-            Object inputObject = readSerialFile(new File(inputFiles.get(i)));
-            System.out.println(inputObject);
+            Object inputObject;
+            File inputFile = new File(inputFiles.get(i));
+            try {
+                inputObject = readSerialFile(inputFile);
+                System.out.println(inputObject);
+            } catch (Exception e) {
+                inputObject = new String(readNonSerialFile(inputFile));
+                System.out.println(((String) inputObject).toString());
+            }
             runner.sendInputData(i, inputObject);
         }
 
@@ -117,7 +124,18 @@ public class RunUnit {
 
     }
 
-    private static Object readSerialFile(File file) throws ClassNotFoundException, IOException {
+    private String readNonSerialFile(File inputFile) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(inputFile);
+        StringBuilder stringBuilder = new StringBuilder();
+        byte[] in = new byte[128];
+        int length = 0;
+        while ((length = fileInputStream.read(in)) > 0) {
+            stringBuilder.append(in.toString());
+        }
+        return stringBuilder.toString();
+    }
+
+    private static Object readSerialFile(File file) throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream(file);
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         Object incomingObject = objectInputStream.readObject();

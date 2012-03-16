@@ -327,8 +327,24 @@ public class AnnotatedUnitWrapper extends Unit {
             }
         }
         if (ret != null) {
-            log("EXIT for task " + getTask().getQualifiedTaskName() + " outputted " + ret);
-            output(ret);
+            if (methodDesc.isMultipleOutputNodes() && (ret instanceof HashMap<?, ?>)) {
+                try {
+                    HashMap<Node, Object> nodeObjectHashMap = (HashMap<Node, Object>) ret;
+
+                    for (Node node : nodeObjectHashMap.keySet()) {
+                        if (node.isOutputNode()) {
+                            outputAtNode(node.getAbsoluteNodeIndex(), nodeObjectHashMap.get(node));
+                        }
+                    }
+                } catch (ClassCastException exception) {
+                    System.out.println("Unit outputs a HashMap, but not a Node-Object hashmap");
+                    output(ret);
+                }
+
+                log("EXIT for task " + getTask().getQualifiedTaskName() + " outputted " + ret);
+            } else {
+                output(ret);
+            }
         } else {
             log("EXIT for task " + getTask().getQualifiedTaskName() + " did not output ");
         }

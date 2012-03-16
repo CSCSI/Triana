@@ -44,6 +44,7 @@ public class Exec implements ExecutionListener {
     public static File RUNS = new File(Locations.getApplicationDataDir(), RUNS_DIR);
 
     static {
+        System.out.println("PID runs path : " + RUNS.getAbsolutePath());
         RUNS.mkdirs();
     }
 
@@ -55,6 +56,7 @@ public class Exec implements ExecutionListener {
         if (pid != null && pid.length() > 0) {
             this.pid = pid;
         }
+        System.out.println("Started exec with pid : " + pid);
     }
 
     public String getPid() {
@@ -110,7 +112,22 @@ public class Exec implements ExecutionListener {
                     return 1;
 //                    System.exit(1);
                 }
-                System.out.println("Executed : " + new Exec(pid).executeNewTriana(wfs.get(0), data));
+                System.out.println("running workflow file in new triana");
+                String wf = wfs.get(0);
+                System.out.println("Workflow : " + wf);
+                System.out.println("pid : " + pid);
+
+                try {
+                    System.out.println("Sleeping...");
+                    Thread.sleep(2000);
+                    System.out.println("OK");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Exec exec = new Exec(pid);
+                String execute = exec.executeNewTriana(wfs.get(0), data);
+                System.out.println("Executed : " + execute);
                 return 0;
 //                System.exit(0);
             }
@@ -128,7 +145,16 @@ public class Exec implements ExecutionListener {
                     return 1;
 //                    System.exit(1);
                 } else {
-                    new Exec(pid).executeWorkflowFile(wfs.get(0), data, args, vals);
+                    System.out.println("this should appear in the output");
+                    try {
+                        System.out.println("Sleeping...");
+                        Thread.sleep(2000);
+                        System.out.println("OK");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Exec exec = new Exec(pid);
+                    exec.executeWorkflowFile(wfs.get(0), data, args, vals);
                     return 0;
                 }
             } else {
@@ -207,6 +233,15 @@ public class Exec implements ExecutionListener {
     }
 
     private String executeNewTriana(String wf, String data) throws IOException {
+        System.out.println("new triana workflow : " + wf + " data : " + data);
+
+        try {
+            System.out.println("Sleeping...");
+            Thread.sleep(2000);
+            System.out.println("OK");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         File f = new File(wf);
         if (!f.exists()) {
             return "Workflow File cannot be found:" + wf;
@@ -255,14 +290,27 @@ public class Exec implements ExecutionListener {
             System.out.println("Cannot find workflow file:" + wf);
             System.exit(1);
         }
+        System.out.println("Starting Triana");
         TrianaInstance engine = new TrianaInstance(args);
         engine.addExtensionClass(CLIaddon.class);
         engine.init();
 
+        System.out.println("init-ed");
+        try {
+            System.out.println("Sleeping...");
+            Thread.sleep(2000);
+            System.out.println("OK");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         XMLReader reader = new XMLReader(new FileReader(f));
         Tool tool = reader.readComponent(engine.getProperties());
+        System.out.println("Loaded tool");
         execute(tool, data);
+        System.out.println("Executed");
         engine.shutdown(0);
+        System.out.println("Shut down");
     }
 
     public void execute(final Tool tool, final String data) throws Exception {
@@ -294,6 +342,8 @@ public class Exec implements ExecutionListener {
             System.out.println("No input file mappings "
                     + ((TaskGraph) tool).getInputNodeCount()
                     + " data input nodes.");
+            runner.dispose();
+            return;
         }
         while (!runner.isFinished()) {
             synchronized (this) {
@@ -325,16 +375,20 @@ public class Exec implements ExecutionListener {
         String[] args = new String[optionsStrings.size()];
 
         for (int i = 0; i < optionsStrings.size(); i++) {
-            args[i] = optionsStrings.get(i);
+            args[i] = optionsStrings.get(i).trim();
         }
 
         try {
-            Runtime runtime = Runtime.getRuntime();
-            Process process = runtime.exec(args, new String[]{}, bin);
-            StreamToOutput err = new StreamToOutput(process.getInputStream(), "err");
-            err.start();
-            StreamToOutput out = new StreamToOutput(process.getInputStream(), "std.out");
-            out.start();
+//            Runtime runtime = Runtime.getRuntime();
+//            Process process = runtime.exec(args, new String[]{}, bin);
+            ProcessBuilder pb = new ProcessBuilder(args);
+            pb.directory(bin);
+//            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            System.out.println("Running " + process.toString());
+            new StreamToOutput(process.getErrorStream(), "err").start();
+            new StreamToOutput(process.getInputStream(), "std.out").start();
 
             int returnCode = process.waitFor();
             System.out.println("Runtime process finished with code " + returnCode);
@@ -343,45 +397,6 @@ public class Exec implements ExecutionListener {
             e.printStackTrace();
         }
         return -1;
-    }
-
-    class StreamToOutput implements Runnable {
-
-        private InputStream inputStream;
-        private String description;
-        private Thread thread;
-        private BufferedReader inreader;
-
-        public StreamToOutput(InputStream inputStream, String description) {
-            this.inputStream = inputStream;
-            this.description = description;
-            inreader = new BufferedReader(new InputStreamReader(this.inputStream));
-
-        }
-
-        public void start() {
-            thread = new Thread(this);
-            thread.run();
-        }
-
-        @Override
-        public void run() {
-            try {
-                String str;
-                while ((str = inreader.readLine()) != null) {
-                    System.out.println(str);
-                }
-            } catch (IOException e) {
-                System.out.println("Error with stream " + description + " closing");
-            } finally {
-                try {
-                    inreader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("Closed streamReader " + description);
-            }
-        }
     }
 
     public InputStream readData(String name) throws FileNotFoundException {

@@ -107,7 +107,7 @@ public class TrianaProperties extends Properties {
 
     public static Properties getDefaultConfiguration() {
         Properties properties = new Properties();
-        properties.put(VERSION, "4");
+        properties.put(VERSION, "4.0");
 
         properties.put(Locations.DEFAULT_PROPERTY_FILE, Locations.getApplicationDataDir() + DOMAIN + ".properties");
         // PROPERTY_FILE_LIST is null

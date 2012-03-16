@@ -1,6 +1,7 @@
 package org.trianacode.config;
 
 import org.apache.commons.logging.Log;
+import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.util.UrlUtils;
 
@@ -31,7 +32,9 @@ public class ModuleClassLoader extends URLClassLoader {
     }
 
     public ModuleClassLoader() {
-        this(ClassLoader.getSystemClassLoader());
+//        this(ClassLoader.getSystemClassLoader());
+        //TODO fix this stupid idea
+        this(TrianaInstance.class.getClassLoader());
     }
 
     public void addModule(URL module) {

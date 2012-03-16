@@ -67,6 +67,10 @@ import org.trianacode.enactment.logging.stampede.StampedeEvent;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -90,7 +94,13 @@ public class Scheduler implements SchedulerInterface {
      */
     private HistoryClipIn history;
     private UUID runUUID;
-    private RuntimeFileLog runtimeFileLog;
+    public RuntimeFileLog runtimeFileLog;
+    private HashMap<Task, Integer> taskMap; // = new HashMap<Task, Integer>();
+    private HashMap<Task, Integer> stateChanges;
+    private int sched_id_count;
+    private ExecutionListener executionLogger = new ExecutionLogger();
+    private long startTime;
+
 
     //    private ExecutionStateLogger logger = new ExecutionStateLogger();
 
@@ -137,13 +147,13 @@ public class Scheduler implements SchedulerInterface {
         }
     }
 
-
     /**
      * Pauses the taskgraph
      */
     public void pauseTaskGraph() {
         pauseTaskGraph(taskgraph);
     }
+
 
     /**
      * Continue after a pause.
@@ -158,7 +168,6 @@ public class Scheduler implements SchedulerInterface {
     public void resetTaskGraph() {
         resetTaskGraph(taskgraph);
     }
-
 
     /**
      * Flushes all data from the task graph cables
@@ -228,6 +237,7 @@ public class Scheduler implements SchedulerInterface {
         //taskgraph.removeExecutionListener(logger);
     }
 
+
     @Override
     public void addExecutionListener(ExecutionListener listener) {
         taskgraph.addExecutionListener(listener);
@@ -236,34 +246,6 @@ public class Scheduler implements SchedulerInterface {
     @Override
     public void removeExecutionListener(ExecutionListener listener) {
         taskgraph.removeExecutionListener(listener);
-    }
-
-
-    /**
-     * Wakes up the specfied task within a running taskgraph
-     */
-    public void wakeTask(Task task) {
-        if (tgState == ExecutionState.RUNNING) {
-            if (task instanceof RunnableInstance) {
-                attachHistoryClipIn(task);
-                ((RunnableInstance) task).wakeUp();
-            } else if (task instanceof TaskGraph) {
-                TaskGraph tgraph = ((TaskGraph) task);
-
-                if (tgraph.isControlTask() && tgraph.isControlTaskConnected()) {
-                    wakeTask(tgraph.getControlTask());
-                } else {
-                    Task[] tasks = tgraph.getTasks(false);
-
-                    for (int count = 0; count < tasks.length; count++) {
-                        wakeTask(tasks[count]);
-                    }
-                }
-            }
-            logStampedeEvent(new StampedeEvent(LogDetail.WAKING_TASK)
-                    .add(LogDetail.UUID, runUUID.toString())
-                    .add(LogDetail.WF, task.getQualifiedToolName()));
-        }
     }
 
     /**
@@ -284,18 +266,32 @@ public class Scheduler implements SchedulerInterface {
      * Send all tasks in the task graph a wake up call (except the control task)
      */
     private void runTaskGraph(TaskGraph tgraph) {
+        startTime = new Date().getTime() / 1000;
         runUUID = UUID.randomUUID();
         runtimeFileLog = new RuntimeFileLog(
                 tgraph.getProperties().getProperty(TrianaProperties.LOG_LOCATION), runUUID);
+        taskMap = new HashMap<Task, Integer>();
+        stateChanges = new HashMap<Task, Integer>();
+        sched_id_count = 0;
+
+        StampedeEvent planEvent = new StampedeEvent(LogDetail.PLAN)
+                .add(LogDetail.ROOT_WF, runUUID.toString())
+                .add(LogDetail.PLANNER_VERSION, (String) tgraph.getParameter(TrianaProperties.VERSION))
+                .add(LogDetail.SUBMIT_DIR, System.getProperty("user.dir"))
+                .add(LogDetail.USERNAME, System.getProperty("user.name"))
+                .add(LogDetail.EXECUTION_FILE_NAME, "exec:" + tgraph.getToolName())
+                .add(LogDetail.SUBMIT_HOSTNAME, getHostname())
+                .add(LogDetail.WF_VERSION, "1")
+                .add(LogDetail.DESCRIPTION_FILE, tgraph.getToolName())
+                .add(LogDetail.ARGS, "\"\"");
+        addBaseEventDetails(planEvent);
+        logStampedeEvent(planEvent);
+
+        logGraph(tgraph);
 
         if ((tgState != ExecutionState.ERROR) && (tgState != ExecutionState.RESETTING)) {
             tgState = ExecutionState.RUNNING;
 
-            logStampedeEvent(new StampedeEvent(LogDetail.RUNNING_WORKFLOW)
-                    .add(LogDetail.UUID, runUUID.toString())
-                    .add(LogDetail.WF, tgraph.getQualifiedToolName())
-                    .add(LogDetail.LOG_FILE, runtimeFileLog.getLogFilePath())
-            );
             wakeTask(tgraph);
         }
     }
@@ -408,9 +404,6 @@ public class Scheduler implements SchedulerInterface {
      * Stops all tasks for an error
      */
     private void stopTaskGraph(TaskGraph tgraph) {
-        logStampedeEvent(new StampedeEvent(LogDetail.STOPPING_WORKFLOW)
-                .add(LogDetail.UUID, runUUID.toString())
-                .add(LogDetail.WF, tgraph.getQualifiedToolName()));
 
         tgState = ExecutionState.ERROR;
         Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
@@ -423,11 +416,350 @@ public class Scheduler implements SchedulerInterface {
 
     }
 
-    public void logStampedeEvent(StampedeEvent stampedeEvent) {
-        if (LoggingUtils.loggingToRabbitMQ(taskgraph.getProperties())) {
-            Loggers.STAMPEDE_LOGGER.info(stampedeEvent);
+    /**
+     * Wakes up the specfied task within a running taskgraph
+     */
+    public void wakeTask(Task task) {
+
+        sched_id_count++;
+        taskMap.put(task, sched_id_count);
+        StampedeEvent wakeStartEvent = new StampedeEvent(LogDetail.START_WAKING_TASK);
+        addSchedJobInstDetails(wakeStartEvent, task);
+        logStampedeEvent(wakeStartEvent);
+
+        if (tgState == ExecutionState.RUNNING) {
+            if (task instanceof RunnableInstance) {
+                attachHistoryClipIn(task);
+                ((RunnableInstance) task).wakeUp();
+
+            } else if (task instanceof TaskGraph) {
+                TaskGraph tgraph = ((TaskGraph) task);
+                tgraph.addExecutionListener(executionLogger);
+
+                if (tgraph.isControlTask() && tgraph.isControlTaskConnected()) {
+                    wakeTask(tgraph.getControlTask());
+                } else {
+                    Task[] tasks = tgraph.getTasks(false);
+
+                    for (int count = 0; count < tasks.length; count++) {
+                        wakeTask(tasks[count]);
+                    }
+                }
+            }
         }
-        runtimeFileLog.info(stampedeEvent);
+
     }
 
+    private void logGraph(TaskGraph taskgraph) {
+        //Task INFO
+
+        logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.TASK_INFO)
+                .add(LogDetail.TYPE_DESC, "compute")
+                .add(LogDetail.TASK_ID, "task:" + taskgraph.getQualifiedTaskName())
+                .add(LogDetail.ARGS, "\"\""))
+                .add(LogDetail.TYPE, "1")
+                .add(LogDetail.TRANSFORMATION, taskgraph.getQualifiedToolName())
+        );
+
+        for (Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)) {
+
+            logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.TASK_INFO)
+                    .add(LogDetail.TYPE_DESC, "compute")
+                    .add(LogDetail.TASK_ID, "task:" + task.getQualifiedTaskName())
+                    .add(LogDetail.ARGS, getTaskArgs(task))
+                    .add(LogDetail.TYPE, "1")
+                    .add(LogDetail.TRANSFORMATION, task.getQualifiedToolName()))
+            );
+        }
+
+        for (Cable cable : TaskGraphUtils.getConnectedCables(TaskGraphUtils.getAllTasksRecursive(taskgraph, false))) {
+            logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.TASK_CABLES)
+                    .add(LogDetail.CHILD_TASK, cable.getReceivingTask().getQualifiedTaskName())
+                    .add(LogDetail.PARENT_TASK, cable.getSendingTask().getQualifiedTaskName()))
+            );
+        }
+
+        //"Job" (Unit) Info
+
+        logStampedeEvent(addBaseEventDetails(
+                new StampedeEvent(LogDetail.UNIT_INFO)
+                        .add(LogDetail.UNIT_ID, "unit:" + taskgraph.getQualifiedToolName())
+                        .add(LogDetail.SUBMIT_FILE, "null")
+                        .add(LogDetail.TYPE, "1")
+                        .add(LogDetail.TYPE_DESC, "compute")
+                        .add(LogDetail.CLUSTERED, "0")
+                        .add(LogDetail.MAX_RETRIES, "1")
+                        .add(LogDetail.TASK_COUNT, "1")
+                        .add(LogDetail.ARGS, "\"\""))
+                .add(LogDetail.EXECUTABLE, taskgraph.getQualifiedToolName())
+        );
+        for (Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)) {
+
+            logStampedeEvent(addBaseEventDetails(
+                    new StampedeEvent(LogDetail.UNIT_INFO)
+                            .add(LogDetail.UNIT_ID, "unit:" + task.getQualifiedToolName())
+                            .add(LogDetail.SUBMIT_FILE, "null")
+                            .add(LogDetail.TYPE, "1")
+                            .add(LogDetail.TYPE_DESC, "compute")
+                            .add(LogDetail.CLUSTERED, "0")
+                            .add(LogDetail.MAX_RETRIES, "1")
+                            .add(LogDetail.TASK_COUNT, "1")
+                            .add(LogDetail.ARGS, getTaskArgs(task))
+                            .add(LogDetail.EXECUTABLE, task.getQualifiedToolName()))
+            );
+        }
+
+        //Map tasks to jobs 1->1
+
+        logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.MAP_TASK_UNIT)
+                .add(LogDetail.TASK_ID, "task:" + taskgraph.getQualifiedTaskName())
+                .add(LogDetail.UNIT_ID, "unit:" + taskgraph.getQualifiedToolName())
+        ));
+        for (Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)) {
+            logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.MAP_TASK_UNIT)
+                    .add(LogDetail.TASK_ID, "task:" + task.getQualifiedTaskName())
+                    .add(LogDetail.UNIT_ID, "unit:" + task.getQualifiedToolName())
+            ));
+        }
+
+        for (Cable cable : TaskGraphUtils.getConnectedCables(TaskGraphUtils.getAllTasksRecursive(taskgraph, false))) {
+            logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.UNIT_CABLES)
+                    .add(LogDetail.CHILD_UNIT, cable.getReceivingTask().getQualifiedTaskName())
+                    .add(LogDetail.PARENT_UNIT, cable.getSendingTask().getQualifiedTaskName())
+            ));
+        }
+    }
+
+
+    public void logStampedeEvent(StampedeEvent stampedeEvent) {
+        if (stampedeEvent != null) {
+            if (LoggingUtils.loggingToRabbitMQ(taskgraph.getProperties())) {
+                Loggers.STAMPEDE_LOGGER.info(stampedeEvent);
+            }
+            runtimeFileLog.info(stampedeEvent);
+        }
+    }
+
+    public StampedeEvent addBaseJobInstDetails(StampedeEvent stampedeEvent, Task task) {
+        Integer changes = stateChanges.get(task);
+        if (changes == null) {
+            changes = 0;
+        } else {
+            changes++;
+        }
+        stateChanges.put(task, changes);
+        addBaseEventDetails(stampedeEvent)
+                .add(LogDetail.UNIT_INST_ID, String.valueOf(getTaskNumber(task)))
+                .add(LogDetail.UNIT_STATE_ID, String.valueOf(changes))
+                .add(LogDetail.UNIT_ID, "unit:" + task.getQualifiedToolName());
+
+        return stampedeEvent;
+    }
+
+    public StampedeEvent addBaseEventDetails(StampedeEvent stampedeEvent) {
+        stampedeEvent.add(LogDetail.LEVEL, LogDetail.LEVELS.INFO)
+                .add(LogDetail.UUID, runUUID.toString());
+        return stampedeEvent;
+    }
+
+    public StampedeEvent addSchedJobInstDetails(StampedeEvent stampedeEvent, Task task) {
+        addBaseJobInstDetails(stampedeEvent, task);
+        stampedeEvent.add(LogDetail.SCHEDULER_ID, String.valueOf(taskMap.get(task)));
+        return stampedeEvent;
+    }
+
+    public Integer getTaskNumber(Task task) {
+        return taskMap.get(task);
+    }
+
+    private StampedeEvent execStateToJobState(ExecutionEvent event) {
+        ExecutionState executionState = event.getState();
+        StampedeEvent stampedeEvent;
+
+        System.out.println("Task " + event.getTask() +
+                " changed from " + event.getOldState() +
+                " to " + event.getState());
+
+        switch (executionState) {
+            //CONDOR JOB STATES
+//            case NOT_INITIALIZED:
+//                //PRE_SCRIPT_STARTED
+//                return 0;
+//
+//            case NOT_EXECUTABLE:
+//                //PRE_SCRIPT_FAILED
+//                return 3;
+
+            case SCHEDULED:
+                //SUBMIT
+                stampedeEvent = new StampedeEvent(LogDetail.SCHEDULED);
+                addSchedJobInstDetails(stampedeEvent, event.getTask());
+                stampedeEvent.add(LogDetail.STATUS, "0");
+                return stampedeEvent;
+
+            case RUNNING:
+                //EXECUTE
+                if (event.getOldState() == ExecutionState.PAUSED) {
+                    stampedeEvent = new StampedeEvent(LogDetail.HELD_END);
+                    addSchedJobInstDetails(stampedeEvent, event.getTask());
+                    stampedeEvent.add(LogDetail.STATUS, "0");
+                    return stampedeEvent;
+                } else {
+                    stampedeEvent = new StampedeEvent(LogDetail.JOB_START);
+                    addSchedJobInstDetails(stampedeEvent, event.getTask())
+                            .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
+                            .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath());
+                    return stampedeEvent;
+                }
+
+            case PAUSED:
+                //JOB_HELD
+                stampedeEvent = new StampedeEvent(LogDetail.HELD_START);
+                addSchedJobInstDetails(stampedeEvent, event.getTask());
+                return stampedeEvent;
+
+            case COMPLETE:
+                //TERMINATED
+                stampedeEvent = new StampedeEvent(LogDetail.JOB_END);
+                addSchedJobInstDetails(stampedeEvent, event.getTask())
+                        .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
+                        .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath())
+                        .add(LogDetail.SITE, getHostname())
+                        .add(LogDetail.MULTIPLIER, "1")
+                        .add(LogDetail.STATUS, "0")
+                        .add(LogDetail.EXIT_CODE, "0");
+                return stampedeEvent;
+
+//            case RESETTING:
+//                //    UNKNOWN
+//                return 9;
+//
+//            case RESET:
+//                //
+//                return 9;
+//
+            case ERROR:
+                //JOB FAILURE
+                stampedeEvent = new StampedeEvent(LogDetail.JOB_END);
+                addSchedJobInstDetails(stampedeEvent, event.getTask())
+                        .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
+                        .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath())
+                        .add(LogDetail.SITE, getHostname())
+                        .add(LogDetail.MULTIPLIER, "1")
+                        .add(LogDetail.STATUS, "-1")
+                        .add(LogDetail.EXIT_CODE, "1");
+                return stampedeEvent;
+
+            case SUSPENDED:
+                //JOB HELD
+                stampedeEvent = new StampedeEvent(LogDetail.HELD_START);
+                addSchedJobInstDetails(stampedeEvent, event.getTask());
+                return stampedeEvent;
+
+            case UNKNOWN:
+                return null;
+//
+//            case LOCK:
+//                return 9;
+        }
+        return null;
+    }
+
+    private String getHostname() {
+        String hostname;
+        try {
+            hostname = Inet4Address.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            hostname = "localhost";
+        }
+        return hostname;
+    }
+
+    private String getTaskArgs(Task task) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\"");
+        for (String param : task.getParameterNames()) {
+            stringBuilder.append(param)
+                    .append(":")
+                    .append(task.getParameter(param))
+                    .append(",");
+        }
+        stringBuilder.append("\"");
+        return stringBuilder.toString().replaceAll("[\n\r]", "");
+    }
+
+    private class ExecutionLogger implements ExecutionListener {
+
+        @Override
+        public void executionStateChanged(ExecutionEvent event) {
+            StampedeEvent stampedeEvent = execStateToJobState(event);
+            logStampedeEvent(stampedeEvent);
+        }
+
+        @Override
+        public void executionRequested(ExecutionEvent event) {
+            if (event.getTask() instanceof TaskGraph) {
+                StampedeEvent stampedeEvent = new StampedeEvent(LogDetail.SCHEDULED);
+                addSchedJobInstDetails(stampedeEvent, event.getTask());
+                stampedeEvent.add(LogDetail.STATUS, "0");
+                logStampedeEvent(stampedeEvent);
+            }
+        }
+
+        @Override
+        public void executionStarting(ExecutionEvent event) {
+            StampedeEvent runEvent = new StampedeEvent(LogDetail.RUNNING_WORKFLOW)
+                    .add(LogDetail.RESTART_COUNT, "0");
+            addBaseEventDetails(runEvent);
+            logStampedeEvent(runEvent);
+        }
+
+        @Override
+        public void executionFinished(ExecutionEvent event) {
+
+            System.out.println("event : "
+                    + event.getTask().getQualifiedTaskName() + " finished");
+
+            logStampedeEvent(addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_TERM)
+                    .add(LogDetail.STATUS, "0"),
+                    event.getTask())
+            );
+            StampedeEvent stampedeEvent = new StampedeEvent(LogDetail.JOB_END);
+            addSchedJobInstDetails(stampedeEvent, event.getTask())
+                    .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
+                    .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath())
+                    .add(LogDetail.SITE, getHostname())
+                    .add(LogDetail.MULTIPLIER, "1")
+                    .add(LogDetail.STATUS, "0")
+                    .add(LogDetail.EXIT_CODE, "0");
+            logStampedeEvent(stampedeEvent);
+
+            Task task = event.getTask();
+            if (task instanceof TaskGraph) {
+                long duration = (new Date().getTime() / 1000) - startTime;
+                if (duration == 0) {
+                    duration = 1;
+                }
+
+                StampedeEvent invEnd = new StampedeEvent(LogDetail.INVOCATION_END);
+                addBaseEventDetails(invEnd)
+                        .add(LogDetail.UNIT_INST_ID, String.valueOf(getTaskNumber(task)))
+                        .add(LogDetail.INVOCATION_ID, "1")
+                        .add(LogDetail.UNIT_ID, "unit:" + task.getQualifiedToolName())
+                        .add(LogDetail.START_TIME, String.valueOf(startTime))
+                        .add(LogDetail.DURATION, String.valueOf(duration))
+                        .add(LogDetail.TRANSFORMATION, task.getQualifiedTaskName())
+                        .add(LogDetail.EXECUTABLE, "Triana")
+                        .add(LogDetail.ARGS, getTaskArgs(task))
+                        .add(LogDetail.TASK_ID, task.getQualifiedTaskName()
+                        );
+            }
+        }
+
+        @Override
+        public void executionReset(ExecutionEvent event) {
+            System.out.println("Reset event " + event.getTask().getQualifiedTaskName()
+                    + " event " + event.getState());
+        }
+    }
 }
