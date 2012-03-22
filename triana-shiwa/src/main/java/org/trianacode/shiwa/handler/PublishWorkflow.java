@@ -134,7 +134,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         DisplayDialog dialog = null;
         shiwaDesktop.addExecutionListener(new TrianaShiwaListener(engine, dialog));
         dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop");
-
+        shiwaDesktop = null;
 
     }
 }

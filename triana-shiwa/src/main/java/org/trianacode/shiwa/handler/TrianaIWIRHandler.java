@@ -40,7 +40,7 @@ public class TrianaIWIRHandler implements WorkflowEngineHandler {
 
     @Override
     public String getWorkflowLanguage(Set<String> strings) {
-        return "iwir";
+        return "IWIR";
     }
 
     @Override

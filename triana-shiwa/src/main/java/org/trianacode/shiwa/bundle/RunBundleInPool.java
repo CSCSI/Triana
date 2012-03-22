@@ -365,7 +365,7 @@ public class RunBundleInPool implements TaskConscious {
         JPanel routingKeyPanel = new JPanel(new BorderLayout());
         JLabel routingKeyLabel = new JLabel("Routing Key : ");
         routingKeyField = new JTextField("*.triana");
-        routingKeyLabel.add(routingKeyLabel, BorderLayout.WEST);
+        routingKeyPanel.add(routingKeyLabel, BorderLayout.WEST);
         routingKeyPanel.add(routingKeyField, BorderLayout.CENTER);
 
         sendToPanel.add(routingKeyPanel);

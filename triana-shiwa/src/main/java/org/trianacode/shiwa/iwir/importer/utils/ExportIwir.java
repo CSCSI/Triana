@@ -30,14 +30,14 @@ public class ExportIwir {
     private HashMap<Task, AbstractTask> taskHashMap = new HashMap<Task, AbstractTask>();
 
     public void taskGraphToIWIRFile(TaskGraph taskGraph, File file) throws IOException {
-        System.out.println(file.getAbsolutePath());
+        System.out.println("Writing IWIR : " + file.getAbsolutePath());
         BlockScope blockScope = taskGraphToBlockScope(taskGraph);
         System.out.println(blockScope == null);
         writeIWIR(blockScope, file);
     }
 
     private File writeIWIR(BlockScope blockScope, File file) throws IOException {
-        IWIR iwir = new IWIR(blockScope.getName());
+        IWIR iwir = new IWIR(file.getName());
         iwir.setTask(blockScope);
         iwir.asXMLFile(file);
         System.out.println("\n" + iwir.asXMLString());

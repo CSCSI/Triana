@@ -16,6 +16,7 @@ import org.shiwa.desktop.data.util.DataUtils;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
+import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.addon.BundleAddon;
 import org.trianacode.enactment.addon.ExecutionAddon;
@@ -24,7 +25,9 @@ import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
 import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
-import org.trianacode.taskgraph.TaskGraphException;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.imp.TaskFactoryImp;
+import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
@@ -51,25 +54,52 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
     private WorkflowImplementation workflowImplementation;
     private boolean bundleInit = false;
     private SHIWABundle shiwaBundle;
+    private ArrayList<File> outputFiles;
 
-    @Override
-    public String getServiceName() {
-        return "UnBundler";
+    private void initBundle(String workflowFilePath) throws SHIWADesktopIOException {
+        shiwaBundle = new SHIWABundle(new File(workflowFilePath));
+        readBundle();
     }
 
-    @Override
-    public String getLongOption() {
-        return "unbundle";
+    public void initBundle(SHIWABundle shiwaBundle) {
+        this.shiwaBundle = shiwaBundle;
+        readBundle();
     }
 
-    @Override
-    public String getShortOption() {
-        return "b";
-    }
+    public void readBundle() {
+        workflowImplementations = new ArrayList<WorkflowImplementation>();
 
-    @Override
-    public String getDescription() {
-        return "SHIWA Bundle Extraction in Triana";
+        configurationList = new ArrayList<Configuration>();
+
+        AggregatedResource aggregatedResource = shiwaBundle.getAggregatedResource();
+
+        if (aggregatedResource instanceof AbstractWorkflow) {
+            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
+                if (resource instanceof WorkflowImplementation) {
+                    workflowImplementations.add((WorkflowImplementation) resource);
+                } else if (resource instanceof Configuration) {
+                    Configuration configuration = (Configuration) resource;
+                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
+                        configurationList.add(configuration);
+                    }
+                }
+            }
+
+        } else if (aggregatedResource instanceof WorkflowImplementation) {
+            workflowImplementations.add((WorkflowImplementation) aggregatedResource);
+
+            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
+                if (resource instanceof AbstractWorkflow) {
+
+                } else if (resource instanceof Configuration) {
+                    Configuration configuration = (Configuration) resource;
+                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
+                        configurationList.add(configuration);
+                    }
+                }
+            }
+        }
+        bundleInit = true;
     }
 
     @Override
@@ -89,7 +119,10 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
     @Override
     public Tool getTool(TrianaInstance instance, String workflowFilePath) throws IOException, TaskGraphException, ProxyInstantiationException {
         initBundle(workflowFilePath);
+        return getTool(instance);
+    }
 
+    private Tool getTool(TrianaInstance instance) throws IOException, TaskGraphException, ProxyInstantiationException {
         workflowImplementation = chooseImp();
         if (workflowImplementation != null) {
 
@@ -101,7 +134,7 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
 
             } else if (workflowImplementation.getLanguage().getShortId().equalsIgnoreCase("IWIR")) {
 
-                IWIR iwir = new IWIR(getWorkflowFile(workflowFilePath));
+                IWIR iwir = new IWIR(bytesToFile(definitionBytes));
                 ImportIwir iwirImporter = new ImportIwir();
                 tool = iwirImporter.taskFromIwir(iwir);
 
@@ -132,7 +165,7 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
     private WorkflowImplementation chooseImp() {
         WorkflowImplementation chosenImp = null;
         for (WorkflowImplementation implementation : workflowImplementations) {
-            System.out.println(implementation.getEngine());
+            System.out.println("Workflow language " + implementation.getEngine());
             if (implementation.getEngine().equalsIgnoreCase("Triana")) {
                 chosenImp = implementation;
             }
@@ -245,53 +278,19 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
         return tempConfFile;
     }
 
-    private void initBundle(String workflowFilePath) throws SHIWADesktopIOException {
-        shiwaBundle = new SHIWABundle(new File(workflowFilePath));
-
-        workflowImplementations = new ArrayList<WorkflowImplementation>();
-
-        configurationList = new ArrayList<Configuration>();
-
-        AggregatedResource aggregatedResource = shiwaBundle.getAggregatedResource();
-
-        if (aggregatedResource instanceof AbstractWorkflow) {
-            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
-                if (resource instanceof WorkflowImplementation) {
-                    workflowImplementations.add((WorkflowImplementation) resource);
-                } else if (resource instanceof Configuration) {
-                    Configuration configuration = (Configuration) resource;
-                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
-                        configurationList.add(configuration);
-                    }
-                }
-            }
-
-        } else if (aggregatedResource instanceof WorkflowImplementation) {
-            workflowImplementations.add((WorkflowImplementation) aggregatedResource);
-
-            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
-                if (resource instanceof AbstractWorkflow) {
-
-                } else if (resource instanceof Configuration) {
-                    Configuration configuration = (Configuration) resource;
-                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
-                        configurationList.add(configuration);
-                    }
-                }
-            }
-        }
-        bundleInit = true;
-    }
-
     @Override
     public File getWorkflowFile(String bundlePath) throws IOException {
         if (!bundleInit) {
             initBundle(bundlePath);
         }
+        return bytesToFile(workflowImplementation.getDefinition().getBytes());
+    }
+
+    private File bytesToFile(byte[] bytes) throws IOException {
         File definitionTempFile = File.createTempFile(workflowImplementation.getDefinition().getFilename(), ".tmp");
         definitionTempFile.deleteOnExit();
         FileOutputStream fileOutputStream = new FileOutputStream(definitionTempFile);
-        fileOutputStream.write(workflowImplementation.getDefinition().getBytes());
+        fileOutputStream.write(bytes);
         fileOutputStream.close();
         return definitionTempFile;
     }
@@ -342,4 +341,131 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
         }
         return null;
     }
+
+    public Tool getTool(TrianaInstance trianaInstance, SHIWABundle shiwaBundle) throws IOException, TaskGraphException, ProxyInstantiationException {
+        initBundle(shiwaBundle);
+        return getTool(trianaInstance);
+    }
+
+    @Override
+    public String getServiceName() {
+        return "UnBundler";
+    }
+
+    @Override
+    public String getLongOption() {
+        return "unbundle";
+    }
+
+    @Override
+    public String getShortOption() {
+        return "b";
+    }
+
+    @Override
+    public String getDescription() {
+        return "SHIWA Bundle Extraction in Triana";
+    }
+
+    public void serializeOutputs(TaskGraph taskGraph) throws TaskException {
+        if (bundleInit) {
+            outputFiles = new ArrayList<File>();
+            for (Node outputNode : taskGraph.getOutputNodes()) {
+                Node toolNode = outputNode.getTopLevelNode();
+
+                Task outputTask = outputNode.getTask();
+                String[] nodeOutputTypes = outputTask.getDataOutputTypes(toolNode.getAbsoluteNodeIndex());
+                String outputType;
+                if (nodeOutputTypes != null) {
+                    outputType = nodeOutputTypes[0];
+                } else {
+                    String[] taskOutputTypes = TaskGraphUtils.getAllDataOutputTypes(outputTask);
+                    if (taskOutputTypes != null) {
+                        outputType = taskOutputTypes[0];
+                    } else {
+                        outputType = Object.class.getCanonicalName();
+                    }
+                }
+
+                try {
+                    if (outputType.equals(String.class.getCanonicalName())) {
+                        addStringTool(toolNode, taskGraph);
+                    } else {
+                        addSerializeTool(toolNode, taskGraph);
+                    }
+                } catch (CableException e) {
+                    e.printStackTrace();
+                } catch (ProxyInstantiationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public ArrayList<File> getOutputFiles() {
+        return outputFiles;
+    }
+
+
+    private int fileIterator = 0;
+
+    private void addSerializeTool(Node toolNode, TaskGraph taskGraph) throws CableException, ProxyInstantiationException, TaskException {
+        String serialName = "Output_" + toolNode.getAbsoluteNodeIndex();
+
+        Task fileTask = new TaskImp(
+                AddonUtils.makeTool(
+                        "Serialize",
+                        "common.output",
+                        serialName,
+                        taskGraph.getProperties()),
+                new TaskFactoryImp(),
+                false
+        );
+        Task task = taskGraph.createTask(fileTask, false);
+
+        File file = createFileInRuntimeFolder(serialName);
+        task.setParameter("filename", file.getAbsolutePath());
+        outputFiles.add(file);
+        task.setParameter("type", "Java Serialize");
+
+        Node inNode = task.addDataInputNode();
+        taskGraph.connect(toolNode, inNode);
+        fileIterator++;
+    }
+
+    private void addStringTool(Node toolNode, TaskGraph taskGraph) throws CableException, ProxyInstantiationException, TaskException {
+        String stringName = "Output_" + toolNode.getAbsoluteNodeIndex();
+
+        Task fileTask = new TaskImp(
+                AddonUtils.makeTool(
+                        "StringToFile",
+                        "common.file",
+                        stringName,
+                        taskGraph.getProperties()),
+                new TaskFactoryImp(),
+                false
+        );
+        Task task = taskGraph.createTask(fileTask, false);
+
+        File file = createFileInRuntimeFolder(stringName);
+        task.setParameter("filename", file.getAbsolutePath());
+        outputFiles.add(file);
+
+        Node inNode = task.addDataInputNode();
+        taskGraph.connect(toolNode, inNode);
+        fileIterator++;
+    }
+
+    private File createFileInRuntimeFolder(String filename) {
+        return new File(outputLocation, filename);
+    }
+
+    public void setRuntimeOutputFolder(File outputFolder) {
+        outputLocation = outputFolder;
+        outputLocation.mkdirs();
+    }
+
+    private File outputLocation = null;
+
+
 }

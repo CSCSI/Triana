@@ -40,7 +40,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     @Override
     public String getEngineName(Set<String> engines) {
-        return "triana";
+        return "Triana";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     @Override
     public String getWorkflowLanguage(Set<String> languages) {
-        return "triana-taskgraph";
+        return "Triana-Taskgraph";
     }
 
     @Override
