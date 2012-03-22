@@ -30,5 +30,7 @@ public @interface Process {
 
     boolean flatten() default false;
 
+    boolean multipleOutputNodes() default false;
+
 
 }
