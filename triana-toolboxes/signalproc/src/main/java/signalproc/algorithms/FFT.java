@@ -571,6 +571,11 @@ public class FFT extends Unit {
 //        setRequireDoubleInputs(true);
 //        setCanProcessDoubleArrays(true);
 
+        defineParameter("style", "Automatic", USER_ACCESSIBLE);
+        defineParameter("opt", "MaximumSpeed", USER_ACCESSIBLE);
+        defineParameter("WindowFunction", "Rectangle", USER_ACCESSIBLE);
+        defineParameter("padding", "true", USER_ACCESSIBLE);
+
         String guilines = "";
         guilines += "Operation of transform: $title style Choice Automatic Direct Direct/normalized(1/N) Inverse Inverse/normalized(1/N)\n";
         guilines += "For 1D transform, optimize for: $title opt Choice MaximumSpeed MinimumStorage\n";
