@@ -241,12 +241,6 @@ public class LoadMP3 extends Unit {
 
     }
 
-    public void byteToShortArray(Vector<Byte> fullByteVector){
-
-
-        }
-
-
     public static void createAudioInputStream(File file) {
 
         System.out.println("file = " + file);

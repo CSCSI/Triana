@@ -574,14 +574,14 @@ public class FFT extends Unit {
         defineParameter("style", "Automatic", USER_ACCESSIBLE);
         defineParameter("opt", "MaximumSpeed", USER_ACCESSIBLE);
         defineParameter("WindowFunction", "Rectangle", USER_ACCESSIBLE);
-        defineParameter("padding", "true", USER_ACCESSIBLE);
+        defineParameter("padding", "false", USER_ACCESSIBLE);
 
         String guilines = "";
         guilines += "Operation of transform: $title style Choice Automatic Direct Direct/normalized(1/N) Inverse Inverse/normalized(1/N)\n";
         guilines += "For 1D transform, optimize for: $title opt Choice MaximumSpeed MinimumStorage\n";
         guilines += "For 1D transform, apply this window to the data: $title WindowFunction Choice " + SigAnalWindows.listOfWindows() + "\n";
         guilines += "For 1D transform, pad input with zeros to a power of 2: $title padding Checkbox false\n";
-        System.out.println("guilines = " + guilines);
+        //System.out.println("guilines = " + guilines);
         setGUIBuilderV2Info(guilines);
     }
 
@@ -652,16 +652,16 @@ public class FFT extends Unit {
     /**
      * @return a string containing the names of the types allowed to be input to FFT, each separated by a white space.
      */
-    public String inputTypes() {
-        return "MultipleAudio VectorType MatrixType";
-    }
-
-    /**
-     * @return a string containing the names of the types output from FFT, each separated by a white space.
-     */
-    public String outputTypes() {
-        return "ComplexSpectrum Spectrum ComplexSampleSet SampleSet Spectrum2D MatrixType";
-    }
+//    public String inputTypes() {
+//        return "MultipleAudio VectorType MatrixType";
+//    }
+//
+//    /**
+//     * @return a string containing the names of the types output from FFT, each separated by a white space.
+//     */
+//    public String outputTypes() {
+//        return "ComplexSpectrum Spectrum ComplexSampleSet SampleSet Spectrum2D MatrixType";
+//    }
 
     public String[] getInputTypes() {
         return new String[]{"triana.types.MultipleAudio", "triana.types.VectorType", "triana.types.MatrixType"};
@@ -687,7 +687,3 @@ public class FFT extends Unit {
         return "fft.html";
     }
 }
-
-
-
-

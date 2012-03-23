@@ -74,7 +74,7 @@ public class LoadSoundPanel extends ParameterPanel {
                 LoadSound.createAudioInputStream(fc.getSelectedFile());
 
                 String fn = fc.getSelectedFile().getAbsolutePath();
-                //userScreen(fc.getSelectedFile().getName());
+                userScreen(fc.getSelectedFile().getName());
                 parameterUpdate("fileName", fn);
 
 

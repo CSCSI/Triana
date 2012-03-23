@@ -136,8 +136,7 @@ public class LoadMP3Panel extends ParameterPanel {
         final JPanel chunkit = new JPanel();
         chunkit.setLayout(new GridLayout(4, 1));
         chunkit.setBackground(Color.white);
-        chunkit.setBorder(
-                BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        chunkit.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         chunkit.setEnabled(false);
 

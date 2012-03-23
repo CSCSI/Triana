@@ -34,8 +34,7 @@ public class OneSide extends Unit {
                 if (sym != 1) {
                     println("Information will be lost on conversion to one-sided!.");
                 }
-                real = FlatArray
-                        .convertToOneSided(real, ((Spectrum) input).getOriginalN(), ((Spectrum) input).isNarrow(),
+                real = FlatArray.convertToOneSided(real, ((Spectrum) input).getOriginalN(), ((Spectrum) input).isNarrow(),
                                 (((Spectrum) input).getLowerFrequencyBound() == 0.0));
                 output = new Spectrum(false, ((Spectrum) input).isNarrow(), real, ((Spectrum) input).getOriginalN(),
                         ((Spectrum) input).getFrequencyResolution(), ((Spectrum) input).getUpperFrequencyBound());

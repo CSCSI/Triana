@@ -289,7 +289,6 @@ public class LoadSound extends Unit {
         // Insert code to clean-up LoadSound (e.g. close open files)
     }
 
-
     /**
      * Called a parameters is updated (e.g. by the GUI)
      */
@@ -299,7 +298,6 @@ public class LoadSound extends Unit {
             LoadSoundPanel.fileName = (String) value;
         }
     }
-
 
     /**
      * @return an array of the types accepted by each input node. For node indexes not covered the types specified by
@@ -315,7 +313,6 @@ public class LoadSound extends Unit {
     public String[] getInputTypes() {
         return new String[]{};
     }
-
 
     /**
      * @return an array of the types output by each output node. For node indexes not covered the types specified by
