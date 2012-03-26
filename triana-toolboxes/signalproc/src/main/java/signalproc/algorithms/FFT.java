@@ -1,23 +1,14 @@
 package signalproc.algorithms;
 
-import java.util.ArrayList;
-
 import org.trianacode.taskgraph.Unit;
-import triana.types.ComplexSampleSet;
-import triana.types.ComplexSpectrum;
-import triana.types.GraphType;
-import triana.types.MatrixType;
-import triana.types.SampleSet;
-import triana.types.Signal;
-import triana.types.Spectral;
-import triana.types.Spectrum;
-import triana.types.Spectrum2D;
-import triana.types.VectorType;
+import triana.types.*;
 import triana.types.audio.MultipleAudio;
 import triana.types.util.FlatArray;
 import triana.types.util.SigAnalWindows;
 import triana.types.util.Str;
 import triana.types.util.Triplet;
+
+import java.util.ArrayList;
 
 /**
  * A FFT unit to perform a Fast Fourier Transform on the input data.
@@ -292,8 +283,8 @@ public class FFT extends Unit {
                 if (oneSide || ((Spectral) input).isNarrow(0)) {
                     dataR = FlatArray.convertToFullSpectrum(dataR, ((Spectral) input).getOriginalN(0), oneSide, true,
                             ((Spectral) input).isNarrow(0), (int) Math
-                                    .round(((Spectral) input).getLowerFrequencyBound(0) / ((Spectral) input)
-                                            .getFrequencyResolution(0)));
+                            .round(((Spectral) input).getLowerFrequencyBound(0) / ((Spectral) input)
+                                    .getFrequencyResolution(0)));
                     System.out.println("Calling convertToFullSpectrum with arguments:");
                     System.out.println("nfull = " + String.valueOf(((Spectral) input).getOriginalN(0)));
                     System.out.println("oneside = " + String.valueOf(oneSide));
@@ -310,8 +301,8 @@ public class FFT extends Unit {
                         dataI = FlatArray
                                 .convertToFullSpectrum(dataI, ((Spectral) input).getOriginalN(0), oneSide, false,
                                         ((Spectral) input).isNarrow(0), (int) Math
-                                                .round(((Spectral) input).getLowerFrequencyBound(0) / ((Spectral) input)
-                                                        .getFrequencyResolution(0)));
+                                        .round(((Spectral) input).getLowerFrequencyBound(0) / ((Spectral) input)
+                                                .getFrequencyResolution(0)));
                         System.out.println("Imaginary data full spectrum:");
                         for (pd = 0; pd < dataI.length; pd++) {
                             System.out.println(String.valueOf(dataI[pd]));
@@ -662,13 +653,12 @@ public class FFT extends Unit {
 //    public String outputTypes() {
 //        return "ComplexSpectrum Spectrum ComplexSampleSet SampleSet Spectrum2D MatrixType";
 //    }
-
     public String[] getInputTypes() {
-        return new String[]{"triana.types.MultipleAudio", "triana.types.VectorType", "triana.types.MatrixType"};
+        return new String[]{"triana.types.audio.MultipleAudio", "triana.types.VectorType", "triana.types.MatrixType"};
     }
 
     public String[] getOutputTypes() {
-        return new String[]{"triana.types.MultipleAudio", "triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.SampleSet", "triana.types.Spectrum2D", "triana.types.MatrixType"};
+        return new String[]{"triana.types.audio.MultipleAudio", "triana.types.ComplexSpectrum", "triana.types.Spectrum", "triana.types.SampleSet", "triana.types.Spectrum2D", "triana.types.MatrixType"};
     }
 
     /**
@@ -680,7 +670,6 @@ public class FFT extends Unit {
     }
 
     /**
-     *
      * @returns the location of the help file for this unit.
      */
     public String getHelpFile() {

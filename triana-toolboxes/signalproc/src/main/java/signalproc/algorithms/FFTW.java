@@ -1,23 +1,14 @@
 package signalproc.algorithms;
 
-import java.util.ArrayList;
-
-import org.trianacode.taskgraph.Unit;
 import jfftw.Plan;
-import triana.types.ComplexSampleSet;
-import triana.types.ComplexSpectrum;
-import triana.types.GraphType;
-import triana.types.MatrixType;
-import triana.types.SampleSet;
-import triana.types.Signal;
-import triana.types.Spectral;
-import triana.types.Spectrum;
-import triana.types.Spectrum2D;
-import triana.types.VectorType;
+import org.trianacode.taskgraph.Unit;
+import triana.types.*;
 import triana.types.audio.MultipleAudio;
 import triana.types.util.SigAnalWindows;
 import triana.types.util.Str;
 import triana.types.util.Triplet;
+
+import java.util.ArrayList;
 
 /**
  * A FFT unit to perform a Fast Fourier Transform on the input data.
@@ -846,9 +837,8 @@ public class FFTW extends Unit {
 //    public String outputTypes() {
 //        return "ComplexSpectrum Spectrum ComplexSampleSet SampleSet Spectrum2D MatrixType";
 //    }
-
     public String[] getInputTypes() {
-        return new String[]{"triana.types.MultipleAudio", "triana.types.VectorType", "triana.types.MatrixType"};
+        return new String[]{"triana.types.audio.MultipleAudio", "triana.types.VectorType", "triana.types.MatrixType"};
     }
 
     public String[] getOutputTypes() {
