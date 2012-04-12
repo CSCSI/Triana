@@ -34,8 +34,7 @@ public class LoadSound extends Unit {
             if (os.startsWith("Windows")) {
                 bigendian = false;
             }
-        }
-        catch (Exception ee) { // ha ha! windows by default ...
+        } catch (Exception ee) { // ha ha! windows by default ...
             bigendian = false;
         }
     }
@@ -66,7 +65,7 @@ public class LoadSound extends Unit {
         }
 
         int chunkNo = 0;
-        //createAudioInputStream(new File(fileName));
+        createAudioInputStream(new File(fileName));
         System.out.println("Chunk Number = " + chunkNo);
 
         while (chunkNo < numberOfChunks) {
@@ -90,8 +89,7 @@ public class LoadSound extends Unit {
                 try {
                     bytesread = audioInputStream.read(bytes, 0, (int) bufSize);
                     System.out.println("bytesread" + bytesread);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -211,8 +209,7 @@ public class LoadSound extends Unit {
         if (audioInputStream != null) {
             try {
                 audioInputStream.close();
-            }
-            catch (Exception ee) {
+            } catch (Exception ee) {
             }
         }
     }

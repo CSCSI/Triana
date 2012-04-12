@@ -138,6 +138,7 @@ public class Serialize extends Unit implements ToolListener {
     private void javaSerialize() {
         try {
             String appendfile = getAppendedFileName();
+            System.out.println(appendfile);
             ObjectOutputStream outstream = new ObjectOutputStream(new FileOutputStream(appendfile));
 
             for (int count = 0; count < data.length; count++) {

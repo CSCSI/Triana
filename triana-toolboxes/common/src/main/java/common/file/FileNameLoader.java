@@ -6,14 +6,14 @@ import org.trianacode.annotation.Tool;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.annotation.TaskConscious;
+import triana.types.FileName;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,51 +23,32 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 @Tool
-public class TextFileReader implements TaskConscious {
+public class FileNameLoader implements TaskConscious {
 
-    private String filePath = ""; ///Users/ian/Work/testBundles/DART/DART Commands 1.txt";
+    //   @TextFieldParameter
+    private String filePath = "";
     private Task task;
 
     @Process(gather = true)
-    public String process(java.util.List list) {
+    public FileName process(List list) {
         if (list.size() > 0) {
-            Object object = list.get(0);
-            if (object instanceof File) {
-                File file = (File) object;
-                if (file.exists() && file.length() < -1) {
-                    filePath = file.getAbsolutePath();
-                }
-            }
-            if (object instanceof String) {
-                filePath = (String) object;
+            if (list.get(0) instanceof String) {
+                filePath = (String) list.get(0);
             }
         }
 
         if (!filePath.equals("")) {
             File file = new File(filePath);
             if (file.exists()) {
-                try {
-                    BufferedReader reader = new BufferedReader(new java.io.FileReader(file));
-                    String line;
-                    StringBuilder sb = new StringBuilder();
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line).append("\n");
-                    }
-                    return sb.toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return "";
+                return new FileName(file);
             }
 
         }
-        return "";
+        return null;
     }
 
     @CustomGUIComponent
     public Component getGUI() {
-        loadParams();
-
         JPanel mainPane = new JPanel();
         mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
 
@@ -87,7 +68,6 @@ public class TextFileReader implements TaskConscious {
                     if (f != null) {
                         filePath = f.getAbsolutePath();
                         locationField.setText(filePath);
-                        task.setParameter("filePath", filePath);
                     }
                 }
             }
@@ -97,29 +77,13 @@ public class TextFileReader implements TaskConscious {
         locationPanel.add(locationButton, BorderLayout.EAST);
 
         mainPane.add(locationPanel);
-
-        JButton clearButton = new JButton("Clear");
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                locationField.setText("");
-                task.setParameter("filePath", "");
-            }
-        });
-        mainPane.add(clearButton);
         return mainPane;
-    }
-
-    private void loadParams() {
-        String fileString = (String) task.getParameter("filePath");
-        if (fileString != null && new File(fileString).exists()) {
-            filePath = fileString;
-        }
     }
 
     @Override
     public void setTask(Task task) {
         this.task = task;
+        task.setDataInputTypes(new String[]{"java.lang.String"});
     }
 }
 

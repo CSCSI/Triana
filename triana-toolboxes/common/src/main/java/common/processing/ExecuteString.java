@@ -3,6 +3,7 @@ package common.processing;
 import org.apache.commons.logging.Log;
 import org.trianacode.annotation.*;
 import org.trianacode.annotation.Process;
+import org.trianacode.enactment.StreamToOutput;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.annotation.TaskConscious;
@@ -11,10 +12,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,63 +34,142 @@ public class ExecuteString implements TaskConscious {
     @TextFieldParameter
     private String executableString = "";
 
+    @TextFieldParameter
+    private String runtimeDirectory = "";
+
+    @TextFieldParameter
+    private String concurrentProcesses = "";
+
+    private int runningProcesses = 0;
+
+    ConcurrentHashMap<Integer, returnCode> returnCodes;// = new ConcurrentHashMap<Integer, returnCode>();
+    private static final String EXIT_CODE = "exitCode";
+
+    enum returnCode {
+        SUCCESS,
+        FAIL
+    }
+
     @Parameter
     private Task task;
 
-    @Process
-    public int process(String executableString) {
+    @Process(gather = true)
+    public ConcurrentHashMap<Integer, returnCode> process(List list) {
+        ArrayList<String> executableStrings = new ArrayList<String>();
 
-        java.lang.Process process = null;
-        BufferedReader errorreader;
-        BufferedReader inreader;
-        String str;
-        boolean errors = false;
-        String errLog = "";
-
-        List<String> options = new ArrayList<String>();
-        String[] optionsStrings = executableString.split(" ");
-        for (int i = 0; i < optionsStrings.length; i++) {
-            options.add(optionsStrings[i]);
+        executableString = execField.getText();
+        if (!executableString.equals("")) {
+            executableStrings.add(executableString);
         }
 
-        StringBuilder out = new StringBuilder();
-
-
-        try {
-
-            Runtime runtime = Runtime.getRuntime();
-            process = runtime.exec(optionsStrings);  // execute command
-
-
-            errorreader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            while ((str = errorreader.readLine()) != null) {
-                errors = true;
-                errLog += str + "\n";
+        for (Object object : list) {
+            if (object instanceof String[]) {
+                Collections.addAll(executableStrings, (String[]) object);
+            } else if (object instanceof String) {
+                executableStrings.add((String) object);
             }
-            errorreader.close();
+        }
 
-            inreader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            str = "";
-            while ((str = inreader.readLine()) != null) {
-                out.append(str).append("\n");
+        runtimeDirectory = runtimeField.getText();
+        if (runtimeDirectory == null || runtimeDirectory.equals("")) {
+            runtimeDirectory = ".";
+        }
+
+        String concurrent = concurrentField.getText();
+        int allowedProcesses;
+        if (concurrent != null) {
+            if (concurrent.equals("")) {
+                allowedProcesses = 1;
+            } else {
+                allowedProcesses = Integer.parseInt(concurrent);
             }
-            inreader.close();
+        } else {
+            allowedProcesses = 1;
+        }
+        int run = 0;
+        System.out.println(executableStrings.size() + " processes to run.");
+        System.out.println("Allowing " + allowedProcesses + " concurrent processes.");
+        returnCodes = new ConcurrentHashMap<Integer, returnCode>();
 
-        } catch (Exception except) {
-            except.printStackTrace();
+        while (run < executableStrings.size()) {
+            if (runningProcesses < allowedProcesses) {
+                System.out.println("Beginning run " + run);
+                String exec = executableStrings.get(run);
+                System.out.println("Run " + run + ", executing : " + exec);
+                StringExecutor executor = new StringExecutor(exec, new File(runtimeDirectory), run);
+                executor.addPropertyChangeListener(new ExitCodeListener(run));
+                executor.execute();
+
+                run++;
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-        if (!errors) {
-            //        log("ExecUnit.process output:" + out.toString());
-        } else {
-            log("ExecUnit.process err:" + errLog);
+        while (returnCodes.size() < executableStrings.size()) {
+            System.out.println(returnCodes.size() + "/" + executableStrings.size() + " complete.");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
+        System.out.println(returnCodes.size() + " return codes recorded " + returnCodes.values().toString());
+        return returnCodes;
+    }
 
-        if (process != null) {
-            return process.exitValue();
-        } else {
-            return -1;
+    class StringExecutor extends SwingWorker<Void, Void> {
+        private String execString;
+        private File execLocation;
+        private int runID;
+
+        public StringExecutor(String execString, File execLocation, int runID) {
+            this.execString = execString;
+            this.execLocation = execLocation;
+            this.runID = runID;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            runningProcesses++;
+            String exitCode = String.valueOf(executeProcess(execString, execLocation));
+
+            this.getPropertyChangeSupport().firePropertyChange(EXIT_CODE, null, exitCode);
+            return null;
+        }
+
+        public void done() {
+            System.out.println("Finished " + this.runID);
+            runningProcesses--;
+        }
+
+        private int executeProcess(String executableString, File execLocation) {
+
+            List<String> options = new ArrayList<String>();
+            String[] optionsStrings = executableString.split(" ");
+            Collections.addAll(options, optionsStrings);
+
+            java.lang.Process process = null;
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder(optionsStrings);
+                processBuilder.directory(execLocation);
+                process = processBuilder.start();
+
+                new StreamToOutput(process.getInputStream(), "std.out").start();
+                new StreamToOutput(process.getErrorStream(), "err").start();
+
+                return process.waitFor();
+
+            } catch (Exception except) {
+                except.printStackTrace();
+                this.cancel(true);
+            }
+
+            return 1;
         }
 
     }
@@ -98,7 +181,9 @@ public class ExecuteString implements TaskConscious {
     }
 
 
-    JTextField execField = new JTextField();
+    JTextField execField = new JTextField("");
+    JTextField runtimeField = new JTextField(""); ///Users/ian/Work/testBundles/DART");
+    JTextField concurrentField = new JTextField("");
     private JPanel mainPanel;
 
 
@@ -111,10 +196,22 @@ public class ExecuteString implements TaskConscious {
         mainPanel.setLayout(new BorderLayout(5, 5));
 
         JPanel topPanel = new JPanel(new GridLayout(0, 2, 5, 5));
-        JPanel lowerPanel = new JPanel(new GridLayout(0, 2, 5, 5));
-
 
         JLabel execLabel = new JLabel("Executable string : ");
+        JLabel folderLabel = new JLabel("Runtime folder : ");
+        JLabel concurrentExecutionsLabel = new JLabel("Concurrent executions : ");
+
+        topPanel.add(execLabel);
+        topPanel.add(execField);
+
+        topPanel.add(folderLabel);
+        topPanel.add(runtimeField);
+
+        topPanel.add(concurrentExecutionsLabel);
+        topPanel.add(concurrentField);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        JPanel lowerPanel = new JPanel(new GridLayout(0, 2, 5, 5));
 
         JButton helpButton = new JButton("Help");
         helpButton.addActionListener(new ActionListener() {
@@ -122,16 +219,12 @@ public class ExecuteString implements TaskConscious {
                 new helpFrame();
             }
         });
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton("Set");
         helpButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply();
             }
         });
-
-        topPanel.add(execLabel);
-        topPanel.add(execField);
-        mainPanel.add(topPanel, BorderLayout.NORTH);
 
         lowerPanel.add(okButton);
         lowerPanel.add(helpButton);
@@ -149,8 +242,9 @@ public class ExecuteString implements TaskConscious {
     }
 
     public void apply() {
-
-        task.setParameter("executable", execField.getText());
+        task.setParameter("executable", execField.getText() == null ? "" : execField.getText());
+        task.setParameter("runtimeDirectory", runtimeField.getText() == null ? "" : runtimeField.getText());
+        task.setParameter("concurrentProcesses", concurrentField.getText());
     }
 
     private void getParams() {
@@ -169,9 +263,12 @@ public class ExecuteString implements TaskConscious {
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
             JLabel helpLabel = new JLabel("This is helpful");
-            JTextArea helpArea = new JTextArea("Executable refers to the program which will be run, eg python, ls " +
-                    "\n\nInput file is the file, or files, to be read by the running program." +
-                    "\n\nExecutable arguments are the parameters given to that program, eg example.py, -l");
+            JTextArea helpArea = new JTextArea("Executable String is a line of text which will be run in a process " +
+                    "\n\nRuntime folder is the location which the process will be run." +
+                    "\n\nConcurrent executions is the number of processes which will run at the same time. If the " +
+                    "input array has multiple strings to run, then this number dictates how many to do at the same time. " +
+                    "Once a process finishes, another starts till they are all complete."
+            );
             helpArea.setEditable(false);
             helpArea.setLineWrap(true);
             helpArea.setWrapStyleWord(true);
@@ -190,6 +287,30 @@ public class ExecuteString implements TaskConscious {
             this.add(panel);
             this.setSize(400, 200);
             this.setVisible(true);
+        }
+    }
+
+    private class ExitCodeListener implements PropertyChangeListener {
+
+        private Integer runID;
+
+        public ExitCodeListener(int runID) {
+            this.runID = runID;
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+
+            Object returned = propertyChangeEvent.getNewValue();
+            if (returned instanceof String) {
+                System.out.println("Run " + runID + " returned " + returned);
+                String code = (String) returned;
+                if (code.equals("0")) {
+                    returnCodes.put(runID, returnCode.SUCCESS);
+                } else {
+                    returnCodes.put(runID, returnCode.FAIL);
+                }
+            }
         }
     }
 }
