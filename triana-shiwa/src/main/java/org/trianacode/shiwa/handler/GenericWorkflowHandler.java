@@ -1,9 +1,11 @@
 package org.trianacode.shiwa.handler;
 
 import org.shiwa.desktop.data.description.handler.TransferSignature;
+import org.shiwa.desktop.data.description.workflow.Author;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -65,6 +67,21 @@ public class GenericWorkflowHandler implements WorkflowEngineHandler {
     @Override
     public String getDisplayImageName() {
         return definitionName + "-image";
+    }
+
+    @Override
+    public List<Author> getAuthors() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    @Override
+    public String getImplementationVersion() {
+        return null;
     }
 
     public void setDefinitionName(String definitionName) {

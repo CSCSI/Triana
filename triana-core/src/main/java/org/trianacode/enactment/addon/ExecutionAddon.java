@@ -6,6 +6,7 @@ import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,4 +25,6 @@ public interface ExecutionAddon extends CLIaddon {
     public Tool getTool(TrianaInstance instance, String workflowFilePath) throws Exception;
 
     public File getConfigFile() throws IOException;
+
+    public void execute(TrianaInstance engine, List<String> pluginArguments) throws Exception;
 }

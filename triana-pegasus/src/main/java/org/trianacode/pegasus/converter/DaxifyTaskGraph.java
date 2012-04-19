@@ -9,6 +9,7 @@ import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
@@ -27,9 +28,16 @@ public class DaxifyTaskGraph implements ConversionAddon {
     private Class fileUnitClass;
     private Class jobUnitClass;
 
+    int fileIterator = 0;
+
     @Override
     public String toString() {
         return "DAX";
+    }
+
+    @Override
+    public String getUsageString() {
+        return "";
     }
 
     public TaskGraph convert(Class fileUnitClass, Class jobUnitClass, TaskGraph taskGraph) {
@@ -54,8 +62,25 @@ public class DaxifyTaskGraph implements ConversionAddon {
         return null;
     }
 
+    private void ungroupAll(TaskGraph taskGraph) {
+        for (Task task : taskGraph.getTasks(false)) {
+            if (task instanceof TaskGraph) {
+                TaskGraph inner = (TaskGraph) task;
+                ungroupAll(inner);
+                try {
+                    taskGraph.unGroupTask(inner.getToolName());
+                } catch (TaskGraphException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private TaskGraph daxifyTaskGraph(TaskGraph taskgraph, String factorytype, boolean presclone,
                                       boolean prestasks, boolean clonecontrol) throws TaskGraphException {
+
+        ungroupAll(taskgraph);
+
         try {
             TaskGraph clone = TaskGraphManager.createTaskGraph(taskgraph, factorytype, presclone);
             if (taskgraph.getToolName() != null) {
@@ -63,7 +88,6 @@ public class DaxifyTaskGraph implements ConversionAddon {
             }
 
             Task[] tasks = taskgraph.getTasks(false);
-
             for (Task task1 : tasks) {
                 if (task1 instanceof TaskGraph) {
                     clone.createTask(daxifyTaskGraph((TaskGraph) task1, TaskFactory.DEFAULT_FACTORY_NAME, false, false, false));
@@ -180,6 +204,12 @@ public class DaxifyTaskGraph implements ConversionAddon {
                 }
             }
 
+            if (clone.getOutputNodeCount() > 0) {
+                for (Node outputNode : clone.getOutputNodes()) {
+                    addFileUnit(outputNode.getTopLevelNode(), null, clone);
+                }
+            }
+
             return clone;
         } catch (ClassCastException except) {
             except.printStackTrace();
@@ -193,7 +223,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
     private void addFileUnit(Node sendnode, Node recnode, TaskGraph clone) throws CableException {
         try {
             Task fileTask = new TaskImp(
-                    AddonUtils.makeTool(fileUnitClass, "" + Math.random() * 100, clone.getProperties()),
+                    AddonUtils.makeTool(fileUnitClass, "Interim_" + fileIterator, clone.getProperties()),
                     new TaskFactoryImp(),
                     false
             );
@@ -205,8 +235,12 @@ public class DaxifyTaskGraph implements ConversionAddon {
                 clone.connect(sendnode, inNode);
             }
 
-            Node outNode = task.addDataOutputNode();
-            clone.connect(outNode, recnode);
+            if (recnode != null) {
+                Node outNode = task.addDataOutputNode();
+                clone.connect(outNode, recnode);
+            }
+
+            fileIterator++;
         } catch (TaskException e) {
             e.printStackTrace();
         } catch (ProxyInstantiationException e) {
@@ -255,6 +289,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
         }
 
         daxTask.setParameter(JobUnit.TRIANA_TOOL, task.getQualifiedToolName());
+        daxTask.setParameter("jobName", ((JavaProxy) task.getProxy()).getFullUnitName());
 
         for (String paramName : task.getParameterNames()) {
             Object value = task.getParameter(paramName);

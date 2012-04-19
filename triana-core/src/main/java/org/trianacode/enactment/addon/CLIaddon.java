@@ -18,4 +18,6 @@ public interface CLIaddon {
     public String getDescription();
 
     public String toString();
+
+    public String getUsageString();
 }

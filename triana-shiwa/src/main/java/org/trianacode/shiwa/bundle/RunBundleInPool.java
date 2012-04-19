@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.shiwa.desktop.data.description.SHIWABundle;
+import org.shiwa.desktop.data.description.bundle.BundleFile;
 import org.shiwa.desktop.data.description.core.Configuration;
 import org.shiwa.desktop.data.description.core.WorkflowImplementation;
 import org.shiwa.desktop.data.description.core.WorkflowSignature;
@@ -82,45 +83,48 @@ public class RunBundleInPool implements TaskConscious {
 
             } else {
                 if (list.size() > 0) {
-                    try {
-                        clearConfigs(workflowController.getWorkflowImplementation());
+                    clearConfigs(workflowController.getWorkflowImplementation());
 
-                        Configuration config = createConfiguration(list);
-                        workflowController.getWorkflowImplementation().getAggregatedResources().add(config);
+                    Configuration config = createConfiguration(list);
+                    workflowController.getWorkflowImplementation().getAggregatedResources().add(config);
 
-                        File tempBundleFile = new File("testBundle.bundle");
-                        DataUtils.bundle(tempBundleFile, workflowController.getWorkflowImplementation());
+                }
 
-                        if (bundleSubmitButtonGroup.getSelection().getActionCommand().equals("cgiPool")) {
-                        } else {
-                            postBundle(sendURLField.getText(), tempBundleFile);
+                try {
 
-                            System.out.println("Sent");
-                            int ttl;
-                            try {
-                                ttl = Integer.parseInt(ttlField.getText());
-                            } catch (NumberFormatException ex) {
-                                ttl = defaultTTL;
-                            }
-                            String key = waitForExec(getURLField.getText(), ttl);
-                            System.out.println("Got key : " + key);
-                            if (key != null) {
-                                File bundle = getResultBundle(getURLField.getText(), key);
+                    File tempBundleFile = new File("testBundle.bundle");
+                    DataUtils.bundle(tempBundleFile, workflowController.getWorkflowImplementation());
 
-                                HashMap<String, ConfigurationResource> outputs = getOutputs(bundle);
-                                if (outputs != null) {
-                                    return compileOutputs(outputs);
-                                } else {
-                                    return null;
-                                }
+                    if (bundleSubmitButtonGroup.getSelection().getActionCommand().equals("cgiPool")) {
+                    } else {
+                        postBundle(sendURLField.getText(), tempBundleFile);
+
+                        System.out.println("Sent");
+                        int ttl;
+                        try {
+                            ttl = Integer.parseInt(ttlField.getText());
+                        } catch (NumberFormatException ex) {
+                            ttl = defaultTTL;
+                        }
+                        String key = waitForExec(getURLField.getText(), ttl);
+                        System.out.println("Got key : " + key);
+                        if (key != null) {
+                            File bundle = getResultBundle(getURLField.getText(), key);
+
+                            HashMap<String, ConfigurationResource> outputs = getOutputs(bundle);
+                            if (outputs != null) {
+                                return compileOutputs(outputs);
+                            } else {
+                                return null;
                             }
                         }
-                    } catch (SHIWADesktopIOException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+                } catch (SHIWADesktopIOException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
             }
         }
         return null;
@@ -427,9 +431,24 @@ public class RunBundleInPool implements TaskConscious {
             if (referableResource instanceof InputPort) {
                 ConfigurationResource configurationResource = new ConfigurationResource(referableResource);
                 //TODO serialize
-                configurationResource.setValue(list.get(inputObjectNo).toString());
+
+                Object inputObject = list.get(inputObjectNo);
+
+                if (inputObject instanceof File) {
+                    try {
+                        configurationResource.setRefType(ConfigurationResource.RefTypes.FILE_REF);
+                        BundleFile bf = DataUtils.createBundleFile((File) inputObject, config.getId() + "/");
+                        bf.setType(BundleFile.FileType.INPUT_FILE);
+                        config.getBundleFiles().add(bf);
+                        configurationResource.setBundleFile(bf);
+                    } catch (SHIWADesktopIOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    configurationResource.setValue(inputObject.toString());
+                    configurationResource.setRefType(ConfigurationResource.RefTypes.INLINE_REF);
+                }
                 inputObjectNo++;
-                configurationResource.setRefType(ConfigurationResource.RefTypes.INLINE_REF);
                 config.addResourceRef(configurationResource);
             }
         }

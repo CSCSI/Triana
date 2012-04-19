@@ -85,16 +85,15 @@ public class TaskGraphOrganize {
 
 
     public static void organizeTaskGraph(int policy, TaskGraph taskgraph) {
-        if (policy == TREE_ORGANIZE) {
+        if (policy == GRAPH_ORGANIZE) {
             treeOrganize(taskgraph);
 
-        } else if (policy == DAX_ORGANIZE){
+        } else if (policy == DAX_ORGANIZE) {
             DaxOrganize daxO = new DaxOrganize(taskgraph);
-        } else{
+        } else {
             graphOrganize(taskgraph);
         }
     }
-
 
 
     /**

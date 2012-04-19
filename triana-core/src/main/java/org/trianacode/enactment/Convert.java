@@ -6,7 +6,6 @@ import org.trianacode.config.cl.ArgumentParsingException;
 import org.trianacode.config.cl.OptionValues;
 import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
-import org.trianacode.enactment.addon.BundleAddon;
 import org.trianacode.enactment.addon.CLIaddon;
 import org.trianacode.enactment.addon.ConversionAddon;
 import org.trianacode.enactment.addon.ExecutionAddon;
@@ -16,7 +15,6 @@ import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -94,7 +92,7 @@ public class Convert {
 
                 if (conversion.size() > 1) {
                     if (conversion.get(1).toLowerCase().equals("bundle")) {
-                        bundleOutputs(engine, outputConvertedFile);
+//                        bundleOutputs(engine, outputConvertedFile);
                     }
                 }
                 engine.shutdown(0);
@@ -102,20 +100,20 @@ public class Convert {
         }
     }
 
-    private void bundleOutputs(TrianaInstance engine, File outputConvertedFile) throws IOException {
-        System.out.println("Will bundle outputs");
-
-        if (bundleInputPath == null) {
-            System.out.println("No input bundle recorded.");
-
-        } else {
-            System.out.println("Producing bundle output");
-            BundleAddon bundleAddon = (BundleAddon) AddonUtils.getService(engine, "unbundle", BundleAddon.class);
-            bundleAddon.setWorkflowFile(bundleInputPath, outputConvertedFile);
-            bundleAddon.saveBundle("BundleOutput.zip");
-            System.out.println("Bundled");
-        }
-    }
+//    private void bundleOutputs(TrianaInstance engine, File outputConvertedFile) throws IOException {
+//        System.out.println("Will bundle outputs");
+//
+//        if (bundleInputPath == null) {
+//            System.out.println("No input bundle recorded.");
+//
+//        } else {
+//            System.out.println("Producing bundle output");
+//            BundleAddon bundleAddon = (BundleAddon) AddonUtils.getService(engine, "unbundle", BundleAddon.class);
+//            bundleAddon.setWorkflowFile(bundleInputPath, outputConvertedFile);
+//            bundleAddon.saveBundle("BundleOutput.zip");
+//            System.out.println("Bundled");
+//        }
+//    }
 
     private void initTool(TrianaInstance engine, OptionValues vals) throws Exception {
         List<String> bundleInputs = vals.getOptionValues(TrianaOptions.EXECUTE_BUNDLE.getShortOpt());

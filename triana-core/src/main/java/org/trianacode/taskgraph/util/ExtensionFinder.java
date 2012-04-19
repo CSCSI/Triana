@@ -23,6 +23,7 @@ import org.trianacode.taskgraph.tool.ClassLoaders;
 import org.trianacode.taskgraph.tool.ToolClassLoader;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -41,6 +42,18 @@ public class ExtensionFinder {
 
 
     private static void loadPaths(List<File> searchDirs) {
+        String jarPath = ExtensionFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        try {
+            String decodedPath = URLDecoder.decode(jarPath, "UTF-8");
+//            System.out.println("This class = " + decodedPath);
+            File file = new File(decodedPath);
+            if (decodedPath.endsWith(".jar") && file.exists()) {
+                searchDirs.add(new File(decodedPath));
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         String cp = System.getProperty("java.class.path");
         String sep = System.getProperty("path.separator");
         if (cp != null && cp.length() > 0) {
@@ -82,7 +95,7 @@ public class ExtensionFinder {
                 }
             }
         }
-        System.out.println("Paths : " + Arrays.toString(searchDirs.toArray()));
+//        System.out.println("Paths : " + Arrays.toString(searchDirs.toArray()));
     }
 
 
@@ -103,34 +116,15 @@ public class ExtensionFinder {
             }
         }
 
-
-//        for(Class clazz : ret.keySet()){
-//            System.out.println(clazz.getCanonicalName() + " : " + ret.get(clazz));
-//        }
-
-        // CHECKS for duplicated instances of the same classes, and keeps just one of each.
-        // If in future it is found that multiple instances of the same extension interface
-        // implementation is required, just delete the block below and return the ret HashMap.
-//        Map<Class, Set<Object>> noDups = new HashMap<Class, Set<Object>>();
-//        for(Class clazz : ret.keySet()){
-//            Set<Object> provs = ret.get(clazz);
-//            Set<Object> noDupProvs = new HashSet<Object>();
-//            for(Object obj : provs){
-//                boolean dup = false;
-//                for(Object object : noDupProvs){
-//                    if(object.getClass() == obj.getClass()){
-//                        dup = true;
-//                    }
-//                }
-//                if(!dup){
-//                    noDupProvs.add(obj);
-//                }
+        //debug
+//        for( Class thing : ret.keySet()){
+//            System.out.println(thing.getCanonicalName());
+//            for(Object subthing : ret.get(thing)){
+//                System.out.println("   >> " + subthing.getClass().getCanonicalName());
 //            }
-//            noDups.put(clazz, noDupProvs);
 //        }
 
         return ret;
-//        return noDups;
     }
 
     public static Set<Object> services(Class provider) {
@@ -146,7 +140,7 @@ public class ExtensionFinder {
 
     public static Map<Class, Set<Object>> getProviders(List<Class> providers, File file) {
         log.debug("searching for providers:" + file.getAbsolutePath());
-        log.debug("*** Looking for extensions in : " + file.getAbsolutePath());
+//        System.out.println("*** Looking for extensions in : " + file.getAbsolutePath());
         Map<Class, Set<Object>> ret = new HashMap<Class, Set<Object>>();
         if (file.isDirectory()) {
             File meta = new File(file, "META-INF");
@@ -247,6 +241,7 @@ public class ExtensionFinder {
                                                 done.add(line);
                                             }
                                         } catch (Exception e1) {
+                                            e1.printStackTrace();
                                             log.debug("Exception thrown trying to load service provider class " + line, e1);
                                         }
                                     }

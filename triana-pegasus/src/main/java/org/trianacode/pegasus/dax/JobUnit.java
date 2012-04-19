@@ -66,6 +66,7 @@ public class JobUnit implements TaskConscious, Displayer {
     public void setTask(Task task) {
         this.task = task;
         getParams();
+        setParams();
     }
 
     @Process(gather = true)
@@ -147,6 +148,7 @@ public class JobUnit implements TaskConscious, Displayer {
 
     public void setParams() {
         if (task != null) {
+            task.setParameter("jobName", jobName);
             task.setParameter("args", args);
             task.setParameter("numberOfJobs", numberOfJobs);
             task.setParameter("fileInputsPerJob", fileInputsPerJob);

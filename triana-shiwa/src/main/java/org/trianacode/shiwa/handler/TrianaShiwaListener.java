@@ -106,27 +106,30 @@ public class TrianaShiwaListener implements ExecutionListener {
         try {
             if (GUIEnv.getApplicationFrame() != null) {
                 String workflowType = WorkflowUtils.getWorkflowType(file, signature);
-                TaskGraph taskGraph;
-                if (workflowType.equals(AddonUtils.TASKGRAPH_FORMAT)) {
-                    taskGraph = TaskGraphFileHandler.openTaskgraph(file, true);
-                } else if (workflowType.equals(AddonUtils.IWIR_FORMAT)) {
-                    ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(trianaInstance, "IWIR-To-Task", ConversionAddon.class);
-                    if (conversionAddon != null) {
-                        taskGraph = (TaskGraph) conversionAddon.workflowToTool(file);
-                        taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+                if (workflowType == null) {
+                    System.out.println("No workflow type detected");
+                } else {
+                    TaskGraph taskGraph;
+                    if (workflowType.equals(AddonUtils.TASKGRAPH_FORMAT)) {
+                        taskGraph = TaskGraphFileHandler.openTaskgraph(file, true);
+                    } else if (workflowType.equals(AddonUtils.IWIR_FORMAT)) {
+                        ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(trianaInstance, "IWIR-To-Task", ConversionAddon.class);
+                        if (conversionAddon != null) {
+                            taskGraph = (TaskGraph) conversionAddon.workflowToTool(file);
+                            taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+                        } else {
+                            System.out.println("Failed to convert IWIR workflow");
+                            return;
+                        }
                     } else {
-                        System.out.println("FAil");
+                        System.out.println("Failed to recognise type : " + workflowType);
                         return;
                     }
-                } else {
-                    System.out.println("Fails");
-                    return;
-                }
 
-                if (signature.hasConfiguration()) {
-                    createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
+                    if (signature.hasConfiguration()) {
+                        createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
+                    }
                 }
-
             } else {
                 devLog.debug("No gui found, running headless");
                 XMLReader reader = new XMLReader(new FileReader(file));

@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -81,7 +82,6 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
     }
 
     private File writeZip() throws IOException {
-
 
         for (Object object : listModel.toArray()) {
             if (object instanceof File) {
@@ -166,10 +166,15 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
 
     @CustomGUIComponent
     public Component getGUI() {
+        loadParams();
         JPanel mainPane = new JPanel();
         mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
 
         listModel = new DefaultListModel();
+
+        for (File file : files) {
+            listModel.addElement(file);
+        }
 
         fileList = new JList(listModel);
         fileList.setVisibleRowCount(10);
@@ -199,7 +204,10 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
                     if (f != null) {
 
                         if (f.isDirectory()) {
-                            int num = f.listFiles().length;
+                            ArrayList<File> listFiles = new ArrayList<File>();
+                            listAllFiles(f, listFiles);
+
+                            int num = listFiles.size();
                             int choice = JOptionPane.showConfirmDialog(null,
                                     "Are you sure you want to add directory\n" +
                                             f.getAbsolutePath() + " which currently contains \n" +
@@ -209,7 +217,7 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
                                     JOptionPane.YES_NO_OPTION);
 
                             if (choice == JOptionPane.OK_OPTION) {
-                                for (File file : f.listFiles()) {
+                                for (File file : listFiles) {
                                     listModel.addElement(file);
                                 }
                                 listModel.addElement(f);
@@ -219,6 +227,7 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
                         } else {
                             listModel.addElement(f);
                         }
+                        updateParams();
                     }
                 }
 
@@ -233,6 +242,7 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
                 int selected = fileList.getSelectedIndex();
                 if (selected > -1) {
                     listModel.remove(selected);
+                    updateParams();
                 }
             }
         });
@@ -242,10 +252,42 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
         return mainPane;
     }
 
+    private void listAllFiles(File f, ArrayList<File> listFiles) {
+        for (File file : f.listFiles()) {
+            if (file.isDirectory()) {
+                listFiles.add(file);
+                listAllFiles(file, listFiles);
+            } else {
+                listFiles.add(file);
+            }
+        }
+    }
+
+    private void updateParams() {
+        String fileString = "";
+        for (Object file : listModel.toArray()) {
+            fileString += ((File) file).getAbsolutePath() + ":";
+        }
+
+        task.setParameter("files", fileString);
+    }
+
+    private void loadParams() {
+        String fileString = (String) task.getParameter("files");
+        if (fileString != null) {
+            String[] fileArray = fileString.split(":");
+
+            for (String string : fileArray) {
+                files.add(new File(string));
+            }
+        }
+    }
+
     @Override
     public void setTask(Task task) {
         this.task = task;
 //        task.setDataInputTypes(new String[]{"java.io.File", "java.lang.String", "Ljava.lang.String;"});
+//        task.setDataOutputTypes(new String[]{"java.io.File"});
     }
 
 

@@ -138,9 +138,9 @@ public class TaskGraphManager {
     public static void initToolTable(ToolTable tools) {
         if (tooltable != null) {
             throw (new RuntimeException("Error: Tool Table already initialized!"));
+        } else {
+            tooltable = tools;
         }
-
-        tooltable = tools;
     }
 
     /**

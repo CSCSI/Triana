@@ -60,12 +60,12 @@
 package org.trianacode.gui.extensions;
 
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.swing.Action;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * The manager responsible for handling extension classes.
@@ -106,7 +106,7 @@ public class ExtensionManager {
         ArrayList exts = new ArrayList();
         Action action;
 
-        for (Iterator it = extlist.iterator(); it.hasNext();) {
+        for (Iterator it = extlist.iterator(); it.hasNext(); ) {
             action = ((Extension) it.next()).getWorkspaceAction(tool);
 
             if (action != null) {
@@ -124,7 +124,7 @@ public class ExtensionManager {
         ArrayList exts = new ArrayList();
         Action action;
 
-        for (Iterator it = extlist.iterator(); it.hasNext();) {
+        for (Iterator it = extlist.iterator(); it.hasNext(); ) {
             action = ((Extension) it.next()).getTreeAction(tool);
 
             if (action != null) {
@@ -142,7 +142,7 @@ public class ExtensionManager {
         ArrayList exts = new ArrayList();
         Action action;
 
-        for (Iterator it = extlist.iterator(); it.hasNext();) {
+        for (Iterator it = extlist.iterator(); it.hasNext(); ) {
             action = ((Extension) it.next()).getWorkflowAction(type);
 
             if (action != null) {

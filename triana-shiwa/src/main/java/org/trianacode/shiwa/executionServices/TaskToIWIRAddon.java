@@ -28,6 +28,11 @@ public class TaskToIWIRAddon implements ConversionAddon {
     }
 
     @Override
+    public String getUsageString() {
+        return "";
+    }
+
+    @Override
     public Object toolToWorkflow(Tool tool) throws IOException {
         ExportIwir exportIwir = new ExportIwir();
         return exportIwir.taskGraphToBlockScope((TaskGraph) tool);

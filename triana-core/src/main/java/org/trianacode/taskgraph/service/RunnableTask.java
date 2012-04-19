@@ -712,21 +712,21 @@ public class RunnableTask extends AbstractRunnableTask
             DataMessage mess = new DataMessage(packet, extract);
 
 
-            if (LoggingUtils.loggingInputs(this.getProperties())) {
+//            if (LoggingUtils.loggingInputs(this.getProperties())) {
 //                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
 //                        .add(LogDetail.TASK, getQualifiedToolName())
 //                        .add("NODE", node.getName())
 //                        .add("DATA", data.toString())
 //                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
 //                );
-            } else {
+//            } else {
 //                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_OUTPUT)
 //                        .add(LogDetail.TASK, getQualifiedToolName())
 //                        .add("NODE", node.getName())
 //                        .add("DATA_LENGTH", "" + data.toString().length())
 //                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
 //                );
-            }
+//            }
             if (blocking) {
                 ((OutputCable) node.getCable()).send(mess);
             } else {

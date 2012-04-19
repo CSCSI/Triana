@@ -70,9 +70,8 @@ public class AddonUtils {
         for (Object service : extensions) {
             if (clazz.isAssignableFrom(service.getClass())) {
                 CLIaddon addon = ((CLIaddon) service);
-                System.out.println("Comparing " + addon.getLongOption() + ":" + longOpt);
+//                System.out.println("Comparing " + addon.getLongOption() + ":" + longOpt);
                 if (addon.getLongOption().equals(longOpt)) {
-                    System.out.println(addon.getLongOption());
                     System.out.println("Returning service " + addon.getLongOption());
                     return (CLIaddon) service;
                 }

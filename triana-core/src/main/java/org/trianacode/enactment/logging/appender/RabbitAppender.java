@@ -22,7 +22,8 @@ public class RabbitAppender extends AppenderSkeleton {
     public String HOST = "err";
     public String USERNAME = "name";
     public String PASSWORD = "password";
-    public String QUEUENAME = "queuename";
+    //    public String QUEUENAME = "queuename";
+    public String EXCHANGENAME = "exchangename";
     private RabbitHandler handler;
 
     public RabbitAppender() {
@@ -61,17 +62,25 @@ public class RabbitAppender extends AppenderSkeleton {
         this.PASSWORD = password;
     }
 
-    public String getQUEUENAME() {
-        return QUEUENAME;
+//    public String getQUEUENAME() {
+//        return QUEUENAME;
+//    }
+//
+//    public void setQUEUENAME(String queuename) {
+//        this.QUEUENAME = queuename;
+//    }
+
+    public void setEXCHANGENAME(String exchangename) {
+        this.EXCHANGENAME = exchangename;
     }
 
-    public void setQUEUENAME(String queuename) {
-        this.QUEUENAME = queuename;
+    public String getEXCHANGENAME() {
+        return EXCHANGENAME;
     }
 
     private void ensureReady() {
         if (handler.getStatus() == RabbitHandler.Status.NOT_READY) {
-            handler.setConnectionInfo(HOST, PORT, USERNAME, PASSWORD, QUEUENAME);
+            handler.setConnectionInfo(HOST, PORT, USERNAME, PASSWORD, EXCHANGENAME);
             handler.initConnection();
         }
     }

@@ -39,6 +39,37 @@ public class RuntimeFileLog implements Log {
         );
         thisLogFolder.mkdirs();
         logFile = new File(thisLogFolder, runUUID + ".log");
+        makeBrainDump(thisLogFolder, runUUID);
+    }
+
+    private void makeBrainDump(File thisLogFolder, UUID runUUID) {
+        String dumpContents = "user stackops\n" +
+                "grid_dn null\n" +
+                "submit_hostname pegasussubmit1.novalocal\n" +
+                "root_wf_uuid " + runUUID.toString() + "\n" +
+                "wf_uuid " + runUUID.toString() + "\n" +
+                "dax /home/stackops/examples/condor-blackdiamond-condorio/blackdiamond.dax\n" +
+                "dax_label blackdiamond\n" +
+                "dax_index 0\n" +
+                "dax_version 3.3\n" +
+                "pegasus_wf_name blackdiamond-0\n" +
+                "timestamp 20120314T140946+0100\n" +
+                "basedir /home/stackops/examples/condor-blackdiamond-condorio/work\n" +
+                "submit_dir /Users/ian/Work/triana4/logging\n" +
+                "properties properties\n" +
+                "planner /usr/bin/pegasus-plan\n" +
+                "planner_version 4.0.0\n" +
+                "pegasus_build 20120301004113Z\n" +
+                "planner_arguments \"--conf pegasusrc --sites condorpool --dir work --output local --dax blackdiamond.dax --submit \"\n" +
+                "jsd jobstate.log\n" +
+                "rundir 20120314T140946+0100\n" +
+                "bindir /usr/bin\n" +
+                "vogroup pegasus\n" +
+                "condor_log blackdiamond-0.log\n" +
+                "notify blackdiamond-0.notify\n" +
+                "dag blackdiamond-0.dag\n" +
+                "type dag";
+        writeFile(new File(thisLogFolder, "braindump.txt"), dumpContents);
     }
 
     private void writeLogMessage(Object obj) {
@@ -57,6 +88,16 @@ public class RuntimeFileLog implements Log {
         } catch (Exception e) {
         }
     }
+
+    private void writeFile(File file, String contents) {
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
+            out.write(contents + "\n");
+            out.close();
+        } catch (Exception e) {
+        }
+    }
+
 
     @Override
     public boolean isDebugEnabled() {

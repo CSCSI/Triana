@@ -2,6 +2,7 @@ package org.trianacode.shiwa.handler;
 
 import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
+import org.shiwa.desktop.data.description.workflow.Author;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktop;
 import org.trianacode.TrianaInstance;
@@ -15,6 +16,7 @@ import org.trianacode.taskgraph.tool.Tool;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,7 +52,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
 
     @Override
     public String getWorkflowLanguage(Set<String> languages) {
-        return "Triana-Taskgraph";
+        return "triana-taskgraph";
     }
 
     @Override
@@ -109,6 +111,21 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     @Override
     public String getDisplayImageName() {
         return task.getQualifiedTaskName() + "-image.jpg";
+    }
+
+    @Override
+    public List<Author> getAuthors() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    @Override
+    public String getImplementationVersion() {
+        return null;
     }
 
     public static void main(String[] args) throws IOException, TaskGraphException {

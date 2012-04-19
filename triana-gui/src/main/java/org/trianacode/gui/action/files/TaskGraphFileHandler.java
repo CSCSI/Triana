@@ -310,7 +310,6 @@ public class TaskGraphFileHandler implements SelectionManager {
                         if (fc.getUI() instanceof BasicFileChooserUI) {
                             filename = ((BasicFileChooserUI) fc.getUI()).getFileName();
                         }
-
                         pb = new TrianaProgressBar("exporting: " + filename, false);
                         chooser.exportWorkflow(GUIEnv.getApplicationFrame().getSelectedTaskGraphPanel().getTaskGraph());
                     } catch (IOException e) {
@@ -494,7 +493,7 @@ public class TaskGraphFileHandler implements SelectionManager {
         if (result == TFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();
             if (f != null) {
-                if(taskgraph.getToolName().startsWith("Untitled")){
+                if (taskgraph.getToolName().startsWith("Untitled")) {
                     taskgraph.setToolName(f.getName());
                 }
                 backGroundSaveTaskGraph(taskgraph, f.getAbsolutePath(), tools, true);

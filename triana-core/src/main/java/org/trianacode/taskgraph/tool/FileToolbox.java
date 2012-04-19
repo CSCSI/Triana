@@ -105,7 +105,7 @@ public class FileToolbox implements Toolbox {
         this.type = FileToolboxLoader.LOCAL_TYPE;
         this.name = name;
 
-        System.out.println("Tool : " + name + " Path : " + path);
+//        System.out.println("Tool : " + name + " Path : " + path);
     }
 
 

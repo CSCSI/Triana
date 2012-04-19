@@ -576,9 +576,9 @@ public class Scheduler implements SchedulerInterface {
         ExecutionState executionState = event.getState();
         StampedeEvent stampedeEvent;
 
-        System.out.println("Task " + event.getTask() +
-                " changed from " + event.getOldState() +
-                " to " + event.getState());
+//        System.out.println("Task " + event.getTask() +
+//                " changed from " + event.getOldState() +
+//                " to " + event.getState());
 
         switch (executionState) {
             //CONDOR JOB STATES
@@ -717,8 +717,8 @@ public class Scheduler implements SchedulerInterface {
         @Override
         public void executionFinished(ExecutionEvent event) {
 
-            System.out.println("event : "
-                    + event.getTask().getQualifiedTaskName() + " finished");
+//            System.out.println("event : "
+//                    + event.getTask().getQualifiedTaskName() + " finished");
 
             logStampedeEvent(addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_TERM)
                     .add(LogDetail.STATUS, "0"),
@@ -751,15 +751,17 @@ public class Scheduler implements SchedulerInterface {
                         .add(LogDetail.TRANSFORMATION, task.getQualifiedTaskName())
                         .add(LogDetail.EXECUTABLE, "Triana")
                         .add(LogDetail.ARGS, getTaskArgs(task))
-                        .add(LogDetail.TASK_ID, task.getQualifiedTaskName()
-                        );
+                        .add(LogDetail.TASK_ID, task.getQualifiedTaskName())
+                        .add(LogDetail.EXIT_CODE, "0")
+                ;
+                logStampedeEvent(invEnd);
             }
         }
 
         @Override
         public void executionReset(ExecutionEvent event) {
-            System.out.println("Reset event " + event.getTask().getQualifiedTaskName()
-                    + " event " + event.getState());
+//            System.out.println("Reset event " + event.getTask().getQualifiedTaskName()
+//                    + " event " + event.getState());
         }
     }
 }

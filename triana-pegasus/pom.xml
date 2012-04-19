@@ -75,6 +75,9 @@
             <!--<goals>-->
             <!--<goal>single</goal>-->
             <!--</goals>-->
+            <!--<configuration>-->
+            <!--<outputDirectory>${build.directory}/alldeps</outputDirectory>-->
+            <!--</configuration>-->
             <!--</execution>-->
             <!--</executions>-->
             <!--</plugin>-->
@@ -104,11 +107,18 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>pegasus.nodeps</groupId>-->
+        <!--<artifactId>pegasus</artifactId>-->
+        <!--<version>3.1.0</version>-->
+        <!--<scope>compile</scope>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>pegasus.nodeps</groupId>
             <artifactId>pegasus</artifactId>
-            <version>3.1.0</version>
-            <scope>compile</scope>
+            <groupId>edu.isi.pegasus</groupId>
+            <version>4.0</version>
+            <systemPath>/Users/ian/Work/triana4/triana-pegasus/lib/pegasus.jar</systemPath>
+            <scope>system</scope>
         </dependency>
     </dependencies>
 

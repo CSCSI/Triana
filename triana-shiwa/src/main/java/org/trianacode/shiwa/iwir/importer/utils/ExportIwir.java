@@ -86,9 +86,9 @@ public class ExportIwir {
 
                 } else {
 
-                    OutputPort outputPort = new OutputPort("out" + (sendingNode.getNodeIndex() + 1), SimpleType.STRING);
+                    OutputPort outputPort = new OutputPort("out" + (sendingNode.getNodeIndex() + 1), SimpleType.FILE);
                     sendingIwirTask.addOutputPort(outputPort);
-                    InputPort inputPort = new InputPort("in" + (receivingNode.getNodeIndex() + 1), SimpleType.STRING);
+                    InputPort inputPort = new InputPort("in" + (receivingNode.getNodeIndex() + 1), SimpleType.FILE);
                     receivingIwirTask.addInputPort(inputPort);
                     ((AbstractCompoundTask) sendingIwirTask.getParentTask()).addLink(outputPort, inputPort);
                     System.out.println("Linked in scope " + outputPort + " to " + inputPort);
@@ -167,7 +167,7 @@ public class ExportIwir {
         System.out.println("\n Input chain with node : " + node);
         System.out.println("top " + node.getTopLevelNode());
         System.out.println("bottom " + node.getBottomLevelNode());
-        InputPort inputBlockPort = new InputPort("in" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.STRING);
+        InputPort inputBlockPort = new InputPort("in" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.FILE);
         taskHashMap.get(node.getBottomLevelTask()).addInputPort(inputBlockPort);
 
         if (node.getTopLevelNode() == node.getBottomLevelNode()) {
@@ -179,7 +179,7 @@ public class ExportIwir {
         InputPort scopePort = inputBlockPort;
         while (scopeNode.getParentNode() != node.getTopLevelNode()) {
             scopeNode = scopeNode.getParentNode();
-            InputPort newPort = new InputPort("in" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
+            InputPort newPort = new InputPort("in" + (scopeNode.getNodeIndex() + 1), SimpleType.FILE);
             taskHashMap.get(scopeNode.getTask()).addInputPort(newPort);
             System.out.println("added " + scopeNode + " to input chain");
             ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(scopePort, newPort);
@@ -187,7 +187,7 @@ public class ExportIwir {
         }
 
         Node topLevelNode = node.getTopLevelNode();
-        InputPort taskInputPort = new InputPort("in" + (topLevelNode.getNodeIndex() + 1), SimpleType.STRING);
+        InputPort taskInputPort = new InputPort("in" + (topLevelNode.getNodeIndex() + 1), SimpleType.FILE);
 
         AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
         iwirTask.addInputPort(taskInputPort);
@@ -205,7 +205,7 @@ public class ExportIwir {
         System.out.println("\n Output chain with node : " + node);
         System.out.println("top " + node.getTopLevelNode());
         System.out.println("bottom " + node.getBottomLevelNode());
-        OutputPort outputBlockPort = new OutputPort("out" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.STRING);
+        OutputPort outputBlockPort = new OutputPort("out" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.FILE);
         taskHashMap.get(node.getBottomLevelTask()).addOutputPort(outputBlockPort);
 
         if (node.getTopLevelNode() == node.getBottomLevelNode()) {
@@ -217,7 +217,7 @@ public class ExportIwir {
         OutputPort scopePort = outputBlockPort;
         while (scopeNode.getParentNode() != node.getTopLevelNode()) {
             scopeNode = scopeNode.getParentNode();
-            OutputPort newPort = new OutputPort("out" + (scopeNode.getNodeIndex() + 1), SimpleType.STRING);
+            OutputPort newPort = new OutputPort("out" + (scopeNode.getNodeIndex() + 1), SimpleType.FILE);
             taskHashMap.get(scopeNode.getTask()).addOutputPort(newPort);
             System.out.println("added " + scopeNode + " to output chain");
             ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(newPort, scopePort);
@@ -225,7 +225,7 @@ public class ExportIwir {
         }
 
         Node topLevelNode = node.getTopLevelNode();
-        OutputPort taskOutputPort = new OutputPort("out" + (topLevelNode.getNodeIndex() + 1), SimpleType.STRING);
+        OutputPort taskOutputPort = new OutputPort("out" + (topLevelNode.getNodeIndex() + 1), SimpleType.FILE);
 
         AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
         iwirTask.addOutputPort(taskOutputPort);

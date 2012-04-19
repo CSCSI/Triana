@@ -1,6 +1,7 @@
 package org.trianacode.shiwa.handler;
 
 import org.shiwa.desktop.data.description.handler.TransferSignature;
+import org.shiwa.desktop.data.description.workflow.Author;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.fgi.iwir.AbstractDataPort;
 import org.shiwa.fgi.iwir.IWIR;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -83,5 +85,20 @@ public class TrianaIWIRHandler implements WorkflowEngineHandler {
     @Override
     public String getDisplayImageName() {
         return iwir.getWfname() + "-image.jpg";
+    }
+
+    @Override
+    public List<Author> getAuthors() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    @Override
+    public String getImplementationVersion() {
+        return null;
     }
 }

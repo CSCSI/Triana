@@ -369,9 +369,9 @@ public class FileUtils {
         f1 = new File(loc1);
         f2 = new File(loc2);
 
-        if (!f1.exists()) {
-            return false;
-        }
+//        if (!f1.exists()) {
+//            return false;
+//        }
 
         if (f2.isDirectory()) // add source file name if none chosen
         {
@@ -1262,8 +1262,7 @@ public class FileUtils {
         String s = null;
         try {
             s = f.getCanonicalPath();
-        }
-        catch (IOException ee) {
+        } catch (IOException ee) {
             logger.error("Couldn't get absolue Path for " + path, ee);
         }
 
@@ -1285,8 +1284,7 @@ public class FileUtils {
             if (dir.indexOf("://") != -1) {
                 return listDir(new URL(dir), recurse);
             }
-        }
-        catch (MalformedURLException murl) {
+        } catch (MalformedURLException murl) {
 
             logger.warn("Internet Address " + dir + " does not exist!");
             return null;
@@ -1340,8 +1338,7 @@ public class FileUtils {
                 }
                 return s;
             }
-        }
-        catch (MalformedURLException murl) {
+        } catch (MalformedURLException murl) {
             logger.warn("Internet Address " + dir +
                     " does not exist!");
             return null;
@@ -1372,8 +1369,7 @@ public class FileUtils {
     public static Listing listDir(URL dir, boolean recurse) {
         try {
             dir.openConnection();
-        }
-        catch (Exception ee) {
+        } catch (Exception ee) {
             logger.warn("Internet Address " + dir + " does not exist!");
             return null;
         }
@@ -1381,8 +1377,7 @@ public class FileUtils {
         if (!dir.toString().endsWith("/")) {
             try {
                 dir = new URL(dir.toString() + "/");
-            }
-            catch (MalformedURLException murl) {
+            } catch (MalformedURLException murl) {
                 // not possible, same directory!
             }
         }
@@ -1410,8 +1405,7 @@ public class FileUtils {
             // directory or a normal file
             try {
                 furl = new URL(file);
-            }
-            catch (MalformedURLException murl) {
+            } catch (MalformedURLException murl) {
                 // not possible but :-
                 logger.error(file + "is not valid", murl);
                 return null;

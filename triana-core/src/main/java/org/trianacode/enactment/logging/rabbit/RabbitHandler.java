@@ -23,7 +23,8 @@ public class RabbitHandler extends SwingWorker {
     ArrayBlockingQueue<String> sendingQueue = new ArrayBlockingQueue<String>(1000);
     private static RabbitHandler rabbitHandler = new RabbitHandler();
 
-    private String queueName = null;
+    //    private String queueName = null;
+    private String exchangeName = null;
     private boolean end = false;
     private String host;
     private int port;
@@ -74,19 +75,20 @@ public class RabbitHandler extends SwingWorker {
     }
 
     private void sendString(String string) throws IOException {
-        channel.basicPublish("", queueName, null, string.getBytes());
+//        channel.basicPublish("", queueName, null, string.getBytes());
+        channel.basicPublish(exchangeName, "", null, string.getBytes());
     }
 
     private boolean dataToSend() {
         return sendingQueue.size() > 0;
     }
 
-    public void setConnectionInfo(String host, int port, String username, String password, String queueName) {
+    public void setConnectionInfo(String host, int port, String username, String password, String exchangeName) {
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
-        this.queueName = queueName;
+        this.exchangeName = exchangeName;
         if (connectRunnable != null) {
             connectRunnable.kill();
         }
@@ -94,12 +96,12 @@ public class RabbitHandler extends SwingWorker {
     }
 
     public void initConnection() {
-        System.out.println(host + " "
-                + port + " "
-                + username + " "
-                + password + " "
-                + queueName
-        );
+//        System.out.println(host + " "
+//                + port + " "
+//                + username + " "
+//                + password + " "
+//                + queueName
+//        );
 
         connectRunnable = new CreateConnection();
         Thread thread = new Thread(connectRunnable);
@@ -123,7 +125,7 @@ public class RabbitHandler extends SwingWorker {
     }
 
     public boolean isReady() {
-        return !(channel == null || !channel.isOpen() || queueName == null);
+        return !(channel == null || !channel.isOpen());//queueName == null);
     }
 
     class CreateConnection implements Runnable {
@@ -160,7 +162,7 @@ public class RabbitHandler extends SwingWorker {
                             }
                         }
                     });
-                    channel.queueDeclare(queueName, false, false, false, null);
+//                    channel.queueDeclare("", false, false, false, null);
                     System.out.println("Connection made " + channel.toString());
                     status = Status.READY;
                 } catch (Exception e) {

@@ -59,7 +59,7 @@ public class FileUnit implements TaskConscious, Displayer {
         thisFile.setFilename(fileName);
         thisFile.setPhysicalFile(physicalFile);
         thisFile.setFileLocation(locationString);
-        System.out.println("File location " + thisFile.getFileLocation());
+//        System.out.println("File location " + thisFile.getFileLocation());
         thisFile.setFileProtocol(fileProtocol);
         thisFile.setUuid(UUID.randomUUID());
         thisFile.setCollection(collection);

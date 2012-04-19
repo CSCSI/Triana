@@ -71,8 +71,10 @@
         <antcall target="toolbox">
             <param name="toolbox" value="gftgu"/>
         </antcall>
+
         <antcall target="dev-toolboxes"/>
         <mkdir dir="dist/toolboxes"/>
+
         <antcall target="module">
             <param name="module" value="triana-pegasus"/>
             <param name="targetModule" value="pegasus"/>
@@ -170,6 +172,12 @@
         <copy todir="../toolboxes/${toolbox}" overwrite="yes">
             <fileset dir="${toolboxes}/${toolbox}/target" includes="classes/**"/>
         </copy>
+
+        <!--<mkdir dir="../toolboxes/alldeps"/>-->
+        <!--<zip destfile="../toolboxes/alldeps/alldeps.zip" update="true">-->
+        <!--<fileset dir="../toolboxes" includes="${toolbox}/**"/>-->
+        <!--</zip>-->
+
     </target>
 
     <target name="clean">

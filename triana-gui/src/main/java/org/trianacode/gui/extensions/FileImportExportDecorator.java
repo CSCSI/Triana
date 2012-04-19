@@ -74,6 +74,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -204,7 +205,6 @@ public class FileImportExportDecorator implements ActionListener {
 
         Display.centralise(outer);
         outer.setVisible(true);
-
         return chooserResult;
     }
 
@@ -221,6 +221,7 @@ public class FileImportExportDecorator implements ActionListener {
                     fc.setSelectedFile(new File(fc.getCurrentDirectory(), filename));
                 }
             }
+            reflectFilenameMethod(fc);
 
             fc.approveSelection();
             chooserResult = JFileChooser.APPROVE_OPTION;
@@ -234,6 +235,17 @@ public class FileImportExportDecorator implements ActionListener {
         } else if (e.getSource() == optionsBtn) {
             getSelectedFilter().showOptionsDialog(fc);
         }
+    }
+
+    private void reflectFilenameMethod(JFileChooser chooser) {
+        try {
+            Method getFileName = chooser.getUI().getClass().getDeclaredMethod("getFileName", new Class[]{});
+            String fn = (String) getFileName.invoke(chooser.getUI(), new Object[]{});
+            if (!new File(fn).isAbsolute())
+                chooser.setSelectedFile(new File(chooser.getCurrentDirectory(), fn));
+            else
+                chooser.setSelectedFile(new File(fn));
+        } catch (Exception e) { /* log warning */ }
     }
 
     /**

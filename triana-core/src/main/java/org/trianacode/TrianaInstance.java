@@ -306,6 +306,7 @@ public class TrianaInstance {
         }
         extensions = ExtensionFinder.services(ext);
         Set<Class> keys = extensions.keySet();
+        System.out.println(Arrays.toString(keys.toArray()));
         for (Class key : keys) {
             if (key.equals(Interceptor.class)) {
                 Set<Object> exts = extensions.get(key);
@@ -362,8 +363,8 @@ public class TrianaInstance {
 
     public void shutdown(int exitCode) {
         toolResolver.shutdown();
-        executorService.shutdown();
         httpServices.stopServices();
+        executorService.shutdown();
         if (exitCode > -1) {
             System.exit(exitCode);
         }

@@ -33,7 +33,7 @@ public class ModuleClassLoader extends URLClassLoader {
 
     public ModuleClassLoader() {
 //        this(ClassLoader.getSystemClassLoader());
-        //TODO fix this stupid idea
+//        TODO fix this stupid idea
         this(TrianaInstance.class.getClassLoader());
     }
 

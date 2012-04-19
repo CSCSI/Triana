@@ -1,8 +1,10 @@
 package common.processing;
 
 import org.apache.commons.logging.Log;
-import org.trianacode.annotation.*;
+import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Process;
+import org.trianacode.annotation.TextFieldParameter;
+import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.StreamToOutput;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.Task;
@@ -50,7 +52,6 @@ public class ExecuteString implements TaskConscious {
         FAIL
     }
 
-    @Parameter
     private Task task;
 
     @Process(gather = true)
@@ -109,10 +110,19 @@ public class ExecuteString implements TaskConscious {
             }
         }
 
+        int wait = 0;
+        int time = 0;
         while (returnCodes.size() < executableStrings.size()) {
-            System.out.println(returnCodes.size() + "/" + executableStrings.size() + " complete.");
+            if (wait > 10000) {
+                time += 10;
+                System.out.println(returnCodes.size() + "/" + executableStrings.size() + " complete. " +
+                        "~" + time + " seconds past."
+                );
+                wait = 0;
+            }
             try {
                 Thread.sleep(1000);
+                wait += 1000;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -248,12 +258,18 @@ public class ExecuteString implements TaskConscious {
     }
 
     private void getParams() {
-        execField.setText((String) task.getParameter("executable"));
+        executableString = (String) task.getParameter("executable");
+        execField.setText(executableString);
+        runtimeDirectory = (String) task.getParameter("runtimeDirectory");
+        runtimeField.setText(runtimeDirectory);
+        concurrentProcesses = (String) task.getParameter("concurrentProcesses");
+        concurrentField.setText(concurrentProcesses);
     }
 
     @Override
     public void setTask(Task task) {
         this.task = task;
+        getParams();
     }
 
     class helpFrame extends JFrame {

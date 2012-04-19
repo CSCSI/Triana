@@ -11,7 +11,6 @@ import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.pegasus.dax.FileUnit;
-import org.trianacode.pegasus.execution.CommandLinePegasus;
 import org.trianacode.pegasus.extras.DaxUtils;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
@@ -38,6 +37,11 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
     @Override
     public String toString() {
         return "DAX";
+    }
+
+    @Override
+    public String getUsageString() {
+        return "";
     }
 
     public ConvertWorkflowToDax() {
@@ -71,7 +75,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
                 try {
                     DaxifyTaskGraph converter = new DaxifyTaskGraph();
                     TaskGraph daxifiedTaskGraph = converter.convert(tg);
-                    CommandLinePegasus.initTaskgraph(daxifiedTaskGraph, daxFilePath, false);
+//                    CommandLinePegasus.initTaskgraph(daxifiedTaskGraph, daxFilePath, false);
 
                     GUIEnv.getApplicationFrame().addParentTaskGraphPanel((TaskGraph) daxifiedTaskGraph);
                     try {
@@ -228,7 +232,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
 
     @Override
     public File toolToWorkflowFile(Tool tool, File configFile, String filePath) throws Exception {
-        CommandLinePegasus.initTaskgraph((TaskGraph) tool, filePath, false);
+//        CommandLinePegasus.initTaskgraph((TaskGraph) tool, filePath, false);
         runDaxCreatorWorkflow(tool, configFile);
         return new File(filePath);
     }

@@ -8,7 +8,6 @@ import org.trianacode.config.cl.OptionValues;
 import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.addon.CLIaddon;
-import org.trianacode.enactment.addon.ExecutionAddon;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoTypeHandler;
@@ -94,16 +93,6 @@ public class Exec implements ExecutionListener {
             String pid = vals.getOptionValue("u");
             String data = vals.getOptionValue("d");
 
-            List<String> bundles = vals.getOptionValues("b");
-            if (bundles != null) {
-                if (bundles.size() != 1) {
-                    System.out.println("Only one bundle can be specified");
-                    return 1;
-                }
-                new Exec(pid).executeBundle(bundles.get(0), data, args);
-                return 0;
-//                System.exit(0);
-            }
 
             List<String> wfs = vals.getOptionValues("w");
             if (wfs != null) {
@@ -170,29 +159,6 @@ public class Exec implements ExecutionListener {
         }
         System.out.println("Fell off end of options, or major error occurred.");
         return 1;
-    }
-
-    private void executeBundle(String bundlePath, String data, String[] args) throws Exception {
-        File f = new File(bundlePath);
-        if (!f.exists()) {
-            System.out.println("Cannot find bundle file:" + bundlePath);
-            System.exit(1);
-        }
-        TrianaInstance engine = new TrianaInstance(args);
-        engine.addExtensionClass(CLIaddon.class);
-        engine.init();
-
-        Thread.sleep(3000);
-
-        ExecutionAddon executionAddon = (ExecutionAddon) AddonUtils.getService(engine, "bundle", ExecutionAddon.class);
-
-        if (executionAddon != null) {
-            System.out.println("Running with " + executionAddon.getServiceName());
-            executionAddon.execute(this, engine, bundlePath, null, data, args);
-        } else {
-            System.out.println("Bundle executing service not found");
-        }
-        engine.shutdown(0);
     }
 
 
@@ -330,21 +296,25 @@ public class Exec implements ExecutionListener {
             System.out.println("Data mappings size : " + mappings.getMap().size());
         }
         runner.runTaskGraph();
-        if (mappings != null) {
-            Iterator<Integer> it = mappings.iterator();
-            while (it.hasNext()) {
-                Integer integer = it.next();
-                Object val = mappings.getValue(integer);
-                System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
-                runner.sendInputData(integer, val);
+
+        if (((TaskGraph) tool).getInputNodeCount() > 0) {
+            if (mappings != null) {
+                Iterator<Integer> it = mappings.iterator();
+                while (it.hasNext()) {
+                    Integer integer = it.next();
+                    Object val = mappings.getValue(integer);
+                    System.out.println("Data : " + val.toString() + " will be sent to input number " + integer);
+                    runner.sendInputData(integer, val);
+                }
+            } else {
+                System.out.println("No input file mappings "
+                        + ((TaskGraph) tool).getInputNodeCount()
+                        + " data input nodes.");
+                runner.dispose();
+                return;
             }
-        } else {
-            System.out.println("No input file mappings "
-                    + ((TaskGraph) tool).getInputNodeCount()
-                    + " data input nodes.");
-            runner.dispose();
-            return;
         }
+
         while (!runner.isFinished()) {
             synchronized (this) {
                 try {

@@ -2,28 +2,24 @@ package org.trianacode.shiwa.executionServices;
 
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.bundle.BundleFile;
-import org.shiwa.desktop.data.description.core.AbstractWorkflow;
 import org.shiwa.desktop.data.description.core.Configuration;
 import org.shiwa.desktop.data.description.core.WorkflowImplementation;
 import org.shiwa.desktop.data.description.handler.TransferPort;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
-import org.shiwa.desktop.data.description.resource.AggregatedResource;
 import org.shiwa.desktop.data.description.resource.ConfigurationResource;
 import org.shiwa.desktop.data.description.resource.ReferableResource;
-import org.shiwa.desktop.data.description.workflow.InputPort;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
 import org.shiwa.desktop.data.util.DataUtils;
-import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.Exec;
-import org.trianacode.enactment.addon.BundleAddon;
 import org.trianacode.enactment.addon.ExecutionAddon;
 import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
+import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
 import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
@@ -46,84 +42,92 @@ import java.util.List;
  * Time: 13:45
  * To change this template use File | Settings | File Templates.
  */
-public class Unbundler implements BundleAddon, ExecutionAddon {
-    private ArrayList<Configuration> configurationList;
-    private ArrayList<WorkflowImplementation> workflowImplementations;
-    File configFile;
+public class Unbundler implements ExecutionAddon {
+//    private ArrayList<Configuration> configurationList;
+//    private ArrayList<WorkflowImplementation> workflowImplementations;
+//    private ArrayList<Configuration> environmentConfigurationList;
+
+    //    File configFile;
     Tool tool;
-    private WorkflowImplementation workflowImplementation;
-    private boolean bundleInit = false;
-    private SHIWABundle shiwaBundle;
+    //    private WorkflowImplementation workflowImplementation;
+//    private boolean bundleInit = false;
+//    private SHIWABundle shiwaBundle;
     private ArrayList<File> outputFiles;
+    //    private String workflowFilePath;
+    private ShiwaBundleHelper shiwaBundleHelper;
 
-    private void initBundle(String workflowFilePath) throws SHIWADesktopIOException {
-        shiwaBundle = new SHIWABundle(new File(workflowFilePath));
-        readBundle();
+    public Unbundler() {
     }
 
-    public void initBundle(SHIWABundle shiwaBundle) {
-        this.shiwaBundle = shiwaBundle;
-        readBundle();
+    public Unbundler(ShiwaBundleHelper shiwaBundleHelper) {
+        this.shiwaBundleHelper = shiwaBundleHelper;
     }
 
-    public void readBundle() {
-        workflowImplementations = new ArrayList<WorkflowImplementation>();
+//    private void initBundle(String workflowFilePath) throws SHIWADesktopIOException {
+//        this.workflowFilePath = workflowFilePath;
+//        shiwaBundle = new SHIWABundle(new File(workflowFilePath));
+//        readBundle();
+//    }
+//
+//    public void initBundle(SHIWABundle shiwaBundle) {
+//        this.shiwaBundle = shiwaBundle;
+//        readBundle();
+//    }
 
-        configurationList = new ArrayList<Configuration>();
-
-        AggregatedResource aggregatedResource = shiwaBundle.getAggregatedResource();
-
-        if (aggregatedResource instanceof AbstractWorkflow) {
-            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
-                if (resource instanceof WorkflowImplementation) {
-                    workflowImplementations.add((WorkflowImplementation) resource);
-                } else if (resource instanceof Configuration) {
-                    Configuration configuration = (Configuration) resource;
-                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
-                        configurationList.add(configuration);
-                    }
-                }
-            }
-
-        } else if (aggregatedResource instanceof WorkflowImplementation) {
-            workflowImplementations.add((WorkflowImplementation) aggregatedResource);
-
-            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
-                if (resource instanceof AbstractWorkflow) {
-
-                } else if (resource instanceof Configuration) {
-                    Configuration configuration = (Configuration) resource;
-                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
-                        configurationList.add(configuration);
-                    }
-                }
-            }
-        }
-        bundleInit = true;
-    }
-
-    @Override
-    public void execute(Exec execEngine, TrianaInstance instance, String bundlePath, Object workflowObject, Object inputData, String[] args) throws Exception {
-        tool = getTool(instance, bundlePath);
-        configFile = getConfigFile();
-
-        if (tool != null) {
-            if (configFile != null) {
-                execEngine.execute(tool, configFile.getAbsolutePath());
-            } else {
-                execEngine.execute(tool, null);
-            }
-        }
-    }
+//    public void readBundle() {
+//        workflowImplementations = new ArrayList<WorkflowImplementation>();
+//
+//        configurationList = new ArrayList<Configuration>();
+//        environmentConfigurationList = new ArrayList<Configuration>();
+//
+//        AggregatedResource aggregatedResource = shiwaBundle.getAggregatedResource();
+//
+//        if (aggregatedResource instanceof AbstractWorkflow) {
+//            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
+//                if (resource instanceof WorkflowImplementation) {
+//                    workflowImplementations.add((WorkflowImplementation) resource);
+//                } else if (resource instanceof Configuration) {
+//                    Configuration configuration = (Configuration) resource;
+//                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
+//                        configurationList.add(configuration);
+//                    }
+//                    if (configuration.getType() == Configuration.ConfigType.ENVIRONMENT_CONFIGURATION) {
+//                        environmentConfigurationList.add(configuration);
+//                    }
+//                }
+//            }
+//
+//        } else if (aggregatedResource instanceof WorkflowImplementation) {
+//            workflowImplementations.add((WorkflowImplementation) aggregatedResource);
+//
+//            for (AggregatedResource resource : aggregatedResource.getAggregatedResources()) {
+//                if (resource instanceof AbstractWorkflow) {
+//
+//                } else if (resource instanceof Configuration) {
+//                    Configuration configuration = (Configuration) resource;
+//                    if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
+//                        configurationList.add(configuration);
+//                    }
+//                    if (configuration.getType() == Configuration.ConfigType.ENVIRONMENT_CONFIGURATION) {
+//                        environmentConfigurationList.add(configuration);
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        bundleInit = true;
+//    }
 
     @Override
     public Tool getTool(TrianaInstance instance, String workflowFilePath) throws IOException, TaskGraphException, ProxyInstantiationException {
-        initBundle(workflowFilePath);
+//        initBundle(workflowFilePath);
         return getTool(instance);
     }
 
     private Tool getTool(TrianaInstance instance) throws IOException, TaskGraphException, ProxyInstantiationException {
-        workflowImplementation = chooseImp();
+//        workflowImplementation = chooseImp();
+        WorkflowImplementation workflowImplementation = shiwaBundleHelper.getWorkflowImplementation();
         if (workflowImplementation != null) {
 
             byte[] definitionBytes = workflowImplementation.getDefinition().getBytes();
@@ -134,7 +138,7 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
 
             } else if (workflowImplementation.getLanguage().getShortId().equalsIgnoreCase("IWIR")) {
 
-                IWIR iwir = new IWIR(bytesToFile(definitionBytes));
+                IWIR iwir = new IWIR(shiwaBundleHelper.writeDefinitionFile());
                 ImportIwir iwirImporter = new ImportIwir();
                 tool = iwirImporter.taskFromIwir(iwir);
 
@@ -153,92 +157,105 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
 
     @Override
     public File getConfigFile() throws IOException {
-        if (workflowImplementation == null || configurationList.size() < 1) {
-            return null;
+
+        if (shiwaBundleHelper.hasDataConfiguration()) {
+            TransferSignature transferSignature = shiwaBundleHelper.createDefaultTransferSignature();
+            File configFile = getIOConfigFromSignature(transferSignature);
+            System.out.println(configFile.getAbsolutePath());
+            return configFile;
         } else {
-            TransferSignature signature = buildSignature(workflowImplementation, configurationList.get(0));
-            configFile = getIOConfigFromSignature(signature);
+            return null;
         }
-        return configFile;
+
     }
 
-    private WorkflowImplementation chooseImp() {
-        WorkflowImplementation chosenImp = null;
-        for (WorkflowImplementation implementation : workflowImplementations) {
-            System.out.println("Workflow language " + implementation.getEngine());
-            if (implementation.getEngine().equalsIgnoreCase("Triana")) {
-                chosenImp = implementation;
+    @Override
+    public void execute(TrianaInstance engine, List<String> pluginArguments) throws Exception {
+//        String[] correctedArgs = null;
+
+        shiwaBundleHelper = new ShiwaBundleHelper(pluginArguments.get(1));
+        shiwaBundleHelper.prepareEnvironmentDependencies();
+
+        tool = getTool(engine);
+        serializeOutputs((TaskGraph) tool);
+        File configFile = getConfigFile();
+
+        if (tool != null) {
+
+            Exec execEngine = new Exec(null);
+
+            if (configFile != null) {
+                execEngine.execute(tool, configFile.getAbsolutePath());
+            } else {
+                execEngine.execute(tool, null);
             }
         }
 
-        if (chosenImp == null) {
-            for (WorkflowImplementation implementation : workflowImplementations) {
-                if (implementation.getLanguage().getShortId().equalsIgnoreCase("IWIR")) {
-                    chosenImp = implementation;
-                }
-            }
+        if (engine != null) {
+            engine.shutdown(-1);
         }
-        return chosenImp;
+
+        System.out.println(createOutputBundle(pluginArguments.get(2)).getAbsolutePath());
     }
 
-    private TransferSignature buildSignature(WorkflowImplementation workflow, Configuration configuration) {
-        TransferSignature signature = new TransferSignature();
+    @Override
+    public void execute(Exec execEngine, TrianaInstance instance, String bundlePath, Object workflowObject, Object inputData, String[] args) throws Exception {
+        tool = getTool(instance, bundlePath);
+        File configFile = getConfigFile();
 
-        signature.setName(workflow.getDefinition().getFilename());
-        System.out.println("Signatures name " + signature.getName());
+        if (tool != null) {
+            if (configFile != null) {
+                execEngine.execute(tool, configFile.getAbsolutePath());
+            } else {
+                execEngine.execute(tool, null);
+            }
+        }
+    }
 
-        for (ReferableResource referableResource : workflow.getSignature().getPorts()) {
-            if (referableResource instanceof InputPort) {
-                String value = null;
-                boolean isReference = false;
 
-                if (configuration != null) {
-                    for (ConfigurationResource portRef : configuration.getResources()) {
-                        if (portRef.getReferableResource().getId() == referableResource.getId()) {
-                            value = portRef.getValue();
-                            isReference = (portRef.getRefType() == ConfigurationResource.RefTypes.FILE_REF);
-                        }
-                    }
-                }
+    public File createOutputBundle(String outputPath) throws IOException {
+        Configuration execConfig = new Configuration(Configuration.ConfigType.EXECUTION_CONFIGURATION);
+        ArrayList<ConfigurationResource> configurationResourceArrayList = new ArrayList<ConfigurationResource>();
 
-                if (value != null) {
-                    if (isReference) {
-                        signature.addInputReference(referableResource.getTitle(), referableResource.getDataType(), value);
-                    } else {
-                        signature.addInput(referableResource.getTitle(), referableResource.getDataType(), value);
-                    }
-                } else {
-                    signature.addInput(referableResource.getTitle(), referableResource.getDataType());
-                }
-            } else if (referableResource instanceof OutputPort) {
-                signature.addOutput(referableResource.getTitle(), referableResource.getDataType());
+        ArrayList<File> outputs = getOutputFiles();
+        ArrayList<OutputPort> outputPorts = new ArrayList<OutputPort>();
+
+        for (ReferableResource resource : shiwaBundleHelper.getWorkflowImplementation().getSignature().getPorts()) {
+            if (resource instanceof OutputPort) {
+                outputPorts.add((OutputPort) resource);
             }
         }
 
-//        for (Dependency dependency : workflow.getDependencies()) {
-////            Constraint constraint = new Constraint(dependency.getTitle(), dependency.getDataType(), dependency.getDescription());
-//            Dependency constraint = new Dependency(dependency.getTitle(), dependency.getDataType(), dependency.getDescription());
-//
-//            if (configuration != null) {
-//                for (ConfigurationResource dependencyRef : configuration.getResources()) {
-//                    if (dependencyRef.getReferableResource() == dependency) {
-//                        if (dependencyRef.getRefType() == ConfigurationResource.RefTypes.FILE_REF) {
-////                            constraint.setValueReference(dependencyRef.getValue());
-//                            constraint.setValueType(TransferSignature.ValueType.BUNDLED_FILE);
-//                        } else {
-//                            constraint.setValue(dependencyRef.getValue());
-//                        }
-//                    }
-//                }
-//            }
-//
-//            signature.addConstraint(constraint);
-//        }
+        for (int i = 0; i < outputs.size(); i++) {
+            //TODO check name
+            ConfigurationResource configurationResource = new ConfigurationResource(outputPorts.get(i));
+            File outputFile = outputs.get(i);
+            System.out.println(outputFile.getAbsolutePath());
+            BundleFile bf = DataUtils.createBundleFile(outputFile, execConfig.getId() + "/");
+            bf.setType(BundleFile.FileType.INPUT_FILE);
+            execConfig.getBundleFiles().add(bf);
+            configurationResource.setBundleFile(bf);
+            configurationResource.setRefType(ConfigurationResource.RefTypes.FILE_REF);
+            execConfig.addResourceRef(configurationResource);
 
-        if (configuration != null) {
-            signature.setHasConfiguration(true);
+            configurationResourceArrayList.add(configurationResource);
         }
-        return signature;
+
+        execConfig.setResources(configurationResourceArrayList);
+
+        shiwaBundleHelper.getWorkflowImplementation().getAggregatedResources().add(execConfig);
+
+        File outputBundle;
+        if (outputPath == null || outputPath.equals("")) {
+            outputBundle = File.createTempFile("bundle", ".tmp");
+        } else {
+            outputBundle = new File(outputPath);
+        }
+
+        System.out.println("Output bundle : " + outputBundle.getAbsolutePath());
+//            File bundleFile = DataUtils.bundle(tempBundle,  shiwaBundle.getAggregatedResource());
+
+        return shiwaBundleHelper.saveBundle(outputBundle);
     }
 
     private File getIOConfigFromSignature(TransferSignature signature) throws IOException {
@@ -253,8 +270,15 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
 
                 String value = inputPort.getValue();
                 boolean reference = inputPort.getValueType() == TransferSignature.ValueType.BUNDLED_FILE;
+                if (reference) {
+                    try {
+//                        value = shiwaBundle.getTempEntry(value).getAbsolutePath();
+                        value = shiwaBundleHelper.getTempEntry(value).getAbsolutePath();
+                    } catch (Exception ignored) {
+                    }
+                }
 
-                IoMapping ioMapping = new IoMapping(new IoType(value, "string", reference), portNumberString);
+                IoMapping ioMapping = new IoMapping(new IoType(value, "string", false), portNumberString);
                 inputMappings.add(ioMapping);
             }
         }
@@ -278,72 +302,66 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
         return tempConfFile;
     }
 
-    @Override
-    public File getWorkflowFile(String bundlePath) throws IOException {
-        if (!bundleInit) {
-            initBundle(bundlePath);
-        }
-        return bytesToFile(workflowImplementation.getDefinition().getBytes());
-    }
-
-    private File bytesToFile(byte[] bytes) throws IOException {
-        File definitionTempFile = File.createTempFile(workflowImplementation.getDefinition().getFilename(), ".tmp");
-        definitionTempFile.deleteOnExit();
-        FileOutputStream fileOutputStream = new FileOutputStream(definitionTempFile);
-        fileOutputStream.write(bytes);
-        fileOutputStream.close();
-        return definitionTempFile;
-    }
-
-    @Override
-    public void setWorkflowFile(String bundlePath, File file) throws IOException {
-        if (!bundleInit) {
-            initBundle(bundlePath);
-        }
-
-        boolean previousDef = false;
-        String language = "";
-        byte[] defBytes = null;
-
-        if (workflowImplementation != null) {
-            if (workflowImplementation.getDefinition() != null) {
-                language = workflowImplementation.getLanguage().getShortId();
-                defBytes = workflowImplementation.getDefinition().getBytes();
-                previousDef = true;
-            }
-
-            BundleFile definitionBundleFile = new BundleFile(new FileInputStream(file), file.getName());
-            workflowImplementation.setDefinition(definitionBundleFile);
-
-            if (previousDef) {
-                BundleFile backupDefinition = new BundleFile(language, defBytes, "", BundleFile.FileType.BUNDLE_FILE);
-                workflowImplementation.getBundleFiles().add(backupDefinition);
-            }
-        }
-
-    }
-
-    @Override
-    public File getConfigFile(String bundlePath) {
-        return null;
-    }
-
-    @Override
-    public Object getWorkflowObject(String bundlePath) {
-        return null;
-    }
-
-    @Override
-    public File saveBundle(String fileName) throws IOException {
-        if (bundleInit) {
-            shiwaBundle.getAggregatedResource().setBaseURI(DataUtils.BASE_URI);
-            DataUtils.bundle(new File(fileName), shiwaBundle.getAggregatedResource());
-        }
-        return null;
-    }
+//    @Override
+//    public File getWorkflowFile(String bundlePath) throws IOException {
+////        if (!bundleInit) {
+////            initBundle(bundlePath);
+////        }
+////        return bytesToFile(workflowImplementation.getDefinition().getBytes());
+//        return shiwaBundleHelper.writeDefinitionFile();
+//    }
+//
+//
+//
+//    @Override
+//    public void setWorkflowFile(String bundlePath, File file) throws IOException {
+////        if (!bundleInit) {
+////            initBundle(bundlePath);
+////        }
+//
+////        boolean previousDef = false;
+////        String language = "";
+////        byte[] defBytes = null;
+////
+////        if (workflowImplementation != null) {
+////            if (workflowImplementation.getDefinition() != null) {
+////                language = workflowImplementation.getLanguage().getShortId();
+////                defBytes = workflowImplementation.getDefinition().getBytes();
+////                previousDef = true;
+////            }
+////
+////            BundleFile definitionBundleFile = new BundleFile(new FileInputStream(file), file.getName());
+////            workflowImplementation.setDefinition(definitionBundleFile);
+////
+////            if (previousDef) {
+////                BundleFile backupDefinition = new BundleFile(language, defBytes, "", BundleFile.FileType.BUNDLE_FILE);
+////                workflowImplementation.getBundleFiles().add(backupDefinition);
+////            }
+////        }
+//
+//    }
+//
+//    @Override
+//    public File getConfigFile(String bundlePath) {
+//        return null;
+//    }
+//
+//    @Override
+//    public Object getWorkflowObject(String bundlePath) {
+//        return null;
+//    }
+//
+//    @Override
+//    public File saveBundle(String fileName) throws IOException {
+////        if (bundleInit) {
+////            shiwaBundle.getAggregatedResource().setBaseURI(DataUtils.BASE_URI);
+////            DataUtils.bundle(new File(fileName), shiwaBundle.getAggregatedResource());
+////        }
+//        return shiwaBundleHelper.saveBundle(new File(fileName));
+//    }
 
     public Tool getTool(TrianaInstance trianaInstance, SHIWABundle shiwaBundle) throws IOException, TaskGraphException, ProxyInstantiationException {
-        initBundle(shiwaBundle);
+//        initBundle(shiwaBundle);
         return getTool(trianaInstance);
     }
 
@@ -367,39 +385,79 @@ public class Unbundler implements BundleAddon, ExecutionAddon {
         return "SHIWA Bundle Extraction in Triana";
     }
 
+    public String toString() {
+        return getServiceName();
+    }
+
+    @Override
+    public String getUsageString() {
+        return "Usage for " + getLongOption() + ".\n" +
+                "eg triana.sh -n -p " + getLongOption() + " input-bundle.zip output-bundle.zip" +
+                "-n for headless triana" +
+                "-p to declare a plugin to use" +
+                "input-bundle is the bundle which will be executed." +
+                "output-bundle is the name of the bundle created after execution, which holds the output data."
+                ;
+    }
+
     public void serializeOutputs(TaskGraph taskGraph) throws TaskException {
-        if (bundleInit) {
-            outputFiles = new ArrayList<File>();
-            for (Node outputNode : taskGraph.getOutputNodes()) {
-                Node toolNode = outputNode.getTopLevelNode();
+//        if (bundleInit) {
+        outputFiles = new ArrayList<File>();
+        for (Node outputNode : taskGraph.getOutputNodes()) {
+            Node toolNode = outputNode.getTopLevelNode();
 
-                Task outputTask = outputNode.getTask();
-                String[] nodeOutputTypes = outputTask.getDataOutputTypes(toolNode.getAbsoluteNodeIndex());
-                String outputType;
-                if (nodeOutputTypes != null) {
-                    outputType = nodeOutputTypes[0];
+            Task outputTask = outputNode.getTask();
+            String[] nodeOutputTypes = outputTask.getDataOutputTypes(toolNode.getAbsoluteNodeIndex());
+            String outputType;
+            if (nodeOutputTypes != null) {
+                outputType = nodeOutputTypes[0];
+            } else {
+                String[] taskOutputTypes = TaskGraphUtils.getAllDataOutputTypes(outputTask);
+                if (taskOutputTypes != null) {
+                    outputType = taskOutputTypes[0];
                 } else {
-                    String[] taskOutputTypes = TaskGraphUtils.getAllDataOutputTypes(outputTask);
-                    if (taskOutputTypes != null) {
-                        outputType = taskOutputTypes[0];
-                    } else {
-                        outputType = Object.class.getCanonicalName();
-                    }
-                }
-
-                try {
-                    if (outputType.equals(String.class.getCanonicalName())) {
-                        addStringTool(toolNode, taskGraph);
-                    } else {
-                        addSerializeTool(toolNode, taskGraph);
-                    }
-                } catch (CableException e) {
-                    e.printStackTrace();
-                } catch (ProxyInstantiationException e) {
-                    e.printStackTrace();
+                    outputType = Object.class.getCanonicalName();
                 }
             }
+
+            try {
+                if (outputType.equals(String.class.getCanonicalName())) {
+                    addStringTool(toolNode, taskGraph);
+                } else if (outputType.equals(File.class.getCanonicalName())) {
+                    addFileRenameTool(toolNode, taskGraph);
+                } else {
+                    addSerializeTool(toolNode, taskGraph);
+                }
+            } catch (CableException e) {
+                e.printStackTrace();
+            } catch (ProxyInstantiationException e) {
+                e.printStackTrace();
+            }
         }
+
+    }
+
+    private void addFileRenameTool(Node toolNode, TaskGraph taskGraph) throws CableException, TaskException, ProxyInstantiationException {
+        String fileName = "Output_" + toolNode.getAbsoluteNodeIndex();
+
+        Task fileTask = new TaskImp(
+                AddonUtils.makeTool(
+                        "RenameFile",
+                        "common.file",
+                        fileName,
+                        taskGraph.getProperties()),
+                new TaskFactoryImp(),
+                false
+        );
+        Task task = taskGraph.createTask(fileTask, false);
+
+        File file = createFileInRuntimeFolder(fileName);
+        task.setParameter("filePath", file.getAbsolutePath());
+        outputFiles.add(file);
+
+        Node inNode = task.addDataInputNode();
+        taskGraph.connect(toolNode, inNode);
+        fileIterator++;
     }
 
     public ArrayList<File> getOutputFiles() {

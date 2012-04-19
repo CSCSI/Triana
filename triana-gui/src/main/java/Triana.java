@@ -69,6 +69,7 @@ import org.trianacode.enactment.Convert;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.RunUnit;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.enactment.plugins.Plugins;
 import org.trianacode.gui.hci.ApplicationFrame;
 
 /**
@@ -87,7 +88,7 @@ public class Triana {
     public static final String ISOLATED_LOGGER = "i";
     public static final String WORKFLOW = "w";
     public static final String NOGUI = "n";
-    public static final String BUNDLE = "b";
+//    public static final String PLUGIN = "p";
 
     /**
      * non gui arguments
@@ -151,9 +152,10 @@ public class Triana {
         boolean exec = vals.hasOptionValue(EXECUTE);
         boolean server = vals.hasOption(SERVER);
         boolean workflow = vals.hasOptionValue(WORKFLOW);
-        boolean bundle = vals.hasOption(BUNDLE);
+        boolean plugin = vals.hasOption(TrianaOptions.PLUGIN.getShortOpt());
         boolean convert = vals.hasOption(TrianaOptions.CONVERT_WORKFLOW.getShortOpt());
         if (runNoGui || pid || runUnit) {
+            System.out.println("Running headless, optional pid or unit.");
             if (runUnit) {
                 new RunUnit(args);
                 System.exit(0);
@@ -161,9 +163,17 @@ public class Triana {
             if (convert) {
                 Convert.convert(args);
             } else if (!server) {
-                if (pid || exec || workflow || bundle) {
-
-                    System.exit(Exec.exec(args));
+                if (pid || exec || workflow || plugin) {
+                    if (plugin) {
+                        try {
+                            System.exit(Plugins.exec(args));
+                        } catch (ArgumentParsingException e) {
+                            System.out.println(e.getMessage());
+                            System.out.println(parser.usage());
+                        }
+                    } else {
+                        System.exit(Exec.exec(args));
+                    }
                 } else {
                     System.out.println("Non-gui mode combined with non-server mode requires either a uuid, a workflow, or a bundle");
                     System.out.println(parser.usage());

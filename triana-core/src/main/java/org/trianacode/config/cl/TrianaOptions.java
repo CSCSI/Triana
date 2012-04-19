@@ -24,6 +24,7 @@ public class TrianaOptions {
     public static final Option EXTRA_MODULES_OPTION = new Option("m", "extra-modules", "add module paths.");
     public static final Option HELP_OPTION = new Option("h", "help", "prints this message.");
 
+    public static final Option PLUGIN = new Option("p", "plugin", "plugin arguments", "runs plugin with iven arguments", true, false);
     public static final Option SUPPRESS_DEFAULT_TOOLBOXES = new Option("sdt", "suppress-default-toolboxes", "start triana with no default, only those given with -x");
     public static final Option CREATE_AND_SUBMIT_DAX = new Option("dax", "submit-to-pegasus", "Takes a workflow, creates a dax, and submits to Pegasus");
     public static final Option EXECUTE_BUNDLE = new Option("b", "bundle", "Input bundle");
@@ -47,6 +48,8 @@ public class TrianaOptions {
             EXTRA_TOOLBOXES_OPTION,
             EXTRA_MODULES_OPTION,
             HELP_OPTION,
+
+            PLUGIN,
             SUPPRESS_DEFAULT_TOOLBOXES,
             CREATE_AND_SUBMIT_DAX,
             EXECUTE_BUNDLE,

@@ -58,6 +58,9 @@
             <!--<goals>-->
             <!--<goal>single</goal>-->
             <!--</goals>-->
+            <!--<configuration>-->
+            <!--<outputDirectory>${build.directory}/alldeps</outputDirectory>-->
+            <!--</configuration>-->
             <!--</execution>-->
             <!--</executions>-->
             <!--</plugin>-->
@@ -81,7 +84,7 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.5-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.shiwa.fgi</groupId>
@@ -103,6 +106,18 @@
             <artifactId>json</artifactId>
             <version>20090211</version>
         </dependency>
+        <dependency>
+            <groupId>fr.insalyon.creatis.shiwapool</groupId>
+            <artifactId>shiwa-pool-agent</artifactId>
+            <version>0.5</version>
+        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>fr.insalyon.creatis.shiwapool</groupId>-->
+        <!--<artifactId>shiwa-pool-agent</artifactId>-->
+        <!--<version>0.5</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${project.basedir}/lib/shiwa-pool-agent-0.5-jar-with-dependencies.jar</systemPath>-->
+        <!--</dependency>-->
     </dependencies>
 
     <repositories>
@@ -110,7 +125,14 @@
             <id>trianacode-maven-repos</id>
             <url>http://trianacode.org/maven</url>
         </repository>
+        <repository>
+            <id>creatis-thirdparty</id>
+            <url>http://vip.creatis.insa-lyon.fr:9007/nexus/content/repositories/thirdparty</url>
+        </repository>
+        <repository>
+            <id>creatis-releases</id>
+            <url>http://vip.creatis.insa-lyon.fr:9007/nexus/content/repositories/releases</url>
+        </repository>
     </repositories>
-
 
 </project>
