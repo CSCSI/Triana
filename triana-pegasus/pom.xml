@@ -117,7 +117,7 @@
             <artifactId>pegasus</artifactId>
             <groupId>edu.isi.pegasus</groupId>
             <version>4.0</version>
-            <systemPath>/Users/ian/Work/triana4/triana-pegasus/lib/pegasus.jar</systemPath>
+            <systemPath>${project.basedir}/lib/pegasus.jar</systemPath>
             <scope>system</scope>
         </dependency>
     </dependencies>
