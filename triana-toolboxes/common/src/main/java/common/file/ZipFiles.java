@@ -55,6 +55,7 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
     @org.trianacode.annotation.Process(gather = true)
     public File process(List list) {
         files.clear();
+        loadParams();
 
         for (Object object : list) {
             File file = null;
@@ -287,7 +288,7 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
     public void setTask(Task task) {
         this.task = task;
 //        task.setDataInputTypes(new String[]{"java.io.File", "java.lang.String", "Ljava.lang.String;"});
-//        task.setDataOutputTypes(new String[]{"java.io.File"});
+        task.setDataOutputTypes(new String[]{"java.io.File"});
     }
 
 

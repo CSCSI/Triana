@@ -9,6 +9,7 @@ import org.shiwa.desktop.data.description.resource.ReferableResource;
 import org.shiwa.desktop.data.description.workflow.Dependency;
 import org.shiwa.desktop.data.description.workflow.InputPort;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
+import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
 import org.shiwa.desktop.data.transfer.WorkflowController;
 import org.shiwa.desktop.data.util.DataUtils;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
@@ -19,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,17 +32,32 @@ import java.util.ArrayList;
  */
 public class ShiwaBundleHelper extends WorkflowController {
 
+    public static String parentUUIDstring = "parentUUID";
+
     //    private String workflowFilePath;
     private SHIWABundle shiwaBundle;
+    private UUID parentUUID = null;
 
     public ShiwaBundleHelper(SHIWABundle shiwaBundle) throws SHIWADesktopIOException {
         this.shiwaBundle = shiwaBundle;
         initialiseController(shiwaBundle);
+        init();
+    }
+
+    private void init() {
+        List<SHIWAProperty> properties = getWorkflowImplementation().getProperties();
+        for (SHIWAProperty property : properties) {
+            if (property.getTitle().equals(parentUUIDstring)) {
+                System.out.println("Found parent uuid " + property.getValue());
+                parentUUID = UUID.fromString(property.getValue());
+            }
+        }
     }
 
     public ShiwaBundleHelper(String bundlePath) throws SHIWADesktopIOException {
         this.shiwaBundle = new SHIWABundle(new File(bundlePath));
         initialiseController(shiwaBundle);
+        init();
     }
 
     public void prepareLibraryDependencies() {
@@ -301,5 +319,9 @@ public class ShiwaBundleHelper extends WorkflowController {
             }
 
         }
+    }
+
+    public UUID getParentUUID() {
+        return parentUUID;
     }
 }

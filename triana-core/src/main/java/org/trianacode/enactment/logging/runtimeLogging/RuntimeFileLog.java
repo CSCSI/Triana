@@ -2,6 +2,7 @@ package org.trianacode.enactment.logging.runtimeLogging;
 
 import gov.lbl.netlogger.LogMessage;
 import org.apache.commons.logging.Log;
+import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.logging.stampede.StampedeEvent;
 
 import java.io.BufferedWriter;
@@ -20,13 +21,17 @@ import java.util.UUID;
  */
 public class RuntimeFileLog implements Log {
     private File logFile;
+    private TrianaProperties properties;
 
     public String getLogFilePath() {
         return logFile.getAbsolutePath();
     }
 
-    public RuntimeFileLog(String property, UUID runUUID) {
-        File rootLogFolder = new File(property);
+    public RuntimeFileLog(String log_location, UUID runUUID) {
+//        this.properties = properties;
+//        String log_location = properties.getProperty(TrianaProperties.LOG_LOCATION);
+
+        File rootLogFolder = new File(log_location);
         if (!rootLogFolder.exists()) {
             rootLogFolder.mkdirs();
         }
@@ -73,6 +78,7 @@ public class RuntimeFileLog implements Log {
     }
 
     private void writeLogMessage(Object obj) {
+
         String string;
         if (obj instanceof StampedeEvent) {
             string = ((StampedeEvent) obj).toString();
@@ -87,6 +93,7 @@ public class RuntimeFileLog implements Log {
             out.close();
         } catch (Exception e) {
         }
+
     }
 
     private void writeFile(File file, String contents) {

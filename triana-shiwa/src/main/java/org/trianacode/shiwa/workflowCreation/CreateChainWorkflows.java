@@ -1,16 +1,16 @@
 package org.trianacode.shiwa.workflowCreation;
 
-import org.trianacode.annotation.CustomGUIComponent;
+import org.trianacode.annotation.CheckboxParameter;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.enactment.AddonUtils;
 import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,10 +22,14 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @org.trianacode.annotation.Tool
-public class CreateChainWorkflows {
+public class CreateChainWorkflows implements TaskConscious {
 
     @TextFieldParameter
-    public String numberOfWorkflows = "";
+    public String tasksPerWorkflow = "30";
+
+    @CheckboxParameter
+    public boolean zip = false;
+    private Task task;
 
     @Process(gather = true)
     public ArrayList<TaskGraph> process(List list) {
@@ -42,40 +46,67 @@ public class CreateChainWorkflows {
             }
         }
 
+        int numOfWorkflows = Integer.parseInt(tasksPerWorkflow);
 
         int start = 0;
-        int end = 30;
-//        List<List<String>> sublists = new ArrayList<List<String>>();
+        int end = numOfWorkflows;
 
-        for (int i = 0; i < (allStrings.size() / 30); i++) {
+        for (int i = 0; i < (allStrings.size() / numOfWorkflows); i++) {
 
             List<String> listItem = allStrings.subList(start, end);
-//            sublists.add(listItem);
+            TaskGraph taskGraph = makeTaskGraph(start, end, listItem);
 
-            start += 30;
-            end += 30;
-            if (end > (allStrings.size() - 1)) {
-                end = (allStrings.size() - 1);
+            if (zip) {
+                try {
+                    addZipper(taskGraph);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
-            TaskGraph taskGraph = makeTaskGraph(start, end, listItem);
+            taskGraph = recycleGraph(taskGraph);
+            System.out.println("Taskgraph outputs " + taskGraph.getOutputNodeCount() + " " +
+                    Arrays.toString(taskGraph.getDataOutputTypes()));
 
             if (taskGraph != null) {
                 System.out.println("Adding taskgraph " + taskGraph.getToolName());
                 allTaskGraphs.add(taskGraph);
             }
+
+            start += numOfWorkflows;
+            end += numOfWorkflows;
+            if (end > (allStrings.size() - 1)) {
+                end = (allStrings.size() - 1);
+            }
+
         }
-//
-//        for(List<String> strings : sublists){
-//            TaskGraph taskGraph = makeTaskGraph(strings);
-//
-//            if(taskGraph != null){
-//                allTaskGraphs.add(taskGraph);
-//            }
-//        }
 
         System.out.println(allTaskGraphs.size() + " taskgraphs created");
         return allTaskGraphs;
+    }
+
+    private void addZipper(TaskGraph taskGraph) throws ProxyInstantiationException, TaskGraphException {
+        ArrayList<Task> endTasks = new ArrayList<Task>();
+        for (Task task : taskGraph.getTasks(false)) {
+            if (task.getOutputNodeCount() == 0) {
+                endTasks.add(task);
+            }
+        }
+
+        Tool zipTool = AddonUtils.makeTool("ZipFiles", "common.file", "zipper", taskGraph.getProperties());
+
+        Task zipTask = taskGraph.createTask(zipTool);
+        zipTask.setParameter("files", "./results");
+
+        for (Task task : endTasks) {
+            taskGraph.connect(task.addDataOutputNode(), zipTask.addDataInputNode());
+        }
+
+        taskGraph.addDataOutputNode(zipTask.addDataOutputNode());
+
+//        Node node = zipTask.addDataOutputNode();
+//        TaskLayoutUtils.resolveGroupNodes(taskGraph);
+
     }
 
     private TaskGraph makeTaskGraph(int start, int end, List<String> strings) {
@@ -86,10 +117,10 @@ public class CreateChainWorkflows {
 
             int pos = 0;
 
-            Node output1 = null;
-            Node output2 = null;
-            Node output3 = null;
-            Node output4 = null;
+            Task prev1 = null;
+            Task prev2 = null;
+            Task prev3 = null;
+            Task prev4 = null;
 
             while (pos < strings.size()) {
                 String string1 = strings.get(pos);
@@ -97,11 +128,11 @@ public class CreateChainWorkflows {
                 Tool tool1 = AddonUtils.makeTool("ExecuteString", "common.processing", "exec" + pos, taskGraph.getProperties());
                 Task task1 = taskGraph.createTask(tool1);
                 task1.setParameter("executable", string1);
-                if (output1 != null) {
+                if (prev1 != null) {
                     Node input1 = task1.addDataInputNode();
-                    taskGraph.connect(output1, input1);
+                    taskGraph.connect(prev1.addDataOutputNode(), input1);
                 }
-                output1 = task1.addDataOutputNode();
+                prev1 = task1;
 
 
                 if (pos + 1 < strings.size()) {
@@ -109,11 +140,11 @@ public class CreateChainWorkflows {
                     Tool tool2 = AddonUtils.makeTool("ExecuteString", "common.processing", "exec" + (pos + 1), taskGraph.getProperties());
                     Task task2 = taskGraph.createTask(tool2);
                     task2.setParameter("executable", string2);
-                    if (output2 != null) {
+                    if (prev2 != null) {
                         Node input2 = task2.addDataInputNode();
-                        taskGraph.connect(output2, input2);
+                        taskGraph.connect(prev2.addDataOutputNode(), input2);
                     }
-                    output2 = task2.addDataOutputNode();
+                    prev2 = task2;
                 }
 
                 if (pos + 2 < strings.size()) {
@@ -121,11 +152,11 @@ public class CreateChainWorkflows {
                     Tool tool3 = AddonUtils.makeTool("ExecuteString", "common.processing", "exec" + (pos + 2), taskGraph.getProperties());
                     Task task3 = taskGraph.createTask(tool3);
                     task3.setParameter("executable", string3);
-                    if (output3 != null) {
+                    if (prev3 != null) {
                         Node input3 = task3.addDataInputNode();
-                        taskGraph.connect(output3, input3);
+                        taskGraph.connect(prev3.addDataOutputNode(), input3);
                     }
-                    output3 = task3.addDataOutputNode();
+                    prev3 = task3;
                 }
 
 
@@ -134,17 +165,15 @@ public class CreateChainWorkflows {
                     Tool tool4 = AddonUtils.makeTool("ExecuteString", "common.processing", "exec" + (pos + 3), taskGraph.getProperties());
                     Task task4 = taskGraph.createTask(tool4);
                     task4.setParameter("executable", string4);
-                    if (output4 != null) {
+                    if (prev4 != null) {
                         Node input4 = task4.addDataInputNode();
-                        taskGraph.connect(output4, input4);
+                        taskGraph.connect(prev4.addDataOutputNode(), input4);
                     }
-                    output4 = task4.addDataOutputNode();
+                    prev4 = task4;
                 }
 
                 pos = pos + 4;
             }
-
-//            allTaskGraphs.add(taskGraph);
 
             return taskGraph;
         } catch (TaskException e) {
@@ -158,10 +187,17 @@ public class CreateChainWorkflows {
     }
 
 
-    @CustomGUIComponent
-    public Component getGUI() {
-        JPanel mainPane = new JPanel();
-        mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
-        return mainPane;
+    public TaskGraph recycleGraph(TaskGraph taskGraph) {
+        try {
+            return (TaskGraph) TaskGraphManager.createTask(taskGraph, TaskGraphManager.DEFAULT_FACTORY_TYPE, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
     }
 }

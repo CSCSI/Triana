@@ -32,6 +32,7 @@ import org.trianacode.taskgraph.tool.Tool;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 //import org.shiwa.desktop.data.description.handler.Dependency;
 
@@ -55,6 +56,7 @@ public class Unbundler implements ExecutionAddon {
     private ArrayList<File> outputFiles;
     //    private String workflowFilePath;
     private ShiwaBundleHelper shiwaBundleHelper;
+    private UUID parentUUID = null;
 
     public Unbundler() {
     }
@@ -175,6 +177,7 @@ public class Unbundler implements ExecutionAddon {
 
         shiwaBundleHelper = new ShiwaBundleHelper(pluginArguments.get(1));
         shiwaBundleHelper.prepareEnvironmentDependencies();
+        parentUUID = shiwaBundleHelper.getParentUUID();
 
         tool = getTool(engine);
         serializeOutputs((TaskGraph) tool);
@@ -183,7 +186,7 @@ public class Unbundler implements ExecutionAddon {
         if (tool != null) {
 
             Exec execEngine = new Exec(null);
-
+            execEngine.setParentUUID(parentUUID);
             if (configFile != null) {
                 execEngine.execute(tool, configFile.getAbsolutePath());
             } else {
@@ -205,6 +208,7 @@ public class Unbundler implements ExecutionAddon {
 
         if (tool != null) {
             if (configFile != null) {
+                execEngine.setParentUUID(parentUUID);
                 execEngine.execute(tool, configFile.getAbsolutePath());
             } else {
                 execEngine.execute(tool, null);

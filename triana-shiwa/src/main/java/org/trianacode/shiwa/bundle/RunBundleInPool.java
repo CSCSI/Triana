@@ -97,7 +97,7 @@ public class RunBundleInPool implements TaskConscious {
 
                     if (bundleSubmitButtonGroup.getSelection().getActionCommand().equals("cgiPool")) {
                     } else {
-                        postBundle(sendURLField.getText(), tempBundleFile);
+                        String uuid = postBundle(sendURLField.getText(), tempBundleFile);
 
                         System.out.println("Sent");
                         int ttl;
@@ -106,7 +106,7 @@ public class RunBundleInPool implements TaskConscious {
                         } catch (NumberFormatException ex) {
                             ttl = defaultTTL;
                         }
-                        String key = waitForExec(getURLField.getText(), ttl);
+                        String key = waitForExec(getURLField.getText(), ttl, uuid);
                         System.out.println("Got key : " + key);
                         if (key != null) {
                             File bundle = getResultBundle(getURLField.getText(), key);
@@ -229,9 +229,9 @@ public class RunBundleInPool implements TaskConscious {
         return null;
     }
 
-    private String waitForExec(String url, int i) {
+    private String waitForExec(String url, int i, String uuid) {
         while (i > 0) {
-            String key = getJSONReply(url);
+            String key = getJSONReply(url, uuid);
             if (key != null) {
                 return key;
             } else {
@@ -248,10 +248,11 @@ public class RunBundleInPool implements TaskConscious {
     }
 
 
-    private String getJSONReply(String url) {
+    private String getJSONReply(String url, String uuid) {
         try {
             HttpClient client = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url + "?action=json");
+//            HttpGet httpGet = new HttpGet(url + "?action=json");
+            HttpGet httpGet = new HttpGet(url + "?action=byid&&uuid=" + uuid);
 
             HttpResponse response = client.execute(httpGet);
             System.out.println(response.getEntity().getContentLength() + " from json");
@@ -294,8 +295,9 @@ public class RunBundleInPool implements TaskConscious {
         return null;
     }
 
-    private void postBundle(String hostAddress, File tempBundleFile) {
+    private String postBundle(String hostAddress, File tempBundleFile) {
 
+        String line = null;
         try {
             FileBody fileBody = new FileBody(tempBundleFile);
             StringBody routing = new StringBody(routingKeyField.getText());
@@ -321,13 +323,14 @@ public class RunBundleInPool implements TaskConscious {
             InputStreamReader isr = new InputStreamReader(input);
             BufferedReader br = new BufferedReader(isr);
 
-            String line = null;
+            line = null;
             while ((line = br.readLine()) != null) {
                 System.out.printf("\n%s", line);
             }
             client.getConnectionManager().shutdown();
         } catch (Exception ignored) {
         }
+        return line;
     }
 
     @CustomGUIComponent

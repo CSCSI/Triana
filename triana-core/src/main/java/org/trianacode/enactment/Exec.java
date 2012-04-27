@@ -48,6 +48,7 @@ public class Exec implements ExecutionListener {
     }
 
     private String pid = UUID.randomUUID().toString();
+    private UUID parentUUID = null;
 
     private TrianaRun runner;
 
@@ -60,6 +61,10 @@ public class Exec implements ExecutionListener {
 
     public String getPid() {
         return pid;
+    }
+
+    public void setParentUUID(UUID parentUUID) {
+        this.parentUUID = parentUUID;
     }
 
     public static void main(String[] args) {
@@ -281,6 +286,11 @@ public class Exec implements ExecutionListener {
 
     public void execute(final Tool tool, final String data) throws Exception {
         runner = new TrianaRun(tool);
+
+        if (parentUUID != null) {
+            runner.getScheduler().setParentUUID(parentUUID);
+        }
+
         runner.getScheduler().addExecutionListener(this);
         NodeMappings mappings = null;
         if (data != null) {

@@ -81,6 +81,11 @@ public class TextFileReader implements TaskConscious {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setMultiSelectionEnabled(false);
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+                File file = new File(filePath);
+                if (file.exists()) {
+                    chooser.setCurrentDirectory(file.getParentFile());
+                }
                 int returnVal = chooser.showDialog(GUIEnv.getApplicationFrame(), "File");
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File f = chooser.getSelectedFile();

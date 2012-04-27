@@ -62,6 +62,8 @@ import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
+import java.util.UUID;
+
 
 /**
  * The Interface that all schedulers must implement. This allows us to easily "bolt" in new scheduler algorithms should
@@ -126,4 +128,7 @@ public interface SchedulerInterface {
 
     public void removeExecutionListener(ExecutionListener listener);
 
+    public void setParentUUID(UUID uuid);
+
+    public UUID getRunUUID();
 }

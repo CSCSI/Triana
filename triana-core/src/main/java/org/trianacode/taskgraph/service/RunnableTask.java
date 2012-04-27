@@ -60,10 +60,7 @@ package org.trianacode.taskgraph.service;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.enactment.logging.Loggers;
-import org.trianacode.enactment.logging.LoggingUtils;
-import org.trianacode.enactment.logging.stampede.LogDetail;
-import org.trianacode.enactment.logging.stampede.StampedeEvent;
-import org.trianacode.enactment.logging.stampede.StampedeLoggerInterface;
+import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.ClipInBucket;
 import org.trianacode.taskgraph.clipin.ClipInStore;
@@ -78,8 +75,6 @@ import org.trianacode.taskgraph.tool.Tool;
 import org.trianacode.taskgraph.tool.ToolTable;
 
 import java.io.*;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -93,21 +88,22 @@ public class RunnableTask extends AbstractRunnableTask
         implements RunnableInstance, RunnableInterface, ControlInterface, Runnable {
 
     private static Log toolLog = Loggers.TOOL_LOGGER;
-    private static StampedeLoggerInterface stampedeLog = Loggers.STAMPEDE_LOGGER;
+    //    private static StampedeLoggerInterface stampedeLog = Loggers.STAMPEDE_LOGGER;
+    private StampedeLog stampedeLog;
 
 
     // A internal string representing null
     private static final String NULL_STR = "#<---NULL->#";
-
     // valid thread states
     private static final Integer NO_THREAD = new Integer(0);
     private static final Integer IN_PROCESS = new Integer(1);
     private static final Integer UNSTABLE = new Integer(2);
+
     // object to lock on - an instane variable
     private final Integer THREAD_LOCK = new Integer(-1);
 
-    private Unit unit;
 
+    private Unit unit;
 
     /**
      * the thead the task is currently running in (or null if not running)
@@ -156,7 +152,6 @@ public class RunnableTask extends AbstractRunnableTask
      * a flag indicating whether the unit has been initialised
      */
     private boolean init = false;
-
     /**
      * a flag indicating whether the thread doesn't exist, is processing or is unstable.
      */
@@ -554,23 +549,23 @@ public class RunnableTask extends AbstractRunnableTask
         } else {
             data = mess;
         }
-        if (data != null) {
-            if (LoggingUtils.loggingInputs(this.getProperties())) {
-//                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
-//                        .add(LogDetail.TASK, getQualifiedToolName())
-//                        .add("NODE", node.getName())
-//                        .add("DATA", data.toString())
-//                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-//                );
-            } else {
-//                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
-//                        .add(LogDetail.TASK, getQualifiedToolName())
-//                        .add("NODE", node.getName())
-//                        .add("DATA_LENGTH", "" + data.toString().length())
-//                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
-//                );
-            }
-        }
+//        if (data != null) {
+//            if (LoggingUtils.loggingInputs(this.getProperties())) {
+////                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
+////                        .add(LogDetail.TASK, getQualifiedToolName())
+////                        .add("NODE", node.getName())
+////                        .add("DATA", data.toString())
+////                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+////                );
+//            } else {
+////                logToSchedulerLogger(new StampedeEvent(LogDetail.UNIT_INPUT)
+////                        .add(LogDetail.TASK, getQualifiedToolName())
+////                        .add("NODE", node.getName())
+////                        .add("DATA_LENGTH", "" + data.toString().length())
+////                        .add(LogDetail.WF, getUltimateParent().getQualifiedToolName())
+////                );
+//            }
+//        }
         return data;
     }
 
@@ -744,9 +739,9 @@ public class RunnableTask extends AbstractRunnableTask
         return null;
     }
 
-    private void logToSchedulerLogger(StampedeEvent stampedeEvent) {
-        getScheduler(this.getParent()).logStampedeEvent(stampedeEvent);
-    }
+//    private void logToSchedulerLogger(StampedeEvent stampedeEvent) {
+//        getScheduler(this.getParent()).stampedeLog.logStampedeEvent(stampedeEvent);
+//    }
 
 
     /**
@@ -888,6 +883,7 @@ public class RunnableTask extends AbstractRunnableTask
      */
     public void process() {
         try {
+            stampedeLog = getScheduler(this.getParent()).stampedeLog;
             toolLog.info("RUNNING " + getQualifiedToolName());
 
             StringBuilder stringBuilder = new StringBuilder();
@@ -900,12 +896,12 @@ public class RunnableTask extends AbstractRunnableTask
             }
             stringBuilder.append("\"");
 
-            String hostname;
-            try {
-                hostname = Inet4Address.getLocalHost().getHostName();
-            } catch (UnknownHostException e) {
-                hostname = "localhost";
-            }
+//            String hostname;
+//            try {
+//                hostname = Inet4Address.getLocalHost().getHostName();
+//            } catch (UnknownHostException e) {
+//                hostname = "localhost";
+//            }
 
             Scheduler scheduler = this.getScheduler(this.getParent());
             if (scheduler != null) {
@@ -914,10 +910,13 @@ public class RunnableTask extends AbstractRunnableTask
 //                        .add(LogDetail.STD_OUT_FILE, scheduler.runtimeFileLog.getLogFilePath())
 //                        .add(LogDetail.STD_ERR_FILE, scheduler.runtimeFileLog.getLogFilePath()),
 //                        this));
-                logToSchedulerLogger(scheduler.addBaseEventDetails(new StampedeEvent(LogDetail.INVOCATION_START)
-                        .add(LogDetail.UNIT_INST_ID, String.valueOf(scheduler.getTaskNumber(this)))
-                        .add(LogDetail.UNIT_ID, this.getQualifiedToolName())
-                        .add(LogDetail.INVOCATION_ID, "1")));
+
+                stampedeLog.logInvocationStart(this);
+
+//                logToSchedulerLogger(scheduler.stampedeLog.addBaseEventDetails(new StampedeEvent(LogDetail.INVOCATION_START)
+//                        .add(LogDetail.UNIT_INST_ID, String.valueOf(scheduler.stampedeLog.getTaskNumber(this)))
+//                        .add(LogDetail.UNIT_ID, this.getQualifiedToolName())
+//                        .add(LogDetail.INVOCATION_ID, "1")));
             }
 
             long startTime = new Date().getTime() / 1000;
@@ -933,33 +932,40 @@ public class RunnableTask extends AbstractRunnableTask
 
 
             if (scheduler != null) {
-                logToSchedulerLogger(scheduler.addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_TERM)
-                        .add(LogDetail.STATUS, "0"),
-                        this)
-                );
+
+                stampedeLog.logJobTerminate(this);
+
+//                logToSchedulerLogger(scheduler.stampedeLog.addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_TERM)
+//                        .add(LogDetail.STATUS, "0"),
+//                        this)
+//                );
                 long duration = (new Date().getTime() / 1000) - startTime;
                 if (duration == 0) {
                     duration = 1;
                 }
 
-                StampedeEvent invEnd = new StampedeEvent(LogDetail.INVOCATION_END);
-                scheduler.addBaseEventDetails(invEnd)
-                        .add(LogDetail.UNIT_INST_ID, String.valueOf(scheduler.getTaskNumber(this)))
-                        .add(LogDetail.INVOCATION_ID, "1")
-                        .add(LogDetail.UNIT_ID, "unit:" + this.getQualifiedToolName())
-                        .add(LogDetail.START_TIME, String.valueOf(startTime))
-                        .add(LogDetail.DURATION, String.valueOf(duration))
-                        .add(LogDetail.TRANSFORMATION, this.getQualifiedTaskName())
-                        .add(LogDetail.EXECUTABLE, "Triana")
-                        .add(LogDetail.ARGS, stringBuilder.toString().replaceAll("[\n\r]", ""))
-                        .add(LogDetail.TASK_ID, this.getQualifiedTaskName()
-                        );
+                stampedeLog.logInvocationEnd(
+                        this, stringBuilder.toString().replaceAll("[\n\r]", ""), startTime, duration);
 
-                logToSchedulerLogger(scheduler.addBaseJobInstDetails(new StampedeEvent(LogDetail.HOST), this)
-                        .add(LogDetail.SITE, "localhost")
-                        .add(LogDetail.HOSTNAME, hostname)
-                        .add(LogDetail.IP_ADDRESS, "127.0.0.1")
-                );
+//                StampedeEvent invEnd = new StampedeEvent(LogDetail.INVOCATION_END);
+//                scheduler.stampedeLog.addBaseEventDetails(invEnd)
+//                        .add(LogDetail.UNIT_INST_ID, String.valueOf(scheduler.stampedeLog.getTaskNumber(this)))
+//                        .add(LogDetail.INVOCATION_ID, "1")
+//                        .add(LogDetail.UNIT_ID, "unit:" + this.getQualifiedToolName())
+//                        .add(LogDetail.START_TIME, String.valueOf(startTime))
+//                        .add(LogDetail.DURATION, String.valueOf(duration))
+//                        .add(LogDetail.TRANSFORMATION, this.getQualifiedTaskName())
+//                        .add(LogDetail.EXECUTABLE, "Triana")
+//                        .add(LogDetail.ARGS, stringBuilder.toString().replaceAll("[\n\r]", ""))
+//                        .add(LogDetail.TASK_ID, this.getQualifiedTaskName()
+//                        );
+
+                stampedeLog.logHost(this);
+//                logToSchedulerLogger(scheduler.stampedeLog.addBaseJobInstDetails(new StampedeEvent(LogDetail.HOST), this)
+//                        .add(LogDetail.SITE, "localhost")
+//                        .add(LogDetail.HOSTNAME, hostname)
+//                        .add(LogDetail.IP_ADDRESS, "127.0.0.1")
+//                );
 
 //                StampedeEvent endJob = new StampedeEvent(LogDetail.JOB_END);
 //                scheduler.addSchedJobInstDetails(endJob, this)
@@ -970,17 +976,17 @@ public class RunnableTask extends AbstractRunnableTask
 
                 if (!getExecutionState().equals(ExecutionState.ERROR)) {
                     toolLog.info("FINISHED RUNNING " + getQualifiedToolName());
-//                    endJob.add(LogDetail.STATUS, "-1");
-//                    endJob.add(LogDetail.EXIT_CODE, "1");
-                    invEnd.add(LogDetail.EXIT_CODE, "0");
-
+////                    endJob.add(LogDetail.STATUS, "-1");
+////                    endJob.add(LogDetail.EXIT_CODE, "1");
+//                    invEnd.add(LogDetail.EXIT_CODE, "0");
+//
                 } else {
-//                    endJob.add(LogDetail.STATUS, "0");
-//                    endJob.add(LogDetail.EXIT_CODE, "0");
-                    invEnd.add(LogDetail.EXIT_CODE, "1");
+////                    endJob.add(LogDetail.STATUS, "0");
+////                    endJob.add(LogDetail.EXIT_CODE, "0");
+//                    invEnd.add(LogDetail.EXIT_CODE, "1");
                 }
-
-                logToSchedulerLogger(invEnd);
+//
+//                logToSchedulerLogger(invEnd);
 //                logToSchedulerLogger(endJob);
             }
 

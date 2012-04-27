@@ -5,17 +5,23 @@ import org.shiwa.desktop.data.description.bundle.BundleFile;
 import org.shiwa.desktop.data.description.core.Configuration;
 import org.shiwa.desktop.data.description.core.WorkflowImplementation;
 import org.shiwa.desktop.data.description.resource.AggregatedResource;
+import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
+import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 import org.trianacode.taskgraph.ser.XMLWriter;
+import org.trianacode.taskgraph.service.TrianaServer;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,11 +31,12 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Tool
-public class BundleEditor {
+public class BundleEditor implements TaskConscious {
 
     @TextFieldParameter
     public String bundlePath = "/Users/ian/dartBundle.zip";
     private ShiwaBundleHelper shiwaBundleHelper;
+    private Task task;
 
     @org.trianacode.annotation.Process
     public ArrayList<File> process(List list) {
@@ -52,6 +59,21 @@ public class BundleEditor {
             if (object instanceof TaskGraph) {
                 TaskGraph taskGraph = (TaskGraph) object;
 
+                TrianaServer server = TaskGraphManager.getTrianaServer(task.getParent());
+                UUID runUUID = server.getSchedulerInterface().getRunUUID();
+                System.out.println("Parent execution " + runUUID.toString());
+
+                cleanProperties();
+
+
+                shiwaBundleHelper.getWorkflowImplementation().addProperty(
+                        new SHIWAProperty(ShiwaBundleHelper.parentUUIDstring,
+                                runUUID.toString()));
+
+
+                StampedeLog stampedeLog = new StampedeLog(taskGraph, UUID.randomUUID());
+                stampedeLog.logPlanEvent(taskGraph, runUUID);
+
                 try {
                     System.out.println("Adding imp " + taskGraph.getToolName());
                     shiwaBundleHelper.getWorkflowImplementation().setDefinition(
@@ -62,7 +84,7 @@ public class BundleEditor {
                 }
 
                 try {
-                    File temp = File.createTempFile(taskGraph.getToolName(), "tmp");
+                    File temp = File.createTempFile(taskGraph.getToolName() + "-", "tmp");
                     File b = shiwaBundleHelper.saveBundle(temp);
                     System.out.println("Made " + b.getAbsolutePath());
                     bundles.add(b);
@@ -74,6 +96,21 @@ public class BundleEditor {
         }
 
         return bundles;
+    }
+
+    private void cleanProperties() {
+        List<SHIWAProperty> props = shiwaBundleHelper.getWorkflowImplementation().getProperties();
+        ArrayList<SHIWAProperty> toRemove = new ArrayList<SHIWAProperty>();
+
+        for (SHIWAProperty p : props) {
+            if (p.getTitle().equals(ShiwaBundleHelper.parentUUIDstring)) {
+                toRemove.add(p);
+            }
+        }
+
+        for (SHIWAProperty rem : toRemove) {
+            props.remove(rem);
+        }
     }
 
     private void clearConfigs(WorkflowImplementation workflowImplementation) {
@@ -105,4 +142,8 @@ public class BundleEditor {
         }
     }
 
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
+    }
 }
