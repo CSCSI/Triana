@@ -9,7 +9,6 @@ import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
-import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
@@ -60,19 +59,19 @@ public class BundleEditor implements TaskConscious {
                 TaskGraph taskGraph = (TaskGraph) object;
 
                 TrianaServer server = TaskGraphManager.getTrianaServer(task.getParent());
-                UUID runUUID = server.getSchedulerInterface().getRunUUID();
-                System.out.println("Parent execution " + runUUID.toString());
+                UUID parentID = server.getSchedulerInterface().getRunUUID();
+                System.out.println("Parent execution " + parentID.toString());
 
                 cleanProperties();
 
 
                 shiwaBundleHelper.getWorkflowImplementation().addProperty(
                         new SHIWAProperty(ShiwaBundleHelper.parentUUIDstring,
-                                runUUID.toString()));
+                                parentID.toString()));
 
 
-                StampedeLog stampedeLog = new StampedeLog(taskGraph, UUID.randomUUID());
-                stampedeLog.logPlanEvent(taskGraph, runUUID);
+//                StampedeLog stampedeLog = new StampedeLog(taskGraph, UUID.randomUUID());
+//                stampedeLog.logPlanEvent(taskGraph, parentID);
 
                 try {
                     System.out.println("Adding imp " + taskGraph.getToolName());

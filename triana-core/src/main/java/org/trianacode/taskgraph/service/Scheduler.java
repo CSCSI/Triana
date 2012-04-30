@@ -288,9 +288,9 @@ public class Scheduler implements SchedulerInterface {
 
         //if there is no parent ID, then this taskgraph is a root graph, and so should be planned/ mapped.
         //otherwise, assume the parent taskgraph has already been planned/ mapped.
-        if (parentUUID == null) {
-            stampedeLog.logPlanEvent(taskgraph, parentUUID);
-        }
+//        if (parentUUID == null) {
+        stampedeLog.logPlanEvent(taskgraph, parentUUID);
+//        }
 
 //        stampedeLog.reset();
 
