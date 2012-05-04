@@ -113,7 +113,7 @@ public class CreateChainWorkflows implements TaskConscious {
         try {
 
             TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
-            taskGraph.setToolName(start + "-" + end);
+            taskGraph.setToolName(start + "-" + (end - 1));
 
             int pos = 0;
 

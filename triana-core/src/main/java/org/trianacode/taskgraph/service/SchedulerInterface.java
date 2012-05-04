@@ -62,7 +62,7 @@ import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
-import java.util.UUID;
+import java.util.HashMap;
 
 
 /**
@@ -128,7 +128,5 @@ public interface SchedulerInterface {
 
     public void removeExecutionListener(ExecutionListener listener);
 
-    public void setParentUUID(UUID uuid);
-
-    public UUID getRunUUID();
+    void setExecutionProperties(HashMap<String, String> executionProperties);
 }

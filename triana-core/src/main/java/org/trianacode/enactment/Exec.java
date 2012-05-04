@@ -42,13 +42,15 @@ public class Exec implements ExecutionListener {
     public static final String RUNS_DIR = "runs";
     public static File RUNS = new File(Locations.getApplicationDataDir(), RUNS_DIR);
 
+    private HashMap<String, String> executionProperties = new HashMap<String, String>();
+
     static {
         System.out.println("PID runs path : " + RUNS.getAbsolutePath());
         RUNS.mkdirs();
     }
 
     private String pid = UUID.randomUUID().toString();
-    private UUID parentUUID = null;
+//    private UUID parentUUID = null;
 
     private TrianaRun runner;
 
@@ -63,9 +65,9 @@ public class Exec implements ExecutionListener {
         return pid;
     }
 
-    public void setParentUUID(UUID parentUUID) {
-        this.parentUUID = parentUUID;
-    }
+//    public void setParentUUID(UUID parentUUID) {
+//        this.parentUUID = parentUUID;
+//    }
 
     public static void main(String[] args) {
         int exitNumber = exec(args);
@@ -287,9 +289,10 @@ public class Exec implements ExecutionListener {
     public void execute(final Tool tool, final String data) throws Exception {
         runner = new TrianaRun(tool);
 
-        if (parentUUID != null) {
-            runner.getScheduler().setParentUUID(parentUUID);
-        }
+//        if (parentUUID != null) {
+//            runner.getScheduler().setParentUUID(parentUUID);
+        runner.getScheduler().setExecutionProperties(executionProperties);
+//        }
 
         runner.getScheduler().addExecutionListener(this);
         NodeMappings mappings = null;
@@ -526,6 +529,15 @@ public class Exec implements ExecutionListener {
             e.printStackTrace();
         }
     }
+
+    public HashMap<String, String> getExecutionProperties() {
+        return executionProperties;
+    }
+
+    public void setExecutionProperties(HashMap<String, String> executionProperties) {
+        this.executionProperties = executionProperties;
+    }
+
 
     public class Poller extends TimerTask {
 

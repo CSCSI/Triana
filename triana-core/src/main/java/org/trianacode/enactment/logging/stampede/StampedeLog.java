@@ -24,10 +24,21 @@ import java.util.UUID;
  */
 public class StampedeLog {
 
+    public static final String RUN_UUID_STRING = "runUUID";
+    public static final String PARENT_UUID_STRING = "parentUUID";
+    public static final String JOB_ID = "jobID";
+    public static final String JOB_INST_ID = "jobInstID";
+
     private HashMap<Task, Integer> stateChanges;
+
     private RuntimeFileLog runtimeFileLog;
     private TaskGraph tgraph;
-    private UUID runUUID;
+
+    private UUID runUUID = null;
+    private UUID parentUUID = null;
+    private String jobID = null;
+    private String jobInstID = null;
+
     private TrianaProperties properties;
     private int sched_id_count = 0;
     private ExecutionListener executionLogger;
@@ -70,12 +81,15 @@ public class StampedeLog {
         }
     }
 
-    public void logPlanEvent(TaskGraph tgraph, UUID parentUUID) {
+    public void logPlanEvent(TaskGraph tgraph) {
         String parent;
+        boolean subWorkflow;
         if (parentUUID == null) {
             parent = runUUID.toString();
+            subWorkflow = false;
         } else {
             parent = parentUUID.toString();
+            subWorkflow = true;
         }
 
         StampedeEvent planEvent = new StampedeEvent(LogDetail.PLAN)
@@ -92,6 +106,25 @@ public class StampedeLog {
         logStampedeEvent(planEvent);
 
         logGraph(tgraph);
+
+        if (subWorkflow) {
+            logSubWf();
+        }
+    }
+
+    public void logSubWf() {
+        if (parentUUID != null && jobID != null && jobInstID != null) {
+            StampedeEvent subWfMap = new StampedeEvent(LogDetail.MAP_SUB_WORKFLOW)
+                    .add(LogDetail.SUB_WF_ID, runUUID.toString())
+                    .add(LogDetail.UNIT_ID, jobID)
+                    .add(LogDetail.UNIT_INST_ID, jobInstID);
+
+            //base event, but replacing runUUID with the parentUUID
+            subWfMap.add(LogDetail.LEVEL, LogDetail.LEVELS.INFO)
+                    .add(LogDetail.UUID, parentUUID.toString());
+
+            logStampedeEvent(subWfMap);
+        }
     }
 
 
@@ -406,6 +439,17 @@ public class StampedeLog {
                         .add(LogDetail.HOSTNAME, getHostname())
                         .add(LogDetail.IP_ADDRESS, "127.0.0.1")
         );
+    }
+
+    public void initExecutionProperties(HashMap<String, String> executionProperties) {
+        runUUID = UUID.fromString(executionProperties.get(RUN_UUID_STRING));
+        parentUUID = UUID.fromString(executionProperties.get(PARENT_UUID_STRING));
+        jobID = executionProperties.get(JOB_ID);
+        jobInstID = executionProperties.get(JOB_INST_ID);
+    }
+
+    public UUID getRunUUID() {
+        return runUUID;
     }
 
 

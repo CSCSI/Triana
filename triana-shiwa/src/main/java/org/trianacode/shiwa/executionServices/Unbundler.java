@@ -19,6 +19,7 @@ import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
+import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
 import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
 import org.trianacode.taskgraph.*;
@@ -31,8 +32,8 @@ import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 //import org.shiwa.desktop.data.description.handler.Dependency;
 
@@ -56,7 +57,7 @@ public class Unbundler implements ExecutionAddon {
     private ArrayList<File> outputFiles;
     //    private String workflowFilePath;
     private ShiwaBundleHelper shiwaBundleHelper;
-    private UUID parentUUID = null;
+//    private UUID parentUUID = null;
 
     public Unbundler() {
     }
@@ -171,13 +172,25 @@ public class Unbundler implements ExecutionAddon {
 
     }
 
+    private void storeShiwaProperty(HashMap<String, String> executionProperties, ShiwaBundleHelper shiwaBundleHelper, String key) {
+        executionProperties.put(key, shiwaBundleHelper.getShiwaProperty(key).toString());
+    }
+
     @Override
     public void execute(TrianaInstance engine, List<String> pluginArguments) throws Exception {
 //        String[] correctedArgs = null;
 
         shiwaBundleHelper = new ShiwaBundleHelper(pluginArguments.get(1));
         shiwaBundleHelper.prepareEnvironmentDependencies();
-        parentUUID = shiwaBundleHelper.getParentUUID();
+//        parentUUID = shiwaBundleHelper.getParentUUID();
+
+        HashMap<String, String> executionProperties = new HashMap<String, String>();
+        storeShiwaProperty(executionProperties, shiwaBundleHelper, StampedeLog.JOB_ID);
+        storeShiwaProperty(executionProperties, shiwaBundleHelper, StampedeLog.PARENT_UUID_STRING);
+        storeShiwaProperty(executionProperties, shiwaBundleHelper, StampedeLog.RUN_UUID_STRING);
+        storeShiwaProperty(executionProperties, shiwaBundleHelper, StampedeLog.JOB_INST_ID);
+
+//        runUUID = shiwaBundleHelper.getRunUUID();
 
         tool = getTool(engine);
         serializeOutputs((TaskGraph) tool);
@@ -186,7 +199,8 @@ public class Unbundler implements ExecutionAddon {
         if (tool != null) {
 
             Exec execEngine = new Exec(null);
-            execEngine.setParentUUID(parentUUID);
+            execEngine.setExecutionProperties(executionProperties);
+//            execEngine.setParentUUID(parentUUID);
             if (configFile != null) {
                 execEngine.execute(tool, configFile.getAbsolutePath());
             } else {
@@ -208,7 +222,7 @@ public class Unbundler implements ExecutionAddon {
 
         if (tool != null) {
             if (configFile != null) {
-                execEngine.setParentUUID(parentUUID);
+//                execEngine.setParentUUID(parentUUID);
                 execEngine.execute(tool, configFile.getAbsolutePath());
             } else {
                 execEngine.execute(tool, null);

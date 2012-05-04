@@ -3,18 +3,14 @@ package org.trianacode.pool.broker;
 import fr.insalyon.creatis.shiwapool.agent.engines.EnginePluginImpl;
 import fr.insalyon.creatis.shiwapool.agent.engines.StatusHelper;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.commons.io.FileUtils;
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.WorkflowInstance;
 import org.trianacode.pool.ShiwaBundleHelper;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -29,10 +25,12 @@ import java.util.Properties;
 @PluginImplementation
 public class PoolToBroker extends EnginePluginImpl {
 
-    public static String languageName = "";
+    public static String languageName = "Triana Taskgraph";
     private Properties properties;
     private static final String HOST_ADDRESS = "host.address";
     private static final String ROUTING_KEY = "routing.key";
+    private static final String RESULTS_ADDRESS = "results.address";
+    private File tempReturnFile;
 
     public PoolToBroker() {
         super(languageName);
@@ -41,11 +39,14 @@ public class PoolToBroker extends EnginePluginImpl {
 
         File propertiesFile = new File("pool.to.broker.properties");
         if (propertiesFile.exists()) {
+            System.out.println("Reading " + propertiesFile.getAbsolutePath());
             try {
                 properties.load(new FileReader(propertiesFile));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            System.out.println("Couldn't find properties at : " + propertiesFile.getAbsolutePath());
         }
     }
 
@@ -55,7 +56,7 @@ public class PoolToBroker extends EnginePluginImpl {
         StatusHelper.setStatus(instanceID, WorkflowInstance.Status.RUNNING);
 
 
-        File tempReturnFile = null;
+        tempReturnFile = null;
         try {
             ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(shiwaBundle);
             File temp = File.createTempFile("bundle", "tmp");
@@ -67,8 +68,12 @@ public class PoolToBroker extends EnginePluginImpl {
             String hostAddress = String.valueOf(properties.get(HOST_ADDRESS));
             String routingKey = String.valueOf(properties.get(ROUTING_KEY));
             String name = getInstanceName(shiwaBundleHelper);
-            postBundle(hostAddress, routingKey, name, temp);
 
+            System.out.println(hostAddress + routingKey + name);
+//            String uuid = postBundle(hostAddress, routingKey, name, temp);
+//
+//            String resultURL = String.valueOf(properties.get(RESULTS_ADDRESS));
+//            File resultsBundle = getResultBundle(resultURL + uuid);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,6 +87,15 @@ public class PoolToBroker extends EnginePluginImpl {
         }
     }
 
+    public void createOutputBundle(String executionDirectory, String outputBundlePath) {
+        try {
+            FileUtils.copyFile(tempReturnFile, new File(outputBundlePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private String getInstanceName(ShiwaBundleHelper shiwaBundleHelper) {
         return shiwaBundleHelper.getWorkflowImplementation().getTitle()
                 + "-" + getTimeStamp();
@@ -92,40 +106,73 @@ public class PoolToBroker extends EnginePluginImpl {
         return dateFormat.format(new Date());
     }
 
-    private String postBundle(String hostAddress, String routingKey, String bundleName, File tempBundleFile) {
-
-        String line = null;
-        try {
-            FileBody fileBody = new FileBody(tempBundleFile);
-            StringBody routing = new StringBody(routingKey);
-            StringBody numtasks = new StringBody("1");
-
-            StringBody name = new StringBody(bundleName);
-
-            MultipartEntity multipartEntity = new MultipartEntity();
-            multipartEntity.addPart("file", fileBody);
-            multipartEntity.addPart("routingkey", routing);
-            multipartEntity.addPart("numtasks", numtasks);
-            multipartEntity.addPart("name", name);
-
-            HttpClient client = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(hostAddress);
-            httpPost.setEntity(multipartEntity);
-            System.out.println("Sending " + httpPost.getEntity().getContentLength()
-                    + " bytes to " + hostAddress);
-            HttpResponse response = client.execute(httpPost);
-
-            InputStream input = response.getEntity().getContent();
-            InputStreamReader isr = new InputStreamReader(input);
-            BufferedReader br = new BufferedReader(isr);
-
-            line = null;
-            while ((line = br.readLine()) != null) {
-                System.out.printf("\n%s", line);
-            }
-            client.getConnectionManager().shutdown();
-        } catch (Exception ignored) {
-        }
-        return line;
-    }
+//    private String postBundle(String hostAddress, String routingKey, String bundleName, File tempBundleFile) {
+//
+//        String line = null;
+//        try {
+//            FileBody fileBody = new FileBody(tempBundleFile);
+//            StringBody routing = new StringBody(routingKey);
+//            StringBody numtasks = new StringBody("1");
+//
+//            StringBody name = new StringBody(bundleName);
+//
+//            MultipartEntity multipartEntity = new MultipartEntity();
+//            multipartEntity.addPart("file", fileBody);
+//            multipartEntity.addPart("routingkey", routing);
+//            multipartEntity.addPart("numtasks", numtasks);
+//            multipartEntity.addPart("name", name);
+//
+//            HttpClient client = new DefaultHttpClient();
+//            HttpPost httpPost = new HttpPost(hostAddress);
+//            httpPost.setEntity(multipartEntity);
+//            System.out.println("Sending " + httpPost.getEntity().getContentLength()
+//                    + " bytes to " + hostAddress);
+//            HttpResponse response = client.execute(httpPost);
+//
+//            InputStream input = response.getEntity().getContent();
+//            InputStreamReader isr = new InputStreamReader(input);
+//            BufferedReader br = new BufferedReader(isr);
+//
+//            line = null;
+//            while ((line = br.readLine()) != null) {
+//                System.out.printf("\n%s", line);
+//            }
+//            client.getConnectionManager().shutdown();
+//        } catch (Exception ignored) {
+//        }
+//        return line;
+//    }
+//
+//    private File getResultBundle(String url) {
+//        try {
+//            HttpClient client = new DefaultHttpClient();
+//            HttpGet httpGet = new HttpGet(url);
+//            System.out.println("Getting JSON from " + httpGet.getURI());
+//
+//            HttpResponse response = client.execute(httpGet);
+//            InputStream input = response.getEntity().getContent();
+//
+//            File bundle = File.createTempFile("received", ".zip");
+//            OutputStream out = new FileOutputStream(bundle);
+//            byte buf[] = new byte[1024];
+//            int len;
+//            while ((len = input.read(buf)) > 0)
+//                out.write(buf, 0, len);
+//            out.close();
+//            input.close();
+//
+//            System.out.println("Got bundle at : " + bundle.getAbsolutePath());
+//
+//            client.getConnectionManager().shutdown();
+//            return bundle;
+//
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        } catch (ClientProtocolException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 }

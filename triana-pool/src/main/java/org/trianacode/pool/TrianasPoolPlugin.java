@@ -3,8 +3,10 @@ package org.trianacode.pool;
 import fr.insalyon.creatis.shiwapool.agent.engines.EnginePluginImpl;
 import fr.insalyon.creatis.shiwapool.agent.engines.StatusHelper;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import org.apache.commons.io.FileUtils;
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.WorkflowInstance;
+import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.trianacode.util.StreamToOutput;
 
 import java.io.File;
@@ -22,8 +24,10 @@ import java.util.List;
  */
 @PluginImplementation
 public class TrianasPoolPlugin extends EnginePluginImpl {
+    private File tempReturnFile;
+
     public TrianasPoolPlugin() {
-        super("http://shiwa-workflow.eu/terms#triana-taskgraph");
+        super("Triana Taskgraph");
     }
 
     @Override
@@ -34,7 +38,7 @@ public class TrianasPoolPlugin extends EnginePluginImpl {
 //        TrianaBundle trianaBundle = new TrianaBundle();
 //        SHIWABundle returnedBundle = trianaBundle.executeBundleReturnBundle(shiwaBundle, new String[]{});
 
-        File tempReturnFile = null;
+        tempReturnFile = null;
         try {
             ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(shiwaBundle);
             File temp = File.createTempFile("bundle", "tmp");
@@ -72,6 +76,15 @@ public class TrianasPoolPlugin extends EnginePluginImpl {
             StatusHelper.setStatus(instanceID, WorkflowInstance.Status.FINISHED);
         } else {
             StatusHelper.setStatus(instanceID, WorkflowInstance.Status.FAILED);
+        }
+    }
+
+    @Override
+    public void createOutputBundle(String executionDirectory, String outputBundlePath) throws SHIWADesktopIOException {
+        try {
+            FileUtils.copyFile(tempReturnFile, new File(outputBundlePath));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

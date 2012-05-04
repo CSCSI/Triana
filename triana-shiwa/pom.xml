@@ -29,9 +29,9 @@
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
-                            <excludeGroupIds>
-                                oro,org.trianacode,org.thinginitself,log4j,org.trianacode,org.apache.velocity,commons-logging,commons-lang,commons-collections
-                            </excludeGroupIds>
+                            <!--<excludeGroupIds>-->
+                            <!--oro,org.trianacode,org.thinginitself,log4j,org.trianacode,org.apache.velocity,commons-logging,commons-lang,commons-collections-->
+                            <!--</excludeGroupIds>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -45,7 +45,7 @@
             <!--</descriptorRefs>-->
             <!--<archive>-->
             <!--<manifest>-->
-            <!--<mainClass>org.trianacode.shiwa.bundle.TrianaBundle</mainClass>-->
+            <!--<mainClass>org.trianacode.shiwa.pool.TrianasPoolPlugin</mainClass>-->
             <!--</manifest>-->
             <!--</archive>-->
             <!--</configuration>-->
@@ -59,7 +59,7 @@
             <!--<goal>single</goal>-->
             <!--</goals>-->
             <!--<configuration>-->
-            <!--<outputDirectory>${build.directory}/alldeps</outputDirectory>-->
+            <!--<outputDirectory>${build.directory}</outputDirectory>-->
             <!--</configuration>-->
             <!--</execution>-->
             <!--</executions>-->
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>fr.insalyon.creatis.shiwapool</groupId>
             <artifactId>shiwa-pool-agent</artifactId>
-            <version>0.6</version>
+            <version>0.8-SNAPSHOT</version>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>fr.insalyon.creatis.shiwapool</groupId>-->
@@ -132,6 +132,10 @@
         <repository>
             <id>creatis-releases</id>
             <url>http://vip.creatis.insa-lyon.fr:9007/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>creatis-snapshots</id>
+            <url>http://kingkong.grid.creatis.insa-lyon.fr:9007/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 

@@ -62,6 +62,7 @@ import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.clipin.HistoryClipIn;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -84,12 +85,15 @@ public class Scheduler implements SchedulerInterface {
      * The history clipin
      */
     private HistoryClipIn history;
-    private UUID runUUID;
-    private UUID parentUUID = null;
+
+//    private UUID runUUID;
+//    private UUID parentUUID = null;
+
     //    public RuntimeFileLog runtimeFileLog;
 //    private HashMap<Task, Integer> taskMap; // = new HashMap<Task, Integer>();
 //    private HashMap<Task, Integer> stateChanges;
-    StampedeLog stampedeLog;
+    public StampedeLog stampedeLog;
+    private HashMap<String, String> executionProperties;
 //    private int sched_id_count;
 //    private ExecutionListener executionLogger = new ExecutionLogger(stampedeLog);
 //    private long startTime;
@@ -241,13 +245,18 @@ public class Scheduler implements SchedulerInterface {
         taskgraph.removeExecutionListener(listener);
     }
 
-    @Override
-    public void setParentUUID(UUID uuid) {
-        this.parentUUID = uuid;
-    }
+//    @Override
+//    public void setParentUUID(UUID uuid) {
+//        this.parentUUID = uuid;
+//    }
+//
+//    public UUID getRunUUID() {
+//        return runUUID;
+//    }
 
-    public UUID getRunUUID() {
-        return runUUID;
+    @Override
+    public void setExecutionProperties(HashMap<String, String> executionProperties) {
+        this.executionProperties = executionProperties;
     }
 
     /**
@@ -276,7 +285,7 @@ public class Scheduler implements SchedulerInterface {
 
 
         //A new unique identifier for this specific execution
-        runUUID = UUID.randomUUID();
+        UUID runUUID = UUID.randomUUID();
 
         //if there is no stampede logger yet, add one. Otherwise change the current one to this uuid
         if (stampedeLog == null) {
@@ -286,10 +295,16 @@ public class Scheduler implements SchedulerInterface {
 //            stampedeLog.setRunUUID(runUUID);
         }
 
+        if (executionProperties != null) {
+            stampedeLog.initExecutionProperties(executionProperties);
+        }
+
+
+        stampedeLog.logPlanEvent(taskgraph);
         //if there is no parent ID, then this taskgraph is a root graph, and so should be planned/ mapped.
         //otherwise, assume the parent taskgraph has already been planned/ mapped.
-//        if (parentUUID == null) {
-        stampedeLog.logPlanEvent(taskgraph, parentUUID);
+//        if (parentUUID != null) {
+//            stampedeLog.logSubWf(parentUUID, runUUID, jobID, jobInstID);
 //        }
 
 //        stampedeLog.reset();

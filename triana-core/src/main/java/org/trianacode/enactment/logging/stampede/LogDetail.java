@@ -81,6 +81,8 @@ public class LogDetail {
     public static final String MULTIPLIER = "multiplier_factor";
     public static final String HELD_START = "stampede.job_inst.held.start";
     public static final String HELD_END = "stampede.job_inst.held.end";
+    public static final String MAP_SUB_WORKFLOW = "stampede.xwf.map.subwf_job";
+    public static final String SUB_WF_ID = "subwf.id";
 
 
     public LogDetail(String name, String detail) {

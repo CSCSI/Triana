@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,32 +31,46 @@ import java.util.UUID;
  */
 public class ShiwaBundleHelper extends WorkflowController {
 
-    public static String parentUUIDstring = "parentUUID";
 
     //    private String workflowFilePath;
     private SHIWABundle shiwaBundle;
-    private UUID parentUUID = null;
+
+//    private UUID parentUUID = null;
 
     public ShiwaBundleHelper(SHIWABundle shiwaBundle) throws SHIWADesktopIOException {
         this.shiwaBundle = shiwaBundle;
         initialiseController(shiwaBundle);
-        init();
+//        init();
     }
 
-    private void init() {
-        List<SHIWAProperty> properties = getWorkflowImplementation().getProperties();
-        for (SHIWAProperty property : properties) {
-            if (property.getTitle().equals(parentUUIDstring)) {
-                System.out.println("Found parent uuid " + property.getValue());
-                parentUUID = UUID.fromString(property.getValue());
-            }
-        }
-    }
+//    private void init() {
+//        SHIWAProperty parentProperty = getShiwaProperty(parentUUIDstring);
+//        if(parentProperty != null){
+//            parentUUID = UUID.fromString(parentProperty.getValue());
+//        }
+////        List<SHIWAProperty> properties = getWorkflowImplementation().getProperties();
+////        for (SHIWAProperty property : properties) {
+////            if (property.getTitle().equals(parentUUIDstring)) {
+////                System.out.println("Found parent uuid " + property.getValue());
+////                parentUUID = UUID.fromString(property.getValue());
+////            }
+////        }
+//    }
 
     public ShiwaBundleHelper(String bundlePath) throws SHIWADesktopIOException {
         this.shiwaBundle = new SHIWABundle(new File(bundlePath));
         initialiseController(shiwaBundle);
-        init();
+//        init();
+    }
+
+    public SHIWAProperty getShiwaProperty(String key) {
+        List<SHIWAProperty> properties = getWorkflowImplementation().getProperties();
+        for (SHIWAProperty property : properties) {
+            if (property.getTitle().equals(key)) {
+                return property;
+            }
+        }
+        return null;
     }
 
     public void prepareLibraryDependencies() {
@@ -260,18 +273,6 @@ public class ShiwaBundleHelper extends WorkflowController {
         return DataUtils.bundle(file, shiwaBundle.getAggregatedResource());
     }
 
-//    public static void main(String[] args) throws IOException, URISyntaxException {
-//        String filename = "http://i9.cscloud.cf.ac.uk/webbed-nfs/nfs/dart/DARTAcousticG.wav";
-//        File remoteFile = new File(filename);
-//        File localFile = new File(remoteFile.getName());
-//        File done = download(filename, new File("."), null);
-//
-////        boolean done = FileUtils.copyFile(filename, downloaded.getAbsolutePath(), 0);
-//
-//        System.out.println("got " + localFile.getAbsolutePath() + " " + done.exists());
-//    }
-
-
     public static File download(String urlSource, File downloadDir, File localFile) throws IOException {
         File remoteFile = new File(urlSource);
         if (localFile == null) {
@@ -321,7 +322,21 @@ public class ShiwaBundleHelper extends WorkflowController {
         }
     }
 
-    public UUID getParentUUID() {
-        return parentUUID;
-    }
+//    public UUID getParentUUID() {
+//        SHIWAProperty parentProperty = getShiwaProperty(StampedeLog.PARENT_UUID_STRING);
+//        if(parentProperty != null) {
+//            return UUID.fromString(parentProperty.getValue());
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    public UUID getRunUUID() {
+//        SHIWAProperty runProperty = getShiwaProperty(StampedeLog.RUN_UUID_STRING);
+//        if(runProperty != null) {
+//            return UUID.fromString(runProperty.getValue());
+//        } else {
+//            return null;
+//        }
+//    }
 }

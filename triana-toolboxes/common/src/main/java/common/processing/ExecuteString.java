@@ -55,7 +55,7 @@ public class ExecuteString implements TaskConscious {
     private Task task;
 
     @Process(gather = true)
-    public ConcurrentHashMap<Integer, returnCode> process(List list) {
+    public ConcurrentHashMap<Integer, returnCode> process(List list) throws Exception {
         ArrayList<String> executableStrings = new ArrayList<String>();
 
         executableString = execField.getText();
