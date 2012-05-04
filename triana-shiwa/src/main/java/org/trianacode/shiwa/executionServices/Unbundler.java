@@ -173,7 +173,7 @@ public class Unbundler implements ExecutionAddon {
     }
 
     private void storeShiwaProperty(HashMap<String, String> executionProperties, ShiwaBundleHelper shiwaBundleHelper, String key) {
-        executionProperties.put(key, shiwaBundleHelper.getShiwaProperty(key).toString());
+        executionProperties.put(key, shiwaBundleHelper.getShiwaProperty(key).getValue());
     }
 
     @Override
