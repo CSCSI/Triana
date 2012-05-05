@@ -111,13 +111,11 @@
             <artifactId>shiwa-pool-agent</artifactId>
             <version>0.8-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>fr.insalyon.creatis.shiwapool</groupId>-->
-        <!--<artifactId>shiwa-pool-agent</artifactId>-->
-        <!--<version>0.5</version>-->
-        <!--<scope>system</scope>-->
-        <!--<systemPath>${project.basedir}/lib/shiwa-pool-agent-0.5-jar-with-dependencies.jar</systemPath>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>fr.insalyon.creatis.shiwapool</groupId>
+            <artifactId>shiwa-pool-client</artifactId>
+            <version>0.8</version>
+        </dependency>
     </dependencies>
 
     <repositories>

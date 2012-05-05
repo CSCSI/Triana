@@ -1,18 +1,6 @@
 package org.trianacode.shiwa.bundle;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import org.jivesoftware.smack.XMPPException;
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.bundle.BundleFile;
 import org.shiwa.desktop.data.description.core.Configuration;
@@ -35,6 +23,7 @@ import org.trianacode.annotation.Tool;
 import org.trianacode.error.ErrorEvent;
 import org.trianacode.error.ErrorTracker;
 import org.trianacode.gui.panels.DisplayDialog;
+import org.trianacode.shiwa.utils.BrokerUtils;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.Task;
@@ -44,10 +33,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,7 +57,7 @@ public class RunBundleInPool implements TaskConscious {
     private WorkflowController workflowController;
     private ButtonGroup bundleSubmitButtonGroup;
     private SHIWABundle shiwaBundle;
-    private String execBundleName;
+    //    private String execBundleName;
     private JTextField sendURLField;
     private JTextField getURLField;
     private JTextField ttlField;
@@ -84,40 +72,17 @@ public class RunBundleInPool implements TaskConscious {
             } else {
                 if (list.size() > 0) {
                     clearConfigs(workflowController.getWorkflowImplementation());
-
                     Configuration config = createConfiguration(list);
                     workflowController.getWorkflowImplementation().getAggregatedResources().add(config);
-
                 }
-
                 try {
-
                     File tempBundleFile = new File("testBundle.bundle");
                     DataUtils.bundle(tempBundleFile, workflowController.getWorkflowImplementation());
 
                     if (bundleSubmitButtonGroup.getSelection().getActionCommand().equals("cgiPool")) {
+                        doPool(tempBundleFile);
                     } else {
-                        String uuid = postBundle(sendURLField.getText(), tempBundleFile);
-
-                        System.out.println("Sent");
-                        int ttl;
-                        try {
-                            ttl = Integer.parseInt(ttlField.getText());
-                        } catch (NumberFormatException ex) {
-                            ttl = defaultTTL;
-                        }
-                        String key = waitForExec(getURLField.getText(), ttl, uuid);
-                        System.out.println("Got key : " + key);
-                        if (key != null) {
-                            File bundle = getResultBundle(getURLField.getText(), key);
-
-                            HashMap<String, ConfigurationResource> outputs = getOutputs(bundle);
-                            if (outputs != null) {
-                                return compileOutputs(outputs);
-                            } else {
-                                return null;
-                            }
-                        }
+                        return doBroker(tempBundleFile);
                     }
                 } catch (SHIWADesktopIOException e) {
                     e.printStackTrace();
@@ -130,9 +95,45 @@ public class RunBundleInPool implements TaskConscious {
         return null;
     }
 
-    private String getTimeStamp() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd_HH-mm-ss-SS_z");
-        return dateFormat.format(new Date());
+    private void doPool(File tempBundleFile) {
+        try {
+            fr.insalyon.creatis.shiwapool.client.Main.main(
+                    new String[]{"--submitBundle", tempBundleFile.getAbsolutePath()}
+            );
+        } catch (SHIWADesktopIOException e) {
+            e.printStackTrace();
+        } catch (XMPPException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private HashMap<Node, Object> doBroker(File tempBundleFile) {
+        String execBundleName = workflowController.getWorkflowImplementation().getTitle()
+                + "-" + BrokerUtils.getTimeStamp();
+
+        String uuid = BrokerUtils.postBundle(
+                sendURLField.getText(), routingKeyField.getText(), execBundleName, tempBundleFile);
+
+        System.out.println("Sent");
+        int ttl;
+        try {
+            ttl = Integer.parseInt(ttlField.getText());
+        } catch (NumberFormatException ex) {
+            ttl = defaultTTL;
+        }
+        String key = BrokerUtils.waitForExec(getURLField.getText(), ttl, uuid, execBundleName);
+        System.out.println("Got key : " + key);
+        if (key != null) {
+            File bundle = BrokerUtils.getResultBundle(getURLField.getText(), key);
+
+            HashMap<String, ConfigurationResource> outputs = getOutputs(bundle);
+            if (outputs != null) {
+                return compileOutputs(outputs);
+            } else {
+                return null;
+            }
+        }
+        return null;
     }
 
     private HashMap<Node, Object> compileOutputs(HashMap<String, ConfigurationResource> outputResources) {
@@ -196,187 +197,48 @@ public class RunBundleInPool implements TaskConscious {
         return null;
     }
 
-    private File getResultBundle(String url, String key) {
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url + "?action=file&key=" + key);
-            System.out.println("Getting JSON from " + httpGet.getURI());
-
-            HttpResponse response = client.execute(httpGet);
-            InputStream input = response.getEntity().getContent();
-
-            File bundle = File.createTempFile("received", ".zip");
-            OutputStream out = new FileOutputStream(bundle);
-            byte buf[] = new byte[1024];
-            int len;
-            while ((len = input.read(buf)) > 0)
-                out.write(buf, 0, len);
-            out.close();
-            input.close();
-
-            System.out.println("Got bundle at : " + bundle.getAbsolutePath());
-
-            client.getConnectionManager().shutdown();
-            return bundle;
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String waitForExec(String url, int i, String uuid) {
-        while (i > 0) {
-            String key = getJSONReply(url, uuid);
-            if (key != null) {
-                return key;
-            } else {
-                try {
-                    System.out.println("No key, sleeping. " + i + " remaining");
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                i -= 1000;
-            }
-        }
-        return null;
-    }
-
-
-    private String getJSONReply(String url, String uuid) {
-        try {
-            HttpClient client = new DefaultHttpClient();
-//            HttpGet httpGet = new HttpGet(url + "?action=json");
-            HttpGet httpGet = new HttpGet(url + "?action=byid&&uuid=" + uuid);
-
-            HttpResponse response = client.execute(httpGet);
-            System.out.println(response.getEntity().getContentLength() + " from json");
-            InputStream input = response.getEntity().getContent();
-            InputStreamReader isr = new InputStreamReader(input);
-            BufferedReader br = new BufferedReader(isr);
-
-            String line = null;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                System.out.printf(line);
-                stringBuilder.append(line);
-            }
-            client.getConnectionManager().shutdown();
-
-            JSONTokener jsonTokener = new JSONTokener(stringBuilder.toString());
-            JSONArray jsonArray = new JSONArray(jsonTokener);
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                String name = jsonObject.getString("name");
-
-                if (name.equals(execBundleName)) {
-                    String key = jsonObject.getString("key");
-                    System.out.println("Name = " + execBundleName + " key = " + key);
-                    return key;
-                }
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    private String postBundle(String hostAddress, File tempBundleFile) {
-
-        String line = null;
-        try {
-            FileBody fileBody = new FileBody(tempBundleFile);
-            StringBody routing = new StringBody(routingKeyField.getText());
-            StringBody numtasks = new StringBody("1");
-            execBundleName = workflowController.getWorkflowImplementation().getTitle()
-                    + "-" + getTimeStamp();
-            StringBody name = new StringBody(execBundleName);
-
-            MultipartEntity multipartEntity = new MultipartEntity();
-            multipartEntity.addPart("file", fileBody);
-            multipartEntity.addPart("routingkey", routing);
-            multipartEntity.addPart("numtasks", numtasks);
-            multipartEntity.addPart("name", name);
-
-            HttpClient client = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(hostAddress);
-            httpPost.setEntity(multipartEntity);
-            System.out.println("Sending " + httpPost.getEntity().getContentLength()
-                    + " bytes to " + hostAddress);
-            HttpResponse response = client.execute(httpPost);
-
-            InputStream input = response.getEntity().getContent();
-            InputStreamReader isr = new InputStreamReader(input);
-            BufferedReader br = new BufferedReader(isr);
-
-            line = null;
-            while ((line = br.readLine()) != null) {
-                System.out.printf("\n%s", line);
-            }
-            client.getConnectionManager().shutdown();
-        } catch (Exception ignored) {
-        }
-        return line;
-    }
-
     @CustomGUIComponent
     public Component getGUI() {
         JPanel mainPane = new JPanel();
         mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
 
-        JPanel locationPanel = new JPanel(new BorderLayout());
+        JPanel bundlePanel = new JPanel(new BorderLayout());
         JLabel locationLabel = new JLabel("Bundle : ");
-        final JTextField locationField = new JTextField(20);
+        JTextField locationField = new JTextField(20);
         String filePath = "";
         locationField.setText(filePath);
         JButton locationButton = new JButton("Get bundle");
         locationButton.addActionListener(new BundleParameter(mainPane, locationField));
 
-        locationPanel.add(locationLabel, BorderLayout.WEST);
-        locationPanel.add(locationField, BorderLayout.CENTER);
-        locationPanel.add(locationButton, BorderLayout.EAST);
-        mainPane.add(locationPanel);
+        bundlePanel.add(locationLabel, BorderLayout.WEST);
+        bundlePanel.add(locationField, BorderLayout.CENTER);
+        bundlePanel.add(locationButton, BorderLayout.EAST);
 
-        JPanel sendToPanel = new JPanel();
-        sendToPanel.setLayout(new BoxLayout(sendToPanel, BoxLayout.Y_AXIS));
+        mainPane.add(bundlePanel);
 
-        JPanel sendURLPanel = new JPanel(new BorderLayout());
-        JLabel sendURLLabel = new JLabel("Send URL : ");
+        final JPanel sendURLPanel = new JPanel(new BorderLayout());
+        final JLabel sendURLLabel = new JLabel("Send URL : ");
         sendURLField = new JTextField("http://s-vmc.cs.cf.ac.uk:7025/Broker/broker");
         sendURLPanel.add(sendURLLabel, BorderLayout.WEST);
         sendURLPanel.add(sendURLField, BorderLayout.CENTER);
 
-        sendToPanel.add(sendURLPanel);
+        mainPane.add(sendURLPanel);
 
-        JPanel getURLPanel = new JPanel(new BorderLayout());
+        final JPanel getURLPanel = new JPanel(new BorderLayout());
         JLabel getURLLabel = new JLabel("Results URL : ");
         getURLField = new JTextField("http://s-vmc.cs.cf.ac.uk:7025/Broker/results");
         getURLPanel.add(getURLLabel, BorderLayout.WEST);
         getURLPanel.add(getURLField, BorderLayout.CENTER);
 
-        sendToPanel.add(getURLPanel);
+        mainPane.add(getURLPanel);
 
-        JPanel routingKeyPanel = new JPanel(new BorderLayout());
+        final JPanel routingKeyPanel = new JPanel(new BorderLayout());
         JLabel routingKeyLabel = new JLabel("Routing Key : ");
         routingKeyField = new JTextField("*.triana");
         routingKeyPanel.add(routingKeyLabel, BorderLayout.WEST);
         routingKeyPanel.add(routingKeyField, BorderLayout.CENTER);
 
-        sendToPanel.add(routingKeyPanel);
+        mainPane.add(routingKeyPanel);
 
         JPanel ttlPanel = new JPanel(new BorderLayout());
         JLabel ttlLabel = new JLabel("Execution wait time (ms) : ");
@@ -384,14 +246,44 @@ public class RunBundleInPool implements TaskConscious {
         ttlPanel.add(ttlLabel, BorderLayout.WEST);
         ttlPanel.add(ttlField, BorderLayout.CENTER);
 
-        sendToPanel.add(ttlPanel);
+        mainPane.add(ttlPanel);
 
+        JPanel sendToPanel = new JPanel();
+        sendToPanel.setLayout(new BoxLayout(sendToPanel, BoxLayout.Y_AXIS));
         bundleSubmitButtonGroup = new ButtonGroup();
-        JRadioButton cgiPoolRadio = new JRadioButton("CGI Pool");
+
+        final JRadioButton cgiPoolRadio = new JRadioButton("CGI Pool");
+        final JRadioButton webServerRadio = new JRadioButton("Web server");
+
+        ActionListener radioListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JRadioButton radioButton = (JRadioButton) actionEvent.getSource();
+                if (radioButton == webServerRadio) {
+                    if (radioButton.isSelected()) {
+                        setEnabling(sendURLPanel, true);
+                        setEnabling(getURLPanel, true);
+                        setEnabling(routingKeyPanel, true);
+                    }
+                }
+                if (radioButton == cgiPoolRadio) {
+                    if (radioButton.isSelected()) {
+                        setEnabling(sendURLPanel, false);
+                        setEnabling(getURLPanel, false);
+                        setEnabling(routingKeyPanel, false);
+                    }
+                }
+            }
+        };
+
         cgiPoolRadio.setActionCommand("cgiPool");
-        JRadioButton webServerRadio = new JRadioButton("Web server");
+        cgiPoolRadio.addActionListener(radioListener);
+
         webServerRadio.setSelected(true);
         webServerRadio.setActionCommand("webServer");
+        webServerRadio.addActionListener(radioListener);
+
+
         bundleSubmitButtonGroup.add(cgiPoolRadio);
         bundleSubmitButtonGroup.add(webServerRadio);
         sendToPanel.add(cgiPoolRadio);
@@ -417,6 +309,15 @@ public class RunBundleInPool implements TaskConscious {
         mainPane.add(viewBundle);
 
         return mainPane;
+    }
+
+    private void setEnabling(Container parent, boolean enabled) {
+        for (Component component : parent.getComponents()) {
+            if (component instanceof Container) {
+                setEnabling((Container) component, enabled);
+            }
+            component.setEnabled(enabled);
+        }
     }
 
 

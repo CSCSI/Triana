@@ -99,14 +99,19 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
         }
         if (files.size() > 0) {
 
+            HashSet<String> filePaths = new HashSet<String>();
+            for (File file : files) {
+                filePaths.add(file.getAbsolutePath());
+            }
+
             File zip = new File(getName() + ".zip");
 
             System.out.println("Writing " + files.size() + " files to zip " + zip.getAbsolutePath());
 
             ZipOutputStream jos = new ZipOutputStream(new FileOutputStream(zip));
 
-            for (File file : files) {
-                writeEntry(file, jos);
+            for (String path : filePaths) {
+                writeEntry(new File(path), jos);
             }
 
             jos.flush();

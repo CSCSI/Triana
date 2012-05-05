@@ -9,6 +9,7 @@ import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.description.resource.ConfigurationResource;
 import org.shiwa.desktop.data.description.resource.ReferableResource;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
+import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
 import org.shiwa.desktop.data.util.DataUtils;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
@@ -173,7 +174,10 @@ public class Unbundler implements ExecutionAddon {
     }
 
     private void storeShiwaProperty(HashMap<String, String> executionProperties, ShiwaBundleHelper shiwaBundleHelper, String key) {
-        executionProperties.put(key, shiwaBundleHelper.getShiwaProperty(key).getValue());
+        SHIWAProperty property = shiwaBundleHelper.getShiwaProperty(key);
+        if (property != null) {
+            executionProperties.put(key, property.getValue());
+        }
     }
 
     @Override
