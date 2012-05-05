@@ -202,13 +202,17 @@ public class Unbundler implements ExecutionAddon {
 
         if (tool != null) {
 
-            Exec execEngine = new Exec(null);
-            execEngine.setExecutionProperties(executionProperties);
+            try {
+                Exec execEngine = new Exec(null);
+                execEngine.setExecutionProperties(executionProperties);
 //            execEngine.setParentUUID(parentUUID);
-            if (configFile != null) {
-                execEngine.execute(tool, configFile.getAbsolutePath());
-            } else {
-                execEngine.execute(tool, null);
+                if (configFile != null) {
+                    execEngine.execute(tool, configFile.getAbsolutePath());
+                } else {
+                    execEngine.execute(tool, null);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

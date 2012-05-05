@@ -442,8 +442,14 @@ public class StampedeLog {
     }
 
     public void initExecutionProperties(HashMap<String, String> executionProperties) {
-        runUUID = UUID.fromString(executionProperties.get(RUN_UUID_STRING));
-        parentUUID = UUID.fromString(executionProperties.get(PARENT_UUID_STRING));
+        String runprop = executionProperties.get(RUN_UUID_STRING);
+        if (runprop != null) {
+            runUUID = UUID.fromString(runprop);
+        }
+        String parentprop = executionProperties.get(PARENT_UUID_STRING);
+        if (parentprop != null) {
+            parentUUID = UUID.fromString(parentprop);
+        }
         jobID = executionProperties.get(JOB_ID);
         jobInstID = executionProperties.get(JOB_INST_ID);
     }
