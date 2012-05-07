@@ -307,6 +307,8 @@ public class Exec implements ExecutionListener {
             IoConfiguration ioc = handler.deserialize(new FileInputStream(conf));
             mappings = handler.map(ioc, runner.getTaskGraph());
             System.out.println("Data mappings size : " + mappings.getMap().size());
+        } else {
+            System.out.println("No input data mapping");
         }
         runner.runTaskGraph();
 

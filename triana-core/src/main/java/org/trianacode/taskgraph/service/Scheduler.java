@@ -277,6 +277,8 @@ public class Scheduler implements SchedulerInterface {
      * Send all tasks in the task graph a wake up call (except the control task)
      */
     private void runTaskGraph(TaskGraph tgraph) {
+
+        System.out.println("Running taskgraph");
 //        startTime = new Date().getTime() / 1000;
 //        runUUID = UUID.randomUUID();
 //        if(parentUUID == null){

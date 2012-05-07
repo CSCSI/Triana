@@ -72,6 +72,7 @@ public class StampedeLog {
 
 
     public StampedeLog(TaskGraph tgraph, UUID runUUID) {
+        System.out.println("StampedeLog");
         this.tgraph = tgraph;
         properties = tgraph.getProperties();
         reset(runUUID);
@@ -490,6 +491,7 @@ public class StampedeLog {
     }
 
     public void initExecutionProperties(HashMap<String, String> executionProperties) {
+        System.out.println("initexecprops");
         String runprop = executionProperties.get(RUN_UUID_STRING);
         if (runprop != null) {
             runUUID = UUID.fromString(runprop);
