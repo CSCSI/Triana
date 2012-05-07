@@ -538,6 +538,7 @@ public class Exec implements ExecutionListener {
 
     public void setExecutionProperties(HashMap<String, String> executionProperties) {
         this.executionProperties = executionProperties;
+        System.out.println("exec props " + executionProperties.toString());
     }
 
 
