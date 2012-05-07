@@ -204,6 +204,8 @@ public class Unbundler implements ExecutionAddon {
 
             try {
                 Exec execEngine = new Exec(null);
+
+                System.out.println(executionProperties.toString());
                 execEngine.setExecutionProperties(executionProperties);
 //            execEngine.setParentUUID(parentUUID);
                 if (configFile != null) {

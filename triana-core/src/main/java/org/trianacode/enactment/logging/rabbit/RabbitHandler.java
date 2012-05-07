@@ -142,6 +142,7 @@ public class RabbitHandler extends SwingWorker {
             while (status == Status.INIT && go) {
                 try {
                     ConnectionFactory factory = new ConnectionFactory();
+                    factory.setRequestedHeartbeat(60);
                     factory.setHost(host);
                     if (username != null && password != null) {
                         factory.setUsername(username);

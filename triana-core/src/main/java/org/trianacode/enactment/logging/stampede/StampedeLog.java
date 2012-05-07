@@ -500,6 +500,8 @@ public class StampedeLog {
         }
         jobID = executionProperties.get(JOB_ID);
         jobInstID = executionProperties.get(JOB_INST_ID);
+
+        System.out.println(runprop + " " + parentprop + " " + jobID + " " + jobInstID);
     }
 
     public UUID getRunUUID() {
