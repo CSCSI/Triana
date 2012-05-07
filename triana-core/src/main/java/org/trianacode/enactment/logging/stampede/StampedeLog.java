@@ -24,25 +24,51 @@ import java.util.UUID;
  */
 public class StampedeLog {
 
+    public static final String STAMPEDE_TASK_TYPE = "stampede.task.type";
+
     public static final String RUN_UUID_STRING = "runUUID";
     public static final String PARENT_UUID_STRING = "parentUUID";
     public static final String JOB_ID = "jobID";
+
     public static final String JOB_INST_ID = "jobInstID";
 
     private HashMap<Task, Integer> stateChanges;
-
     private RuntimeFileLog runtimeFileLog;
-    private TaskGraph tgraph;
 
+    private TaskGraph tgraph;
     private UUID runUUID = null;
     private UUID parentUUID = null;
     private String jobID = null;
-    private String jobInstID = null;
 
+    private String jobInstID = null;
     private TrianaProperties properties;
     private int sched_id_count = 0;
     private ExecutionListener executionLogger;
     long startTime;
+
+
+    public enum JobType {
+        unknown(0, "unknown"),
+        compute(1, "compute"),
+        stage_in(2, "stage-in-tx"),
+        stage_out_tx(3, "stage-out"),
+        registration(4, "registration"),
+        inter_site_tx(5, "inter-site-tx"),
+        create_dir(6, "create-dir"),
+        staged_compute(7, "staged-compute"), //since 3.1 no longer generated
+        cleanup(8, "cleanup"),
+        chmod(9, "chmod"),
+        dax(10, "dax"),
+        dag(11, "dag");
+
+        public int code;
+        public String desc;
+
+        JobType(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
 
 
     public StampedeLog(TaskGraph tgraph, UUID runUUID) {
@@ -180,12 +206,25 @@ public class StampedeLog {
     public void logTaskgraphJobs(TaskGraph taskgraph) {
         for (Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)) {
 
+            JobType jobType = null;
+            Object typeParam = task.getParameter(STAMPEDE_TASK_TYPE);
+            if (typeParam != null) {
+                jobType = getJobType(typeParam.toString());
+            }
+
+            if (jobType == null) {
+                jobType = JobType.compute;
+            }
+
+            int type = jobType.code;
+            String typeDesc = jobType.desc;
+
             logStampedeEvent(addBaseEventDetails(
                     new StampedeEvent(LogDetail.UNIT_INFO)
                             .add(LogDetail.UNIT_ID, "unit:" + task.getQualifiedToolName())
                             .add(LogDetail.SUBMIT_FILE, "null")
-                            .add(LogDetail.TYPE, "1")
-                            .add(LogDetail.TYPE_DESC, "compute")
+                            .add(LogDetail.TYPE, String.valueOf(type))
+                            .add(LogDetail.TYPE_DESC, typeDesc)
                             .add(LogDetail.CLUSTERED, "0")
                             .add(LogDetail.MAX_RETRIES, "1")
                             .add(LogDetail.TASK_COUNT, "1")
@@ -193,6 +232,15 @@ public class StampedeLog {
                             .add(LogDetail.EXECUTABLE, task.getQualifiedToolName()))
             );
         }
+    }
+
+    private JobType getJobType(String s) {
+        for (JobType type : JobType.values()) {
+            if (type.desc.equals(s)) {
+                return type;
+            }
+        }
+        return null;
     }
 
     public void mapTasksTojobs(TaskGraph taskgraph) {
@@ -495,6 +543,10 @@ public class StampedeLog {
         @Override
         public void executionFinished(ExecutionEvent event) {
 
+            long duration = (new Date().getTime() / 1000) - startTime;
+            if (duration == 0) {
+                duration = 1;
+            }
 //            System.out.println("event : "
 //                    + event.getTask().getQualifiedTaskName() + " finished");
 
@@ -508,16 +560,14 @@ public class StampedeLog {
                     .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath())
                     .add(LogDetail.SITE, getHostname())
                     .add(LogDetail.MULTIPLIER, "1")
+                    .add(LogDetail.LOCAL_DURATION, String.valueOf(duration))
                     .add(LogDetail.STATUS, "0")
                     .add(LogDetail.EXIT_CODE, "0");
             logStampedeEvent(stampedeEvent);
 
             Task task = event.getTask();
             if (task instanceof TaskGraph) {
-                long duration = (new Date().getTime() / 1000) - startTime;
-                if (duration == 0) {
-                    duration = 1;
-                }
+
 
                 StampedeEvent invEnd = new StampedeEvent(LogDetail.INVOCATION_END);
                 addBaseEventDetails(invEnd)

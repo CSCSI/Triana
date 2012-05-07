@@ -11,14 +11,11 @@ import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
+import org.trianacode.shiwa.utils.BrokerUtils;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 import org.trianacode.taskgraph.ser.XMLWriter;
-import org.trianacode.taskgraph.service.Scheduler;
-import org.trianacode.taskgraph.service.SchedulerInterface;
-import org.trianacode.taskgraph.service.TrianaServer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -57,56 +54,69 @@ public class BundleEditor implements TaskConscious {
             e.printStackTrace();
         }
 
-        TrianaServer server = TaskGraphManager.getTrianaServer(task.getParent());
-        SchedulerInterface sched = server.getSchedulerInterface();
+//        TrianaServer server = TaskGraphManager.getTrianaServer(task.getParent());
+//        SchedulerInterface sched = server.getSchedulerInterface();
 
-        String jobID = "unit:" + task.getQualifiedToolName();
-        if (sched instanceof Scheduler) {
-            Scheduler scheduler = (Scheduler) sched;
-            UUID parentID = scheduler.stampedeLog.getRunUUID();
-            System.out.println("Parent execution " + parentID.toString());
-            String jobInstID = scheduler.stampedeLog.getTaskNumber(task).toString();
+//        Scheduler scheduler = BrokerUtils.getSchedulerForTaskGraph(task.getParent());
 
-            WorkflowImplementation impl = shiwaBundleHelper.getWorkflowImplementation();
 
-            for (Object object : list) {
-                if (object instanceof TaskGraph) {
-                    TaskGraph taskGraph = (TaskGraph) object;
+//        if(scheduler != null) {
 
-                    cleanProperties();
 
-                    impl.addProperty(new SHIWAProperty(StampedeLog.PARENT_UUID_STRING,
-                            parentID.toString()));
+//            String jobID = "unit:" + task.getQualifiedToolName();
+//        if (sched instanceof Scheduler) {
+//            Scheduler scheduler = (Scheduler) sched;
+//            UUID parentID = scheduler.stampedeLog.getRunUUID();
+//            System.out.println("Parent execution " + parentID.toString());
+//            String jobInstID = scheduler.stampedeLog.getTaskNumber(task).toString();
 
-                    UUID runUUID = UUID.randomUUID();
-                    impl.addProperty(new SHIWAProperty(StampedeLog.RUN_UUID_STRING,
-                            runUUID.toString()));
 
-                    impl.addProperty(new SHIWAProperty(StampedeLog.JOB_ID, jobID));
+        WorkflowImplementation impl = shiwaBundleHelper.getWorkflowImplementation();
 
-                    impl.addProperty(new SHIWAProperty(StampedeLog.JOB_INST_ID, jobInstID));
+        for (Object object : list) {
+            if (object instanceof TaskGraph) {
+                TaskGraph taskGraph = (TaskGraph) object;
 
-                    try {
-                        System.out.println("Adding imp " + taskGraph.getToolName());
-                        impl.setDefinition(
-                                new BundleFile(
-                                        getWorkflowDefinition(taskGraph), taskGraph.getToolName()));
-                    } catch (SHIWADesktopIOException e) {
-                        e.printStackTrace();
-                    }
+                cleanProperties();
+                UUID runUUID = UUID.randomUUID();
 
-                    try {
-                        File temp = File.createTempFile(taskGraph.getToolName() + "-", "tmp");
-                        File b = shiwaBundleHelper.saveBundle(temp);
-                        System.out.println("Made " + b.getAbsolutePath());
-                        bundles.add(b);
+                BrokerUtils.prepareSubworkflow(
+                        task, runUUID, shiwaBundleHelper.getWorkflowImplementation()
+                );
+//                    BrokerUtils.addParentDetailsToSubWorkflow(impl, runUUID, parentID, jobID, jobInstID);
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//
+//                    impl.addProperty(new SHIWAProperty(StampedeLog.PARENT_UUID_STRING,
+//                            parentID.toString()));
+//
+//                    impl.addProperty(new SHIWAProperty(StampedeLog.RUN_UUID_STRING,
+//                            runUUID.toString()));
+//
+//                    impl.addProperty(new SHIWAProperty(StampedeLog.JOB_ID, jobID));
+//
+//                    impl.addProperty(new SHIWAProperty(StampedeLog.JOB_INST_ID, jobInstID));
+
+                try {
+                    System.out.println("Adding imp " + taskGraph.getToolName());
+                    impl.setDefinition(
+                            new BundleFile(
+                                    getWorkflowDefinition(taskGraph), taskGraph.getToolName()));
+                } catch (SHIWADesktopIOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    File temp = File.createTempFile(taskGraph.getToolName() + "-", "tmp");
+                    File b = shiwaBundleHelper.saveBundle(temp);
+                    System.out.println("Made " + b.getAbsolutePath());
+                    bundles.add(b);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
+//        }
 
         return bundles;
     }

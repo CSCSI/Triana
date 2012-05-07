@@ -3,8 +3,11 @@ package org.trianacode.shiwa.workflowCreation;
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
+import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
 import org.trianacode.shiwa.utils.BrokerUtils;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import java.io.File;
 import java.util.List;
@@ -17,13 +20,16 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Tool
-public class RunMultipleBundles {
+public class RunMultipleBundles implements TaskConscious {
 
     @TextFieldParameter
     public String address = "http://s-vmc.cs.cf.ac.uk:7025/Broker/broker";
 
     @TextFieldParameter
     private String routingKey = "*.triana";
+
+    private Task task;
+
 
     @org.trianacode.annotation.Process()
     public void process(List list) {
@@ -41,5 +47,11 @@ public class RunMultipleBundles {
                 }
             }
         }
+    }
+
+    @Override
+    public void setTask(Task task) {
+        this.task = task;
+        task.setParameter(StampedeLog.STAMPEDE_TASK_TYPE, StampedeLog.JobType.dax.desc);
     }
 }

@@ -25,7 +25,7 @@ import java.util.List;
 public class CreateChainWorkflows implements TaskConscious {
 
     @TextFieldParameter
-    public String tasksPerWorkflow = "30";
+    public String tasksPerWorkflowString = "30";
 
     @CheckboxParameter
     public boolean zip = false;
@@ -46,12 +46,17 @@ public class CreateChainWorkflows implements TaskConscious {
             }
         }
 
-        int numOfWorkflows = Integer.parseInt(tasksPerWorkflow);
+        int tasksPerWorkflow = Integer.parseInt(tasksPerWorkflowString);
 
         int start = 0;
-        int end = numOfWorkflows;
+        int end = tasksPerWorkflow;
 
-        for (int i = 0; i < (allStrings.size() / numOfWorkflows); i++) {
+        int tomake = allStrings.size() / tasksPerWorkflow;
+        if (tomake < 1) {
+            tomake = 1;
+        }
+
+        for (int i = 0; i < tomake; i++) {
 
             List<String> listItem = allStrings.subList(start, end);
             TaskGraph taskGraph = makeTaskGraph(start, end, listItem);
@@ -73,8 +78,8 @@ public class CreateChainWorkflows implements TaskConscious {
                 allTaskGraphs.add(taskGraph);
             }
 
-            start += numOfWorkflows;
-            end += numOfWorkflows;
+            start += tasksPerWorkflow;
+            end += tasksPerWorkflow;
             if (end > (allStrings.size() - 1)) {
                 end = (allStrings.size() - 1);
             }

@@ -76,6 +76,7 @@ public class RabbitHandler extends SwingWorker {
 
     private void sendString(String string) throws IOException {
 //        channel.basicPublish("", queueName, null, string.getBytes());
+//        System.out.println(string);
         channel.basicPublish(exchangeName, "", null, string.getBytes());
     }
 

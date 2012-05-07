@@ -106,6 +106,10 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
 
             File zip = new File(getName() + ".zip");
 
+            if (zip.exists()) {
+                zip.delete();
+            }
+
             System.out.println("Writing " + files.size() + " files to zip " + zip.getAbsolutePath());
 
             ZipOutputStream jos = new ZipOutputStream(new FileOutputStream(zip));

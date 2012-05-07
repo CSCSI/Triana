@@ -13,10 +13,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.shiwa.desktop.data.description.core.WorkflowImplementation;
+import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
+import org.trianacode.enactment.logging.stampede.StampedeLog;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphManager;
+import org.trianacode.taskgraph.service.Scheduler;
+import org.trianacode.taskgraph.service.SchedulerInterface;
+import org.trianacode.taskgraph.service.TrianaServer;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -167,5 +177,40 @@ public class BrokerUtils {
         } catch (Exception ignored) {
         }
         return line;
+    }
+
+    public static void addParentDetailsToSubWorkflow(
+            WorkflowImplementation impl, UUID runUUID, UUID parentID, String jobID, String jobInstID) {
+
+        impl.addProperty(new SHIWAProperty(StampedeLog.PARENT_UUID_STRING,
+                parentID.toString()));
+
+        impl.addProperty(new SHIWAProperty(StampedeLog.RUN_UUID_STRING,
+                runUUID.toString()));
+
+        impl.addProperty(new SHIWAProperty(StampedeLog.JOB_ID, jobID));
+
+        impl.addProperty(new SHIWAProperty(StampedeLog.JOB_INST_ID, jobInstID));
+    }
+
+    public static Scheduler getSchedulerForTaskGraph(TaskGraph taskGraph) {
+        TrianaServer server = TaskGraphManager.getTrianaServer(taskGraph);
+        SchedulerInterface sched = server.getSchedulerInterface();
+        if (sched instanceof Scheduler) {
+            return (Scheduler) sched;
+        }
+        return null;
+    }
+
+    public static void prepareSubworkflow(Task task, UUID runUUID, WorkflowImplementation workflowImplementation) {
+        Scheduler scheduler = getSchedulerForTaskGraph(task.getParent());
+
+        addParentDetailsToSubWorkflow(
+                workflowImplementation,
+                runUUID,
+                scheduler.stampedeLog.getRunUUID(),
+                "unit:" + task.getQualifiedToolName(),
+                scheduler.stampedeLog.getTaskNumber(task).toString()
+        );
     }
 }

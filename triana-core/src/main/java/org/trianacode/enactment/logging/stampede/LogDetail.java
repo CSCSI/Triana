@@ -83,6 +83,7 @@ public class LogDetail {
     public static final String HELD_END = "stampede.job_inst.held.end";
     public static final String MAP_SUB_WORKFLOW = "stampede.xwf.map.subwf_job";
     public static final String SUB_WF_ID = "subwf.id";
+    public static final String LOCAL_DURATION = "local.dur";
 
 
     public LogDetail(String name, String detail) {

@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -75,22 +76,26 @@ public class RunBundleInPool implements TaskConscious {
                     Configuration config = createConfiguration(list);
                     workflowController.getWorkflowImplementation().getAggregatedResources().add(config);
                 }
-                try {
-                    File tempBundleFile = new File("testBundle.bundle");
-                    DataUtils.bundle(tempBundleFile, workflowController.getWorkflowImplementation());
-
-                    if (bundleSubmitButtonGroup.getSelection().getActionCommand().equals("cgiPool")) {
-                        doPool(tempBundleFile);
-                    } else {
-                        return doBroker(tempBundleFile);
-                    }
-                } catch (SHIWADesktopIOException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
             }
+            try {
+                BrokerUtils.prepareSubworkflow(
+                        task, UUID.randomUUID(), workflowController.getWorkflowImplementation()
+                );
+
+                File tempBundleFile = new File("testBundle.bundle");
+                DataUtils.bundle(tempBundleFile, workflowController.getWorkflowImplementation());
+
+                if (bundleSubmitButtonGroup.getSelection().getActionCommand().equals("cgiPool")) {
+                    doPool(tempBundleFile);
+                } else {
+                    return doBroker(tempBundleFile);
+                }
+            } catch (SHIWADesktopIOException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
         return null;
     }
@@ -205,7 +210,7 @@ public class RunBundleInPool implements TaskConscious {
         JPanel bundlePanel = new JPanel(new BorderLayout());
         JLabel locationLabel = new JLabel("Bundle : ");
         JTextField locationField = new JTextField(20);
-        String filePath = "";
+        String filePath = "/Users/ian/stuff/concat-two.zip";
         locationField.setText(filePath);
         JButton locationButton = new JButton("Get bundle");
         locationButton.addActionListener(new BundleParameter(mainPane, locationField));
