@@ -257,7 +257,6 @@ public class Scheduler implements SchedulerInterface {
     @Override
     public void setExecutionProperties(HashMap<String, String> executionProperties) {
         this.executionProperties = executionProperties;
-        System.out.println("sched exec props");
     }
 
     /**

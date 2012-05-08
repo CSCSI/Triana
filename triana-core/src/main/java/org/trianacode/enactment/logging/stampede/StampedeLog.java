@@ -45,6 +45,7 @@ public class StampedeLog {
     private int sched_id_count = 0;
     private ExecutionListener executionLogger;
     long startTime;
+    private HashMap<Task, Long> taskTimes;
 
 
     public enum JobType {
@@ -87,12 +88,14 @@ public class StampedeLog {
     }
 
     public void reset(UUID uuid) {
-        startTime = new Date().getTime() / 1000;
+        startTime = getTime();
+//        startTime = new Date().getTime() / 1000;
         setRunUUID(uuid);
 
         String log_location = properties.getProperty(TrianaProperties.LOG_LOCATION);
         runtimeFileLog = new RuntimeFileLog(log_location, runUUID);
         taskMap = new HashMap<Task, Integer>();
+        taskTimes = new HashMap<Task, Long>();
         stateChanges = new HashMap<Task, Integer>();
         sched_id_count = 0;
     }
@@ -546,12 +549,15 @@ public class StampedeLog {
         @Override
         public void executionFinished(ExecutionEvent event) {
 
-            long duration = (new Date().getTime() / 1000) - startTime;
-            if (duration == 0) {
-                duration = 1;
+//            long duration = (new Date().getTime() / 1000) - startTime;
+//            if (duration == 0) {
+//                duration = 1;
+//            }
+            long duration = 1;
+
+            if (taskTimes.containsKey(event.getTask())) {
+                duration = getTime() - taskTimes.get(event.getTask());
             }
-//            System.out.println("event : "
-//                    + event.getTask().getQualifiedTaskName() + " finished");
 
             logStampedeEvent(addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_TERM)
                     .add(LogDetail.STATUS, "0"),
@@ -603,9 +609,7 @@ public class StampedeLog {
             ExecutionState executionState = event.getState();
             StampedeEvent stampedeEvent;
 
-//        System.out.println("Task " + event.getTask() +
-//                " changed from " + event.getOldState() +
-//                " to " + event.getState());
+            long duration = 1;
 
             switch (executionState) {
                 //CONDOR JOB STATES
@@ -632,6 +636,7 @@ public class StampedeLog {
                         stampedeEvent.add(LogDetail.STATUS, "0");
                         return stampedeEvent;
                     } else {
+                        taskTimes.put(event.getTask(), getTime());
                         stampedeEvent = new StampedeEvent(LogDetail.JOB_START);
                         addSchedJobInstDetails(stampedeEvent, event.getTask())
                                 .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
@@ -647,10 +652,16 @@ public class StampedeLog {
 
                 case COMPLETE:
                     //TERMINATED
+
+                    if (taskTimes.containsKey(event.getTask())) {
+                        duration = getTime() - taskTimes.get(event.getTask());
+                    }
+
                     stampedeEvent = new StampedeEvent(LogDetail.JOB_END);
                     addSchedJobInstDetails(stampedeEvent, event.getTask())
                             .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
                             .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath())
+                            .add(LogDetail.LOCAL_DURATION, String.valueOf(duration))
                             .add(LogDetail.SITE, getHostname())
                             .add(LogDetail.MULTIPLIER, "1")
                             .add(LogDetail.STATUS, "0")
@@ -667,11 +678,17 @@ public class StampedeLog {
 //
                 case ERROR:
                     //JOB FAILURE
+
+                    if (taskTimes.containsKey(event.getTask())) {
+                        duration = getTime() - taskTimes.get(event.getTask());
+                    }
+
                     stampedeEvent = new StampedeEvent(LogDetail.JOB_END);
                     addSchedJobInstDetails(stampedeEvent, event.getTask())
                             .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
                             .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath())
                             .add(LogDetail.SITE, getHostname())
+                            .add(LogDetail.LOCAL_DURATION, String.valueOf(duration))
                             .add(LogDetail.MULTIPLIER, "1")
                             .add(LogDetail.STATUS, "-1")
                             .add(LogDetail.EXIT_CODE, "1");
@@ -692,5 +709,9 @@ public class StampedeLog {
             return null;
         }
 
+    }
+
+    private long getTime() {
+        return new Date().getTime() / 1000;
     }
 }

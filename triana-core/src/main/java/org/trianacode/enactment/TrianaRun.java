@@ -115,7 +115,6 @@ public class TrianaRun {
      * Initializes the triana exec
      */
     protected void init(Tool tool) throws TaskGraphException {
-        System.out.println("TrianaRun init");
         initDummyTask();
 
         if (tool instanceof TaskGraph) {
