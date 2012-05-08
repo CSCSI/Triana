@@ -24,7 +24,7 @@ import java.util.UUID;
  */
 public class StampedeLog {
 
-    public static final String STAMPEDE_TASK_TYPE = "stampede.task.type";
+    public static final String STAMPEDE_TASK_TYPE = "stampedeTaskType";
 
     public static final String RUN_UUID_STRING = "runUUID";
     public static final String PARENT_UUID_STRING = "parentUUID";
@@ -72,7 +72,6 @@ public class StampedeLog {
 
 
     public StampedeLog(TaskGraph tgraph, UUID runUUID) {
-        System.out.println("StampedeLog");
         this.tgraph = tgraph;
         properties = tgraph.getProperties();
         reset(runUUID);

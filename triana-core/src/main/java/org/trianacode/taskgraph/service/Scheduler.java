@@ -279,7 +279,6 @@ public class Scheduler implements SchedulerInterface {
      */
     private void runTaskGraph(TaskGraph tgraph) {
 
-        System.out.println("Running taskgraph");
 //        startTime = new Date().getTime() / 1000;
 //        runUUID = UUID.randomUUID();
 //        if(parentUUID == null){

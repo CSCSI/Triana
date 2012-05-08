@@ -17,9 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -113,6 +111,8 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
             System.out.println("Writing " + files.size() + " files to zip " + zip.getAbsolutePath());
 
             ZipOutputStream jos = new ZipOutputStream(new FileOutputStream(zip));
+
+            System.out.println(Arrays.toString(filePaths.toArray()));
 
             for (String path : filePaths) {
                 writeEntry(new File(path), jos);
