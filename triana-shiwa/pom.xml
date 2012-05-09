@@ -36,34 +36,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-            <!--<artifactId>maven-assembly-plugin</artifactId>-->
-            <!--<version>2.2.1</version>-->
-            <!--<configuration>-->
-            <!--<descriptorRefs>-->
-            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
-            <!--</descriptorRefs>-->
-            <!--<archive>-->
-            <!--<manifest>-->
-            <!--<mainClass>org.trianacode.shiwa.pool.TrianasPoolPlugin</mainClass>-->
-            <!--</manifest>-->
-            <!--</archive>-->
-            <!--</configuration>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>make-assembly</id>-->
-            <!--&lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
-            <!--<phase>package</phase>-->
-            <!--&lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
-            <!--<goals>-->
-            <!--<goal>single</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<outputDirectory>${build.directory}</outputDirectory>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
         </plugins>
         <extensions>
             <extension>
@@ -114,7 +86,7 @@
         <dependency>
             <groupId>fr.insalyon.creatis.shiwapool</groupId>
             <artifactId>shiwa-pool-client</artifactId>
-            <version>0.8</version>
+            <version>0.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -127,10 +99,10 @@
             <id>creatis-thirdparty</id>
             <url>http://vip.creatis.insa-lyon.fr:9007/nexus/content/repositories/thirdparty</url>
         </repository>
-        <repository>
-            <id>creatis-releases</id>
-            <url>http://vip.creatis.insa-lyon.fr:9007/nexus/content/repositories/releases</url>
-        </repository>
+        <!--<repository>-->
+        <!--<id>creatis-releases</id>-->
+        <!--<url>http://vip.creatis.insa-lyon.fr:9007/nexus/content/repositories/releases</url>-->
+        <!--</repository>-->
         <repository>
             <id>creatis-snapshots</id>
             <url>http://kingkong.grid.creatis.insa-lyon.fr:9007/nexus/content/repositories/snapshots/</url>
