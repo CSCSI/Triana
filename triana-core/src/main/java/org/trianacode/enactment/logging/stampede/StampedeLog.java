@@ -549,12 +549,7 @@ public class StampedeLog {
         @Override
         public void executionFinished(ExecutionEvent event) {
 
-//            long duration = (new Date().getTime() / 1000) - startTime;
-//            if (duration == 0) {
-//                duration = 1;
-//            }
             long duration = 1;
-
             if (taskTimes.containsKey(event.getTask())) {
                 duration = getTime() - taskTimes.get(event.getTask());
             }
@@ -600,8 +595,6 @@ public class StampedeLog {
 
         @Override
         public void executionReset(ExecutionEvent event) {
-//            System.out.println("Reset event " + event.getTask().getQualifiedTaskName()
-//                    + " event " + event.getState());
         }
 
 
@@ -609,7 +602,14 @@ public class StampedeLog {
             ExecutionState executionState = event.getState();
             StampedeEvent stampedeEvent;
 
-            long duration = 1;
+            long duration = 0;
+            if (taskTimes.containsKey(event.getTask())) {
+                duration = getTime() - taskTimes.get(event.getTask());
+            }
+            if (duration < 1) {
+                duration = 1;
+            }
+
 
             switch (executionState) {
                 //CONDOR JOB STATES
@@ -653,10 +653,6 @@ public class StampedeLog {
                 case COMPLETE:
                     //TERMINATED
 
-                    if (taskTimes.containsKey(event.getTask())) {
-                        duration = getTime() - taskTimes.get(event.getTask());
-                    }
-
                     stampedeEvent = new StampedeEvent(LogDetail.JOB_END);
                     addSchedJobInstDetails(stampedeEvent, event.getTask())
                             .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
@@ -678,10 +674,6 @@ public class StampedeLog {
 //
                 case ERROR:
                     //JOB FAILURE
-
-                    if (taskTimes.containsKey(event.getTask())) {
-                        duration = getTime() - taskTimes.get(event.getTask());
-                    }
 
                     stampedeEvent = new StampedeEvent(LogDetail.JOB_END);
                     addSchedJobInstDetails(stampedeEvent, event.getTask())

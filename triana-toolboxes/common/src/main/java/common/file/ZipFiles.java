@@ -170,7 +170,7 @@ public class ZipFiles implements TaskConscious, ListSelectionListener {
                 zos.closeEntry();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
