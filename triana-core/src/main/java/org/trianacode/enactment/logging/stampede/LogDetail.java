@@ -84,6 +84,7 @@ public class LogDetail {
     public static final String MAP_SUB_WORKFLOW = "stampede.xwf.map.subwf_job";
     public static final String SUB_WF_ID = "subwf.id";
     public static final String LOCAL_DURATION = "local.dur";
+    public static final String REMOTE_CPU_TIME = "remote_cpu_time";
 
 
     public LogDetail(String name, String detail) {

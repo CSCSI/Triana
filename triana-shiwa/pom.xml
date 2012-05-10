@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.5.1-SNAPSHOT</version>
+            <version>1.5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.shiwa.fgi</groupId>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.0.1</version>
+            <version>4.1.3</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>

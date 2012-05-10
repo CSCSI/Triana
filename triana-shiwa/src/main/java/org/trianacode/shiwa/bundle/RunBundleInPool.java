@@ -20,10 +20,12 @@ import org.shiwa.desktop.gui.SHIWADesktop;
 import org.shiwa.desktop.gui.util.listener.DefaultBundleReceivedListener;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Tool;
+import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.error.ErrorEvent;
 import org.trianacode.error.ErrorTracker;
 import org.trianacode.gui.panels.DisplayDialog;
 import org.trianacode.shiwa.utils.BrokerUtils;
+import org.trianacode.taskgraph.CableException;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.Task;
@@ -329,6 +331,7 @@ public class RunBundleInPool implements TaskConscious {
     @Override
     public void setTask(Task task) {
         this.task = task;
+        task.setParameter(StampedeLog.STAMPEDE_TASK_TYPE, StampedeLog.JobType.dax.desc);
     }
 
 
@@ -454,6 +457,9 @@ public class RunBundleInPool implements TaskConscious {
                 e.printStackTrace();
             }
         }
+        task.setDataInputTypes(new String[]{"java.lang.Object"});
+        task.setDataOutputTypes(new String[]{"java.lang.Object"});
+
         outputNodeMap = new HashMap<String, Node>();
         String[] outputPorts = new String[outputPortMap.size()];
         outputPortMap.keySet().toArray(outputPorts);
@@ -479,13 +485,19 @@ public class RunBundleInPool implements TaskConscious {
         if (input) {
             while (task.getInputNodeCount() > size) {
                 Node node = task.getInputNode(task.getDataInputNodeCount() - 1);
-                node.disconnect();
+                try {
+                    task.getParent().disconnect(node.getCable());
+                } catch (CableException ignored) {
+                }
                 task.removeDataInputNode(node);
             }
         } else {
             while (task.getOutputNodeCount() > size) {
                 Node node = task.getOutputNode(task.getDataOutputNodeCount() - 1);
-                node.disconnect();
+                try {
+                    task.getParent().disconnect(node.getCable());
+                } catch (CableException ignored) {
+                }
                 task.removeDataOutputNode(node);
             }
         }
