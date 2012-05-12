@@ -51,7 +51,8 @@ public class CreateChainWorkflows implements TaskConscious {
         int start = 0;
         int end = tasksPerWorkflow;
 
-        int tomake = allStrings.size() / tasksPerWorkflow;
+        double tomake = Math.ceil((double) allStrings.size() / (double) tasksPerWorkflow);
+
         if (tomake < 1) {
             tomake = 1;
         }
@@ -61,6 +62,7 @@ public class CreateChainWorkflows implements TaskConscious {
                 end = allStrings.size();
             }
 
+            System.out.println("Start " + start + " end " + end);
             List<String> listItem = allStrings.subList(start, end);
             TaskGraph taskGraph = makeTaskGraph(start, end, listItem);
 

@@ -1,5 +1,6 @@
 package org.trianacode.shiwa.workflowCreation;
 
+import org.trianacode.annotation.CheckboxParameter;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.AddonUtils;
@@ -11,7 +12,6 @@ import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphManager;
 import org.trianacode.taskgraph.annotation.TaskConscious;
-import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 
 import java.io.File;
 import java.util.List;
@@ -34,6 +34,9 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
 
     private Task task;
 
+    @CheckboxParameter
+    public boolean local = false;
+
 
     @org.trianacode.annotation.Process()
     public void process(List list) {
@@ -44,12 +47,33 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
 
             for (Object object : list) {
                 if (object instanceof File) {
-                    org.trianacode.taskgraph.tool.Tool tool1 =
-                            AddonUtils.makeTool("BundleToTrianaCloud",
-                                    "org.trianacode.shiwa.bundle",
-                                    "send" + ((File) object).getName(), taskGraph.getProperties());
-                    Task task1 = taskGraph.createTask(tool1);
-                    task1.setParameter("bundleFile", ((File) object).getAbsolutePath());
+                    try {
+
+                        if (!local) {
+                            org.trianacode.taskgraph.tool.Tool tool1 =
+                                    AddonUtils.makeTool("BundleToTrianaCloud",
+                                            "org.trianacode.shiwa.bundle",
+                                            "send" + ((File) object).getName(), taskGraph.getProperties());
+                            Task task1 = taskGraph.createTask(tool1);
+                            task1.setParameter("bundleFile", ((File) object).getAbsolutePath());
+
+                        } else {
+                            org.trianacode.taskgraph.tool.Tool tool1 =
+                                    AddonUtils.makeTool("BundleToLocalTriana",
+                                            "org.trianacode.shiwa.bundle",
+                                            "send" + ((File) object).getName(), taskGraph.getProperties());
+                            Task task1 = taskGraph.createTask(tool1);
+
+
+                            String exec = "./triana.sh -n -p unbundle " + ((File) object).getAbsolutePath() + " " +
+                                    File.createTempFile("output", "tmp").getAbsolutePath();
+
+                            task1.setParameter("executable", exec);
+                            task1.setParameter("runtimeDirectory", "triana-app/dist/");
+                        }
+                    } catch (Exception e) {
+
+                    }
                 }
             }
 
@@ -61,8 +85,6 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
             frame.addParentTaskGraphPanel(taskGraph);
 
         } catch (TaskException e) {
-            e.printStackTrace();
-        } catch (ProxyInstantiationException e) {
             e.printStackTrace();
         }
     }

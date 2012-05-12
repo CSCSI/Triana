@@ -1,4 +1,4 @@
-package common.processing;
+package org.trianacode.shiwa.bundle;
 
 import org.apache.commons.logging.Log;
 import org.trianacode.annotation.CustomGUIComponent;
@@ -7,6 +7,8 @@ import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.StreamToOutput;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.enactment.logging.stampede.StampedeLog;
+import org.trianacode.shiwa.utils.BrokerUtils;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 
@@ -20,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Tool
-public class ExecuteString implements TaskConscious {
+public class BundleToLocalTriana implements TaskConscious {
 
     @TextFieldParameter
     private String executableString = "";
@@ -159,9 +162,22 @@ public class ExecuteString implements TaskConscious {
 
         private int executeProcess(String executableString, File execLocation) {
 
+
             List<String> options = new ArrayList<String>();
             String[] optionsStrings = executableString.split(" ");
             Collections.addAll(options, optionsStrings);
+
+            try {
+                String bundlePath = optionsStrings[4];
+
+                ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(bundlePath);
+
+                BrokerUtils.prepareSubworkflow(
+                        task, UUID.randomUUID(), shiwaBundleHelper.getWorkflowImplementation()
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             java.lang.Process process = null;
             try {
@@ -271,6 +287,7 @@ public class ExecuteString implements TaskConscious {
     @Override
     public void setTask(Task task) {
         this.task = task;
+        task.setParameter(StampedeLog.STAMPEDE_TASK_TYPE, StampedeLog.JobType.dax.desc);
         getParams();
     }
 

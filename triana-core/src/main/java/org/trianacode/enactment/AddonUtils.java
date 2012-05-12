@@ -91,7 +91,7 @@ public class AddonUtils {
         tool.setProxy(new JavaProxy(simpleName, packageName));
         tool.setToolPackage(packageName);
         tool.setToolName(name);
-        System.out.println("New : " + tool.getToolName() + " " + packageName + "." + simpleName);
+//        System.out.println("New : " + tool.getToolName() + " " + packageName + "." + simpleName);
         return tool;
     }
 
