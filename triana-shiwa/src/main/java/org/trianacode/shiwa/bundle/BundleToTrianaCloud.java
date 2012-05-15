@@ -11,6 +11,7 @@ import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class BundleToTrianaCloud implements TaskConscious {
                 bundleFile = ((File) object).getAbsolutePath();
             }
         }
-
+        ArrayList<File> toSend = new ArrayList<File>();
         try {
             ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(new SHIWABundle(new File(bundleFile)));
             BrokerUtils.prepareSubworkflow(task, UUID.randomUUID(), shiwaBundleHelper.getWorkflowImplementation());
@@ -50,14 +51,28 @@ public class BundleToTrianaCloud implements TaskConscious {
 
             File updatedBundle = DataUtils.bundle(tempBundleFile, shiwaBundleHelper.getWorkflowImplementation());
 
-            BrokerUtils.postBundle(
-                    "http://s-vmc.cs.cf.ac.uk:7025/Broker/broker",
-                    "*.triana",
-                    updatedBundle.getName() + BrokerUtils.getTimeStamp(),
-                    updatedBundle);
-
+            toSend.add(updatedBundle);
         } catch (Exception e) {
+            System.out.println("Issue with bundle " + bundleFile);
             e.printStackTrace();
+        }
+
+        if (toSend.size() == 1) {
+            for (File bundle : toSend) {
+                try {
+                    BrokerUtils.postBundle(
+                            "http://s-vmc.cs.cf.ac.uk:7025/Broker/broker",
+                            "*.triana",
+                            bundle.getName() + BrokerUtils.getTimeStamp(),
+                            bundle);
+
+                } catch (Exception e) {
+                    System.out.println("Issue with bundle " + bundleFile);
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println("Error creating bundle, not sending.");
         }
     }
 

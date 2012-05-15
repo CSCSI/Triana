@@ -133,7 +133,7 @@ public class ExecuteString implements TaskConscious {
         int errorHappened = 0;
 
         for (Object value : returnCodes.values()) {
-            if (!((String) value).equals("1")) {
+            if (!((String) value).equals("0")) {
                 errorHappened++;
             }
         }
