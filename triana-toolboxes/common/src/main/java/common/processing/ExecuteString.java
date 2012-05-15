@@ -44,18 +44,18 @@ public class ExecuteString implements TaskConscious {
 
     private int runningProcesses = 0;
 
-    ConcurrentHashMap<Integer, returnCode> returnCodes;// = new ConcurrentHashMap<Integer, returnCode>();
+    ConcurrentHashMap<Integer, Object> returnCodes;// = new ConcurrentHashMap<Integer, returnCode>();
     private static final String EXIT_CODE = "exitCode";
 
-    enum returnCode {
-        SUCCESS,
-        FAIL
-    }
+//    enum returnCode {
+//        SUCCESS,
+//        FAIL
+//    }
 
     private Task task;
 
     @Process(gather = true)
-    public ConcurrentHashMap<Integer, returnCode> process(List list) throws Exception {
+    public ConcurrentHashMap<Integer, Object> process(List list) throws Exception {
         ArrayList<String> executableStrings = new ArrayList<String>();
 
         executableString = execField.getText();
@@ -90,7 +90,7 @@ public class ExecuteString implements TaskConscious {
         int run = 0;
         System.out.println(executableStrings.size() + " processes to run.");
         System.out.println("Allowing " + allowedProcesses + " concurrent processes.");
-        returnCodes = new ConcurrentHashMap<Integer, returnCode>();
+        returnCodes = new ConcurrentHashMap<Integer, Object>();
 
         while (run < executableStrings.size()) {
             if (runningProcesses < allowedProcesses) {
@@ -129,6 +129,20 @@ public class ExecuteString implements TaskConscious {
         }
 
         System.out.println(returnCodes.size() + " return codes recorded " + returnCodes.values().toString());
+
+        int errorHappened = 0;
+
+        for (Object value : returnCodes.values()) {
+            if (!((String) value).equals("1")) {
+                errorHappened++;
+            }
+        }
+
+        if (errorHappened > 0) {
+            throw new RuntimeException(errorHappened + " of the " + returnCodes.size()
+                    + "processes in " + task.getToolName() + " has returned an error code");
+        }
+
         return returnCodes;
     }
 
@@ -324,9 +338,9 @@ public class ExecuteString implements TaskConscious {
                 System.out.println("Run " + runID + " returned " + returned);
                 String code = (String) returned;
                 if (code.equals("0")) {
-                    returnCodes.put(runID, returnCode.SUCCESS);
+                    returnCodes.put(runID, returned);
                 } else {
-                    returnCodes.put(runID, returnCode.FAIL);
+                    returnCodes.put(runID, returned);
                 }
             }
         }
