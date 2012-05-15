@@ -25,6 +25,7 @@ import org.trianacode.taskgraph.service.TrianaServer;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
@@ -205,6 +206,8 @@ public class BrokerUtils {
     public static void prepareSubworkflow(Task task, UUID runUUID, WorkflowImplementation workflowImplementation) {
         Scheduler scheduler = getSchedulerForTaskGraph(task.getParent());
 
+        cleanBundleProperties(workflowImplementation);
+
         addParentDetailsToSubWorkflow(
                 workflowImplementation,
                 runUUID,
@@ -212,5 +215,23 @@ public class BrokerUtils {
                 "unit:" + task.getQualifiedToolName(),
                 scheduler.stampedeLog.getTaskNumber(task).toString()
         );
+    }
+
+    private static void cleanBundleProperties(WorkflowImplementation workflowImplementation) {
+        ArrayList<SHIWAProperty> toRemove = new ArrayList<SHIWAProperty>();
+
+        for (SHIWAProperty property : workflowImplementation.getProperties()) {
+            String title = property.getTitle();
+            if (title.equals(StampedeLog.PARENT_UUID_STRING) ||
+                    title.equals(StampedeLog.JOB_ID) ||
+                    title.equals(StampedeLog.JOB_INST_ID) ||
+                    title.equals(StampedeLog.RUN_UUID_STRING)) {
+                toRemove.add(property);
+            }
+        }
+
+        for (SHIWAProperty removing : toRemove) {
+            workflowImplementation.getProperties().remove(removing);
+        }
     }
 }

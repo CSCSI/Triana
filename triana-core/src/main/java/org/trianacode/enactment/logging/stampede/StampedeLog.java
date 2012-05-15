@@ -131,6 +131,11 @@ public class StampedeLog {
                 .add(LogDetail.WF_VERSION, "1")
                 .add(LogDetail.DESCRIPTION_FILE, tgraph.getToolName())
                 .add(LogDetail.ARGS, "\"\"");
+
+        if (subWorkflow) {
+            planEvent.add(LogDetail.PARENT_WF, parent);
+        }
+
         addBaseEventDetails(planEvent);
         logStampedeEvent(planEvent);
 

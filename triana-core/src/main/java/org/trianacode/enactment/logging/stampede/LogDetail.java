@@ -85,6 +85,7 @@ public class LogDetail {
     public static final String SUB_WF_ID = "subwf.id";
     public static final String LOCAL_DURATION = "local.dur";
     public static final String REMOTE_CPU_TIME = "remote_cpu_time";
+    public static final String PARENT_WF = "parent.xwf.id";
 
 
     public LogDetail(String name, String detail) {

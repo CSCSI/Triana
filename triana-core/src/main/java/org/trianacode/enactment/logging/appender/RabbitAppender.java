@@ -79,7 +79,7 @@ public class RabbitAppender extends AppenderSkeleton {
     }
 
     private void ensureReady() {
-        if (handler.getStatus() == RabbitHandler.Status.NOT_READY) {
+        if (handler.getStatus() != RabbitHandler.Status.READY) {
             handler.setConnectionInfo(HOST, PORT, USERNAME, PASSWORD, EXCHANGENAME);
             handler.initConnection();
         }
