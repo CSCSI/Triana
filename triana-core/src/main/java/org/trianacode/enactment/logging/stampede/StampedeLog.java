@@ -46,6 +46,11 @@ public class StampedeLog {
     private ExecutionListener executionLogger;
     long startTime;
     private HashMap<Task, Long> taskTimes;
+    private boolean subWorkflow = false;
+
+    public boolean isSubWorkflow() {
+        return subWorkflow;
+    }
 
 
     public enum JobType {
@@ -112,7 +117,6 @@ public class StampedeLog {
 
     public void logPlanEvent(TaskGraph tgraph) {
         String parent;
-        boolean subWorkflow;
         if (parentUUID == null) {
             parent = runUUID.toString();
             subWorkflow = false;
@@ -499,7 +503,6 @@ public class StampedeLog {
     }
 
     public void initExecutionProperties(HashMap<String, String> executionProperties) {
-        System.out.println("initexecprops");
         String runprop = executionProperties.get(RUN_UUID_STRING);
         if (runprop != null) {
             runUUID = UUID.fromString(runprop);
@@ -607,6 +610,10 @@ public class StampedeLog {
 
         private StampedeEvent execStateToJobState(ExecutionEvent event) {
             ExecutionState executionState = event.getState();
+            System.out.println("Task : " + event.getTask().getToolName()
+                    + " in state " + event.getState().name() +
+                    " previously " + event.getOldState().name());
+
             StampedeEvent stampedeEvent;
 
             long duration = 0;

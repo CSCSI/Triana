@@ -926,6 +926,7 @@ public class RunnableTask extends AbstractRunnableTask
 
                 unit.process();
             } catch (Exception except) {
+                System.out.println(this.getToolName() + " : " + this.getExecutionState().name());
                 notifyError(except);
                 toolLog.warn("Exception thrown invoking process() on Unit:", except);
             }

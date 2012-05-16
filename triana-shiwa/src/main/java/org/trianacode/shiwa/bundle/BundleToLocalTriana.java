@@ -1,6 +1,7 @@
 package org.trianacode.shiwa.bundle;
 
 import org.apache.commons.logging.Log;
+import org.shiwa.desktop.data.util.DataUtils;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.TextFieldParameter;
@@ -175,6 +176,15 @@ public class BundleToLocalTriana implements TaskConscious {
                 BrokerUtils.prepareSubworkflow(
                         task, UUID.randomUUID(), shiwaBundleHelper.getWorkflowImplementation()
                 );
+
+                File temp = File.createTempFile("anything", "tmp");
+
+                DataUtils.bundle(
+                        temp,
+                        shiwaBundleHelper.getWorkflowImplementation());
+
+                optionsStrings[4] = temp.getAbsolutePath();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

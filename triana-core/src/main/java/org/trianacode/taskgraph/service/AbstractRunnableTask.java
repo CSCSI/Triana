@@ -312,8 +312,9 @@ public abstract class AbstractRunnableTask extends TaskImp implements RunnableIn
      */
     public void notifyError(String message) throws NotifyErrorException {
         broadcastError(message);
-        TaskGraphManager.getTrianaServer(getParent()).notifyError(this, message);
+
         setExecutionState(ExecutionState.ERROR);
+        TaskGraphManager.getTrianaServer(getParent()).notifyError(this, message);
 
         if (message != null) {
             setParameterType(ERROR_MESSAGE, Tool.TRANSIENT);

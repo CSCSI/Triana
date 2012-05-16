@@ -231,7 +231,9 @@ public class Scheduler implements SchedulerInterface {
      */
     public void notifyError(RunnableInstance cause, String message) {
         stopTaskGraph(taskgraph);
-        //taskgraph.removeExecutionListener(logger);
+        if (stampedeLog.isSubWorkflow()) {
+            System.exit(1);
+        }
     }
 
 
