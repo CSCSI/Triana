@@ -462,7 +462,7 @@ public class StampedeLog {
         this.runUUID = runUUID;
     }
 
-    public void logInvocationStart(RunnableTask runnableTask) {
+    public void logInvocationStart(Task runnableTask) {
         logStampedeEvent(
                 addBaseEventDetails(new StampedeEvent(LogDetail.INVOCATION_START)
                         .add(LogDetail.UNIT_INST_ID, String.valueOf(getTaskNumber(runnableTask)))
@@ -478,7 +478,7 @@ public class StampedeLog {
         );
     }
 
-    public void logInvocationEnd(RunnableTask runnableTask, String args, long startTime, long duration) {
+    public void logInvocationEnd(Task runnableTask, String args, long startTime, long duration) {
         StampedeEvent invEnd = addBaseEventDetails(new StampedeEvent(LogDetail.INVOCATION_END))
                 .add(LogDetail.UNIT_INST_ID, String.valueOf(getTaskNumber(runnableTask)))
                 .add(LogDetail.INVOCATION_ID, "1")

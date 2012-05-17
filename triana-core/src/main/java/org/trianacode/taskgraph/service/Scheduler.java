@@ -341,6 +341,8 @@ public class Scheduler implements SchedulerInterface {
         if ((tgState != ExecutionState.ERROR) && (tgState != ExecutionState.RESETTING)) {
             tgState = ExecutionState.RUNNING;
 
+            stampedeLog.logInvocationStart(tgraph);
+
             wakeTask(tgraph);
         }
     }
