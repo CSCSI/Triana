@@ -43,6 +43,7 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
 
         try {
             TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
+            taskGraph.setToolName("submittingWorkflow");
 
 
             for (Object object : list) {
@@ -53,7 +54,7 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
                             org.trianacode.taskgraph.tool.Tool tool1 =
                                     AddonUtils.makeTool("BundleToTrianaCloud",
                                             "org.trianacode.shiwa.bundle",
-                                            "send" + ((File) object).getName(), taskGraph.getProperties());
+                                            ((File) object).getName(), taskGraph.getProperties());
                             Task task1 = taskGraph.createTask(tool1);
                             task1.setParameter("bundleFile", ((File) object).getAbsolutePath());
 
@@ -61,7 +62,7 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
                             org.trianacode.taskgraph.tool.Tool tool1 =
                                     AddonUtils.makeTool("BundleToLocalTriana",
                                             "org.trianacode.shiwa.bundle",
-                                            "send" + ((File) object).getName(), taskGraph.getProperties());
+                                            ((File) object).getName(), taskGraph.getProperties());
                             Task task1 = taskGraph.createTask(tool1);
 
 
@@ -71,6 +72,7 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
                             task1.setParameter("executable", exec);
                             task1.setParameter("runtimeDirectory", "triana-app/dist/");
                         }
+
                     } catch (Exception e) {
 
                     }

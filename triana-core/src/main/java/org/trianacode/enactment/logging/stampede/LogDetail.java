@@ -15,6 +15,8 @@ public class LogDetail {
     //    public static final String WF = "WORKFLOW.FILE";
     public static final String LEVEL = "level";
     public static final String RUNNING_WORKFLOW = "stampede.xwf.start";
+    public static final String FINISHED_WORKFLOW = "stampede.xwf.end";
+
 //    public static final String FINISHED_WORKFLOW = "WORKFLOW.FINISHED";
 //    public static final String STOPPING_WORKFLOW = "WORKFLOW.STOPPING";
 //    public static final String RUNNING_TASK = "TASK.RUNNING";

@@ -106,7 +106,7 @@ public class BundleEditor implements TaskConscious {
                 }
 
                 try {
-                    File temp = File.createTempFile(taskGraph.getToolName() + "-", "tmp");
+                    File temp = File.createTempFile(taskGraph.getToolName() + "-", "");
                     File b = shiwaBundleHelper.saveBundle(temp);
                     System.out.println("Made " + b.getAbsolutePath());
                     bundles.add(b);

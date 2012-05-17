@@ -232,7 +232,12 @@ public class Scheduler implements SchedulerInterface {
     public void notifyError(RunnableInstance cause, String message) {
         stopTaskGraph(taskgraph);
         if (stampedeLog.isSubWorkflow()) {
-            System.exit(1);
+            try {
+                Thread.sleep(3000);
+                stampedeLog.complete();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

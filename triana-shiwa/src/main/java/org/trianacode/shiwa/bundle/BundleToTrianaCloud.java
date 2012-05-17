@@ -60,12 +60,16 @@ public class BundleToTrianaCloud implements TaskConscious {
         if (toSend.size() == 1) {
             for (File bundle : toSend) {
                 try {
-                    BrokerUtils.postBundle(
+                    String key = BrokerUtils.postBundle(
                             "http://s-vmc.cs.cf.ac.uk:7025/Broker/broker",
                             "*.triana",
                             bundle.getName() + BrokerUtils.getTimeStamp(),
                             bundle);
 
+                    BrokerUtils.getResultBundle(
+                            "http://s-vmc.cs.cf.ac.uk:7025/Broker/results",
+                            key
+                    );
                 } catch (Exception e) {
                     System.out.println("Issue with bundle " + bundleFile);
                     e.printStackTrace();

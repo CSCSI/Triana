@@ -1,6 +1,7 @@
 package org.trianacode.shiwa.utils;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -44,26 +45,34 @@ public class BrokerUtils {
     }
 
     public static File getResultBundle(String url, String key) {
+
+        System.out.println("Requesting " + key + " from " + url);
+
         try {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url + "?action=file&key=" + key);
-            System.out.println("Getting JSON from " + httpGet.getURI());
+            boolean tryAgain = true;
 
-            HttpResponse response = client.execute(httpGet);
-            InputStream input = response.getEntity().getContent();
+            HttpResponse response = null;
+            HttpClient client = null;
+            while (tryAgain) {
+                client = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url + "?action=file&key=" + key);
 
-            File bundle = File.createTempFile("received", ".zip");
-            OutputStream out = new FileOutputStream(bundle);
-            byte buf[] = new byte[1024];
-            int len;
-            while ((len = input.read(buf)) > 0)
-                out.write(buf, 0, len);
-            out.close();
-            input.close();
+                response = client.execute(httpGet);
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    tryAgain = false;
+                } else {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
 
-            System.out.println("Got bundle at : " + bundle.getAbsolutePath());
+            File bundle = writeFile(response);
 
             client.getConnectionManager().shutdown();
+
             return bundle;
 
         } catch (UnsupportedEncodingException e) {
@@ -75,6 +84,23 @@ public class BrokerUtils {
         }
         return null;
     }
+
+    private static File writeFile(HttpResponse response) throws IOException {
+        InputStream input = response.getEntity().getContent();
+
+        File bundle = File.createTempFile("received", ".zip");
+        OutputStream out = new FileOutputStream(bundle);
+        byte buf[] = new byte[1024];
+        int len;
+        while ((len = input.read(buf)) > 0)
+            out.write(buf, 0, len);
+        out.close();
+        input.close();
+
+        System.out.println("Got bundle at : " + bundle.getAbsolutePath());
+        return bundle;
+    }
+
 
     public static String waitForExec(String url, int i, String uuid, String execBundleName) {
         while (i > 0) {
@@ -145,7 +171,6 @@ public class BrokerUtils {
     public static String postBundle(
             String hostAddress, String routingKey, String execBundleName, File tempBundleFile) {
 
-        String line = null;
         try {
             FileBody fileBody = new FileBody(tempBundleFile);
             StringBody routing = new StringBody(routingKey);
@@ -170,14 +195,31 @@ public class BrokerUtils {
             InputStreamReader isr = new InputStreamReader(input);
             BufferedReader br = new BufferedReader(isr);
 
-            line = null;
+            String line = null;
+            StringBuilder keyString = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 System.out.printf("\n%s", line);
+                keyString.append(line);
             }
             client.getConnectionManager().shutdown();
+
+
+            return findKey(keyString.toString());
+
         } catch (Exception ignored) {
         }
-        return line;
+        return null;
+    }
+
+    private static String findKey(String s) {
+
+        int openTag = s.indexOf("<uuid>");
+        int closeTag = s.indexOf("</uuid>");
+
+        if (openTag != -1 && closeTag != -1 && closeTag > openTag) {
+            return s.substring(openTag + 6, closeTag);
+        }
+        return null;
     }
 
     public static void addParentDetailsToSubWorkflow(

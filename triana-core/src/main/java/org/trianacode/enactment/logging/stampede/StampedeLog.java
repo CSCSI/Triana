@@ -52,6 +52,14 @@ public class StampedeLog {
         return subWorkflow;
     }
 
+    public void complete() {
+        Task[] tasks = TaskGraphUtils.getAllTasksRecursive(tgraph, true);
+        for (Task task : tasks) {
+            if ((task instanceof RunnableTask)) {
+                ((RunnableTask) task).afterProcess();
+            }
+        }
+    }
 
     public enum JobType {
         unknown(0, "unknown"),
@@ -477,7 +485,7 @@ public class StampedeLog {
                 .add(LogDetail.TRANSFORMATION, runnableTask.getQualifiedTaskName())
                 .add(LogDetail.EXECUTABLE, "Triana")
                 .add(LogDetail.ARGS, args)
-                .add(LogDetail.TASK_ID, runnableTask.getQualifiedTaskName()
+                .add(LogDetail.TASK_ID, "task:" + runnableTask.getQualifiedTaskName()
                 );
 
         if (!runnableTask.getExecutionState().equals(ExecutionState.ERROR)) {
@@ -593,10 +601,17 @@ public class StampedeLog {
                         .add(LogDetail.TRANSFORMATION, task.getQualifiedTaskName())
                         .add(LogDetail.EXECUTABLE, "Triana")
                         .add(LogDetail.ARGS, getTaskArgs(task))
-                        .add(LogDetail.TASK_ID, task.getQualifiedTaskName())
+                        .add(LogDetail.TASK_ID, "task:" + ((TaskGraph) task).getQualifiedTaskName())
                         .add(LogDetail.EXIT_CODE, "0")
                 ;
                 logStampedeEvent(invEnd);
+
+                StampedeEvent xwfEnd = new StampedeEvent(LogDetail.FINISHED_WORKFLOW);
+                addBaseEventDetails(xwfEnd)
+                        .add(LogDetail.RESTART_COUNT, "0")
+                        .add(LogDetail.STATUS, "0")
+                ;
+                logStampedeEvent(xwfEnd);
 
                 //After execution, stop listening for events.
 
