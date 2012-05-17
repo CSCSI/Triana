@@ -7,6 +7,7 @@ import org.trianacode.enactment.logging.runtimeLogging.RuntimeFileLog;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.service.ExecutionEvent;
 import org.trianacode.taskgraph.service.ExecutionListener;
+import org.trianacode.taskgraph.service.RunnableInstance;
 import org.trianacode.taskgraph.service.RunnableTask;
 
 import java.net.Inet4Address;
@@ -57,6 +58,9 @@ public class StampedeLog {
         for (Task task : tasks) {
             if ((task instanceof RunnableTask)) {
                 ((RunnableTask) task).afterProcess();
+            }
+            if (task instanceof RunnableInstance) {
+                ((RunnableInstance) task).finished();
             }
         }
     }
