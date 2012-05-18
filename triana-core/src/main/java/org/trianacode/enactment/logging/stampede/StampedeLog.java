@@ -206,8 +206,8 @@ public class StampedeLog {
     public void logTaskgraphCables(TaskGraph taskgraph) {
         for (Cable cable : TaskGraphUtils.getConnectedCables(TaskGraphUtils.getAllTasksRecursive(taskgraph, false))) {
             logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.TASK_CABLES)
-                    .add(LogDetail.CHILD_TASK, cable.getReceivingTask().getQualifiedTaskName())
-                    .add(LogDetail.PARENT_TASK, cable.getSendingTask().getQualifiedTaskName()))
+                    .add(LogDetail.CHILD_TASK, "task:" + cable.getReceivingTask().getQualifiedTaskName())
+                    .add(LogDetail.PARENT_TASK, "task:" + cable.getSendingTask().getQualifiedTaskName()))
             );
         }
     }
@@ -416,13 +416,20 @@ public class StampedeLog {
     }
 
     public void wakeTask(Task task) {
-        sched_id_count++;
-        taskMap.put(task, sched_id_count);
+        recordSched(task);
         StampedeEvent wakeStartEvent = new StampedeEvent(LogDetail.START_WAKING_TASK);
         addSchedJobInstDetails(wakeStartEvent, task);
         logStampedeEvent(wakeStartEvent);
     }
 
+    public void recordSchedForRootTaskGraph(TaskGraph taskGraph) {
+        recordSched(taskGraph);
+    }
+
+    private void recordSched(Task task) {
+        sched_id_count++;
+        taskMap.put(task, sched_id_count);
+    }
 
     public static String getHostname() {
         String hostname;
@@ -466,8 +473,15 @@ public class StampedeLog {
         logStampedeEvent(
                 addBaseEventDetails(new StampedeEvent(LogDetail.INVOCATION_START)
                         .add(LogDetail.UNIT_INST_ID, String.valueOf(getTaskNumber(runnableTask)))
-                        .add(LogDetail.UNIT_ID, runnableTask.getQualifiedToolName())
+                        .add(LogDetail.UNIT_ID, "unit:" + runnableTask.getQualifiedToolName())
                         .add(LogDetail.INVOCATION_ID, "1")));
+    }
+
+    public void logJobInstStart(TaskGraph taskGraph) {
+        logStampedeEvent(
+                addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_START), taskGraph)
+                        .add(LogDetail.STD_OUT_FILE, runtimeFileLog.getLogFilePath())
+                        .add(LogDetail.STD_ERR_FILE, runtimeFileLog.getLogFilePath()));
     }
 
     public void logJobTerminate(RunnableTask runnableTask) {
