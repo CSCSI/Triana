@@ -126,6 +126,13 @@ public class RabbitHandler extends SwingWorker {
     }
 
     public boolean isReady() {
+        if (connectRunnable == null) {
+            connectRunnable = new CreateConnection();
+            Thread thread = new Thread(connectRunnable);
+            status = Status.INIT;
+            thread.start();
+        }
+
         return !(channel == null || !channel.isOpen());//queueName == null);
     }
 

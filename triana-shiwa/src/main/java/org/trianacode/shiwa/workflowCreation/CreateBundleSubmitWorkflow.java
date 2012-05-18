@@ -4,7 +4,6 @@ import org.trianacode.annotation.CheckboxParameter;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.AddonUtils;
-import org.trianacode.enactment.logging.stampede.StampedeLog;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.taskgraph.Task;
@@ -104,6 +103,6 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
     @Override
     public void setTask(Task task) {
         this.task = task;
-        task.setParameter(StampedeLog.STAMPEDE_TASK_TYPE, StampedeLog.JobType.dax.desc);
+//        task.setParameter(StampedeLog.STAMPEDE_TASK_TYPE, StampedeLog.JobType.dax.desc);
     }
 }

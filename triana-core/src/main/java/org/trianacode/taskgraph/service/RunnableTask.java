@@ -931,10 +931,7 @@ public class RunnableTask extends AbstractRunnableTask
                 toolLog.warn("Exception thrown invoking process() on Unit:", except);
             }
 
-
             if (scheduler != null) {
-
-                stampedeLog.logJobTerminate(this);
 
 //                logToSchedulerLogger(scheduler.stampedeLog.addSchedJobInstDetails(new StampedeEvent(LogDetail.JOB_TERM)
 //                        .add(LogDetail.STATUS, "0"),
@@ -947,6 +944,8 @@ public class RunnableTask extends AbstractRunnableTask
 
                 stampedeLog.logInvocationEnd(
                         this, stringBuilder.toString().replaceAll("[\n\r]", ""), startTime, duration);
+
+                stampedeLog.logJobTerminate(this);
 
 //                StampedeEvent invEnd = new StampedeEvent(LogDetail.INVOCATION_END);
 //                scheduler.stampedeLog.addBaseEventDetails(invEnd)
