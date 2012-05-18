@@ -129,7 +129,7 @@ public class StampedeLog {
             subWorkflow = true;
         }
 
-        stampedeEvent.add(LogDetail.PROCESS_UUID, parent);
+        //stampedeEvent.add(LogDetail.PROCESS_UUID, parent);
 
         if (stampedeEvent != null) {
             if (LoggingUtils.loggingToRabbitMQ(properties)) {
