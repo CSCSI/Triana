@@ -214,7 +214,7 @@ public class TrianaBundle {
         if (args.length > 0) {
             filePath = args[0];
         } else {
-            filePath = "/Users/ian/stuff/testBundle.zip";
+            filePath = "C:\\Users\\Dave\\Desktop\\bundle2.zip";
         }
 
         File file = new File(filePath);

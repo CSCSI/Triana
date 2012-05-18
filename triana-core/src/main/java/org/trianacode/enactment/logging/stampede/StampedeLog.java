@@ -119,6 +119,18 @@ public class StampedeLog {
 
 
     public void logStampedeEvent(StampedeEvent stampedeEvent) {
+
+        String parent;
+        if (parentUUID == null) {
+            parent = runUUID.toString();
+            subWorkflow = false;
+        } else {
+            parent = parentUUID.toString();
+            subWorkflow = true;
+        }
+
+        stampedeEvent.add(LogDetail.PROCESS_UUID, parent);
+
         if (stampedeEvent != null) {
             if (LoggingUtils.loggingToRabbitMQ(properties)) {
                 Loggers.STAMPEDE_LOGGER.info(stampedeEvent);
