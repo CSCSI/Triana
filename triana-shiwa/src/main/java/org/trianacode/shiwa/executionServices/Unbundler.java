@@ -32,7 +32,10 @@ import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.*;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -208,11 +211,17 @@ public class Unbundler implements ExecutionAddon {
                 System.out.println(executionProperties.toString());
                 execEngine.setExecutionProperties(executionProperties);
 //            execEngine.setParentUUID(parentUUID);
+
+                timeOutput("KIERAN! Executing bundle at t:");
+
                 if (configFile != null) {
                     execEngine.execute(tool, configFile.getAbsolutePath());
                 } else {
                     execEngine.execute(tool, null);
                 }
+
+                timeOutput("KIERAN! Completing bundle at t:");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -553,5 +562,12 @@ public class Unbundler implements ExecutionAddon {
 
     private File outputLocation = null;
 
-
+    public static void timeOutput(String s){
+        String d;
+        Format formatter;
+        Date date = new Date();
+        formatter = new SimpleDateFormat("hh:mm:ss");
+        d = formatter.format(date);
+        System.out.println(s+d);
+    }
 }
