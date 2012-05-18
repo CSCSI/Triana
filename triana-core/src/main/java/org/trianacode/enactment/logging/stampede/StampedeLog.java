@@ -193,11 +193,25 @@ public class StampedeLog {
     public void logAllTasks(TaskGraph taskgraph) {
         for (Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)) {
 
+            JobType jobType = null;
+            Object typeParam = task.getParameter(STAMPEDE_TASK_TYPE);
+            if (typeParam != null) {
+                jobType = getJobType(typeParam.toString());
+            }
+
+            if (jobType == null) {
+                jobType = JobType.compute;
+            }
+
+            int type = jobType.code;
+            String typeDesc = jobType.desc;
+
+
             logStampedeEvent(addBaseEventDetails(new StampedeEvent(LogDetail.TASK_INFO)
-                    .add(LogDetail.TYPE_DESC, "compute")
+                    .add(LogDetail.TYPE_DESC, typeDesc)
                     .add(LogDetail.TASK_ID, "task:" + task.getQualifiedTaskName())
                     .add(LogDetail.ARGS, getTaskArgs(task))
-                    .add(LogDetail.TYPE, "1")
+                    .add(LogDetail.TYPE, String.valueOf(type))
                     .add(LogDetail.TRANSFORMATION, task.getQualifiedToolName()))
             );
         }
