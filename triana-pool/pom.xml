@@ -120,6 +120,11 @@
             <version>20090211</version>
         </dependency>
         <dependency>
+            <groupId>org.shiwa.desktop</groupId>
+            <artifactId>shiwa-desktop-gui</artifactId>
+            <version>1.5.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>fr.insalyon.creatis.shiwapool</groupId>
             <artifactId>shiwa-pool-agent</artifactId>
             <version>0.8-SNAPSHOT</version>

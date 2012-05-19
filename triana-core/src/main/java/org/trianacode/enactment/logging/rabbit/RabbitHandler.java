@@ -122,6 +122,9 @@ public class RabbitHandler extends SwingWorker {
 
     public void sendLog(String string) throws IOException, InterruptedException {
         sendingQueue.put(string);
+        if (sendingQueue.remainingCapacity() < 200) {
+            System.out.println("Warning : Logging queue getting full.");
+        }
 //        System.out.println("+" + sendingQueue.size());
     }
 
