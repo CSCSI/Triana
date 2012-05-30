@@ -28,12 +28,19 @@ public class ExportIwir {
 
     private HashSet<Cable> cables = new HashSet<Cable>();
     private HashMap<Task, AbstractTask> taskHashMap = new HashMap<Task, AbstractTask>();
+    boolean std = false;
 
     public void taskGraphToIWIRFile(TaskGraph taskGraph, File file) throws IOException {
         System.out.println("Writing IWIR : " + file.getAbsolutePath());
         BlockScope blockScope = taskGraphToBlockScope(taskGraph);
         System.out.println(blockScope == null);
         writeIWIR(blockScope, file);
+    }
+
+    private void stdOut(String string){
+        if(std){
+            System.out.printf(string);
+        }
     }
 
     private File writeIWIR(BlockScope blockScope, File file) throws IOException {
@@ -48,25 +55,25 @@ public class ExportIwir {
         BlockScope blockScope = recordTasksAndCables(taskGraph);
 
         System.out.println("\nTasks " + taskHashMap.toString());
-        System.out.println("Cables " + ArrayUtils.toString(cables.toArray()));
+        stdOut("Cables " + ArrayUtils.toString(cables.toArray()));
         for (Cable cable : cables) {
             if (cable != null) {
-                System.out.println("\n" + cable);
+                stdOut("\n" + cable);
 
                 Node receivingNode = cable.getReceivingNode().getTopLevelNode();
-                System.out.println("Cable sends data into " + receivingNode.getName());
+                stdOut("Cable sends data into " + receivingNode.getName());
                 Node sendingNode = cable.getSendingNode().getTopLevelNode();
-                System.out.println("Cable receives data from " + sendingNode.getName());
+                stdOut("Cable receives data from " + sendingNode.getName());
 
 
                 AbstractTask sendingIwirTask = taskHashMap.get(sendingNode.getTask());
-                System.out.println("sending task : " + sendingIwirTask.getUniqueId());
+                stdOut("sending task : " + sendingIwirTask.getUniqueId());
                 AbstractTask receivingIwirTask = taskHashMap.get(receivingNode.getTask());
-                System.out.println("receiving task : " + receivingIwirTask.getUniqueId());
+                stdOut("receiving task : " + receivingIwirTask.getUniqueId());
 
 
                 if (sendingIwirTask.getParentTask() != receivingIwirTask.getParentTask()) {
-                    System.out.println("***Out of scope");
+                    stdOut("***Out of scope");
 
 //                    AbstractCompoundTask sendingCompoundTask = ((AbstractCompoundTask)taskHashMap.get(
 //                            sendingNode.getTopLevelNode().getTask()).getParentTask());
@@ -78,7 +85,7 @@ public class ExportIwir {
 
                     AbstractCompoundTask topLevelCompoundTask = ((AbstractCompoundTask) outputPort.getMyTask().getParentTask());
 
-                    System.out.println("Linking in scope " + outputPort
+                    stdOut("Linking in scope " + outputPort
                             + " to " + inputPort + " scope "
                             + topLevelCompoundTask);
                     topLevelCompoundTask.addLink(outputPort, inputPort);
@@ -91,7 +98,7 @@ public class ExportIwir {
                     InputPort inputPort = new InputPort("in" + (receivingNode.getNodeIndex() + 1), SimpleType.FILE);
                     receivingIwirTask.addInputPort(inputPort);
                     ((AbstractCompoundTask) sendingIwirTask.getParentTask()).addLink(outputPort, inputPort);
-                    System.out.println("Linked in scope " + outputPort + " to " + inputPort);
+                    stdOut("Linked in scope " + outputPort + " to " + inputPort);
                 }
 
             }
@@ -123,7 +130,7 @@ public class ExportIwir {
 
                     Object unitPackage = map.get(JavaConstants.UNIT_PACKAGE);
                     Object unitName = map.get(JavaConstants.UNIT_NAME);
-                    System.out.println(unitPackage + " " + unitName);
+                    stdOut(unitPackage + " " + unitName);
                     if (unitName != null && unitPackage != null) {
                         tasktype = unitPackage.toString() + "." + unitName.toString();
                     } else {
@@ -164,14 +171,14 @@ public class ExportIwir {
     }
 
     private InputPort addInputNodeChainToBlockScope(Node node) {
-        System.out.println("\n Input chain with node : " + node);
-        System.out.println("top " + node.getTopLevelNode());
-        System.out.println("bottom " + node.getBottomLevelNode());
+        stdOut("\n Input chain with node : " + node);
+        stdOut("top " + node.getTopLevelNode());
+        stdOut("bottom " + node.getBottomLevelNode());
         InputPort inputBlockPort = new InputPort("in" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.FILE);
         taskHashMap.get(node.getBottomLevelTask()).addInputPort(inputBlockPort);
 
         if (node.getTopLevelNode() == node.getBottomLevelNode()) {
-            System.out.println("Single node, no scope issues :)");
+            stdOut("Single node, no scope issues :)");
             return inputBlockPort;
         }
 
@@ -181,7 +188,7 @@ public class ExportIwir {
             scopeNode = scopeNode.getParentNode();
             InputPort newPort = new InputPort("in" + (scopeNode.getNodeIndex() + 1), SimpleType.FILE);
             taskHashMap.get(scopeNode.getTask()).addInputPort(newPort);
-            System.out.println("added " + scopeNode + " to input chain");
+            stdOut("added " + scopeNode + " to input chain");
             ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(scopePort, newPort);
             scopePort = newPort;
         }
@@ -192,24 +199,24 @@ public class ExportIwir {
         AbstractTask iwirTask = taskHashMap.get(topLevelNode.getTask());
         iwirTask.addInputPort(taskInputPort);
 
-        System.out.println("Trying to add " + taskInputPort.getUniqueId()
+        stdOut("Trying to add " + taskInputPort.getUniqueId()
                 + " to end of input chain - previous node "
                 + scopePort.getUniqueId());
         ((AbstractCompoundTask) iwirTask.getParentTask()).addLink(scopePort, taskInputPort);
 
-        System.out.println("Returning " + inputBlockPort.getUniqueId());
+        stdOut("Returning " + inputBlockPort.getUniqueId());
         return inputBlockPort;
     }
 
     private OutputPort addOutputNodeChainToBlockScope(Node node) {
-        System.out.println("\n Output chain with node : " + node);
-        System.out.println("top " + node.getTopLevelNode());
-        System.out.println("bottom " + node.getBottomLevelNode());
+        stdOut("\n Output chain with node : " + node);
+        stdOut("top " + node.getTopLevelNode());
+        stdOut("bottom " + node.getBottomLevelNode());
         OutputPort outputBlockPort = new OutputPort("out" + (node.getBottomLevelNode().getNodeIndex() + 1), SimpleType.FILE);
         taskHashMap.get(node.getBottomLevelTask()).addOutputPort(outputBlockPort);
 
         if (node.getTopLevelNode() == node.getBottomLevelNode()) {
-            System.out.println("Single node, no scope issues :)");
+            stdOut("Single node, no scope issues :)");
             return outputBlockPort;
         }
 
@@ -219,7 +226,7 @@ public class ExportIwir {
             scopeNode = scopeNode.getParentNode();
             OutputPort newPort = new OutputPort("out" + (scopeNode.getNodeIndex() + 1), SimpleType.FILE);
             taskHashMap.get(scopeNode.getTask()).addOutputPort(newPort);
-            System.out.println("added " + scopeNode + " to output chain");
+            stdOut("added " + scopeNode + " to output chain");
             ((AbstractCompoundTask) newPort.getMyTask().getParentTask()).addLink(newPort, scopePort);
             scopePort = newPort;
         }
@@ -232,7 +239,7 @@ public class ExportIwir {
 
         ((AbstractCompoundTask) iwirTask.getParentTask()).addLink(taskOutputPort, scopePort);
 
-        System.out.println("Returning " + outputBlockPort.getUniqueId());
+        stdOut("Returning " + outputBlockPort.getUniqueId());
         return outputBlockPort;
     }
 

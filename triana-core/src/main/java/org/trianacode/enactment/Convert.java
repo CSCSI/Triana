@@ -131,6 +131,7 @@ public class Convert {
             }
 
             if (type == null) {
+                System.out.println("Workflow type not recognised");
                 return;
             } else if (type.equals(AddonUtils.TASKGRAPH_FORMAT)) {
                 XMLReader reader = new XMLReader(new FileReader(workflowInput.get(0)));

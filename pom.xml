@@ -61,6 +61,8 @@
         <module>triana-pegasus-gui</module>
         <module>triana-toolboxes</module>
         <module>triana-shiwa</module>
+        <module>triana-pool</module>
+        <module>triana-convert</module>
         <module>triana-app</module>
 
     </modules>
