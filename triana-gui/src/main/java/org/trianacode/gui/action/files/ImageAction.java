@@ -359,7 +359,7 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
             }
         }
 
-        private String getType() {
+        private String getFileType() {
             if (this.jpg.isSelected()) {
                 return "jpg";
             }
@@ -383,7 +383,7 @@ public class ImageAction extends AbstractAction implements ActionDisplayOptions 
                 if (f != null) {
                     Thread thread = new Thread() {
                         public void run() {
-                            save(f, comp, getScale(), rect, image, getType(), true);
+                            save(f, comp, getScale(), rect, image, getFileType(), true);
                             setVisible(false);
                             dispose();
                         }

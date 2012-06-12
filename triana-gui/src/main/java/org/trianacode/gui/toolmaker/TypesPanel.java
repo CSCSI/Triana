@@ -260,7 +260,7 @@ public class TypesPanel extends JPanel implements ActionListener {
             dialog.setVisible(true);
 
             if (dialog.isAccepted()) {
-                Type type = dialog.getType();
+                PanelType type = dialog.getPanelType();
                 DefaultListModel addlist;
 
                 if (event.getSource() == addin) {
@@ -303,13 +303,13 @@ public class TypesPanel extends JPanel implements ActionListener {
     /**
      * Adds the type to the list so that the list remains in node order
      */
-    private void addInNodeOrder(Type type, DefaultListModel addlist) {
-        Type curtype;
+    private void addInNodeOrder(PanelType type, DefaultListModel addlist) {
+        PanelType curtype;
         int count = 0;
         boolean added = false;
 
         while ((count < addlist.getSize()) && (!added)) {
-            curtype = (Type) addlist.getElementAt(count);
+            curtype = (PanelType) addlist.getElementAt(count);
 
             if (type.getIndex() < curtype.getIndex()) {
                 addlist.add(count, type);
@@ -381,10 +381,10 @@ public class TypesPanel extends JPanel implements ActionListener {
         int nodecount = 0;
 
         for (int count = 0; count < types.length; count++) {
-            if (((Type) types[count]).isAllNodes()) {
-                allnodes.add(((Type) types[count]).getType());
+            if (((PanelType) types[count]).isAllNodes()) {
+                allnodes.add(((PanelType) types[count]).getType());
                 used++;
-            } else if (((Type) types[count]).isOtherNodes()) {
+            } else if (((PanelType) types[count]).isOtherNodes()) {
                 used++;
             }
         }
@@ -394,8 +394,8 @@ public class TypesPanel extends JPanel implements ActionListener {
             curnode.addAll(allnodes);
 
             for (int count = 0; count < types.length; count++) {
-                if (((Type) types[count]).getIndex() == nodecount) {
-                    curnode.add(((Type) types[count]).getType());
+                if (((PanelType) types[count]).getIndex() == nodecount) {
+                    curnode.add(((PanelType) types[count]).getType());
                     used++;
                 }
             }
@@ -423,10 +423,10 @@ public class TypesPanel extends JPanel implements ActionListener {
         ArrayList otherlist = new ArrayList();
 
         for (int count = 0; count < types.length; count++) {
-            if (((Type) types[count]).isAllNodes()) {
-                otherlist.add(((Type) types[count]).getType());
-            } else if (((Type) types[count]).isOtherNodes()) {
-                otherlist.add(((Type) types[count]).getType());
+            if (((PanelType) types[count]).isAllNodes()) {
+                otherlist.add(((PanelType) types[count]).getType());
+            } else if (((PanelType) types[count]).isOtherNodes()) {
+                otherlist.add(((PanelType) types[count]).getType());
             }
         }
 
@@ -434,7 +434,7 @@ public class TypesPanel extends JPanel implements ActionListener {
     }
 
 
-    private class Type {
+    private class PanelType {
 
         public final static int ALL_NODES = -1;
         public final static int OTHER_NODES = Integer.MAX_VALUE;
@@ -442,7 +442,7 @@ public class TypesPanel extends JPanel implements ActionListener {
         private int index;
         private String type;
 
-        public Type(int index, String type) {
+        public PanelType(int index, String type) {
             this.index = index;
             this.type = type;
         }
@@ -582,19 +582,19 @@ public class TypesPanel extends JPanel implements ActionListener {
         }
 
 
-        public Type getType() {
+        public PanelType getPanelType() {
             String nodestr = (String) nodelist.getSelectedItem();
             int nodeindex;
 
             if (nodestr.equals(ALL_NODES)) {
-                nodeindex = Type.ALL_NODES;
+                nodeindex = PanelType.ALL_NODES;
             } else if (nodestr.equals(OTHER_NODES)) {
-                nodeindex = Type.OTHER_NODES;
+                nodeindex = PanelType.OTHER_NODES;
             } else {
                 nodeindex = Integer.parseInt(nodestr);
             }
 
-            return new Type(nodeindex, (String) typelist.getSelectedItem());
+            return new PanelType(nodeindex, (String) typelist.getSelectedItem());
         }
 
         /**
