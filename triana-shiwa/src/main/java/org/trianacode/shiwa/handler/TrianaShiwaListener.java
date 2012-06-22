@@ -96,7 +96,7 @@ public class TrianaShiwaListener implements ExecutionListener {
     }
 
     @Override
-    public void digestWorkflow(File file, TransferSignature signature) {
+    public void digestWorkflow(File file, File file1, TransferSignature signature) {
         devLog.debug("Importing a bundle");
 
         if (receivedListener != null) {
@@ -142,6 +142,11 @@ public class TrianaShiwaListener implements ExecutionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean ignoreBundle() {
+        return false;
     }
 
 

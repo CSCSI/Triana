@@ -18,10 +18,15 @@ public class BundleUnitListener implements ExecutionListener {
     private TransferSignature transferSignature;
 
     @Override
-    public void digestWorkflow(File file, TransferSignature transferSignature) {
+    public void digestWorkflow(File file, File file1, TransferSignature transferSignature) {
 
         this.file = file;
         this.transferSignature = transferSignature;
+    }
+
+    @Override
+    public boolean ignoreBundle() {
+        return false;
     }
 
     public TransferSignature getTransferSignature() {
