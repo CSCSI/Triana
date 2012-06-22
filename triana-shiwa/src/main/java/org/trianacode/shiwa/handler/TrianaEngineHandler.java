@@ -80,7 +80,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     }
 
     @Override
-    public InputStream getWorkflowDefinition() {
+    public InputStream getDefinition() {
         try {
             File temp = File.createTempFile("publishedTaskgraphTemp", ".xml");
             temp.deleteOnExit();
@@ -98,7 +98,7 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     }
 
     @Override
-    public String getWorkflowDefinitionName() {
+    public String getDefinitionName() {
         return task.getQualifiedTaskName();
     }
 
@@ -119,12 +119,12 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
     }
 
     @Override
-    public String getDescription() {
+    public String getVersion() {
         return null;
     }
 
     @Override
-    public String getImplementationVersion() {
+    public String getDescription() {
         return null;
     }
 

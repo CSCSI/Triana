@@ -2,7 +2,7 @@ package org.trianacode.shiwa.bundle;
 
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.bundle.BundleFile;
-import org.shiwa.desktop.data.description.core.Configuration;
+import org.shiwa.desktop.data.description.core.ExecutionMapping;
 import org.shiwa.desktop.data.description.resource.ConfigurationResource;
 import org.shiwa.desktop.data.description.resource.ReferableResource;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
@@ -24,13 +24,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+//import org.shiwa.desktop.data.description.core.Configuration;
+
 /**
- * Created by IntelliJ IDEA.
- * User: Ian Harvey
- * Date: 24/02/2012
- * Time: 16:59
- * To change this template use File | Settings | File Templates.
- */
+* Created by IntelliJ IDEA.
+* User: Ian Harvey
+* Date: 24/02/2012
+* Time: 16:59
+* To change this template use File | Settings | File Templates.
+*/
 public class TrianaBundle {
 
     public File executeBundleReturnFile(SHIWABundle shiwaBundle, String[] trianaArgs) throws SHIWADesktopIOException {
@@ -108,7 +110,7 @@ public class TrianaBundle {
                 engine.shutdown(-1);
             }
 
-            Configuration execConfig = new Configuration(Configuration.ConfigType.EXECUTION_CONFIGURATION);
+            ExecutionMapping execConfig = new ExecutionMapping();
             ArrayList<ConfigurationResource> configurationResourceArrayList = new ArrayList<ConfigurationResource>();
 
             ArrayList<File> outputs = unbundler.getOutputFiles();
@@ -126,7 +128,7 @@ public class TrianaBundle {
                 File outputFile = outputs.get(i);
                 System.out.println(outputFile.getAbsolutePath());
                 BundleFile bf = DataUtils.createBundleFile(outputFile, execConfig.getId() + "/");
-                bf.setType(BundleFile.FileType.INPUT_FILE);
+                bf.setType(BundleFile.FileType.DATA_FILE);
                 execConfig.getBundleFiles().add(bf);
                 configurationResource.setBundleFile(bf);
                 configurationResource.setRefType(ConfigurationResource.RefTypes.FILE_REF);

@@ -60,7 +60,6 @@ public class DaxReaderGUIInterface extends AbstractFormatFilter implements TaskG
                 DaxJob.class.getSimpleName()
         );
         TaskGraph tg = daxReader.importWorkflow(file, properties);
-
         try {
             TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
         } catch (Exception e) {

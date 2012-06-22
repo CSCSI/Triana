@@ -1,6 +1,6 @@
 package org.trianacode.shiwa.bundle;
 
-import org.shiwa.desktop.data.description.SHIWABundle;
+import org.shiwa.desktop.data.description.ConcreteBundle;
 import org.shiwa.desktop.data.util.DataUtils;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.TextFieldParameter;
@@ -43,7 +43,7 @@ public class BundleToTrianaCloud implements TaskConscious {
         }
         ArrayList<File> toSend = new ArrayList<File>();
         try {
-            ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(new SHIWABundle(new File(bundleFile)));
+            ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(new ConcreteBundle(new File(bundleFile)));
             BrokerUtils.prepareSubworkflow(task, UUID.randomUUID(), shiwaBundleHelper.getWorkflowImplementation());
 
             File tempBundleFile = File.createTempFile(

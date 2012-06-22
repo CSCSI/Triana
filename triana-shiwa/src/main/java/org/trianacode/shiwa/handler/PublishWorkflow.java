@@ -1,9 +1,7 @@
 package org.trianacode.shiwa.handler;
 
-import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktop;
-import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.addon.ConversionAddon;
@@ -12,7 +10,6 @@ import org.trianacode.gui.action.files.ImageAction;
 import org.trianacode.gui.hci.ApplicationFrame;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.DisplayDialog;
-import org.trianacode.shiwa.iwir.importer.utils.ExportIwir;
 import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
@@ -54,6 +51,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
 
         WorkflowEngineHandler handler = buildHandler(tg);
         if (handler != null) {
+            System.out.println("Handler built " + handler.getClass().getCanonicalName());
             publish(handler, frame.getEngine());
         }
     }
@@ -68,17 +66,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         } else {
             System.out.println(tg.getQualifiedTaskName());
 
-            InputStream displayStream = null;
-            try {
-                File imageFile = File.createTempFile("image", ".jpg");
-                ImageAction.save(imageFile, 1, "jpg");
-                if (imageFile.length() > 0) {
-                    displayStream = new FileInputStream(imageFile);
-                    System.out.println("Display image created : " + imageFile.toURI());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
 
             ArrayList<ConversionAddon> converters = new ArrayList<ConversionAddon>();
             Set<Object> addons = AddonUtils.getCLIaddons(GUIEnv.getApplicationFrame().getEngine());
@@ -98,35 +86,47 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
             Object addon = JOptionPane.showInputDialog(GUIEnv.getApplicationFrame(),
                     "Please select the format for the workflow definition to be submitted in.",
                     "Select Definition Type",
-                    JOptionPane.OK_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
                     null,
                     choices,
                     choices[0]);
 
             if (addon != null) {
-                TransferSignature signature = new TransferSignature();
+                InputStream displayStream = getImageStream();
+//                TransferSignature signature = new TransferSignature();
                 if (!(addon instanceof ConversionAddon)) {
                     return new TrianaEngineHandler(tg, tg.getProperties().getEngine(), displayStream);
-                } else if (addon.toString().equals("iwir")) {
-                    ExportIwir exportIwir = new ExportIwir();
-                    //BlockScope blockscope = exportIwir.taskGraphToBlockScope(tg);
-                    IWIR iwir = new IWIR(tg.getToolName());
-                    //iwir.setTask(blockscope);
-                    return new TrianaIWIRHandler(iwir, displayStream);
-
+                } else if (addon.toString().equals("IWIR")) {
+                    return new TrianaIWIRHandler(tg, displayStream);
                 } else {
-                    InputStream definitionStream = ((ConversionAddon) addon).toolToWorkflowFileInputStream(tg);
-                    GenericWorkflowHandler handler = new GenericWorkflowHandler(definitionStream, displayStream);
-                    handler.setSignature(signature);
-                    handler.setLanguage(addon.toString());
-                    handler.setDefinitionName(tg.getToolName());
-
-                    return handler;
+//                    InputStream definitionStream = ((ConversionAddon) addon).toolToWorkflowFileInputStream(tg);
+//                    GenericWorkflowHandler handler = new GenericWorkflowHandler(definitionStream, displayStream);
+//                    handler.setSignature(signature);
+//                    handler.setLanguage(addon.toString());
+//                    handler.setDefinitionName(tg.getToolName());
+//                    return handler;
+                    System.out.printf("Handler not found");
+                    return null;
                 }
             } else {
                 return null;
             }
         }
+    }
+
+    private static InputStream getImageStream(){
+        InputStream displayStream = null;
+        try {
+            File imageFile = File.createTempFile("image", ".jpg");
+            ImageAction.save(imageFile, 1, "jpg");
+            if (imageFile.length() > 0) {
+                displayStream = new FileInputStream(imageFile);
+                System.out.println("Display image created : " + imageFile.toURI());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return displayStream;
     }
 
     public static void publish(WorkflowEngineHandler handler, TrianaInstance engine) {

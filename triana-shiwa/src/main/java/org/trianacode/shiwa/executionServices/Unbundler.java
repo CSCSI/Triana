@@ -2,7 +2,7 @@ package org.trianacode.shiwa.executionServices;
 
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.bundle.BundleFile;
-import org.shiwa.desktop.data.description.core.Configuration;
+import org.shiwa.desktop.data.description.core.ExecutionMapping;
 import org.shiwa.desktop.data.description.core.WorkflowImplementation;
 import org.shiwa.desktop.data.description.handler.TransferPort;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+//import org.shiwa.desktop.data.description.core.Configuration;
 
 //import org.shiwa.desktop.data.description.handler.Dependency;
 
@@ -251,7 +253,8 @@ public class Unbundler implements ExecutionAddon {
 
 
     public File createOutputBundle(String outputPath) throws IOException {
-        Configuration execConfig = new Configuration(Configuration.ConfigType.EXECUTION_CONFIGURATION);
+//        Configuration execConfig = new Configuration(Configuration.ConfigType.EXECUTION_CONFIGURATION);
+        ExecutionMapping execConfig = new ExecutionMapping();
         ArrayList<ConfigurationResource> configurationResourceArrayList = new ArrayList<ConfigurationResource>();
 
         ArrayList<File> outputs = getOutputFiles();
@@ -269,7 +272,7 @@ public class Unbundler implements ExecutionAddon {
             File outputFile = outputs.get(i);
             System.out.println(outputFile.getAbsolutePath());
             BundleFile bf = DataUtils.createBundleFile(outputFile, execConfig.getId() + "/");
-            bf.setType(BundleFile.FileType.INPUT_FILE);
+            bf.setType(BundleFile.FileType.DATA_FILE);
             execConfig.getBundleFiles().add(bf);
             configurationResource.setBundleFile(bf);
             configurationResource.setRefType(ConfigurationResource.RefTypes.FILE_REF);

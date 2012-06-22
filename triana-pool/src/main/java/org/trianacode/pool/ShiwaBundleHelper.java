@@ -1,10 +1,8 @@
 package org.trianacode.pool;
 
-import org.apache.commons.io.FileUtils;
+import org.shiwa.desktop.data.description.ConcreteBundle;
 import org.shiwa.desktop.data.description.SHIWABundle;
-import org.shiwa.desktop.data.description.bundle.BundleFile;
-import org.shiwa.desktop.data.description.core.Configuration;
-import org.shiwa.desktop.data.description.core.WorkflowImplementation;
+import org.shiwa.desktop.data.description.core.*;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.description.resource.ConfigurationResource;
 import org.shiwa.desktop.data.description.resource.ReferableResource;
@@ -12,9 +10,9 @@ import org.shiwa.desktop.data.description.workflow.Dependency;
 import org.shiwa.desktop.data.description.workflow.InputPort;
 import org.shiwa.desktop.data.description.workflow.OutputPort;
 import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
-import org.shiwa.desktop.data.transfer.WorkflowController;
 import org.shiwa.desktop.data.util.DataUtils;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
+import org.shiwa.desktop.data.util.properties.Locations;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,34 +28,52 @@ import java.util.UUID;
  * Time: 14:28
  * To change this template use File | Settings | File Templates.
  */
-public class ShiwaBundleHelper extends WorkflowController {
+public class ShiwaBundleHelper {
 
-    public static String parentUUIDstring = "parentUUID";
 
     //    private String workflowFilePath;
-    private SHIWABundle shiwaBundle;
-    private UUID parentUUID = null;
+    private ConcreteBundle concreteBundle;
+
+//    private UUID parentUUID = null;
 
     public ShiwaBundleHelper(SHIWABundle shiwaBundle) throws SHIWADesktopIOException {
-        this.shiwaBundle = shiwaBundle;
-        initialiseController(shiwaBundle);
-        init();
+        if(shiwaBundle instanceof ConcreteBundle){
+            this.concreteBundle = (ConcreteBundle) shiwaBundle;
+        } else {
+
+        }
+//        initialiseController(concreteBundle);
+//        init();
     }
 
-    private void init() {
-        List<SHIWAProperty> properties = getWorkflowImplementation().getProperties();
-        for (SHIWAProperty property : properties) {
-            if (property.getTitle().equals(parentUUIDstring)) {
-                System.out.println("Found parent uuid " + property.getValue());
-                parentUUID = UUID.fromString(property.getValue());
-            }
-        }
-    }
+//    private void init() {
+//        SHIWAProperty parentProperty = getShiwaProperty(parentUUIDstring);
+//        if(parentProperty != null){
+//            parentUUID = UUID.fromString(parentProperty.getValue());
+//        }
+////        List<SHIWAProperty> properties = getWorkflowImplementation().getProperties();
+////        for (SHIWAProperty property : properties) {
+////            if (property.getTitle().equals(parentUUIDstring)) {
+////                System.out.println("Found parent uuid " + property.getValue());
+////                parentUUID = UUID.fromString(property.getValue());
+////            }
+////        }
+//    }
 
     public ShiwaBundleHelper(String bundlePath) throws SHIWADesktopIOException {
-        this.shiwaBundle = new SHIWABundle(new File(bundlePath));
-        initialiseController(shiwaBundle);
-        init();
+        this.concreteBundle = new ConcreteBundle(new File(bundlePath));
+//        initialiseController(concreteBundle);
+//        init();
+    }
+
+    public SHIWAProperty getShiwaProperty(String key) {
+        List<SHIWAProperty> properties = concreteBundle.getPrimaryConcreteTask().getProperties();
+        for (SHIWAProperty property : properties) {
+            if (property.getTitle().equals(key)) {
+                return property;
+            }
+        }
+        return null;
     }
 
     public void prepareLibraryDependencies() {
@@ -76,7 +91,7 @@ public class ShiwaBundleHelper extends WorkflowController {
 
     public ArrayList<Dependency> getDependencyForType(String type) {
         ArrayList<Dependency> dependencies = new ArrayList<Dependency>();
-        for (Dependency dependency : getWorkflowImplementation().getDependencies()) {
+        for (Dependency dependency : concreteBundle.getPrimaryConcreteTask().getDependencies()) {
             if (dependency.getDataType().equals(type)) {
                 dependencies.add(dependency);
             }
@@ -85,8 +100,8 @@ public class ShiwaBundleHelper extends WorkflowController {
     }
 
     public ConfigurationResource getConfigurationResourceForDependency(Dependency dependency) {
-        for (Configuration config : getConfigurations()) {
-            for (ConfigurationResource configurationResource : config.getResources()) {
+        for (Mapping mapping : concreteBundle.getPrimaryMappings()) {
+            for (ConfigurationResource configurationResource : mapping.getResources()) {
                 if (dependency.getId().equals(configurationResource.getId())) {
                     return configurationResource;
                 }
@@ -102,25 +117,17 @@ public class ShiwaBundleHelper extends WorkflowController {
         }
         System.out.println("   >> Made : " + file.getAbsolutePath());
 
-        return extractToFile(configurationResource, file);
+        return DataUtils.extractToFile(configurationResource, file);
     }
 
-    public static File extractToFile(ConfigurationResource resource, File file) throws IOException {
-        BundleFile bundleFile = resource.getBundleFile();
-        FileOutputStream outputStream = new FileOutputStream(file);
-        outputStream.write(bundleFile.getBytes());
-        outputStream.close();
-        return file;
+    public File getTempEntry(String relativePath) throws IOException {
+        return DataUtils.inputStreamToFile(concreteBundle.getEntry(relativePath),
+                Locations.getTempFile(relativePath.replaceAll("/", "."), false));
     }
 
-//    public File getTempEntry(String relativePath) throws IOException {
-//        return DataUtils.inputStreamToFile(shiwaBundle.getEntry(relativePath),
-//                Locations.getTempFile(relativePath.replaceAll("/", "."), false));
-//    }
-//
-//    public File extractToFile(String relativePath, File file) throws IOException {
-//        return DataUtils.inputStreamToFile(shiwaBundle.getEntry(relativePath), file);
-//    }
+    public File extractToFile(String relativePath, File file) throws IOException {
+        return DataUtils.inputStreamToFile(concreteBundle.getEntry(relativePath), file);
+    }
 
     public File bytesToFile(byte[] bytes, File file) throws IOException {
 
@@ -131,13 +138,13 @@ public class ShiwaBundleHelper extends WorkflowController {
     }
 
     public File writeDefinitionFile() throws IOException {
-        File definitionTempFile = File.createTempFile(getWorkflowImplementation().getDefinition().getFilename(), ".tmp");
+        File definitionTempFile = File.createTempFile(concreteBundle.getPrimaryConcreteTask().getDefinition().getFilename(), ".tmp");
         definitionTempFile.deleteOnExit();
         return writeDefinitionFile(definitionTempFile);
     }
 
     public File writeDefinitionFile(File file) throws IOException {
-        return bytesToFile(getWorkflowImplementation().getDefinition().getBytes(), file);
+        return bytesToFile(concreteBundle.getPrimaryConcreteTask().getDefinition().getBytes(), file);
     }
 
     private File createFileInRuntimeFolder(String filename) {
@@ -153,31 +160,39 @@ public class ShiwaBundleHelper extends WorkflowController {
 
     public TransferSignature createDefaultTransferSignature() throws IOException {
         if (hasDataConfiguration()) {
-            return createTransferSignature(getWorkflowImplementation(),
-                    getFirstConfigurationOfType(Configuration.ConfigType.DATA_CONFIGURATION));
+            return createTransferSignature(concreteBundle.getPrimaryConcreteTask(),
+                    getFirstConfigurationOfType(DataMapping.class));
         }
         return null;
     }
 
     public boolean hasDataConfiguration() {
-        for (Configuration config : getConfigurations()) {
-            if (config.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
+        for (Mapping mapping : concreteBundle.getPrimaryMappings()) {
+            if(mapping instanceof DataMapping){
                 return true;
             }
+//            if (config.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
+//                return true;
+//            }
         }
         return false;
     }
 
-    private Configuration getFirstConfigurationOfType(Configuration.ConfigType configType) {
-        for (Configuration config : getConfigurations()) {
-            if (config.getType() == configType) {
-                return config;
+    private Mapping getFirstConfigurationOfType(Class<? extends Mapping> mappingType) {
+        for (Mapping mapping :  concreteBundle.getPrimaryMappings()) {
+
+            if(mapping.getClass().isAssignableFrom(mappingType)){
+                return mapping;
             }
+
+//            if (config.getType() == configType) {
+//                return config;
+//            }
         }
         return null;
     }
 
-    public TransferSignature createTransferSignature(WorkflowImplementation workflow, Configuration configuration) throws IOException {
+    public TransferSignature createTransferSignature(ConcreteTask workflow, Mapping configuration) throws IOException {
         TransferSignature signature = new TransferSignature();
 
         signature.setName(workflow.getDefinition().getFilename());
@@ -266,38 +281,28 @@ public class ShiwaBundleHelper extends WorkflowController {
     }
 
     public File saveBundle(File file) throws SHIWADesktopIOException {
-        return DataUtils.bundle(file, shiwaBundle.getAggregatedResource());
+        return DataUtils.bundle(file, concreteBundle.getAggregatedResource());
     }
-
-//    public static void main(String[] args) throws IOException, URISyntaxException {
-//        String filename = "http://i9.cscloud.cf.ac.uk/webbed-nfs/nfs/dart/DARTAcousticG.wav";
-//        File remoteFile = new File(filename);
-//        File localFile = new File(remoteFile.getName());
-//        File done = download(filename, new File("."), null);
-//
-////        boolean done = FileUtils.copyFile(filename, downloaded.getAbsolutePath(), 0);
-//
-//        System.out.println("got " + localFile.getAbsolutePath() + " " + done.exists());
-//    }
-
 
     public static File download(String urlSource, File downloadDir, File localFile) throws IOException {
         File remoteFile = new File(urlSource);
         if (localFile == null) {
             localFile = new File(downloadDir, remoteFile.getName());
         }
-        FileUtils.copyURLToFile(new URL(urlSource), localFile);
+        org.apache.commons.io.FileUtils.copyURLToFile(new URL(urlSource), localFile);
         return localFile;
     }
 
 
     public void prepareEnvironmentDependencies() throws IOException {
-        for (Dependency dependency : getWorkflowImplementation().getDependencies()) {
+        for (Dependency dependency : concreteBundle.getPrimaryConcreteTask().getDependencies()) {
             String value = null;
             TransferSignature.ValueType valueType = null;
 
-            if (getFirstConfigurationOfType(Configuration.ConfigType.ENVIRONMENT_CONFIGURATION) != null) {
-                for (ConfigurationResource portRef : getFirstConfigurationOfType(Configuration.ConfigType.ENVIRONMENT_CONFIGURATION).getResources()) {
+//            if (getFirstConfigurationOfType(Configuration.ConfigType.ENVIRONMENT_CONFIGURATION) != null) {
+            if (getFirstConfigurationOfType(EnvironmentMapping.class) != null) {
+
+                for (ConfigurationResource portRef : getFirstConfigurationOfType(EnvironmentMapping.class).getResources()) {
                     if (portRef.getReferableResource().getId().equals(dependency.getId())) {
                         value = portRef.getValue();
 
@@ -330,7 +335,25 @@ public class ShiwaBundleHelper extends WorkflowController {
         }
     }
 
-    public UUID getParentUUID() {
-        return parentUUID;
+//    public UUID getParentUUID() {
+//        SHIWAProperty parentProperty = getShiwaProperty(StampedeLog.PARENT_UUID_STRING);
+//        if(parentProperty != null) {
+//            return UUID.fromString(parentProperty.getValue());
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    public UUID getRunUUID() {
+//        SHIWAProperty runProperty = getShiwaProperty(StampedeLog.RUN_UUID_STRING);
+//        if(runProperty != null) {
+//            return UUID.fromString(runProperty.getValue());
+//        } else {
+//            return null;
+//        }
+//    }
+
+    public WorkflowImplementation getWorkflowImplementation() {
+        return (WorkflowImplementation) concreteBundle.getPrimaryConcreteTask();
     }
 }

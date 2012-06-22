@@ -84,13 +84,21 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.5.1-SNAPSHOT</version>
+            <version>1.6-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.shiwa.fgi</groupId>
-            <artifactId>iwir</artifactId>
-            <version>1.1.4</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.shiwa.desktop</groupId>-->
+            <!--<artifactId>shiwa-desktop-gui</artifactId>-->
+            <!--<version>1.6-BETA</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/lib/shiwa-desktop-all-1.6-BETA.jar</systemPath>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.shiwa.fgi</groupId>-->
+            <!--<artifactId>iwir</artifactId>-->
+            <!--<version>1.1.4</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -110,6 +118,12 @@
             <groupId>fr.insalyon.creatis.shiwapool</groupId>
             <artifactId>shiwa-pool-agent</artifactId>
             <version>0.8-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>shiwa-desktop-data</artifactId>
+                    <groupId>org.shiwa.desktop</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>fr.insalyon.creatis.shiwapool</groupId>
@@ -119,6 +133,10 @@
                 <exclusion>
                     <artifactId>xml-apis</artifactId>
                     <groupId>xml-apis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>shiwa-desktop-data</artifactId>
+                    <groupId>org.shiwa.desktop</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

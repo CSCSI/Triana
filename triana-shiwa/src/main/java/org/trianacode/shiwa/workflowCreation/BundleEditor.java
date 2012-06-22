@@ -1,8 +1,9 @@
 package org.trianacode.shiwa.workflowCreation;
 
-import org.shiwa.desktop.data.description.SHIWABundle;
+import org.shiwa.desktop.data.description.ConcreteBundle;
 import org.shiwa.desktop.data.description.bundle.BundleFile;
-import org.shiwa.desktop.data.description.core.Configuration;
+import org.shiwa.desktop.data.description.core.DataMapping;
+import org.shiwa.desktop.data.description.core.Mapping;
 import org.shiwa.desktop.data.description.core.WorkflowImplementation;
 import org.shiwa.desktop.data.description.resource.AggregatedResource;
 import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
@@ -21,6 +22,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+//import org.shiwa.desktop.data.description.core.Configuration;
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,7 +50,7 @@ public class BundleEditor implements TaskConscious {
             File inputBundleFile = new File(bundlePath);
             System.out.println("input exists : " + inputBundleFile.exists());
 
-            shiwaBundleHelper = new ShiwaBundleHelper(new SHIWABundle(inputBundleFile));
+            shiwaBundleHelper = new ShiwaBundleHelper(new ConcreteBundle(inputBundleFile));
             clearConfigs(shiwaBundleHelper.getWorkflowImplementation());
 
         } catch (SHIWADesktopIOException e) {
@@ -140,15 +143,15 @@ public class BundleEditor implements TaskConscious {
     }
 
     private void clearConfigs(WorkflowImplementation workflowImplementation) {
-        ArrayList<Configuration> dataConfigs = new ArrayList<Configuration>();
+        ArrayList<Mapping> dataConfigs = new ArrayList<Mapping>();
         for (AggregatedResource resource : workflowImplementation.getAggregatedResources()) {
-            if (resource instanceof Configuration) {
-                if (((Configuration) resource).getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
-                    dataConfigs.add((Configuration) resource);
-                }
+            if (resource instanceof DataMapping) {
+//                if (((Configuration) resource).getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
+                    dataConfigs.add((DataMapping) resource);
+//                }
             }
         }
-        for (Configuration configuration : dataConfigs) {
+        for (Mapping configuration : dataConfigs) {
             workflowImplementation.getAggregatedResources().remove(configuration);
         }
     }

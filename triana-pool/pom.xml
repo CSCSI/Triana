@@ -122,12 +122,18 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.5.1-SNAPSHOT</version>
+            <version>1.6-BETA</version>
         </dependency>
         <dependency>
             <groupId>fr.insalyon.creatis.shiwapool</groupId>
             <artifactId>shiwa-pool-agent</artifactId>
             <version>0.8-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>shiwa-desktop-data</artifactId>
+                    <groupId>org.shiwa.desktop</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

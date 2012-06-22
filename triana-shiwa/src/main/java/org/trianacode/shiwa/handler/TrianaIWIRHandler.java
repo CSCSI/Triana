@@ -4,12 +4,15 @@ import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.description.workflow.Author;
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.fgi.iwir.AbstractDataPort;
+import org.shiwa.fgi.iwir.BlockScope;
 import org.shiwa.fgi.iwir.IWIR;
+import org.trianacode.shiwa.iwir.importer.utils.ExportIwir;
+import org.trianacode.taskgraph.TaskGraph;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Set;
 
@@ -25,9 +28,25 @@ public class TrianaIWIRHandler implements WorkflowEngineHandler {
     private IWIR iwir;
     private InputStream imageInputStream;
 
-    public TrianaIWIRHandler(IWIR iwir, InputStream imageInputStream) {
-        this.iwir = iwir;
+    public TrianaIWIRHandler(TaskGraph taskGraph, InputStream imageInputStream) {
         this.imageInputStream = imageInputStream;
+        try {
+            init(taskGraph);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void init(TaskGraph taskGraph) throws IOException {
+        ExportIwir exportIwir = new ExportIwir();
+        BlockScope blockscope = exportIwir.taskGraphToBlockScope(taskGraph);
+        iwir = new IWIR(taskGraph.getToolName());
+        iwir.setTask(blockscope);
+
+//        File file = File.createTempFile("iwir", "tmp");
+//        file.deleteOnExit();
+//        System.out.println("Created temp iwir " + file.getAbsolutePath());
+//        iwir.asXMLFile(file);
     }
 
     @Override
@@ -60,25 +79,24 @@ public class TrianaIWIRHandler implements WorkflowEngineHandler {
     }
 
     @Override
-    public InputStream getWorkflowDefinition() {
+    public InputStream getDefinition() {
+        System.out.printf("Returning def bytestream");
         try {
-            File file = File.createTempFile("iwir", "tmp");
-            file.deleteOnExit();
-            iwir.asXMLFile(file);
-            return new FileInputStream(file);
-        } catch (IOException e) {
+            return new ByteArrayInputStream(iwir.asXMLString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
-    public String getWorkflowDefinitionName() {
+    public String getDefinitionName() {
         return iwir.getWfname();
     }
 
     @Override
     public InputStream getDisplayImage() {
+        System.out.println("Returning representation of iwir graphic");
         return imageInputStream;
     }
 
@@ -98,7 +116,7 @@ public class TrianaIWIRHandler implements WorkflowEngineHandler {
     }
 
     @Override
-    public String getImplementationVersion() {
+    public String getVersion() {
         return null;
     }
 }

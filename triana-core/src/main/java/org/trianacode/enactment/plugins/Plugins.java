@@ -36,6 +36,8 @@ import java.util.Set;
  */
 
 public class Plugins {
+    public static String CONVERT = "convert";
+
     private OptionsHandler parser;
     private List<String> pluginArguments;
     private String[] args;
@@ -68,6 +70,10 @@ public class Plugins {
         Set<Object> addons = AddonUtils.getCLIaddons(engine);
         System.out.println(Arrays.toString(addons.toArray()));
 
+        if(pluginArguments.get(0).toLowerCase().equals(CONVERT)) {
+
+        }
+
         CLIaddon service = AddonUtils.getService(engine, pluginArguments.get(0), CLIaddon.class);
         if (service != null) {
 
@@ -85,6 +91,12 @@ public class Plugins {
 
             if (service instanceof ConversionAddon) {
                 System.out.println("Conversion addon");
+                    ConversionAddon conversionAddon = (ConversionAddon) service;
+                try {
+
+                } catch (Exception e){
+
+                }
             }
 
         } else {
