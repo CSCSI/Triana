@@ -1,18 +1,14 @@
 package signalproc.input;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
+import org.trianacode.taskgraph.event.*;
 import triana.types.VectorType;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Imports raw data from a binary file
@@ -394,9 +390,9 @@ public class BinaryImporter extends Unit implements TaskListener {
             iteroffset = new Boolean((String) value).booleanValue();
         }
 
-        if ((columnschema.indexOf('+') > -1) && (!columnschema.endsWith("+"))) {
+        if (columnschema != null && (columnschema.indexOf('+') > -1) && (!columnschema.endsWith("+"))) {
             setParameter("columnschema", columnschema.substring(0, columnschema.indexOf('+') + 1));
-        } else if ((rowschema.indexOf('+') > -1) && (!rowschema.endsWith("+"))) {
+        } else if (rowschema != null && (rowschema.indexOf('+') > -1) && (!rowschema.endsWith("+"))) {
             setParameter("rowschema", rowschema.substring(0, rowschema.indexOf('+') + 1));
         }
     }
