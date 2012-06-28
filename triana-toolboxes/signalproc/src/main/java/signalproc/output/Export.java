@@ -376,11 +376,9 @@ public abstract class Export extends Unit {
 
         // Code to update local variables
         if (paramname.equals("filename")) {
-            if(filename != null && filename != null){
-                if (!filename.equals(value)) {
-                    filename = (String) value;
-                    resetFile();
-                }
+            if(filename != null &&!filename.equals(value)) {
+                filename = (String) value;
+                resetFile();
             }
         }
 
