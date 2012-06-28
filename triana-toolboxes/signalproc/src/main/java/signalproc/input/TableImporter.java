@@ -1,22 +1,18 @@
 package signalproc.input;
 
+import org.trianacode.taskgraph.NodeException;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.event.*;
+import triana.types.VectorType;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.swing.JOptionPane;
-import org.trianacode.taskgraph.NodeException;
-import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.Unit;
-import org.trianacode.taskgraph.event.ParameterUpdateEvent;
-import org.trianacode.taskgraph.event.TaskDisposedEvent;
-import org.trianacode.taskgraph.event.TaskListener;
-import org.trianacode.taskgraph.event.TaskNodeEvent;
-import org.trianacode.taskgraph.event.TaskPropertyEvent;
-import triana.types.VectorType;
 
 
 /**
@@ -366,12 +362,12 @@ public class TableImporter extends Unit implements TaskListener {
             multi = new Boolean((String) value).booleanValue();
         }
 
-        if (extract.equals(COLUMNS) && (columns.indexOf('+') > -1)) {
+        if (extract != null && extract.equals(COLUMNS) && (columns.indexOf('+') > -1)) {
             JOptionPane.showMessageDialog(null, "Cannot use + in columns when using column extract");
             setParameter("columns", (Object) columns.replace('+', ' '));
-        } else if ((columns.indexOf('+') > -1) && (!columns.endsWith("+"))) {
+        } else if (columns != null && (columns.indexOf('+') > -1) && (!columns.endsWith("+"))) {
             setParameter("columns", (Object) columns.substring(0, columns.indexOf('+') + 1));
-        } else if ((rows.indexOf('+') > -1) && (!rows.endsWith("+"))) {
+        } else if (rows != null &&  (rows.indexOf('+') > -1) && (!rows.endsWith("+"))) {
             setParameter("rows", (Object) rows.substring(0, rows.indexOf('+') + 1));
         }
     }
