@@ -58,15 +58,15 @@
 
 package signalproc.output;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-
 import org.trianacode.taskgraph.NodeException;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.Unit;
 import triana.types.VectorType;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * An abstract unit for exporting data.
@@ -376,9 +376,11 @@ public abstract class Export extends Unit {
 
         // Code to update local variables
         if (paramname.equals("filename")) {
-            if (!filename.equals(value)) {
-                filename = (String) value;
-                resetFile();
+            if(filename != null){
+                if (!filename.equals(value)) {
+                    filename = (String) value;
+                    resetFile();
+                }
             }
         }
 
