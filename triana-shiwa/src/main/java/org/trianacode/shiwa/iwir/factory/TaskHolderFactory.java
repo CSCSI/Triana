@@ -1,8 +1,13 @@
 package org.trianacode.shiwa.iwir.factory;
 
 import org.shiwa.fgi.iwir.*;
-import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.holders.*;
+import org.trianacode.shiwa.iwir.importer.utils.ToolUtils;
+import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.Unit;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,7 +27,21 @@ public class TaskHolderFactory {
         return taskHolderFactory;
     }
 
-    public TaskHolder getTaskHolder(AbstractTask iwirTask) {
+    public Task addTaskHolder(AbstractTask iwirTask, TaskGraph taskGraph) throws TaskException {
+        TaskHolder holder = getTaskHolder(iwirTask);
+        Task task = taskGraph.createTask(ToolUtils.initTool(holder, taskGraph.getProperties()));
+
+        if (iwirTask instanceof org.shiwa.fgi.iwir.Task) {
+            String taskType = ((org.shiwa.fgi.iwir.Task) iwirTask).getTasktype();
+            Unit unit = ((JavaProxy)task.getProxy()).getUnit();
+            if(unit instanceof AtomicTaskHolder){
+//                ((AtomicTaskHolder) unit).setExecutable(new Executable(taskType));
+            }
+        }
+        return task;
+    }
+
+    private TaskHolder getTaskHolder(AbstractTask iwirTask){
         TaskHolder taskHolder = null;
         if (iwirTask instanceof ForEachTask) {
             taskHolder = new ForEachTaskHolder();
@@ -44,10 +63,10 @@ public class TaskHolderFactory {
         }
         if (taskHolder == null) {
             taskHolder = new AtomicTaskHolder();
-            if (iwirTask instanceof Task) {
-                String taskType = ((Task) iwirTask).getTasktype();
-                taskHolder.setExecutable(new Executable(taskType));
-            }
+//            if (iwirTask instanceof Task) {
+//                String taskType = ((Task) iwirTask).getTasktype();
+//                taskHolder.setExecutable(new Executable(taskType));
+//            }
         }
         taskHolder.setIWIRTask(iwirTask);
         taskHolder.registerIWIRTask(iwirTask);

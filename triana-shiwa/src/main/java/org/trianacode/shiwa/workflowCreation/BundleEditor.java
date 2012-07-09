@@ -8,9 +8,10 @@ import org.shiwa.desktop.data.description.core.WorkflowImplementation;
 import org.shiwa.desktop.data.description.resource.AggregatedResource;
 import org.shiwa.desktop.data.description.workflow.SHIWAProperty;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
-import org.trianacode.annotation.TextFieldParameter;
+import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.stampede.StampedeLog;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
 import org.trianacode.shiwa.utils.BrokerUtils;
 import org.trianacode.taskgraph.Task;
@@ -18,6 +19,10 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 import org.trianacode.taskgraph.ser.XMLWriter;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +40,7 @@ import java.util.UUID;
 @Tool
 public class BundleEditor implements TaskConscious {
 
-    @TextFieldParameter
+//    @TextFieldParameter
     public String bundlePath = "/Users/ian/dartBundle.zip";
     private ShiwaBundleHelper shiwaBundleHelper;
     private Task task;
@@ -46,83 +51,106 @@ public class BundleEditor implements TaskConscious {
         System.out.println("Creating " + list.size() + " bundles");
         ArrayList<File> bundles = new ArrayList<File>();
 
-        try {
-            File inputBundleFile = new File(bundlePath);
-            System.out.println("input exists : " + inputBundleFile.exists());
+        File inputBundleFile = new File(bundlePath);
+        System.out.println("input exists : " + inputBundleFile.exists());
 
-            shiwaBundleHelper = new ShiwaBundleHelper(new ConcreteBundle(inputBundleFile));
-            clearConfigs(shiwaBundleHelper.getWorkflowImplementation());
+        if(inputBundleFile.exists()){
+            try {
+                shiwaBundleHelper = new ShiwaBundleHelper(new ConcreteBundle(inputBundleFile));
 
-        } catch (SHIWADesktopIOException e) {
-            e.printStackTrace();
-        }
+                clearConfigs(shiwaBundleHelper.getWorkflowImplementation());
 
-//        TrianaServer server = TaskGraphManager.getTrianaServer(task.getParent());
-//        SchedulerInterface sched = server.getSchedulerInterface();
+                WorkflowImplementation impl = shiwaBundleHelper.getWorkflowImplementation();
 
-//        Scheduler scheduler = BrokerUtils.getSchedulerForTaskGraph(task.getParent());
+                for (Object object : list) {
+                    if (object instanceof TaskGraph) {
+                        TaskGraph taskGraph = (TaskGraph) object;
 
+                        cleanProperties();
+                        UUID runUUID = UUID.randomUUID();
 
-//        if(scheduler != null) {
+                        BrokerUtils.prepareSubworkflow(
+                                task, runUUID, shiwaBundleHelper.getWorkflowImplementation()
+                        );
 
+                        System.out.println("Adding imp " + taskGraph.getToolName());
+                        impl.setDefinition(
+                                new BundleFile(
+                                        getWorkflowDefinition(taskGraph), taskGraph.getToolName()));
 
-//            String jobID = "unit:" + task.getQualifiedToolName();
-//        if (sched instanceof Scheduler) {
-//            Scheduler scheduler = (Scheduler) sched;
-//            UUID parentID = scheduler.stampedeLog.getRunUUID();
-//            System.out.println("Parent execution " + parentID.toString());
-//            String jobInstID = scheduler.stampedeLog.getTaskNumber(task).toString();
-
-
-        WorkflowImplementation impl = shiwaBundleHelper.getWorkflowImplementation();
-
-        for (Object object : list) {
-            if (object instanceof TaskGraph) {
-                TaskGraph taskGraph = (TaskGraph) object;
-
-                cleanProperties();
-                UUID runUUID = UUID.randomUUID();
-
-                BrokerUtils.prepareSubworkflow(
-                        task, runUUID, shiwaBundleHelper.getWorkflowImplementation()
-                );
-//                    BrokerUtils.addParentDetailsToSubWorkflow(impl, runUUID, parentID, jobID, jobInstID);
-
-//
-//                    impl.addProperty(new SHIWAProperty(StampedeLog.PARENT_UUID_STRING,
-//                            parentID.toString()));
-//
-//                    impl.addProperty(new SHIWAProperty(StampedeLog.RUN_UUID_STRING,
-//                            runUUID.toString()));
-//
-//                    impl.addProperty(new SHIWAProperty(StampedeLog.JOB_ID, jobID));
-//
-//                    impl.addProperty(new SHIWAProperty(StampedeLog.JOB_INST_ID, jobInstID));
-
-                try {
-                    System.out.println("Adding imp " + taskGraph.getToolName());
-                    impl.setDefinition(
-                            new BundleFile(
-                                    getWorkflowDefinition(taskGraph), taskGraph.getToolName()));
-                } catch (SHIWADesktopIOException e) {
-                    e.printStackTrace();
+                        File temp = File.createTempFile(taskGraph.getToolName() + "-", "");
+                        File b = shiwaBundleHelper.saveBundle(temp);
+                        System.out.println("Made " + b.getAbsolutePath());
+                        bundles.add(b);
+                    }
                 }
-
-                try {
-                    File temp = File.createTempFile(taskGraph.getToolName() + "-", "");
-                    File b = shiwaBundleHelper.saveBundle(temp);
-                    System.out.println("Made " + b.getAbsolutePath());
-                    bundles.add(b);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (SHIWADesktopIOException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-//        }
-
         return bundles;
     }
+
+    @CustomGUIComponent
+    public Component getGUI() {
+        loadParams();
+
+        JPanel mainPane = new JPanel();
+        mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
+
+        JPanel locationPanel = new JPanel(new BorderLayout());
+        JLabel locationLabel = new JLabel("File Path : ");
+        final JTextField locationField = new JTextField(20);
+        locationField.setText(bundlePath);
+        JButton locationButton = new JButton("...");
+        locationButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setMultiSelectionEnabled(false);
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+                File file = new File(bundlePath);
+                if (file.exists()) {
+                    chooser.setCurrentDirectory(file.getParentFile());
+                }
+                int returnVal = chooser.showDialog(GUIEnv.getApplicationFrame(), "File");
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File f = chooser.getSelectedFile();
+                    if (f != null) {
+                        bundlePath = f.getAbsolutePath();
+                        locationField.setText(bundlePath);
+                        task.setParameter("filePath", bundlePath);
+                    }
+                }
+            }
+        });
+        locationPanel.add(locationLabel, BorderLayout.WEST);
+        locationPanel.add(locationField, BorderLayout.CENTER);
+        locationPanel.add(locationButton, BorderLayout.EAST);
+
+        mainPane.add(locationPanel);
+
+        JButton clearButton = new JButton("Clear");
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                locationField.setText("");
+                task.setParameter("filePath", "");
+            }
+        });
+        mainPane.add(clearButton);
+        return mainPane;
+    }
+
+    private void loadParams() {
+        String fileString = (String) task.getParameter("bundlePath");
+        if (fileString != null && new File(fileString).exists()) {
+            bundlePath = fileString;
+        }
+    }
+
 
     private void cleanProperties() {
         List<SHIWAProperty> props = shiwaBundleHelper.getWorkflowImplementation().getProperties();
@@ -147,7 +175,7 @@ public class BundleEditor implements TaskConscious {
         for (AggregatedResource resource : workflowImplementation.getAggregatedResources()) {
             if (resource instanceof DataMapping) {
 //                if (((Configuration) resource).getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
-                    dataConfigs.add((DataMapping) resource);
+                dataConfigs.add((DataMapping) resource);
 //                }
             }
         }

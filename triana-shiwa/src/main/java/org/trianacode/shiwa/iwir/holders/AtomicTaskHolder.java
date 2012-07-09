@@ -1,6 +1,8 @@
 package org.trianacode.shiwa.iwir.holders;
 
+import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.factory.AbstractTaskHolder;
+import org.trianacode.shiwa.iwir.factory.BasicIWIRPanel;
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,6 +12,19 @@ import org.trianacode.shiwa.iwir.factory.AbstractTaskHolder;
  * To change this template use File | Settings | File Templates.
  */
 public class AtomicTaskHolder extends AbstractTaskHolder {
+
+    private Executable executable;
+
+    @Override
+    public void init() {
+
+        if(this.isParameter(Executable.EXECUTABLE)){
+            executable = (Executable) getParameter(Executable.EXECUTABLE);
+        }
+
+        setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());
+        setParameterPanelInstantiate(ON_TASK_INSTANTATION);
+    }
 
     @Override
     public void process() throws Exception {
@@ -31,4 +46,7 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
         }
     }
 
+    public Executable getExecutable() {
+        return executable;
+    }
 }

@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
@@ -56,7 +57,7 @@ public class ConvertLanguage {
 
     public ConvertLanguage(){}
 
-    public void doConvert(File inputFile, File outputFile) throws IOException, TaskGraphException, ProxyInstantiationException {
+    public void doConvert(File inputFile, File outputFile) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
         if(inputFile.exists()){
 
             String type = getWorkflowType(inputFile);
@@ -71,7 +72,7 @@ public class ConvertLanguage {
                 try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
 
                 ImportIwir iwirImport = new ImportIwir();
-                TaskGraph tool = iwirImport.taskFromIwir(new IWIR(inputFile));
+                TaskGraph tool = iwirImport.taskFromIwir(new IWIR(inputFile), null);
 
                 XMLWriter outWriter = new XMLWriter(new PrintWriter(System.out));
                 outWriter.writeComponent(tool);

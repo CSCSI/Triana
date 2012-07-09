@@ -3,19 +3,22 @@ package org.trianacode.shiwa.handler;
 import org.apache.commons.logging.Log;
 import org.shiwa.desktop.data.description.handler.TransferPort;
 import org.shiwa.desktop.data.description.handler.TransferSignature;
+import org.shiwa.desktop.data.description.resource.ConfigurationResource;
 import org.shiwa.desktop.data.transfer.ExecutionListener;
+import org.shiwa.desktop.data.util.DataUtils;
 import org.shiwa.desktop.gui.util.listener.DefaultBundleReceivedListener;
+import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.Exec;
 import org.trianacode.enactment.TrianaRun;
-import org.trianacode.enactment.addon.ConversionAddon;
 import org.trianacode.enactment.io.*;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.DisplayDialog;
+import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
 import org.trianacode.shiwa.utils.WorkflowUtils;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.ToolImp;
@@ -95,8 +98,18 @@ public class TrianaShiwaListener implements ExecutionListener {
         return conf;
     }
 
+    public static File writeConfigurationResourceToFile(ConfigurationResource configurationResource, File file, File outputLocation) throws IOException {
+        String longName = configurationResource.getBundleFile().getFilename();
+        if (file == null) {
+            file = new File(outputLocation, longName.substring(longName.lastIndexOf("/") + 1));
+        }
+        System.out.println("   >> Made : " + file.getAbsolutePath());
+
+        return DataUtils.extractToFile(configurationResource, file);
+    }
+
     @Override
-    public void digestWorkflow(File file, File file1, TransferSignature signature) {
+    public void digestWorkflow(File workflowDefinitionFile, File fgiBundleFile, TransferSignature signature) {
         devLog.debug("Importing a bundle");
 
         if (receivedListener != null) {
@@ -105,22 +118,29 @@ public class TrianaShiwaListener implements ExecutionListener {
 
         try {
             if (GUIEnv.getApplicationFrame() != null) {
-                String workflowType = WorkflowUtils.getWorkflowType(file, signature);
+                String workflowType = WorkflowUtils.getWorkflowType(workflowDefinitionFile, signature);
                 if (workflowType == null) {
                     System.out.println("No workflow type detected");
                 } else {
                     TaskGraph taskGraph;
                     if (workflowType.equals(AddonUtils.TASKGRAPH_FORMAT)) {
-                        taskGraph = TaskGraphFileHandler.openTaskgraph(file, true);
+                        System.out.println("Taskgraph");
+                        taskGraph = TaskGraphFileHandler.openTaskgraph(workflowDefinitionFile, true);
                     } else if (workflowType.equals(AddonUtils.IWIR_FORMAT)) {
-                        ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(trianaInstance, "IWIR-To-Task", ConversionAddon.class);
-                        if (conversionAddon != null) {
-                            taskGraph = (TaskGraph) conversionAddon.workflowToTool(file);
-                            taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
-                        } else {
-                            System.out.println("Failed to convert IWIR workflow");
-                            return;
-                        }
+                        System.out.println("IWIR");
+                        IWIR iwir = new IWIR(workflowDefinitionFile);
+                        taskGraph = new ImportIwir().taskFromIwir(iwir, fgiBundleFile);
+
+                        taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+
+//                        ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(trianaInstance, "IWIR-To-Task", ConversionAddon.class);
+//                        if (conversionAddon != null) {
+//                            taskGraph = (TaskGraph) conversionAddon.workflowToTool(file);
+
+//                        taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+//                        } else {
+//                            System.out.println("Failed to convert IWIR workflow");
+//                        }
                     } else {
                         System.out.println("Failed to recognise type : " + workflowType);
                         return;
@@ -132,7 +152,7 @@ public class TrianaShiwaListener implements ExecutionListener {
                 }
             } else {
                 devLog.debug("No gui found, running headless");
-                XMLReader reader = new XMLReader(new FileReader(file));
+                XMLReader reader = new XMLReader(new FileReader(workflowDefinitionFile));
                 Tool tool = reader.readComponent(trianaInstance.getProperties());
                 if (tool instanceof TaskGraph) {
                     TaskGraph taskGraph = (TaskGraph) tool;
@@ -143,6 +163,8 @@ public class TrianaShiwaListener implements ExecutionListener {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public boolean ignoreBundle() {
@@ -219,22 +241,30 @@ public class TrianaShiwaListener implements ExecutionListener {
                     Node inputNode = taskgraph.getInputNode(i);
                     inputNodes[i] = inputNode.getTopLevelNode();
                 }
-                Task varTask = taskgraph.createTask(getVarTool(taskgraph.getProperties()));
-                varTask.setParameter("configSize", inputNodes.length);
 
+                Tool varTool = getVarTool(taskgraph.getProperties());
+                varTool.setParameter("configSize", inputNodes.length);
+
+                Iterator<Integer> itr = mappings.iterator();
+                while (itr.hasNext()) {
+                    Integer integer = itr.next();
+                    Object val = mappings.getValue(integer);
+                    varTool.setParameter("var" + integer.toString(), val);
+                }
+
+                Task varTask = taskgraph.createTask(varTool);
 
                 devLog.debug("Data mappings size : " + mappings.getMap().size());
                 Iterator<Integer> it = mappings.iterator();
                 while (it.hasNext()) {
                     Integer integer = it.next();
-                    Object val = mappings.getValue(integer);
-                    devLog.debug("Data : " + val.toString() + " will be sent to input number " + integer);
+//                    Object val = mappings.getValue(integer);
+//                    devLog.debug("Data : " + val.toString() + " will be sent to input number " + integer);
                     Node taskNode = getNodeInScope(inputNodes[integer], taskgraph);
                     Node addedNode = varTask.addDataOutputNode();
 
-
                     taskgraph.connect(addedNode, taskNode);
-                    varTask.setParameter("var" + integer.toString(), val);
+//                    varTask.setParameter("var" + integer.toString(), val);
                 }
 
                 Object o = varTask.getParameter("configSize");
@@ -242,7 +272,7 @@ public class TrianaShiwaListener implements ExecutionListener {
                 if (o instanceof Integer) {
                     configSize = (Integer) o;
                 }
-                devLog.debug("Multiple output config task added " + configSize);
+                System.out.println("Multiple output config task added " + configSize);
 
             } else {
                 devLog.debug("Mappings was null");

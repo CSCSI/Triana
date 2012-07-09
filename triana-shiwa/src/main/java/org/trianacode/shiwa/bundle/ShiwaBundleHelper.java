@@ -82,7 +82,7 @@ public class ShiwaBundleHelper {
         for (Dependency dependency : deps) {
             ConfigurationResource confRes = getConfigurationResourceForDependency(dependency);
             try {
-                writeConfigurationResourceToFile(confRes, null);
+                writeConfigurationResourceToFile(confRes, null, outputLocation);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -110,7 +110,7 @@ public class ShiwaBundleHelper {
         return null;
     }
 
-    public File writeConfigurationResourceToFile(ConfigurationResource configurationResource, File file) throws IOException {
+    public static File writeConfigurationResourceToFile(ConfigurationResource configurationResource, File file, File outputLocation) throws IOException {
         String longName = configurationResource.getBundleFile().getFilename();
         if (file == null) {
             file = new File(outputLocation, longName.substring(longName.lastIndexOf("/") + 1));
@@ -296,42 +296,49 @@ public class ShiwaBundleHelper {
 
     public void prepareEnvironmentDependencies() throws IOException {
         for (Dependency dependency : concreteBundle.getPrimaryConcreteTask().getDependencies()) {
-            String value = null;
-            TransferSignature.ValueType valueType = null;
 
 //            if (getFirstConfigurationOfType(Configuration.ConfigType.ENVIRONMENT_CONFIGURATION) != null) {
-                if (getFirstConfigurationOfType(EnvironmentMapping.class) != null) {
+            if (getFirstConfigurationOfType(EnvironmentMapping.class) != null) {
 
-                    for (ConfigurationResource portRef : getFirstConfigurationOfType(EnvironmentMapping.class).getResources()) {
-                    if (portRef.getReferableResource().getId().equals(dependency.getId())) {
-                        value = portRef.getValue();
+                List<ConfigurationResource> config = getFirstConfigurationOfType(EnvironmentMapping.class).getResources();
+                writeConfigResourcesToDisk(dependency, config, outputLocation);
+            }
+        }
+    }
 
-                        ConfigurationResource.RefTypes refType = portRef.getRefType();
-                        System.out.println("Value for " + portRef.getId() + " : " + value);
+    public static void writeConfigResourcesToDisk(
+            Dependency dependency,
+            List<ConfigurationResource> config,
+            File outputLocation) throws IOException {
+        String value = null;
+        TransferSignature.ValueType valueType = null;
+        for (ConfigurationResource portRef : config) {
+            if (portRef.getReferableResource().getId().equals(dependency.getId())) {
+                value = portRef.getValue();
 
-                        if (refType == ConfigurationResource.RefTypes.INLINE_REF) {
-                            valueType = TransferSignature.ValueType.INLINE_STRING;
+                ConfigurationResource.RefTypes refType = portRef.getRefType();
+                System.out.println("Value for " + portRef.getId() + " : " + value);
 
-                        } else if (refType == ConfigurationResource.RefTypes.URI_REF) {
-                            File success = download(value, new File("."), null);
-                            if (success.exists()) {
-                                System.out.println("Fetched " + value + " to " + success.getAbsolutePath());
-                                value = success.getAbsolutePath();
-                            } else {
-                                System.out.println("Failed to fetch " + value);
-                            }
+                if (refType == ConfigurationResource.RefTypes.INLINE_REF) {
+                    valueType = TransferSignature.ValueType.INLINE_STRING;
 
-                            valueType = TransferSignature.ValueType.INLINE_URI;
-                        } else if (refType == ConfigurationResource.RefTypes.FILE_REF) {
-                            valueType = TransferSignature.ValueType.BUNDLED_FILE;
-//                            File tempFile = DataUtils.extractToTempFile(portRef);
-                            File tempFile = writeConfigurationResourceToFile(portRef, null);
-                            value = tempFile.getAbsolutePath();
-                        }
+                } else if (refType == ConfigurationResource.RefTypes.URI_REF) {
+                    File success = download(value, new File("."), null);
+                    if (success.exists()) {
+                        System.out.println("Fetched " + value + " to " + success.getAbsolutePath());
+                        value = success.getAbsolutePath();
+                    } else {
+                        System.out.println("Failed to fetch " + value);
                     }
+
+                    valueType = TransferSignature.ValueType.INLINE_URI;
+                } else if (refType == ConfigurationResource.RefTypes.FILE_REF) {
+                    valueType = TransferSignature.ValueType.BUNDLED_FILE;
+//                            File tempFile = DataUtils.extractToTempFile(portRef);
+                    File tempFile = writeConfigurationResourceToFile(portRef, null, outputLocation);
+                    value = tempFile.getAbsolutePath();
                 }
             }
-
         }
     }
 

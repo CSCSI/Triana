@@ -56,7 +56,7 @@ public class TaskToIWIRAddon implements ConversionAddon {
             }
             if (iwir != null) {
                 ImportIwir iwirImporter = new ImportIwir();
-                tool = iwirImporter.taskFromIwir(iwir);
+                tool = iwirImporter.taskFromIwir(iwir, null);
                 return tool;
             }
         } catch (Exception e) {

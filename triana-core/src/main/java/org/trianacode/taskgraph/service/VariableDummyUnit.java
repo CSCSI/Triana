@@ -38,5 +38,29 @@ public class VariableDummyUnit extends Unit {
             }
         }
     }
+
+    @Override
+    public void init() {
+        String guiInfo = "";
+
+//        Object configSizeObject = getParameter("configSize");
+        if (isParameter("configSize")) {
+            guiInfo += "Number of variables $title configSize TextField 1\n";
+            int configSize = Integer.parseInt(String.valueOf(getParameter("configSize")));
+            for (int i = 0; i < configSize; i++) {
+                guiInfo += "Var " + i + " $title var" + i + " TextField 1\n";
+            }
+        } else {
+//            System.out.println("no config size");
+            if (isParameter("variable")) {
+                guiInfo += "Single variable $title variable TextField 1\n";
+            } else {
+//                System.out.println("no variable");
+            }
+        }
+
+        setGUIBuilderV2Info(guiInfo);
+    }
+
 }
 

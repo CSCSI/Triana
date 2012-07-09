@@ -1,5 +1,5 @@
 org.trianacode.shiwa.executionServices.Unbundler
 org.trianacode.shiwa.executionServices.TaskToIWIRAddon
-org.trianacode.shiwa.executionServices.IWIRToTaskAddon
+org.trianacode.shiwa.executionServices.IwirToTaskAddon
 
 

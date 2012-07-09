@@ -65,7 +65,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
 //            return new IwirToTaskGraph().importIWIR(file, properties);
             TaskTypeToTool.addTaskType("InOut", InOut.class);
 
-            return new ImportIwir().taskFromIwir(new IWIR(file));
+            return new ImportIwir().taskFromIwir(new IWIR(file), null);
         } catch (Exception e) {
             e.printStackTrace();
         }

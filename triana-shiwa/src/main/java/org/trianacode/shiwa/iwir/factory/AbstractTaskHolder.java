@@ -1,7 +1,6 @@
 package org.trianacode.shiwa.iwir.factory;
 
 import org.shiwa.fgi.iwir.AbstractTask;
-import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.exporter.IwirRegister;
 import org.trianacode.taskgraph.Unit;
 
@@ -13,17 +12,17 @@ import org.trianacode.taskgraph.Unit;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
-    Executable executable;
+//    Executable executable;
     AbstractTask abstractTask;
 
-    public Executable getExecutable() {
-        return executable;
-    }
+//    public Executable getExecutable() {
+//        return executable;
+//    }
 
-    public void setExecutable(Executable executable) {
-        this.executable = executable;
-        this.setParameter(Executable.TASKTYPE, executable.getTaskType());
-    }
+//    public void setExecutable(Executable executable) {
+//        this.executable = executable;
+//        this.setParameter(Executable.TASKTYPE, executable.getTaskType());
+//    }
 
     public AbstractTask getIWIRTask() {
         return abstractTask;

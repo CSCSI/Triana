@@ -31,6 +31,7 @@ import org.trianacode.taskgraph.ser.DocumentHandler;
 import org.trianacode.taskgraph.ser.XMLReader;
 import org.trianacode.taskgraph.tool.Tool;
 
+import javax.xml.bind.JAXBException;
 import java.io.*;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -129,12 +130,12 @@ public class Unbundler implements ExecutionAddon {
 //    }
 
     @Override
-    public Tool getTool(TrianaInstance instance, String workflowFilePath) throws IOException, TaskGraphException, ProxyInstantiationException {
+    public Tool getTool(TrianaInstance instance, String workflowFilePath) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
 //        initBundle(workflowFilePath);
         return getTool(instance);
     }
 
-    private Tool getTool(TrianaInstance instance) throws IOException, TaskGraphException, ProxyInstantiationException {
+    private Tool getTool(TrianaInstance instance) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
 //        workflowImplementation = chooseImp();
         WorkflowImplementation workflowImplementation = shiwaBundleHelper.getWorkflowImplementation();
         if (workflowImplementation != null) {
@@ -149,7 +150,7 @@ public class Unbundler implements ExecutionAddon {
 
                 IWIR iwir = new IWIR(shiwaBundleHelper.writeDefinitionFile());
                 ImportIwir iwirImporter = new ImportIwir();
-                tool = iwirImporter.taskFromIwir(iwir);
+                tool = iwirImporter.taskFromIwir(iwir, null);
 
                 System.out.println("Definition name " + workflowImplementation.getDefinition().getFilename());
                 System.out.println("Toolname " + tool.getToolName());
@@ -400,7 +401,7 @@ public class Unbundler implements ExecutionAddon {
 //        return shiwaBundleHelper.saveBundle(new File(fileName));
 //    }
 
-    public Tool getTool(TrianaInstance trianaInstance, SHIWABundle shiwaBundle) throws IOException, TaskGraphException, ProxyInstantiationException {
+    public Tool getTool(TrianaInstance trianaInstance, SHIWABundle shiwaBundle) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
 //        initBundle(shiwaBundle);
         return getTool(trianaInstance);
     }

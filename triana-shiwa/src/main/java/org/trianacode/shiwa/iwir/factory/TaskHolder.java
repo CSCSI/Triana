@@ -1,7 +1,6 @@
 package org.trianacode.shiwa.iwir.factory;
 
 import org.shiwa.fgi.iwir.AbstractTask;
-import org.trianacode.shiwa.iwir.execute.Executable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,9 +11,9 @@ import org.trianacode.shiwa.iwir.execute.Executable;
  */
 public interface TaskHolder {
 
-    public Executable getExecutable();
+//    public Executable getExecutable();
 
-    public void setExecutable(Executable executable);
+//    public void setExecutable(Executable executable);
 
     public AbstractTask getIWIRTask();
 

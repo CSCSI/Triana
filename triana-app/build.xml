@@ -88,8 +88,8 @@
             <param name="targetModule" value="shiwa"/>
         </antcall>
         <!--<antcall target="module">-->
-        <!--<param name="module" value="triana-shiwa-iwir"/>-->
-        <!--<param name="targetModule" value="iwir"/>-->
+            <!--<param name="module" value="triana-shiwa-old"/>-->
+            <!--<param name="targetModule" value="shiwa-old"/>-->
         <!--</antcall>-->
     </target>
 
@@ -147,8 +147,8 @@
             <param name="toolbox" value="triana-shiwa"/>
         </antcall>
         <!--<antcall target="dev-toolbox">-->
-        <!--<param name="toolboxes" value="../"/>-->
-        <!--<param name="toolbox" value="triana-shiwa-iwir"/>-->
+            <!--<param name="toolboxes" value="../"/>-->
+            <!--<param name="toolbox" value="triana-shiwa-old"/>-->
         <!--</antcall>-->
         <antcall target="dev-toolbox">
             <param name="toolboxes" value="../"/>
