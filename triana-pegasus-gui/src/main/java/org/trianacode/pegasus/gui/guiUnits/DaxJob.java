@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.Loggers;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.pegasus.dax.Displayer;
 import org.trianacode.pegasus.dax.JobUnit;
 import org.trianacode.pegasus.gui.models.DaxJobComponentModel;
@@ -15,6 +16,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,7 +55,6 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
     JRadioButton scatterCheck;
     JRadioButton spreadCheck;
     JRadioButton one2oneCheck;
-
 
     @org.trianacode.annotation.Process(gather = true)
     public UUID fakeProcess(List list) {
@@ -161,6 +165,25 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
         lowerPanelScatter.add(numberInputFilesLabel);
         lowerPanelScatter.add(filesPerJobCombo);
 
+
+        JButton argsFromFileButton = new JButton("Job arguments");
+        argsFromFileButton.addActionListener( new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setMultiSelectionEnabled(false);
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                int returnVal = chooser.showDialog(GUIEnv.getApplicationFrame(), "File");
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File f = chooser.getSelectedFile();
+                    if (f != null) {
+                        getArgs(f);
+                    }
+                }
+            }
+        });
+        lowerPanel.add(argsFromFileButton);
+
         lowerPanel.add(lowerPanel1);
         lowerPanel.add(lowerPanelAuto);
         lowerPanel.add(lowerPanelScatter);
@@ -184,6 +207,22 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
         apply.addActionListener(this);
         mainPane.add(apply);
         return mainPane;
+    }
+
+    private void getArgs(File file) {
+        argsStringArray = new ArrayList<String>();
+        try {
+            BufferedReader reader = new BufferedReader(new java.io.FileReader(file));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                argsStringArray.add(line);
+            }
+            System.out.printf("Will try to make " + argsStringArray.size() + " jobs.");
+            numberOfJobs = argsStringArray.size();
+            apply();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

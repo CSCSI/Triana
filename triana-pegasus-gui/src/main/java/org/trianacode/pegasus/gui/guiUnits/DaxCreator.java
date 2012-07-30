@@ -33,6 +33,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
 
     String locationString = "";
     private JTextField nameField;
+    private JTextField nameSpaceField;
     private JTextField locationField;
     private JCheckBox demoCheck;
     private static Log devLog = Loggers.DEV_LOGGER;
@@ -76,6 +77,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         devLog.debug("File location : " + locationString);
         task.setParameter("fileName", locationString);
         task.setParameter("demo", demo);
+        task.setParameter("namespace", nameSpaceField.getText());
 
     }
 
@@ -85,7 +87,14 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         guiComponent.setLayout(new BoxLayout(guiComponent, BoxLayout.Y_AXIS));
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(3, 1));
+        mainPanel.setLayout(new GridLayout(4, 1));
+
+        JPanel nameSpacePanel = new JPanel(new BorderLayout());
+        JLabel namespaceLabel = new JLabel("Namespace : ");
+        nameSpaceField = new JTextField("namespace");
+        nameSpacePanel.add(namespaceLabel, BorderLayout.WEST);
+        nameSpacePanel.add(nameSpaceField, BorderLayout.CENTER);
+        mainPanel.add(nameSpacePanel);
 
         JPanel namePanel = new JPanel(new BorderLayout());
         JLabel nameLabel = new JLabel("Select filename : ");

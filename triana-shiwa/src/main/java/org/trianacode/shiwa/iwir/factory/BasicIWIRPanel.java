@@ -18,7 +18,8 @@ public class BasicIWIRPanel extends ParameterPanel {
         setLayout(new GridLayout(1, 1));
 
         JPanel jPanel = new JPanel();
-        jPanel.setLayout(new GridLayout(4, 1));
+        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
+
 
         JLabel jLabel = new JLabel("Qualified name : " + getTask().getQualifiedTaskName());
         jPanel.add(jLabel);
@@ -33,7 +34,7 @@ public class BasicIWIRPanel extends ParameterPanel {
         jTextArea.append(getDescription());
 
         JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new FlowLayout());
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 
         String condition = (String) getTask().getParameter(CONDITION);
         if (condition != null) {
@@ -43,9 +44,9 @@ public class BasicIWIRPanel extends ParameterPanel {
 
         Executable executable = (Executable) getTask().getParameter(Executable.EXECUTABLE);
         if ((executable != null)){
-            infoPanel.add(new JLabel("Executable " + executable.getTaskType()));
-            infoPanel.add(new JLabel("Working Dir" + executable.getWorkingDir().getAbsolutePath()));
-            infoPanel.add(new JLabel("Args + " + Arrays.toString(executable.getArgs())));
+            infoPanel.add(new JLabel("Executable : " + executable.getPrimaryExec()));
+            infoPanel.add(new JLabel("Working Dir : " + executable.getWorkingDir().getAbsolutePath()));
+            infoPanel.add(new JLabel("Args : " + Arrays.toString(executable.getArgs())));
         }
 
         jPanel.add(infoPanel);
@@ -54,18 +55,27 @@ public class BasicIWIRPanel extends ParameterPanel {
 
 
     private String getDescription() {
+        Executable executable = (Executable) getTask().getParameter(Executable.EXECUTABLE);
+
         String inputNodeString = "";
+        String nodeName = null;
         for (Node node : getTask().getInputNodes()) {
-            inputNodeString += "\n" + node.getName();
+            if ((executable != null)){
+                nodeName = executable.getPorts().get(node.getName());
+            }
+            inputNodeString += "\n          " + node.getName() + " : (" + nodeName + ")";
         }
+
         String outputNodeString = "";
         for (Node node : getTask().getOutputNodes()) {
-            outputNodeString += "\n" + node.getName();
+            if ((executable != null)){
+                nodeName = executable.getPorts().get(node.getName());
+            }
+            outputNodeString += "\n          " + node.getName() + " : (" + nodeName + ")";
         }
-        String string = "\nTask " + getTask().getDisplayName() +
+        return "\nTask " + getTask().getDisplayName() +
                 "\n     Input nodes : " + inputNodeString +
                 "\n     Output nodes : " + outputNodeString;
-        return string;
     }
 
     @Override

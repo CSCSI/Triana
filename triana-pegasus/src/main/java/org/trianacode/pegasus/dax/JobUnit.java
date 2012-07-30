@@ -10,6 +10,7 @@ import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +55,9 @@ public class JobUnit implements TaskConscious, Displayer {
     private static Log devLog = Loggers.DEV_LOGGER;
     public static final String TRIANA_TOOL = "triana_tool";
 
+    public ArrayList<String> argsStringArray = null;
+
+
 //    public String getArgs() {
 //        return args;
 //    }
@@ -87,6 +91,12 @@ public class JobUnit implements TaskConscious, Displayer {
         thisJob.setUuid(thisUUID);
         thisJob.setCollection(collection);
         thisJob.setNumberOfJobs(numberOfJobs);
+
+        if(argsStringArray != null){
+            thisJob.setJobArgs(argsStringArray);
+            thisJob.setNumberOfJobs(argsStringArray.size());
+        }
+
         thisJob.setFileInputsPerJob(fileInputsPerJob);
         thisJob.setConnectPattern(connectPattern);
 

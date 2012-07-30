@@ -223,9 +223,9 @@ public interface Node {
      */
     public void dispose();
 
-    public void setProperty(String key, String value);
-
-    public String getProperty(String key);
+//    public void setProperty(String key, String value);
+//
+//    public String getProperty(String key);
 
     public String getName();
 }

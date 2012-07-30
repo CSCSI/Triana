@@ -2,6 +2,7 @@ package org.trianacode.shiwa.iwir.importer.utils;
 
 import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
 import org.shiwa.fgi.iwir.*;
+import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.factory.TaskHolderFactory;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.Task;
@@ -27,6 +28,7 @@ public class ImportIwir {
 
     boolean std = false;
     private FGIWorkflowReader fgiWorkflowReader = null;
+    public static final String IWIR_NODE = "iwirNode";
 
     private void stdOut(String string){
         if(std){
@@ -34,6 +36,13 @@ public class ImportIwir {
         }
     }
 
+    /**
+     * sets the fgiWorkflowReader for this bundle.
+     *
+     * @param fgiBundleFile
+     * @throws JAXBException
+     * @throws IOException
+     */
     private void initFGIWorkflowReader(File fgiBundleFile) throws JAXBException, IOException {
         if(fgiBundleFile != null){
             System.out.println("fgiBundleFile = "
@@ -50,8 +59,11 @@ public class ImportIwir {
 
         initFGIWorkflowReader(fgiBundle);
 
+        //create a new taskgraph for the workflow
         AbstractTask mainTask = iwir.getTask();
         TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
+
+        //recurse the iwir structure, add to taskgraph
         recordAbstractTasksAndDataLinks(mainTask, taskGraph);
         stdOut(taskGraph.toString());
 
@@ -140,7 +152,6 @@ public class ImportIwir {
 
 
     private Task createFromIWIRTask(AbstractTask iwirTask, TaskGraph tg) throws TaskException, JAXBException, IOException {
-        String taskType = ((org.shiwa.fgi.iwir.Task) iwirTask).getTasktype();
 
         //if the iwirTask is a standard IWIR Atomic Task, try to find and/or make a tool for it.
         //this requires the taskType string, the name and the taskgraph properties
@@ -156,38 +167,71 @@ public class ImportIwir {
             trianaTask.setParameterType(property.getName(), Tool.USER_ACCESSIBLE);
         }
 
-
         return trianaTask;
     }
 
+    private void addNodes(AbstractTask mainTask, Task task, TaskGraph tg) throws NodeException {
+        Executable executable = null;
+        if(task.isParameterName(Executable.EXECUTABLE)){
+            executable = (Executable) task.getParameter(Executable.EXECUTABLE);
+        }
+        for (AbstractPort port : mainTask.getAllInputPorts()) {
+            Node newNode = null;
+            if (port instanceof InputPort) {
+                newNode = tg.addDataInputNode(task.addDataInputNode());
+            }
+            if (port instanceof LoopPort) {
+                newNode = task.addParameterInputNode("loop");
+            }
+            if(newNode != null && executable != null){
+                executable.addPort(newNode.getName(), port.getName());
+            }
 
+        }
+        for (AbstractPort port : mainTask.getAllOutputPorts()) {
+            Node newNode = null;
+            if (port instanceof OutputPort) {
+                newNode = tg.addDataOutputNode(task.addDataOutputNode());
+            }
+            if (port instanceof LoopPort) {
+                newNode = task.addParameterOutputNode("loop");
+            }
+            if(newNode != null && executable != null){
+                executable.addPort(newNode.getName(), port.getName());
+            }
+        }
+        if(executable != null){
+            task.setParameter(Executable.EXECUTABLE, executable);
+            System.out.println("Has exec " + executable.getPorts().values().toString());
+        }
+    }
+
+    /**
+     *
+     * @param mainTask
+     * @param tg
+     * @return
+     * @throws ProxyInstantiationException
+     * @throws TaskException
+     * @throws JAXBException
+     * @throws IOException
+     */
     private TaskGraph recordAbstractTasksAndDataLinks(AbstractTask mainTask, TaskGraph tg) throws ProxyInstantiationException, TaskException, JAXBException, IOException {
 //        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
 //        taskGraph.setToolName(mainTask.getName());
         tg.setToolName(mainTask.getName());
 
+
+        //If there is only one task in the workflow, the mainTask with be a Task (ie not Compound)
+
         if(mainTask instanceof org.shiwa.fgi.iwir.Task){
             abstractHashMap.put(mainTask, tg);
-//            Task task = TaskHolderFactory.getTaskHolderFactory().addTaskHolder(mainTask, tg);
 
+            //create a new Triana Task from the IWIR info, and add to taskgraph
             Task task = createFromIWIRTask(mainTask, tg);
 
-            for (AbstractPort port : mainTask.getAllInputPorts()) {
-                if (port instanceof InputPort) {
-                    tg.addDataInputNode(task.addDataInputNode());
-                }
-                if (port instanceof LoopPort) {
-                    task.addParameterInputNode("loop");
-                }
-            }
-            for (AbstractPort port : mainTask.getAllOutputPorts()) {
-                if (port instanceof OutputPort) {
-                    tg.addDataOutputNode(task.addDataOutputNode());
-                }
-                if (port instanceof LoopPort) {
-                    task.addParameterOutputNode("loop");
-                }
-            }
+            addNodes(mainTask, task, tg);
+
         } else {
 
             dataLinks.addAll(((AbstractCompoundTask) mainTask).getDataLinks());
@@ -195,30 +239,13 @@ public class ImportIwir {
 
             if (!(mainTask instanceof org.shiwa.fgi.iwir.Task) && !(mainTask instanceof BlockScope)) {
                 Task controlTask = TaskHolderFactory.getTaskHolderFactory().addTaskHolder(mainTask, tg);
-//            stdOut(taskHolder.getClass().getCanonicalName());
 
 //                Task controlTask = tg.createTask(ToolUtils.initTool(taskHolder, tg.getProperties()));
 //            taskGraph.createTask(ToolUtils.initTool(taskHolder, taskGraph.getProperties()));
                 abstractHashMap.put(mainTask, controlTask);
 
-                for (AbstractPort port : mainTask.getAllInputPorts()) {
-                    if (port instanceof InputPort) {
-                        tg.addDataInputNode(controlTask.addDataInputNode());
-                    }
-                    if (port instanceof LoopPort) {
-                        controlTask.addParameterInputNode("loop");
-                    }
-                }
-                for (AbstractPort port : mainTask.getAllOutputPorts()) {
-                    if (port instanceof OutputPort) {
-                        tg.addDataOutputNode(controlTask.addDataOutputNode());
-                    }
-                    if (port instanceof LoopPort) {
-                        controlTask.addParameterOutputNode("loop");
-                    }
-                }
+                addNodes(mainTask, controlTask, tg);
             }
-
 
             for (AbstractTask iwirTask : mainTask.getChildren()) {
                 if (iwirTask instanceof org.shiwa.fgi.iwir.Task) {

@@ -4,6 +4,7 @@ import org.trianacode.enactment.StreamToOutput;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,9 +20,13 @@ public class Executable implements ExecutableInterface, Serializable {
     public static final String EXECUTABLE = "executable";
     private String[] args = new String[0];
     private File workingDir = null;
+    private String primaryExec = "";
+
+    private HashMap<String, String> ports;
 
     public Executable(String taskType) {
         this.taskType = taskType;
+        ports = new HashMap<String, String>();
     }
 
     private void runProcess() {
@@ -94,5 +99,22 @@ public class Executable implements ExecutableInterface, Serializable {
 
     public String[] getArgs() {
         return args;
+    }
+
+    public void setPrimaryExec(String primaryExec) {
+        this.primaryExec = primaryExec;
+    }
+
+    public String getPrimaryExec() {
+        return primaryExec;
+    }
+
+
+    public HashMap<String, String> getPorts() {
+        return ports;
+    }
+
+    public void addPort(String nodeName, String portName) {
+        ports.put(nodeName, portName);
     }
 }

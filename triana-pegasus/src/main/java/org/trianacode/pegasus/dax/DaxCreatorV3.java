@@ -38,6 +38,8 @@ public class DaxCreatorV3 implements TaskConscious {
     public int idNumber = 0;
     public Task task;
 
+    String namespace = "";
+
     Log devLog = Loggers.DEV_LOGGER;
 
     private ArrayList<String> PFLarray;
@@ -46,12 +48,16 @@ public class DaxCreatorV3 implements TaskConscious {
     public boolean demo = true;
 
     @TextFieldParameter
-    private String fileName = "output";
+    public String fileName = "output";
 
     @Process(gather = true)
     public java.io.File process(List in) {
         PFLarray = new ArrayList<String>();
         devLog.debug("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
+
+        if(task.getParameter("fileName") != null){
+            fileName = (String) task.getParameter("fileName");
+        }
 
         DaxRegister register = DaxRegister.getDaxRegister();
 
@@ -96,7 +102,7 @@ public class DaxCreatorV3 implements TaskConscious {
                     String jobName = "Process";
                     String id = "0000000" + (j + 1);
                     id = ("ID" + id.substring(id.length() - 7));
-                    Job job = new Job(id, fileName, jobName, "1.0");
+                    Job job = new Job(id, namespace, jobName, "1.0");
                     job.addArgument(inChunk.getJobArgs());
 
 
@@ -124,8 +130,15 @@ public class DaxCreatorV3 implements TaskConscious {
     }
 
     private java.io.File daxFromRegister(DaxRegister register) {
+
         //      register.listAll();
+
         idNumber = 0;
+        if(task.getParameter("namespace") != null){
+            namespace = (String) task.getParameter("namespace");
+        } else {
+            namespace = fileName;
+        }
         ADAG dax = new ADAG(fileName);
 
         HashMap<String, Executable> execs = new HashMap<String, Executable>();
@@ -199,10 +212,14 @@ public class DaxCreatorV3 implements TaskConscious {
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
 
-            Job job = new Job(id, fileName, jobName, "1.0");
+            Job job = new Job(id, namespace, jobName, "1.0");
             devLog.debug("args :" + jobChunk.getJobArgs());
-            job.addArgument(jobChunk.getJobArgs());
 
+            if(jobChunk.getArgsStringArray() != null){
+                job.addArgument(jobChunk.getArgsStringArray().get(n));
+            } else {
+                job.addArgument(jobChunk.getJobArgs());
+            }
 
 //            jobChunk.listChunks();
             List inFiles = jobChunk.getInFileChunks();
@@ -353,7 +370,7 @@ public class DaxCreatorV3 implements TaskConscious {
             }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
-            Job job = new Job(id, fileName, jobName, "1.0");
+            Job job = new Job(id, namespace, jobName, "1.0");
             job.addArgument(jobChunk.getJobArgs());
 
 
@@ -448,7 +465,7 @@ public class DaxCreatorV3 implements TaskConscious {
             }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
-            Job job = new Job(id, fileName, jobName, "1.0");
+            Job job = new Job(id, namespace, jobName, "1.0");
             job.addArgument(jobChunk.getJobArgs());
 
             for (int j = offset; j < (offset + numberInputsPerJob); j++) {
@@ -511,7 +528,7 @@ public class DaxCreatorV3 implements TaskConscious {
             }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
-            Job job = new Job(id, fileName, jobName, "1.0");
+            Job job = new Job(id, namespace, jobName, "1.0");
             job.addArgument(jobChunk.getJobArgs());
 
 //            String fileName = fc.getFilename();
@@ -592,7 +609,6 @@ public class DaxCreatorV3 implements TaskConscious {
                     devLog.debug("Building one2one output");
                     //                   chunk.setOne2one(true);
                     chunk.setNumberOfFiles(jobChunk.getNumberOfJobs());
-                    System.out.println("One2One file will have x files : " + chunk.getNumberOfFiles());
 
                     //                devLog.debug("File " + chunk.getFilename() + " duplication set to " + chunk.getNumberOfFiles());
                     if (chunk.getNamePattern() != null) {

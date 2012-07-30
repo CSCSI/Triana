@@ -36,6 +36,7 @@ public class DaxJobChunk implements Serializable {
     private ArgBuilder argBuilder;
 
     Log devLog = Loggers.DEV_LOGGER;
+    private ArrayList<String> argsStringArray = null;
 
     public String getJobName() {
         return jobName;
@@ -185,5 +186,13 @@ public class DaxJobChunk implements Serializable {
 
     public ArgBuilder getArgBuilder() {
         return argBuilder;
+    }
+
+    public void setJobArgs(ArrayList<String> argsStringArray) {
+        this.argsStringArray = argsStringArray;
+    }
+
+    public ArrayList<String> getArgsStringArray() {
+        return argsStringArray;
     }
 }

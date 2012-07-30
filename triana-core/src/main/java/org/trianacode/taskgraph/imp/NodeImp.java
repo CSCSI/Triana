@@ -615,15 +615,15 @@ public class NodeImp implements NodeListener, Node {
         }
     }
 
-    @Override
-    public void setProperty(String key, String value) {
-        properties.put(key, value);
-    }
-
-    @Override
-    public String getProperty(String key) {
-        return properties.get(key);
-    }
+//    @Override
+//    public void setProperty(String key, String value) {
+//        properties.put(key, value);
+//    }
+//
+//    @Override
+//    public String getProperty(String key) {
+//        return properties.get(key);
+//    }
 
     public String getName() {
         String name = task.getQualifiedTaskName();

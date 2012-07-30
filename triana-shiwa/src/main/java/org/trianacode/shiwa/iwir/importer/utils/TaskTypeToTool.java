@@ -83,7 +83,7 @@ public class TaskTypeToTool {
                 try {
                     tool = AddonUtils.makeTool(unitName, packageName, taskName, properties);
                 } catch (Exception ignored) {
-                    System.out.printf("Triana doesn't know what " + type + " is.");
+//                    System.out.println("Triana doesn't know what " + type + " is.");
                     tool = null;
                 }
             }
@@ -168,11 +168,11 @@ public class TaskTypeToTool {
 
                     FileNameType exec = posixApplicationType.getExecutable();
                     System.out.println("Executable " + exec.getValue());
-                    System.out.println("Arg " + posixApplicationType.getOtherAttributes().toString());
+                    executable.setPrimaryExec("./" + exec.getValue());
 
                     List<ArgumentType> argumentTypes = posixApplicationType.getArgument();
                     ArrayList<String> argsStrings = new ArrayList<String>();
-                    argsStrings.add(exec.getValue());
+                    argsStrings.add("./" + exec.getValue());
 
                     for(ArgumentType argumentType : argumentTypes){
                         argsStrings.add(argumentType.getValue());
