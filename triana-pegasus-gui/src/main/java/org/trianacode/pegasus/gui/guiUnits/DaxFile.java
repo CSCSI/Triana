@@ -537,6 +537,8 @@ class NamingPanel extends JDialog {
                 PatternCollection pc = new PatternCollection(getSeparator());
                 for (int i = 0; i < parts; i++) {
                     pc.add(new CharSequencePattern(nameParts.get(i)));
+
+
                 }
                 for (int i = 0; i < 5; i++) {
                     devLog.debug(pc.next());
@@ -549,6 +551,7 @@ class NamingPanel extends JDialog {
 
                 setNamingPattern(pc);
             } catch (Exception ex) {
+                 ex.printStackTrace();
             } finally {
                 dispose();
             }

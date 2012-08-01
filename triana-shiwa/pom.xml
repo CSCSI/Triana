@@ -84,7 +84,7 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.5.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>hu.sztaki.lpds.jsdl_lib</groupId>
@@ -101,11 +101,11 @@
             <!--<systemPath>${project.basedir}/lib/shiwa-desktop-all-1.6-BETA.jar</systemPath>-->
         <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.shiwa.fgi</groupId>-->
-            <!--<artifactId>iwir</artifactId>-->
-            <!--<version>1.1.4</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.shiwa.fgi</groupId>
+            <artifactId>iwir</artifactId>
+            <version>1.1.8</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>

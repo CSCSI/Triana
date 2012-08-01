@@ -29,6 +29,8 @@ public class InOut extends Unit {
         setMaximumOutputNodes(Integer.MAX_VALUE);
 
         setParameterUpdatePolicy(PROCESS_UPDATE);
+
+        setParameterPanelClass(InOutPanel.class.getCanonicalName());
     }
 
     public void reset() {

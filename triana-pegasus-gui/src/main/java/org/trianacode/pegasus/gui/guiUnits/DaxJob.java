@@ -55,6 +55,8 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
     JRadioButton scatterCheck;
     JRadioButton spreadCheck;
     JRadioButton one2oneCheck;
+    private JTextField inputSwitchField;
+    private JTextField outputSwitchField;
 
     @org.trianacode.annotation.Process(gather = true)
     public UUID fakeProcess(List list) {
@@ -96,6 +98,7 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
         }
         upperPanel.add(argsField);
 
+
         collectionBox = new JCheckBox("Collection", collection);
         collectionBox.addItemListener(this);
         upperPanel.add(collectionBox);
@@ -109,6 +112,27 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
         upperPanel.add(collectLabel);
 
         mainPane.add(upperPanel);
+
+        JPanel switchArgsPanel = new JPanel(new GridLayout(2,1));
+
+        JPanel inputSwitchPanel = new JPanel(new BorderLayout());
+        JLabel inputSwitchLabel = new JLabel("Input switch : ");
+        inputSwitchField = new JTextField("");
+        inputSwitchField.setText(inputSwitch);
+        inputSwitchPanel.add(inputSwitchLabel, BorderLayout.WEST);
+        inputSwitchPanel.add(inputSwitchField, BorderLayout.CENTER);
+
+        JPanel outputSwitchPanel = new JPanel(new BorderLayout());
+        JLabel outputSwitchLabel = new JLabel("Output switch : ");
+        outputSwitchField = new JTextField("");
+        outputSwitchField.setText(outputSwitch);
+        outputSwitchPanel.add(outputSwitchLabel, BorderLayout.WEST);
+        outputSwitchPanel.add(outputSwitchField, BorderLayout.CENTER);
+
+        switchArgsPanel.add(inputSwitchPanel);
+        switchArgsPanel.add(outputSwitchPanel);
+
+        mainPane.add(switchArgsPanel);
 
         lowerPanel = new JPanel();
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
@@ -228,11 +252,14 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
 
     public void apply() {
         changeToolName(nameField.getText());
+        exec = execField.getText();
         jobName = nameField.getText();
         args = argsField.getText();
         if (!collection) {
             connectPattern = DaxJob.AUTO_CONNECT;
         }
+        inputSwitch = inputSwitchField.getText();
+        outputSwitch = outputSwitchField.getText();
         setParams();
     }
 
@@ -252,7 +279,6 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
     }
 
     public void actionPerformed(ActionEvent ae) {
-        devLog.debug("An action ");
         if (ae.getActionCommand().equals("apply")) {
             apply();
         }
@@ -268,7 +294,6 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
 
 
     public void itemStateChanged(ItemEvent itemEvent) {
-        devLog.debug("An item");
         if (itemEvent.getSource() == collectionBox) {
             if (collectionBox.isSelected()) {
                 collectLabel.setText("Collection of jobs.");

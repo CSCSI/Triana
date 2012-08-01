@@ -64,6 +64,7 @@ public class DaxFileChunk implements Serializable {
         if (namePattern != null) {
             namePattern.resetCount();
         }
+        devLog.debug("Reset counter for " + filename);
     }
 
     public void setFilename(String filename) {

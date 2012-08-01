@@ -14,8 +14,8 @@ import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -42,7 +42,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
     Log devLog = Loggers.DEV_LOGGER;
 
-    private ArrayList<String> PFLarray;
+//    private ArrayList<String> PFLarray;
 
     @CheckboxParameter
     public boolean demo = true;
@@ -50,9 +50,12 @@ public class DaxCreatorV3 implements TaskConscious {
     @TextFieldParameter
     public String fileName = "output";
 
+    private HashSet<File> filesForDax = new HashSet<File>();
+    private HashMap<String, Job> jobHashMap = new HashMap<String, Job>();
+
     @Process(gather = true)
     public java.io.File process(List in) {
-        PFLarray = new ArrayList<String>();
+//        PFLarray = new ArrayList<String>();
         devLog.debug("\nList in is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         if(task.getParameter("fileName") != null){
@@ -150,6 +153,13 @@ public class DaxCreatorV3 implements TaskConscious {
             devLog.debug("******** " + jobChunk.getArgBuilder().getArgString());
             int pattern = jobChunk.getConnectPattern();
 
+            for (DaxFileChunk fc : jobChunk.getOutFileChunks()) {
+                fc.resetNextCounter();
+            }
+            for (DaxFileChunk fc : jobChunk.getInFileChunks()) {
+                fc.resetNextCounter();
+            }
+
             devLog.debug("\nJob : " + jobChunk.getJobName());
             if (pattern == AUTO_CONNECT) {
                 devLog.debug("auto_connect");
@@ -179,22 +189,44 @@ public class DaxCreatorV3 implements TaskConscious {
                 fc.resetNextCounter();
             }
 
-            Executable exec = new Executable(fileName, jobChunk.getJobName(), "1.0");
+            Executable exec = new Executable(namespace, jobChunk.getJobName(), "1.0");
             exec.setArchitecture(Executable.ARCH.X86).setOS(Executable.OS.LINUX);
             exec.setInstalled(true);
 //            exec.addPhysicalFile("file:///home/triana-pegasus/pegasus-wms-3.0.1/bin/keg", "condorpool");
-            exec.addPhysicalFile("file:///usr/bin/gnome-terminal", "condorpool");
+            exec.addPhysicalFile(jobChunk.getExecLocation(), "condorpool");
             execs.put(jobChunk.getJobName(), exec);
 
         }
+
+        writeDependencies(dax, jobChunks);
+
         for (Executable ex : execs.values()) {
             dax.addExecutable(ex);
         }
 
-        devLog.debug("\nFound files : " + PFLarray.toString());
+        for(File file : filesForDax){
+            dax.addFile(file);
+        }
+
+//        devLog.debug("\nFound files : " + PFLarray.toString());
 
         return writeDax(dax);
 
+    }
+
+    private void writeDependencies(ADAG dax, List<DaxJobChunk> jobChunks) {
+
+        for(Job job : dax.getJobs()){
+            for(File file : job.getUses()){
+
+            }
+        }
+
+        for(DaxJobChunk jobChunk : jobChunks){
+            for(DaxFileChunk fileChunk : jobChunk.getInFileChunks()){
+
+            }
+        }
     }
 
     private void autoConnect(ADAG dax, DaxJobChunk jobChunk) {
@@ -205,9 +237,9 @@ public class DaxCreatorV3 implements TaskConscious {
          */
         for (int n = 0; n < jobChunk.getNumberOfJobs(); n++) {
             String jobName = jobChunk.getJobName();
-            if (jobChunk.getNumberOfJobs() > 1) {
-                jobName = (jobName + "-" + n);
-            }
+//            if (jobChunk.getNumberOfJobs() > 1) {
+//                jobName = (jobName + "-" + n);
+//            }
             idNumber++;
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
@@ -293,14 +325,15 @@ public class DaxCreatorV3 implements TaskConscious {
         //    String filename = chunk.getNextFilename();
         String filename = fileChunk.getFilename();
         String fileLocation = fileChunk.getFileLocation();
-//        String fileProtocol = fileChunk.getFileProtocol();
+        String fileProtocol = fileChunk.getFileProtocol();
         File file = new File(filename);
 
         if (fileChunk.isPhysicalFile()) {
-            PFLarray.add(fileLocation);
+//            PFLarray.add(fileProtocol + fileLocation);
             devLog.debug(fileLocation + " added to dax");
-            file.addPhysicalFile(fileLocation, "condorpool");
-            dax.addFile(file);
+            file.addPhysicalFile(fileProtocol + fileLocation, "condorpool");
+            filesForDax.add(file);
+//            dax.addFile(file);
         }
         file.setRegister(false);
         file.setTransfer(File.TRANSFER.OPTIONAL);
@@ -339,7 +372,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
 
     public void spreadConnect(ADAG dax, DaxJobChunk jobChunk) {
-        int n = 0;
+//        int n = 0;
         int numberJobs = jobChunk.getNumberOfJobs();
         Vector<DaxFileChunk> fcs = new Vector<DaxFileChunk>();
         for (DaxFileChunk fc : jobChunk.getInFileChunks()) {
@@ -363,11 +396,11 @@ public class DaxCreatorV3 implements TaskConscious {
             idNumber++;
 
             String jobName = jobChunk.getJobName();
-            if (numberJobs > 1) {
-                jobName = (jobName + "-" + n);
-                devLog.debug("Jobs name is : " + jobName);
-                n++;
-            }
+//            if (numberJobs > 1) {
+//                jobName = (jobName + "-" + n);
+//                devLog.debug("Jobs name is : " + jobName);
+//                n++;
+//            }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
             Job job = new Job(id, namespace, jobName, "1.0");
@@ -425,6 +458,7 @@ public class DaxCreatorV3 implements TaskConscious {
 //            }
 
             devLog.debug("Adding job : " + job.getName() + " to dax");
+            jobHashMap.put(job.getId(), job);
             dax.addJob(job);
         }
 
@@ -432,7 +466,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
 
     private void scatterConnect(ADAG dax, DaxJobChunk jobChunk) {
-        int n = 0;
+//        int n = 0;
         int numberJobs = 0;
         double numberInputsPerJob = jobChunk.getFileInputsPerJob();
         Vector<DaxFileChunk> fcs = new Vector<DaxFileChunk>();
@@ -458,11 +492,11 @@ public class DaxCreatorV3 implements TaskConscious {
             idNumber++;
 
             String jobName = jobChunk.getJobName();
-            if (numberJobs > 1) {
-                jobName = (jobName + "-" + n);
-                devLog.debug("Jobs name is : " + jobName);
-                n++;
-            }
+//            if (numberJobs > 1) {
+//                jobName = (jobName + "-" + n);
+//                devLog.debug("Jobs name is : " + jobName);
+//                n++;
+//            }
             String id = "0000000" + (idNumber);
             id = ("ID" + id.substring(id.length() - 7));
             Job job = new Job(id, namespace, jobName, "1.0");
@@ -625,6 +659,7 @@ public class DaxCreatorV3 implements TaskConscious {
                     outputFile.setTransfer(File.TRANSFER.OPTIONAL);
                     outputFile.setRegister(false);
                     job.uses(outputFile, File.LINK.output);
+                    job.addArgument(jobChunk.getArgBuilder().outputSwitch).addArgument(outputFile);
                 } else {
                     devLog.debug("Not a one2one");
                     for (int k = 0; k < chunk.getNumberOfFiles(); k++) {
@@ -643,6 +678,7 @@ public class DaxCreatorV3 implements TaskConscious {
                         outputFile.setRegister(false);
                         outputFile.setTransfer(File.TRANSFER.OPTIONAL);
                         job.uses(outputFile, File.LINK.output);
+                        job.addArgument(jobChunk.getArgBuilder().outputSwitch).addArgument(outputFile);
 
                     }
                 }

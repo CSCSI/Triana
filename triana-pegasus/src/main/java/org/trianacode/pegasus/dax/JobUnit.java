@@ -50,6 +50,9 @@ public class JobUnit implements TaskConscious, Displayer {
     public boolean autoConnect = true;
     public String exec = "ls";
 
+    public String inputSwitch = "-i";
+    public String outputSwitch = "-o";
+
     public Task task;
 
     private static Log devLog = Loggers.DEV_LOGGER;
@@ -88,6 +91,7 @@ public class JobUnit implements TaskConscious, Displayer {
 
         thisJob.setJobName(jobName);
         thisJob.setJobArgs(args);
+        thisJob.setExecLocation(exec);
         thisJob.setUuid(thisUUID);
         thisJob.setCollection(collection);
         thisJob.setNumberOfJobs(numberOfJobs);
@@ -106,8 +110,8 @@ public class JobUnit implements TaskConscious, Displayer {
         devLog.debug("\nList into " + jobName + " is size: " + in.size() + " contains : " + in.toString() + ".\n ");
 
         ArgBuilder ab = new ArgBuilder();
-        ab.setInputSwitch("-I");
-        ab.setOutputSwitch("-O");
+        ab.setInputSwitch(inputSwitch);
+        ab.setOutputSwitch(outputSwitch);
         ab.setArgString(args);
 
         for (Object object : in) {
@@ -153,7 +157,36 @@ public class JobUnit implements TaskConscious, Displayer {
             numberOfJobs = getNumberOfJobs();
             connectPattern = getConnectPattern();
             fileInputsPerJob = getFileInputsPerJob();
+            exec = getExecLocation();
+            inputSwitch = getInputSwitch();
+            outputSwitch = getOutputSwitch();
         }
+    }
+
+    private String getOutputSwitch() {
+        Object o = task.getParameter("outputSwitch");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return outputSwitch;
+    }
+
+    private String getInputSwitch() {
+        Object o = task.getParameter("inputSwitch");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return inputSwitch;
+    }
+
+
+
+    private String getExecLocation() {
+        Object o = task.getParameter("execLocation");
+        if (o != null && !((String) o).equals("")) {
+            return (String) o;
+        }
+        return exec;
     }
 
     public void setParams() {
@@ -164,6 +197,9 @@ public class JobUnit implements TaskConscious, Displayer {
             task.setParameter("fileInputsPerJob", fileInputsPerJob);
             task.setParameter("collection", collection);
             task.setParameter("connectPattern", connectPattern);
+            task.setParameter("execLocation", exec);
+            task.setParameter("inputSwitch", inputSwitch);
+            task.setParameter("outputSwitch", outputSwitch);
         }
     }
 

@@ -5,7 +5,7 @@ import org.trianacode.config.TrianaProperties;
 import org.trianacode.gui.extensions.AbstractFormatFilter;
 import org.trianacode.gui.extensions.TaskGraphImporterInterface;
 import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
-import org.trianacode.shiwa.iwir.importer.utils.TaskTypeToTool;
+import org.trianacode.shiwa.iwir.importer.utils.TaskTypeRepo;
 import org.trianacode.shiwa.test.InOut;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
@@ -63,7 +63,7 @@ public class IwirReader extends AbstractFormatFilter implements TaskGraphImporte
     public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException {
         try {
 //            return new IwirToTaskGraph().importIWIR(file, properties);
-            TaskTypeToTool.addTaskType("InOut", InOut.class);
+            TaskTypeRepo.addTaskType("InOut", InOut.class);
 
             return new ImportIwir().taskFromIwir(new IWIR(file), null);
         } catch (Exception e) {

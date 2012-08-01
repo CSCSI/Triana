@@ -1,6 +1,6 @@
 package org.trianacode.shiwa.iwir.importer.utils;
 
-import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
+//import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
 import org.shiwa.fgi.iwir.*;
 import org.trianacode.shiwa.iwir.execute.Executable;
 import org.trianacode.shiwa.iwir.factory.TaskHolderFactory;
@@ -27,7 +27,7 @@ public class ImportIwir {
     private HashSet<DataLink> dataLinks = new HashSet<DataLink>();
 
     boolean std = false;
-    private FGIWorkflowReader fgiWorkflowReader = null;
+//    private FGIWorkflowReader fgiWorkflowReader = null;
     public static final String IWIR_NODE = "iwirNode";
 
     private void stdOut(String string){
@@ -48,7 +48,7 @@ public class ImportIwir {
             System.out.println("fgiBundleFile = "
                     + fgiBundleFile.exists() + " "
                     + fgiBundleFile.getAbsolutePath());
-            fgiWorkflowReader = new FGIWorkflowReader(fgiBundleFile);
+//            fgiWorkflowReader = new FGIWorkflowReader(fgiBundleFile);
         } else {
             System.out.println("No fgi bundle returned, " +
                     "best effort triana-only tools will be used");
@@ -151,13 +151,16 @@ public class ImportIwir {
     }
 
 
-    private Task createFromIWIRTask(AbstractTask iwirTask, TaskGraph tg) throws TaskException, JAXBException, IOException {
+    private Task createFromIWIRTask(AbstractTask iwirTask, TaskGraph tg) throws TaskException, JAXBException, IOException, ProxyInstantiationException {
 
         //if the iwirTask is a standard IWIR Atomic Task, try to find and/or make a tool for it.
         //this requires the taskType string, the name and the taskgraph properties
 
-        Tool newTask = TaskTypeToTool.getToolFromType(
-                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg.getProperties());
+//        Tool newTask = TaskTypeToTool.getToolFromType(
+//                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg.getProperties());
+        Tool newTask = TaskTypeRepo.getToolFromType(
+                (org.shiwa.fgi.iwir.Task) iwirTask, tg.getProperties());
+
 
         Task trianaTask = tg.createTask(newTask);
 

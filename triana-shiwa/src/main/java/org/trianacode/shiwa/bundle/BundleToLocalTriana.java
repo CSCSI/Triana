@@ -171,7 +171,7 @@ public class BundleToLocalTriana implements TaskConscious {
             try {
                 String bundlePath = optionsStrings[4];
 
-                ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(bundlePath);
+                ShiwaBundleHelper152 shiwaBundleHelper = new ShiwaBundleHelper152(bundlePath);
 
                 BrokerUtils.prepareSubworkflow(
                         task, UUID.randomUUID(), shiwaBundleHelper.getWorkflowImplementation()

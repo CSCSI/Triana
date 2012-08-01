@@ -4,7 +4,7 @@ import org.shiwa.desktop.data.description.SHIWABundle;
 import org.trianacode.annotation.TextFieldParameter;
 import org.trianacode.annotation.Tool;
 import org.trianacode.enactment.logging.stampede.StampedeLog;
-import org.trianacode.shiwa.bundle.ShiwaBundleHelper;
+import org.trianacode.shiwa.bundle.ShiwaBundleHelper152;
 import org.trianacode.shiwa.utils.BrokerUtils;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.annotation.TaskConscious;
@@ -38,7 +38,7 @@ public class RunMultipleBundles implements TaskConscious {
         for (Object object : list) {
             if (object instanceof File) {
                 try {
-                    ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(new SHIWABundle((File) object));
+                    ShiwaBundleHelper152 shiwaBundleHelper = new ShiwaBundleHelper152(new SHIWABundle((File) object));
                     String execBundleName = shiwaBundleHelper.getWorkflowImplementation().getTitle()
                             + "-" + BrokerUtils.getTimeStamp();
                     BrokerUtils.postBundle(address, routingKey, execBundleName, (File) object);

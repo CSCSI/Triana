@@ -37,6 +37,7 @@ public class DaxJobChunk implements Serializable {
 
     Log devLog = Loggers.DEV_LOGGER;
     private ArrayList<String> argsStringArray = null;
+    private String execLocation;
 
     public String getJobName() {
         return jobName;
@@ -194,5 +195,13 @@ public class DaxJobChunk implements Serializable {
 
     public ArrayList<String> getArgsStringArray() {
         return argsStringArray;
+    }
+
+    public void setExecLocation(String execLocation) {
+        this.execLocation = execLocation;
+    }
+
+    public String getExecLocation() {
+        return execLocation;
     }
 }
