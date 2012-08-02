@@ -44,6 +44,7 @@ public class DaxReader {
     private String daxJobUnitName = "DaxJob";
 
     private static Log devLog = Loggers.DEV_LOGGER;
+    public static final String ORIGINAL_DAX_FILE = "originalDaxFile";
 
     public DaxReader() {
     }
@@ -90,6 +91,7 @@ public class DaxReader {
                 tg = createTaskGraph(jobList, properties);
                 tg.setToolName(file.getName());
             }
+            tg.setParameter(DaxReader.ORIGINAL_DAX_FILE, file.getAbsolutePath());
             return tg;
         } else {
             return null;

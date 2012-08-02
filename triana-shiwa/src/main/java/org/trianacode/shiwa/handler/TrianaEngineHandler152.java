@@ -32,11 +32,11 @@ public class TrianaEngineHandler152 implements WorkflowEngineHandler {
 
     private Task task;
     private InputStream displayImage;
-    private TrianaInstance trianaInstance;
+//    private TrianaInstance trianaInstance;
 
-    public TrianaEngineHandler152(Task task, TrianaInstance trianaInstance, InputStream displayImage) {
+    public TrianaEngineHandler152(Task task, InputStream displayImage) {
         this.task = task;
-        this.trianaInstance = trianaInstance;
+//        this.trianaInstance = trianaInstance;
         this.displayImage = displayImage;
     }
 
@@ -150,7 +150,7 @@ public class TrianaEngineHandler152 implements WorkflowEngineHandler {
 //                SHIWADesktopPanel.ButtonOption.SHOW_TOOLBAR
 //        );
         SHIWADesktop shiwaDesktop = new SHIWADesktop(
-                new TrianaEngineHandler152((Task) tool, engine, null),
+                new TrianaEngineHandler152((Task) tool, null),
                 SHIWADesktop.ButtonOption.SHOW_TOOLBAR
         );
         JFrame jFrame = new JFrame();

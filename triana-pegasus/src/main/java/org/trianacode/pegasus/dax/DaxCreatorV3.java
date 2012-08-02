@@ -14,10 +14,8 @@ import org.trianacode.taskgraph.annotation.TaskConscious;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -192,13 +190,11 @@ public class DaxCreatorV3 implements TaskConscious {
             Executable exec = new Executable(namespace, jobChunk.getJobName(), "1.0");
             exec.setArchitecture(Executable.ARCH.X86).setOS(Executable.OS.LINUX);
             exec.setInstalled(true);
-//            exec.addPhysicalFile("file:///home/triana-pegasus/pegasus-wms-3.0.1/bin/keg", "condorpool");
-            exec.addPhysicalFile(jobChunk.getExecLocation(), "condorpool");
+            exec.addPhysicalFile(jobChunk.getExecLocation(), "local");
             execs.put(jobChunk.getJobName(), exec);
 
         }
 
-        writeDependencies(dax, jobChunks);
 
         for (Executable ex : execs.values()) {
             dax.addExecutable(ex);
@@ -208,25 +204,40 @@ public class DaxCreatorV3 implements TaskConscious {
             dax.addFile(file);
         }
 
+        writeDependencies(dax);
 //        devLog.debug("\nFound files : " + PFLarray.toString());
 
         return writeDax(dax);
 
     }
 
-    private void writeDependencies(ADAG dax, List<DaxJobChunk> jobChunks) {
+    private void writeDependencies(ADAG dax) {
 
         for(Job job : dax.getJobs()){
+
+//            System.out.println("Job " + job.getId());
+
+            ArrayList<File> inputFiles = new ArrayList<File>();
             for(File file : job.getUses()){
+//                System.out.println("  Uses file " + file.getName() + " + " + file.getLink().name());
+                if(file.getLink() == File.LINK.input){
+                    inputFiles.add(file);
+//                    System.out.println("Input file " + file.getName() + " into job " + job.getId());
+                }
+            }
 
+            for(Job job1 : dax.getJobs()){
+                for(File file1 : job1.getUses()){
+                    if(file1.getLink() == File.LINK.output){
+//                        System.out.println("Output file " + file1.getName() + " out of job " + job1.getId());
+                        if(inputFiles.contains(file1)){
+                            dax.addDependency(job1, job);
+                        }
+                    }
+                }
             }
         }
 
-        for(DaxJobChunk jobChunk : jobChunks){
-            for(DaxFileChunk fileChunk : jobChunk.getInFileChunks()){
-
-            }
-        }
     }
 
     private void autoConnect(ADAG dax, DaxJobChunk jobChunk) {
@@ -331,7 +342,7 @@ public class DaxCreatorV3 implements TaskConscious {
         if (fileChunk.isPhysicalFile()) {
 //            PFLarray.add(fileProtocol + fileLocation);
             devLog.debug(fileLocation + " added to dax");
-            file.addPhysicalFile(fileProtocol + fileLocation, "condorpool");
+            file.addPhysicalFile(fileProtocol + fileLocation, "local");
             filesForDax.add(file);
 //            dax.addFile(file);
         }

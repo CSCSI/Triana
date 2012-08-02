@@ -1,13 +1,14 @@
 package org.trianacode.shiwa.iwir.importer.utils;
 
-import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
-import hu.sztaki.lpds.jsdl_lib.Parser;
-import org.ggf.schemas.jsdl._2005._11.jsdl.ApplicationType;
-import org.ggf.schemas.jsdl._2005._11.jsdl.DataStagingType;
-import org.ggf.schemas.jsdl._2005._11.jsdl.JobDefinitionType;
-import org.ggf.schemas.jsdl._2005._11.jsdl_posix.ArgumentType;
-import org.ggf.schemas.jsdl._2005._11.jsdl_posix.FileNameType;
-import org.ggf.schemas.jsdl._2005._11.jsdl_posix.POSIXApplicationType;
+//import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
+//import hu.sztaki.lpds.jsdl_lib.Parser;
+//import org.ggf.schemas.jsdl._2005._11.jsdl.ApplicationType;
+//import org.ggf.schemas.jsdl._2005._11.jsdl.DataStagingType;
+//import org.ggf.schemas.jsdl._2005._11.jsdl.JobDefinitionType;
+//import org.ggf.schemas.jsdl._2005._11.jsdl_posix.ArgumentType;
+//import org.ggf.schemas.jsdl._2005._11.jsdl_posix.FileNameType;
+//import org.ggf.schemas.jsdl._2005._11.jsdl_posix.POSIXApplicationType;
+
 import org.shiwa.fgi.iwir.Task;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.AddonUtils;
@@ -18,15 +19,12 @@ import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 //FIX ME
@@ -157,59 +155,59 @@ public class TaskTypeRepo {
         return null;
     }
 
-    private static void populateExecutableFromJSDL(Executable executable, File jsdlFile)
-            throws IOException, JAXBException {
-
-        String j = readJSDL(jsdlFile);
-
-        Parser parser = new Parser();
-        JobDefinitionType jobDef =  parser.readJSDLFromString(j);
-
-        String jobName = jobDef.getJobDescription().getJobIdentification().getJobName();
-        ApplicationType attributes = jobDef.getJobDescription().getApplication();
-
-        String dir = System.getProperty("user.dir");
-        File workingDir = new File(dir);
-        File execDir = new File(workingDir, attributes.getApplicationName());
-        execDir.mkdirs();
-
-        executable.setWorkingDir(execDir);
-
-        String[] args = new String[0];
-        for(Object obj : attributes.getAny()){
-
-            if(obj instanceof ElementNSImpl){
-                if(((ElementNSImpl) obj).getLocalName().equals("POSIXApplication_Type")){
-                    JAXBElement jaxbElement =
-                            parser.unMarshal((ElementNSImpl) obj, new POSIXApplicationType());
-
-                    POSIXApplicationType posixApplicationType = (POSIXApplicationType) jaxbElement.getValue();
-
-                    FileNameType exec = posixApplicationType.getExecutable();
-                    System.out.println("Executable " + exec.getValue());
-                    executable.setPrimaryExec("./" + exec.getValue());
-
-                    List<ArgumentType> argumentTypes = posixApplicationType.getArgument();
-                    ArrayList<String> argsStrings = new ArrayList<String>();
-                    argsStrings.add("./" + exec.getValue());
-
-                    for(ArgumentType argumentType : argumentTypes){
-                        argsStrings.add(argumentType.getValue());
-                    }
-                    args = argsStrings.toArray(new String[argsStrings.size()]);
-                    executable.setArgs(args);
-                }
-            }
-        }
-
-        System.out.println("Will execute " + Arrays.toString(args) + " in " + execDir.getAbsolutePath());
-
-        List<DataStagingType> dataStaging = jobDef.getJobDescription().getDataStaging();
-        for(DataStagingType ds : dataStaging){
-
-        }
-
-    }
+//    private static void populateExecutableFromJSDL(Executable executable, File jsdlFile)
+//            throws IOException, JAXBException {
+//
+//        String j = readJSDL(jsdlFile);
+//
+//        Parser parser = new Parser();
+//        JobDefinitionType jobDef =  parser.readJSDLFromString(j);
+//
+//        String jobName = jobDef.getJobDescription().getJobIdentification().getJobName();
+//        ApplicationType attributes = jobDef.getJobDescription().getApplication();
+//
+//        String dir = System.getProperty("user.dir");
+//        File workingDir = new File(dir);
+//        File execDir = new File(workingDir, attributes.getApplicationName());
+//        execDir.mkdirs();
+//
+//        executable.setWorkingDir(execDir);
+//
+//        String[] args = new String[0];
+//        for(Object obj : attributes.getAny()){
+//
+//            if(obj instanceof ElementNSImpl){
+//                if(((ElementNSImpl) obj).getLocalName().equals("POSIXApplication_Type")){
+//                    JAXBElement jaxbElement =
+//                            parser.unMarshal((ElementNSImpl) obj, new POSIXApplicationType());
+//
+//                    POSIXApplicationType posixApplicationType = (POSIXApplicationType) jaxbElement.getValue();
+//
+//                    FileNameType exec = posixApplicationType.getExecutable();
+//                    System.out.println("Executable " + exec.getValue());
+//                    executable.setPrimaryExec("./" + exec.getValue());
+//
+//                    List<ArgumentType> argumentTypes = posixApplicationType.getArgument();
+//                    ArrayList<String> argsStrings = new ArrayList<String>();
+//                    argsStrings.add("./" + exec.getValue());
+//
+//                    for(ArgumentType argumentType : argumentTypes){
+//                        argsStrings.add(argumentType.getValue());
+//                    }
+//                    args = argsStrings.toArray(new String[argsStrings.size()]);
+//                    executable.setArgs(args);
+//                }
+//            }
+//        }
+//
+//        System.out.println("Will execute " + Arrays.toString(args) + " in " + execDir.getAbsolutePath());
+//
+//        List<DataStagingType> dataStaging = jobDef.getJobDescription().getDataStaging();
+//        for(DataStagingType ds : dataStaging){
+//
+//        }
+//
+//    }
 
     private static String readJSDL(File file) throws IOException {
         StringBuilder fileData = new StringBuilder(1000);

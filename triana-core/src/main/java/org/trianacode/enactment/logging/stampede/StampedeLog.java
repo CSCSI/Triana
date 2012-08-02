@@ -669,9 +669,9 @@ public class StampedeLog {
 
         private StampedeEvent execStateToJobState(ExecutionEvent event) {
             ExecutionState executionState = event.getState();
-            System.out.println("Task : " + event.getTask().getToolName()
-                    + " in state " + event.getState().name() +
-                    " previously " + event.getOldState().name());
+//            System.out.println("Task : " + event.getTask().getToolName()
+//                    + " in state " + event.getState().name() +
+//                    " previously " + event.getOldState().name());
 
             StampedeEvent stampedeEvent;
 

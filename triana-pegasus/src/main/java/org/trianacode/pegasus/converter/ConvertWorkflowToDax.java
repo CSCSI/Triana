@@ -36,7 +36,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
 
     @Override
     public String toString() {
-        return "DAX";
+        return "DAX and run";
     }
 
     @Override
