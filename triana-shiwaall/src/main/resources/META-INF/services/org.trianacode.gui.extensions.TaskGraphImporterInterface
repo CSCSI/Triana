@@ -1,0 +1,3 @@
+org.trianacode.shiwaall.iwir.importer.IwirReader
+org.trianacode.shiwaall.bundle.BundleReader
+org.trianacode.shiwaall.gui.importer.DaxReaderGUIInterface

@@ -1,0 +1,5 @@
+org.trianacode.shiwaall.handler.PublishWorkflowExtension
+org.trianacode.shiwaall.handler.DownloadWorkflowExtension
+org.trianacode.shiwaall.bundle.RunAndBundleExtension
+org.trianacode.shiwaall.iwir.importer.TaskTypeRepoPanel
+org.trianacode.shiwaall.gui.Daxifier

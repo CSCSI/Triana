@@ -1,0 +1,3 @@
+org.trianacode.shiwaall.models.ShiwaColorModel
+org.trianacode.shiwaall.iwir.factory.models.IWIRColorModel
+org.trianacode.shiwaall.gui.models.DaxColorModel

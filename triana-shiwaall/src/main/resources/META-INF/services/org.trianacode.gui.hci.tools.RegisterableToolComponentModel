@@ -1,0 +1,4 @@
+org.trianacode.shiwaall.models.ShiwaConfigComponentModel
+org.trianacode.shiwaall.iwir.factory.models.IWIRControlComponentModel
+org.trianacode.shiwaall.gui.models.DaxFileComponentModel
+org.trianacode.shiwaall.gui.models.DaxJobComponentModel
