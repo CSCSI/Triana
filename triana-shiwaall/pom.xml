@@ -93,7 +93,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>pegasus.nodeps</groupId>
+            <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-pegasus-handler</artifactId>
             <version>1.6-SNAPSHOT</version>
         </dependency>
