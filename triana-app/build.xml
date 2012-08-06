@@ -10,8 +10,8 @@
     <property name="gui-classes" value="../triana-gui/target/classes"/>
     <property name="anno-classes" value="../triana-annotation/target/classes"/>
     <property name="types-classes" value="../triana-types/target/classes"/>
-    <property name="pegasus-classes" value="../triana-pegasus/target/classes"/>
-    <property name="pegasus-gui-classes" value="../triana-pegasus-gui/classes"/>
+    <!--<property name="pegasus-classes" value="../triana-pegasus/target/classes"/>-->
+    <!--<property name="pegasus-gui-classes" value="../triana-pegasus-gui/classes"/>-->
     <property name="toolboxes" value="../triana-toolboxes"/>
 
     <target name="triana-app">
@@ -76,20 +76,24 @@
         <mkdir dir="dist/toolboxes"/>
 
         <antcall target="module">
-            <param name="module" value="triana-pegasus"/>
-            <param name="targetModule" value="pegasus"/>
-        </antcall>
-        <antcall target="module">
-            <param name="module" value="triana-pegasus-gui"/>
-            <param name="targetModule" value="pegasus"/>
-        </antcall>
-        <antcall target="module">
-            <param name="module" value="triana-shiwa"/>
-            <param name="targetModule" value="shiwa"/>
+            <param name="module" value="triana-shiwaall"/>
+            <param name="targetModule" value="shiwaall"/>
         </antcall>
         <!--<antcall target="module">-->
-            <!--<param name="module" value="triana-shiwa-old"/>-->
-            <!--<param name="targetModule" value="shiwa-old"/>-->
+        <!--<param name="module" value="triana-pegasus"/>-->
+        <!--<param name="targetModule" value="pegasus"/>-->
+        <!--</antcall>-->
+        <!--<antcall target="module">-->
+        <!--<param name="module" value="triana-pegasus-gui"/>-->
+        <!--<param name="targetModule" value="pegasus"/>-->
+        <!--</antcall>-->
+        <!--<antcall target="module">-->
+        <!--<param name="module" value="triana-shiwa"/>-->
+        <!--<param name="targetModule" value="shiwa"/>-->
+        <!--</antcall>-->
+        <!--<antcall target="module">-->
+        <!--<param name="module" value="triana-shiwa-old"/>-->
+        <!--<param name="targetModule" value="shiwa-old"/>-->
         <!--</antcall>-->
     </target>
 
@@ -142,22 +146,22 @@
         <antcall target="dev-toolbox">
             <param name="toolbox" value="gftgu"/>
         </antcall>
-        <antcall target="dev-toolbox">
-            <param name="toolboxes" value="../"/>
-            <param name="toolbox" value="triana-shiwa"/>
-        </antcall>
         <!--<antcall target="dev-toolbox">-->
-            <!--<param name="toolboxes" value="../"/>-->
-            <!--<param name="toolbox" value="triana-shiwa-old"/>-->
+        <!--<param name="toolboxes" value="../"/>-->
+        <!--<param name="toolbox" value="triana-shiwa"/>-->
         <!--</antcall>-->
         <antcall target="dev-toolbox">
             <param name="toolboxes" value="../"/>
-            <param name="toolbox" value="triana-pegasus"/>
+            <param name="toolbox" value="triana-shiwaall"/>
         </antcall>
-        <antcall target="dev-toolbox">
-            <param name="toolboxes" value="../"/>
-            <param name="toolbox" value="triana-pegasus-gui"/>
-        </antcall>
+        <!--<antcall target="dev-toolbox">-->
+        <!--<param name="toolboxes" value="../"/>-->
+        <!--<param name="toolbox" value="triana-pegasus"/>-->
+        <!--</antcall>-->
+        <!--<antcall target="dev-toolbox">-->
+        <!--<param name="toolboxes" value="../"/>-->
+        <!--<param name="toolbox" value="triana-pegasus-gui"/>-->
+        <!--</antcall>-->
     </target>
 
     <target name="dev-toolbox">

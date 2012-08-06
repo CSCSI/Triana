@@ -5,7 +5,9 @@ import org.trianacode.gui.desktop.DesktopViewListener;
 import org.trianacode.gui.desktop.DesktopViewManager;
 import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
+import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -93,12 +95,25 @@ public class TabManager implements DesktopViewManager, ChangeListener {
         for (DesktopViewListener listener : listeners) {
             listener.ViewClosed(tab);
         }
+        TaskGraph taskGraph = tab.getTaskgraphPanel().getTaskGraph();
+        Task[] tasks = TaskGraphUtils.getAllTasksRecursive(taskGraph, true);
+
+        for(Task task : tasks){
+            if(task instanceof TaskGraph){
+                DesktopView view = getTaskgraphViewFor((TaskGraph) task);
+                if (view instanceof TabView) {
+                    tabs.remove(view);
+                    headerLabelMap.remove(view);
+                    tabbedPane.remove((TabView) view);
+                }
+            }
+        }
+
         if (tab instanceof TabView) {
             tabs.remove(tab);
             headerLabelMap.remove(tab);
             tabbedPane.remove((TabView) tab);
         }
-
     }
 
     @Override

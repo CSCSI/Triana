@@ -3,6 +3,7 @@ package imageproc.output;
 import org.trianacode.gui.panels.FilePanel;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
+import triana.types.FileName;
 import triana.types.TrianaImage;
 import triana.types.TrianaPixelMap;
 import triana.types.image.GifEncoder;
@@ -10,6 +11,7 @@ import triana.types.image.GifEncoder;
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 
 /**
@@ -36,7 +38,8 @@ public class WriteGIF extends Unit {
 //            doubleClick();
         }
 
-        BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(imageName));
+        File file = new File(imageName);
+        BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(file));
         GifEncoder ge = new GifEncoder(image, bo);
 //        Dimension d = trimage.getImageDimensions();
         //      ge.encodeStart(d.width, d.height);
@@ -44,6 +47,8 @@ public class WriteGIF extends Unit {
 //        ge.encodeDone();
         //    bo.flush();
         bo.close();
+
+        output(new FileName(file));
     }
 
     public void doubleClick() {
@@ -121,7 +126,7 @@ public class WriteGIF extends Unit {
      *         space.
      */
     public String[] getOutputTypes() {
-        return new String[]{};
+        return new String[]{"triana.types.FileName"};
     }
 
     /**

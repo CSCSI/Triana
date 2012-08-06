@@ -107,6 +107,7 @@ public class ErrorDialog implements Serializable {
      */
     public static void show(final String title, final String text) {
         final JFrame showit = new JFrame(title);
+        showit.setSize(400,600);
 
         JButton ok = new JButton("OK");
         ok.addActionListener(
@@ -128,7 +129,7 @@ public class ErrorDialog implements Serializable {
         JLabel icon = new JLabel(ima);
         icon.setBorder(new EmptyBorder(3, 3, 3, 3));
         JScrollPane scroll = new JScrollPane(textarea);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         showit.getContentPane().setLayout(new BorderLayout());
