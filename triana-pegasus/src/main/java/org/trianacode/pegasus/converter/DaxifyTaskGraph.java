@@ -8,12 +8,14 @@ import org.trianacode.pegasus.dax.JobUnit;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
+import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -32,7 +34,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
 
     @Override
     public String toString() {
-        return "DAX";
+        return getServiceName();
     }
 
     @Override
@@ -210,6 +212,19 @@ public class DaxifyTaskGraph implements ConversionAddon {
                 }
             }
 
+            Node childNode = getTaskgraphChildNode(clone);
+            if (childNode != null) {
+//
+                ToolImp creatorTool = new ToolImp(clone.getProperties());
+                initTool(creatorTool, "DaxCreator", "org.trianacode.pegasus.gui.guiUnits", 1, 0);
+//                if (daxFilePath != null) {
+//                    creatorTool.setParameter("fileName", daxFilePath);
+//                }
+                Task creatorTask = clone.createTask(creatorTool);
+
+                clone.connect(childNode, creatorTask.getDataInputNode(0));
+            }
+
             return clone;
         } catch (ClassCastException except) {
             except.printStackTrace();
@@ -217,6 +232,18 @@ public class DaxifyTaskGraph implements ConversionAddon {
         } catch (TaskGraphException except) {
             except.printStackTrace();
             throw (new TaskGraphException("cloningError" + ": " + except.getMessage(), except));
+        }
+    }
+
+    private static void initTool(ToolImp tool, String unitName, String unitPackage, int inNodes, int outNodes) {
+        tool.setToolName(unitName);
+        try {
+            tool.setDataInputNodeCount(inNodes);
+            tool.setDataOutputNodeCount(outNodes);
+            tool.setToolPackage(unitPackage);
+            tool.setProxy(new JavaProxy(unitName, unitPackage));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -300,7 +327,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
 
     @Override
     public String getServiceName() {
-        return "taskgraph-to-daxJobs";
+        return "Triana Dax Template";
     }
 
     @Override
@@ -341,5 +368,36 @@ public class DaxifyTaskGraph implements ConversionAddon {
     @Override
     public InputStream toolToWorkflowFileInputStream(Tool tool) {
         return null;
+    }
+
+    private static Node getTaskgraphChildNode(TaskGraph taskGraph) {
+// Find a child task on the taskgraph to attach the daxCreator to, and connect it
+
+        Node childNode = null;
+        try {
+            Task[] tasks = taskGraph.getTasks(false);
+            ArrayList<Task> childTasks = new ArrayList<Task>();
+            for (Task task : tasks) {
+                if (task.getDataOutputNodeCount() == 0) {
+                    childTasks.add(task);
+                }
+            }
+            System.out.println("These are the child tasks of the taskgraph (will use the first discovered): ");
+            for (Task task : childTasks) {
+                System.out.println(task.getToolName());
+            }
+
+            if (childTasks.size() > 0) {
+                childNode = childTasks.get(0).addDataOutputNode();
+            } else {
+                if (taskGraph.getOutputNodeCount() > 0) {
+                    childNode = taskGraph.getOutputNode(0).getTopLevelTask().addDataOutputNode();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to add node to child leaf of taskgraph");
+        }
+        System.out.println("Child node " + childNode);
+        return childNode;
     }
 }

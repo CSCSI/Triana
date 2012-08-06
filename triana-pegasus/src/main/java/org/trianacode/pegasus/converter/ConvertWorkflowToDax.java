@@ -36,7 +36,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
 
     @Override
     public String toString() {
-        return "DAX and run";
+        return getServiceName();
     }
 
     @Override
@@ -249,7 +249,7 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
 
     @Override
     public String getServiceName() {
-        return "daxConverter";
+        return "Pegasus Dax";
     }
 
     @Override

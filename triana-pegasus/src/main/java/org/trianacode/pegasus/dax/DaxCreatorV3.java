@@ -45,6 +45,9 @@ public class DaxCreatorV3 implements TaskConscious {
     @CheckboxParameter
     public boolean demo = true;
 
+    @CheckboxParameter
+    public boolean publish = true;
+
     @TextFieldParameter
     public String fileName = "output";
 

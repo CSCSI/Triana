@@ -107,19 +107,19 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>pegasus.nodeps</groupId>-->
+        <!--<artifactId>pegasus</artifactId>-->
+        <!--<version>4.0.1</version>-->
+        <!--<scope>compile</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>pegasus.nodeps</groupId>
             <artifactId>pegasus</artifactId>
-            <version>4.0.1</version>
-            <scope>compile</scope>
+            <version>4.1.0cvs</version>
+            <!--<systemPath>/Users/ian/Coding/pegasus/pegasus-svn/dist/pegasus-4.1.0cvs/share/pegasus/java/pegasus.jar</systemPath>-->
+            <!--<scope>system</scope>-->
         </dependency>
-        <!--<dependency>-->
-        <!--<artifactId>pegasus</artifactId>-->
-        <!--<groupId>edu.isi.pegasus</groupId>-->
-        <!--<version>4.0</version>-->
-        <!--<systemPath>${project.basedir}/lib/pegasus.jar</systemPath>-->
-        <!--<scope>system</scope>-->
-        <!--</dependency>-->
 
     </dependencies>
 
