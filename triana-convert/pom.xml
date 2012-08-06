@@ -84,7 +84,7 @@
 
         <dependency>
             <groupId>org.trianacode</groupId>
-            <artifactId>triana-shiwa</artifactId>
+            <artifactId>triana-shiwa-all</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
             <exclusions>

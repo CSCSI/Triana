@@ -2,8 +2,8 @@ package org.trianacode.convert;
 
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
-import org.trianacode.shiwa.iwir.importer.utils.ExportIwir;
-import org.trianacode.shiwa.iwir.importer.utils.ImportIwir;
+import org.trianacode.shiwaall.iwir.importer.utils.ExportIwir;
+import org.trianacode.shiwaall.iwir.importer.utils.ImportIwir;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.TaskGraphException;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
