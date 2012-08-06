@@ -6,7 +6,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.commons.io.FileUtils;
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.WorkflowInstance;
-import org.trianacode.pool.ShiwaBundleHelper;
+import org.trianacode.pool.ShiwaBundleHelper152;
 
 import java.io.File;
 import java.io.FileReader;
@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+
+//import org.trianacode.pool.ShiwaBundleHelper;
 
 /**
  * Created by IntelliJ IDEA.
@@ -58,7 +60,7 @@ public class PoolToBroker extends EnginePluginImpl {
 
         tempReturnFile = null;
         try {
-            ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(shiwaBundle);
+            ShiwaBundleHelper152 shiwaBundleHelper = new ShiwaBundleHelper152(shiwaBundle);
             File temp = File.createTempFile("bundle", "tmp");
             shiwaBundleHelper.saveBundle(temp);
 
@@ -96,7 +98,7 @@ public class PoolToBroker extends EnginePluginImpl {
     }
 
 
-    private String getInstanceName(ShiwaBundleHelper shiwaBundleHelper) {
+    private String getInstanceName(ShiwaBundleHelper152 shiwaBundleHelper) {
         return shiwaBundleHelper.getWorkflowImplementation().getTitle()
                 + "-" + getTimeStamp();
     }

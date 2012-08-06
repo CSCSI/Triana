@@ -40,7 +40,7 @@ public class TrianasPoolPlugin extends EnginePluginImpl {
 
         tempReturnFile = null;
         try {
-            ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(shiwaBundle);
+            ShiwaBundleHelper152 shiwaBundleHelper = new ShiwaBundleHelper152(shiwaBundle);
             File temp = File.createTempFile("bundle", "tmp");
             shiwaBundleHelper.saveBundle(temp);
 
