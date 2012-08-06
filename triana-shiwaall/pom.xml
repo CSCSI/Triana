@@ -93,8 +93,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.shiwa.desktop</groupId>
-            <artifactId>shiwa-desktop-pegasus-handler</artifactId>
+            <groupId>org.shiwa.pegasus</groupId>
+            <artifactId>pegasus-handler</artifactId>
             <version>1.6-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -107,24 +107,17 @@
             <artifactId>restless</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-            <version>2.6.2</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>xerces</groupId>-->
+            <!--<artifactId>xmlParserAPIs</artifactId>-->
+            <!--<version>2.6.2</version>-->
+        <!--</dependency>-->
         <!--<dependency>-->
             <!--<groupId>hu.sztaki.lpds.jsdl_lib</groupId>-->
             <!--<artifactId>JSDL_Temp_Cre_Tool</artifactId>-->
             <!--<version>1.0</version>-->
             <!--<scope>system</scope>-->
             <!--<systemPath>${project.basedir}/lib/JSDL_Temp_Cre_Tool.jar</systemPath>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.shiwa.desktop</groupId>-->
-            <!--<artifactId>shiwa-desktop-gui</artifactId>-->
-            <!--<version>1.6-BETA</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/shiwa-desktop-all-1.6-BETA.jar</systemPath>-->
         <!--</dependency>-->
 
         <dependency>
