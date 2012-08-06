@@ -1,5 +1,0 @@
-org.trianacode.shiwa.handler.PublishWorkflowExtension
-org.trianacode.shiwa.handler.DownloadWorkflowExtension
-org.trianacode.shiwa.bundle.RunAndBundleExtension
-org.trianacode.shiwa.iwir.importer.TaskTypeRepoPanel
-
