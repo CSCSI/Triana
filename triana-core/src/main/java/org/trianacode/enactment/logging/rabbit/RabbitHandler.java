@@ -175,7 +175,7 @@ public class RabbitHandler extends SwingWorker {
                         }
                     });
 //                    channel.queueDeclare("", false, false, false, null);
-                    System.out.println("Connection made " + channel.toString());
+//                    System.out.println("Connection made " + channel.toString());
                     status = Status.READY;
                 } catch (Exception e) {
                     System.out.println("Connection fail");

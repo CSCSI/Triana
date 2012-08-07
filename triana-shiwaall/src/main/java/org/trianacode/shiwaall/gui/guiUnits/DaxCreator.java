@@ -1,6 +1,7 @@
 package org.trianacode.shiwaall.gui.guiUnits;
 
 import org.apache.commons.logging.Log;
+import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktop;
 import org.shiwa.pegasus.PegasusHandler;
 import org.trianacode.annotation.CustomGUIComponent;
@@ -21,11 +22,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Created by IntelliJ IDEA.
@@ -77,7 +79,32 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         if(publish){
             File siteFile = writeFile("site.xml", siteText);
             File propertiesFile = writeFile("propertiesrc", propertiesText);
+
+            System.out.println("Current dir " + System.getProperty("user.dir"));
+            File currentDir = new File(System.getProperty("user.dir"));
+            File schemaDir = new File(currentDir, "schema");
+            schemaDir.mkdirs();
+            String property = System.setProperty(
+                    "pegasus.home.schemadir",
+                    schemaDir.getAbsolutePath()
+            );
+
+            System.out.println("sax " + System.getProperty("org.xml.sax.driver"));
+            System.out.println(property);
+
+            try {
+                prepareSchemas(schemaDir);
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
+
             PegasusHandler pegasusHandler = new PegasusHandler(daxFile, propertiesFile);
+
+            System.out.println(pegasusHandler.getClass().getCanonicalName());
+            if(pegasusHandler instanceof WorkflowEngineHandler){
+                System.out.print("Is handler");
+            }
+
             SHIWADesktop shiwaDesktop = new SHIWADesktop( pegasusHandler,
                     SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
 
@@ -87,6 +114,39 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
 
         return daxFile;
     }
+
+    private void prepareSchemas(File outputDir) throws IOException, URISyntaxException {
+        InputStream zipStream = this.getClass().getClassLoader().getResourceAsStream("schemas/schema.zip");
+//        URL zipUrl = Thread.currentThread().getContextClassLoader().getResource("schemas/schema.zip");
+
+        if(zipStream != null){
+
+            File file = File.createTempFile("schemazips", ".zip");
+            file.deleteOnExit();
+            copyStreams(zipStream, new FileOutputStream(file));
+
+            ZipFile zipFile = new ZipFile(file);
+
+            for(Enumeration e = zipFile.entries(); e.hasMoreElements();){
+                ZipEntry zipEntry = (ZipEntry) e.nextElement();
+                File outputFile = new File(outputDir, zipEntry.getName());
+                copyStreams(zipFile.getInputStream(zipEntry), new FileOutputStream(outputFile));
+            }
+        } else {
+            System.out.println("Didnt find url");
+        }
+    }
+
+    private void copyStreams(InputStream inStream, FileOutputStream outStream) throws IOException {
+        byte[] buf = new byte[1024];
+        int l;
+        while ((l = inStream.read(buf)) >= 0) {
+            outStream.write(buf, 0, l);
+        }
+        inStream.close();
+        outStream.close();
+    }
+
 
     private void update() {
 

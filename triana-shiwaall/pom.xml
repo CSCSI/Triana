@@ -122,7 +122,7 @@
 
         <dependency>
             <groupId>org.shiwa.fgi</groupId>
-            <artifactId>iwir</artifactId>
+            <artifactId>iwirTool</artifactId>
             <version>1.1.8</version>
         </dependency>
         <dependency>
