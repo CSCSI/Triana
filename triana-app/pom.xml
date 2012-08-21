@@ -43,12 +43,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.trianacode</groupId>
-            <artifactId>triana-types</artifactId>
-            <version>0.1</version>
-            <scope>compile</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.trianacode</groupId>-->
+            <!--<artifactId>triana-types</artifactId>-->
+            <!--<version>0.1</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
         <!--<dependency>
             <groupId>org.trianacode</groupId>
             <artifactId>triana-org.trianacode.pegasus.gui</artifactId>

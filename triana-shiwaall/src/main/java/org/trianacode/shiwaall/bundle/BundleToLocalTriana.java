@@ -1,7 +1,6 @@
 package org.trianacode.shiwaall.bundle;
 
 import org.apache.commons.logging.Log;
-import org.shiwa.desktop.data.util.DataUtils;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.TextFieldParameter;
@@ -25,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+//import org.shiwa.desktop.data.util.DataUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -171,7 +172,7 @@ public class BundleToLocalTriana implements TaskConscious {
             try {
                 String bundlePath = optionsStrings[4];
 
-                ShiwaBundleHelper152 shiwaBundleHelper = new ShiwaBundleHelper152(bundlePath);
+                ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(bundlePath);
 
                 BrokerUtils.prepareSubworkflow(
                         task, UUID.randomUUID(), shiwaBundleHelper.getWorkflowImplementation()
@@ -179,9 +180,11 @@ public class BundleToLocalTriana implements TaskConscious {
 
                 File temp = File.createTempFile("anything", "tmp");
 
-                DataUtils.bundle(
-                        temp,
-                        shiwaBundleHelper.getWorkflowImplementation());
+                shiwaBundleHelper.bundle(temp);
+
+//                DataUtils.bundle(
+//                        temp,
+//                        shiwaBundleHelper.getWorkflowImplementation());
 
                 optionsStrings[4] = temp.getAbsolutePath();
 

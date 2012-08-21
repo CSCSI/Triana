@@ -44,7 +44,7 @@ public class BundleToTrianaCloud implements TaskConscious {
         }
         ArrayList<File> toSend = new ArrayList<File>();
         try {
-            ShiwaBundleHelper152 shiwaBundleHelper = new ShiwaBundleHelper152(new SHIWABundle(new File(bundleFile)));
+            ShiwaBundleHelper shiwaBundleHelper = new ShiwaBundleHelper(new SHIWABundle(new File(bundleFile)));
             BrokerUtils.prepareSubworkflow(task, UUID.randomUUID(), shiwaBundleHelper.getWorkflowImplementation());
 
             File tempBundleFile = File.createTempFile(

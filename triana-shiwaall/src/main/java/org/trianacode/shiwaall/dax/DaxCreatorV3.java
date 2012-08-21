@@ -24,7 +24,6 @@ import java.util.List;
  * Time: 9:27:14 PM
  * To change this template use File | Settings | File Templates.
  * <p/>
- * use isi.org.trianacode.shiwaall.gui. for v3.0.1 compatibility.
  */
 
 @Tool //(panelClass = "org.trianacode.org.trianacode.shiwaall.gui.dax.DaxCreatorV3Panel")

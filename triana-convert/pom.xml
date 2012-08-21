@@ -147,11 +147,11 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.shiwa.fgi</groupId>
-            <artifactId>iwirTool</artifactId>
-            <version>1.1.8</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.shiwa.fgi</groupId>-->
+            <!--<artifactId>iwir</artifactId>-->
+            <!--<version>1.1.10</version>-->
+        <!--</dependency>-->
 
 
     </dependencies>

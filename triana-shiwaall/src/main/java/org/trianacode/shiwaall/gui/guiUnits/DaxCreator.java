@@ -1,7 +1,6 @@
 package org.trianacode.shiwaall.gui.guiUnits;
 
 import org.apache.commons.logging.Log;
-import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktop;
 import org.shiwa.pegasus.PegasusHandler;
 import org.trianacode.annotation.CustomGUIComponent;
@@ -101,11 +100,8 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
             PegasusHandler pegasusHandler = new PegasusHandler(daxFile, propertiesFile);
 
             System.out.println(pegasusHandler.getClass().getCanonicalName());
-            if(pegasusHandler instanceof WorkflowEngineHandler){
-                System.out.print("Is handler");
-            }
 
-            SHIWADesktop shiwaDesktop = new SHIWADesktop( pegasusHandler,
+            SHIWADesktop shiwaDesktop = new SHIWADesktop(pegasusHandler,
                     SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
 
             DisplayDialog dialog = new DisplayDialog(
@@ -180,7 +176,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
                 try {
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    e.printStackTrace();
                 }
             }
         }
@@ -412,6 +408,5 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
             this.setTitle("site.xml");
         }
     }
-
 
 }
