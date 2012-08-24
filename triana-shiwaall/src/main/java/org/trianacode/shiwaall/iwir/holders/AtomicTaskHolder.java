@@ -34,6 +34,11 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
             for (int i = 0; i < getInputNodeCount(); i++) {
                 inputs[i] = getInputAtNode(i);
             }
+
+            for(Object inputData : inputs){
+                System.out.println(inputData.getClass().getCanonicalName());
+            }
+
             Object[] outputs = new Object[getOutputNodeCount()];
             getExecutable().run(inputs, outputs);
 

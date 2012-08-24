@@ -311,7 +311,7 @@ public class BundleSubmit implements TaskConscious {
                     SHIWADesktop shiwaDesktop = new SHIWADesktop(SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
                     try {
                         shiwaDesktop.openBundle(concreteBundle);
-                        new DisplayDialog(shiwaDesktop.getPanel(), "Shiwa Desktop");
+                        new DisplayDialog(shiwaDesktop.getPanel(), "Shiwa Desktop", null);
                     } catch (SHIWADesktopIOException e) {
                         e.printStackTrace();
                     }

@@ -12,6 +12,7 @@ import org.trianacode.gui.panels.DisplayDialog;
 import org.trianacode.shiwaall.dax.DaxCreatorV3;
 import org.trianacode.shiwaall.dax.DaxReader;
 import org.trianacode.shiwaall.dax.Displayer;
+import org.trianacode.shiwaall.handler.PublishWorkflow;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 
@@ -38,8 +39,6 @@ import java.util.zip.ZipFile;
 @Tool
 public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious {
 
-    String propertiesText = "";
-
     String locationString = "";
     private JTextField nameField;
     private JTextField nameSpaceField;
@@ -49,6 +48,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
 
 
     private static Log devLog = Loggers.DEV_LOGGER;
+    private static final String SITE_FILENAME = "site.xml";
 
     @org.trianacode.annotation.Process(gather = true)
     public File fakeProcess(List list) {
@@ -75,37 +75,38 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         } else {
             displayMessage("Not displaying demo, or file not found/accessible : " + daxFile.getAbsolutePath());
         }
-        if(publish){
-            File siteFile = writeFile("site.xml", siteText);
+        if(publish && daxFile.exists()){
+            System.out.println("Current dir " + System.getProperty("user.dir"));
+
+            siteText = siteText.replace(TOP_DIR_PLACEHOLDER, locationField.getText());
+            File siteFile = writeFile(SITE_FILENAME, siteText);
+            propertiesText = propertiesText.replace(TOP_DIR_PLACEHOLDER, locationField.getText());
             File propertiesFile = writeFile("propertiesrc", propertiesText);
 
-            System.out.println("Current dir " + System.getProperty("user.dir"));
             File currentDir = new File(System.getProperty("user.dir"));
             File schemaDir = new File(currentDir, "schema");
             schemaDir.mkdirs();
-            String property = System.setProperty(
-                    "pegasus.home.schemadir",
-                    schemaDir.getAbsolutePath()
-            );
-
-            System.out.println("sax " + System.getProperty("org.xml.sax.driver"));
-            System.out.println(property);
-
+//            String property = System.setProperty(
+//                    "pegasus.home.schemadir",
+//                    schemaDir.getAbsolutePath()
+//            );
             try {
                 prepareSchemas(schemaDir);
             } catch (Exception ignored) {
                 ignored.printStackTrace();
             }
 
-            PegasusHandler pegasusHandler = new PegasusHandler(daxFile, propertiesFile);
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            System.out.println(pegasusHandler.getClass().getCanonicalName());
+            PegasusHandler pegasusHandler = new PegasusHandler(daxFile, propertiesFile);
+            pegasusHandler.setDisplayImage(PublishWorkflow.getImageStream());
+            pegasusHandler.setDisplayImageName(daxFile.getName() + "-image.jpg");
 
             SHIWADesktop shiwaDesktop = new SHIWADesktop(pegasusHandler,
                     SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
 
             DisplayDialog dialog = new DisplayDialog(
-                    shiwaDesktop.getPanel(), "SHIWA Desktop");
+                    shiwaDesktop.getPanel(), "SHIWA Desktop", null);
         }
 
         return daxFile;
@@ -289,6 +290,17 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
     }
 
 
+    private static final String TOP_DIR_PLACEHOLDER = "topDirPlaceholder";
+    String propertiesText = "pegasus.catalog.site=XML3\n" +
+            "pegasus.catalog.site.file=" + TOP_DIR_PLACEHOLDER + File.separator + SITE_FILENAME + "\n" +
+            "\n" +
+            "pegasus.catalog.transformation.file=tc\n" +
+            "pegasus.catalog.transformation=Text\n" +
+            "\n" +
+            "pegasus.dir.useTimestamp=true\n" +
+            "pegasus.data.configuration=condorio\n" +
+            "pegasus.condor.logs.symlink=false\n" +
+            "pegasus.dir.storage.deep=false";
     @Override
     public void displayMessage(String string) {
         devLog.debug(string);
@@ -299,20 +311,9 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-            if(propertiesText.equals("")){
-                propertiesText = "pegasus.catalog.site=XML3\n" +
-                        "pegasus.catalog.site.file=" + topDir + File.separator + "sites.xml\n" +
-                        "\n" +
-                        "pegasus.catalog.transformation.file=tc\n" +
-                        "pegasus.catalog.transformation=Text\n" +
-                        "\n" +
-                        "pegasus.dir.useTimestamp=true\n" +
-                        "pegasus.data.configuration=condorio\n" +
-                        "pegasus.condor.logs.symlink=false\n" +
-                        "pegasus.dir.storage.deep=false";
-            }
+            String areaText = propertiesText.replace(TOP_DIR_PLACEHOLDER, topDir);
 
-            final JTextArea propertiesArea = new JTextArea(propertiesText);
+            final JTextArea propertiesArea = new JTextArea(areaText);
             JScrollPane scrollPane = new JScrollPane(propertiesArea);
             panel.add(scrollPane);
 
@@ -332,64 +333,61 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         }
     }
 
-    String siteText = "";
+    String siteText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<sitecatalog xmlns=\"http://pegasus.isi.edu/schema/sitecatalog\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://pegasus.isi.edu/schema/sitecatalog http://pegasus.isi.edu/schema/sc-3.0.xsd\" version=\"3.0\">\n" +
+            "    <site handle=\"local\" arch=\"x86\" os=\"LINUX\">\n" +
+            "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
+            "        <head-fs>\n" +
+            "            <scratch>\n" +
+            "                <shared>\n" +
+            "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/scratch\"/>\n" +
+            "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/scratch\"/>\n" +
+            "                </shared>\n" +
+            "            </scratch>\n" +
+            "            <storage>\n" +
+            "                <shared>\n" +
+            "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/outputs\"/>\n" +
+            "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/outputs\"/>\n" +
+            "                </shared>\n" +
+            "            </storage>\n" +
+            "        </head-fs>\n" +
+            "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
+            "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >/usr/bin/..</profile>\n" +
+            "        <profile namespace=\"env\" key=\"GLOBUS_TCP_PORT_RANGE\" >40000,50000</profile>\n" +
+            "    </site>\n" +
+            "\n" +
+            "    <site handle=\"local-condor\" arch=\"x86\" os=\"LINUX\">\n" +
+            "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
+            "        <head-fs>\n" +
+            "            <scratch>\n" +
+            "                <shared>\n" +
+            "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/scratch\"/>\n" +
+            "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/scratch\"/>\n" +
+            "                </shared>\n" +
+            "            </scratch>\n" +
+            "            <storage>\n" +
+            "                <shared>\n" +
+            "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/outputs\"/>\n" +
+            "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/outputs\"/>\n" +
+            "                </shared>\n" +
+            "            </storage>\n" +
+            "        </head-fs>\n" +
+            "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
+            "        \n" +
+            "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >/usr/bin/</profile>\n" +
+            "        <profile namespace=\"env\" key=\"GLOBUS_TCP_PORT_RANGE\" >40000,50000</profile>\n" +
+            "        <profile namespace=\"pegasus\" key=\"style\">condor</profile>\n" +
+            "        <profile namespace=\"condor\" key=\"universe\">vanilla</profile>\n" +
+            "    </site>\n" +
+            "</sitecatalog>";
     class SiteFrame extends JDialog {
         public SiteFrame(String topDir) {
             this.setModal(true);
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-            if(siteText.equals("")){
-                siteText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<sitecatalog xmlns=\"http://pegasus.isi.edu/schema/sitecatalog\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://pegasus.isi.edu/schema/sitecatalog http://pegasus.isi.edu/schema/sc-3.0.xsd\" version=\"3.0\">\n" +
-                        "    <site handle=\"local\" arch=\"x86\" os=\"LINUX\">\n" +
-                        "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
-                        "        <head-fs>\n" +
-                        "            <scratch>\n" +
-                        "                <shared>\n" +
-                        "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/scratch\"/>\n" +
-                        "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/scratch\"/>\n" +
-                        "                </shared>\n" +
-                        "            </scratch>\n" +
-                        "            <storage>\n" +
-                        "                <shared>\n" +
-                        "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/outputs\"/>\n" +
-                        "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/outputs\"/>\n" +
-                        "                </shared>\n" +
-                        "            </storage>\n" +
-                        "        </head-fs>\n" +
-                        "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
-                        "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >/usr/bin/..</profile>\n" +
-                        "        <profile namespace=\"env\" key=\"GLOBUS_TCP_PORT_RANGE\" >40000,50000</profile>\n" +
-                        "    </site>\n" +
-                        "\n" +
-                        "    <site handle=\"local-condor\" arch=\"x86\" os=\"LINUX\">\n" +
-                        "        <grid  type=\"gt2\" contact=\"localhost/jobmanager-fork\" scheduler=\"Fork\" jobtype=\"auxillary\"/>\n" +
-                        "        <head-fs>\n" +
-                        "            <scratch>\n" +
-                        "                <shared>\n" +
-                        "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/scratch\"/>\n" +
-                        "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/scratch\"/>\n" +
-                        "                </shared>\n" +
-                        "            </scratch>\n" +
-                        "            <storage>\n" +
-                        "                <shared>\n" +
-                        "                    <file-server protocol=\"file\" url=\"file://\" mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/outputs\"/>\n" +
-                        "                    <internal-mount-point mount-point=\"/home/ubuntu/DART/work/2012-08-01_113119/local-condor/outputs\"/>\n" +
-                        "                </shared>\n" +
-                        "            </storage>\n" +
-                        "        </head-fs>\n" +
-                        "        <replica-catalog  type=\"LRC\" url=\"rlsn://dummyValue.url.edu\" />\n" +
-                        "        \n" +
-                        "        <profile namespace=\"env\" key=\"PEGASUS_HOME\" >/usr/bin/</profile>\n" +
-                        "        <profile namespace=\"env\" key=\"GLOBUS_TCP_PORT_RANGE\" >40000,50000</profile>\n" +
-                        "        <profile namespace=\"pegasus\" key=\"style\">condor</profile>\n" +
-                        "        <profile namespace=\"condor\" key=\"universe\">vanilla</profile>\n" +
-                        "    </site>\n" +
-                        "</sitecatalog>";
-            }
-
-            final JTextArea siteArea = new JTextArea(siteText);
+            String areaText = siteText.replace(TOP_DIR_PLACEHOLDER, topDir);
+            final JTextArea siteArea = new JTextArea(areaText);
             JScrollPane scrollPane = new JScrollPane(siteArea);
             panel.add(scrollPane);
 

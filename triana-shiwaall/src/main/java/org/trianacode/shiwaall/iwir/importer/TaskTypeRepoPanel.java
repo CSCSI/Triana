@@ -3,7 +3,6 @@ package org.trianacode.shiwaall.iwir.importer;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.extensions.Extension;
-import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.DisplayDialog;
 import org.trianacode.shiwaall.executionServices.TaskTypeToolDescriptor;
 import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
@@ -30,7 +29,6 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
         putValue(SHORT_DESCRIPTION, "TaskType Repository");
         putValue(NAME, "TaskType Repository");
         if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
-            putValue(SMALL_ICON, GUIEnv.getIcon("upload_small.png"));
         }
     }
 
@@ -69,6 +67,6 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
             mainPanel.add(new JLabel(descriptor.getTasktype() + " " + classname));
         }
 
-        DisplayDialog displayDialog = new DisplayDialog(mainPanel, "TaskType Repo");
+        DisplayDialog displayDialog = new DisplayDialog(mainPanel, "TaskType Repo", null);
     }
 }

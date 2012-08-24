@@ -222,6 +222,11 @@ public class DaxifyTaskGraph implements ConversionAddon {
 //                }
                 Task creatorTask = clone.createTask(creatorTool);
 
+                //sensible location on the taskgraph
+                TPoint childPoint = TaskLayoutUtils.getPosition(childNode.getTask());
+                TPoint creatorPoint = new TPoint(childPoint.getX() + 1.5, childPoint.getY());
+                TaskLayoutUtils.setPosition(creatorTask, creatorPoint);
+
                 clone.connect(childNode, creatorTask.getDataInputNode(0));
             }
 
@@ -265,6 +270,20 @@ public class DaxifyTaskGraph implements ConversionAddon {
             if (recnode != null) {
                 Node outNode = task.addDataOutputNode();
                 clone.connect(outNode, recnode);
+            }
+
+            TPoint taskPoint = null;
+            if(sendnode != null){
+                //Place interim file task after producing executable task
+                TPoint sendingpoint = TaskLayoutUtils.getPosition(sendnode.getTask());
+                taskPoint = new TPoint(sendingpoint.getX() + 1.5, sendingpoint.getY());
+            } else if( recnode != null) {
+                // If no producing task (ie its an input file) place it before the consuming task
+                TPoint recpoint = TaskLayoutUtils.getPosition(recnode.getTask());
+                taskPoint = new TPoint(recpoint.getX() - 1.5, recpoint.getY());
+            }
+            if(taskPoint != null){
+                TaskLayoutUtils.setPosition(task, taskPoint);
             }
 
             fileIterator++;

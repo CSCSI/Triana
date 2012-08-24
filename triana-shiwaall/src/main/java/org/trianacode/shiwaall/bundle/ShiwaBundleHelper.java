@@ -167,7 +167,7 @@ public class ShiwaBundleHelper {
 
     public File getTempEntry(String relativePath) throws IOException {
         return DataUtils.inputStreamToFile(concreteBundle.getEntry(relativePath),
-                Locations.getTempFile(relativePath.replaceAll("/", "."), false));
+                Locations.getTempFile(relativePath.replaceAll("/", ".")));
     }
 
     public File extractToFile(String relativePath, File file) throws IOException {

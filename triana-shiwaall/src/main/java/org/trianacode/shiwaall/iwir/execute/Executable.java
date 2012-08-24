@@ -23,8 +23,10 @@ public class Executable implements ExecutableInterface, Serializable {
     private String primaryExec = "";
 
     private HashMap<String, String> ports;
+    private String taskName = "";
 
     public Executable(String taskType) {
+        System.out.println("New Executable " + taskType);
         this.taskType = taskType;
         ports = new HashMap<String, String>();
     }
@@ -116,5 +118,13 @@ public class Executable implements ExecutableInterface, Serializable {
 
     public void addPort(String nodeName, String portName) {
         ports.put(nodeName, portName);
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getTaskName() {
+        return taskName;
     }
 }

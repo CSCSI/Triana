@@ -2,6 +2,7 @@ package org.trianacode.shiwaall.handler;
 
 import org.shiwa.desktop.data.transfer.WorkflowEngineHandler;
 import org.shiwa.desktop.gui.SHIWADesktop;
+import org.shiwa.desktop.gui.util.InterfaceUtils;
 import org.trianacode.TrianaInstance;
 import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.addon.ConversionAddon;
@@ -39,8 +40,12 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         putValue(SHORT_DESCRIPTION, "Publish");
         putValue(NAME, "Publish");
         if ((displayOption == DISPLAY_ICON) || (displayOption == DISPLAY_BOTH)) {
-            putValue(SMALL_ICON, GUIEnv.getIcon("upload_small.png"));
+//            putValue(SMALL_ICON, GUIEnv.getIcon("upload_small.png"));
+//            InterfaceUtils.initImages();
+            Icon icon = InterfaceUtils.X16_ICON;
+            putValue(SMALL_ICON, icon);
         }
+
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
@@ -115,7 +120,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         }
     }
 
-    private static InputStream getImageStream(){
+    public static InputStream getImageStream(){
         InputStream displayStream = null;
         try {
             File imageFile = File.createTempFile("image", ".jpg");
@@ -134,7 +139,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         SHIWADesktop shiwaDesktop = new SHIWADesktop(handler, SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
         DisplayDialog dialog = null;
         shiwaDesktop.addExecutionListener(new TrianaShiwaListener(engine, dialog));
-        dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop");
+        dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop", null);
         shiwaDesktop = null;
 
     }

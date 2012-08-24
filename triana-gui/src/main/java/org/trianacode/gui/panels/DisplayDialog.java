@@ -11,13 +11,15 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class DisplayDialog extends JDialog {
-    public DisplayDialog(JPanel panel, String title) {
+    public DisplayDialog(JPanel panel, String title, Image icon) {
         //     this.setModal(true);
         this.setTitle(title);
         this.setLocationRelativeTo(null);
         this.add(panel);
         this.pack();
-
+        if(icon != null){
+            this.setIconImage(icon);
+        }
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         final int x = (screenSize.width - this.getWidth()) / 2;
         final int y = (screenSize.height - this.getHeight()) / 2;

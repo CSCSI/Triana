@@ -1,6 +1,7 @@
 package org.trianacode.shiwaall.iwir.importer.utils;
 
 //import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
+import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
 import org.shiwa.fgi.iwir.*;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.factory.TaskHolderFactory;
@@ -27,7 +28,7 @@ public class ImportIwir {
     private HashSet<DataLink> dataLinks = new HashSet<DataLink>();
 
     boolean std = false;
-//    private FGIWorkflowReader fgiWorkflowReader = null;
+    private FGIWorkflowReader fgiWorkflowReader = null;
     public static final String IWIR_NODE = "iwirNode";
 
     private void stdOut(String string){
@@ -48,7 +49,7 @@ public class ImportIwir {
             System.out.println("fgiBundleFile = "
                     + fgiBundleFile.exists() + " "
                     + fgiBundleFile.getAbsolutePath());
-//            fgiWorkflowReader = new FGIWorkflowReader(fgiBundleFile);
+            fgiWorkflowReader = new FGIWorkflowReader(fgiBundleFile);
         } else {
             System.out.println("No fgi bundle returned, " +
                     "best effort triana-only tools will be used");
@@ -156,10 +157,10 @@ public class ImportIwir {
         //if the iwirTask is a standard IWIR Atomic Task, try to find and/or make a tool for it.
         //this requires the taskType string, the name and the taskgraph properties
 
-//        Tool newTask = TaskTypeToTool.getToolFromType(
-//                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg.getProperties());
         Tool newTask = TaskTypeRepo.getToolFromType(
-                (org.shiwa.fgi.iwir.Task) iwirTask, tg.getProperties());
+                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg.getProperties());
+//        Tool newTask = TaskTypeRepo.getToolFromType(
+//                (org.shiwa.fgi.iwir.Task) iwirTask, tg.getProperties());
 
 
         Task trianaTask = tg.createTask(newTask);
@@ -219,7 +220,7 @@ public class ImportIwir {
      * @throws JAXBException
      * @throws IOException
      */
-    private TaskGraph recordAbstractTasksAndDataLinks(AbstractTask mainTask, TaskGraph tg) throws ProxyInstantiationException, TaskException, JAXBException, IOException {
+    private TaskGraph recordAbstractTasksAndDataLinks(AbstractTask mainTask, TaskGraph tg) throws ProxyInstantiationException, TaskException, IOException, JAXBException {
 //        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
 //        taskGraph.setToolName(mainTask.getName());
         tg.setToolName(mainTask.getName());
@@ -227,7 +228,7 @@ public class ImportIwir {
 
         //If there is only one task in the workflow, the mainTask with be a Task (ie not Compound)
 
-        if(mainTask instanceof org.shiwa.fgi.iwir.Task){
+        if(mainTask instanceof org.shiwa.fgi.iwir.Task) {
             abstractHashMap.put(mainTask, tg);
 
             //create a new Triana Task from the IWIR info, and add to taskgraph
@@ -274,6 +275,7 @@ public class ImportIwir {
                 } else {
                     if (iwirTask instanceof AbstractCompoundTask) {
 
+                        System.out.println("WARNING THIS IS BROKEN");
                         TaskGraph innerTaskGraph = TaskGraphManager.createTaskGraph();
                         TaskGraph concreteTaskGraph = (TaskGraph) tg.createTask(innerTaskGraph);
                         recordAbstractTasksAndDataLinks(iwirTask, concreteTaskGraph);
@@ -284,6 +286,7 @@ public class ImportIwir {
                 }
             }
         }
+        System.out.printf("Import of tasks complete");
         return tg;
     }
 

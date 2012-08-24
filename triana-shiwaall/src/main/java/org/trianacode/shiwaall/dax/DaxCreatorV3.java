@@ -48,7 +48,7 @@ public class DaxCreatorV3 implements TaskConscious {
     public boolean publish = true;
 
     @TextFieldParameter
-    public String fileName = "output";
+    public String fileName = "output.xml";
 
     private HashSet<File> filesForDax = new HashSet<File>();
     private HashMap<String, Job> jobHashMap = new HashMap<String, Job>();

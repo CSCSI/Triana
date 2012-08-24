@@ -6,6 +6,7 @@ import org.shiwa.desktop.data.description.handler.TransferSignature;
 import org.shiwa.desktop.data.description.resource.ConfigurationResource;
 import org.shiwa.desktop.data.transfer.ExecutionListener;
 import org.shiwa.desktop.data.util.DataUtils;
+import org.shiwa.desktop.gui.SHIWADesktop;
 import org.shiwa.desktop.gui.util.listener.DefaultBundleReceivedListener;
 import org.shiwa.fgi.iwir.IWIR;
 import org.trianacode.TrianaInstance;
@@ -52,6 +53,7 @@ public class TrianaShiwaListener implements ExecutionListener {
     private static Log devLog = Loggers.DEV_LOGGER;
 
     private DefaultBundleReceivedListener receivedListener = null;
+    private SHIWADesktop shiwaDesktop = null;
 
 
     public TrianaShiwaListener(TrianaInstance trianaInstance, DisplayDialog dialog) {
@@ -114,6 +116,10 @@ public class TrianaShiwaListener implements ExecutionListener {
 
         if (receivedListener != null) {
             receivedListener.dispose();
+        }
+        if(shiwaDesktop != null){
+            shiwaDesktop.dispose();
+            shiwaDesktop = null;
         }
 
         try {
@@ -301,5 +307,9 @@ public class TrianaShiwaListener implements ExecutionListener {
         varTool.setToolName("Configuration");
         TaskLayoutUtils.setPosition(varTool, new TPoint(1, 1));
         return varTool;
+    }
+
+    public void addSHIWADesktop(SHIWADesktop shiwaDesktop) {
+        this.shiwaDesktop = shiwaDesktop;
     }
 }
