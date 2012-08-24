@@ -1,5 +1,9 @@
 package org.trianacode.shiwaall.iwir.execute;
 
+import org.trianacode.taskgraph.Node;
+
+import java.util.HashMap;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -10,7 +14,5 @@ package org.trianacode.shiwaall.iwir.execute;
 public interface ExecutableInterface {
     public void run();
 
-    public void run(Object[] inputs);
-
-    public void run(Object[] inputs, Object[] outputs);
+    public void run(HashMap<Node, Object> inputObjectAtNodeMap, Object[] outputs);
 }

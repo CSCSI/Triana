@@ -19,6 +19,7 @@ import org.ggf.schemas.jsdl._2005._11.jsdl_posix.FileNameType;
 import org.ggf.schemas.jsdl._2005._11.jsdl_posix.POSIXApplicationType;
 import org.shiwa.desktop.data.transfer.FGITaskReader;
 import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
+import org.shiwa.fgi.iwir.InputPort;
 import org.shiwa.fgi.iwir.Task;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.AddonUtils;
@@ -132,7 +133,7 @@ public class TaskTypeRepo {
                 if(jsdlFile != null) {
                     Executable executable = new Executable(type);
                     executable.setTaskName(iwirTask.getName());
-                    populateExecutableFromJSDL(executable, jsdlFile);
+                    populateExecutableFromJSDL(executable, jsdlFile, iwirTask);
 
                     Set<File> envFiles = reader.getDefinitionFiles();
 
@@ -180,7 +181,7 @@ public class TaskTypeRepo {
         return null;
     }
 
-    private static void populateExecutableFromJSDL(Executable executable, File jsdlFile)
+    private static void populateExecutableFromJSDL(Executable executable, File jsdlFile, Task iwirTask)
             throws IOException, JAXBException {
 
         System.out.println("Reading JSDL");
@@ -232,12 +233,21 @@ public class TaskTypeRepo {
             }
         }
 
-        System.out.println("Will execute " + Arrays.toString(args) + " in " + execDir.getAbsolutePath());
-
         List<DataStagingType> dataStaging = jobDef.getJobDescription().getDataStaging();
-        for(DataStagingType ds : dataStaging){
+        for(InputPort inputPort : iwirTask.getInputPorts()){
+            String portName = inputPort.getName();
 
+            for(DataStagingType dataStage : dataStaging){
+                if(dataStage.getName() != null && dataStage.getName().equals(portName)){
+                    System.out.println("Bingo " + portName);
+                    String fileName = dataStage.getFileName();
+                    File inputFile = new File(executable.getWorkingDir(), fileName);
+                    executable.addInputFile(inputPort, inputFile);
+                }
+            }
         }
+
+        System.out.println("Will execute " + Arrays.toString(args) + " in " + execDir.getAbsolutePath());
 
     }
 
