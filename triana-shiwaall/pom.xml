@@ -106,8 +106,8 @@
             <groupId>hu.sztaki.lpds.jsdl_lib</groupId>
             <artifactId>JSDL_Temp_Cre_Tool</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>/Users/ian/Documents/shiwa-svn/shiwa/WP6_JRA2/devel/JSDL Template Creation- and Instantiation Tool/release/JSDL_Temp_Cre_Tool 1.0/jar/JSDL_Temp_Cre_Tool.jar</systemPath>
+            <!--<scope>system</scope>-->
+            <!--<systemPath>/Users/ian/Documents/shiwa-svn/shiwa/WP6_JRA2/devel/JSDL Template Creation- and Instantiation Tool/release/JSDL_Temp_Cre_Tool 1.0/jar/JSDL_Temp_Cre_Tool.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
