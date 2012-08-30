@@ -2,6 +2,7 @@ package org.trianacode.shiwaall.gui.guiUnits;
 
 import org.apache.commons.logging.Log;
 import org.shiwa.desktop.gui.SHIWADesktop;
+import org.shiwa.desktop.gui.util.InterfaceUtils;
 import org.shiwa.pegasus.PegasusHandler;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Tool;
@@ -105,8 +106,9 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
             SHIWADesktop shiwaDesktop = new SHIWADesktop(pegasusHandler,
                     SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
 
-            DisplayDialog dialog = new DisplayDialog(
-                    shiwaDesktop.getPanel(), "SHIWA Desktop", null);
+
+            Image icon = InterfaceUtils.X16_ICON.getImage();
+            DisplayDialog dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop", icon);
         }
 
         return daxFile;

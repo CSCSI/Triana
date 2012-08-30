@@ -8,6 +8,7 @@ import org.shiwa.desktop.data.description.workflow.OutputPort;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.shiwa.desktop.data.util.monitors.BundleMonitor;
 import org.shiwa.desktop.gui.SHIWADesktop;
+import org.shiwa.desktop.gui.util.InterfaceUtils;
 import org.shiwa.desktop.gui.util.listener.DefaultBundleReceivedListener;
 import org.trianacode.annotation.CustomGUIComponent;
 import org.trianacode.annotation.Tool;
@@ -311,7 +312,8 @@ public class BundleSubmit implements TaskConscious {
                     SHIWADesktop shiwaDesktop = new SHIWADesktop(SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
                     try {
                         shiwaDesktop.openBundle(concreteBundle);
-                        new DisplayDialog(shiwaDesktop.getPanel(), "Shiwa Desktop", null);
+                        Image icon = InterfaceUtils.X16_ICON.getImage();
+                        new DisplayDialog(shiwaDesktop.getPanel(), "Shiwa Desktop", icon);
                     } catch (SHIWADesktopIOException e) {
                         e.printStackTrace();
                     }

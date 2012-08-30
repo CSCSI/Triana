@@ -14,6 +14,7 @@ import org.trianacode.gui.panels.DisplayDialog;
 import org.trianacode.taskgraph.TaskGraph;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -139,7 +140,8 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         SHIWADesktop shiwaDesktop = new SHIWADesktop(handler, SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
         DisplayDialog dialog = null;
         shiwaDesktop.addExecutionListener(new TrianaShiwaListener(engine, dialog));
-        dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop", null);
+        Image icon = InterfaceUtils.X16_ICON.getImage();
+        dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop", icon);
         shiwaDesktop = null;
 
     }
