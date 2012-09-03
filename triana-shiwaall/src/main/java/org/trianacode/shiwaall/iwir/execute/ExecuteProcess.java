@@ -1,8 +1,10 @@
 package org.trianacode.shiwaall.iwir.execute;
 
 import org.trianacode.enactment.StreamToOutput;
+import org.trianacode.taskgraph.Node;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,17 +33,23 @@ public class ExecuteProcess implements ExecutableInterface {
     }
 
     @Override
-    public void run(Object[] inputs) {
-        this.inputs = inputs;
-        runExec();
+    public void run(HashMap<Node, Object> inputObjectAtNodeMap, Object[] outputs) {
+        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
-    @Override
-    public void run(Object[] inputs, Object[] outputs) {
-        this.inputs = inputs;
-        this.outputs = outputs;
-        runExec();
-    }
+//    @Override
+//    public void run(Object[] inputs) {
+//        this.inputs = inputs;
+//        runExec();
+//    }
+//
+//    @Override
+//    public void run(Object[] inputs, Object[] outputs) {
+//        this.inputs = inputs;
+//        this.outputs = outputs;
+//        runExec();
+//    }
 
     public String getInputSwitch() {
         return inputSwitch;

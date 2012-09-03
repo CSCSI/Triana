@@ -2,12 +2,11 @@ package org.trianacode.shiwaall.iwir.execute;
 
 import org.apache.commons.io.FileUtils;
 import org.shiwa.fgi.iwir.InputPort;
+import org.shiwa.fgi.iwir.OutputPort;
 import org.trianacode.enactment.StreamToOutput;
 import org.trianacode.taskgraph.Node;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 /**
@@ -26,16 +25,17 @@ public class Executable implements ExecutableInterface, Serializable {
     private File workingDir = null;
     private String primaryExec = "";
 
-    private HashMap<String, String> ports;
+    private HashMap<String, String> nodeNameToPortName;
     private String taskName = "";
-    private HashMap<String, File> nodeToFileMap;
+    private HashMap<InputPort, File> inputPortToFileMap;
+    private HashMap<OutputPort, File> outputPortToFileMap;
 
 
     public Executable(String taskType) {
-        System.out.println("New Executable " + taskType);
         this.taskType = taskType;
-        ports = new HashMap<String, String>();
-        nodeToFileMap = new HashMap<String, File>();
+        nodeNameToPortName = new HashMap<String, String>();
+        inputPortToFileMap = new HashMap<InputPort, File>();
+        outputPortToFileMap = new HashMap<OutputPort, File>();
     }
 
     private void runProcess() {
@@ -84,19 +84,20 @@ public class Executable implements ExecutableInterface, Serializable {
         System.out.println("TaskType : " + taskType);
         System.out.println("Running with inputs, producing outputs");
 
+        System.out.println(nodeNameToPortName.toString());
+        System.out.println(inputPortToFileMap.toString());
+
         for(Node node : inputs.keySet()){
-            File executableInputFile = nodeToFileMap.get(node.getName());
+            File executableInputFile = getInputFileForNode(node);
             Object input = inputs.get(node);
 
             if(input instanceof String){
                 try {
-                    URI url = new URI((String) input);
-                    File file = new File(url);
+                    File file = new File((String) input);
                     if(file.exists()){
+                        System.out.println("Input " + file.getAbsolutePath() + " exists " + file.exists());
                         FileUtils.copyFile(file, executableInputFile);
                     }
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -160,11 +161,12 @@ public class Executable implements ExecutableInterface, Serializable {
 
 
     public HashMap<String, String> getPorts() {
-        return ports;
+        return nodeNameToPortName;
     }
 
     public void addPort(String nodeName, String portName) {
-        ports.put(nodeName, portName);
+        System.out.println(nodeName + " maps to " + portName);
+        nodeNameToPortName.put(nodeName, portName);
     }
 
     public void setTaskName(String taskName) {
@@ -176,10 +178,41 @@ public class Executable implements ExecutableInterface, Serializable {
     }
 
     public void addInputFile(InputPort inputPort, File inputFile) {
-        for(String nodeName : ports.keySet()){
-            if(ports.get(nodeName).equals(inputPort.getName())){
-                nodeToFileMap.put(nodeName, inputFile);
+        inputPortToFileMap.put(inputPort, inputFile);
+    }
+
+    private File getInputFileForNode(Node node){
+        System.out.println("Looking for a file for " + node.getBottomLevelNode().getName());
+        String portName = nodeNameToPortName.get(node.getBottomLevelNode().getName());
+        if(portName != null){
+            System.out.println("IWIR port " + portName);
+            for(InputPort inputPort : inputPortToFileMap.keySet()){
+                if(inputPort.getName().equals(portName)){
+                    File file = inputPortToFileMap.get(inputPort);
+                    System.out.println("Input node to file : " + file.getAbsolutePath());
+                    return file;
+                }
             }
         }
+        return null;
+    }
+
+    public File getOutputFileForNode(Node node) {
+        String portName = nodeNameToPortName.get(node.getBottomLevelNode().getName());
+        if(portName != null) {
+            System.out.println("IWIR output port " + portName);
+            for(OutputPort outputPort : outputPortToFileMap.keySet()){
+                if(outputPort.getName().equals(portName)){
+                    File file = outputPortToFileMap.get(outputPort);
+                    System.out.println("Output node to file : " + file.getAbsolutePath());
+                    return file;
+                }
+            }
+        }
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void addOutputFile(OutputPort outputPort, File outputFile) {
+        outputPortToFileMap.put(outputPort, outputFile);
     }
 }

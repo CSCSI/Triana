@@ -5,6 +5,7 @@ import org.trianacode.shiwaall.iwir.factory.AbstractTaskHolder;
 import org.trianacode.shiwaall.iwir.factory.BasicIWIRPanel;
 import org.trianacode.taskgraph.Node;
 
+import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -31,7 +32,7 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
 
     @Override
     public void process() throws Exception {
-
+        System.out.println("");
         if (getInputNodeCount() > 0) {
 //            Object[] inputs = new Object[getInputNodeCount()];
             HashMap<Node, Object> inputObjectAtNodeMap = new HashMap<Node, Object>();
@@ -49,8 +50,15 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
             Object[] outputs = new Object[getOutputNodeCount()];
             getExecutable().run(inputObjectAtNodeMap, outputs);
 
-            for (int j = 0; j < outputs.length; j++) {
-                outputAtNode(j, outputs[j]);
+            for(int j = 0; j < getOutputNodeCount(); j++) {
+                Node node = getTask().getOutputNode(j);
+
+                File outputFile = getExecutable().getOutputFileForNode(node);
+                if(outputFile != null && outputFile.exists()){
+                    outputAtNode(j, outputFile.getAbsolutePath());
+                } else {
+                    System.out.println("Output file for node " + node.getName() + " does not exist");
+                }
             }
 
         } else {
@@ -61,4 +69,12 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
     public Executable getExecutable() {
         return executable;
     }
+
+//    public String getTaskType(){
+//        AbstractTask iwirTask = getIWIRTask();
+//        if(iwirTask instanceof Task){
+//            return ((Task) iwirTask).getTasktype();
+//        }
+//        return null;
+//    }
 }

@@ -20,6 +20,7 @@ import org.ggf.schemas.jsdl._2005._11.jsdl_posix.POSIXApplicationType;
 import org.shiwa.desktop.data.transfer.FGITaskReader;
 import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
 import org.shiwa.fgi.iwir.InputPort;
+import org.shiwa.fgi.iwir.OutputPort;
 import org.shiwa.fgi.iwir.Task;
 import org.trianacode.config.TrianaProperties;
 import org.trianacode.enactment.AddonUtils;
@@ -34,7 +35,6 @@ import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -73,6 +73,13 @@ public class TaskTypeRepo {
         }
 
         return singleInstance;
+    }
+
+    private static boolean printing = false;
+    private static void stdout(String string){
+        if(printing){
+            System.out.println(string);
+        }
     }
 
     public static void addTaskType(String type, Class clazz) {
@@ -115,7 +122,7 @@ public class TaskTypeRepo {
             if (type.contains(".")) {
                 String unitName = type.substring(type.lastIndexOf(".") + 1);
                 String packageName = type.substring(0, type.lastIndexOf("."));
-                System.out.println(packageName + unitName);
+                stdout(packageName + unitName);
                 try {
                     tool = AddonUtils.makeTool(unitName, packageName, taskName, properties);
                 } catch (Exception ignored) {
@@ -126,7 +133,7 @@ public class TaskTypeRepo {
 
         //FIX ME
         if (tool == null && fgiWorkflowReader != null){
-            System.out.println("Using JSDL for tasktype " + type);
+            stdout("Using JSDL for tasktype " + type);
             FGITaskReader reader = fgiWorkflowReader.getReaderByType(type);
             if(reader != null) {
                 File jsdlFile = reader.getJSDLFile();
@@ -140,7 +147,7 @@ public class TaskTypeRepo {
                     for(File file : envFiles){
                         File destinationFile = new File(executable.getWorkingDir(), file.getName());
                         FileUtils.copyFile(file, destinationFile);
-                        System.out.println("File " + destinationFile.getAbsolutePath() + " is exec'd " + destinationFile.setExecutable(true, false));
+                        stdout("File " + destinationFile.getAbsolutePath() + " is exec'd " + destinationFile.setExecutable(true, false));
                         file.deleteOnExit();
                     }
 
@@ -151,15 +158,15 @@ public class TaskTypeRepo {
                         e.printStackTrace();
                     }
 
-                    System.out.println("Tasktype " + iwirTask.getTasktype() + " has "
+                    stdout("Tasktype " + iwirTask.getTasktype() + " has "
                             + envFiles.size() + " files to run. The jsdl is at "
                             + jsdlFile.getAbsolutePath());
                     jsdlFile.deleteOnExit();
                 } else {
-                    System.out.printf("JSDL null " + iwirTask.getTasktype());
+                    stdout("JSDL null " + iwirTask.getTasktype());
                 }
             } else {
-                System.out.println("FGITaskReader null " + iwirTask.getTasktype());
+                stdout("FGITaskReader null " + iwirTask.getTasktype());
             }
         }
 
@@ -168,7 +175,7 @@ public class TaskTypeRepo {
         }
         tool.setToolName(iwirTask.getName());
         tool.setParameter(Executable.TASKTYPE, type);
-        System.out.println("Returning tool " + tool.getToolName() + " " + tool.getClass().getCanonicalName());
+        stdout("Returning tool " + tool.getToolName() + " " + tool.getClass().getCanonicalName());
         return tool;
     }
 
@@ -184,10 +191,8 @@ public class TaskTypeRepo {
     private static void populateExecutableFromJSDL(Executable executable, File jsdlFile, Task iwirTask)
             throws IOException, JAXBException {
 
-        System.out.println("Reading JSDL");
         String j = readJSDL(jsdlFile);
 
-        System.out.println("Getting parser");
         Parser parser = new Parser();
         JobDefinitionType jobDef =  parser.readJSDLFromString(j);
 
@@ -202,10 +207,10 @@ public class TaskTypeRepo {
 
         executable.setWorkingDir(execDir);
 
-        for(QName name : attributes.getOtherAttributes().keySet()){
-            String att = attributes.getOtherAttributes().get(name);
-            System.out.println(name.toString() + " " + att);
-        }
+//        for(QName name : attributes.getOtherAttributes().keySet()){
+//            String att = attributes.getOtherAttributes().get(name);
+//            System.out.println(name.toString() + " " + att);
+//        }
 
         String[] args = new String[0];
         for(Object obj : attributes.getAny()){
@@ -217,7 +222,7 @@ public class TaskTypeRepo {
                     POSIXApplicationType posixApplicationType = (POSIXApplicationType) jaxbElement.getValue();
 
                     FileNameType exec = posixApplicationType.getExecutable();
-                    System.out.println("Executable " + exec.getValue());
+                    stdout("Executable " + exec.getValue());
                     executable.setPrimaryExec("./" + exec.getValue());
 
                     List<ArgumentType> argumentTypes = posixApplicationType.getArgument();
@@ -239,7 +244,6 @@ public class TaskTypeRepo {
 
             for(DataStagingType dataStage : dataStaging){
                 if(dataStage.getName() != null && dataStage.getName().equals(portName)){
-                    System.out.println("Bingo " + portName);
                     String fileName = dataStage.getFileName();
                     File inputFile = new File(executable.getWorkingDir(), fileName);
                     executable.addInputFile(inputPort, inputFile);
@@ -247,7 +251,19 @@ public class TaskTypeRepo {
             }
         }
 
-        System.out.println("Will execute " + Arrays.toString(args) + " in " + execDir.getAbsolutePath());
+        for(OutputPort outputPort : iwirTask.getOutputPorts()){
+            String portName = outputPort.getName();
+
+            for(DataStagingType dataStage : dataStaging){
+                if(dataStage.getName() != null && dataStage.getName().equals(portName)){
+                    String fileName = dataStage.getFileName();
+                    File outputFile = new File(executable.getWorkingDir(), fileName);
+                    executable.addOutputFile(outputPort, outputFile);
+                }
+            }
+        }
+
+        stdout("Staging binary " + Arrays.toString(args) + " in " + execDir.getAbsolutePath());
 
     }
 

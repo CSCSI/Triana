@@ -121,7 +121,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         }
     }
 
-    public static InputStream getImageStream(){
+    public static InputStream getImageStream() {
         InputStream displayStream = null;
         try {
             File imageFile = File.createTempFile("image", ".jpg");

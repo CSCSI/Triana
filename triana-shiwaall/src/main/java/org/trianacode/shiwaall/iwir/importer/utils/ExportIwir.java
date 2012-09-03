@@ -125,6 +125,7 @@ public class ExportIwir {
                 blockScope.addTask(recordTasksAndCables((TaskGraph) task));
             } else {
                 String tasktype;
+                System.out.println("Exporting task of class " + task.getClass().getCanonicalName());
                 if (!(task instanceof TaskHolder)) {
                     Map<String, Object> map = task.getProxy().getInstanceDetails();
 

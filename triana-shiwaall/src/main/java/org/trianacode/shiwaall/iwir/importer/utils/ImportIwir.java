@@ -1,8 +1,8 @@
 package org.trianacode.shiwaall.iwir.importer.utils;
 
-//import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
 import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
 import org.shiwa.fgi.iwir.*;
+import org.trianacode.TrianaInstance;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.factory.TaskHolderFactory;
 import org.trianacode.taskgraph.*;
@@ -24,17 +24,30 @@ import java.util.HashSet;
  * To change this template use File | Settings | File Templates.
  */
 public class ImportIwir {
-    private HashMap<AbstractTask, Task> abstractHashMap = new HashMap<AbstractTask, Task>();
-    private HashSet<DataLink> dataLinks = new HashSet<DataLink>();
 
+    private HashMap<AbstractTask, Task> abstractHashMap = new HashMap<AbstractTask, Task>();
+
+    private HashSet<DataLink> dataLinks = new HashSet<DataLink>();
     boolean std = false;
+
     private FGIWorkflowReader fgiWorkflowReader = null;
     public static final String IWIR_NODE = "iwirNode";
 
     private void stdOut(String string){
         if(std){
-            System.out.printf(string);
+            System.out.println(string);
         }
+    }
+
+    public static void main(String[] args) throws IOException, CableException, JAXBException, ProxyInstantiationException, TaskException {
+        ImportIwir importIwir = new ImportIwir();
+
+        IWIR iwir = new IWIR(new File("/Users/ian/Downloads/fgibundle/workflow.xml.iwir"));
+
+        TrianaInstance engine = new TrianaInstance(args);
+        engine.init();
+        TaskGraph taskGraph = importIwir.taskFromIwir(iwir, null);
+        System.exit(0);
     }
 
     /**
@@ -73,7 +86,13 @@ public class ImportIwir {
 
 
         for (DataLink dataLink : dataLinks) {
-//            stdOut("\nLink from " + dataLink.getFromPort() + " to " + dataLink.getToPort());
+
+            stdOut("\nLink from " + dataLink.getFromPort() +
+                    " (" + dataLink.getFromPort().getType().toString() + ") " +
+                    " to " + dataLink.getToPort() +
+                    " (" + dataLink.getToPort().getType().toString() + ")"
+            );
+
             AbstractPort outgoingPort = dataLink.getFromPort();
             AbstractPort incomingPort = dataLink.getToPort();
 
@@ -93,14 +112,27 @@ public class ImportIwir {
 
 
             if (sendingTask == receivingTask.getParent()) {
-
-                Node graphNode = ((TaskGraph) sendingTask).addDataInputNode(receivingTask.addDataInputNode());
+                Node receivingNode = receivingTask.addDataInputNode();
+                Node graphNode = ((TaskGraph) sendingTask).addDataInputNode(receivingNode);
                 inputChain(outgoingPort, graphNode);
+
+                if(receivingTask.isParameterName(Executable.EXECUTABLE)){
+                    Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
+                    executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
+                    receivingTask.setParameter(Executable.EXECUTABLE, executable);
+                }
             }
 
             if (receivingTask == sendingTask.getParent()) {
-                Node graphNode = ((TaskGraph) receivingTask).addDataOutputNode(sendingTask.addDataOutputNode());
+                Node sendingNode = sendingTask.addDataOutputNode();
+                Node graphNode = ((TaskGraph) receivingTask).addDataOutputNode(sendingNode);
                 outputChain(incomingPort, graphNode);
+
+                if(sendingTask.isParameterName(Executable.EXECUTABLE)){
+                    Executable executable = (Executable) sendingTask.getParameter(Executable.EXECUTABLE);
+                    executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
+                    sendingTask.setParameter(Executable.EXECUTABLE, executable);
+                }
             }
 
             //check both are atomic tasks
@@ -114,7 +146,21 @@ public class ImportIwir {
                             + receivingTask.getQualifiedToolName() + " in "
                             + scopeTaskgraph.getQualifiedToolName()
                     );
-                    scopeTaskgraph.connect(sendingTask.addDataOutputNode(), receivingTask.addDataInputNode());
+                    Node sendingNode = sendingTask.addDataOutputNode();
+                    Node receivingNode = receivingTask.addDataInputNode();
+                    scopeTaskgraph.connect(sendingNode, receivingNode);
+
+                    if(sendingTask.isParameterName(Executable.EXECUTABLE)){
+                        Executable executable = (Executable) sendingTask.getParameter(Executable.EXECUTABLE);
+                        executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
+                        sendingTask.setParameter(Executable.EXECUTABLE, executable);
+                    }
+                    if(receivingTask.isParameterName(Executable.EXECUTABLE)){
+                        Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
+                        executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
+                        receivingTask.setParameter(Executable.EXECUTABLE, executable);
+                    }
+
                 }
             }
         }
@@ -180,15 +226,18 @@ public class ImportIwir {
             executable = (Executable) task.getParameter(Executable.EXECUTABLE);
         }
         for (AbstractPort port : mainTask.getAllInputPorts()) {
+            System.out.println("Input port " + port.getName() + " " + port.getClass().getCanonicalName());
             Node newNode = null;
             if (port instanceof InputPort) {
                 newNode = tg.addDataInputNode(task.addDataInputNode());
             }
-            if (port instanceof LoopPort) {
-                newNode = task.addParameterInputNode("loop");
+            if (port instanceof LoopPort || port instanceof LoopElement) {
+//                newNode = task.addParameterInputNode("loop");
+                  newNode = tg.addDataInputNode(task.addDataInputNode());
+                stdOut("Loop port found " + port.getName());
             }
             if(newNode != null && executable != null){
-                executable.addPort(newNode.getName(), port.getName());
+                executable.addPort(newNode.getTopLevelNode().getName(), port.getName());
             }
 
         }
@@ -201,12 +250,11 @@ public class ImportIwir {
                 newNode = task.addParameterOutputNode("loop");
             }
             if(newNode != null && executable != null){
-                executable.addPort(newNode.getName(), port.getName());
+                executable.addPort(newNode.getTopLevelNode().getName(), port.getName());
             }
         }
         if(executable != null){
             task.setParameter(Executable.EXECUTABLE, executable);
-            System.out.println("Has exec " + executable.getPorts().values().toString());
         }
     }
 
@@ -224,7 +272,6 @@ public class ImportIwir {
 //        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();
 //        taskGraph.setToolName(mainTask.getName());
         tg.setToolName(mainTask.getName());
-
 
         //If there is only one task in the workflow, the mainTask with be a Task (ie not Compound)
 
@@ -275,7 +322,6 @@ public class ImportIwir {
                 } else {
                     if (iwirTask instanceof AbstractCompoundTask) {
 
-                        System.out.println("WARNING THIS IS BROKEN");
                         TaskGraph innerTaskGraph = TaskGraphManager.createTaskGraph();
                         TaskGraph concreteTaskGraph = (TaskGraph) tg.createTask(innerTaskGraph);
                         recordAbstractTasksAndDataLinks(iwirTask, concreteTaskGraph);
@@ -286,7 +332,6 @@ public class ImportIwir {
                 }
             }
         }
-        System.out.printf("Import of tasks complete");
         return tg;
     }
 
