@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -33,36 +34,86 @@ import java.util.UUID;
 @Tool(renderingHints = {DaxJobComponentModel.DAX_JOB_RENDERING_HINT}, minimumInputs = 1, minimumOutputs = 1)
 public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemListener, ActionListener {
 
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
+    
+    /** The upper panel. */
     JPanel upperPanel; // = new JPanel(new GridLayout(4, 2, 5, 5));
+    
+    /** The lower panel. */
     JPanel lowerPanel; // = new JPanel();
+    
+    /** The lower panel1. */
     JPanel lowerPanel1; // = new JPanel(new GridLayout(3, 1, 5, 5));
+    
+    /** The lower panel auto. */
     JPanel lowerPanelAuto; // = new JPanel(new GridLayout(1, 2, 5, 5));
+    
+    /** The lower panel scatter. */
     JPanel lowerPanelScatter; // = new JPanel(new GridLayout(1, 2, 5, 5));
+    
+    /** The lower panel one2 one. */
     JPanel lowerPanelOne2One; // = new JPanel(new GridLayout(1, 2, 5, 5));
 
+    /** The name field. */
     JTextField nameField;
+    
+    /** The exec field. */
     JTextField execField;
+    
+    /** The args field. */
     JTextField argsField;
+    
+    /** The collect label. */
     JLabel collectLabel;
+    
+    /** The number jobs label. */
     JLabel numberJobsLabel;
+    
+    /** The number input files label. */
     JLabel numberInputFilesLabel;
 
+    /** The files per job combo. */
     JComboBox filesPerJobCombo;
+    
+    /** The jobs combo. */
     JComboBox jobsCombo;
+    
+    /** The collection box. */
     JCheckBox collectionBox;
+    
+    /** The auto check. */
     JRadioButton autoCheck;
+    
+    /** The scatter check. */
     JRadioButton scatterCheck;
+    
+    /** The spread check. */
     JRadioButton spreadCheck;
+    
+    /** The one2one check. */
     JRadioButton one2oneCheck;
+    
+    /** The input switch field. */
     private JTextField inputSwitchField;
+    
+    /** The output switch field. */
     private JTextField outputSwitchField;
 
+    /**
+     * Fake process.
+     *
+     * @param list the list
+     * @return the uuid
+     */
     @org.trianacode.annotation.Process(gather = true)
     public UUID fakeProcess(List list) {
         return this.process(list);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.JobUnit#getComponent()
+     */
     @CustomGUIComponent
     public Component getComponent() {
         JPanel mainPane = new JPanel();
@@ -233,6 +284,12 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
         return mainPane;
     }
 
+    /**
+     * Gets the args.
+     *
+     * @param file the file
+     * @return the args
+     */
     private void getArgs(File file) {
         argsStringArray = new ArrayList<String>();
         try {
@@ -250,6 +307,9 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
     }
 
 
+    /**
+     * Apply.
+     */
     public void apply() {
         changeToolName(nameField.getText());
         exec = execField.getText();
@@ -263,6 +323,12 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
         setParams();
     }
 
+    /**
+     * Sets the enabling.
+     *
+     * @param c the c
+     * @param enable the enable
+     */
     public void setEnabling(Component c, boolean enable) {
         c.setEnabled(enable);
         if (c instanceof Container) {
@@ -273,11 +339,17 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.JobUnit#displayMessage(java.lang.String)
+     */
     @Override
     public void displayMessage(String string) {
         devLog.debug(string);
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent ae) {
         if (ae.getActionCommand().equals("apply")) {
             apply();
@@ -293,6 +365,9 @@ public class DaxJob extends JobUnit implements Displayer, TaskConscious, ItemLis
     }
 
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+     */
     public void itemStateChanged(ItemEvent itemEvent) {
         if (itemEvent.getSource() == collectionBox) {
             if (collectionBox.isSelected()) {

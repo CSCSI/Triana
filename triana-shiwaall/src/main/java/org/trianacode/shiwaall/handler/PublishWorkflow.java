@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 
+// TODO: Auto-generated Javadoc
 /**
 * Created by IntelliJ IDEA.
 * User: Ian Harvey
@@ -33,10 +34,18 @@ import java.util.Set;
 */
 public class PublishWorkflow extends AbstractAction implements ActionDisplayOptions {
 
+    /**
+     * Instantiates a new publish workflow.
+     */
     public PublishWorkflow() {
         this(DISPLAY_BOTH);
     }
 
+    /**
+     * Instantiates a new publish workflow.
+     *
+     * @param displayOption the display option
+     */
     public PublishWorkflow(int displayOption) {
         putValue(SHORT_DESCRIPTION, "Publish");
         putValue(NAME, "Publish");
@@ -49,6 +58,9 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent actionEvent) {
 
 
@@ -62,6 +74,12 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         }
     }
 
+    /**
+     * Builds the handler.
+     *
+     * @param tg the tg
+     * @return the workflow engine handler
+     */
     public static WorkflowEngineHandler buildHandler(TaskGraph tg) {
         System.out.println("Publishing Workflow");
 
@@ -121,6 +139,11 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         }
     }
 
+    /**
+     * Gets the image stream.
+     *
+     * @return the image stream
+     */
     public static InputStream getImageStream() {
         InputStream displayStream = null;
         try {
@@ -136,10 +159,16 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
         return displayStream;
     }
 
+    /**
+     * Publish.
+     *
+     * @param handler the handler
+     * @param engine the engine
+     */
     public static void publish(WorkflowEngineHandler handler, TrianaInstance engine) {
         SHIWADesktop shiwaDesktop = new SHIWADesktop(handler, SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
         DisplayDialog dialog = null;
-        shiwaDesktop.addExecutionListener(new TrianaShiwaListener(engine, dialog));
+        shiwaDesktop.addExecutionListener(new TrianaShiwaListener(engine));
         Image icon = InterfaceUtils.X16_ICON.getImage();
         dialog = new DisplayDialog(shiwaDesktop.getPanel(), "SHIWA Desktop", icon);
         shiwaDesktop = null;

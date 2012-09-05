@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -16,11 +17,21 @@ import java.util.Vector;
  */
 public class NodePortTranslator {
 
+    /** The port node hash map. */
     HashMap<String, Node> portNodeHashMap;
+    
+    /** The node abstract port id hash map. */
     HashMap<Node, String> nodeAbstractPortIDHashMap;
+    
+    /** The abstract port hash map. */
     HashMap<String, AbstractPort> abstractPortHashMap;
+    
+    /** The node proxies. */
     Vector<NodeProxy> nodeProxies;
 
+    /**
+     * Instantiates a new node port translator.
+     */
     public NodePortTranslator() {
         portNodeHashMap = new HashMap<String, Node>();
         nodeAbstractPortIDHashMap = new HashMap<Node, String>();
@@ -28,6 +39,11 @@ public class NodePortTranslator {
         nodeProxies = new Vector<NodeProxy>();
     }
 
+    /**
+     * Adds the node proxy.
+     *
+     * @param nodeProxy the node proxy
+     */
     public void addNodeProxy(NodeProxy nodeProxy) {
         portNodeHashMap.put(nodeProxy.getAbstractPort().getUniqueId(), nodeProxy.getNode());
         nodeAbstractPortIDHashMap.put(nodeProxy.getNode(), nodeProxy.getAbstractPort().getUniqueId());
@@ -39,6 +55,12 @@ public class NodePortTranslator {
 //        listAll();
     }
 
+    /**
+     * Gets the node for abstract port.
+     *
+     * @param abstractPortID the abstract port id
+     * @return the node for abstract port
+     */
     public Node getNodeForAbstractPort(String abstractPortID) {
         Node node = portNodeHashMap.get(abstractPortID);
         if (node != null) {
@@ -49,6 +71,12 @@ public class NodePortTranslator {
         }
     }
 
+    /**
+     * Gets the abstract port for node.
+     *
+     * @param node the node
+     * @return the abstract port for node
+     */
     public AbstractPort getAbstractPortForNode(Node node) {
         AbstractPort abstractPort = abstractPortHashMap.get(nodeAbstractPortIDHashMap.get(node));
         if (abstractPort != null) {
@@ -59,6 +87,9 @@ public class NodePortTranslator {
         }
     }
 
+    /**
+     * List all.
+     */
     public void listAll() {
         System.out.println("\n*** Listing all node stuff, abstract key");
         for (Map.Entry entry : portNodeHashMap.entrySet()) {

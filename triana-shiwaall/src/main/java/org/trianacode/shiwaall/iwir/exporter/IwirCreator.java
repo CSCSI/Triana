@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -27,23 +28,43 @@ import java.util.List;
 
 @Tool(panelClass = "org.trianacode.shiwaall.iwirTools.creation.IwirCreatorPanel")
 public class IwirCreator implements TaskConscious {
+    
+    /** The Constant AUTO_CONNECT. */
     private static final int AUTO_CONNECT = 0;
+    
+    /** The Constant SCATTER_CONNECT. */
     private static final int SCATTER_CONNECT = 1;
+    
+    /** The Constant ONE2ONE_CONNECT. */
     private static final int ONE2ONE_CONNECT = 2;
+    
+    /** The Constant SPREAD_CONNECT. */
     private static final int SPREAD_CONNECT = 3;
+    
+    /** The id number. */
     public int idNumber = 0;
 
+    /** The PF larray. */
     private ArrayList<String> PFLarray = new ArrayList<String>();
 
+    /** The demo. */
     @CheckboxParameter
     private boolean demo = false;
 
+    /** The file name. */
     @TextFieldParameter
     private String fileName = "output_iwir.xml";
 
+    /** The task. */
     private org.trianacode.taskgraph.Task task;
 
 
+    /**
+     * Process.
+     *
+     * @param in the in
+     * @return the java.io. file
+     */
     @org.trianacode.annotation.Process(gather = true)
     public java.io.File process(List in) {
         log("IwirCreator");
@@ -84,12 +105,24 @@ public class IwirCreator implements TaskConscious {
         return iwirFile;
     }
 
+    /**
+     * Log.
+     *
+     * @param s the s
+     */
     private void log(String s) {
 //        Log log = Loggers.DEV_LOGGER;
 //        log.debug(s);
         System.out.println(s);
     }
 
+    /**
+     * Iwir from task graph.
+     *
+     * @param taskGraph the task graph
+     * @param fileName the file name
+     * @return the java.io. file
+     */
     public static java.io.File iwirFromTaskGraph(TaskGraph taskGraph, String fileName) {
         IWIR iwir = new IWIR(fileName);
         BlockScope rootTask = new BlockScope("FIXMETODO");
@@ -100,6 +133,13 @@ public class IwirCreator implements TaskConscious {
         return writeIwir(iwir, fileName);
     }
 
+    /**
+     * Write iwir.
+     *
+     * @param iwir the iwir
+     * @param fileName the file name
+     * @return the java.io. file
+     */
     private static java.io.File writeIwir(IWIR iwir, String fileName) {
         java.io.File iwirFile = new java.io.File(fileName + ".xml");
         try {
@@ -111,6 +151,12 @@ public class IwirCreator implements TaskConscious {
         return iwirFile;
     }
 
+    /**
+     * Adds the generic triana tasks.
+     *
+     * @param rootTask the root task
+     * @param taskGraph the task graph
+     */
     private static void addGenericTrianaTasks(AbstractSimpleCompoundTask rootTask, TaskGraph taskGraph) {
         NodePortTranslator nodePortTranslator = new NodePortTranslator();
 
@@ -150,6 +196,13 @@ public class IwirCreator implements TaskConscious {
 //        }
     }
 
+    /**
+     * Adds the and record ports.
+     *
+     * @param addedTask the added task
+     * @param task the task
+     * @param nodePortTranslator the node port translator
+     */
     private static void addAndRecordPorts(AbstractTask addedTask, org.trianacode.taskgraph.Task task, NodePortTranslator nodePortTranslator) {
 //TODO - more fucking node connecting!!!!!
 
@@ -703,7 +756,10 @@ public class IwirCreator implements TaskConscious {
 //
 //
 
-    @Override
+    /* (non-Javadoc)
+ * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+ */
+@Override
     public void setTask(org.trianacode.taskgraph.Task task) {
         this.task = task;
     }

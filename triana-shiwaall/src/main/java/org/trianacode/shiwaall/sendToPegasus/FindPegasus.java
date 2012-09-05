@@ -9,6 +9,7 @@ import javax.jmdns.ServiceInfo;
 import java.io.IOException;
 import java.net.InetAddress;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -19,12 +20,24 @@ import java.net.InetAddress;
 public class FindPegasus {
 
 
+    /**
+     * Log.
+     *
+     * @param s the s
+     */
     private static void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
         System.out.println(s);
     }
 
+    /**
+     * Find pegasus.
+     *
+     * @param timeout the timeout
+     * @param displayer the displayer
+     * @return the service info
+     */
     public static ServiceInfo findPegasus(long timeout, Displayer displayer) {
 
         log("Trying to find services with JmDNS");

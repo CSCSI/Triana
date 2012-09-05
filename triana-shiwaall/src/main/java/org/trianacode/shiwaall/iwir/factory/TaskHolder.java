@@ -2,6 +2,7 @@ package org.trianacode.shiwaall.iwir.factory;
 
 import org.shiwa.fgi.iwir.AbstractTask;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -15,9 +16,24 @@ public interface TaskHolder {
 
 //    public void setExecutable(Executable executable);
 
-    public AbstractTask getIWIRTask();
+    /**
+ * Gets the iWIR task.
+ *
+ * @return the iWIR task
+ */
+public AbstractTask getIWIRTask();
 
+    /**
+     * Sets the iWIR task.
+     *
+     * @param abstractTask the new iWIR task
+     */
     public void setIWIRTask(AbstractTask abstractTask);
 
+    /**
+     * Register iwir task.
+     *
+     * @param abstractTask the abstract task
+     */
     public void registerIWIRTask(AbstractTask abstractTask);
 }

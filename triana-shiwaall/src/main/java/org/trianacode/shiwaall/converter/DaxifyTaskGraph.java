@@ -3,6 +3,8 @@ package org.trianacode.shiwaall.converter;
 import org.apache.commons.lang.ArrayUtils;
 import org.trianacode.enactment.AddonUtils;
 import org.trianacode.enactment.addon.ConversionAddon;
+import org.trianacode.gui.hci.GUIEnv;
+import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.shiwaall.dax.FileUnit;
 import org.trianacode.shiwaall.dax.JobUnit;
 import org.trianacode.taskgraph.*;
@@ -18,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -27,21 +30,39 @@ import java.util.Collection;
  */
 public class DaxifyTaskGraph implements ConversionAddon {
 
+    /** The file unit class. */
     private Class fileUnitClass;
+    
+    /** The job unit class. */
     private Class jobUnitClass;
 
+    /** The file iterator. */
     int fileIterator = 0;
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return getServiceName();
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getUsageString()
+     */
     @Override
     public String getUsageString() {
         return "";
     }
 
+    /**
+     * Convert.
+     *
+     * @param fileUnitClass the file unit class
+     * @param jobUnitClass the job unit class
+     * @param taskGraph the task graph
+     * @return the task graph
+     */
     public TaskGraph convert(Class fileUnitClass, Class jobUnitClass, TaskGraph taskGraph) {
         this.fileUnitClass = fileUnitClass;
         this.jobUnitClass = jobUnitClass;
@@ -53,6 +74,12 @@ public class DaxifyTaskGraph implements ConversionAddon {
         return null;
     }
 
+    /**
+     * Convert.
+     *
+     * @param taskGraph the task graph
+     * @return the task graph
+     */
     public TaskGraph convert(TaskGraph taskGraph) {
         fileUnitClass = FileUnit.class;
         jobUnitClass = JobUnit.class;
@@ -64,6 +91,11 @@ public class DaxifyTaskGraph implements ConversionAddon {
         return null;
     }
 
+    /**
+     * Ungroup all.
+     *
+     * @param taskGraph the task graph
+     */
     private void ungroupAll(TaskGraph taskGraph) {
         for (Task task : taskGraph.getTasks(false)) {
             if (task instanceof TaskGraph) {
@@ -78,6 +110,17 @@ public class DaxifyTaskGraph implements ConversionAddon {
         }
     }
 
+    /**
+     * Daxify task graph.
+     *
+     * @param taskgraph the taskgraph
+     * @param factorytype the factorytype
+     * @param presclone the presclone
+     * @param prestasks the prestasks
+     * @param clonecontrol the clonecontrol
+     * @return the task graph
+     * @throws TaskGraphException the task graph exception
+     */
     private TaskGraph daxifyTaskGraph(TaskGraph taskgraph, String factorytype, boolean presclone,
                                       boolean prestasks, boolean clonecontrol) throws TaskGraphException {
 
@@ -240,6 +283,15 @@ public class DaxifyTaskGraph implements ConversionAddon {
         }
     }
 
+    /**
+     * Inits the tool.
+     *
+     * @param tool the tool
+     * @param unitName the unit name
+     * @param unitPackage the unit package
+     * @param inNodes the in nodes
+     * @param outNodes the out nodes
+     */
     private static void initTool(ToolImp tool, String unitName, String unitPackage, int inNodes, int outNodes) {
         tool.setToolName(unitName);
         try {
@@ -252,6 +304,14 @@ public class DaxifyTaskGraph implements ConversionAddon {
         }
     }
 
+    /**
+     * Adds the file unit.
+     *
+     * @param sendnode the sendnode
+     * @param recnode the recnode
+     * @param clone the clone
+     * @throws CableException the cable exception
+     */
     private void addFileUnit(Node sendnode, Node recnode, TaskGraph clone) throws CableException {
         try {
             Task fileTask = new TaskImp(
@@ -276,14 +336,30 @@ public class DaxifyTaskGraph implements ConversionAddon {
             if(sendnode != null){
                 //Place interim file task after producing executable task
                 TPoint sendingpoint = TaskLayoutUtils.getPosition(sendnode.getTask());
-                taskPoint = new TPoint(sendingpoint.getX() + 1.5, sendingpoint.getY());
+//                taskPoint = new TPoint(sendingpoint.getX() + 1.5, sendingpoint.getY());
+
+                int outputNodeCount = sendnode.getTask().getOutputNodeCount();
+                int thisNodeNumber = sendnode.getTask().getAbsoluteNodeIndex(sendnode);
+
+                double y = thisNodeNumber - (outputNodeCount/2);
+                taskPoint = new TPoint(sendingpoint.getX() + 1.5, sendingpoint.getY() + y);
+
             } else if( recnode != null) {
-                // If no producing task (ie its an input file) place it before the consuming task
+                // If no producing task (ie its an input file) place it before the consuming task.
+                //Put it either in front of it, or above if there's no space
                 TPoint recpoint = TaskLayoutUtils.getPosition(recnode.getTask());
-                taskPoint = new TPoint(recpoint.getX() - 1.5, recpoint.getY());
+                if(recpoint.getX() - 1.5 > 0){
+                    taskPoint = new TPoint(recpoint.getX() - 1.5, recpoint.getY());
+                } else {
+                    taskPoint = new TPoint(recpoint.getX(), recpoint.getY() - 1);
+                }
             }
             if(taskPoint != null){
+
+                TaskGraphPanel panel = GUIEnv.getApplicationFrame().getSelectedDesktopView().getTaskgraphPanel();
                 TaskLayoutUtils.setPosition(task, taskPoint);
+
+//                moveTask(panel, task, taskPoint);
             }
 
             fileIterator++;
@@ -294,7 +370,26 @@ public class DaxifyTaskGraph implements ConversionAddon {
         }
     }
 
-    private Task initDaxTask(Task task, Class clazz) {
+//    private void moveTask(TaskGraphPanel panel, Task task, TPoint taskPoint){
+//        Rectangle taskBounds = panel.getTaskComponent(task).getComponent().getBounds();
+//        for(TaskComponent overlap : panel.getTaskComponents()) {
+//            Rectangle overlapRect = overlap.getComponent().getBounds();
+//            if(taskBounds.intersects(overlapRect)){
+//                taskPoint.setY(taskPoint.getY() + 1);
+//                TaskLayoutUtils.setPosition(task, taskPoint);
+//                moveTask(panel, task, taskPoint);
+//            }
+//        }
+//    }
+
+    /**
+ * Inits the dax task.
+ *
+ * @param task the task
+ * @param clazz the clazz
+ * @return the task
+ */
+private Task initDaxTask(Task task, Class clazz) {
         Tool tool = null;
         try {
             tool = AddonUtils.makeTool(clazz, task.getToolName(), task.getProperties());
@@ -313,6 +408,12 @@ public class DaxifyTaskGraph implements ConversionAddon {
         return null;
     }
 
+    /**
+     * Sets the parameters.
+     *
+     * @param task the task
+     * @param daxTask the dax task
+     */
     private void setParameters(Task task, Task daxTask) {
         int count = 0;
         while (count < task.getInputNodeCount()) {
@@ -344,51 +445,84 @@ public class DaxifyTaskGraph implements ConversionAddon {
         //Todo - probably something technical and frustrating...
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getServiceName()
+     */
     @Override
     public String getServiceName() {
         return "Triana Dax Template";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getLongOption()
+     */
     @Override
     public String getLongOption() {
         return "taskgraph-to-daxJobs";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getShortOption()
+     */
     @Override
     public String getShortOption() {
         return "dax";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getDescription()
+     */
     @Override
     public String getDescription() {
         return "An intermediary stage between a taskgraph and a dax, where units must input/output files.";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflow(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Object toolToWorkflow(Tool tool) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#workflowToTool(java.lang.Object)
+     */
     @Override
     public Tool workflowToTool(Object workflowObject) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#processWorkflow(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Tool processWorkflow(Tool workflow) {
         return convert((TaskGraph) workflow);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflowFile(org.trianacode.taskgraph.tool.Tool, java.io.File, java.lang.String)
+     */
     @Override
     public File toolToWorkflowFile(Tool tool, File configFile, String filePath) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflowFileInputStream(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public InputStream toolToWorkflowFileInputStream(Tool tool) {
         return null;
     }
 
+    /**
+     * Gets the taskgraph child node.
+     *
+     * @param taskGraph the task graph
+     * @return the taskgraph child node
+     */
     private static Node getTaskgraphChildNode(TaskGraph taskGraph) {
 // Find a child task on the taskgraph to attach the daxCreator to, and connect it
 

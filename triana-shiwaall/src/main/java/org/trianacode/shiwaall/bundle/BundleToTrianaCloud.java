@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -27,10 +28,18 @@ import java.util.UUID;
 @Tool
 public class BundleToTrianaCloud implements TaskConscious {
 
+    /** The bundle file. */
     @TextFieldParameter
     public String bundleFile = "";
+    
+    /** The task. */
     private Task task;
 
+    /**
+     * Process.
+     *
+     * @param list the list
+     */
     @Process(gather = true)
     public void process(List list) {
 
@@ -81,6 +90,9 @@ public class BundleToTrianaCloud implements TaskConscious {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;

@@ -2,15 +2,29 @@ package org.trianacode.shiwaall.test;
 
 import org.shiwa.fgi.iwir.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BlockScopeMock.
+ */
 public class BlockScopeMock {
     // a dummy example with new blockscope construct
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         IWIR i = new BlockScopeMock().build();
 
         System.out.println(i.asXMLString());
     }
 
+    /**
+     * Builds the.
+     *
+     * @return the iwir
+     */
     public IWIR build() {
 
         BlockScope bs = new BlockScope("topLevel");

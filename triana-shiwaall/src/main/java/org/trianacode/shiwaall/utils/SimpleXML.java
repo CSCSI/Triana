@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -27,6 +28,13 @@ import java.io.Writer;
  */
 public class SimpleXML {
 
+    /**
+     * Make xml document.
+     *
+     * @param rootName the root name
+     * @return the document
+     * @throws Exception the exception
+     */
     public static Document makeXMLDocument(String rootName) throws Exception {
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -56,12 +64,28 @@ public class SimpleXML {
         return doc;
     }
 
+    /**
+     * Adds the root comment.
+     *
+     * @param document the document
+     * @param commentText the comment text
+     * @return the document
+     */
     public static Document addRootComment(Document document, String commentText) {
         Comment comment = document.createComment(commentText);
         document.getDocumentElement().appendChild(comment);
         return document;
     }
 
+    /**
+     * Creates the element.
+     *
+     * @param document the document
+     * @param parent the parent
+     * @param key the key
+     * @param value the value
+     * @return the element
+     */
     public static Element createElement(Document document, Element parent, String key, String value) {
         Element newElement = document.createElement(key);
         newElement.setTextContent(value);
@@ -69,6 +93,13 @@ public class SimpleXML {
         return newElement;
     }
 
+    /**
+     * Gets the xM las string.
+     *
+     * @param document the document
+     * @return the xM las string
+     * @throws TransformerException the transformer exception
+     */
     public static String getXMLasString(Document document) throws TransformerException {
         Source source = new DOMSource(document);
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
@@ -83,6 +114,13 @@ public class SimpleXML {
         return outputWriter.toString();
     }
 
+    /**
+     * Write xml file.
+     *
+     * @param doc the doc
+     * @param saveFile the save file
+     * @param systemOut the system out
+     */
     public static void writeXmlFile(Document doc, File saveFile, boolean systemOut) {
         try {
 
@@ -113,12 +151,26 @@ public class SimpleXML {
         }
     }
 
+    /**
+     * Document from string.
+     *
+     * @param xmlString the xml string
+     * @return the document
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws SAXException the sAX exception
+     */
     public static Document documentFromString(String xmlString) throws IOException, SAXException {
         DOMParser parser = new DOMParser();
         parser.parse(new InputSource(new java.io.StringReader(xmlString)));
         return parser.getDocument();
     }
 
+    /**
+     * Flatten string.
+     *
+     * @param output the output
+     * @return the string
+     */
     public static String flattenString(String output) {
         return output.replaceAll("(\\r|\\n)", "");
     }

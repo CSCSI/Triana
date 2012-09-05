@@ -22,12 +22,24 @@ package org.trianacode.shiwaall.extras;
 import javax.swing.*;
 import java.util.Arrays;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BareBonesBrowserLaunch.
+ */
 public class BareBonesBrowserLaunch {
 
+    /** The Constant browsers. */
     static final String[] browsers = {"google-chrome", "firefox", "opera",
             "epiphany", "konqueror", "conkeror", "midori", "kazehakase", "mozilla"};
+    
+    /** The Constant errMsg. */
     static final String errMsg = "Error attempting to launch web browser";
 
+    /**
+     * Open url.
+     *
+     * @param url the url
+     */
     public static void openURL(String url) {
         try {  //attempt to use Desktop library from JDK 1.6+
             Class<?> d = Class.forName("java.awt.Desktop");

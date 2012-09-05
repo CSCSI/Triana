@@ -4,6 +4,7 @@ import org.trianacode.shiwaall.extras.FileBuilder;
 
 import java.io.File;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -13,6 +14,11 @@ import java.io.File;
  */
 public class CatalogBuilder {
 
+    /**
+     * Builds the properties file.
+     *
+     * @param topDir the top dir
+     */
     public static void buildPropertiesFile(String topDir) {
         String propertiesFileContents = "org.trianacode.shiwaall.gui.catalog.site=XML3\n" +
                 "org.trianacode.shiwaall.gui.catalog.site.file=" + topDir + File.separator + "sites.xml\n" +
@@ -24,6 +30,11 @@ public class CatalogBuilder {
 
     }
 
+    /**
+     * Builds the sites file.
+     *
+     * @param topDir the top dir
+     */
     public static void buildSitesFile(String topDir) {
         String pegasusDir = System.getenv("PEGASUS_HOME");
 

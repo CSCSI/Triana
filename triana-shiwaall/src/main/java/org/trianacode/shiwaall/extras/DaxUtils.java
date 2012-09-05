@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -23,6 +24,13 @@ import java.util.List;
  */
 public class DaxUtils {
 
+    /**
+     * Creates the dummy io config file.
+     *
+     * @param taskGraph the task graph
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public static File createDummyIOConfigFile(TaskGraph taskGraph) throws IOException {
         List<IoMapping> inputMappings = new ArrayList<IoMapping>();
         for (Node node : taskGraph.getDataInputNodes()) {

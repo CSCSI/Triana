@@ -5,6 +5,7 @@ import org.trianacode.enactment.AddonUtils;
 
 import java.io.File;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -14,6 +15,13 @@ import java.io.File;
  */
 public class WorkflowUtils {
 
+    /**
+     * Gets the workflow type.
+     *
+     * @param file the file
+     * @param signature the signature
+     * @return the workflow type
+     */
     public static String getWorkflowType(File file, TransferSignature signature) {
         String workflowType = null;
         if (signature != null && signature.getLanguage() != null) {
@@ -23,6 +31,8 @@ public class WorkflowUtils {
                 workflowType = AddonUtils.TASKGRAPH_FORMAT;
             } else if (language.equals("IWIR")) {
                 workflowType = AddonUtils.IWIR_FORMAT;
+            } else if (language.equals("DAX")) {
+                workflowType = AddonUtils.DAX_FORMAT;
             }
         } else {
             workflowType = AddonUtils.getWorkflowType(file);
@@ -30,6 +40,11 @@ public class WorkflowUtils {
         return workflowType;
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         String a = "a";
         String b = "a";
@@ -50,6 +65,11 @@ public class WorkflowUtils {
         System.out.println(c.compareTo("a"));
     }
 
+    /**
+     * Compare.
+     *
+     * @return true, if successful
+     */
     private static boolean compare() {
         return "a" == "a";
     }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -26,38 +27,62 @@ import java.util.UUID;
 @Tool
 public class JobUnit implements TaskConscious, Displayer {
 
+    /** The Constant AUTO_CONNECT. */
     public static final int AUTO_CONNECT = 0;
+    
+    /** The Constant SCATTER_CONNECT. */
     public static final int SCATTER_CONNECT = 1;
+    
+    /** The Constant ONE2ONE_CONNECT. */
     public static final int ONE2ONE_CONNECT = 2;
+    
+    /** The Constant SPREAD_CONNECT. */
     public static final int SPREAD_CONNECT = 3;
 
     //    @Parameter
+    /** The number of jobs. */
     public int numberOfJobs = 1;
     //    @Parameter
+    /** The file inputs per job. */
     public int fileInputsPerJob = 1;
     //    @Parameter
+    /** The connect pattern. */
     public int connectPattern = 0;
 
     //    @TextFieldParameter
+    /** The job name. */
     public String jobName = "a_process";
 
     //    @TextFieldParameter
+    /** The args. */
     public String args = "an_argument";
 
     //    @CheckboxParameter
+    /** The collection. */
     public boolean collection = false;
 
+    /** The auto connect. */
     public boolean autoConnect = true;
+    
+    /** The exec. */
     public String exec = "ls";
 
+    /** The input switch. */
     public String inputSwitch = "-i";
+    
+    /** The output switch. */
     public String outputSwitch = "-o";
 
+    /** The task. */
     public Task task;
 
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
+    
+    /** The Constant TRIANA_TOOL. */
     public static final String TRIANA_TOOL = "triana_tool";
 
+    /** The args string array. */
     public ArrayList<String> argsStringArray = null;
 
 
@@ -69,13 +94,22 @@ public class JobUnit implements TaskConscious, Displayer {
 //        this.jobName = name;
 //    }
 
-    @Override
+    /* (non-Javadoc)
+ * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+ */
+@Override
     public void setTask(Task task) {
         this.task = task;
         getParams();
         setParams();
     }
 
+    /**
+     * Process.
+     *
+     * @param in the in
+     * @return the uuid
+     */
     @Process(gather = true)
     public UUID process(List in) {
 
@@ -150,6 +184,11 @@ public class JobUnit implements TaskConscious, Displayer {
         return thisUUID;
     }
 
+    /**
+     * Gets the params.
+     *
+     * @return the params
+     */
     public void getParams() {
         if (task != null) {
             jobName = getJobName();
@@ -163,6 +202,11 @@ public class JobUnit implements TaskConscious, Displayer {
         }
     }
 
+    /**
+     * Gets the output switch.
+     *
+     * @return the output switch
+     */
     private String getOutputSwitch() {
         Object o = task.getParameter("outputSwitch");
         if (o != null && !((String) o).equals("")) {
@@ -171,6 +215,11 @@ public class JobUnit implements TaskConscious, Displayer {
         return outputSwitch;
     }
 
+    /**
+     * Gets the input switch.
+     *
+     * @return the input switch
+     */
     private String getInputSwitch() {
         Object o = task.getParameter("inputSwitch");
         if (o != null && !((String) o).equals("")) {
@@ -181,6 +230,11 @@ public class JobUnit implements TaskConscious, Displayer {
 
 
 
+    /**
+     * Gets the exec location.
+     *
+     * @return the exec location
+     */
     private String getExecLocation() {
         Object o = task.getParameter("execLocation");
         if (o != null && !((String) o).equals("")) {
@@ -189,6 +243,9 @@ public class JobUnit implements TaskConscious, Displayer {
         return exec;
     }
 
+    /**
+     * Sets the params.
+     */
     public void setParams() {
         if (task != null) {
             task.setParameter("jobName", jobName);
@@ -203,6 +260,11 @@ public class JobUnit implements TaskConscious, Displayer {
         }
     }
 
+    /**
+     * Change tool name.
+     *
+     * @param name the name
+     */
     public void changeToolName(String name) {
         if (task != null) {
             devLog.debug("Changing tool " + task.getToolName() + " to : " + name);
@@ -211,6 +273,11 @@ public class JobUnit implements TaskConscious, Displayer {
         }
     }
 
+    /**
+     * Gets the job name.
+     *
+     * @return the job name
+     */
     private String getJobName() {
         Object o = task.getParameter("jobName");
         if (o != null && !((String) o).equals("")) {
@@ -219,6 +286,11 @@ public class JobUnit implements TaskConscious, Displayer {
         return jobName;
     }
 
+    /**
+     * Checks if is collection.
+     *
+     * @return true, if is collection
+     */
     public boolean isCollection() {
         Object o = task.getParameter("collection");
         if (o != null) {
@@ -228,6 +300,11 @@ public class JobUnit implements TaskConscious, Displayer {
         return false;
     }
 
+    /**
+     * Gets the number of jobs.
+     *
+     * @return the number of jobs
+     */
     public int getNumberOfJobs() {
         Object o = task.getParameter("numberOfJobs");
         if (o != null) {
@@ -241,6 +318,11 @@ public class JobUnit implements TaskConscious, Displayer {
         return 1;
     }
 
+    /**
+     * Gets the file inputs per job.
+     *
+     * @return the file inputs per job
+     */
     public int getFileInputsPerJob() {
         Object o = task.getParameter("fileInputsPerJob");
         if (o != null) {
@@ -254,6 +336,11 @@ public class JobUnit implements TaskConscious, Displayer {
         return 1;
     }
 
+    /**
+     * Gets the connect pattern.
+     *
+     * @return the connect pattern
+     */
     public int getConnectPattern() {
         Object o = task.getParameter("connectPattern");
         if (o != null) {
@@ -273,11 +360,19 @@ public class JobUnit implements TaskConscious, Displayer {
     }
 
 
+    /**
+     * Gets the component.
+     *
+     * @return the component
+     */
     @CustomGUIComponent
     public Component getComponent() {
         return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.Displayer#displayMessage(java.lang.String)
+     */
     @Override
     public void displayMessage(String string) {
         devLog.debug(string);

@@ -1,6 +1,9 @@
 package org.trianacode.shiwaall.string;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class StringTest.
+ *
  * @author Andrew Harrison
  * @version 1.0.0 Jul 15, 2010
  */
@@ -8,6 +11,11 @@ package org.trianacode.shiwaall.string;
 public class StringTest {
 
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
 
         System.out.println("ABC");

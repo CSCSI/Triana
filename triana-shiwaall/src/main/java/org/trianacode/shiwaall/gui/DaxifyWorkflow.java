@@ -11,6 +11,7 @@ import org.trianacode.taskgraph.TaskGraph;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -19,10 +20,19 @@ import java.awt.event.ActionEvent;
  * To change this template use File | Settings | File Templates.
  */
 public class DaxifyWorkflow extends AbstractAction implements ActionDisplayOptions {
+    
+    /**
+     * Instantiates a new daxify workflow.
+     */
     public DaxifyWorkflow() {
         this(DISPLAY_BOTH);
     }
 
+    /**
+     * Instantiates a new daxify workflow.
+     *
+     * @param displayOption the display option
+     */
     public DaxifyWorkflow(int displayOption) {
         putValue(SHORT_DESCRIPTION, "Convert To dax");
         putValue(NAME, "Daxify");
@@ -31,6 +41,9 @@ public class DaxifyWorkflow extends AbstractAction implements ActionDisplayOptio
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         final ApplicationFrame frame = GUIEnv.getApplicationFrame();

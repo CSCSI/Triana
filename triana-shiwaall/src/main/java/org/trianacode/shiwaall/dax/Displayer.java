@@ -1,5 +1,6 @@
 package org.trianacode.shiwaall.dax;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -8,5 +9,11 @@ package org.trianacode.shiwaall.dax;
  * To change this template use File | Settings | File Templates.
  */
 public interface Displayer {
+    
+    /**
+     * Display message.
+     *
+     * @param string the string
+     */
     public void displayMessage(String string);
 }

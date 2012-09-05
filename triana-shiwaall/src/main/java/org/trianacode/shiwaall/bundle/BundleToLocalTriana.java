@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO: Auto-generated Javadoc
 //import org.shiwa.desktop.data.util.DataUtils;
 
 /**
@@ -38,27 +39,49 @@ import java.util.concurrent.ConcurrentHashMap;
 @Tool
 public class BundleToLocalTriana implements TaskConscious {
 
+    /** The executable string. */
     @TextFieldParameter
     private String executableString = "";
 
+    /** The runtime directory. */
     @TextFieldParameter
     private String runtimeDirectory = "";
 
+    /** The concurrent processes. */
     @TextFieldParameter
     private String concurrentProcesses = "";
 
+    /** The running processes. */
     private int runningProcesses = 0;
 
+    /** The return codes. */
     ConcurrentHashMap<Integer, returnCode> returnCodes;// = new ConcurrentHashMap<Integer, returnCode>();
+    
+    /** The Constant EXIT_CODE. */
     private static final String EXIT_CODE = "exitCode";
 
+    /**
+     * The Enum returnCode.
+     */
     enum returnCode {
+        
+        /** The success. */
         SUCCESS,
+        
+        /** The fail. */
         FAIL
     }
 
+    /** The task. */
     private Task task;
 
+    /**
+     * Process.
+     *
+     * @param list the list
+     * @return the concurrent hash map
+     * @throws Exception the exception
+     */
     @Process(gather = true)
     public ConcurrentHashMap<Integer, returnCode> process(List list) throws Exception {
         ArrayList<String> executableStrings = new ArrayList<String>();
@@ -137,17 +160,36 @@ public class BundleToLocalTriana implements TaskConscious {
         return returnCodes;
     }
 
+    /**
+     * The Class StringExecutor.
+     */
     class StringExecutor extends SwingWorker<Void, Void> {
+        
+        /** The exec string. */
         private String execString;
+        
+        /** The exec location. */
         private File execLocation;
+        
+        /** The run id. */
         private int runID;
 
+        /**
+         * Instantiates a new string executor.
+         *
+         * @param execString the exec string
+         * @param execLocation the exec location
+         * @param runID the run id
+         */
         public StringExecutor(String execString, File execLocation, int runID) {
             this.execString = execString;
             this.execLocation = execLocation;
             this.runID = runID;
         }
 
+        /* (non-Javadoc)
+         * @see javax.swing.SwingWorker#doInBackground()
+         */
         @Override
         protected Void doInBackground() throws Exception {
             runningProcesses++;
@@ -157,11 +199,21 @@ public class BundleToLocalTriana implements TaskConscious {
             return null;
         }
 
+        /* (non-Javadoc)
+         * @see javax.swing.SwingWorker#done()
+         */
         public void done() {
             System.out.println("Finished " + this.runID);
             runningProcesses--;
         }
 
+        /**
+         * Execute process.
+         *
+         * @param executableString the executable string
+         * @param execLocation the exec location
+         * @return the int
+         */
         private int executeProcess(String executableString, File execLocation) {
 
 
@@ -215,6 +267,11 @@ public class BundleToLocalTriana implements TaskConscious {
 
     }
 
+    /**
+     * Log.
+     *
+     * @param s the s
+     */
     private void log(String s) {
         Log log = Loggers.DEV_LOGGER;
         log.debug(s);
@@ -222,12 +279,24 @@ public class BundleToLocalTriana implements TaskConscious {
     }
 
 
+    /** The exec field. */
     JTextField execField = new JTextField("");
+    
+    /** The runtime field. */
     JTextField runtimeField = new JTextField(""); ///Users/ian/Work/testBundles/DART");
+    
+    /** The concurrent field. */
     JTextField concurrentField = new JTextField("");
+    
+    /** The main panel. */
     private JPanel mainPanel;
 
 
+    /**
+     * Gets the component.
+     *
+     * @return the component
+     */
     @CustomGUIComponent
     public Component getComponent() {
         mainPanel = new JPanel();
@@ -274,20 +343,34 @@ public class BundleToLocalTriana implements TaskConscious {
         return mainPanel;
     }
 
+    /**
+     * Apply clicked.
+     */
     public void applyClicked() {
         apply();
     }
 
+    /**
+     * Ok clicked.
+     */
     public void okClicked() {
         apply();
     }
 
+    /**
+     * Apply.
+     */
     public void apply() {
         task.setParameter("executable", execField.getText() == null ? "" : execField.getText());
         task.setParameter("runtimeDirectory", runtimeField.getText() == null ? "" : runtimeField.getText());
         task.setParameter("concurrentProcesses", concurrentField.getText());
     }
 
+    /**
+     * Gets the params.
+     *
+     * @return the params
+     */
     private void getParams() {
         executableString = (String) task.getParameter("executable");
         execField.setText(executableString);
@@ -297,6 +380,9 @@ public class BundleToLocalTriana implements TaskConscious {
         concurrentField.setText(concurrentProcesses);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;
@@ -304,7 +390,14 @@ public class BundleToLocalTriana implements TaskConscious {
         getParams();
     }
 
+    /**
+     * The Class helpFrame.
+     */
     class helpFrame extends JFrame {
+        
+        /**
+         * Instantiates a new help frame.
+         */
         public helpFrame() {
             this.setTitle("Help");
             JPanel panel = new JPanel();
@@ -338,14 +431,34 @@ public class BundleToLocalTriana implements TaskConscious {
         }
     }
 
+    /**
+     * The listener interface for receiving exitCode events.
+     * The class that is interested in processing a exitCode
+     * event implements this interface, and the object created
+     * with that class is registered with a component using the
+     * component's <code>addExitCodeListener<code> method. When
+     * the exitCode event occurs, that object's appropriate
+     * method is invoked.
+     *
+     * @see ExitCodeEvent
+     */
     private class ExitCodeListener implements PropertyChangeListener {
 
+        /** The run id. */
         private Integer runID;
 
+        /**
+         * Instantiates a new exit code listener.
+         *
+         * @param runID the run id
+         */
         public ExitCodeListener(int runID) {
             this.runID = runID;
         }
 
+        /* (non-Javadoc)
+         * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+         */
         @Override
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 

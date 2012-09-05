@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -21,13 +22,24 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class ParallelForEachTaskHolder extends AbstractTaskHolder {
+    
+    /** The parallel task. */
     private Tool parallelTask;
+    
+    /** The all inputs. */
     ArrayList<Object> allInputs;
+    
+    /** The attachments. */
     HashMap<Task, Node> attachments;
+    
+    /** The parent. */
     TaskGraph parent;
 
     //add arraylists to hold new nodes
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.iwir.factory.AbstractTaskHolder#init()
+     */
     public void init() {
         super.init();
         defineParameter("count", "0", Unit.USER_ACCESSIBLE);
@@ -39,6 +51,9 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         );
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#process()
+     */
     @Override
     public void process() throws Exception {
         parent = this.getTask().getParent();
@@ -96,6 +111,11 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         sendData(addedTasks);
     }
 
+    /**
+     * Send data.
+     *
+     * @param addedTasks the added tasks
+     */
     private void sendData(ArrayList<Task> addedTasks) {
         for (int i = 0; i < allInputs.size(); i++) {
             Object input = allInputs.get(0);
@@ -129,6 +149,11 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
 
     }
 
+    /**
+     * Adds the loopback cable.
+     *
+     * @param addedTasks the added tasks
+     */
     private void addLoopbackCable(ArrayList<Task> addedTasks) {
         for (Task newTask : addedTasks) {
             try {
@@ -142,10 +167,22 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         }
     }
 
+    /**
+     * Creates the task.
+     *
+     * @param unit the unit
+     * @return the task
+     */
     public Task createTask(Unit unit) {
         return createTask(createTool(unit));
     }
 
+    /**
+     * Creates the task.
+     *
+     * @param tool the tool
+     * @return the task
+     */
     private Task createTask(Tool tool) {
         Task newTask = null;
         try {
@@ -158,6 +195,11 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         return newTask;
     }
 
+    /**
+     * Connect task.
+     *
+     * @param newTask the new task
+     */
     private void connectTask(Task newTask) {
         try {
             Node thisTaskOutputNode = this.getTask().addDataOutputNode();
@@ -175,6 +217,13 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         }
     }
 
+    /**
+     * Adds the and connect tool.
+     *
+     * @param tool the tool
+     * @param data the data
+     * @return the task
+     */
     private Task addAndConnectTool(Tool tool, Object data) {
         TaskGraph parent = this.getTask().getParent();
 
@@ -203,6 +252,12 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         return newTask;
     }
 
+    /**
+     * Creates the tool.
+     *
+     * @param unit the unit
+     * @return the tool imp
+     */
     private ToolImp createTool(Unit unit) {
         ToolImp tool = null;
         ProxyFactory.initProxyFactory();
@@ -220,6 +275,11 @@ public class ParallelForEachTaskHolder extends AbstractTaskHolder {
         return tool;
     }
 
+    /**
+     * Sets the parallel task.
+     *
+     * @param parallelTask the new parallel task
+     */
     public void setParallelTask(Task parallelTask) {
         this.parallelTask = parallelTask;
     }

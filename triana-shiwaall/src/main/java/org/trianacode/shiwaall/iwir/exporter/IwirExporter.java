@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -20,9 +21,15 @@ import java.io.IOException;
  */
 public class IwirExporter extends AbstractFormatFilter implements TaskGraphExporterInterface {
 
+    /**
+     * Instantiates a new iwir exporter.
+     */
     public IwirExporter() {
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.TaskGraphExporterInterface#exportWorkflow(org.trianacode.taskgraph.TaskGraph, java.io.File, boolean)
+     */
     @Override
     public void exportWorkflow(TaskGraph taskgraph, File file, boolean appendSuffix) throws IOException, TaskGraphException {
 //        IwirCreator.iwirFromTaskGraph(taskgraph, file.getName());
@@ -30,31 +37,49 @@ public class IwirExporter extends AbstractFormatFilter implements TaskGraphExpor
         exportIwir.taskGraphToIWIRFile(taskgraph, file);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#getFilterDescription()
+     */
     @Override
     public String getFilterDescription() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#getChoosableFileFilters()
+     */
     @Override
     public FileFilter[] getChoosableFileFilters() {
         return new FileFilter[0];
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#getDefaultFileFilter()
+     */
     @Override
     public FileFilter getDefaultFileFilter() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#hasOptions()
+     */
     @Override
     public boolean hasOptions() {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#showOptionsDialog(java.awt.Component)
+     */
     @Override
     public int showOptionsDialog(Component parent) {
         return 0;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#toString()
+     */
     public String toString() {
         return "IwirExporter";
     }

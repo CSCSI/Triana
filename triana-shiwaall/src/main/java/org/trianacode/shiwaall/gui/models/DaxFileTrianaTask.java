@@ -8,6 +8,7 @@ import org.trianacode.taskgraph.event.ParameterUpdateEvent;
 import javax.swing.*;
 import java.awt.*;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -17,12 +18,19 @@ import java.awt.*;
  */
 public class DaxFileTrianaTask extends MainTrianaTask {
 
+    /** The task. */
     private Task task;
+    
+    /** The collection component. */
     private JLabel collectionComponent = null;
+    
+    /** The counter. */
     int counter = 0;
 
     /**
-     * Constructs a new MainTrianaTask for viewing the specified task
+     * Constructs a new MainTrianaTask for viewing the specified task.
+     *
+     * @param task the task
      */
     public DaxFileTrianaTask(Task task) {
         super(task);
@@ -32,10 +40,18 @@ public class DaxFileTrianaTask extends MainTrianaTask {
         }
     }
 
+    /**
+     * Gets the task.
+     *
+     * @return the task
+     */
     public Task getTask() {
         return task;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.main.imp.TrianaTask#processParameterUpdate(org.trianacode.taskgraph.event.ParameterUpdateEvent)
+     */
     protected void processParameterUpdate(final ParameterUpdateEvent evt) {
         if (evt.getTask() == this.task && evt.getParameterName().equals("collection")) {
             Boolean b = (Boolean) evt.getNewValue();
@@ -51,6 +67,9 @@ public class DaxFileTrianaTask extends MainTrianaTask {
         }
     }
 
+    /**
+     * Sets the collection.
+     */
     protected void setCollection() {
 
         if (collectionComponent == null) {
@@ -61,6 +80,9 @@ public class DaxFileTrianaTask extends MainTrianaTask {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.main.imp.TrianaTool#drawRectangle(java.awt.Graphics, java.awt.Color, java.awt.Color)
+     */
     protected void drawRectangle(Graphics g, Color color, Color orig) {
         Color toolColor = color;
         Color shadow = toolColor.darker();
@@ -78,6 +100,11 @@ public class DaxFileTrianaTask extends MainTrianaTask {
     }
 
 
+    /**
+     * Checks if is collection.
+     *
+     * @return true, if is collection
+     */
     private boolean isCollection() {
         Object o = getTask().getParameter("collection");
         if (o != null) {

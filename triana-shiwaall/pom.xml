@@ -81,17 +81,17 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.shiwa.desktop</groupId>-->
-            <!--<artifactId>shiwa-desktop-gui</artifactId>-->
-            <!--<version>1.6-SNAPSHOT</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<artifactId>iwirTool</artifactId>-->
-                    <!--<groupId>org.shiwa.fgi</groupId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.shiwa.desktop</groupId>
+            <artifactId>shiwa-desktop-gui</artifactId>
+            <version>1.6</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>iwirTool</artifactId>
+                    <groupId>org.shiwa.fgi</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>javax.jmdns</groupId>
             <artifactId>jmdns</artifactId>
@@ -163,6 +163,10 @@
                 <exclusion>
                     <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>shiwa-desktop-gui</artifactId>
+                    <groupId>org.shiwa.desktop</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

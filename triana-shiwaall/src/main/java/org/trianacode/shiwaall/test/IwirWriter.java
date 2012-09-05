@@ -6,6 +6,7 @@ import org.shiwa.fgi.iwir.*;
 import java.io.File;
 import java.io.IOException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -14,6 +15,10 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class IwirWriter {
+    
+    /**
+     * Instantiates a new iwir writer.
+     */
     public IwirWriter() {
         IWIR iwir = new IWIR();
         iwir.setWfname("test");
@@ -69,6 +74,11 @@ public class IwirWriter {
 //           org.shiwa.fgi.iwir.examples.CrossProduct.main(new String[0]);
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         new IwirWriter();
     }

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// TODO: Auto-generated Javadoc
 //import org.shiwa.desktop.data.description.core.Configuration;
 
 /**
@@ -41,10 +42,21 @@ import java.util.UUID;
 public class BundleEditor implements TaskConscious {
 
 //    @TextFieldParameter
-    public String bundlePath = "/Users/ian/dartBundle.zip";
+    /** The bundle path. */
+public String bundlePath = "/Users/ian/dartBundle.zip";
+    
+    /** The shiwa bundle helper. */
     private ShiwaBundleHelper shiwaBundleHelper;
+    
+    /** The task. */
     private Task task;
 
+    /**
+     * Process.
+     *
+     * @param list the list
+     * @return the array list
+     */
     @org.trianacode.annotation.Process
     public ArrayList<File> process(List list) {
 
@@ -93,6 +105,11 @@ public class BundleEditor implements TaskConscious {
         return bundles;
     }
 
+    /**
+     * Gets the gui.
+     *
+     * @return the gui
+     */
     @CustomGUIComponent
     public Component getGUI() {
         loadParams();
@@ -144,6 +161,9 @@ public class BundleEditor implements TaskConscious {
         return mainPane;
     }
 
+    /**
+     * Load params.
+     */
     private void loadParams() {
         String fileString = (String) task.getParameter("bundlePath");
         if (fileString != null && new File(fileString).exists()) {
@@ -152,6 +172,9 @@ public class BundleEditor implements TaskConscious {
     }
 
 
+    /**
+     * Clean properties.
+     */
     private void cleanProperties() {
         List<SHIWAProperty> props = shiwaBundleHelper.getWorkflowImplementation().getProperties();
         ArrayList<SHIWAProperty> toRemove = new ArrayList<SHIWAProperty>();
@@ -170,6 +193,11 @@ public class BundleEditor implements TaskConscious {
         }
     }
 
+    /**
+     * Clear configs.
+     *
+     * @param workflowImplementation the workflow implementation
+     */
     private void clearConfigs(WorkflowImplementation workflowImplementation) {
         ArrayList<Mapping> dataConfigs = new ArrayList<Mapping>();
         for (AggregatedResource resource : workflowImplementation.getAggregatedResources()) {
@@ -184,6 +212,12 @@ public class BundleEditor implements TaskConscious {
         }
     }
 
+    /**
+     * Gets the workflow definition.
+     *
+     * @param task the task
+     * @return the workflow definition
+     */
     public InputStream getWorkflowDefinition(Task task) {
         try {
             File temp = File.createTempFile("publishedTaskgraphTemp", ".xml");
@@ -198,6 +232,9 @@ public class BundleEditor implements TaskConscious {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;

@@ -8,6 +8,7 @@ import org.trianacode.taskgraph.Node;
 import java.io.File;
 import java.util.HashMap;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -17,8 +18,12 @@ import java.util.HashMap;
  */
 public class AtomicTaskHolder extends AbstractTaskHolder {
 
+    /** The executable. */
     private Executable executable;
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.iwir.factory.AbstractTaskHolder#init()
+     */
     @Override
     public void init() {
 
@@ -30,6 +35,9 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
         setParameterPanelInstantiate(ON_TASK_INSTANTATION);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#process()
+     */
     @Override
     public void process() throws Exception {
         System.out.println("");
@@ -66,6 +74,11 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
         }
     }
 
+    /**
+     * Gets the executable.
+     *
+     * @return the executable
+     */
     public Executable getExecutable() {
         return executable;
     }

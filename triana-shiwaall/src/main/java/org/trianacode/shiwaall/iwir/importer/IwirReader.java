@@ -15,6 +15,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -25,40 +26,64 @@ import java.io.IOException;
 public class IwirReader extends AbstractFormatFilter implements TaskGraphImporterInterface {
 
 
+    /**
+     * Instantiates a new iwir reader.
+     */
     public IwirReader() {
 
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#getFilterDescription()
+     */
     @Override
     public String getFilterDescription() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#getChoosableFileFilters()
+     */
     @Override
     public FileFilter[] getChoosableFileFilters() {
         return new FileFilter[0];
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#getDefaultFileFilter()
+     */
     @Override
     public FileFilter getDefaultFileFilter() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#hasOptions()
+     */
     @Override
     public boolean hasOptions() {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#showOptionsDialog(java.awt.Component)
+     */
     @Override
     public int showOptionsDialog(Component parent) {
         return 0;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.AbstractFormatFilter#toString()
+     */
     public String toString() {
         return "IwirReader";
     }
 
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.TaskGraphImporterInterface#importWorkflow(java.io.File, org.trianacode.config.TrianaProperties)
+     */
     @Override
     public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException {
         try {

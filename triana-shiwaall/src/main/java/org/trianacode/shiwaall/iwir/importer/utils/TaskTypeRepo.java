@@ -41,6 +41,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
 //import org.apache.xerces.dom.ElementNSImpl;
 
 //FIX ME
@@ -59,14 +60,24 @@ public class TaskTypeRepo {
 //    private HashMap<String, Class> typeTaskMap = new HashMap<String, Class>();
 //    private HashMap<Class, String> classTypeMap = new HashMap<Class, String>();
 
-    ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTypeToolDescriptor>();
+    /** The task type tool descriptors. */
+ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTypeToolDescriptor>();
 
+    /** The single instance. */
     private static TaskTypeRepo singleInstance = null;
 
+    /**
+     * Instantiates a new task type repo.
+     */
     private TaskTypeRepo() {
         addTaskType(InOut.class, "InOut");
     }
 
+    /**
+     * Gets the task type repo.
+     *
+     * @return the task type repo
+     */
     private static TaskTypeRepo getTaskTypeRepo() {
         if (singleInstance == null) {
             singleInstance = new TaskTypeRepo();
@@ -75,25 +86,63 @@ public class TaskTypeRepo {
         return singleInstance;
     }
 
+    /** The printing. */
     private static boolean printing = false;
+    
+    /**
+     * Stdout.
+     *
+     * @param string the string
+     */
     private static void stdout(String string){
         if(printing){
             System.out.println(string);
         }
     }
 
+    /**
+     * Adds the task type.
+     *
+     * @param type the type
+     * @param clazz the clazz
+     */
     public static void addTaskType(String type, Class clazz) {
         getTaskTypeRepo().addTaskType(clazz, type);
     }
 
+    /**
+     * Adds the task type.
+     *
+     * @param clazz the clazz
+     * @param type the type
+     */
     private void addTaskType(Class clazz, String type) {
         addTaskType(clazz, type, null);
     }
 
+    /**
+     * Adds the task type.
+     *
+     * @param clazz the clazz
+     * @param type the type
+     * @param properties the properties
+     */
     private void addTaskType(Class clazz, String type, Properties properties){
         taskTypeToolDescriptors.add(new TaskTypeToolDescriptor(type, clazz, properties));
     }
 
+    /**
+     * Gets the tool from type.
+     *
+     * @param iwirTask the iwir task
+     * @param fgiWorkflowReader the fgi workflow reader
+     * @param properties the properties
+     * @return the tool from type
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws JAXBException the jAXB exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws TaskException the task exception
+     */
     public static Tool getToolFromType(Task iwirTask, FGIWorkflowReader fgiWorkflowReader,
                                        TrianaProperties properties) throws IOException, JAXBException, ProxyInstantiationException, TaskException {
 //    public static Tool getToolFromType(Task iwirTask,
@@ -179,6 +228,12 @@ public class TaskTypeRepo {
         return tool;
     }
 
+    /**
+     * Gets the descriptor for type.
+     *
+     * @param type the type
+     * @return the descriptor for type
+     */
     private TaskTypeToolDescriptor getDescriptorForType(String type) {
         for(TaskTypeToolDescriptor descriptor : taskTypeToolDescriptors){
             if(descriptor.getTasktype().equals(type)){
@@ -188,6 +243,15 @@ public class TaskTypeRepo {
         return null;
     }
 
+    /**
+     * Populate executable from jsdl.
+     *
+     * @param executable the executable
+     * @param jsdlFile the jsdl file
+     * @param iwirTask the iwir task
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws JAXBException the jAXB exception
+     */
     private static void populateExecutableFromJSDL(Executable executable, File jsdlFile, Task iwirTask)
             throws IOException, JAXBException {
 
@@ -267,6 +331,13 @@ public class TaskTypeRepo {
 
     }
 
+    /**
+     * Read jsdl.
+     *
+     * @param file the file
+     * @return the string
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private static String readJSDL(File file) throws IOException {
         StringBuilder fileData = new StringBuilder(1000);
         BufferedReader reader = new BufferedReader(
@@ -284,6 +355,11 @@ public class TaskTypeRepo {
         return fileData.toString();
     }
 
+    /**
+     * Gets the all descriptors.
+     *
+     * @return the all descriptors
+     */
     public static ArrayList<TaskTypeToolDescriptor> getAllDescriptors() {
         return getTaskTypeRepo().taskTypeToolDescriptors;
     }

@@ -7,6 +7,7 @@ import org.trianacode.taskgraph.tool.Tool;
 
 import java.awt.*;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -16,14 +17,23 @@ import java.awt.*;
  */
 public class IWIRColorModel implements RegisterableColorModel {
 
+    /** The Constant IWIR_COLOR_MODEL. */
     public static final String IWIR_COLOR_MODEL = "IWIR Tools";
+    
+    /** The Constant IWIR_CONTROL_COLOR. */
     public static final Color IWIR_CONTROL_COLOR = new Color(255, 206, 0);
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.hci.color.RegisterableColorModel#getRegistrationNames()
+     */
     @Override
     public String[] getRegistrationNames() {
         return new String[]{IWIRControlComponentModel.IWIR_CONTROL_RENDERING_HINT};
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.hci.color.RegisterableColorModel#getDefaultColorForRegistrationName(java.lang.String)
+     */
     @Override
     public Color getDefaultColorForRegistrationName(String name) {
         if (IWIRControlComponentModel.IWIR_CONTROL_RENDERING_HINT.equals(name)) {
@@ -32,21 +42,33 @@ public class IWIRColorModel implements RegisterableColorModel {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.hci.color.ColorModel#getModelName()
+     */
     @Override
     public String getModelName() {
         return IWIR_COLOR_MODEL;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.hci.color.ColorModel#getColorNames()
+     */
     @Override
     public String[] getColorNames() {
         return new String[]{IWIRControlComponentModel.IWIR_CONTROL_RENDERING_HINT};
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.hci.color.ColorModel#getElementNames()
+     */
     @Override
     public String[] getElementNames() {
         return new String[]{TrianaColorConstants.TOOL_ELEMENT};
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.hci.color.ColorModel#getColor(java.lang.String, org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Color getColor(String element, Tool tool) {
         if (element.equals(TrianaColorConstants.TOOL_ELEMENT)) {
@@ -60,6 +82,9 @@ public class IWIRColorModel implements RegisterableColorModel {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.hci.color.ColorModel#getColor(java.lang.String)
+     */
     @Override
     public Color getColor(String element) {
         if (element.equals(TrianaColorConstants.TOOL_ELEMENT)) {

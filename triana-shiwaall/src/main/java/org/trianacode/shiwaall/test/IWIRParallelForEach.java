@@ -2,6 +2,7 @@ package org.trianacode.shiwaall.test;
 
 import org.shiwa.fgi.iwir.*;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -11,6 +12,9 @@ import org.shiwa.fgi.iwir.*;
  */
 public class IWIRParallelForEach {
 
+    /**
+     * Instantiates a new iWIR parallel for each.
+     */
     public IWIRParallelForEach() {
 
         IWIR iwir = new IWIR("testParallelForEach");
@@ -55,6 +59,11 @@ public class IWIRParallelForEach {
 
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         new IWIRParallelForEach();
     }

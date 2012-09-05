@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -16,6 +17,18 @@ import java.util.zip.ZipEntry;
  * To change this template use File | Settings | File Templates.
  */
 public class MakeWorkflowZip {
+    
+    /**
+     * Make zip.
+     *
+     * @param dax the dax
+     * @param properties the properties
+     * @param rc the rc
+     * @param sites the sites
+     * @param tc the tc
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public static File makeZip(String dax, String properties, String rc, String sites, String tc) throws IOException {
         Properties zipProperties = new Properties();
         zipProperties.put("dax", new File(dax).getName());

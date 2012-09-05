@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+// TODO: Auto-generated Javadoc
 //import org.shiwa.desktop.data.description.core.Configuration;
 
 /**
@@ -35,6 +36,14 @@ import java.util.Date;
 */
 public class TrianaBundle {
 
+    /**
+     * Execute bundle return file.
+     *
+     * @param shiwaBundle the shiwa bundle
+     * @param trianaArgs the triana args
+     * @return the file
+     * @throws SHIWADesktopIOException the sHIWA desktop io exception
+     */
     public File executeBundleReturnFile(SHIWABundle shiwaBundle, String[] trianaArgs) throws SHIWADesktopIOException {
 
 //        WorkflowController workflowController = null;
@@ -154,6 +163,13 @@ public class TrianaBundle {
         return null;
     }
 
+    /**
+     * Execute bundle.
+     *
+     * @param shiwaBundle the shiwa bundle
+     * @param trianaArgs the triana args
+     * @return the byte[]
+     */
     public byte[] executeBundle(SHIWABundle shiwaBundle, String[] trianaArgs) {
         try {
             return getFileBytes(executeBundleReturnFile(shiwaBundle, trianaArgs));
@@ -163,6 +179,13 @@ public class TrianaBundle {
         return null;
     }
 
+    /**
+     * Execute bundle return bundle.
+     *
+     * @param shiwaBundle the shiwa bundle
+     * @param trianaArgs the triana args
+     * @return the sHIWA bundle
+     */
     public SHIWABundle executeBundleReturnBundle(SHIWABundle shiwaBundle, String[] trianaArgs) {
         try {
             return new SHIWABundle(executeBundleReturnFile(shiwaBundle, trianaArgs));
@@ -172,11 +195,23 @@ public class TrianaBundle {
         return null;
     }
 
+    /**
+     * Gets the time stamp.
+     *
+     * @return the time stamp
+     */
     private static String getTimeStamp() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd_HH-mm-ss-SS_z");
         return dateFormat.format(new Date());
     }
 
+    /**
+     * Gets the file bytes.
+     *
+     * @param outfile the outfile
+     * @return the file bytes
+     * @throws Exception the exception
+     */
     public static byte[] getFileBytes(File outfile) throws Exception {
         FileInputStream fis = new FileInputStream(outfile);
         long length = outfile.length();
@@ -210,6 +245,12 @@ public class TrianaBundle {
     }
 
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws Exception the exception
+     */
     public static void main(String[] args) throws Exception {
 
         String filePath;

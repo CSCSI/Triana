@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -25,20 +26,42 @@ import java.util.HashSet;
  */
 public class ImportIwir {
 
+    /** The abstract hash map. */
     private HashMap<AbstractTask, Task> abstractHashMap = new HashMap<AbstractTask, Task>();
 
+    /** The data links. */
     private HashSet<DataLink> dataLinks = new HashSet<DataLink>();
+    
+    /** The std. */
     boolean std = false;
 
+    /** The fgi workflow reader. */
     private FGIWorkflowReader fgiWorkflowReader = null;
+    
+    /** The Constant IWIR_NODE. */
     public static final String IWIR_NODE = "iwirNode";
 
+    /**
+     * Std out.
+     *
+     * @param string the string
+     */
     private void stdOut(String string){
         if(std){
             System.out.println(string);
         }
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws CableException the cable exception
+     * @throws JAXBException the jAXB exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws TaskException the task exception
+     */
     public static void main(String[] args) throws IOException, CableException, JAXBException, ProxyInstantiationException, TaskException {
         ImportIwir importIwir = new ImportIwir();
 
@@ -53,9 +76,9 @@ public class ImportIwir {
     /**
      * sets the fgiWorkflowReader for this bundle.
      *
-     * @param fgiBundleFile
-     * @throws JAXBException
-     * @throws IOException
+     * @param fgiBundleFile the fgi bundle file
+     * @throws JAXBException the jAXB exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void initFGIWorkflowReader(File fgiBundleFile) throws JAXBException, IOException {
         if(fgiBundleFile != null){
@@ -69,6 +92,18 @@ public class ImportIwir {
         }
     }
 
+    /**
+     * Task from iwir.
+     *
+     * @param iwir the iwir
+     * @param fgiBundle the fgi bundle
+     * @return the task graph
+     * @throws TaskException the task exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws CableException the cable exception
+     * @throws JAXBException the jAXB exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public TaskGraph taskFromIwir(IWIR iwir, File fgiBundle) throws TaskException, ProxyInstantiationException, CableException, JAXBException, IOException {
 
         initFGIWorkflowReader(fgiBundle);
@@ -167,6 +202,12 @@ public class ImportIwir {
         return taskGraph;
     }
 
+    /**
+     * Input chain.
+     *
+     * @param outgoingPort the outgoing port
+     * @param inputNode the input node
+     */
     private void inputChain(AbstractPort outgoingPort, Node inputNode) {
         try {
             for (DataLink dataLink : dataLinks) {
@@ -184,6 +225,14 @@ public class ImportIwir {
         }
     }
 
+    /**
+     * Output chain.
+     *
+     * @param iwirReceivingPort the iwir receiving port
+     * @param graphOutputNode the graph output node
+     * @throws NodeException the node exception
+     * @throws CableException the cable exception
+     */
     private void outputChain(AbstractPort iwirReceivingPort, Node graphOutputNode) throws NodeException, CableException {
         for (DataLink dataLink : dataLinks) {
             if (dataLink.getFromPort() == iwirReceivingPort) {
@@ -198,6 +247,17 @@ public class ImportIwir {
     }
 
 
+    /**
+     * Creates the from iwir task.
+     *
+     * @param iwirTask the iwir task
+     * @param tg the tg
+     * @return the task
+     * @throws TaskException the task exception
+     * @throws JAXBException the jAXB exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     */
     private Task createFromIWIRTask(AbstractTask iwirTask, TaskGraph tg) throws TaskException, JAXBException, IOException, ProxyInstantiationException {
 
         //if the iwirTask is a standard IWIR Atomic Task, try to find and/or make a tool for it.
@@ -220,6 +280,14 @@ public class ImportIwir {
         return trianaTask;
     }
 
+    /**
+     * Adds the nodes.
+     *
+     * @param mainTask the main task
+     * @param task the task
+     * @param tg the tg
+     * @throws NodeException the node exception
+     */
     private void addNodes(AbstractTask mainTask, Task task, TaskGraph tg) throws NodeException {
         Executable executable = null;
         if(task.isParameterName(Executable.EXECUTABLE)){
@@ -259,14 +327,15 @@ public class ImportIwir {
     }
 
     /**
+     * Record abstract tasks and data links.
      *
-     * @param mainTask
-     * @param tg
-     * @return
-     * @throws ProxyInstantiationException
-     * @throws TaskException
-     * @throws JAXBException
-     * @throws IOException
+     * @param mainTask the main task
+     * @param tg the tg
+     * @return the task graph
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws TaskException the task exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws JAXBException the jAXB exception
      */
     private TaskGraph recordAbstractTasksAndDataLinks(AbstractTask mainTask, TaskGraph tg) throws ProxyInstantiationException, TaskException, IOException, JAXBException {
 //        TaskGraph taskGraph = TaskGraphManager.createTaskGraph();

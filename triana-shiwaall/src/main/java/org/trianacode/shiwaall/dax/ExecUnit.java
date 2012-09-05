@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
- * todo - pipe input stream?
+ * todo - pipe input stream?.
  *
  * @author Andrew Harrison
  * @version 1.0.0 Jul 27, 2010
@@ -29,25 +30,47 @@ import java.util.List;
 @Tool //(panelClass = "org.trianacode.org.trianacode.shiwaall.gui.dax.ExecUnitPanel")
 public class ExecUnit implements TaskConscious {
 
+    /** The Constant numberOfFiles. */
     public static final String numberOfFiles = "Number of files";
+    
+    /** The Constant namesOfFiles. */
     public static final String namesOfFiles = "Names of files";
 
+    /** The dso. */
     DaxSettingObject dso = new DaxSettingObject();
 
+    /** The executable. */
     @TextFieldParameter
     private String executable = "";
+    
+    /** The input_file. */
     @TextFieldParameter
     private String input_file = "";
+    
+    /** The executable_args. */
     @TextFieldParameter
     private String executable_args = "";
+    
+    /** The search_for. */
     @TextFieldParameter
     private String search_for = "";
+    
+    /** The save_as. */
     @Parameter
     private String save_as = "";
+    
+    /** The task. */
     private Task task;
 
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
+    /**
+     * Process.
+     *
+     * @param in the in
+     * @return the dax setting object
+     */
     @Process(gather = true)
     public DaxSettingObject process(List in) {
 
@@ -122,6 +145,11 @@ public class ExecUnit implements TaskConscious {
 
     }
 
+    /**
+     * Error.
+     *
+     * @return true, if successful
+     */
     private boolean error() {
         if (input_file.equals("")) {
             return false;
@@ -137,6 +165,11 @@ public class ExecUnit implements TaskConscious {
         }
     }
 
+    /**
+     * Check for data.
+     *
+     * @param s the s
+     */
     private void checkForData(String s) {
         if (s.contains(search_for)) {
             devLog.debug("Found : " + search_for);
@@ -161,18 +194,35 @@ public class ExecUnit implements TaskConscious {
         }
     }
 
+    /** The exec field. */
     JTextField execField = new JTextField();
+    
+    /** The file field. */
     JTextField fileField = new JTextField();
+    
+    /** The exec args field. */
     JTextField execArgsField = new JTextField();
+    
+    /** The search field. */
     JTextField searchField = new JTextField();
+    
+    /** The options. */
     String[] options = {ExecUnit.numberOfFiles, ExecUnit.namesOfFiles};
+    
+    /** The drop down. */
     JComboBox dropDown = new JComboBox(options);
 
 
     //    private HashMap map = new HashMap();
+    /** The main panel. */
     private JPanel mainPanel;
 
 
+    /**
+     * Gets the component.
+     *
+     * @return the component
+     */
     @CustomGUIComponent
     public Component getComponent() {
         mainPanel = new JPanel();
@@ -242,14 +292,23 @@ public class ExecUnit implements TaskConscious {
         return mainPanel;
     }
 
+    /**
+     * Apply clicked.
+     */
     public void applyClicked() {
         apply();
     }
 
+    /**
+     * Ok clicked.
+     */
     public void okClicked() {
         apply();
     }
 
+    /**
+     * Apply.
+     */
     public void apply() {
 
         task.setParameter("executable", execField.getText());
@@ -259,6 +318,11 @@ public class ExecUnit implements TaskConscious {
         task.setParameter("save_as", (String) dropDown.getSelectedItem());
     }
 
+    /**
+     * Gets the params.
+     *
+     * @return the params
+     */
     private void getParams() {
         execField.setText((String) task.getParameter("executable"));
         fileField.setText((String) task.getParameter("input_file"));
@@ -267,12 +331,22 @@ public class ExecUnit implements TaskConscious {
         dropDown.setSelectedItem((String) task.getParameter("save_as"));
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;
     }
 
+    /**
+     * The Class helpFrame.
+     */
     class helpFrame extends JFrame {
+        
+        /**
+         * Instantiates a new help frame.
+         */
         public helpFrame() {
             this.setTitle("Help");
             JPanel panel = new JPanel();

@@ -3,6 +3,7 @@ package org.trianacode.shiwaall.utils;
 import org.trianacode.annotation.Process;
 import org.trianacode.annotation.Tool;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -14,6 +15,9 @@ import org.trianacode.annotation.Tool;
 public class FUBAR {
 
 
+    /**
+     * Process.
+     */
     @Process
     public void process() {
         throw new RuntimeException("Mwahahaha");

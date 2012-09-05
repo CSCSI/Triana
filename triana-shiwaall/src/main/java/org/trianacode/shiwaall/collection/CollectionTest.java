@@ -3,13 +3,21 @@ package org.trianacode.shiwaall.collection;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class CollectionTest.
+ *
  * @author Andrew Harrison
  * @version 1.0.0 Jul 15, 2010
  */
 
 public class CollectionTest {
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         List<AddCollectionElement> listA = new ArrayList<AddCollectionElement>();
         for (int i = 0; i < 2; i++) {

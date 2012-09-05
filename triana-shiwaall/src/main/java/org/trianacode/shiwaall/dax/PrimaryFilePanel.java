@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -19,22 +20,48 @@ import java.util.List;
 
 class PrimaryFilePanel extends JDialog implements ActionListener {
 
+    /** The main panel. */
     JPanel mainPanel = new JPanel();
+    
+    /** The bg. */
     ButtonGroup bg = new ButtonGroup();
 
+    /** The chunks. */
     List<DaxFileChunk> chunks = new ArrayList();
+    
+    /** The job name. */
     String jobName = "";
+    
+    /** The return chunk. */
     DaxFileChunk returnChunk = null;
 
+    /**
+     * Gets the value.
+     *
+     * @param jobName the job name
+     * @param list the list
+     * @return the value
+     */
     public static Object getValue(String jobName, List list) {
         PrimaryFilePanel pfp = new PrimaryFilePanel(jobName, list);
         return pfp.getReturnValue();
     }
 
+    /**
+     * Gets the return value.
+     *
+     * @return the return value
+     */
     private Object getReturnValue() {
         return returnChunk;
     }
 
+    /**
+     * Instantiates a new primary file panel.
+     *
+     * @param jobName the job name
+     * @param l the l
+     */
     public PrimaryFilePanel(String jobName, List l) {
         this.chunks = l;
         this.jobName = jobName;
@@ -80,6 +107,9 @@ class PrimaryFilePanel extends JDialog implements ActionListener {
 
     }
 
+    /**
+     * Ok pressed.
+     */
     private void okPressed() {
         if (returnChunk == null) {
             returnChunk = chunks.get(0);
@@ -87,6 +117,9 @@ class PrimaryFilePanel extends JDialog implements ActionListener {
         dispose();
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         int i = Integer.parseInt(e.getActionCommand());

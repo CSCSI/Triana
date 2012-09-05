@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -20,12 +21,21 @@ import java.util.List;
 
 @Tool(panelClass = "org.trianacode.org.trianacode.shiwaall.gui.dax.SettingObjectOutputPanel")
 public class SettingObjectOutput {
+    
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
+    /** The map. */
     @Parameter
     HashMap map = new HashMap();
 
 
+    /**
+     * Process.
+     *
+     * @param in the in
+     * @return the dax setting object
+     */
     @Process(gather = true)
     public DaxSettingObject process(List in) {
         for (Object o : in) {
@@ -43,6 +53,9 @@ public class SettingObjectOutput {
 
     }
 
+    /**
+     * Sets the param.
+     */
     private void setParam() {
     }
 }

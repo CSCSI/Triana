@@ -2,6 +2,7 @@ package org.trianacode.shiwaall.gui.models;
 
 import org.trianacode.taskgraph.Task;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -11,6 +12,11 @@ import org.trianacode.taskgraph.Task;
  */
 public class DaxJobTrianaTask extends DaxFileTrianaTask {
 
+    /**
+     * Instantiates a new dax job triana task.
+     *
+     * @param task the task
+     */
     public DaxJobTrianaTask(Task task) {
         super(task);
     }

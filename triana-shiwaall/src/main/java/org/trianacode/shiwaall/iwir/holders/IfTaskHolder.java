@@ -9,6 +9,7 @@ import org.trianacode.taskgraph.imp.RenderingHintImp;
 
 import java.util.Vector;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -18,11 +19,19 @@ import java.util.Vector;
  */
 public class IfTaskHolder extends AbstractTaskHolder {
 
+    /** The then nodes. */
     Vector<Node> thenNodes = new Vector<Node>();
+    
+    /** The else nodes. */
     Vector<Node> elseNodes = new Vector<Node>();
+    
+    /** The readable condition. */
     private String readableCondition = "";
 
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#process()
+     */
     @Override
     public void process() throws Exception {
         Object data = getInputAtNode(0);
@@ -42,6 +51,9 @@ public class IfTaskHolder extends AbstractTaskHolder {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.iwir.factory.AbstractTaskHolder#init()
+     */
     public void init() {
         super.init();
 //        defineParameter("count", "0", Unit.USER_ACCESSIBLE);
@@ -55,18 +67,38 @@ public class IfTaskHolder extends AbstractTaskHolder {
         setParameterPanelInstantiate(ON_USER_ACCESS);
     }
 
+    /**
+     * Adds the if node.
+     *
+     * @param node the node
+     */
     public void addIfNode(Node node) {
         thenNodes.add(node);
     }
 
+    /**
+     * Adds the else node.
+     *
+     * @param node the node
+     */
     public void addElseNode(Node node) {
         elseNodes.add(node);
     }
 
+    /**
+     * Condition satisfied.
+     *
+     * @return true, if successful
+     */
     public boolean conditionSatisfied() {
         return ((IfTask) getIWIRTask()).getCondition().eval();
     }
 
+    /**
+     * Sets the readable condition.
+     *
+     * @param readableCondition the new readable condition
+     */
     public void setReadableCondition(String readableCondition) {
         setParameter(BasicIWIRPanel.CONDITION, readableCondition);
     }

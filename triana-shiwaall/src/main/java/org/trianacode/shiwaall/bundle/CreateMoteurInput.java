@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -24,6 +25,12 @@ import java.util.List;
 @Tool
 public class CreateMoteurInput {
 
+    /**
+     * Process.
+     *
+     * @param list the list
+     * @return the file
+     */
     @Process(gather = true)
     public File process(List list) {
 
@@ -53,6 +60,13 @@ public class CreateMoteurInput {
         return null;
     }
 
+    /**
+     * Cut string.
+     *
+     * @param all the all
+     * @param doc the doc
+     * @param root the root
+     */
     private static void cutString(String all, Document doc, Element root) {
         String[] inputs = (all).split(";");
 
@@ -68,6 +82,15 @@ public class CreateMoteurInput {
         }
     }
 
+    /**
+     * Adds the source.
+     *
+     * @param doc the doc
+     * @param inputData the input data
+     * @param name the name
+     * @param type the type
+     * @param value the value
+     */
     private static void addSource(Document doc, Element inputData, String name, String type, String value) {
         Element source = doc.createElement("source");
         DomPain.attribute(source, "name", name);
@@ -78,6 +101,11 @@ public class CreateMoteurInput {
         inputData.appendChild(source);
     }
 
+    /**
+     * Make doc.
+     *
+     * @return the file
+     */
     private static File makeDoc() {
         try {
 
@@ -103,6 +131,11 @@ public class CreateMoteurInput {
         return null;
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         makeDoc();
     }

@@ -9,10 +9,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BasicIWIRPanel.
+ */
 public class BasicIWIRPanel extends ParameterPanel {
 
+    /** The Constant CONDITION. */
     public static final String CONDITION = "condition";
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#init()
+     */
     @Override
     public void init() {
         setLayout(new GridLayout(1, 1));
@@ -54,6 +62,11 @@ public class BasicIWIRPanel extends ParameterPanel {
     }
 
 
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
     private String getDescription() {
         Executable executable = (Executable) getTask().getParameter(Executable.EXECUTABLE);
 
@@ -78,11 +91,17 @@ public class BasicIWIRPanel extends ParameterPanel {
                 "\n     Output nodes : " + outputNodeString;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#reset()
+     */
     @Override
     public void reset() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#dispose()
+     */
     @Override
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.

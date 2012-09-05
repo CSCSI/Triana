@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -35,20 +36,44 @@ import java.util.Vector;
  */
 public class DaxReader {
 
+    /** The file. */
     private File file = null;
+    
+    /** The doc. */
     private Document doc = null;
+    
+    /** The tool vector. */
     private ArrayList<DaxJobHolder> toolVector = new ArrayList<DaxJobHolder>();
+    
+    /** The files. */
     private ArrayList<DaxFileHolder> files = new ArrayList<DaxFileHolder>();
+    
+    /** The dax package. */
     private String daxPackage = "org.trianacode.shiwaall.gui.guiUnits";
+    
+    /** The dax file unit name. */
     private String daxFileUnitName = "DaxFile";
+    
+    /** The dax job unit name. */
     private String daxJobUnitName = "DaxJob";
 
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
+    
+    /** The Constant ORIGINAL_DAX_FILE. */
     public static final String ORIGINAL_DAX_FILE = "originalDaxFile";
 
+    /**
+     * Instantiates a new dax reader.
+     */
     public DaxReader() {
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         String filename = "";
         if (args.length > 0) {
@@ -59,17 +84,32 @@ public class DaxReader {
         }
     }
 
+    /**
+     * Instantiates a new dax reader.
+     *
+     * @param filename the filename
+     */
     public DaxReader(String filename) {
         setFile(new File(filename));
         getJobInfo();
     }
 
+    /**
+     * Instantiates a new dax reader.
+     *
+     * @param daxPackage the dax package
+     * @param file the file
+     * @param job the job
+     */
     public DaxReader(String daxPackage, String file, String job) {
         this.daxPackage = daxPackage;
         this.daxFileUnitName = file;
         this.daxJobUnitName = job;
     }
 
+    /**
+     * Reset.
+     */
     private void reset() {
         file = null;
         doc = null;
@@ -77,6 +117,15 @@ public class DaxReader {
         files = new ArrayList<DaxFileHolder>();
     }
 
+    /**
+     * Import workflow.
+     *
+     * @param file the file
+     * @param properties the properties
+     * @return the task graph
+     * @throws TaskGraphException the task graph exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public TaskGraph importWorkflow(File file, TrianaProperties properties) throws TaskGraphException, IOException {
         devLog.debug("importWorkflow called.");
         setFile(file);
@@ -98,6 +147,11 @@ public class DaxReader {
         }
     }
 
+    /**
+     * List all jobs.
+     *
+     * @param jobs the jobs
+     */
     private void listAllJobs(Vector<DaxJobHolder> jobs) {
         for (DaxJobHolder job : jobs) {
             devLog.debug("Found job : " + job.getToolname());
@@ -110,9 +164,9 @@ public class DaxReader {
     }
 
     /**
-     * set the DAX file to create the workflow from
+     * set the DAX file to create the workflow from.
      *
-     * @param file
+     * @param file the new file
      */
 
     public void setFile(File file) {
@@ -123,9 +177,9 @@ public class DaxReader {
     }
 
     /**
-     * Returns a list of all the nodes labelled "job"
+     * Returns a list of all the nodes labelled "job".
      *
-     * @return
+     * @return the job info
      */
     private NodeList getJobInfo() {
         NodeList jobList = null;
@@ -140,6 +194,12 @@ public class DaxReader {
         return jobList;
     }
 
+    /**
+     * Gets the job holders from node list.
+     *
+     * @param jobList the job list
+     * @return the job holders from node list
+     */
     public Vector<DaxJobHolder> getJobHoldersFromNodeList(NodeList jobList) {
         Vector<DaxJobHolder> sortedJobs = new Vector<DaxJobHolder>();
         for (int i = 0; i < jobList.getLength(); i++) {
@@ -171,6 +231,13 @@ public class DaxReader {
         return sortedJobs;
     }
 
+    /**
+     * Creates the task graph.
+     *
+     * @param jobList the job list
+     * @param properties the properties
+     * @return the task graph
+     */
     private TaskGraph createTaskGraph(NodeList jobList, TrianaProperties properties) {
         TaskGraph tg = null;
 
@@ -232,6 +299,12 @@ public class DaxReader {
 
     }
 
+    /**
+     * Combine units.
+     *
+     * @param tg the tg
+     * @return the task graph
+     */
     private TaskGraph combineUnits(TaskGraph tg) {
 
         Task[] tasks = tg.getTasks(false);
@@ -270,6 +343,13 @@ public class DaxReader {
         return tg;
     }
 
+    /**
+     * Lcs.
+     *
+     * @param a the a
+     * @param b the b
+     * @return the string
+     */
     public static String lcs(String a, String b) {
 
         devLog.debug("s.a : " + a + " s.b : " + b);
@@ -288,6 +368,12 @@ public class DaxReader {
         }
     }
 
+    /**
+     * Gets the task from tool.
+     *
+     * @param tool the tool
+     * @return the task from tool
+     */
     private Task getTaskFromTool(Tool tool) {
         Task task = null;
         /*
@@ -316,7 +402,7 @@ public class DaxReader {
      * Loops through jobs input nodes, then output nodes.
      * Attaches jobs input and output nodes to the next available node from a files "DaxFileHolder" getUnconnected(In-Out)Node()
      *
-     * @param tg
+     * @param tg the tg
      */
     private void attachCables(TaskGraph tg) {
         for (Iterator iter = toolVector.iterator(); iter.hasNext(); ) {
@@ -373,7 +459,7 @@ public class DaxReader {
     }
 
     /**
-     * Finds all nodes labelled "job" in DAX,
+     * Finds all nodes labelled "job" in DAX,.
      */
     private void findFiles() {
         NodeList jobLst = doc.getElementsByTagName("job");
@@ -461,8 +547,8 @@ public class DaxReader {
      * All tools created are of type "JobUnit".
      * Created tool should have the correct number of input and output nodes
      *
-     * @param tool
-     * @param node
+     * @param tool the tool
+     * @param node the node
      */
     private void initJobTool(ToolImp tool, Node node) {
         DaxJobHolder djh = new DaxJobHolder();
@@ -547,6 +633,12 @@ public class DaxReader {
 
     }
 
+    /**
+     * Inits the file tool.
+     *
+     * @param tool the tool
+     * @param dfh the dfh
+     */
     private void initFileTool(ToolImp tool, DaxFileHolder dfh) {
 
         tool.setToolName(dfh.getFilename());
@@ -569,6 +661,13 @@ public class DaxReader {
 
     }
 
+    /**
+     * Make proxy.
+     *
+     * @param filename the filename
+     * @param packageLocation the package location
+     * @return the proxy
+     */
     private Proxy makeProxy(String filename, String packageLocation) {
         HashMap details = new HashMap();
         details.put("unitName", (filename));
@@ -583,6 +682,13 @@ public class DaxReader {
     }
 
 
+    /**
+     * Gets the node attribute value.
+     *
+     * @param node the node
+     * @param name the name
+     * @return the node attribute value
+     */
     private String getNodeAttributeValue(Node node, String name) {
         Node child = node.getAttributes().getNamedItem(name);
         if (child != null) {
@@ -592,16 +698,26 @@ public class DaxReader {
         }
     }
 
+    /**
+     * Gets the file.
+     *
+     * @return the file
+     */
     public File getFile() {
         return file;
     }
 
+    /**
+     * Gets the file name.
+     *
+     * @return the file name
+     */
     public String getFileName() {
         return file.getName();
     }
 
     /**
-     * Sets the doc variable which will be used as the root node when building tools from the DAX
+     * Sets the doc variable which will be used as the root node when building tools from the DAX.
      */
     private void setDoc() {
         try {
@@ -618,9 +734,9 @@ public class DaxReader {
     }
 
     /**
-     * Checks if the first string in the file is "adag"
+     * Checks if the first string in the file is "adag".
      *
-     * @return
+     * @return true, if is valid dax
      */
     private boolean isValidDax() {
         String rootString = doc.getDocumentElement().getNodeName();
@@ -634,16 +750,22 @@ public class DaxReader {
         }
     }
 
+    /**
+     * Gets the node list from tag.
+     *
+     * @param tagName the tag name
+     * @return the node list from tag
+     */
     private NodeList getNodeListFromTag(String tagName) {
         NodeList nodeLst = doc.getElementsByTagName(tagName);
         return nodeLst;
     }
 
     /**
-     * Lists all the attributes in the NamedNodeMap
+     * Lists all the attributes in the NamedNodeMap.
      *
-     * @param map
-     * @return
+     * @param map the map
+     * @return the string
      */
     private String listAllAttributes(NamedNodeMap map) {
         String listString = "";

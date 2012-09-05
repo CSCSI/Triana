@@ -9,6 +9,7 @@ import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -19,6 +20,9 @@ import java.util.List;
 
 public class RuntimeTaskCreation extends Unit {
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#process()
+     */
     @Override
     public void process() throws Exception {
         ArrayList<Object> allInputs = new ArrayList<Object>();
@@ -44,6 +48,13 @@ public class RuntimeTaskCreation extends Unit {
         //    output("Some text");
     }
 
+    /**
+     * Adds the and connect unit.
+     *
+     * @param unit the unit
+     * @param data the data
+     * @return the task
+     */
     private Task addAndConnectUnit(Unit unit, Object data) {
         TaskGraph parent = this.getTask().getParent();
 
@@ -74,6 +85,12 @@ public class RuntimeTaskCreation extends Unit {
         return newTask;
     }
 
+    /**
+     * Inits the tool.
+     *
+     * @param unit the unit
+     * @return the tool imp
+     */
     private ToolImp initTool(Unit unit) {
         ToolImp tool = null;
         ProxyFactory.initProxyFactory();
@@ -93,11 +110,17 @@ public class RuntimeTaskCreation extends Unit {
         return tool;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#getInputTypes()
+     */
     @Override
     public String[] getInputTypes() {
         return new String[]{"java.lang.Object"};
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#getOutputTypes()
+     */
     @Override
     public String[] getOutputTypes() {
         return new String[]{"java.lang.Object"};

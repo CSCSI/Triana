@@ -15,6 +15,7 @@ import org.trianacode.taskgraph.annotation.TaskConscious;
 import java.io.File;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -25,18 +26,27 @@ import java.util.List;
 @Tool
 public class CreateBundleSubmitWorkflow implements TaskConscious {
 
+    /** The address. */
     @TextFieldParameter
     public String address = "http://s-vmc.cs.cf.ac.uk:7025/Broker/broker";
 
+    /** The routing key. */
     @TextFieldParameter
     private String routingKey = "*.triana";
 
+    /** The task. */
     private Task task;
 
+    /** The local. */
     @CheckboxParameter
     public boolean local = false;
 
 
+    /**
+     * Process.
+     *
+     * @param list the list
+     */
     @org.trianacode.annotation.Process()
     public void process(List list) {
 
@@ -91,6 +101,12 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
     }
 
 
+    /**
+     * Recycle graph.
+     *
+     * @param taskGraph the task graph
+     * @return the task graph
+     */
     public TaskGraph recycleGraph(TaskGraph taskGraph) {
         try {
             return (TaskGraph) TaskGraphManager.createTask(taskGraph, TaskGraphManager.DEFAULT_FACTORY_TYPE, false);
@@ -100,6 +116,9 @@ public class CreateBundleSubmitWorkflow implements TaskConscious {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;

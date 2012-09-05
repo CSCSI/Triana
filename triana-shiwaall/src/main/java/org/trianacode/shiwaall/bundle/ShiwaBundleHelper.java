@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -39,11 +40,18 @@ public class ShiwaBundleHelper {
 
 
     //    private String workflowFilePath;
+    /** The concrete bundle. */
     private ConcreteBundle concreteBundle;
 
 //    private UUID parentUUID = null;
 
-    public ShiwaBundleHelper(SHIWABundle shiwaBundle) throws SHIWADesktopIOException {
+    /**
+ * Instantiates a new shiwa bundle helper.
+ *
+ * @param shiwaBundle the shiwa bundle
+ * @throws SHIWADesktopIOException the sHIWA desktop io exception
+ */
+public ShiwaBundleHelper(SHIWABundle shiwaBundle) throws SHIWADesktopIOException {
         if(shiwaBundle instanceof ConcreteBundle){
             this.concreteBundle = (ConcreteBundle) shiwaBundle;
         } else {
@@ -67,13 +75,25 @@ public class ShiwaBundleHelper {
 ////        }
 //    }
 
-    public ShiwaBundleHelper(String bundlePath) throws SHIWADesktopIOException {
+    /**
+ * Instantiates a new shiwa bundle helper.
+ *
+ * @param bundlePath the bundle path
+ * @throws SHIWADesktopIOException the sHIWA desktop io exception
+ */
+public ShiwaBundleHelper(String bundlePath) throws SHIWADesktopIOException {
         this.concreteBundle = new ConcreteBundle(new File(bundlePath));
 //        initialiseController(concreteBundle);
 //        init();
     }
 
 
+    /**
+     * Creates the configuration.
+     *
+     * @param list the list
+     * @return the mapping
+     */
     public Mapping createConfiguration(List list) {
         if (list.size() > 0) {
 
@@ -111,6 +131,12 @@ public class ShiwaBundleHelper {
         return null;
     }
 
+    /**
+     * Gets the shiwa property.
+     *
+     * @param key the key
+     * @return the shiwa property
+     */
     public SHIWAProperty getShiwaProperty(String key) {
         List<SHIWAProperty> properties = concreteBundle.getPrimaryConcreteTask().getProperties();
         for (SHIWAProperty property : properties) {
@@ -121,6 +147,9 @@ public class ShiwaBundleHelper {
         return null;
     }
 
+    /**
+     * Prepare library dependencies.
+     */
     public void prepareLibraryDependencies() {
         ArrayList<Dependency> deps = getDependencyForType("Library");
 
@@ -134,6 +163,12 @@ public class ShiwaBundleHelper {
         }
     }
 
+    /**
+     * Gets the dependency for type.
+     *
+     * @param type the type
+     * @return the dependency for type
+     */
     public ArrayList<Dependency> getDependencyForType(String type) {
         ArrayList<Dependency> dependencies = new ArrayList<Dependency>();
         for (Dependency dependency : concreteBundle.getPrimaryConcreteTask().getDependencies()) {
@@ -144,6 +179,12 @@ public class ShiwaBundleHelper {
         return dependencies;
     }
 
+    /**
+     * Gets the configuration resource for dependency.
+     *
+     * @param dependency the dependency
+     * @return the configuration resource for dependency
+     */
     public ConfigurationResource getConfigurationResourceForDependency(Dependency dependency) {
         for (Mapping mapping : concreteBundle.getPrimaryMappings()) {
             for (ConfigurationResource configurationResource : mapping.getResources()) {
@@ -155,6 +196,15 @@ public class ShiwaBundleHelper {
         return null;
     }
 
+    /**
+     * Write configuration resource to file.
+     *
+     * @param configurationResource the configuration resource
+     * @param file the file
+     * @param outputLocation the output location
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public static File writeConfigurationResourceToFile(ConfigurationResource configurationResource, File file, File outputLocation) throws IOException {
         String longName = configurationResource.getBundleFile().getFilename();
         if (file == null) {
@@ -165,15 +215,38 @@ public class ShiwaBundleHelper {
         return DataUtils.extractToFile(configurationResource, file);
     }
 
+    /**
+     * Gets the temp entry.
+     *
+     * @param relativePath the relative path
+     * @return the temp entry
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public File getTempEntry(String relativePath) throws IOException {
         return DataUtils.inputStreamToFile(concreteBundle.getEntry(relativePath),
                 Locations.getTempFile(relativePath.replaceAll("/", ".")));
     }
 
+    /**
+     * Extract to file.
+     *
+     * @param relativePath the relative path
+     * @param file the file
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public File extractToFile(String relativePath, File file) throws IOException {
         return DataUtils.inputStreamToFile(concreteBundle.getEntry(relativePath), file);
     }
 
+    /**
+     * Bytes to file.
+     *
+     * @param bytes the bytes
+     * @param file the file
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public File bytesToFile(byte[] bytes, File file) throws IOException {
 
         FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -192,17 +265,35 @@ public class ShiwaBundleHelper {
 //        return bytesToFile(concreteBundle.getPrimaryConcreteTask().getDefinition().getBytes(), file);
 //    }
 
-    private File createFileInRuntimeFolder(String filename) {
+    /**
+ * Creates the file in runtime folder.
+ *
+ * @param filename the filename
+ * @return the file
+ */
+private File createFileInRuntimeFolder(String filename) {
         return new File(outputLocation, filename);
     }
 
+    /**
+     * Sets the runtime output folder.
+     *
+     * @param outputFolder the new runtime output folder
+     */
     public void setRuntimeOutputFolder(File outputFolder) {
         outputLocation = outputFolder;
         outputLocation.mkdirs();
     }
 
+    /** The output location. */
     private File outputLocation = new File(System.getProperty("user.dir"));
 
+    /**
+     * Creates the default transfer signature.
+     *
+     * @return the transfer signature
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public TransferSignature createDefaultTransferSignature() throws IOException {
         if (hasDataConfiguration()) {
             return createTransferSignature(concreteBundle.getPrimaryConcreteTask(),
@@ -211,6 +302,11 @@ public class ShiwaBundleHelper {
         return null;
     }
 
+    /**
+     * Checks for data configuration.
+     *
+     * @return true, if successful
+     */
     public boolean hasDataConfiguration() {
         for (Mapping mapping : concreteBundle.getPrimaryMappings()) {
             if(mapping instanceof DataMapping){
@@ -223,6 +319,12 @@ public class ShiwaBundleHelper {
         return false;
     }
 
+    /**
+     * Gets the first configuration of type.
+     *
+     * @param mappingType the mapping type
+     * @return the first configuration of type
+     */
     private Mapping getFirstConfigurationOfType(Class<? extends Mapping> mappingType) {
         for (Mapping mapping :  concreteBundle.getPrimaryMappings()) {
 
@@ -237,6 +339,14 @@ public class ShiwaBundleHelper {
         return null;
     }
 
+    /**
+     * Creates the transfer signature.
+     *
+     * @param workflow the workflow
+     * @param configuration the configuration
+     * @return the transfer signature
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public TransferSignature createTransferSignature(ConcreteTask workflow, Mapping configuration) throws IOException {
         TransferSignature signature = new TransferSignature();
 
@@ -325,10 +435,26 @@ public class ShiwaBundleHelper {
         return signature;
     }
 
+    /**
+     * Save bundle.
+     *
+     * @param file the file
+     * @return the file
+     * @throws SHIWADesktopIOException the sHIWA desktop io exception
+     */
     public File saveBundle(File file) throws SHIWADesktopIOException {
         return DataUtils.bundle(file, concreteBundle.getAggregatedResource());
     }
 
+    /**
+     * Download.
+     *
+     * @param urlSource the url source
+     * @param downloadDir the download dir
+     * @param localFile the local file
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public static File download(String urlSource, File downloadDir, File localFile) throws IOException {
         File remoteFile = new File(urlSource);
         if (localFile == null) {
@@ -339,6 +465,11 @@ public class ShiwaBundleHelper {
     }
 
 
+    /**
+     * Prepare environment dependencies.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void prepareEnvironmentDependencies() throws IOException {
         for (Dependency dependency : concreteBundle.getPrimaryConcreteTask().getDependencies()) {
 
@@ -351,6 +482,14 @@ public class ShiwaBundleHelper {
         }
     }
 
+    /**
+     * Write config resources to disk.
+     *
+     * @param dependency the dependency
+     * @param config the config
+     * @param outputLocation the output location
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public static void writeConfigResourcesToDisk(
             Dependency dependency,
             List<ConfigurationResource> config,
@@ -405,16 +544,33 @@ public class ShiwaBundleHelper {
 //        }
 //    }
 
-    public WorkflowImplementation getWorkflowImplementation() {
+    /**
+ * Gets the workflow implementation.
+ *
+ * @return the workflow implementation
+ */
+public WorkflowImplementation getWorkflowImplementation() {
         return (WorkflowImplementation) concreteBundle.getPrimaryConcreteTask();
     }
 
+    /**
+     * Bundle.
+     *
+     * @param temp the temp
+     * @throws SHIWADesktopIOException the sHIWA desktop io exception
+     */
     public void bundle(File temp) throws SHIWADesktopIOException {
         DataUtils.bundle(
                 temp,
                 getWorkflowImplementation());
     }
 
+    /**
+     * Gets the outputs.
+     *
+     * @param bundle the bundle
+     * @return the outputs
+     */
     public static HashMap<String, ConfigurationResource> getOutputs(File bundle) {
 
         HashMap<String, ConfigurationResource> results = new HashMap<String, ConfigurationResource>();
@@ -452,6 +608,9 @@ public class ShiwaBundleHelper {
         return null;
     }
 
+    /**
+     * Clear configs.
+     */
     public void clearConfigs() {
         ArrayList<Mapping> dataConfigs = new ArrayList<Mapping>();
         for (AggregatedResource resource : getWorkflowImplementation().getAggregatedResources()) {
@@ -466,6 +625,13 @@ public class ShiwaBundleHelper {
         }
     }
 
+    /**
+     * Compile outputs.
+     *
+     * @param outputResources the output resources
+     * @param outputNodeMap the output node map
+     * @return the hash map
+     */
     public HashMap<Node, Object> compileOutputs(HashMap<String, ConfigurationResource> outputResources, HashMap<String, Node> outputNodeMap) {
         HashMap<Node, Object> outputs = new HashMap<Node, Object>();
         System.out.println(outputResources.size() + " output objects.");
@@ -495,6 +661,13 @@ public class ShiwaBundleHelper {
         return outputs;
     }
 
+    /**
+     * Gets the task signature.
+     *
+     * @param inputPortMap the input port map
+     * @param outputPortMap the output port map
+     * @return the task signature
+     */
     public void getTaskSignature(HashMap<String, InputPort> inputPortMap, HashMap<String, OutputPort> outputPortMap) {
         TaskSignature signature = concreteBundle.getPrimaryConcreteTask().getSignature();
         for (ReferableResource referableResource : signature.getPorts()) {

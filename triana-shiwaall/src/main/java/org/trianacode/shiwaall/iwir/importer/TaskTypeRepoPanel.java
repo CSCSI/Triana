@@ -12,6 +12,7 @@ import org.trianacode.taskgraph.tool.Tool;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created with IntelliJ IDEA.
  * User: ian
@@ -21,10 +22,18 @@ import java.awt.event.ActionEvent;
  */
 public class TaskTypeRepoPanel extends AbstractAction implements Extension, ActionDisplayOptions {
 
+    /**
+     * Instantiates a new task type repo panel.
+     */
     public TaskTypeRepoPanel(){
         this(DISPLAY_BOTH);
     }
 
+    /**
+     * Instantiates a new task type repo panel.
+     *
+     * @param displayOption the display option
+     */
     public TaskTypeRepoPanel(int displayOption){
         putValue(SHORT_DESCRIPTION, "TaskType Repository");
         putValue(NAME, "TaskType Repository");
@@ -32,20 +41,32 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.Extension#init(org.trianacode.gui.action.ToolSelectionHandler)
+     */
     @Override
     public void init(ToolSelectionHandler selhandler) {
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.Extension#getTreeAction(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Action getTreeAction(Tool tool) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.Extension#getWorkspaceAction(org.trianacode.taskgraph.Task)
+     */
     @Override
     public Action getWorkspaceAction(Task tool) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.extensions.Extension#getWorkflowAction(int)
+     */
     @Override
     public Action getWorkflowAction(int type) {
         if (type == Extension.TOOL_TYPE) {
@@ -53,6 +74,9 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
         } else return null;
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 

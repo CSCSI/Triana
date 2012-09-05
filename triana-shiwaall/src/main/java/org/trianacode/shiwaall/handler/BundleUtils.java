@@ -10,6 +10,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created with IntelliJ IDEA.
  * User: ian
@@ -19,6 +20,12 @@ import java.nio.charset.Charset;
  */
 public class BundleUtils {
 
+    /**
+     * Gets the display stream.
+     *
+     * @param taskGraph the task graph
+     * @return the display stream
+     */
     public static InputStream getDisplayStream(TaskGraph taskGraph){
         DesktopView view = GUIEnv.getApplicationFrame().getDesktopViewFor(taskGraph);
         GUIEnv.getApplicationFrame().getDesktopViewManager().setSelected(view, true);
@@ -37,6 +44,12 @@ public class BundleUtils {
         return displayStream;
     }
 
+    /**
+     * Read file.
+     *
+     * @param path the path
+     * @return the string
+     */
     public static String readFile(String path) {
         try{
             FileInputStream stream = null;

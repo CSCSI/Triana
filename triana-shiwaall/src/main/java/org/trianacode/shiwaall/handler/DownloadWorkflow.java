@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -20,10 +21,18 @@ import java.awt.event.ActionEvent;
  */
 public class DownloadWorkflow extends AbstractAction implements ActionDisplayOptions {
 
+    /**
+     * Instantiates a new download workflow.
+     */
     public DownloadWorkflow() {
         this(ActionDisplayOptions.DISPLAY_BOTH);
     }
 
+    /**
+     * Instantiates a new download workflow.
+     *
+     * @param displayOption the display option
+     */
     public DownloadWorkflow(int displayOption) {
         putValue(SHORT_DESCRIPTION, "Retrieve Bundle");
         putValue(NAME, "Retrieve Bundle");
@@ -35,6 +44,9 @@ public class DownloadWorkflow extends AbstractAction implements ActionDisplayOpt
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         System.out.println("Opening SHIWADesktop");
@@ -42,7 +54,7 @@ public class DownloadWorkflow extends AbstractAction implements ActionDisplayOpt
         ApplicationFrame frame = GUIEnv.getApplicationFrame();
 
         DisplayDialog dialog = null;
-        TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine(), dialog);
+        TrianaShiwaListener tsl = new TrianaShiwaListener(frame.getEngine());
 
 //        SHIWADesktopOpener shiwaDesktopOpener = new SHIWADesktopOpener();
 //        tsl.setReceivedListener(shiwaDesktopOpener);

@@ -3,6 +3,7 @@ package org.trianacode.shiwaall.extras;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -12,6 +13,12 @@ import java.io.FileWriter;
  */
 public class FileBuilder {
 
+    /**
+     * Instantiates a new file builder.
+     *
+     * @param name the name
+     * @param contents the contents
+     */
     public FileBuilder(String name, String contents) {
         try {
             // Create file

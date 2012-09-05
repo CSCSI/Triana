@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -26,10 +27,22 @@ import java.util.Map;
  */
 public class ExportIwir {
 
+    /** The cables. */
     private HashSet<Cable> cables = new HashSet<Cable>();
+    
+    /** The task hash map. */
     private HashMap<Task, AbstractTask> taskHashMap = new HashMap<Task, AbstractTask>();
+    
+    /** The std. */
     boolean std = false;
 
+    /**
+     * Task graph to iwir file.
+     *
+     * @param taskGraph the task graph
+     * @param file the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void taskGraphToIWIRFile(TaskGraph taskGraph, File file) throws IOException {
         System.out.println("Writing IWIR : " + file.getAbsolutePath());
         BlockScope blockScope = taskGraphToBlockScope(taskGraph);
@@ -37,12 +50,25 @@ public class ExportIwir {
         writeIWIR(blockScope, file);
     }
 
+    /**
+     * Std out.
+     *
+     * @param string the string
+     */
     private void stdOut(String string){
         if(std){
             System.out.printf(string);
         }
     }
 
+    /**
+     * Write iwir.
+     *
+     * @param blockScope the block scope
+     * @param file the file
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private File writeIWIR(BlockScope blockScope, File file) throws IOException {
         IWIR iwir = new IWIR(file.getName());
         iwir.setTask(blockScope);
@@ -51,6 +77,12 @@ public class ExportIwir {
         return file;
     }
 
+    /**
+     * Task graph to block scope.
+     *
+     * @param taskGraph the task graph
+     * @return the block scope
+     */
     public BlockScope taskGraphToBlockScope(TaskGraph taskGraph) {
         BlockScope blockScope = recordTasksAndCables(taskGraph);
 
@@ -108,6 +140,12 @@ public class ExportIwir {
         return blockScope;
     }
 
+    /**
+     * Record tasks and cables.
+     *
+     * @param taskGraph the task graph
+     * @return the block scope
+     */
     private BlockScope recordTasksAndCables(TaskGraph taskGraph) {
         BlockScope blockScope = new BlockScope(taskGraph.getToolName().replaceAll(" ", "_"));
         taskHashMap.put(taskGraph, blockScope);
@@ -162,6 +200,11 @@ public class ExportIwir {
     }
 
 
+    /**
+     * Adds the iwir graph nodes.
+     *
+     * @param taskGraph the task graph
+     */
     private void addIWIRGraphNodes(TaskGraph taskGraph) {
         for (Node node : taskGraph.getInputNodes()) {
             addInputNodeChainToBlockScope(node);
@@ -171,6 +214,12 @@ public class ExportIwir {
         }
     }
 
+    /**
+     * Adds the input node chain to block scope.
+     *
+     * @param node the node
+     * @return the input port
+     */
     private InputPort addInputNodeChainToBlockScope(Node node) {
         stdOut("\n Input chain with node : " + node);
         stdOut("top " + node.getTopLevelNode());
@@ -209,6 +258,12 @@ public class ExportIwir {
         return inputBlockPort;
     }
 
+    /**
+     * Adds the output node chain to block scope.
+     *
+     * @param node the node
+     * @return the output port
+     */
     private OutputPort addOutputNodeChainToBlockScope(Node node) {
         stdOut("\n Output chain with node : " + node);
         stdOut("top " + node.getTopLevelNode());

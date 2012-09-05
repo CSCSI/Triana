@@ -5,6 +5,7 @@ import org.trianacode.taskgraph.Task;
 
 import java.awt.*;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -14,10 +15,18 @@ import java.awt.*;
  */
 public class ShiwaConfigTrianaTask extends MainTrianaTask {
 
+    /**
+     * Instantiates a new shiwa config triana task.
+     *
+     * @param task the task
+     */
     public ShiwaConfigTrianaTask(Task task) {
         super(task);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.main.imp.TrianaTool#drawRectangle(java.awt.Graphics, java.awt.Color, java.awt.Color)
+     */
     @Override()
     protected void drawRectangle(Graphics graphics, Color color, Color original) {
         graphics.setColor(color);

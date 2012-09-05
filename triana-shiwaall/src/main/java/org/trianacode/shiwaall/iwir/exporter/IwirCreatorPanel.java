@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -20,12 +21,24 @@ import java.io.File;
  */
 public class IwirCreatorPanel extends ParameterPanel {
 
+    /** The location string. */
     String locationString = "";
+    
+    /** The name field. */
     private JTextField nameField;
+    
+    /** The location field. */
     private JTextField locationField;
+    
+    /** The demo check. */
     private JCheckBox demoCheck;
+    
+    /** The demo. */
     private boolean demo = false;
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#init()
+     */
     @Override
     public void init() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -86,6 +99,9 @@ public class IwirCreatorPanel extends ParameterPanel {
         add(mainPanel);
     }
 
+    /**
+     * Update.
+     */
     private void update() {
 
         locationString = nameField.getText();
@@ -100,19 +116,31 @@ public class IwirCreatorPanel extends ParameterPanel {
 
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#okClicked()
+     */
     public void okClicked() {
         update();
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#applyClicked()
+     */
     public void applyClicked() {
         update();
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#reset()
+     */
     @Override
     public void reset() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#dispose()
+     */
     @Override
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.

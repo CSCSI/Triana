@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -32,38 +33,87 @@ import java.util.Vector;
 @org.trianacode.annotation.Tool(renderingHints = {"DAX File"})
 public class DaxFile extends FileUnit implements TaskConscious, Displayer, ActionListener, ItemListener {
 
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
+    /** The location. */
     File location;
 
+    /** The collect label. */
     JLabel collectLabel; // = new JLabel("");
+    
+    /** The iter label. */
     JLabel iterLabel;  //= new JLabel("");
+    
+    /** The name field. */
     JTextField nameField; //= new JTextField("");
+    
+    /** The location field. */
     JTextField locationField; //= new JTextField("");
+    
+    /** The file list area. */
     JTextArea fileListArea; //= new JTextArea("Example filenames here..\n\n");
+    
+    /** The name panel. */
     private JPanel namePanel; //= new JPanel();
+    
+    /** The collection panel. */
     private JPanel collectionPanel; //= new JPanel();
+    
+    /** The naming pattern box. */
     JComboBox namingPatternBox; //= new JComboBox();
 //    PatternCollection namingPattern = null;
 
-    JButton nameReset;
+    /** The name reset. */
+JButton nameReset;
+    
+    /** The naming button. */
     JButton namingButton;
+    
+    /** The location button. */
     JButton locationButton;
+    
+    /** The location check. */
     JCheckBox locationCheck;
+    
+    /** The numbers combo. */
     JComboBox numbersCombo;
+    
+    /** The one2one check. */
     JCheckBox one2oneCheck;
+    
+    /** The collection check. */
     JCheckBox collectionCheck;
+    
+    /** The location type combo. */
     JComboBox locationTypeCombo;
+    
+    /** The number label. */
     JLabel numberLabel;
+    
+    /** The number files panel. */
     JPanel numberFilesPanel;
+    
+    /** The custom name panel. */
     JPanel customNamePanel;
+    
+    /** The location panel. */
     JPanel locationPanel;
 
+    /**
+     * Fake process.
+     *
+     * @param list the list
+     * @return the uuid
+     */
     @org.trianacode.annotation.Process(gather = true)
     public UUID fakeProcess(List list) {
         return this.fileUnitProcess(list);
     }
 
+    /**
+     * Apply.
+     */
     private void apply() {
         if (physicalFile) {
             fileProtocol = (String) locationTypeCombo.getSelectedItem();
@@ -81,6 +131,9 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
     }
 
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.FileUnit#getComponent()
+     */
     @CustomGUIComponent
     public Component getComponent() {
         JPanel mainPanel = new JPanel();
@@ -217,6 +270,9 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
     }
 
     //  class FileActionPerformer implements ActionListener {
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getActionCommand().equals("apply")) {
             apply();
@@ -272,6 +328,9 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
     //  }
 
     //   class FileItemPerformer implements ItemListener{
+    /* (non-Javadoc)
+     * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+     */
     public void itemStateChanged(ItemEvent itemEvent) {
         if (itemEvent.getSource().equals(one2oneCheck)) {
             if (one2oneCheck.isSelected()) {
@@ -317,6 +376,12 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
     }
     //   }
 
+    /**
+     * Sets the enabling.
+     *
+     * @param c the c
+     * @param enable the enable
+     */
     public void setEnabling(Component c, boolean enable) {
         c.setEnabled(enable);
         if (c instanceof Container) {
@@ -378,6 +443,9 @@ public class DaxFile extends FileUnit implements TaskConscious, Displayer, Actio
 
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.FileUnit#displayMessage(java.lang.String)
+     */
     @Override
     public void displayMessage(String string) {
         devLog.debug(string);

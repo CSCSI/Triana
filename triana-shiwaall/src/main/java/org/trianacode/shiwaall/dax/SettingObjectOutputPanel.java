@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -20,11 +21,19 @@ import java.util.Set;
 
 public class SettingObjectOutputPanel extends ParameterPanel {
 
+    /** The output area. */
     private JTextArea outputArea = new JTextArea();
+    
+    /** The map. */
     private HashMap map = new HashMap();
+    
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#init()
+     */
     @Override
     public void init() {
         getParams();
@@ -53,6 +62,11 @@ public class SettingObjectOutputPanel extends ParameterPanel {
 
     }
 
+    /**
+     * Gets the params.
+     *
+     * @return the params
+     */
     private void getParams() {
         Object o = getTask().getParameter("map");
         if (o instanceof HashMap) {
@@ -60,10 +74,16 @@ public class SettingObjectOutputPanel extends ParameterPanel {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#reset()
+     */
     @Override
     public void reset() {
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#dispose()
+     */
     @Override
     public void dispose() {
     }

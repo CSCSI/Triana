@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -17,12 +18,24 @@ import java.util.HashMap;
 @Tool
 public class DartScript {
 
+    /** The freqpoints_max. */
     public static String freqpoints_max = "freqpoints_max";
+    
+    /** The harmonics_max. */
     public static String harmonics_max = "harmonics_max";
+    
+    /** The audio_files_csv. */
     public static String audio_files_csv = "audio_file";
 
+    /** The defaults. */
     private HashMap<String, String> defaults;
 
+    /**
+     * Process.
+     *
+     * @param input the input
+     * @return the string[]
+     */
     @Process()
     public String[] process(String input) {
 
@@ -55,6 +68,9 @@ public class DartScript {
         return runs.toArray(runArray);
     }
 
+    /**
+     * Sets the defaults.
+     */
     private void setDefaults() {
         defaults = new HashMap<String, String>();
 
@@ -66,6 +82,12 @@ public class DartScript {
     }
 
 
+    /**
+     * Gets the inputs.
+     *
+     * @param all the all
+     * @return the inputs
+     */
     private void getInputs(String all) {
         String[] inputs = (all).split(";");
 

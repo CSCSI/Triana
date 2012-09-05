@@ -14,6 +14,7 @@ import org.trianacode.shiwaall.dax.DaxCreatorV3;
 import org.trianacode.shiwaall.dax.DaxReader;
 import org.trianacode.shiwaall.dax.Displayer;
 import org.trianacode.shiwaall.handler.PublishWorkflow;
+import org.trianacode.shiwaall.handler.TrianaShiwaListener;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.annotation.TaskConscious;
 
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -40,22 +42,42 @@ import java.util.zip.ZipFile;
 @Tool
 public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious {
 
+    /** The location string. */
     String locationString = "";
+    
+    /** The name field. */
     private JTextField nameField;
+    
+    /** The name space field. */
     private JTextField nameSpaceField;
+    
+    /** The location field. */
     private JTextField locationField;
+    
+    /** The demo check. */
     private JCheckBox demoCheck;
+    
+    /** The publish check. */
     private JCheckBox publishCheck;
 
 
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
+    
+    /** The Constant SITE_FILENAME. */
     private static final String SITE_FILENAME = "site.xml";
 
+    /**
+     * Fake process.
+     *
+     * @param list the list
+     * @return the file
+     */
     @org.trianacode.annotation.Process(gather = true)
     public File fakeProcess(List list) {
         update();
         File daxFile = this.process(list);
-        if (demo && daxFile.exists() && daxFile.canRead()) {
+        if (daxFile.exists() && daxFile.canRead()) {
             displayMessage("Displaying demo of " + daxFile.getAbsolutePath());
             DaxReader dr = new DaxReader();
 
@@ -65,7 +87,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
                 TaskGraph tg = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(t);
                 TaskGraphOrganize.organizeTaskGraph(TaskGraphOrganize.DAX_ORGANIZE, tg);
 
-                if (Desktop.isDesktopSupported()) {
+                if (demo && Desktop.isDesktopSupported()) {
                     Desktop.getDesktop().edit(daxFile);
                 }
 
@@ -105,6 +127,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
 
             SHIWADesktop shiwaDesktop = new SHIWADesktop(pegasusHandler,
                     SHIWADesktop.ButtonOption.SHOW_TOOLBAR);
+            shiwaDesktop.addExecutionListener(new TrianaShiwaListener(GUIEnv.getApplicationFrame().getEngine()));
 
 
             Image icon = InterfaceUtils.X16_ICON.getImage();
@@ -114,6 +137,13 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         return daxFile;
     }
 
+    /**
+     * Prepare schemas.
+     *
+     * @param outputDir the output dir
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws URISyntaxException the uRI syntax exception
+     */
     private void prepareSchemas(File outputDir) throws IOException, URISyntaxException {
         InputStream zipStream = this.getClass().getClassLoader().getResourceAsStream("schemas/schema.zip");
 //        URL zipUrl = Thread.currentThread().getContextClassLoader().getResource("schemas/schema.zip");
@@ -136,6 +166,13 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         }
     }
 
+    /**
+     * Copy streams.
+     *
+     * @param inStream the in stream
+     * @param outStream the out stream
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private void copyStreams(InputStream inStream, FileOutputStream outStream) throws IOException {
         byte[] buf = new byte[1024];
         int l;
@@ -147,6 +184,9 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
     }
 
 
+    /**
+     * Update.
+     */
     private void update() {
 
         locationString = nameField.getText();
@@ -162,6 +202,13 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
 
     }
 
+    /**
+     * Write file.
+     *
+     * @param name the name
+     * @param contents the contents
+     * @return the file
+     */
     public File writeFile(String name, String contents) {
         File file = new File(name);
         BufferedWriter out = null;
@@ -186,6 +233,9 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         return file;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.DaxCreatorV3#getComponent()
+     */
     @CustomGUIComponent
     public Component getComponent() {
         final JPanel guiComponent = new JPanel();
@@ -203,7 +253,14 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
 
         JPanel namePanel = new JPanel(new BorderLayout());
         JLabel nameLabel = new JLabel("Select filename : ");
-        nameField = new JTextField("output");
+
+        String daxName = task.getParent().getToolName();
+        if(daxName.endsWith(".xml")){
+            daxName = daxName.substring(0, daxName.lastIndexOf("."));
+            daxName += ".dax";
+        }
+
+        nameField = new JTextField(daxName);
         namePanel.add(nameLabel, BorderLayout.WEST);
         namePanel.add(nameField, BorderLayout.CENTER);
 
@@ -254,7 +311,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         mainPanel.add(catalogPanel);
 
         JPanel demoPanel = new JPanel();
-        JLabel demoLabel = new JLabel("Demo? : ");
+        JLabel demoLabel = new JLabel("Show DAX XML? : ");
         demoCheck = new JCheckBox();
         demoCheck.setSelected(demo);
         demoCheck.addItemListener(new ItemListener() {
@@ -292,7 +349,10 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
     }
 
 
+    /** The Constant TOP_DIR_PLACEHOLDER. */
     private static final String TOP_DIR_PLACEHOLDER = "topDirPlaceholder";
+    
+    /** The properties text. */
     String propertiesText = "pegasus.catalog.site=XML3\n" +
             "pegasus.catalog.site.file=" + TOP_DIR_PLACEHOLDER + File.separator + SITE_FILENAME + "\n" +
             "\n" +
@@ -303,11 +363,25 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
             "pegasus.data.configuration=condorio\n" +
             "pegasus.condor.logs.symlink=false\n" +
             "pegasus.dir.storage.deep=false";
+    
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.Displayer#displayMessage(java.lang.String)
+     */
     @Override
     public void displayMessage(String string) {
         devLog.debug(string);
     }
+    
+    /**
+     * The Class PropertiesFrame.
+     */
     class PropertiesFrame extends JDialog {
+        
+        /**
+         * Instantiates a new properties frame.
+         *
+         * @param topDir the top dir
+         */
         public PropertiesFrame(String topDir) {
             this.setModal(true);
             JPanel panel = new JPanel();
@@ -335,6 +409,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
         }
     }
 
+    /** The site text. */
     String siteText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<sitecatalog xmlns=\"http://pegasus.isi.edu/schema/sitecatalog\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://pegasus.isi.edu/schema/sitecatalog http://pegasus.isi.edu/schema/sc-3.0.xsd\" version=\"3.0\">\n" +
             "    <site handle=\"local\" arch=\"x86\" os=\"LINUX\">\n" +
@@ -382,7 +457,17 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
             "        <profile namespace=\"condor\" key=\"universe\">vanilla</profile>\n" +
             "    </site>\n" +
             "</sitecatalog>";
+    
+    /**
+     * The Class SiteFrame.
+     */
     class SiteFrame extends JDialog {
+        
+        /**
+         * Instantiates a new site frame.
+         *
+         * @param topDir the top dir
+         */
         public SiteFrame(String topDir) {
             this.setModal(true);
             JPanel panel = new JPanel();

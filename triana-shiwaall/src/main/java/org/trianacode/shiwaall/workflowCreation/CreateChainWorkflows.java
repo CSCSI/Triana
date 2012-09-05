@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -24,13 +25,23 @@ import java.util.List;
 @org.trianacode.annotation.Tool
 public class CreateChainWorkflows implements TaskConscious {
 
+    /** The tasks per workflow string. */
     @TextFieldParameter
     public String tasksPerWorkflowString = "30";
 
+    /** The zip. */
     @CheckboxParameter
     public boolean zip = false;
+    
+    /** The task. */
     private Task task;
 
+    /**
+     * Process.
+     *
+     * @param list the list
+     * @return the array list
+     */
     @Process(gather = true)
     public ArrayList<TaskGraph> process(List list) {
 
@@ -95,6 +106,13 @@ public class CreateChainWorkflows implements TaskConscious {
         return allTaskGraphs;
     }
 
+    /**
+     * Adds the zipper.
+     *
+     * @param taskGraph the task graph
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws TaskGraphException the task graph exception
+     */
     private void addZipper(TaskGraph taskGraph) throws ProxyInstantiationException, TaskGraphException {
         ArrayList<Task> endTasks = new ArrayList<Task>();
         for (Task task : taskGraph.getTasks(false)) {
@@ -119,6 +137,14 @@ public class CreateChainWorkflows implements TaskConscious {
 
     }
 
+    /**
+     * Make task graph.
+     *
+     * @param start the start
+     * @param end the end
+     * @param strings the strings
+     * @return the task graph
+     */
     private TaskGraph makeTaskGraph(int start, int end, List<String> strings) {
         try {
 
@@ -197,6 +223,12 @@ public class CreateChainWorkflows implements TaskConscious {
     }
 
 
+    /**
+     * Recycle graph.
+     *
+     * @param taskGraph the task graph
+     * @return the task graph
+     */
     public TaskGraph recycleGraph(TaskGraph taskGraph) {
         try {
             return (TaskGraph) TaskGraphManager.createTask(taskGraph, TaskGraphManager.DEFAULT_FACTORY_TYPE, false);
@@ -206,6 +238,9 @@ public class CreateChainWorkflows implements TaskConscious {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;

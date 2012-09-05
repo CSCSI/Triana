@@ -2,18 +2,25 @@ package org.trianacode.shiwaall.iwir.logic;
 
 import org.trianacode.shiwaall.iwir.factory.AbstractTaskHolder;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AbstractLoop.
+ *
  * @author Andrew Harrison
  * @version 1.0.0 25/06/2011
  */
 public abstract class AbstractLoop extends AbstractTaskHolder {
 
     // the number of wakeups received by this unit
+    /** The wakeups. */
     private int wakeups = 0;
 
     /*
     * Called whenever there is data for the unit to process
     */
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#process()
+     */
     public void process() throws Exception {
         wakeups++;
         Object[] data = getData();
@@ -27,6 +34,8 @@ public abstract class AbstractLoop extends AbstractTaskHolder {
 
 
     /**
+     * Gets the data.
+     *
      * @return an array of the input data on this iteration
      */
     private Object[] getData() {
@@ -39,6 +48,11 @@ public abstract class AbstractLoop extends AbstractTaskHolder {
         return data;
     }
 
+    /**
+     * Gets the condition.
+     *
+     * @return the condition
+     */
     protected abstract Condition getCondition();
 
 
@@ -76,6 +90,8 @@ public abstract class AbstractLoop extends AbstractTaskHolder {
 
 
     /**
+     * Gets the input types.
+     *
      * @return an array of the input types for Loop2
      */
     public String[] getInputTypes() {
@@ -83,6 +99,8 @@ public abstract class AbstractLoop extends AbstractTaskHolder {
     }
 
     /**
+     * Gets the output types.
+     *
      * @return an array of the output types for Loop2
      */
     public String[] getOutputTypes() {

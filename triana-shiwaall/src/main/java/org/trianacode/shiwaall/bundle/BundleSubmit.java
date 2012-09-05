@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -42,20 +43,52 @@ import java.util.UUID;
 @Tool
 public class BundleSubmit implements TaskConscious {
 
+    /** The input port map. */
     private HashMap<String, InputPort> inputPortMap;
+    
+    /** The output port map. */
     private HashMap<String, OutputPort> outputPortMap;
+    
+    /** The input node map. */
     private HashMap<String, Node> inputNodeMap;
+    
+    /** The output node map. */
     private HashMap<String, Node> outputNodeMap;
+    
+    /** The task. */
     private Task task;
+    
+    /** The bundle submit button group. */
     private ButtonGroup bundleSubmitButtonGroup;
+    
+    /** The concrete bundle. */
     private ConcreteBundle concreteBundle;
+    
+    /** The send url field. */
     private JTextField sendURLField;
+    
+    /** The get url field. */
     private JTextField getURLField;
+    
+    /** The ttl field. */
     private JTextField ttlField;
+    
+    /** The routing key field. */
     private JTextField routingKeyField;
+    
+    /** The default ttl. */
     private int defaultTTL = 30000;
+    
+    /** The shiwa bundle helper. */
     private ShiwaBundleHelper shiwaBundleHelper;
 
+    /**
+     * Process.
+     *
+     * @param list the list
+     * @return the hash map
+     * @throws SHIWADesktopIOException the sHIWA desktop io exception
+     */
     @org.trianacode.annotation.Process(gather = true, multipleOutputNodes = true)
     public HashMap<Node, Object> process(List list) throws SHIWADesktopIOException {
         if (concreteBundle != null) {
@@ -102,6 +135,11 @@ public class BundleSubmit implements TaskConscious {
     }
 
 
+    /**
+     * Do pool.
+     *
+     * @param tempBundleFile the temp bundle file
+     */
     private void doPool(File tempBundleFile) {
         try {
             fr.insalyon.creatis.shiwapool.client.Main.main(
@@ -114,6 +152,12 @@ public class BundleSubmit implements TaskConscious {
         }
     }
 
+    /**
+     * Do broker.
+     *
+     * @param tempBundleFile the temp bundle file
+     * @return the hash map
+     */
     private HashMap<Node, Object> doBroker(File tempBundleFile) {
         String execBundleName = concreteBundle.getPrimaryConcreteTask().getTitle()
                 + "-" + BrokerUtils.getTimeStamp();
@@ -210,7 +254,12 @@ public class BundleSubmit implements TaskConscious {
 //        return null;
 //    }
 
-    @CustomGUIComponent
+    /**
+ * Gets the gui.
+ *
+ * @return the gui
+ */
+@CustomGUIComponent
     public Component getGUI() {
         JPanel mainPane = new JPanel();
         mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
@@ -325,6 +374,12 @@ public class BundleSubmit implements TaskConscious {
         return mainPane;
     }
 
+    /**
+     * Sets the enabling.
+     *
+     * @param parent the parent
+     * @param enabled the enabled
+     */
     private void setEnabling(Container parent, boolean enabled) {
         for (Component component : parent.getComponents()) {
             if (component instanceof Container) {
@@ -335,6 +390,9 @@ public class BundleSubmit implements TaskConscious {
     }
 
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;
@@ -388,7 +446,10 @@ public class BundleSubmit implements TaskConscious {
 //        }
 //    }
 
-    private void init() {
+    /**
+ * Inits the.
+ */
+private void init() {
 //        workflowController = null;
         try {
 //            workflowController = new WorkflowController(shiwaBundle);
@@ -477,6 +538,13 @@ public class BundleSubmit implements TaskConscious {
         }
     }
 
+    /**
+     * Adds the nodes.
+     *
+     * @param size the size
+     * @param input the input
+     * @throws NodeException the node exception
+     */
     private void addNodes(int size, boolean input) throws NodeException {
         if (input) {
             while (task.getInputNodeCount() < size) {
@@ -489,6 +557,12 @@ public class BundleSubmit implements TaskConscious {
         }
     }
 
+    /**
+     * Removes the nodes.
+     *
+     * @param size the size
+     * @param input the input
+     */
     private void removeNodes(int size, boolean input) {
         if (input) {
             while (task.getInputNodeCount() > size) {
@@ -511,21 +585,40 @@ public class BundleSubmit implements TaskConscious {
         }
     }
 
+    /**
+     * The Class BundleParameter.
+     */
     private class BundleParameter extends DefaultBundleReceivedListener implements ActionListener {
+        
+        /** The main pane. */
         private JPanel mainPane;
+        
+        /** The location field. */
         private JTextField locationField;
 
+        /**
+         * Instantiates a new bundle parameter.
+         *
+         * @param mainPane the main pane
+         * @param locationField the location field
+         */
         public BundleParameter(JPanel mainPane, JTextField locationField) {
             this.mainPane = mainPane;
             this.locationField = locationField;
         }
 
+        /* (non-Javadoc)
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             BundleMonitor.addListener(this);
             open(mainPane);
         }
 
+        /* (non-Javadoc)
+         * @see org.shiwa.desktop.data.transfer.BundleReceivedListener#acceptBundleFile(java.io.File)
+         */
         @Override
         public void acceptBundleFile(File file) {
             if (file != null) {
@@ -540,6 +633,9 @@ public class BundleSubmit implements TaskConscious {
             }
         }
 
+        /* (non-Javadoc)
+         * @see org.shiwa.desktop.gui.util.listener.DefaultBundleReceivedListener#dispose()
+         */
         @Override
         public void dispose() {
         }

@@ -6,6 +6,7 @@ import org.trianacode.taskgraph.imp.ToolImp;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 import org.trianacode.taskgraph.tool.Tool;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -15,6 +16,13 @@ import org.trianacode.taskgraph.tool.Tool;
  */
 public class ToolUtils {
 
+    /**
+     * Inits the tool.
+     *
+     * @param taskHolder the task holder
+     * @param properties the properties
+     * @return the tool
+     */
     public static Tool initTool(TaskHolder taskHolder, TrianaProperties properties) {
         ToolImp tool = null;
         try {

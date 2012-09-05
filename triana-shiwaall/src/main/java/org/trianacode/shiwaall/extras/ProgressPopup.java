@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -14,12 +15,28 @@ import java.awt.event.ActionListener;
  * To change this template use File | Settings | File Templates.
  */
 public class ProgressPopup extends JDialog {
+    
+    /** The text area. */
     JTextArea textArea;
+    
+    /** The bar. */
     JProgressBar bar;
+    
+    /** The bit size. */
     int bitSize;
+    
+    /** The progress. */
     int progress = 0;
+    
+    /** The done. */
     boolean done = false;
 
+    /**
+     * Instantiates a new progress popup.
+     *
+     * @param title the title
+     * @param numberOfTasks the number of tasks
+     */
     public ProgressPopup(String title, int numberOfTasks) {
 
         Window parentWindow = this.getOwner();
@@ -61,19 +78,35 @@ public class ProgressPopup extends JDialog {
         }
     }
 
+    /**
+     * Sets the unsure time.
+     */
     public void setUnsureTime() {
         bar.setIndeterminate(true);
     }
 
+    /**
+     * Adds the text.
+     *
+     * @param text the text
+     */
     public void addText(String text) {
         textArea.append(text + "\n");
         addBit();
     }
 
+    /**
+     * Adds the text no progress.
+     *
+     * @param text the text
+     */
     public void addTextNoProgress(String text) {
         textArea.append(text + "\n");
     }
 
+    /**
+     * Adds the bit.
+     */
     private void addBit() {
         bar.setIndeterminate(false);
         progress += bitSize;
@@ -83,6 +116,9 @@ public class ProgressPopup extends JDialog {
         }
     }
 
+    /**
+     * Finish.
+     */
     public void finish() {
         bar.setValue(100);
         int wait = 0;

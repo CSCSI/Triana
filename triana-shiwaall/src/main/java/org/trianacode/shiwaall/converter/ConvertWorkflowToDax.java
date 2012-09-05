@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -34,20 +35,34 @@ import java.util.ArrayList;
  */
 public class ConvertWorkflowToDax extends AbstractAction implements ActionDisplayOptions, ConversionAddon {
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return getServiceName();
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getUsageString()
+     */
     @Override
     public String getUsageString() {
         return "";
     }
 
+    /**
+     * Instantiates a new convert workflow to dax.
+     */
     public ConvertWorkflowToDax() {
         this(DISPLAY_BOTH);
     }
 
+    /**
+     * Instantiates a new convert workflow to dax.
+     *
+     * @param displayOption the display option
+     */
     public ConvertWorkflowToDax(int displayOption) {
         putValue(SHORT_DESCRIPTION, "Convert");
         putValue(NAME, "Convert to Dax");
@@ -56,6 +71,9 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         final ApplicationFrame frame = GUIEnv.getApplicationFrame();
@@ -68,6 +86,13 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         }
     }
 
+    /**
+     * Convert.
+     *
+     * @param tg the tg
+     * @param daxFilePath the dax file path
+     * @param configFile the config file
+     */
     public void convert(final TaskGraph tg, final String daxFilePath, final File configFile) {
         Runnable runnable = new Runnable() {
             @Override
@@ -96,6 +121,15 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
 
     }
 
+    /**
+     * Run dax creator workflow.
+     *
+     * @param daxifiedTaskGraph the daxified task graph
+     * @param configFile the config file
+     * @return the int
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws TaskGraphException the task graph exception
+     */
     private int runDaxCreatorWorkflow(Tool daxifiedTaskGraph, File configFile) throws IOException, TaskGraphException {
         addInputsToDaxifiedTaskGraph((TaskGraph) daxifiedTaskGraph, configFile);
 
@@ -121,6 +155,14 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         return errorNumber;
     }
 
+    /**
+     * Adds the inputs to daxified task graph.
+     *
+     * @param daxifiedTaskGraph the daxified task graph
+     * @param conf the conf
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws TaskGraphException the task graph exception
+     */
     private void addInputsToDaxifiedTaskGraph(TaskGraph daxifiedTaskGraph, File conf) throws IOException, TaskGraphException {
         if (conf == null || !conf.exists()) {
         } else {
@@ -175,6 +217,15 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         }
     }
 
+    /**
+     * Adds the file unit.
+     *
+     * @param sendnode the sendnode
+     * @param recnode the recnode
+     * @param clone the clone
+     * @return the task
+     * @throws CableException the cable exception
+     */
     private Task addFileUnit(Node sendnode, Node recnode, TaskGraph clone) throws CableException {
         Task fileTask = null;
         Task task = null;
@@ -202,6 +253,13 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         return task;
     }
 
+    /**
+     * Save task graph.
+     *
+     * @param daxifiedTaskGraph the daxified task graph
+     * @param tempFilePath the temp file path
+     * @return the file
+     */
     private File saveTaskGraph(TaskGraph daxifiedTaskGraph, String tempFilePath) {
         File file = null;
         try {
@@ -215,21 +273,33 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         return file;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflow(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Object toolToWorkflow(Tool tool) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#workflowToTool(java.lang.Object)
+     */
     @Override
     public Tool workflowToTool(Object workflowObject) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#processWorkflow(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Tool processWorkflow(Tool workflow) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflowFile(org.trianacode.taskgraph.tool.Tool, java.io.File, java.lang.String)
+     */
     @Override
     public File toolToWorkflowFile(Tool tool, File configFile, String filePath) throws Exception {
 //        CommandLinePegasus.initTaskgraph((TaskGraph) tool, filePath, false);
@@ -237,6 +307,9 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         return new File(filePath);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflowFileInputStream(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public InputStream toolToWorkflowFileInputStream(Tool tool) {
         try {
@@ -247,21 +320,33 @@ public class ConvertWorkflowToDax extends AbstractAction implements ActionDispla
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getServiceName()
+     */
     @Override
     public String getServiceName() {
         return "Pegasus Dax";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getLongOption()
+     */
     @Override
     public String getLongOption() {
         return "convert-dax";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getShortOption()
+     */
     @Override
     public String getShortOption() {
         return "dax";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getDescription()
+     */
     @Override
     public String getDescription() {
         return "Converts a taskgraph formed of DaxFiles and DaxJobs to a Pegasus .dax file";

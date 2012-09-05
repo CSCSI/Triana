@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -27,20 +28,45 @@ import java.io.File;
 @Tool
 public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Displayer {
 
+    /** The url field. */
     JTextField urlField = new JTextField("");
+    
+    /** The dax field. */
     JTextField daxField = new JTextField("");
+    
+    /** The prop field. */
     JTextField propField = new JTextField("");
+    
+    /** The rc field. */
     JTextField rcField = new JTextField("");
+    
+    /** The sc field. */
     JTextField scField = new JTextField("");
+    
+    /** The tc field. */
     JTextField tcField = new JTextField("");
 
+    /** The jmdns button. */
     JRadioButton jmdnsButton = new JRadioButton(auto, false);
+    
+    /** The url button. */
     JRadioButton urlButton = new JRadioButton(manual, false);
+    
+    /** The run local button. */
     JRadioButton runLocalButton = new JRadioButton(local, false);
+    
+    /** The popup. */
     private ProgressPopup popup;
+    
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
 
+    /**
+     * Fake process.
+     *
+     * @param file the file
+     */
     @Process
     public void fakeProcess(File file) {
         popup = new ProgressPopup("Finding Pegasus", 30);
@@ -51,6 +77,9 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
     }
 
 
+    /**
+     * Sets the params.
+     */
     private void setParams() {
         task.setParameter(dax, daxField.getText());
         task.setParameter(prop, propField.getText());
@@ -62,6 +91,11 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
 
     }
 
+    /**
+     * Gets the params.
+     *
+     * @return the params
+     */
     private void getParams() {
         if (task != null) {
             try {
@@ -96,6 +130,9 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
         }
     }
 
+    /**
+     * Fill maps.
+     */
     private void fillMaps() {
         locationMap.put(dax, daxField);
         locationMap.put(prop, propField);
@@ -108,6 +145,9 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
         radioMap.put(local, runLocalButton);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.DaxToPegasusUnit#displayMessage(java.lang.String)
+     */
     public void displayMessage(String string) {
         if (popup == null) {
             popup = new ProgressPopup("Finding Pegasus", 30);
@@ -115,6 +155,9 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
         popup.addText(string);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.DaxToPegasusUnit#getComponent()
+     */
     @CustomGUIComponent
     public Component getComponent() {
         ActionPerformer actionPerformer = new ActionPerformer();
@@ -231,7 +274,14 @@ public class DaxToPegasus extends DaxToPegasusUnit implements TaskConscious, Dis
         return mainPane;
     }
 
+    /**
+     * The Class ActionPerformer.
+     */
     class ActionPerformer implements ActionListener {
+        
+        /* (non-Javadoc)
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
         public void actionPerformed(ActionEvent ae) {
             if (locationMap.containsKey(ae.getActionCommand())) {
                 JFileChooser chooser = new JFileChooser();

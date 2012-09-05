@@ -42,7 +42,7 @@ public class DaxCreatorV3 implements TaskConscious {
 //    private ArrayList<String> PFLarray;
 
     @CheckboxParameter
-    public boolean demo = true;
+    public boolean demo = false;
 
     @CheckboxParameter
     public boolean publish = true;
@@ -92,7 +92,6 @@ public class DaxCreatorV3 implements TaskConscious {
 
     private void daxFromInList(List in) {
 
-        //needs to be in the new isi.org.trianacode.shiwaall.gui
 
         ADAG dax = new ADAG(fileName);
 
@@ -137,12 +136,13 @@ public class DaxCreatorV3 implements TaskConscious {
         //      register.listAll();
 
         idNumber = 0;
+        java.io.File filenameFile = new java.io.File(fileName);
         if(task.getParameter("namespace") != null){
             namespace = (String) task.getParameter("namespace");
         } else {
-            namespace = fileName;
+            namespace = filenameFile.getName();
         }
-        ADAG dax = new ADAG(fileName);
+        ADAG dax = new ADAG(filenameFile.getName());
 
         HashMap<String, Executable> execs = new HashMap<String, Executable>();
 

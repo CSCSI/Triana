@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -25,30 +26,54 @@ import java.util.UUID;
 @Tool //(renderingHints = {"DAX File"})
 public class FileUnit implements TaskConscious, Displayer {
 
+    /** The Constant PHYSICAL_FILE. */
     public static final String PHYSICAL_FILE = "physicalFile";
+    
+    /** The Constant FILE_URL. */
     public static final String FILE_URL = "locationString";
 
+    /** The location string. */
     @Parameter
     public String locationString = "";   //wtf?
 
+    /** The physical file. */
     @Parameter
     public boolean physicalFile = false;
+    
+    /** The file protocol. */
     @Parameter
     public String fileProtocol = "";
+    
+    /** The number of files. */
     @Parameter
     public int numberOfFiles = 1;
 
 
+    /** The naming pattern. */
     @Parameter
     public PatternCollection namingPattern = null;
 
+    /** The file name. */
     public String fileName = "a.txt";
+    
+    /** The collection. */
     public boolean collection = false;
+    
+    /** The one2one. */
     public boolean one2one = false;
 
+    /** The task. */
     public Task task;
+    
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
+    /**
+     * File unit process.
+     *
+     * @param in the in
+     * @return the uuid
+     */
     @org.trianacode.annotation.Process(gather = true)
     public UUID fileUnitProcess(List in) {
         fileName = task.getToolName();
@@ -122,6 +147,9 @@ public class FileUnit implements TaskConscious, Displayer {
         return thisFile.getUuid();
     }
 
+    /**
+     * Sets the params.
+     */
     public void setParams() {
         if (task != null) {
             task.setParameter("numberOfFiles", numberOfFiles);
@@ -138,6 +166,11 @@ public class FileUnit implements TaskConscious, Displayer {
         }
     }
 
+    /**
+     * Gets the params.
+     *
+     * @return the params
+     */
     public void getParams() {
         if (task != null) {
             fileName = getFileName();
@@ -152,7 +185,9 @@ public class FileUnit implements TaskConscious, Displayer {
     }
 
     /**
-     * Various getting and setting of parameters
+     * Various getting and setting of parameters.
+     *
+     * @param name the name
      */
     public void changeToolName(String name) {
         fileName = name;
@@ -164,6 +199,11 @@ public class FileUnit implements TaskConscious, Displayer {
         }
     }
 
+    /**
+     * Gets the file name.
+     *
+     * @return the file name
+     */
     private String getFileName() {
         Object o = task.getParameter("fileName");
         if (o != null && !((String) o).equals("")) {
@@ -172,6 +212,11 @@ public class FileUnit implements TaskConscious, Displayer {
         return fileName;
     }
 
+    /**
+     * Gets the naming pattern.
+     *
+     * @return the naming pattern
+     */
     public PatternCollection getNamingPattern() {
         Object o = task.getParameter("namingPattern");
         if (o instanceof PatternCollection) {
@@ -181,6 +226,11 @@ public class FileUnit implements TaskConscious, Displayer {
         return null;
     }
 
+    /**
+     * Checks if is collection.
+     *
+     * @return true, if is collection
+     */
     public boolean isCollection() {
         Object o = task.getParameter("collection");
         if (o != null) {
@@ -191,6 +241,11 @@ public class FileUnit implements TaskConscious, Displayer {
         return false;
     }
 
+    /**
+     * Checks if is one2one.
+     *
+     * @return true, if is one2one
+     */
     public boolean isOne2one() {
         Object o = task.getParameter("one2one");
         if (o != null) {
@@ -201,6 +256,11 @@ public class FileUnit implements TaskConscious, Displayer {
         return false;
     }
 
+    /**
+     * Gets the number of files.
+     *
+     * @return the number of files
+     */
     public int getNumberOfFiles() {
         Object o = task.getParameter("numberOfFiles");
         if (o != null) {
@@ -213,6 +273,11 @@ public class FileUnit implements TaskConscious, Displayer {
         return 1;
     }
 
+    /**
+     * Checks if is physical file.
+     *
+     * @return true, if is physical file
+     */
     private boolean isPhysicalFile() {
         Object o = task.getParameter(PHYSICAL_FILE);
         if (o != null) {
@@ -223,6 +288,11 @@ public class FileUnit implements TaskConscious, Displayer {
         return false;
     }
 
+    /**
+     * Gets the file location.
+     *
+     * @return the file location
+     */
     public String getFileLocation() {
         Object o = task.getParameter(FILE_URL);
         if (o != null && !((String) o).equals("")) {
@@ -231,6 +301,11 @@ public class FileUnit implements TaskConscious, Displayer {
         return "";
     }
 
+    /**
+     * Gets the file protocol.
+     *
+     * @return the file protocol
+     */
     public String getFileProtocol() {
         Object o = task.getParameter("fileProtocol");
         if (o != null && !((String) o).equals("")) {
@@ -239,17 +314,28 @@ public class FileUnit implements TaskConscious, Displayer {
         return "";
     }
 
+    /**
+     * Gets the component.
+     *
+     * @return the component
+     */
     @CustomGUIComponent
     public Component getComponent() {
         return new JLabel("This is a non-gui tool. Use the triana-pegasus-gui toolbox for more options.");
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;
         getParams();
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.Displayer#displayMessage(java.lang.String)
+     */
     @Override
     public void displayMessage(String string) {
         devLog.debug(string);

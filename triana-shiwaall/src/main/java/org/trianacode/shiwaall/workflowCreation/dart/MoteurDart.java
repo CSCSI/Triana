@@ -9,6 +9,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created with IntelliJ IDEA.
  * User: ian
@@ -20,9 +21,18 @@ import java.io.FileWriter;
 @Tool
 public class MoteurDart {
 
+    /** The url field. */
     JTextField urlField = new JTextField("");
+    
+    /** The number of lines. */
     JTextField numberOfLines = new JTextField("");
 
+    /**
+     * Process.
+     *
+     * @param strings the strings
+     * @return the file
+     */
     @Process
     public File process(String[] strings){
 
@@ -52,6 +62,11 @@ public class MoteurDart {
         return null;
     }
 
+    /**
+     * Gets the gui.
+     *
+     * @return the gui
+     */
     @CustomGUIComponent
     public Component getGui(){
         JPanel jPanel = new JPanel();

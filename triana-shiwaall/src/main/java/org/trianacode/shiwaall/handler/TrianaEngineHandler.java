@@ -19,6 +19,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Set;
 
+// TODO: Auto-generated Javadoc
 /**
 * Created by IntelliJ IDEA.
 * User: Ian Harvey
@@ -28,33 +29,58 @@ import java.util.Set;
 */
 public class TrianaEngineHandler implements WorkflowEngineHandler {
 
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
+    /** The task. */
     private Task task;
+    
+    /** The display image. */
     private InputStream displayImage;
+    
+    /** The triana instance. */
     private TrianaInstance trianaInstance;
 
+    /**
+     * Instantiates a new triana engine handler.
+     *
+     * @param task the task
+     * @param trianaInstance the triana instance
+     * @param displayImage the display image
+     */
     public TrianaEngineHandler(Task task, TrianaInstance trianaInstance, InputStream displayImage) {
         this.task = task;
         this.trianaInstance = trianaInstance;
         this.displayImage = displayImage;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getEngineName(java.util.Set)
+     */
     @Override
     public String getEngineName(Set<String> engines) {
         return "Triana";
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getEngineVersion()
+     */
     @Override
     public String getEngineVersion() {
         return (String) task.getProperties().get(TrianaProperties.VERSION);
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getWorkflowLanguage(java.util.Set)
+     */
     @Override
     public String getWorkflowLanguage(Set<String> languages) {
         return "triana-taskgraph";
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getSignature()
+     */
     @Override
     public TransferSignature getSignature() {
         TransferSignature signature = new TransferSignature();
@@ -65,6 +91,11 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         return signature;
     }
 
+    /**
+     * Sets the output ports.
+     *
+     * @param signature the new output ports
+     */
     private void setOutputPorts(TransferSignature signature) {
         for (int i = 0; i < task.getDataOutputNodeCount(); i++) {
             String s = task.getDataOutputTypes(i)[0];
@@ -72,6 +103,11 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         }
     }
 
+    /**
+     * Sets the input ports.
+     *
+     * @param signature the new input ports
+     */
     private void setInputPorts(TransferSignature signature) {
         for (int i = 0; i < task.getDataInputNodeCount(); i++) {
             String s = task.getDataInputTypes(i)[0];
@@ -79,6 +115,9 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getDefinition()
+     */
     @Override
     public InputStream getDefinition() {
         try {
@@ -97,37 +136,62 @@ public class TrianaEngineHandler implements WorkflowEngineHandler {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getDefinitionName()
+     */
     @Override
     public String getDefinitionName() {
         return task.getQualifiedTaskName();
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getDisplayImage()
+     */
     @Override
     public InputStream getDisplayImage() {
         devLog.debug("Sending display image to ShiwaDesktop");
         return displayImage;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getDisplayImageName()
+     */
     @Override
     public String getDisplayImageName() {
         return task.getQualifiedTaskName() + "-image.jpg";
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getAuthors()
+     */
     @Override
     public List<Author> getAuthors() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getVersion()
+     */
     @Override
     public String getVersion() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getDescription()
+     */
     @Override
     public String getDescription() {
         return null;
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws TaskGraphException the task graph exception
+     */
     public static void main(String[] args) throws IOException, TaskGraphException {
         String wf = args[0];
         File f = new File(wf);

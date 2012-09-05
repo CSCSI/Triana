@@ -18,7 +18,8 @@ import org.trianacode.enactment.io.*;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.panels.DisplayDialog;
+import org.trianacode.gui.hci.TrianaProgressBar;
+import org.trianacode.shiwaall.dax.DaxReader;
 import org.trianacode.shiwaall.iwir.importer.utils.ImportIwir;
 import org.trianacode.shiwaall.utils.WorkflowUtils;
 import org.trianacode.taskgraph.*;
@@ -39,29 +40,47 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
-* Created by IntelliJ IDEA.
-* User: Ian Harvey
-* Date: 06/07/2011
-* Time: 14:22
-* To change this template use File | Settings | File Templates.
-*/
+ * Created by IntelliJ IDEA.
+ * User: Ian Harvey
+ * Date: 06/07/2011
+ * Time: 14:22
+ * To change this template use File | Settings | File Templates.
+ *
+ * @see TrianaShiwaEvent
+ */
 public class TrianaShiwaListener implements ExecutionListener {
 
+    /** The triana instance. */
     private TrianaInstance trianaInstance;
-    private DisplayDialog dialog;
+    
+    /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
+    /** The received listener. */
     private DefaultBundleReceivedListener receivedListener = null;
+    
+    /** The shiwa desktop. */
     private SHIWADesktop shiwaDesktop = null;
 
 
-    public TrianaShiwaListener(TrianaInstance trianaInstance, DisplayDialog dialog) {
+    /**
+     * Instantiates a new triana shiwa listener.
+     *
+     * @param trianaInstance the triana instance
+     */
+    public TrianaShiwaListener(TrianaInstance trianaInstance) {
         this.trianaInstance = trianaInstance;
-        this.dialog = dialog;
-
     }
 
+    /**
+     * Gets the iO config from signature.
+     *
+     * @param name the name
+     * @param signature the signature
+     * @return the iO config from signature
+     */
     public IoConfiguration getIOConfigFromSignature(String name, TransferSignature signature) {
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
@@ -100,6 +119,15 @@ public class TrianaShiwaListener implements ExecutionListener {
         return conf;
     }
 
+    /**
+     * Write configuration resource to file.
+     *
+     * @param configurationResource the configuration resource
+     * @param file the file
+     * @param outputLocation the output location
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public static File writeConfigurationResourceToFile(ConfigurationResource configurationResource, File file, File outputLocation) throws IOException {
         String longName = configurationResource.getBundleFile().getFilename();
         if (file == null) {
@@ -110,8 +138,11 @@ public class TrianaShiwaListener implements ExecutionListener {
         return DataUtils.extractToFile(configurationResource, file);
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.ExecutionListener#digestWorkflow(java.io.File, java.io.File, org.shiwa.desktop.data.description.handler.TransferSignature)
+     */
     @Override
-    public void digestWorkflow(File workflowDefinitionFile, File fgiBundleFile, TransferSignature signature) {
+    public void digestWorkflow(final File workflowDefinitionFile, final File fgiBundleFile, final TransferSignature signature) {
         devLog.debug("Importing a bundle");
 
         if (receivedListener != null) {
@@ -124,37 +155,47 @@ public class TrianaShiwaListener implements ExecutionListener {
 
         try {
             if (GUIEnv.getApplicationFrame() != null) {
-                String workflowType = WorkflowUtils.getWorkflowType(workflowDefinitionFile, signature);
+                final String workflowType = WorkflowUtils.getWorkflowType(workflowDefinitionFile, signature);
                 if (workflowType == null) {
                     System.out.println("No workflow type detected");
                 } else {
-                    TaskGraph taskGraph;
-                    if (workflowType.equals(AddonUtils.TASKGRAPH_FORMAT)) {
-                        System.out.println("Taskgraph");
-                        taskGraph = TaskGraphFileHandler.openTaskgraph(workflowDefinitionFile, true);
-                    } else if (workflowType.equals(AddonUtils.IWIR_FORMAT)) {
-                        System.out.println("IWIR");
-                        IWIR iwir = new IWIR(workflowDefinitionFile);
-                        taskGraph = new ImportIwir().taskFromIwir(iwir, fgiBundleFile);
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
 
-                        taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+                            try{
 
-//                        ConversionAddon conversionAddon = (ConversionAddon) AddonUtils.getService(trianaInstance, "IWIR-To-Task", ConversionAddon.class);
-//                        if (conversionAddon != null) {
-//                            taskGraph = (TaskGraph) conversionAddon.workflowToTool(file);
+                                TrianaProgressBar trianaProgressBar =
+                                        new TrianaProgressBar("Loading " + workflowType + " workflow", false);
 
-//                        taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
-//                        } else {
-//                            System.out.println("Failed to convert IWIR workflow");
-//                        }
-                    } else {
-                        System.out.println("Failed to recognise type : " + workflowType);
-                        return;
-                    }
+                                TaskGraph taskGraph;
 
-                    if (signature.hasConfiguration()) {
-                        createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
-                    }
+                                if (workflowType.equals(AddonUtils.TASKGRAPH_FORMAT)) {
+                                    System.out.println("Taskgraph");
+                                    taskGraph = TaskGraphFileHandler.openTaskgraph(workflowDefinitionFile, true);
+                                } else if (workflowType.equals(AddonUtils.IWIR_FORMAT)) {
+                                    System.out.println("IWIR");
+                                    IWIR iwir = new IWIR(workflowDefinitionFile);
+                                    taskGraph = new ImportIwir().taskFromIwir(iwir, fgiBundleFile);
+
+                                    taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+
+                                } else if (workflowType.equals(AddonUtils.DAX_FORMAT)) {
+                                    taskGraph = new DaxReader().importWorkflow(workflowDefinitionFile, TaskGraphManager.createTaskGraph().getProperties());
+                                    taskGraph = GUIEnv.getApplicationFrame().addParentTaskGraphPanel(taskGraph);
+                                } else {
+                                    System.out.println("Failed to recognise type : " + workflowType);
+                                    return;
+                                }
+
+                                if (signature.hasConfiguration()) {
+                                    createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
+                                }
+                                trianaProgressBar.disposeProgressBar();
+                            }catch (Exception e){}
+                        }
+                    });
+                    thread.start();
                 }
             } else {
                 devLog.debug("No gui found, running headless");
@@ -172,12 +213,24 @@ public class TrianaShiwaListener implements ExecutionListener {
 
 
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.ExecutionListener#ignoreBundle()
+     */
     @Override
     public boolean ignoreBundle() {
         return false;
     }
 
 
+    /**
+     * Execute workflow in gui.
+     *
+     * @param toolName the tool name
+     * @param tool the tool
+     * @param signature the signature
+     * @throws TaskGraphException the task graph exception
+     * @throws SchedulerException the scheduler exception
+     */
     private void executeWorkflowInGUI(String toolName, Tool tool, TransferSignature signature) throws TaskGraphException, SchedulerException {
         TrianaRun runner = new TrianaRun(tool);
         IoConfiguration ioc = getIOConfigFromSignature(toolName, signature);
@@ -218,6 +271,13 @@ public class TrianaShiwaListener implements ExecutionListener {
 
     }
 
+    /**
+     * Exec.
+     *
+     * @param loadedTask the loaded task
+     * @param conf the conf
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private void exec(Task loadedTask, IoConfiguration conf) throws IOException {
         DocumentHandler documentHandler = new DocumentHandler();
         new IoHandler().serialize(documentHandler, conf);
@@ -234,6 +294,12 @@ public class TrianaShiwaListener implements ExecutionListener {
         }
     }
 
+    /**
+     * Creates the config unit.
+     *
+     * @param taskgraph the taskgraph
+     * @param ioConfiguration the io configuration
+     */
     private void createConfigUnit(TaskGraph taskgraph, IoConfiguration ioConfiguration) {
         try {
             IoHandler handler = new IoHandler();
@@ -288,10 +354,22 @@ public class TrianaShiwaListener implements ExecutionListener {
         }
     }
 
+    /**
+     * Sets the received listener.
+     *
+     * @param receivedListener the new received listener
+     */
     public void setReceivedListener(DefaultBundleReceivedListener receivedListener) {
         this.receivedListener = receivedListener;
     }
 
+    /**
+     * Gets the node in scope.
+     *
+     * @param inputNode the input node
+     * @param taskGraph the task graph
+     * @return the node in scope
+     */
     private Node getNodeInScope(Node inputNode, TaskGraph taskGraph) {
         Node scopeNode = inputNode.getTopLevelNode();
         while (scopeNode.getTask().getParent() != taskGraph && scopeNode != null) {
@@ -300,6 +378,14 @@ public class TrianaShiwaListener implements ExecutionListener {
         return scopeNode;
     }
 
+    /**
+     * Gets the var tool.
+     *
+     * @param properties the properties
+     * @return the var tool
+     * @throws TaskException the task exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     */
     private Tool getVarTool(TrianaProperties properties) throws TaskException, ProxyInstantiationException {
         ToolImp varTool = new ToolImp(properties);
         varTool.setToolPackage(VariableDummyUnit.class.getPackage().getName());
@@ -309,6 +395,11 @@ public class TrianaShiwaListener implements ExecutionListener {
         return varTool;
     }
 
+    /**
+     * Adds the shiwa desktop.
+     *
+     * @param shiwaDesktop the shiwa desktop
+     */
     public void addSHIWADesktop(SHIWADesktop shiwaDesktop) {
         this.shiwaDesktop = shiwaDesktop;
     }

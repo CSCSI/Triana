@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -22,22 +23,34 @@ import java.io.InputStream;
  */
 public class TaskToIWIRAddon implements ConversionAddon {
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "IWIR";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getUsageString()
+     */
     @Override
     public String getUsageString() {
         return "";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflow(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Object toolToWorkflow(Tool tool) throws IOException {
         ExportIwir exportIwir = new ExportIwir();
         return exportIwir.taskGraphToBlockScope((TaskGraph) tool);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#workflowToTool(java.lang.Object)
+     */
     @Override
     public Tool workflowToTool(Object workflowObject) {
         try {
@@ -65,11 +78,17 @@ public class TaskToIWIRAddon implements ConversionAddon {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#processWorkflow(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public Tool processWorkflow(Tool workflow) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflowFile(org.trianacode.taskgraph.tool.Tool, java.io.File, java.lang.String)
+     */
     @Override
     public File toolToWorkflowFile(Tool tool, File configFile, String filePath) throws Exception {
         ExportIwir exportIwir = new ExportIwir();
@@ -78,6 +97,9 @@ public class TaskToIWIRAddon implements ConversionAddon {
         return outputFile;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ConversionAddon#toolToWorkflowFileInputStream(org.trianacode.taskgraph.tool.Tool)
+     */
     @Override
     public InputStream toolToWorkflowFileInputStream(Tool tool) {
         try {
@@ -95,21 +117,33 @@ public class TaskToIWIRAddon implements ConversionAddon {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getServiceName()
+     */
     @Override
     public String getServiceName() {
         return "TaskGraphToIWIR";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getLongOption()
+     */
     @Override
     public String getLongOption() {
         return "iwir-converter";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getShortOption()
+     */
     @Override
     public String getShortOption() {
         return "iwir";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getDescription()
+     */
     @Override
     public String getDescription() {
         return "Converts TaskGraph objects to IWIR blockscopes, or IWIR files.";

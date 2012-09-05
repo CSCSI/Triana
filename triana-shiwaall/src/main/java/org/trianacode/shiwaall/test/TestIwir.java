@@ -5,6 +5,7 @@ import org.shiwa.fgi.iwir.*;
 import java.io.File;
 import java.io.IOException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -14,12 +15,22 @@ import java.io.IOException;
  */
 public class TestIwir {
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         TestIwir testIwir = new TestIwir();
         testIwir.testIwir();
     }
 
 
+    /**
+     * Test iwir.
+     *
+     * @return the iwir
+     */
     private IWIR testIwir() {
 
         IWIR crossProduct = null;
@@ -44,6 +55,11 @@ public class TestIwir {
 
     }
 
+    /**
+     * Builds the.
+     *
+     * @return the iwir
+     */
     private IWIR build() {
         IWIR i = new IWIR("crossProduct");
 

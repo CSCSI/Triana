@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// TODO: Auto-generated Javadoc
 /**
 * Created by IntelliJ IDEA.
 * User: Ian Harvey
@@ -29,14 +30,28 @@ import java.util.Set;
 */
 public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
+    /** The iwir. */
     private IWIR iwir;
+    
+    /** The image input stream. */
     private InputStream imageInputStream;
+    
+    /** The jsdls. */
     private Map<String, FGITaskHandler> jsdls = null;
 
 
     //For internal testing
+    /**
+     * Instantiates a new triana iwir handler.
+     */
     private TrianaIWIRHandler(){}
 
+    /**
+     * Instantiates a new triana iwir handler.
+     *
+     * @param taskGraph the task graph
+     * @param trianaImage the triana image
+     */
     public TrianaIWIRHandler(TaskGraph taskGraph, InputStream trianaImage) {
         try {
             init(taskGraph);
@@ -46,6 +61,12 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
         }
     }
 
+    /**
+     * Gets the image input stream.
+     *
+     * @param trianaImage the triana image
+     * @return the image input stream
+     */
     private InputStream getImageInputStream(InputStream trianaImage){
         InputStream image;
         try{
@@ -67,6 +88,12 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
         return image;
     }
 
+    /**
+     * Inits the.
+     *
+     * @param taskGraph the task graph
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private void init(TaskGraph taskGraph) throws IOException {
         ExportIwir exportIwir = new ExportIwir();
         BlockScope blockscope = exportIwir.taskGraphToBlockScope(taskGraph);
@@ -84,6 +111,14 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws JAXBException the jAXB exception
+     * @throws FileImTeaPotException the file im tea pot exception
+     */
     public static void main(String[] args) throws IOException, JAXBException, FileImTeaPotException {
         TrianaIWIRHandler trianaIWIRHandler = new TrianaIWIRHandler();
 
@@ -93,6 +128,14 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
     }
 
+    /**
+     * Prepare jsd ls.
+     *
+     * @param iwir the iwir
+     * @throws JAXBException the jAXB exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws FileImTeaPotException the file im tea pot exception
+     */
     private void prepareJSDLs(IWIR iwir) throws JAXBException, IOException, FileImTeaPotException {
         jsdls = new HashMap<String, FGITaskHandler>();
         Parser parser = new Parser();
@@ -171,21 +214,33 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getEngineName(java.util.Set)
+     */
     @Override
     public String getEngineName(Set<String> strings) {
         return "Triana";
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getEngineVersion()
+     */
     @Override
     public String getEngineVersion() {
         return "4.0";
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getWorkflowLanguage(java.util.Set)
+     */
     @Override
     public String getWorkflowLanguage(Set<String> strings) {
         return "IWIR";
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getSignature()
+     */
     @Override
     public TransferSignature getSignature() {
         TransferSignature signature = new TransferSignature();
@@ -200,6 +255,9 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
         return signature;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getDefinition()
+     */
     @Override
     public InputStream getDefinition() {
         try {
@@ -210,41 +268,63 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getDefinitionName()
+     */
     @Override
     public String getDefinitionName() {
         return iwir.getWfname();
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getDisplayImage()
+     */
     @Override
     public InputStream getDisplayImage() {
         return imageInputStream;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.WorkflowEngineHandler#getDisplayImageName()
+     */
     @Override
     public String getDisplayImageName() {
         return iwir.getWfname() + "-image.jpg";
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getAuthors()
+     */
     @Override
     public List<Author> getAuthors() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getDescription()
+     */
     @Override
     public String getDescription() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.TaskHandler#getVersion()
+     */
     @Override
     public String getVersion() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.shiwa.desktop.data.transfer.FGIWorkflowEngineHandler#getTaskHandlers()
+     */
     @Override
     public Map<String, FGITaskHandler> getTaskHandlers() {
         return jsdls;
     }
 
+    /** The horrible jsd lhack. */
     private static String horribleJSDLhack = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<JobDefinition xmlns=\"http://schemas.ggf.org/jsdl/2005/11/jsdl\" xmlns:ns2=\"http://schemas.ggf.org/jsdl/2005/11/jsdl-posix\" xmlns:ns3=\"extension.dci\" xmlns:ns4=\"uri:MBSchedulingDescriptionLanguage\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://schemas.ggf.org/jsdl/2005/11/jsdl\">\n" +
             "    <JobDescription>\n" +

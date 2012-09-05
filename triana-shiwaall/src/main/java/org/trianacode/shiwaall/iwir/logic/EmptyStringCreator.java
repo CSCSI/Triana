@@ -4,6 +4,7 @@ import org.trianacode.taskgraph.Unit;
 
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -14,16 +15,25 @@ import java.util.ArrayList;
 
 public class EmptyStringCreator extends Unit {
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#getInputTypes()
+     */
     @Override
     public String[] getInputTypes() {
         return new String[]{"java.lang.Object"};
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#getOutputTypes()
+     */
     @Override
     public String[] getOutputTypes() {
         return new String[]{"java.lang.Object"};
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.Unit#process()
+     */
     public void process() {
 
         if (this.getInputNodeCount() > 0) {

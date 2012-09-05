@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -35,42 +36,81 @@ import java.util.List;
 @Tool
 public class DaxToPegasusUnit implements TaskConscious, Displayer {
 
+    /** The zip file. */
     File zipFile = null;
+    
+    /** The task. */
     public Task task;
 
 
+    /** The location map. */
     public HashMap<String, JTextField> locationMap = new HashMap<String, JTextField>();
+    
+    /** The radio map. */
     public HashMap<String, JRadioButton> radioMap = new HashMap<String, JRadioButton>();
 
+    /** The Constant dax. */
     public static final String dax = "daxLocation";
+    
+    /** The Constant prop. */
     public static final String prop = "propLocation";
+    
+    /** The Constant rc. */
     public static final String rc = "rcLocation";
+    
+    /** The Constant sites. */
     public static final String sites = "sitesLocation";
+    
+    /** The Constant tc. */
     public static final String tc = "tcLocation";
 
+    /** The Constant auto. */
     public static final String auto = "AUTO";
+    
+    /** The Constant manual. */
     public static final String manual = "URL";
+    
+    /** The Constant local. */
     public static final String local = "LOCAL";
 
+    /** The dev log. */
     Log devLog = Loggers.DEV_LOGGER;
 
 
+    /** The location service. */
     @Parameter
     public String locationService = auto;
+    
+    /** The manual url. */
     @Parameter
     String manualURL = "";
+    
+    /** The prop location. */
     @Parameter
     String propLocation = "../bonjourpegasus/bin/config/properties";
+    
+    /** The dax location. */
     @Parameter
     String daxLocation = "../bonjourpegasus/bin/dax/diamond.dax";
+    
+    /** The rc location. */
     @Parameter
     String rcLocation = "../bonjourpegasus/bin/config/rc.data";
+    
+    /** The tc location. */
     @Parameter
     String tcLocation = "../bonjourpegasus/bin/config/tc.data";
+    
+    /** The sites location. */
     @Parameter
     String sitesLocation = "../bonjourpegasus/bin/config/sites.xml";
 
 
+    /**
+     * Process.
+     *
+     * @param object the object
+     */
     @Process
     public void process(Object object) {
 
@@ -122,21 +162,37 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
         }
     }
 
+    /**
+     * Gets the component.
+     *
+     * @return the component
+     */
     @CustomGUIComponent
     public Component getComponent() {
         return new JLabel("This is the non-gui version of this tool. " +
                 "Please use DaxToPegasus from Triana-Pegasus-GUI for more options.");
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.dax.Displayer#displayMessage(java.lang.String)
+     */
     public void displayMessage(String string) {
         devLog.debug(string);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.taskgraph.annotation.TaskConscious#setTask(org.trianacode.taskgraph.Task)
+     */
     @Override
     public void setTask(Task task) {
         this.task = task;
     }
 
+    /**
+     * Gets the and check files.
+     *
+     * @return the and check files
+     */
     private boolean getAndCheckFiles() {
         ArrayList<String> files = new ArrayList<String>();
         files.add(this.getPropertiesLocation());
@@ -148,6 +204,12 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
         return checkExists(files);
     }
 
+    /**
+     * Check exists.
+     *
+     * @param files the files
+     * @return true, if successful
+     */
     private boolean checkExists(ArrayList files) {
         for (Object file : files) {
             String location = (String) file;
@@ -174,7 +236,7 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
      * Sends dax related data to the org.trianacode.shiwaall.gui server defined by the JmDNS search
      * If service not found on predicted port (normally 8080), will try 8081, 8082...8090.
      *
-     * @param info
+     * @param info the info
      */
     private void sendToPegasus(ServiceInfo info) {
         displayMessage("Setting properties.");
@@ -252,9 +314,9 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
     }
 
     /**
-     * Sends dax related data to a user specified, manually entered url
+     * Sends dax related data to a user specified, manually entered url.
      *
-     * @param url
+     * @param url the url
      */
     private void sendToPegasus(String url) {
 
@@ -335,26 +397,54 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
 
     }
 
+    /**
+     * Gets the properties location.
+     *
+     * @return the properties location
+     */
     public String getPropertiesLocation() {
         return propLocation;
     }
 
+    /**
+     * Gets the dax location.
+     *
+     * @return the dax location
+     */
     public String getDaxLocation() {
         return daxLocation;
     }
 
+    /**
+     * Gets the rc location.
+     *
+     * @return the rc location
+     */
     public String getRcLocation() {
         return rcLocation;
     }
 
+    /**
+     * Gets the tc location.
+     *
+     * @return the tc location
+     */
     public String getTcLocation() {
         return tcLocation;
     }
 
+    /**
+     * Gets the sites location.
+     *
+     * @return the sites location
+     */
     public String getSitesLocation() {
         return sitesLocation;
     }
 
+    /**
+     * Run local.
+     */
     private void runLocal() {
         devLog.debug("Running locally");
         List commmandStrVector = new ArrayList();
@@ -383,6 +473,11 @@ public class DaxToPegasusUnit implements TaskConscious, Displayer {
         runExec("condor_q");
     }
 
+    /**
+     * Run exec.
+     *
+     * @param cmd the cmd
+     */
     private void runExec(String cmd) {
         try {
             Runtime runtime = Runtime.getRuntime();

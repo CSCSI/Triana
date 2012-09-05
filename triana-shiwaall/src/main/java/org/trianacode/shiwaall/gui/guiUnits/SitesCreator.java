@@ -8,18 +8,43 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SitesCreator.
+ */
 class SitesCreator extends JDialog {
+    
+    /** The sites file. */
     File sitesFile = null;
+    
+    /** The cluster name field. */
     private JTextField clusterNameField;
+    
+    /** The hostname field. */
     private JTextField hostnameField;
+    
+    /** The gate keeper type field. */
     private JTextField gateKeeperTypeField;
+    
+    /** The gate keeper port field. */
     private JTextField gateKeeperPortField;
+    
+    /** The scheduler field. */
     private JTextField schedulerField;
+    
+    /** The work dir field. */
     private JTextField workDirField;
+    
+    /** The pegasus home field. */
     private JTextField pegasusHomeField;
+    
+    /** The globus location field. */
     private JTextField globusLocationField;
 
 
+    /**
+     * Instantiates a new sites creator.
+     */
     public SitesCreator() {
         this.setModal(true);
         this.setLocationRelativeTo(this.getOwner());
@@ -81,6 +106,9 @@ class SitesCreator extends JDialog {
         this.setVisible(true);
     }
 
+    /**
+     * Ok pressed.
+     */
     private void okPressed() {
 
         String clusterName = clusterNameField.getText();
@@ -124,11 +152,21 @@ class SitesCreator extends JDialog {
         dispose();
     }
 
+    /**
+     * Gets the file.
+     *
+     * @return the file
+     */
     public static Object getFile() {
         SitesCreator sitesCreator = new SitesCreator();
         return sitesCreator.getReturnValue();
     }
 
+    /**
+     * Gets the return value.
+     *
+     * @return the return value
+     */
     private Object getReturnValue() {
         return sitesFile;
     }

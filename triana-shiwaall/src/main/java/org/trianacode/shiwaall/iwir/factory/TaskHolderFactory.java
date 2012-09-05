@@ -9,6 +9,7 @@ import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -18,15 +19,32 @@ import org.trianacode.taskgraph.proxy.java.JavaProxy;
  */
 public class TaskHolderFactory {
 
+    /** The task holder factory. */
     private static TaskHolderFactory taskHolderFactory = new TaskHolderFactory();
 
+    /**
+     * Instantiates a new task holder factory.
+     */
     private TaskHolderFactory() {
     }
 
+    /**
+     * Gets the task holder factory.
+     *
+     * @return the task holder factory
+     */
     public static TaskHolderFactory getTaskHolderFactory() {
         return taskHolderFactory;
     }
 
+    /**
+     * Adds the task holder.
+     *
+     * @param iwirTask the iwir task
+     * @param taskGraph the task graph
+     * @return the task
+     * @throws TaskException the task exception
+     */
     public Task addTaskHolder(AbstractTask iwirTask, TaskGraph taskGraph) throws TaskException {
         TaskHolder holder = getTaskHolder(iwirTask);
         Task task = taskGraph.createTask(ToolUtils.initTool(holder, taskGraph.getProperties()));
@@ -41,6 +59,12 @@ public class TaskHolderFactory {
         return task;
     }
 
+    /**
+     * Gets the task holder.
+     *
+     * @param iwirTask the iwir task
+     * @return the task holder
+     */
     private TaskHolder getTaskHolder(AbstractTask iwirTask){
         TaskHolder taskHolder = null;
         if (iwirTask instanceof ForEachTask) {

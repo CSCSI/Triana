@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 //import org.shiwa.desktop.data.description.core.Configuration;
 
 //import org.shiwa.desktop.data.description.handler.Dependency;
@@ -57,18 +58,29 @@ public class Unbundler implements ExecutionAddon {
 //    private ArrayList<Configuration> environmentConfigurationList;
 
     //    File configFile;
-    Tool tool;
+    /** The tool. */
+Tool tool;
     //    private WorkflowImplementation workflowImplementation;
 //    private boolean bundleInit = false;
 //    private SHIWABundle shiwaBundle;
+    /** The output files. */
     private ArrayList<File> outputFiles;
     //    private String workflowFilePath;
+    /** The shiwa bundle helper. */
     private ShiwaBundleHelper shiwaBundleHelper;
 //    private UUID parentUUID = null;
 
-    public Unbundler() {
+    /**
+ * Instantiates a new unbundler.
+ */
+public Unbundler() {
     }
 
+    /**
+     * Instantiates a new unbundler.
+     *
+     * @param shiwaBundleHelper the shiwa bundle helper
+     */
     public Unbundler(ShiwaBundleHelper shiwaBundleHelper) {
         this.shiwaBundleHelper = shiwaBundleHelper;
     }
@@ -129,12 +141,25 @@ public class Unbundler implements ExecutionAddon {
 //        bundleInit = true;
 //    }
 
-    @Override
+    /* (non-Javadoc)
+ * @see org.trianacode.enactment.addon.ExecutionAddon#getTool(org.trianacode.TrianaInstance, java.lang.String)
+ */
+@Override
     public Tool getTool(TrianaInstance instance, String workflowFilePath) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
 //        initBundle(workflowFilePath);
         return getTool(instance);
     }
 
+    /**
+     * Gets the tool.
+     *
+     * @param instance the instance
+     * @return the tool
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws TaskGraphException the task graph exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws JAXBException the jAXB exception
+     */
     private Tool getTool(TrianaInstance instance) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
 //        workflowImplementation = chooseImp();
         WorkflowImplementation workflowImplementation = shiwaBundleHelper.getWorkflowImplementation();
@@ -168,6 +193,9 @@ public class Unbundler implements ExecutionAddon {
         return tool;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ExecutionAddon#getConfigFile()
+     */
     @Override
     public File getConfigFile() throws IOException {
 
@@ -182,6 +210,13 @@ public class Unbundler implements ExecutionAddon {
 
     }
 
+    /**
+     * Store shiwa property.
+     *
+     * @param executionProperties the execution properties
+     * @param shiwaBundleHelper the shiwa bundle helper
+     * @param key the key
+     */
     private void storeShiwaProperty(HashMap<String, String> executionProperties, ShiwaBundleHelper shiwaBundleHelper, String key) {
         SHIWAProperty property = shiwaBundleHelper.getShiwaProperty(key);
         if (property != null) {
@@ -189,6 +224,9 @@ public class Unbundler implements ExecutionAddon {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ExecutionAddon#execute(org.trianacode.TrianaInstance, java.util.List)
+     */
     @Override
     public void execute(TrianaInstance engine, List<String> pluginArguments) throws Exception {
 //        String[] correctedArgs = null;
@@ -240,6 +278,9 @@ public class Unbundler implements ExecutionAddon {
         System.out.println(createOutputBundle(pluginArguments.get(2)).getAbsolutePath());
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.ExecutionAddon#execute(org.trianacode.enactment.Exec, org.trianacode.TrianaInstance, java.lang.String, java.lang.Object, java.lang.Object, java.lang.String[])
+     */
     @Override
     public void execute(Exec execEngine, TrianaInstance instance, String bundlePath, Object workflowObject, Object inputData, String[] args) throws Exception {
         tool = getTool(instance, bundlePath);
@@ -256,6 +297,13 @@ public class Unbundler implements ExecutionAddon {
     }
 
 
+    /**
+     * Creates the output bundle.
+     *
+     * @param outputPath the output path
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public File createOutputBundle(String outputPath) throws IOException {
 //        Configuration execConfig = new Configuration(Configuration.ConfigType.EXECUTION_CONFIGURATION);
         ExecutionMapping execConfig = new ExecutionMapping();
@@ -302,6 +350,13 @@ public class Unbundler implements ExecutionAddon {
         return shiwaBundleHelper.saveBundle(outputBundle);
     }
 
+    /**
+     * Gets the iO config from signature.
+     *
+     * @param signature the signature
+     * @return the iO config from signature
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private File getIOConfigFromSignature(TransferSignature signature) throws IOException {
 
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
@@ -404,35 +459,64 @@ public class Unbundler implements ExecutionAddon {
 //        return shiwaBundleHelper.saveBundle(new File(fileName));
 //    }
 
-    public Tool getTool(TrianaInstance trianaInstance, SHIWABundle shiwaBundle) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
+    /**
+ * Gets the tool.
+ *
+ * @param trianaInstance the triana instance
+ * @param shiwaBundle the shiwa bundle
+ * @return the tool
+ * @throws IOException Signals that an I/O exception has occurred.
+ * @throws TaskGraphException the task graph exception
+ * @throws ProxyInstantiationException the proxy instantiation exception
+ * @throws JAXBException the jAXB exception
+ */
+public Tool getTool(TrianaInstance trianaInstance, SHIWABundle shiwaBundle) throws IOException, TaskGraphException, ProxyInstantiationException, JAXBException {
 //        initBundle(shiwaBundle);
         return getTool(trianaInstance);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getServiceName()
+     */
     @Override
     public String getServiceName() {
         return "UnBundler";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getLongOption()
+     */
     @Override
     public String getLongOption() {
         return "unbundle";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getShortOption()
+     */
     @Override
     public String getShortOption() {
         return "b";
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getDescription()
+     */
     @Override
     public String getDescription() {
         return "SHIWA Bundle Extraction in Triana";
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return getServiceName();
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.enactment.addon.CLIaddon#getUsageString()
+     */
     @Override
     public String getUsageString() {
         return "Usage for " + getLongOption() + ".\n" +
@@ -444,6 +528,12 @@ public class Unbundler implements ExecutionAddon {
                 ;
     }
 
+    /**
+     * Serialize outputs.
+     *
+     * @param taskGraph the task graph
+     * @throws TaskException the task exception
+     */
     public void serializeOutputs(TaskGraph taskGraph) throws TaskException {
 //        if (bundleInit) {
         outputFiles = new ArrayList<File>();
@@ -481,6 +571,15 @@ public class Unbundler implements ExecutionAddon {
 
     }
 
+    /**
+     * Adds the file rename tool.
+     *
+     * @param toolNode the tool node
+     * @param taskGraph the task graph
+     * @throws CableException the cable exception
+     * @throws TaskException the task exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     */
     private void addFileRenameTool(Node toolNode, TaskGraph taskGraph) throws CableException, TaskException, ProxyInstantiationException {
         String fileName = "Output_" + toolNode.getAbsoluteNodeIndex();
 
@@ -504,13 +603,28 @@ public class Unbundler implements ExecutionAddon {
         fileIterator++;
     }
 
+    /**
+     * Gets the output files.
+     *
+     * @return the output files
+     */
     public ArrayList<File> getOutputFiles() {
         return outputFiles;
     }
 
 
+    /** The file iterator. */
     private int fileIterator = 0;
 
+    /**
+     * Adds the serialize tool.
+     *
+     * @param toolNode the tool node
+     * @param taskGraph the task graph
+     * @throws CableException the cable exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws TaskException the task exception
+     */
     private void addSerializeTool(Node toolNode, TaskGraph taskGraph) throws CableException, ProxyInstantiationException, TaskException {
         String serialName = "Output_" + toolNode.getAbsoluteNodeIndex();
 
@@ -535,6 +649,15 @@ public class Unbundler implements ExecutionAddon {
         fileIterator++;
     }
 
+    /**
+     * Adds the string tool.
+     *
+     * @param toolNode the tool node
+     * @param taskGraph the task graph
+     * @throws CableException the cable exception
+     * @throws ProxyInstantiationException the proxy instantiation exception
+     * @throws TaskException the task exception
+     */
     private void addStringTool(Node toolNode, TaskGraph taskGraph) throws CableException, ProxyInstantiationException, TaskException {
         String stringName = "Output_" + toolNode.getAbsoluteNodeIndex();
 
@@ -558,17 +681,34 @@ public class Unbundler implements ExecutionAddon {
         fileIterator++;
     }
 
+    /**
+     * Creates the file in runtime folder.
+     *
+     * @param filename the filename
+     * @return the file
+     */
     private File createFileInRuntimeFolder(String filename) {
         return new File(outputLocation, filename);
     }
 
+    /**
+     * Sets the runtime output folder.
+     *
+     * @param outputFolder the new runtime output folder
+     */
     public void setRuntimeOutputFolder(File outputFolder) {
         outputLocation = outputFolder;
         outputLocation.mkdirs();
     }
 
+    /** The output location. */
     private File outputLocation = null;
 
+    /**
+     * Time output.
+     *
+     * @param s the s
+     */
     public static void timeOutput(String s){
         String d;
         Format formatter;

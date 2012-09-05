@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -39,11 +40,23 @@ import java.util.UUID;
  */
 public class BrokerUtils {
 
+    /**
+     * Gets the time stamp.
+     *
+     * @return the time stamp
+     */
     public static String getTimeStamp() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd_HH-mm-ss-SS_z");
         return dateFormat.format(new Date());
     }
 
+    /**
+     * Gets the result bundle.
+     *
+     * @param url the url
+     * @param key the key
+     * @return the result bundle
+     */
     public static File getResultBundle(String url, String key) {
 
         System.out.println("Requesting " + key + " from " + url);
@@ -85,6 +98,13 @@ public class BrokerUtils {
         return null;
     }
 
+    /**
+     * Write file.
+     *
+     * @param response the response
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private static File writeFile(HttpResponse response) throws IOException {
         InputStream input = response.getEntity().getContent();
 
@@ -102,6 +122,15 @@ public class BrokerUtils {
     }
 
 
+    /**
+     * Wait for exec.
+     *
+     * @param url the url
+     * @param i the i
+     * @param uuid the uuid
+     * @param execBundleName the exec bundle name
+     * @return the string
+     */
     public static String waitForExec(String url, int i, String uuid, String execBundleName) {
         while (i > 0) {
             String key = getJSONReply(url, uuid, execBundleName);
@@ -121,6 +150,14 @@ public class BrokerUtils {
     }
 
 
+    /**
+     * Gets the jSON reply.
+     *
+     * @param url the url
+     * @param uuid the uuid
+     * @param execBundleName the exec bundle name
+     * @return the jSON reply
+     */
     public static String getJSONReply(String url, String uuid, String execBundleName) {
         try {
             HttpClient client = new DefaultHttpClient();
@@ -168,6 +205,15 @@ public class BrokerUtils {
         return null;
     }
 
+    /**
+     * Post bundle.
+     *
+     * @param hostAddress the host address
+     * @param routingKey the routing key
+     * @param execBundleName the exec bundle name
+     * @param tempBundleFile the temp bundle file
+     * @return the string
+     */
     public static String postBundle(
             String hostAddress, String routingKey, String execBundleName, File tempBundleFile) {
 
@@ -211,6 +257,12 @@ public class BrokerUtils {
         return null;
     }
 
+    /**
+     * Find key.
+     *
+     * @param s the s
+     * @return the string
+     */
     private static String findKey(String s) {
 
         int openTag = s.indexOf("<uuid>");
@@ -222,6 +274,15 @@ public class BrokerUtils {
         return null;
     }
 
+    /**
+     * Adds the parent details to sub workflow.
+     *
+     * @param impl the impl
+     * @param runUUID the run uuid
+     * @param parentID the parent id
+     * @param jobID the job id
+     * @param jobInstID the job inst id
+     */
     public static void addParentDetailsToSubWorkflow(
             WorkflowImplementation impl, UUID runUUID, UUID parentID, String jobID, String jobInstID) {
 
@@ -236,6 +297,12 @@ public class BrokerUtils {
         impl.addProperty(new SHIWAProperty(StampedeLog.JOB_INST_ID, jobInstID));
     }
 
+    /**
+     * Gets the scheduler for task graph.
+     *
+     * @param taskGraph the task graph
+     * @return the scheduler for task graph
+     */
     public static Scheduler getSchedulerForTaskGraph(TaskGraph taskGraph) {
         TrianaServer server = TaskGraphManager.getTrianaServer(taskGraph);
         SchedulerInterface sched = server.getSchedulerInterface();
@@ -245,6 +312,13 @@ public class BrokerUtils {
         return null;
     }
 
+    /**
+     * Prepare subworkflow.
+     *
+     * @param task the task
+     * @param runUUID the run uuid
+     * @param workflowImplementation the workflow implementation
+     */
     public static void prepareSubworkflow(Task task, UUID runUUID, WorkflowImplementation workflowImplementation) {
         Scheduler scheduler = getSchedulerForTaskGraph(task.getParent());
 
@@ -259,6 +333,11 @@ public class BrokerUtils {
         );
     }
 
+    /**
+     * Clean bundle properties.
+     *
+     * @param workflowImplementation the workflow implementation
+     */
     private static void cleanBundleProperties(WorkflowImplementation workflowImplementation) {
         ArrayList<SHIWAProperty> toRemove = new ArrayList<SHIWAProperty>();
 

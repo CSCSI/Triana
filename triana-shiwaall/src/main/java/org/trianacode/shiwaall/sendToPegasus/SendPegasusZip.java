@@ -8,6 +8,7 @@ import org.thinginitself.streamable.StreamableFile;
 
 import java.io.File;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -17,6 +18,13 @@ import java.io.File;
  */
 public class SendPegasusZip {
 
+    /**
+     * Send file.
+     *
+     * @param httpAddress the http address
+     * @param file the file
+     * @return the response
+     */
     public static Response sendFile(String httpAddress, File file) {
         try {
             RequestContext c = new RequestContext(httpAddress);

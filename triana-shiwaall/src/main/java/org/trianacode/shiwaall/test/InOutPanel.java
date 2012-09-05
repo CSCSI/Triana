@@ -7,6 +7,7 @@ import java.awt.dnd.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created with IntelliJ IDEA.
  * User: ian
@@ -16,11 +17,18 @@ import java.awt.event.MouseEvent;
  */
 public class InOutPanel extends ParameterPanel implements DropTargetListener, AWTEventListener {
 
+    /** The x. */
     int x = 0;
+    
+    /** The y. */
     int y = 0;
 
+    /** The toolkit. */
     Toolkit toolkit = Toolkit.getDefaultToolkit();
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#init()
+     */
     @Override
     public void init() {
         setLayout(new BorderLayout());
@@ -30,22 +38,34 @@ public class InOutPanel extends ParameterPanel implements DropTargetListener, AW
         new DropTarget(this, this);
     }
 
+    /* (non-Javadoc)
+     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+     */
     @Override
     public void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
         graphics.draw3DRect(x, y, x + 20, y + 20, true);
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#reset()
+     */
     @Override
     public void reset() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.gui.panels.ParameterPanel#dispose()
+     */
     @Override
     public void dispose() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.AWTEventListener#eventDispatched(java.awt.AWTEvent)
+     */
     @Override
     public void eventDispatched(AWTEvent event) {
 
@@ -63,28 +83,43 @@ public class InOutPanel extends ParameterPanel implements DropTargetListener, AW
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.dnd.DropTargetListener#dragEnter(java.awt.dnd.DropTargetDragEvent)
+     */
     @Override
     public void dragEnter(DropTargetDragEvent dtde) {
         System.out.printf("Drag enter");
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.dnd.DropTargetListener#dragOver(java.awt.dnd.DropTargetDragEvent)
+     */
     @Override
     public void dragOver(DropTargetDragEvent dtde) {
         System.out.printf("Drag over");
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.dnd.DropTargetListener#dropActionChanged(java.awt.dnd.DropTargetDragEvent)
+     */
     @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.dnd.DropTargetListener#dragExit(java.awt.dnd.DropTargetEvent)
+     */
     @Override
     public void dragExit(DropTargetEvent dte) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
+     */
     @Override
     public void drop(DropTargetDropEvent dtde) {
         //To change body of implemented methods use File | Settings | File Templates.

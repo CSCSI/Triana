@@ -6,6 +6,7 @@ import org.trianacode.taskgraph.Node;
 import java.io.File;
 import java.util.HashMap;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created by IntelliJ IDEA.
  * User: Ian Harvey
@@ -15,23 +16,47 @@ import java.util.HashMap;
  */
 public class ExecuteProcess implements ExecutableInterface {
 
+    /** The executable url. */
     private String executableURL;
+    
+    /** The input switch. */
     private String inputSwitch = "";
+    
+    /** The output switch. */
     private String outputSwitch = "";
+    
+    /** The variable string. */
     private String variableString = "";
+    
+    /** The working directory. */
     private File workingDirectory = null;
+    
+    /** The inputs. */
     private Object[] inputs;
+    
+    /** The outputs. */
     private Object[] outputs;
 
+    /**
+     * Instantiates a new execute process.
+     *
+     * @param executableURL the executable url
+     */
     public ExecuteProcess(String executableURL) {
         this.executableURL = executableURL;
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.iwir.execute.ExecutableInterface#run()
+     */
     @Override
     public void run() {
         runExec();
     }
 
+    /* (non-Javadoc)
+     * @see org.trianacode.shiwaall.iwir.execute.ExecutableInterface#run(java.util.HashMap, java.lang.Object[])
+     */
     @Override
     public void run(HashMap<Node, Object> inputObjectAtNodeMap, Object[] outputs) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -51,30 +76,65 @@ public class ExecuteProcess implements ExecutableInterface {
 //        runExec();
 //    }
 
-    public String getInputSwitch() {
+    /**
+ * Gets the input switch.
+ *
+ * @return the input switch
+ */
+public String getInputSwitch() {
         return inputSwitch;
     }
 
+    /**
+     * Sets the input switch.
+     *
+     * @param inputSwitch the new input switch
+     */
     public void setInputSwitch(String inputSwitch) {
         this.inputSwitch = inputSwitch;
     }
 
+    /**
+     * Gets the output switch.
+     *
+     * @return the output switch
+     */
     public String getOutputSwitch() {
         return outputSwitch;
     }
 
+    /**
+     * Sets the output switch.
+     *
+     * @param outputSwitch the new output switch
+     */
     public void setOutputSwitch(String outputSwitch) {
         this.outputSwitch = outputSwitch;
     }
 
+    /**
+     * Gets the variable string.
+     *
+     * @return the variable string
+     */
     public String getVariableString() {
         return variableString;
     }
 
+    /**
+     * Sets the variable string.
+     *
+     * @param variableString the new variable string
+     */
     public void setVariableString(String variableString) {
         this.variableString = variableString;
     }
 
+    /**
+     * Sets the working directory.
+     *
+     * @param directory the new working directory
+     */
     public void setWorkingDirectory(String directory) {
         File dir = new File(directory);
         if (dir.exists() && dir.isDirectory()) {
@@ -82,10 +142,18 @@ public class ExecuteProcess implements ExecutableInterface {
         }
     }
 
+    /**
+     * Gets the working directory.
+     *
+     * @return the working directory
+     */
     public File getWorkingDirectory() {
         return workingDirectory;
     }
 
+    /**
+     * Run exec.
+     */
     private void runExec() {
         String args = buildArgs();
 
@@ -104,6 +172,11 @@ public class ExecuteProcess implements ExecutableInterface {
         }
     }
 
+    /**
+     * Builds the args.
+     *
+     * @return the string
+     */
     private String buildArgs() {
         String inputString = "";
 

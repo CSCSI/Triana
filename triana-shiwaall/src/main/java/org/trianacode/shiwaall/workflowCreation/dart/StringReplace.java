@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
+// TODO: Auto-generated Javadoc
 /**
  * Created with IntelliJ IDEA.
  * User: ian
@@ -19,9 +20,18 @@ import java.util.Collection;
 @Tool
 public class StringReplace {
 
+    /** The start field. */
     JTextField startField = new JTextField("");
+    
+    /** The replace field. */
     JTextField replaceField = new JTextField("");
 
+    /**
+     * Process.
+     *
+     * @param strings the strings
+     * @return the string
+     */
     @Process
     public String process(Collection strings){
 
@@ -37,6 +47,11 @@ public class StringReplace {
         return initialString;
     }
 
+    /**
+     * Gets the gui.
+     *
+     * @return the gui
+     */
     @CustomGUIComponent
     public Component getGui(){
         JPanel jPanel = new JPanel();
