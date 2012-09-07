@@ -334,4 +334,9 @@ public class Executable implements ExecutableInterface, Serializable {
     public void addOutputFile(OutputPort outputPort, File outputFile) {
         outputPortToFileMap.put(outputPort, outputFile);
     }
+
+    @Override
+    public String toString(){
+        return primaryExec;
+    }
 }

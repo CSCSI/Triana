@@ -1,5 +1,7 @@
 package org.trianacode.shiwaall.executionServices;
 
+import org.trianacode.shiwaall.iwir.execute.Executable;
+
 import java.util.Properties;
 
 // TODO: Auto-generated Javadoc
@@ -14,9 +16,12 @@ public class TaskTypeToolDescriptor {
 
     /** The tasktype. */
     private String tasktype;
-    
+
+    /** An executable object which describes how to create a non-Triana task*/
+    private Executable executable = null;
+
     /** The clazz. */
-    private Class clazz;
+    private Class clazz = null;
     
     /** The properties. */
     private Properties properties;
@@ -32,6 +37,11 @@ public class TaskTypeToolDescriptor {
         this.tasktype = tasktype;
         this.clazz = clazz;
         this.properties = properties;
+    }
+
+    public TaskTypeToolDescriptor(String tasktype, Executable executable){
+        this.tasktype = tasktype;
+        this.executable = executable;
     }
 
     /**
@@ -86,5 +96,13 @@ public class TaskTypeToolDescriptor {
      */
     public void setTasktype(String tasktype) {
         this.tasktype = tasktype;
+    }
+
+    public Executable getExecutable() {
+        return executable;
+    }
+
+    public void setExecutable(Executable executable) {
+        this.executable = executable;
     }
 }

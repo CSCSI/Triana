@@ -61,7 +61,7 @@ public class TaskTypeRepo {
 //    private HashMap<Class, String> classTypeMap = new HashMap<Class, String>();
 
     /** The task type tool descriptors. */
-ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTypeToolDescriptor>();
+    HashMap<String, TaskTypeToolDescriptor> taskTypeToolDescriptors;
 
     /** The single instance. */
     private static TaskTypeRepo singleInstance = null;
@@ -70,7 +70,8 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
      * Instantiates a new task type repo.
      */
     private TaskTypeRepo() {
-        addTaskType(InOut.class, "InOut");
+        taskTypeToolDescriptors = new HashMap<String, TaskTypeToolDescriptor>();
+        taskTypeToolDescriptors.put("InOut", new TaskTypeToolDescriptor("InOut", InOut.class, null));
     }
 
     /**
@@ -86,7 +87,7 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
         return singleInstance;
     }
 
-    /** The printing. */
+    /** True if std out should be enabled. */
     private static boolean printing = false;
     
     /**
@@ -103,32 +104,10 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
     /**
      * Adds the task type.
      *
-     * @param type the type
-     * @param clazz the clazz
+     * @param taskTypeToolDescriptor a descriptor to create a task of this tasktype
      */
-    public static void addTaskType(String type, Class clazz) {
-        getTaskTypeRepo().addTaskType(clazz, type);
-    }
-
-    /**
-     * Adds the task type.
-     *
-     * @param clazz the clazz
-     * @param type the type
-     */
-    private void addTaskType(Class clazz, String type) {
-        addTaskType(clazz, type, null);
-    }
-
-    /**
-     * Adds the task type.
-     *
-     * @param clazz the clazz
-     * @param type the type
-     * @param properties the properties
-     */
-    private void addTaskType(Class clazz, String type, Properties properties){
-        taskTypeToolDescriptors.add(new TaskTypeToolDescriptor(type, clazz, properties));
+    public static void addTaskType(TaskTypeToolDescriptor taskTypeToolDescriptor) {
+        getTaskTypeRepo().taskTypeToolDescriptors.put(taskTypeToolDescriptor.getTasktype(), taskTypeToolDescriptor);
     }
 
     /**
@@ -166,7 +145,6 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
             } catch (Exception ignored) {
             }
         } else {
-            TaskTypeRepo.addTaskType(type, null);
 
             if (type.contains(".")) {
                 String unitName = type.substring(type.lastIndexOf(".") + 1);
@@ -211,6 +189,7 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
                             + envFiles.size() + " files to run. The jsdl is at "
                             + jsdlFile.getAbsolutePath());
                     jsdlFile.deleteOnExit();
+                    TaskTypeRepo.addTaskType(new TaskTypeToolDescriptor(type, executable));
                 } else {
                     stdout("JSDL null " + iwirTask.getTasktype());
                 }
@@ -225,7 +204,10 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
         tool.setToolName(iwirTask.getName());
         tool.setParameter(Executable.TASKTYPE, type);
         stdout("Returning tool " + tool.getToolName() + " " + tool.getClass().getCanonicalName());
+
         return tool;
+
+
     }
 
     /**
@@ -235,12 +217,7 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
      * @return the descriptor for type
      */
     private TaskTypeToolDescriptor getDescriptorForType(String type) {
-        for(TaskTypeToolDescriptor descriptor : taskTypeToolDescriptors){
-            if(descriptor.getTasktype().equals(type)){
-                return descriptor;
-            }
-        }
-        return null;
+        return taskTypeToolDescriptors.get(type);
     }
 
     /**
@@ -360,7 +337,11 @@ ArrayList<TaskTypeToolDescriptor> taskTypeToolDescriptors = new ArrayList<TaskTy
      *
      * @return the all descriptors
      */
-    public static ArrayList<TaskTypeToolDescriptor> getAllDescriptors() {
-        return getTaskTypeRepo().taskTypeToolDescriptors;
+    public static Collection<TaskTypeToolDescriptor> getAllDescriptors() {
+        return getTaskTypeRepo().taskTypeToolDescriptors.values();
+    }
+
+    public static TaskTypeToolDescriptor getDescriptorFromType(String tasktype) {
+        return getTaskTypeRepo().getDescriptorForType(tasktype);
     }
 }

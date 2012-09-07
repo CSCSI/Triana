@@ -163,7 +163,7 @@ public class PublishWorkflow extends AbstractAction implements ActionDisplayOpti
      * Publish.
      *
      * @param handler the handler
-     * @param engine the engine
+     * @param engine the TrianaInstange "engine"
      */
     public static void publish(WorkflowEngineHandler handler, TrianaInstance engine) {
         SHIWADesktop shiwaDesktop = new SHIWADesktop(handler, SHIWADesktop.ButtonOption.SHOW_TOOLBAR);

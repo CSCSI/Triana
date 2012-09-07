@@ -70,7 +70,7 @@ public class DaxCreator extends DaxCreatorV3 implements Displayer, TaskConscious
     /**
      * Fake process.
      *
-     * @param list the list
+     * @param list the list of input objects to the creation tool
      * @return the file
      */
     @org.trianacode.annotation.Process(gather = true)

@@ -5,12 +5,17 @@ import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.extensions.Extension;
 import org.trianacode.gui.panels.DisplayDialog;
 import org.trianacode.shiwaall.executionServices.TaskTypeToolDescriptor;
+import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.tool.Tool;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -82,15 +87,67 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(new JLabel("TaskType  :   Triana Class : Executable"));
+
+
+        String[] columnNames = {"TaskType", "Triana Class", "Executable"};
+        ArrayList<Object[]> types = new ArrayList<Object[]>();
 
         for(TaskTypeToolDescriptor descriptor : TaskTypeRepo.getAllDescriptors()){
             String classname = "";
+            Executable exec = null;
             if(descriptor.getToolClass() != null){
                 classname = descriptor.getToolClass().getCanonicalName();
             }
-            mainPanel.add(new JLabel(descriptor.getTasktype() + " " + classname));
+
+            Object[] thisType;
+            if(descriptor.getExecutable() != null){
+                exec = descriptor.getExecutable();
+                thisType = new Object[]{descriptor.getTasktype(), classname, exec};
+            } else {
+                thisType = new Object[]{descriptor.getTasktype(), classname, ""};
+            }
+            types.add(thisType);
         }
+        Object[][] data = new Object[types.size()][3];
+        types.toArray(data);
+
+        JTable jTable = new JTable(data, columnNames);
+        DefaultTableModel defaultTableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int a, int b){
+                return false;
+            }
+        };
+//        jTable.setModel(defaultTableModel);
+//        jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        jTable.setShowGrid(true);
+//        jTable.addMouseListener(new RowListener(mainPanel));
+//        jTable.setPreferredScrollableViewportSize(new Dimension(300, 70));
+//        jTable.setFillsViewportHeight(true);
+
+        JScrollPane jScrollPane = new JScrollPane(jTable);
+        mainPanel.add(jScrollPane);
+
 
         DisplayDialog displayDialog = new DisplayDialog(mainPanel, "TaskType Repo", null);
+    }
+
+    private class RowListener extends MouseAdapter {
+
+        private JPanel mainPanel;
+
+        public RowListener(JPanel mainPanel) {
+            this.mainPanel = mainPanel;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent event){
+            JTable jTable = (JTable) event.getSource();
+            int selection = jTable.getSelectedRow();
+
+
+        }
+
     }
 }

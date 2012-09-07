@@ -3,7 +3,7 @@ package org.trianacode.shiwaall.iwir.importer.utils;
 import org.apache.commons.lang.ArrayUtils;
 import org.shiwa.fgi.iwir.*;
 import org.trianacode.shiwaall.iwir.execute.Executable;
-import org.trianacode.shiwaall.iwir.factory.TaskHolder;
+import org.trianacode.shiwaall.iwir.holders.AtomicTaskHolder;
 import org.trianacode.taskgraph.Cable;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
@@ -29,10 +29,10 @@ public class ExportIwir {
 
     /** The cables. */
     private HashSet<Cable> cables = new HashSet<Cable>();
-    
+
     /** The task hash map. */
     private HashMap<Task, AbstractTask> taskHashMap = new HashMap<Task, AbstractTask>();
-    
+
     /** The std. */
     boolean std = false;
 
@@ -62,7 +62,7 @@ public class ExportIwir {
     }
 
     /**
-     * Write iwir.
+     * Write iwir Blockscope to xml file.
      *
      * @param blockScope the block scope
      * @param file the file
@@ -78,7 +78,9 @@ public class ExportIwir {
     }
 
     /**
-     * Task graph to block scope.
+     * Triana Taskgraph to IWIR blockscope conversion.
+     * After recordingTasksAndCables() iterates through the cables in the Taskgraph to
+     * create the connections within iwir
      *
      * @param taskGraph the task graph
      * @return the block scope
@@ -141,7 +143,7 @@ public class ExportIwir {
     }
 
     /**
-     * Record tasks and cables.
+     * Record tasks and cables, produces iwir Tasks
      *
      * @param taskGraph the task graph
      * @return the block scope
@@ -164,25 +166,26 @@ public class ExportIwir {
             } else {
                 String tasktype;
                 System.out.println("Exporting task of class " + task.getClass().getCanonicalName());
-                if (!(task instanceof TaskHolder)) {
-                    Map<String, Object> map = task.getProxy().getInstanceDetails();
 
-                    Object unitPackage = map.get(JavaConstants.UNIT_PACKAGE);
-                    Object unitName = map.get(JavaConstants.UNIT_NAME);
-                    stdOut(unitPackage + " " + unitName);
-                    if (unitName != null && unitPackage != null) {
-                        tasktype = unitPackage.toString() + "." + unitName.toString();
-                    } else {
-                        tasktype = "";
-                    }
+                Map<String, Object> map = task.getProxy().getInstanceDetails();
+
+                Object unitPackage = map.get(JavaConstants.UNIT_PACKAGE);
+                Object unitName = map.get(JavaConstants.UNIT_NAME);
+                stdOut(unitPackage + " " + unitName);
+                if (unitName != null && unitPackage != null) {
+                    tasktype = unitPackage.toString() + "." + unitName.toString();
                 } else {
+                    tasktype = task.getToolName();
+                }
+                if(tasktype.equals(AtomicTaskHolder.class.getCanonicalName())){
                     Object taskTypeObject = task.getParameter(Executable.TASKTYPE);
                     if (taskTypeObject != null) {
                         tasktype = (String) taskTypeObject;
                     } else {
-                        tasktype = "";
+                        tasktype = task.getToolName();
                     }
                 }
+                System.out.println("Tasktype for " + task.getToolName() + " " + tasktype);
 
                 org.shiwa.fgi.iwir.Task iwirTask = new org.shiwa.fgi.iwir.Task(task.getToolName().replaceAll(" ", "_"), tasktype);
                 for (String name : task.getParameterNames()) {
