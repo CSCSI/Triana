@@ -9,6 +9,7 @@ import org.shiwa.desktop.data.transfer.FGITaskHandler;
 import org.shiwa.desktop.data.transfer.FGIWorkflowEngineHandler;
 import org.shiwa.desktop.data.transfer.IWIRTaskHandler;
 import org.shiwa.fgi.iwir.*;
+import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
 import org.trianacode.shiwaall.executionServices.TaskTypeToolDescriptor;
 import org.trianacode.shiwaall.extras.FileBuilder;
@@ -16,9 +17,12 @@ import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.importer.utils.ExportIwir;
 import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
 import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.TaskGraphUtils;
+import org.trianacode.taskgraph.proxy.java.JavaProxy;
 
 import javax.xml.bind.JAXBException;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.*;
 
 // TODO: Auto-generated Javadoc
@@ -31,12 +35,15 @@ import java.util.*;
  */
 public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
+    private static final String TRIANA_RUN_SCRIPT = "triana-single-folder.sh";
+
+    public static String TRIANA_JAR_NAME = "triana-app-4.0.0-SNAPSHOT.jar";
+
     /** The iwir. */
     private IWIR iwir;
 
     /** The image input stream. */
     private InputStream imageInputStream;
-
     /** The jsdls. */
     private Map<String, FGITaskHandler> jsdls = null;
     private TaskGraph taskgraph = null;
@@ -78,7 +85,7 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
             File file = new File("/usr/local/bin/dot");
             if(file.exists()){
                 File imageFile = iwir.getImage(file.getAbsolutePath(), "png", "");
-                System.out.println("dot image " + imageFile.getAbsolutePath());
+//                System.out.println("dot image " + imageFile.getAbsolutePath());
                 image = new FileInputStream(imageFile);
             } else{
                 System.out.println("/usr/local/bin/dot not found");
@@ -139,24 +146,91 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
      */
     private ArrayList<File> findTrianaFiles() {
         ArrayList<File> files = new ArrayList<File>();
+        File trianaRootFolder = null;
 
         if(Locations.isJarred()){
-            File trianaJar = new File(Locations.runHome().getAbsolutePath());
-            File rootFolder = new File(trianaJar.getParent());
 
-            File libFolder = new File(rootFolder, "lib");
-            if(libFolder.exists() && libFolder.isDirectory()){
-                files.add(rootFolder);
-                for(File lib : libFolder.listFiles()){
-                    File libWithParent = new File(rootFolder, lib.getName());
-                    files.add(libWithParent);
+            try {
+                File jarFile = new File( TrianaInstance.class.getProtectionDomain()
+                        .getCodeSource().getLocation().toURI());
+                System.out.println("triana jar : " + jarFile.getAbsolutePath());
+
+
+//            File trianaJar = new File(Locations.runHome().getAbsolutePath());
+                trianaRootFolder = new File(jarFile.getParent());
+
+
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        } else {
+            File trianaFolder = new File(Locations.getHomeProper());
+            if(trianaFolder.exists() && trianaFolder.isDirectory()){
+                File trianaApp = new File(trianaFolder, "triana-app");
+                if(trianaApp.exists() && trianaApp.isDirectory()){
+                    File dist = new File(trianaApp, "dist");
+                    if(dist.exists() && dist.isDirectory()){
+                        File trianaJar = new File(dist, TRIANA_JAR_NAME);
+                        if(trianaJar.exists()){
+                            files.add(trianaJar);
+                            trianaRootFolder = new File(trianaJar.getParent());
+                        }
+                    }
                 }
             }
         }
 
-        System.out.println(Locations.getHomeProper() + "\n" + Locations.getDefaultToolboxRoot()
-                + "\n" + Locations.isJarred() + "\n" + Locations.runHome().getAbsolutePath()  + "\n"
-        );
+        if (trianaRootFolder == null ){
+            return null;
+        }
+
+
+        File singleFolderTrianaScript = new File(trianaRootFolder, TRIANA_RUN_SCRIPT);
+        if(singleFolderTrianaScript.exists()){
+            files.add(singleFolderTrianaScript);
+        }
+
+        File libFolder = new File(trianaRootFolder, "lib");
+        if(libFolder.exists() && libFolder.isDirectory()){
+//            files.add(trianaRootFolder);
+            for(File lib : libFolder.listFiles()){
+                File libWithParent = new File(libFolder, lib.getName());
+                files.add(libWithParent);
+            }
+        }
+
+        HashSet<File> taskFiles = new HashSet<File>();
+        for(org.trianacode.taskgraph.Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)){
+
+            JavaProxy javaProxy = (JavaProxy) task.getProxy();
+            Class unitClass = javaProxy.getUnit().getClass();
+
+            File clazzFile = null;
+            try {
+                clazzFile = new File( unitClass.getProtectionDomain()
+                        .getCodeSource().getLocation().toURI());
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+            if(clazzFile != null){
+
+                System.out.println("task " + task.getToolName() +
+                        " tool " + task.getClass().getCanonicalName() +
+                        "triana toolbox jar : " + clazzFile.getAbsolutePath());
+                taskFiles.add(clazzFile);
+            }
+        }
+        files.addAll(taskFiles);
+
+//        System.out.println(Locations.getHomeProper()
+//                + "\n" + Locations.isJarred() + "\n" + Locations.runHome().getAbsolutePath()  + "\n"
+//        );
+
+
+        for (File file : files){
+            System.out.println(file.getAbsolutePath() + " " + file.exists() + "\n");
+        }
+
         return files;
     }
 
@@ -186,8 +260,8 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                     HashSet<File> tasksFiles = new HashSet<File>();
                     Executable executable = null;
                     String jobName = "triana.sh";
-                    String executableFileName = "triana.sh";
-                    String arguments = "-n -w ";
+                    String executableFileName = TRIANA_RUN_SCRIPT;
+                    String arguments = "-n -u " + tasktype;
 
                     TaskTypeToolDescriptor taskTypeToolDescriptor;
                     if( (taskTypeToolDescriptor = TaskTypeRepo.getDescriptorFromType(tasktype)) != null){
@@ -197,8 +271,6 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                     } else {
                         tasksFiles.addAll(trianaFiles);
                     }
-                    System.out.println(tasksFiles);
-
 
                     IWIRTaskHandler iwirTaskHandler = new IWIRTaskHandler(task);
                     iwirTaskHandler.setFiles(tasksFiles);
@@ -250,11 +322,10 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
                     jsdls.put(tasktype, iwirTaskHandler);
 
-                    System.out.println(jsdls.keySet());
-
                 }
             }
         }
+        System.out.println(jsdls.keySet());
     }
 
     /* (non-Javadoc)

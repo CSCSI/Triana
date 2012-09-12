@@ -264,7 +264,7 @@ public class ImportIwir {
         //this requires the taskType string, the name and the taskgraph properties
 
         Tool newTask = TaskTypeRepo.getToolFromType(
-                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg.getProperties());
+                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg.getProperties(), true);
 //        Tool newTask = TaskTypeRepo.getToolFromType(
 //                (org.shiwa.fgi.iwir.Task) iwirTask, tg.getProperties());
 

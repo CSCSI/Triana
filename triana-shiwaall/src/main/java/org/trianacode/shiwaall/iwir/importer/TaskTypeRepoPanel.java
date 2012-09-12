@@ -3,19 +3,25 @@ package org.trianacode.shiwaall.iwir.importer;
 import org.trianacode.gui.action.ActionDisplayOptions;
 import org.trianacode.gui.action.ToolSelectionHandler;
 import org.trianacode.gui.extensions.Extension;
+import org.trianacode.gui.hci.ApplicationFrame;
+import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.panels.DisplayDialog;
 import org.trianacode.shiwaall.executionServices.TaskTypeToolDescriptor;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
 import org.trianacode.taskgraph.Task;
+import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -26,6 +32,9 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class TaskTypeRepoPanel extends AbstractAction implements Extension, ActionDisplayOptions {
+
+    private Object[][] data = null;
+    private TaskTypeToolDescriptor selectedDescriptor = null;
 
     /**
      * Instantiates a new task type repo panel.
@@ -84,10 +93,14 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        showPanel();
+    }
+
+    private void showPanel() {
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(new JLabel("TaskType  :   Triana Class : Executable"));
+//        mainPanel.add(new JLabel("TaskType  :   Triana Class : Executable"));
 
 
         String[] columnNames = {"TaskType", "Triana Class", "Executable"};
@@ -103,51 +116,116 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
             Object[] thisType;
             if(descriptor.getExecutable() != null){
                 exec = descriptor.getExecutable();
-                thisType = new Object[]{descriptor.getTasktype(), classname, exec};
+                thisType = new Object[]{descriptor, classname, exec};
             } else {
-                thisType = new Object[]{descriptor.getTasktype(), classname, ""};
+                thisType = new Object[]{descriptor, classname, ""};
             }
             types.add(thisType);
         }
-        Object[][] data = new Object[types.size()][3];
+        data = new Object[types.size()][3];
         types.toArray(data);
 
-        JTable jTable = new JTable(data, columnNames);
+        JTable jTable = new JTable();
         DefaultTableModel defaultTableModel = new DefaultTableModel() {
+
             @Override
             public boolean isCellEditable(int a, int b){
                 return false;
             }
         };
-//        jTable.setModel(defaultTableModel);
-//        jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        defaultTableModel.setDataVector(data, columnNames);
+        jTable.setModel(defaultTableModel);
+        jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jTable.setShowGrid(true);
-//        jTable.addMouseListener(new RowListener(mainPanel));
 //        jTable.setPreferredScrollableViewportSize(new Dimension(300, 70));
 //        jTable.setFillsViewportHeight(true);
 
         JScrollPane jScrollPane = new JScrollPane(jTable);
         mainPanel.add(jScrollPane);
+        JTextArea jTextArea = new JTextArea();
+        jTextArea.setRows(8);
 
+        jTable.addMouseListener(new RowListener(jTextArea));
+        mainPanel.add(jTextArea);
+
+
+        JButton addTool = new JButton("Add to Taskgraph");
+        addTool.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ApplicationFrame applicationFrame =
+                        GUIEnv.getApplicationFrame();
+                if(applicationFrame != null){
+                    TaskGraph taskGraph = applicationFrame.getSelectedDesktopView().getTaskgraphPanel().getTaskGraph();
+                    Tool tool = TaskTypeRepo.getToolFromDescriptor(selectedDescriptor, taskGraph.getProperties());
+
+                    try {
+                        Task task = taskGraph.createTask(tool);
+
+                        System.out.println(selectedDescriptor.getExecutable().getPorts());
+
+                    } catch (TaskException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        mainPanel.add(addTool);
+        addTool.setEnabled(GUIEnv.getApplicationFrame() != null);
 
         DisplayDialog displayDialog = new DisplayDialog(mainPanel, "TaskType Repo", null);
     }
 
     private class RowListener extends MouseAdapter {
 
-        private JPanel mainPanel;
+        private JTextArea jTextArea;
 
-        public RowListener(JPanel mainPanel) {
-            this.mainPanel = mainPanel;
+        public RowListener(JTextArea jTextArea) {
+            this.jTextArea = jTextArea;
         }
 
         @Override
-        public void mousePressed(MouseEvent event){
+        public void mouseClicked(MouseEvent event){
             JTable jTable = (JTable) event.getSource();
             int selection = jTable.getSelectedRow();
+            System.out.println(selection);
 
-
+            if(selection <= (data.length -1)){
+                Object[] description = data[selection];
+                if(description != null && description[0] != null){
+                    selectedDescriptor = (TaskTypeToolDescriptor) description[0];
+                    printDescrption();
+                }
+                System.out.println(Arrays.deepToString(data));
+            }
         }
 
+        private void printDescrption() {
+            System.out.println(selectedDescriptor.getTasktype());
+            TaskTypeToolDescriptor toolDescriptor = selectedDescriptor;
+            StringBuilder descriptionStrings = new StringBuilder();
+
+            descriptionStrings.append("Tasktype : " + toolDescriptor.getTasktype() + "\n");
+            descriptionStrings.append("Class : " + toolDescriptor.getToolClass() + "\n");
+            descriptionStrings.append("Properties : " + toolDescriptor.getProperties() + "\n");
+
+            if(toolDescriptor.getExecutable() != null){
+                descriptionStrings.append(
+                        "Executable" + toolDescriptor.getExecutable().getPrimaryExec() + "\n");
+                descriptionStrings.append(
+                        "Runtime folder " + toolDescriptor.getExecutable().getWorkingDir().getAbsolutePath() + "\n");
+            } else {
+                descriptionStrings.append("Executable : null\n");
+            }
+
+            jTextArea.setText(descriptionStrings.toString());
+        }
+
+    }
+
+    public static void main(String[] args) {
+        TaskTypeRepoPanel taskTypeRepoPanel = new TaskTypeRepoPanel();
+        taskTypeRepoPanel.showPanel();
     }
 }

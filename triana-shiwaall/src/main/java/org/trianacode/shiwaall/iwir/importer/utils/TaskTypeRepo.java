@@ -35,10 +35,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 // TODO: Auto-generated Javadoc
@@ -89,7 +86,7 @@ public class TaskTypeRepo {
 
     /** True if std out should be enabled. */
     private static boolean printing = false;
-    
+
     /**
      * Stdout.
      *
@@ -114,7 +111,7 @@ public class TaskTypeRepo {
      * Gets the tool from type.
      *
      * @param iwirTask the iwir task
-     * @param fgiWorkflowReader the fgi workflow reader
+     * @param fgiWorkflowReader the fgi workflow reader for the FGI bundle, can be null
      * @param properties the properties
      * @return the tool from type
      * @throws IOException Signals that an I/O exception has occurred.
@@ -123,43 +120,33 @@ public class TaskTypeRepo {
      * @throws TaskException the task exception
      */
     public static Tool getToolFromType(Task iwirTask, FGIWorkflowReader fgiWorkflowReader,
-                                       TrianaProperties properties) throws IOException, JAXBException, ProxyInstantiationException, TaskException {
-//    public static Tool getToolFromType(Task iwirTask,
-//                                       TrianaProperties properties) throws IOException, JAXBException, ProxyInstantiationException, TaskException {
-        Tool tool = null;
+                                       TrianaProperties properties, boolean inOutOnFail) throws IOException, JAXBException, ProxyInstantiationException, TaskException {
         String taskName = iwirTask.getName();
         String type = iwirTask.getTasktype();
 
         TaskTypeToolDescriptor descriptor = getTaskTypeRepo().getDescriptorForType(type);
 
+        Tool tool = null;
         if (descriptor != null) {
-            Class clazz = descriptor.getToolClass();
-            try {
-                tool = AddonUtils.makeTool(clazz, taskName, properties);
-
-                if(descriptor.getProperties() != null){
-                    for(String key : descriptor.getProperties().stringPropertyNames()){
-                        tool.setParameter(key, descriptor.getProperties().get(key));
-                    }
-                }
-            } catch (Exception ignored) {
-            }
+            tool = getToolFromDescriptor(descriptor, properties);
         } else {
+            tool = getTrianaTool(type, properties);
 
-            if (type.contains(".")) {
-                String unitName = type.substring(type.lastIndexOf(".") + 1);
-                String packageName = type.substring(0, type.lastIndexOf("."));
-                stdout(packageName + unitName);
-                try {
-                    tool = AddonUtils.makeTool(unitName, packageName, taskName, properties);
-                } catch (Exception ignored) {
-                    tool = null;
-                }
-            }
+//            if (type.contains(".")) {
+//                String unitName = type.substring(type.lastIndexOf(".") + 1);
+//                String packageName = type.substring(0, type.lastIndexOf("."));
+//                stdout(packageName + unitName);
+//                try {
+//                    tool = AddonUtils.makeTool(unitName, packageName, taskName, properties);
+//                } catch (Exception ignored) {
+//                    tool = null;
+//                }
+//            }
         }
 
         //FIX ME
         if (tool == null && fgiWorkflowReader != null){
+
             stdout("Using JSDL for tasktype " + type);
             FGITaskReader reader = fgiWorkflowReader.getReaderByType(type);
             if(reader != null) {
@@ -181,6 +168,7 @@ public class TaskTypeRepo {
                     try {
                         tool = AddonUtils.makeTool(AtomicTaskHolder.class, iwirTask.getTasktype(), properties);
                         tool.setParameter(Executable.EXECUTABLE, executable);
+                        executable.setTool(tool);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -198,7 +186,7 @@ public class TaskTypeRepo {
             }
         }
 
-        if (tool == null) {
+        if (tool == null && inOutOnFail) {
             tool = AddonUtils.makeTool(InOut.class, taskName, properties);
         }
         tool.setToolName(iwirTask.getName());
@@ -208,6 +196,50 @@ public class TaskTypeRepo {
         return tool;
 
 
+    }
+
+    private static Tool getTrianaTool(String type, TrianaProperties properties) {
+        System.out.println("From triana tool");
+
+        System.out.println(Arrays.toString(properties.getEngine().getToolTable().getToolNames()));
+
+        return properties.getEngine().getToolTable().getTool(type);
+    }
+
+    public static Tool getToolFromDescriptor(TaskTypeToolDescriptor descriptor, TrianaProperties properties) {
+        System.out.println("From descriptor");
+        Tool tool = null;
+//        Class clazz = descriptor.getToolClass();
+//        String taskName = descriptor.getTasktype();
+
+        tool = getTrianaTool(descriptor.getTasktype(), properties);
+        if(tool == null){
+            try {
+
+                if(descriptor.getExecutable() != null){
+                    if(descriptor.getExecutable().getTool() != null){
+                        tool = descriptor.getExecutable().getTool();
+                        Executable executable = descriptor.getExecutable();
+                        tool.setParameter(Executable.EXECUTABLE, descriptor.getExecutable());
+                        tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
+                    }
+                }
+
+//                tool = AddonUtils.makeTool(AtomicTaskHolder.class, descriptor.getTasktype(), properties);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+
+        }
+
+        if(tool != null && descriptor.getProperties() != null){
+            for(String key : descriptor.getProperties().stringPropertyNames()){
+                tool.setParameter(key, descriptor.getProperties().get(key));
+            }
+        }
+        return tool;
     }
 
     /**
@@ -232,7 +264,12 @@ public class TaskTypeRepo {
     private static void populateExecutableFromJSDL(Executable executable, File jsdlFile, Task iwirTask)
             throws IOException, JAXBException {
 
-        String j = readJSDL(jsdlFile);
+        String jsdlString = readJSDL(jsdlFile);
+        populateExecutableFromJSDLString(executable, jsdlString, iwirTask);
+    }
+
+    public static void populateExecutableFromJSDLString(Executable executable, String j, Task iwirTask) throws JAXBException, FileNotFoundException {
+        executable.setJSDLstring(j);
 
         Parser parser = new Parser();
         JobDefinitionType jobDef =  parser.readJSDLFromString(j);

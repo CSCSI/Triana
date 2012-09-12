@@ -14,8 +14,9 @@ import java.awt.*;
  */
 public class DisplayDialog extends JDialog {
     public DisplayDialog(JPanel panel, String title, Image icon) {
-        //     this.setModal(true);
+//             this.setModal(true);
         this.setTitle(title);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         this.add(panel);
         this.pack();

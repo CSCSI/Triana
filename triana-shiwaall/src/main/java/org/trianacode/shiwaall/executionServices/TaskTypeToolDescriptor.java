@@ -105,4 +105,8 @@ public class TaskTypeToolDescriptor {
     public void setExecutable(Executable executable) {
         this.executable = executable;
     }
+
+    public String toString(){
+        return getTasktype();
+    }
 }

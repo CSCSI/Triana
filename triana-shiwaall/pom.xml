@@ -84,7 +84,7 @@
         <dependency>
             <groupId>org.shiwa.desktop</groupId>
             <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.6</version>
+            <version>1.6.1-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <artifactId>iwirTool</artifactId>

@@ -5,6 +5,7 @@ import org.shiwa.fgi.iwir.InputPort;
 import org.shiwa.fgi.iwir.OutputPort;
 import org.trianacode.enactment.StreamToOutput;
 import org.trianacode.taskgraph.Node;
+import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.*;
 import java.util.HashMap;
@@ -49,6 +50,9 @@ public class Executable implements ExecutableInterface, Serializable {
     /** The output port to file map. */
     private HashMap<OutputPort, File> outputPortToFileMap;
 
+    private String JSDLstring = "";
+
+    private Tool tool = null;
 
     /**
      * Instantiates a new executable.
@@ -134,6 +138,7 @@ public class Executable implements ExecutableInterface, Serializable {
                 try {
                     File file = new File((String) input);
                     if(file.exists()){
+                        System.out.println("Executable input : " + executableInputFile);
                         System.out.println("Input " + file.getAbsolutePath() + " exists " + file.exists());
                         FileUtils.copyFile(file, executableInputFile);
                     }
@@ -339,4 +344,22 @@ public class Executable implements ExecutableInterface, Serializable {
     public String toString(){
         return primaryExec;
     }
+
+    public void setJSDLstring(String JSDLstring) {
+        this.JSDLstring = JSDLstring;
+    }
+
+    public String getJSDLstring() {
+        return JSDLstring;
+    }
+
+    public void setTool(Tool tool) {
+        this.tool = tool;
+    }
+
+    public Tool getTool() {
+        return tool;
+    }
+
+
 }

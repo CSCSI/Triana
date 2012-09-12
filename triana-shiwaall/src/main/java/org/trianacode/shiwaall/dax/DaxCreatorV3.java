@@ -191,7 +191,7 @@ public class DaxCreatorV3 implements TaskConscious {
 
             Executable exec = new Executable(namespace, jobChunk.getJobName(), "1.0");
             exec.setArchitecture(Executable.ARCH.X86).setOS(Executable.OS.LINUX);
-            exec.setInstalled(true);
+            exec.setInstalled(false);
             exec.addPhysicalFile(jobChunk.getExecLocation(), "local");
             execs.put(jobChunk.getJobName(), exec);
 

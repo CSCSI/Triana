@@ -54,6 +54,9 @@ public class RunUnit {
         ArrayList<String> unitArgs = (ArrayList<String>) vals.getOptionValues(TrianaOptions.RUN_UNIT.getShortOpt());
 
         String className = unitArgs.get(0);
+        if(className == null){
+            return;
+        }
         String[] splitName = new String[]{
                 className.substring(0, className.lastIndexOf(".")),
                 className.substring(className.lastIndexOf(".") + 1)
@@ -117,6 +120,8 @@ public class RunUnit {
                 } catch (DataNotResolvableException e) {
                     e.printStackTrace();
                 }
+            } else {
+                System.out.println("Not a workflowDataPacket");
             }
             System.out.println("Exec.execute output node " + node.getName() + " data : " + o);
         }
