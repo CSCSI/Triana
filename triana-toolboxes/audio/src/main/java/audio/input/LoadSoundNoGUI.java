@@ -1,25 +1,21 @@
 package audio.input;
 
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import org.trianacode.gui.Display;
+import org.trianacode.taskgraph.Unit;
+import triana.types.audio.AudioChannelFormat;
+import triana.types.audio.MultipleAudio;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import org.trianacode.gui.Display;
-import org.trianacode.taskgraph.Unit;
-import triana.types.audio.AudioChannelFormat;
-import triana.types.audio.MultipleAudio;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Headless version of of LoadSound so that it can be used to process a file whose location is hardcoded in this code.
@@ -65,6 +61,15 @@ public class LoadSoundNoGUI extends Unit {
     File file;
 
     public void process() throws Exception {
+
+        if(getInputNodeCount() == 1){
+            Object object = getInputAtNode(0);
+            if(object instanceof String){
+                fileName = (String) object;
+                createAudioInputStream(new File(fileName));
+            }
+
+        }
 
         if (audioInputStream == null) {
             return;
@@ -301,7 +306,7 @@ public class LoadSoundNoGUI extends Unit {
         // Initialise node properties
         setDefaultInputNodes(0);
         setMinimumInputNodes(0);
-        setMaximumInputNodes(0);
+        setMaximumInputNodes(1);
 
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(0);
@@ -315,9 +320,9 @@ public class LoadSoundNoGUI extends Unit {
         setPopUpDescription("");
         setHelpFileLocation("LoadSoundNoGUI.html");
 
-        // Define initial value and type of parameters
+//        // Define initial value and type of parameters
         defineParameter("fileName", "/Users/eddie/Desktop/06 Midnight Express copy.aif", USER_ACCESSIBLE);
-
+//
         createAudioInputStream(new File(fileName));
         String fn = "/Users/eddie/Desktop/06 Midnight Express copy.aif";
         parameterUpdate("fileName", fn);
@@ -363,7 +368,7 @@ public class LoadSoundNoGUI extends Unit {
      * @return an array of the input types accepted by nodes not covered by getNodeInputTypes().
      */
     public String[] getInputTypes() {
-        return new String[]{};
+        return new String[]{"java.lang.Object"};
     }
 
 

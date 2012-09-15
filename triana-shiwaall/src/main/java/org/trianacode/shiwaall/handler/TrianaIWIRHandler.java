@@ -212,21 +212,24 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
-            if(clazzFile != null){
+            if(clazzFile != null) {
+                if(clazzFile.isFile()){
 
-                System.out.println("task " + task.getToolName() +
-                        " tool " + task.getClass().getCanonicalName() +
-                        "triana toolbox jar : " + clazzFile.getAbsolutePath());
-                taskFiles.add(clazzFile);
+                    System.out.println("task " + task.getToolName() +
+                            " tool " + task.getClass().getCanonicalName() +
+                            "triana toolbox jar : " + clazzFile.getAbsolutePath());
+                    taskFiles.add(clazzFile);
+                } else {
+                    //TODO iterate through and grab all sub-folders/files and flatten
+                }
             }
-        }
-        files.addAll(taskFiles);
+            files.addAll(taskFiles);
 
 //        System.out.println(Locations.getHomeProper()
 //                + "\n" + Locations.isJarred() + "\n" + Locations.runHome().getAbsolutePath()  + "\n"
 //        );
 
-
+        }
         for (File file : files){
             System.out.println(file.getAbsolutePath() + " " + file.exists() + "\n");
         }

@@ -196,31 +196,31 @@ public class TaskTypeRepo {
 
         org.trianacode.taskgraph.Task task = taskGraph.createTask(tool);
 
-        if(descriptor != null){
-            Executable executable = descriptor.getExecutable();
-
-
-
-            File workingDir = executable.getWorkingDir();
-            if(workingDir != null){
-
-                // basically a clone, without the annoyance of implementing Cloneable
-                Executable thisExecutable = new Executable(type);
-
-
-                String name = task.getToolName();
-                File execDir = new File(workingDir.getParent());
-
-                File thisWorkingDir = new File(execDir, name);
-
-                FileUtils.copyDirectory(workingDir, thisWorkingDir);
-                thisExecutable.setWorkingDir(thisWorkingDir);
-
-                tool.setParameter(Executable.EXECUTABLE, thisExecutable);
-            }
-
-            tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
-        }
+//        if(descriptor != null){
+//            Executable executable = descriptor.getExecutable();
+//
+//
+//
+//            File workingDir = executable.getWorkingDir();
+//            if(workingDir != null){
+//
+//                // basically a clone, without the annoyance of implementing Cloneable
+//                Executable thisExecutable = new Executable(type);
+//
+//
+//                String name = task.getToolName();
+//                File execDir = new File(workingDir.getParent());
+//
+//                File thisWorkingDir = new File(execDir, name);
+//
+//                FileUtils.copyDirectory(workingDir, thisWorkingDir);
+//                thisExecutable.setWorkingDir(thisWorkingDir);
+//
+//                tool.setParameter(Executable.EXECUTABLE, thisExecutable);
+//            }
+//
+//            tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
+//        }
 
 
         return task;

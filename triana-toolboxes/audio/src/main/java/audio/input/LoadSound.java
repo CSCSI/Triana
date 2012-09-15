@@ -243,7 +243,7 @@ public class LoadSound extends Unit {
         // Initialise node properties
         setDefaultInputNodes(0);
         setMinimumInputNodes(0);
-        setMaximumInputNodes(0);
+        setMaximumInputNodes(1);
         setDefaultOutputNodes(1);
         setMinimumOutputNodes(1);
         setMaximumOutputNodes(Integer.MAX_VALUE);
@@ -308,7 +308,7 @@ public class LoadSound extends Unit {
      * @return an array of the input types accepted by nodes not covered by getNodeInputTypes().
      */
     public String[] getInputTypes() {
-        return new String[]{};
+        return new String[]{"java.lang.Object"};
     }
 
     /**

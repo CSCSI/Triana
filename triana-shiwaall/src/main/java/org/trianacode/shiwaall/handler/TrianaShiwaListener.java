@@ -119,7 +119,9 @@ public class TrianaShiwaListener implements ExecutionListener {
                          " " + inputPort.getValueType().toString()
                 );
 
-                IoMapping ioMapping = new IoMapping(new IoType(value, "string", reference), portNumberString);
+                //TODO figure out references
+
+                IoMapping ioMapping = new IoMapping(new IoType(value, "string", false), portNumberString);
                 inputMappings.add(ioMapping);
                 portNumber++;
             }
