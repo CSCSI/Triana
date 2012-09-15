@@ -10,7 +10,6 @@ import org.trianacode.shiwaall.executionServices.TaskTypeToolDescriptor;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
 import org.trianacode.taskgraph.Task;
-import org.trianacode.taskgraph.TaskException;
 import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.tool.Tool;
 
@@ -157,14 +156,19 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
                         GUIEnv.getApplicationFrame();
                 if(applicationFrame != null){
                     TaskGraph taskGraph = applicationFrame.getSelectedDesktopView().getTaskgraphPanel().getTaskGraph();
-                    Tool tool = TaskTypeRepo.getToolFromDescriptor(selectedDescriptor, taskGraph.getProperties());
+
+//                    Tool tool = TaskTypeRepo.getToolFromDescriptor(selectedDescriptor, taskGraph.getProperties());
 
                     try {
-                        Task task = taskGraph.createTask(tool);
+                        Task task = TaskTypeRepo.getTaskFromType(
+                                new org.shiwa.fgi.iwir.Task( selectedDescriptor.getTasktype(),
+                                        selectedDescriptor.getTasktype())
+                                , null, taskGraph, false);
+//                        Task task = taskGraph.createTask(tool);
 
                         System.out.println(selectedDescriptor.getExecutable().getPorts());
 
-                    } catch (TaskException e1) {
+                    } catch (Exception e1) {
                         e1.printStackTrace();
                     }
                 }
@@ -173,6 +177,7 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
 
         mainPanel.add(addTool);
         addTool.setEnabled(GUIEnv.getApplicationFrame() != null);
+        addTool.setEnabled(false); //until a deap clone of the Executable is possible, this is useless.
 
         DisplayDialog displayDialog = new DisplayDialog(mainPanel, "TaskType Repo", null);
     }

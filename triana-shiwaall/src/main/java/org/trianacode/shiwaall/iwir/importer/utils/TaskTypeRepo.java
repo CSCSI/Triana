@@ -29,6 +29,7 @@ import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.holders.AtomicTaskHolder;
 import org.trianacode.shiwaall.test.InOut;
 import org.trianacode.taskgraph.TaskException;
+import org.trianacode.taskgraph.TaskGraph;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
 import org.trianacode.taskgraph.tool.Tool;
 import org.w3c.dom.Element;
@@ -112,15 +113,15 @@ public class TaskTypeRepo {
      *
      * @param iwirTask the iwir task
      * @param fgiWorkflowReader the fgi workflow reader for the FGI bundle, can be null
-     * @param properties the properties
+     * @param taskGraph the taskgraph the task will be created within
      * @return the tool from type
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws JAXBException the jAXB exception
      * @throws ProxyInstantiationException the proxy instantiation exception
      * @throws TaskException the task exception
      */
-    public static Tool getToolFromType(Task iwirTask, FGIWorkflowReader fgiWorkflowReader,
-                                       TrianaProperties properties, boolean inOutOnFail) throws IOException, JAXBException, ProxyInstantiationException, TaskException {
+    public static org.trianacode.taskgraph.Task getTaskFromType(Task iwirTask, FGIWorkflowReader fgiWorkflowReader,
+                                                                TaskGraph taskGraph, boolean inOutOnFail) throws IOException, JAXBException, ProxyInstantiationException, TaskException {
         String taskName = iwirTask.getName();
         String type = iwirTask.getTasktype();
 
@@ -128,9 +129,9 @@ public class TaskTypeRepo {
 
         Tool tool = null;
         if (descriptor != null) {
-            tool = getToolFromDescriptor(descriptor, properties);
+//            tool = getToolFromDescriptor(descriptor, taskGraph.getProperties());
         } else {
-            tool = getTrianaTool(type, properties);
+            tool = getTrianaTool(type, taskGraph.getProperties());
 
 //            if (type.contains(".")) {
 //                String unitName = type.substring(type.lastIndexOf(".") + 1);
@@ -166,7 +167,7 @@ public class TaskTypeRepo {
                     }
 
                     try {
-                        tool = AddonUtils.makeTool(AtomicTaskHolder.class, iwirTask.getTasktype(), properties);
+                        tool = AddonUtils.makeTool(AtomicTaskHolder.class, iwirTask.getTasktype(), taskGraph.getProperties());
                         tool.setParameter(Executable.EXECUTABLE, executable);
                         executable.setTool(tool);
                     } catch (Exception e) {
@@ -187,21 +188,48 @@ public class TaskTypeRepo {
         }
 
         if (tool == null && inOutOnFail) {
-            tool = AddonUtils.makeTool(InOut.class, taskName, properties);
+            tool = AddonUtils.makeTool(InOut.class, taskName, taskGraph.getProperties());
         }
         tool.setToolName(iwirTask.getName());
         tool.setParameter(Executable.TASKTYPE, type);
         stdout("Returning tool " + tool.getToolName() + " " + tool.getClass().getCanonicalName());
 
-        return tool;
+        org.trianacode.taskgraph.Task task = taskGraph.createTask(tool);
+
+        if(descriptor != null){
+            Executable executable = descriptor.getExecutable();
 
 
+
+            File workingDir = executable.getWorkingDir();
+            if(workingDir != null){
+
+                // basically a clone, without the annoyance of implementing Cloneable
+                Executable thisExecutable = new Executable(type);
+
+
+                String name = task.getToolName();
+                File execDir = new File(workingDir.getParent());
+
+                File thisWorkingDir = new File(execDir, name);
+
+                FileUtils.copyDirectory(workingDir, thisWorkingDir);
+                thisExecutable.setWorkingDir(thisWorkingDir);
+
+                tool.setParameter(Executable.EXECUTABLE, thisExecutable);
+            }
+
+            tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
+        }
+
+
+        return task;
     }
 
     private static Tool getTrianaTool(String type, TrianaProperties properties) {
         System.out.println("From triana tool");
 
-        System.out.println(Arrays.toString(properties.getEngine().getToolTable().getToolNames()));
+//        System.out.println(Arrays.toString(properties.getEngine().getToolTable().getToolNames()));
 
         return properties.getEngine().getToolTable().getTool(type);
     }
@@ -219,9 +247,10 @@ public class TaskTypeRepo {
                 if(descriptor.getExecutable() != null){
                     if(descriptor.getExecutable().getTool() != null){
                         tool = descriptor.getExecutable().getTool();
-                        Executable executable = descriptor.getExecutable();
-                        tool.setParameter(Executable.EXECUTABLE, descriptor.getExecutable());
-                        tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
+//                        Executable executable = descriptor.getExecutable();
+//
+//                        tool.setParameter(Executable.EXECUTABLE, descriptor.getExecutable());
+//                        tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
                     }
                 }
 

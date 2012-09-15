@@ -23,9 +23,10 @@ public class VariableDummyUnit extends Unit {
 
     @Override
     public void process() throws Exception {
-        Object configSizeObject = getParameter("configSize");
-        if (configSizeObject != null) {
-            int configSize = (Integer) configSizeObject;
+
+        if (isParameter("configSize")) {
+            int configSize = Integer.parseInt(String.valueOf(getParameter("configSize")));
+            System.out.println(configSize);
             for (int i = 0; i < configSize; i++) {
                 Object val = getParameter("var" + i);
                 System.out.println("Output : " + val + " node : " + i);

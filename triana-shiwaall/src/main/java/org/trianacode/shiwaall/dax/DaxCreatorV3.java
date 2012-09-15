@@ -338,7 +338,9 @@ public class DaxCreatorV3 implements TaskConscious {
         //    String filename = chunk.getNextFilename();
         String filename = fileChunk.getFilename();
         String fileLocation = fileChunk.getFileLocation();
+        System.out.println("file location" + fileLocation);
         String fileProtocol = fileChunk.getFileProtocol();
+        System.out.println("protocol " + fileProtocol);
         File file = new File(filename);
 
         if (fileChunk.isPhysicalFile()) {

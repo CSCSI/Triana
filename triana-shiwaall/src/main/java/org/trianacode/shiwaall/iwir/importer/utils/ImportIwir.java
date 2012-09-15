@@ -3,8 +3,10 @@ package org.trianacode.shiwaall.iwir.importer.utils;
 import org.shiwa.desktop.data.transfer.FGIWorkflowReader;
 import org.shiwa.fgi.iwir.*;
 import org.trianacode.TrianaInstance;
+import org.trianacode.enactment.AddonUtils;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.factory.TaskHolderFactory;
+import org.trianacode.shiwaall.test.InOut;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.Task;
 import org.trianacode.taskgraph.proxy.ProxyInstantiationException;
@@ -13,6 +15,7 @@ import org.trianacode.taskgraph.tool.Tool;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -31,13 +34,13 @@ public class ImportIwir {
 
     /** The data links. */
     private HashSet<DataLink> dataLinks = new HashSet<DataLink>();
-    
+
     /** The std. */
     boolean std = false;
 
     /** The fgi workflow reader. */
     private FGIWorkflowReader fgiWorkflowReader = null;
-    
+
     /** The Constant IWIR_NODE. */
     public static final String IWIR_NODE = "iwirNode";
 
@@ -116,86 +119,194 @@ public class ImportIwir {
         recordAbstractTasksAndDataLinks(mainTask, taskGraph);
         stdOut(taskGraph.toString());
 
-//        stdOut("Abstract Tasks " + abstractHashMap.toString());
-//        stdOut("DataLinks " + ArrayUtils.toString(dataLinks.toArray()));
 
+        //The following block of code looks for root IWIR ports which
+        //map to more than one task. Triana likes one 2 one mappings, IWIR allows one 2 many.
 
+        // Make a copy of all the data links to iterate through
+        ArrayList<DataLink> copyOfDataLinks = new ArrayList<DataLink>();
+        copyOfDataLinks.addAll(dataLinks);
+
+        //for matching ports to new "splitting" tasks
+        HashMap<AbstractPort, Task> alternativeNodes = new HashMap<AbstractPort, Task>();
+
+        // map of the root input port to the multiple datalink it has connected to it
+        HashMap<AbstractPort, ArrayList<DataLink>> collisions = new HashMap<AbstractPort, ArrayList<DataLink>>();
+
+        //iterate through datalinks
         for (DataLink dataLink : dataLinks) {
 
-            stdOut("\nLink from " + dataLink.getFromPort() +
-                    " (" + dataLink.getFromPort().getType().toString() + ") " +
-                    " to " + dataLink.getToPort() +
-                    " (" + dataLink.getToPort().getType().toString() + ")"
-            );
+            //check to see if ports task is the root taskgraph.
+            if(abstractHashMap.get(dataLink.getFromPort().getMyTask()) == taskGraph
+                    && !collisions.containsKey(dataLink.getFromPort())
+                    ){
 
-            AbstractPort outgoingPort = dataLink.getFromPort();
-            AbstractPort incomingPort = dataLink.getToPort();
+                AbstractPort sendingPort = dataLink.getFromPort();
+                ArrayList<DataLink> collidingLinks = new ArrayList<DataLink>();
 
-            stdOut(outgoingPort.getPredecessors().toString());
-            stdOut(outgoingPort.getAllSuccessors().toString());
 
-            stdOut(incomingPort.getPredecessors().toString());
-            stdOut(incomingPort.getAllSuccessors().toString());
+                //iterate through the copy of the links
+                for(DataLink anotherDataLink : copyOfDataLinks) {
 
-            AbstractTask sendingAbstract = outgoingPort.getMyTask();
-            AbstractTask receivingAbstract = incomingPort.getMyTask();
 
-            Task sendingTask = abstractHashMap.get(sendingAbstract);
-            Task receivingTask = abstractHashMap.get(receivingAbstract);
+                    //if the link is not itself && they have the same "from" port, its a collision
+                    if(
+                            dataLink != anotherDataLink &&
+                            dataLink.getFrom().equals(anotherDataLink.getFrom())){
+
+                        System.out.println("####### port collision, " + dataLink.getFrom()
+                                + " : " + dataLink.getTo()
+                                + " : " + anotherDataLink.getTo()
+                        );
+
+                        //build up a list of colliding datalinks from this port
+                        collidingLinks.add(anotherDataLink);
+                    }
+                }
+
+
+                //if there is more than one datalink on this port,
+                // add the original link too, and store the port
+                if(collidingLinks.size() > 0){
+                    System.out.println("port " + sendingPort.getName() + " collides with " + collidingLinks.size());
+                    collidingLinks.add(dataLink);
+                    collisions.put(sendingPort, collidingLinks);
+                }
+            }
+        }
+
+
+        //go through the colliding ports
+        for(AbstractPort abstractPort : collisions.keySet()){
+
+            Task scopedTaskgraph = abstractHashMap.get(abstractPort.getMyTask());
+            if( scopedTaskgraph instanceof TaskGraph){
+                System.out.println("Will create now splitting task in " + taskGraph.getToolName());
+
+                //create the splitting tool which passes one input to multiple receiveing nodes
+                Tool tool = AddonUtils.makeTool(InOut.class, abstractPort.getUniqueId(), scopedTaskgraph.getProperties());
+
+                Task task = taskGraph.createTask(tool);
+
+//                taskGraph.connect(task.addDataOutputNode(), abstractHashMap.get(abstractPort.getMyTask()).addDataInputNode());
+
+                //add connection from splitting node to each new port.
+                for(DataLink anotherDataLink : collisions.get(abstractPort)){
+
+                    Task receivingTask = abstractHashMap.get(anotherDataLink.getToPort().getMyTask());
+                    Node receivingNode = receivingTask.addDataInputNode();
+
+                    taskGraph.connect(task.addDataOutputNode(), receivingNode);
+
+                    //Record the links for data matching up later
+                    if(receivingTask.isParameterName(Executable.EXECUTABLE)){
+                        Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
+                        executable.addPort(receivingNode.getTopLevelNode().getName(), anotherDataLink.getToPort().getName());
+                        receivingTask.setParameter(Executable.EXECUTABLE, executable);
+                    }
+
+                }
+
+                //for future reference, this port now maps to one specific task
+                alternativeNodes.put(abstractPort, task);
+            }
+
+        }
+
+
+        //continue with standard cable creation.
+
+        HashSet<AbstractPort> toIgnore = new HashSet<AbstractPort>();
+
+        for (DataLink dataLink : dataLinks) {
+            if(!toIgnore.contains(dataLink.getFromPort())){
+
+                stdOut("\nLink from " + dataLink.getFromPort() +
+                        " (" + dataLink.getFromPort().getType().toString() + ") " +
+                        " to " + dataLink.getToPort() +
+                        " (" + dataLink.getToPort().getType().toString() + ")"
+                );
+
+                AbstractPort outgoingPort = dataLink.getFromPort();
+                AbstractPort incomingPort = dataLink.getToPort();
+
+                stdOut(outgoingPort.getPredecessors().toString());
+                stdOut(outgoingPort.getAllSuccessors().toString());
+
+                stdOut(incomingPort.getPredecessors().toString());
+                stdOut(incomingPort.getAllSuccessors().toString());
+
+                AbstractTask sendingAbstract = outgoingPort.getMyTask();
+                AbstractTask receivingAbstract = incomingPort.getMyTask();
+
+                Task sendingTask = abstractHashMap.get(sendingAbstract);
+                Task receivingTask = abstractHashMap.get(receivingAbstract);
+
+                if(alternativeNodes.keySet().contains(outgoingPort)){
+                    receivingTask = alternativeNodes.get(outgoingPort);
+                    toIgnore.add(outgoingPort);
+                }
 
 //            stdOut("Will connect " + sendingTask + " to " + receivingTask);
 
 
-            if (sendingTask == receivingTask.getParent()) {
-                Node receivingNode = receivingTask.addDataInputNode();
-                Node graphNode = ((TaskGraph) sendingTask).addDataInputNode(receivingNode);
-                inputChain(outgoingPort, graphNode);
-
-                if(receivingTask.isParameterName(Executable.EXECUTABLE)){
-                    Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
-                    executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
-                    receivingTask.setParameter(Executable.EXECUTABLE, executable);
-                }
-            }
-
-            if (receivingTask == sendingTask.getParent()) {
-                Node sendingNode = sendingTask.addDataOutputNode();
-                Node graphNode = ((TaskGraph) receivingTask).addDataOutputNode(sendingNode);
-                outputChain(incomingPort, graphNode);
-
-                if(sendingTask.isParameterName(Executable.EXECUTABLE)){
-                    Executable executable = (Executable) sendingTask.getParameter(Executable.EXECUTABLE);
-                    executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
-                    sendingTask.setParameter(Executable.EXECUTABLE, executable);
-                }
-            }
-
-            //check both are atomic tasks
-            if (sendingAbstract instanceof org.shiwa.fgi.iwir.Task
-                    && receivingAbstract instanceof org.shiwa.fgi.iwir.Task) {
-
-                if (sendingTask.getParent() == receivingTask.getParent()) {
-                    TaskGraph scopeTaskgraph = sendingTask.getParent();
-                    stdOut("Connecting "
-                            + sendingTask.getQualifiedToolName() + " to "
-                            + receivingTask.getQualifiedToolName() + " in "
-                            + scopeTaskgraph.getQualifiedToolName()
-                    );
-                    Node sendingNode = sendingTask.addDataOutputNode();
+                if (sendingTask == receivingTask.getParent()) {
                     Node receivingNode = receivingTask.addDataInputNode();
-                    scopeTaskgraph.connect(sendingNode, receivingNode);
+                    Node graphNode = ((TaskGraph) sendingTask).addDataInputNode(receivingNode);
+                    inputChain(outgoingPort, graphNode);
+
+                    TaskGraph parentGraph = ((TaskGraph)sendingTask);
+                    parentGraph.setParameter(outgoingPort.getName(), graphNode.getAbsoluteNodeIndex());
+                    System.out.println("fromPort " + outgoingPort.getName()
+                            + " graphPort " + graphNode.getName()
+                            + " index " + graphNode.getAbsoluteNodeIndex()
+                    );
+
+                    if(receivingTask.isParameterName(Executable.EXECUTABLE)){
+                        Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
+                        executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
+                        receivingTask.setParameter(Executable.EXECUTABLE, executable);
+                    }
+                }
+
+                if (receivingTask == sendingTask.getParent()) {
+                    Node sendingNode = sendingTask.addDataOutputNode();
+                    Node graphNode = ((TaskGraph) receivingTask).addDataOutputNode(sendingNode);
+                    outputChain(incomingPort, graphNode);
 
                     if(sendingTask.isParameterName(Executable.EXECUTABLE)){
                         Executable executable = (Executable) sendingTask.getParameter(Executable.EXECUTABLE);
                         executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
                         sendingTask.setParameter(Executable.EXECUTABLE, executable);
                     }
-                    if(receivingTask.isParameterName(Executable.EXECUTABLE)){
-                        Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
-                        executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
-                        receivingTask.setParameter(Executable.EXECUTABLE, executable);
-                    }
+                }
 
+                //check both are atomic tasks
+                if (sendingAbstract instanceof org.shiwa.fgi.iwir.Task
+                        && receivingAbstract instanceof org.shiwa.fgi.iwir.Task) {
+
+                    if (sendingTask.getParent() == receivingTask.getParent()) {
+                        TaskGraph scopeTaskgraph = sendingTask.getParent();
+                        stdOut("Connecting "
+                                + sendingTask.getQualifiedToolName() + " to "
+                                + receivingTask.getQualifiedToolName() + " in "
+                                + scopeTaskgraph.getQualifiedToolName()
+                        );
+                        Node sendingNode = sendingTask.addDataOutputNode();
+                        Node receivingNode = receivingTask.addDataInputNode();
+                        scopeTaskgraph.connect(sendingNode, receivingNode);
+
+                        if(sendingTask.isParameterName(Executable.EXECUTABLE)){
+                            Executable executable = (Executable) sendingTask.getParameter(Executable.EXECUTABLE);
+                            executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
+                            sendingTask.setParameter(Executable.EXECUTABLE, executable);
+                        }
+                        if(receivingTask.isParameterName(Executable.EXECUTABLE)){
+                            Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
+                            executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
+                            receivingTask.setParameter(Executable.EXECUTABLE, executable);
+                        }
+                    }
                 }
             }
         }
@@ -263,13 +374,14 @@ public class ImportIwir {
         //if the iwirTask is a standard IWIR Atomic Task, try to find and/or make a tool for it.
         //this requires the taskType string, the name and the taskgraph properties
 
-        Tool newTask = TaskTypeRepo.getToolFromType(
-                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg.getProperties(), true);
+        System.out.println("Making " + iwirTask.getUniqueId());
+
+        Task trianaTask = TaskTypeRepo.getTaskFromType(
+                (org.shiwa.fgi.iwir.Task) iwirTask, fgiWorkflowReader, tg, true);
 //        Tool newTask = TaskTypeRepo.getToolFromType(
 //                (org.shiwa.fgi.iwir.Task) iwirTask, tg.getProperties());
 
-
-        Task trianaTask = tg.createTask(newTask);
+        System.out.println();
 
         //add the iwir property strings to the triana task
         for (Property property : iwirTask.getProperties()) {
@@ -301,7 +413,7 @@ public class ImportIwir {
             }
             if (port instanceof LoopPort || port instanceof LoopElement) {
 //                newNode = task.addParameterInputNode("loop");
-                  newNode = tg.addDataInputNode(task.addDataInputNode());
+                newNode = tg.addDataInputNode(task.addDataInputNode());
                 stdOut("Loop port found " + port.getName());
             }
             if(newNode != null && executable != null){

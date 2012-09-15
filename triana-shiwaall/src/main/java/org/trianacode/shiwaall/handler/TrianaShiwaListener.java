@@ -18,7 +18,6 @@ import org.trianacode.enactment.io.*;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.gui.action.files.TaskGraphFileHandler;
 import org.trianacode.gui.hci.GUIEnv;
-import org.trianacode.gui.hci.TrianaProgressBar;
 import org.trianacode.shiwaall.dax.DaxReader;
 import org.trianacode.shiwaall.iwir.importer.utils.ImportIwir;
 import org.trianacode.shiwaall.utils.WorkflowUtils;
@@ -48,19 +47,18 @@ import java.util.List;
  * Time: 14:22
  * To change this template use File | Settings | File Templates.
  *
- * @see TrianaShiwaEvent
  */
 public class TrianaShiwaListener implements ExecutionListener {
 
     /** The triana instance. */
     private TrianaInstance trianaInstance;
-    
+
     /** The dev log. */
     private static Log devLog = Loggers.DEV_LOGGER;
 
     /** The received listener. */
     private DefaultBundleReceivedListener receivedListener = null;
-    
+
     /** The shiwa desktop. */
     private SHIWADesktop shiwaDesktop = null;
 
@@ -77,11 +75,14 @@ public class TrianaShiwaListener implements ExecutionListener {
     /**
      * Gets the iO config from signature.
      *
-     * @param name the name
+     * @param taskGraph the taskgraph
      * @param signature the signature
      * @return the iO config from signature
      */
-    public IoConfiguration getIOConfigFromSignature(String name, TransferSignature signature) {
+    public IoConfiguration getIOConfigFromSignature(TaskGraph taskGraph, TransferSignature signature) {
+
+//        System.out.println("building signature");
+
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
         List<TransferPort> inputPorts = signature.getInputs();
@@ -90,22 +91,41 @@ public class TrianaShiwaListener implements ExecutionListener {
             if (inputPort.getValue() != null) {
                 String portName = inputPort.getName();
 //                String portNumberString = portName.substring(portName.indexOf("_") + 1);
-                String portNumberString = String.valueOf(portNumber);
+
+//                String portNumberString = getCorrectPortNumber(taskGraph, portName);
+                Object portNumberObject = taskGraph.getParameter(portName);
+                String portNumberString = "";
+                if(portNumberObject != null){
+                    portNumberString = ((Integer)portNumberObject).toString();
+                    System.out.println(portName + " : " + portNumberString);
+                }
+//                String portNumberString = String.valueOf(portNumber);
 
                 String value = inputPort.getValue();
+
                 boolean reference;
                 if (inputPort.getValueType() == TransferSignature.ValueType.BUNDLED_FILE) {
                     reference = true;
                 } else {
                     reference = false;
                 }
+
+                System.out.println("\n" +
+                        "Data " + value +
+                        " to port " + inputPort.getName() +
+                        " portNumber " + portNumberString +
+                        " reference " + reference +
+                        " " + inputPort.getType() +
+                         " " + inputPort.getValueType().toString()
+                );
+
                 IoMapping ioMapping = new IoMapping(new IoType(value, "string", reference), portNumberString);
                 inputMappings.add(ioMapping);
                 portNumber++;
             }
         }
 
-        IoConfiguration conf = new IoConfiguration(name, "0.1", inputMappings, new ArrayList<IoMapping>());
+        IoConfiguration conf = new IoConfiguration(taskGraph.getQualifiedToolName(), "0.1", inputMappings, new ArrayList<IoMapping>());
 
         List<IoMapping> mappings = conf.getInputs();
         for (IoMapping mapping : mappings) {
@@ -118,6 +138,43 @@ public class TrianaShiwaListener implements ExecutionListener {
 
         return conf;
     }
+
+//    private String getCorrectPortNumber(TaskGraph taskGraph, String portName) {
+//        System.out.println("Looking for portName " + portName);
+//
+//        for(Node node : taskGraph.getInputNodes()){
+//            node = node.getTopLevelNode();
+//
+////            System.out.println("taskgraph has node named " + node.getName());
+//            Task task = node.getTopLevelTask();
+//
+//            if(task.getProxy() instanceof JavaProxy){
+//                JavaProxy javaProxy = (JavaProxy)task.getProxy();
+//                Unit unit = javaProxy.getUnit();
+//
+//                if(unit.getClass().getCanonicalName().equals(AtomicTaskHolder.class.getCanonicalName())){
+//                    Object executableObject = task.getParameter(Executable.EXECUTABLE);
+//                    if (executableObject != null) {
+//                        Executable executable = (Executable) executableObject;
+//
+//                        HashMap<String, String> portNames = executable.getPorts();
+//
+//                        String tasksPortName = portNames.get(node.getName());
+//
+//                        if(tasksPortName != null){
+//                            System.out.println("looking for " + portName + " found " + tasksPortName);
+//                            if(tasksPortName.equals(portName)){
+//                                System.out.println("taskgraph node " +
+//                                        taskGraph.getNodeIndex(node.getBottomLevelNode()));
+//                                return String.valueOf(taskGraph.getNodeIndex(node.getBottomLevelNode()));
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return "";
+//    }
 
     /**
      * Write configuration resource to file.
@@ -165,8 +222,9 @@ public class TrianaShiwaListener implements ExecutionListener {
 
                             try{
 
-                                TrianaProgressBar trianaProgressBar =
-                                        new TrianaProgressBar("Loading " + workflowType + " workflow", false);
+//                                TrianaProgressBar trianaProgressBar =
+//                                        new TrianaProgressBar("Loading " + workflowType + " workflow", false);
+//                                trianaProgressBar.start();
 
                                 TaskGraph taskGraph;
 
@@ -189,10 +247,12 @@ public class TrianaShiwaListener implements ExecutionListener {
                                 }
 
                                 if (signature.hasConfiguration()) {
-                                    createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedToolName(), signature));
+                                    createConfigUnit(taskGraph, getIOConfigFromSignature(taskGraph, signature));
                                 }
-                                trianaProgressBar.disposeProgressBar();
-                            }catch (Exception e){}
+//                                trianaProgressBar.disposeProgressBar();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     });
                     thread.start();
@@ -203,7 +263,13 @@ public class TrianaShiwaListener implements ExecutionListener {
                 Tool tool = reader.readComponent(trianaInstance.getProperties());
                 if (tool instanceof TaskGraph) {
                     TaskGraph taskGraph = (TaskGraph) tool;
-                    exec(taskGraph, getIOConfigFromSignature(taskGraph.getQualifiedTaskName(), signature));
+                    IoConfiguration io = getIOConfigFromSignature(taskGraph, signature);
+
+                    DocumentHandler handler = new DocumentHandler();
+                    new IoHandler().serialize(handler, io);
+                    handler.output(System.out, true);
+
+                    exec(taskGraph, io);
                 }
             }
         } catch (Exception e) {
@@ -233,7 +299,7 @@ public class TrianaShiwaListener implements ExecutionListener {
      */
     private void executeWorkflowInGUI(String toolName, Tool tool, TransferSignature signature) throws TaskGraphException, SchedulerException {
         TrianaRun runner = new TrianaRun(tool);
-        IoConfiguration ioc = getIOConfigFromSignature(toolName, signature);
+        IoConfiguration ioc = getIOConfigFromSignature((TaskGraph) tool, signature);
         IoHandler handler = new IoHandler();
         NodeMappings mappings = handler.map(ioc, runner.getTaskGraph());
 
@@ -303,10 +369,13 @@ public class TrianaShiwaListener implements ExecutionListener {
     private void createConfigUnit(TaskGraph taskgraph, IoConfiguration ioConfiguration) {
         try {
             IoHandler handler = new IoHandler();
+            DocumentHandler documentHandler = new DocumentHandler();
+
+            handler.serialize(documentHandler, ioConfiguration);
+            documentHandler.output(System.out, true);
             NodeMappings mappings = handler.map(ioConfiguration, taskgraph);
 
             if (mappings != null) {
-
 
                 Node[] inputNodes = new Node[taskgraph.getInputNodeCount()];
                 for (int i = 0; i < taskgraph.getInputNodes().length; i++) {
