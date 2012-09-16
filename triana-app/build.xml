@@ -177,10 +177,7 @@
             <fileset dir="${toolboxes}/${toolbox}/target" includes="classes/**"/>
         </copy>
 
-        <!--<mkdir dir="../toolboxes/alldeps"/>-->
-        <!--<zip destfile="../toolboxes/alldeps/alldeps.zip" update="true">-->
-        <!--<fileset dir="../toolboxes" includes="${toolbox}/**"/>-->
-        <!--</zip>-->
+
 
     </target>
 
@@ -191,15 +188,20 @@
 
 
     <target name="mvn-install">
+        <mkdir dir="dist/dist-tar"/>
+        <tar destfile="dist/dist-tar/disttar.tar.bz2" compression="bzip2">
+            <fileset dir="dist" excludes="dist/dist-tar/*"/>
+        </tar>
+
         <!--
-        <exec executable="mvn">
-                    <arg value="-e"/>
-                    <arg value="install:install-file"/>
-                    <arg value="-Dfile=dist/triana-app-${version}.jar"/>
-                    <arg value="-DpomFile=pom.xml"/>
-                    <arg value="-Dversion=${version}"/>
-                    <arg value="-Dpackaging=jar"/>
-                </exec>-->
+<exec executable="mvn">
+            <arg value="-e"/>
+            <arg value="install:install-file"/>
+            <arg value="-Dfile=dist/triana-app-${version}.jar"/>
+            <arg value="-DpomFile=pom.xml"/>
+            <arg value="-Dversion=${version}"/>
+            <arg value="-Dpackaging=jar"/>
+        </exec>-->
 
     </target>
 

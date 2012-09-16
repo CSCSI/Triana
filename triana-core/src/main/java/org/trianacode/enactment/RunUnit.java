@@ -83,14 +83,19 @@ public class RunUnit {
         for (int i = 0; i < inputFiles.size(); i++) {
             Object inputObject;
             File inputFile = new File(inputFiles.get(i));
+            if(inputFile.exists()){
             try {
                 inputObject = readSerialFile(inputFile);
-                System.out.println(inputObject);
+                System.out.println("Serialised input : \n" + inputObject);
             } catch (Exception e) {
-                inputObject = new String(readNonSerialFile(inputFile));
-                System.out.println(((String) inputObject).toString());
+                inputObject = readNonSerialFile(inputFile);
+                System.out.println("Raw text input : \n" +  (String)inputObject);
             }
             runner.sendInputData(i, inputObject);
+            } else {
+                System.out.println("File " + inputFile.getName() + " not found. Exiting");
+                return;
+            }
         }
 
         while (!runner.isFinished()) {
@@ -132,10 +137,17 @@ public class RunUnit {
     private String readNonSerialFile(File inputFile) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(inputFile);
         StringBuilder stringBuilder = new StringBuilder();
-        byte[] in = new byte[128];
-        int length = 0;
-        while ((length = fileInputStream.read(in)) > 0) {
-            stringBuilder.append(in.toString());
+//        byte[] in = new byte[128];
+//        int length = 0;
+//        while ((length = fileInputStream.read(in)) > 0) {
+//            stringBuilder.append(in.toString());
+//        }
+
+        int content;
+        while ((content = fileInputStream.read()) != -1) {
+            // convert to char and display it
+            System.out.print("char " + (char) content);
+            stringBuilder.append((char)content);
         }
         return stringBuilder.toString();
     }
