@@ -50,6 +50,10 @@ public class ExportIwir {
         writeIWIR(blockScope, file);
     }
 
+    public HashMap<Task, AbstractTask> getTaskHashMap(){
+        return taskHashMap;
+    }
+
     /**
      * Std out.
      *

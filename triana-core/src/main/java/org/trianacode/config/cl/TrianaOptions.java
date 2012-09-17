@@ -29,6 +29,8 @@ public class TrianaOptions {
     public static final Option CREATE_AND_SUBMIT_DAX = new Option("dax", "submit-to-pegasus", "Takes a workflow, creates a dax, and submits to Pegasus");
     public static final Option EXECUTE_BUNDLE = new Option("b", "bundle", "Input bundle");
     public static final Option OUTPUT_FORMAT = new Option("f", "output-format", "The format the workflow will be produced as after processing.");
+
+    public static final Option UNIT_PROPERTIES = new Option("P", "unit-properties", "Properties for a single unit with option -U is used.");
     public static final Option RUN_UNIT = new Option("U", "execute-unit", "Execute a single unit, from the package name");
     public static final Option CONVERT_WORKFLOW = new Option("c", "convert-workflow", "languages", "No execution, converts between workflow languages", true, true);
     public static final Option INPUT_FILES = new Option("I", "input-files", "input files", "Serialized objects, one per file per input port", true, false);
@@ -55,6 +57,7 @@ public class TrianaOptions {
             EXECUTE_BUNDLE,
             OUTPUT_FORMAT,
             CONVERT_WORKFLOW,
+            UNIT_PROPERTIES,
             RUN_UNIT,
             INPUT_FILES,
             OUTPUT_FILES

@@ -188,10 +188,12 @@
 
 
     <target name="mvn-install">
-        <mkdir dir="dist/dist-tar"/>
-        <tar destfile="dist/dist-tar/disttar.tar.bz2" compression="bzip2">
-            <fileset dir="dist" excludes="dist/dist-tar/*"/>
+        <tar destfile="dist/../disttar.tar.bz2" compression="bzip2">
+            <fileset dir="dist"/>
         </tar>
+        <mkdir dir="dist/dist-tar"/>
+        <copy file="dist/../disttar.tar.bz2" todir="dist/dist-tar"/>
+        <delete file="dist/../disttar.tar.bz2"/>
 
         <!--
 <exec executable="mvn">

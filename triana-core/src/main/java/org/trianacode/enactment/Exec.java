@@ -351,6 +351,7 @@ public class Exec implements ExecutionListener {
                     e.printStackTrace();
                 }
             }
+            writeData(o, node.getAbsoluteNodeIndex());
             System.out.println("Exec.execute output node " + node.getName() + " data : " + o);
         }
         runner.dispose();
@@ -401,12 +402,13 @@ public class Exec implements ExecutionListener {
         if (!lockDir.exists()) {
             return;
         }
-        File dataFile = new File(lockDir, "" + index);
+        File dataFile = new File(lockDir, "output_" + index);
         IoTypeHandler ioth = IoHandler.getHandler(o);
         if (ioth != null) {
             FileOutputStream fout = new FileOutputStream(dataFile);
             ioth.write(o, fout);
         }
+        System.out.println("wrote output " + dataFile.getAbsolutePath());
     }
 
     public void createFile() throws IOException {

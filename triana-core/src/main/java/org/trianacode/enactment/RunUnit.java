@@ -20,6 +20,7 @@ import org.trianacode.taskgraph.service.SchedulerException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -77,6 +78,22 @@ public class RunUnit {
             tool.setDataOutputNodeCount(outputFiles.size());
         }
 
+        if(vals.hasOption(TrianaOptions.UNIT_PROPERTIES.getShortOpt())) {
+            List<String> unitProperties = vals.getOptionValues(TrianaOptions.UNIT_PROPERTIES.getShortOpt());
+            if(unitProperties.size() > 0){
+                String propertiesLocation = unitProperties.get(0);
+                File propertiesFile = new File(propertiesLocation);
+                if(propertiesFile.exists()){
+                    Properties properties = new Properties();
+                    properties.loadFromXML(new FileInputStream(propertiesFile));
+                    for(Object property : properties.keySet()){
+                        tool.setParameter((String) property, properties.get(property));
+                    }
+                }
+            }
+
+        }
+
         TrianaRun runner = new TrianaRun(tool);
         runner.runTaskGraph();
 
@@ -84,14 +101,14 @@ public class RunUnit {
             Object inputObject;
             File inputFile = new File(inputFiles.get(i));
             if(inputFile.exists()){
-            try {
-                inputObject = readSerialFile(inputFile);
-                System.out.println("Serialised input : \n" + inputObject);
-            } catch (Exception e) {
-                inputObject = readNonSerialFile(inputFile);
-                System.out.println("Raw text input : \n" +  (String)inputObject);
-            }
-            runner.sendInputData(i, inputObject);
+                try {
+                    inputObject = readSerialFile(inputFile);
+                    System.out.println("Serialised input : \n" + inputObject);
+                } catch (Exception e) {
+                    inputObject = readNonSerialFile(inputFile);
+                    System.out.println("Raw text input : \n" +  (String)inputObject);
+                }
+                runner.sendInputData(i, inputObject);
             } else {
                 System.out.println("File " + inputFile.getName() + " not found. Exiting");
                 return;
@@ -146,7 +163,7 @@ public class RunUnit {
         int content;
         while ((content = fileInputStream.read()) != -1) {
             // convert to char and display it
-            System.out.print("char " + (char) content);
+//            System.out.print("char " + (char) content);
             stringBuilder.append((char)content);
         }
         return stringBuilder.toString();

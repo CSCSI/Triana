@@ -11,14 +11,19 @@ import org.shiwa.desktop.data.transfer.IWIRTaskHandler;
 import org.shiwa.fgi.iwir.*;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
+import org.trianacode.enactment.io.IoConfiguration;
+import org.trianacode.enactment.io.IoHandler;
+import org.trianacode.enactment.io.IoMapping;
+import org.trianacode.enactment.io.IoType;
 import org.trianacode.shiwaall.executionServices.TaskTypeToolDescriptor;
 import org.trianacode.shiwaall.extras.FileBuilder;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.importer.utils.ExportIwir;
 import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
+import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.TaskGraph;
-import org.trianacode.taskgraph.TaskGraphUtils;
-import org.trianacode.taskgraph.proxy.java.JavaProxy;
+import org.trianacode.taskgraph.ser.DocumentHandler;
+import org.trianacode.taskgraph.ser.XMLWriter;
 
 import javax.xml.bind.JAXBException;
 import java.io.*;
@@ -35,9 +40,7 @@ import java.util.*;
  */
 public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
-    private static final String TRIANA_RUN_SCRIPT = "triana-single-folder.sh";
-
-    public static String TRIANA_JAR_NAME = "triana-app-4.0.0-SNAPSHOT.jar";
+    private static final String TRIANA_RUN_SCRIPT = "unzip-triana.sh";
 
     /** The iwir. */
     private IWIR iwir;
@@ -47,6 +50,7 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
     /** The jsdls. */
     private Map<String, FGITaskHandler> jsdls = null;
     private TaskGraph taskgraph = null;
+    private HashMap<org.trianacode.taskgraph.Task, AbstractTask> taskHashMap = null;
 
 
     //For internal testing
@@ -107,6 +111,7 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
     private void init(TaskGraph taskGraph) throws IOException {
         ExportIwir exportIwir = new ExportIwir();
         BlockScope blockscope = exportIwir.taskGraphToBlockScope(taskGraph);
+        taskHashMap = exportIwir.getTaskHashMap();
         iwir = new IWIR(taskGraph.getToolName());
         iwir.setTask(blockscope);
 
@@ -146,7 +151,7 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
      */
     private ArrayList<File> findTrianaFiles() {
         ArrayList<File> files = new ArrayList<File>();
-        File trianaRootFolder = null;
+        File dist = null;
 
         if(Locations.isJarred()){
 
@@ -155,10 +160,8 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                         .getCodeSource().getLocation().toURI());
                 System.out.println("triana jar : " + jarFile.getAbsolutePath());
 
-
 //            File trianaJar = new File(Locations.runHome().getAbsolutePath());
-                trianaRootFolder = new File(jarFile.getParent());
-
+                dist = new File(jarFile.getParent());
 
             } catch (URISyntaxException e) {
                 e.printStackTrace();
@@ -168,68 +171,81 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
             if(trianaFolder.exists() && trianaFolder.isDirectory()){
                 File trianaApp = new File(trianaFolder, "triana-app");
                 if(trianaApp.exists() && trianaApp.isDirectory()){
-                    File dist = new File(trianaApp, "dist");
-                    if(dist.exists() && dist.isDirectory()){
-                        File trianaJar = new File(dist, TRIANA_JAR_NAME);
-                        if(trianaJar.exists()){
-                            files.add(trianaJar);
-                            trianaRootFolder = new File(trianaJar.getParent());
-                        }
-                    }
+                    dist = new File(trianaApp, "dist");
+
+//                        File trianaJar = new File(dist, TRIANA_JAR_NAME);
+//                        if(trianaJar.exists()){
+//                            files.add(trianaJar);
+//                            trianaRootFolder = new File(trianaJar.getParent());
+//                        }
+
                 }
             }
         }
+        if(dist != null && dist.exists() && dist.isDirectory()){
+            File untarTriana = new File(dist, "unzip-triana.sh");
+            if(untarTriana.exists() && untarTriana.isFile()){
+                files.add(untarTriana);
+            }
 
-        if (trianaRootFolder == null ){
+            File disttar = new File(dist, "dist-tar");
+            if(disttar.exists() && disttar.isDirectory()){
+                File disttarFile = new File(disttar, "disttar.tar.bz2");
+                files.add(disttarFile);
+            }
+        } else {
             return null;
         }
 
 
-        File singleFolderTrianaScript = new File(trianaRootFolder, TRIANA_RUN_SCRIPT);
-        if(singleFolderTrianaScript.exists()){
-            files.add(singleFolderTrianaScript);
-        }
+//        File singleFolderTrianaScript = new File(trianaRootFolder, TRIANA_RUN_SCRIPT);
+//        if(singleFolderTrianaScript.exists()){
+//            files.add(singleFolderTrianaScript);
+//        }
+//
+//        File libFolder = new File(trianaRootFolder, "lib");
+//        if(libFolder.exists() && libFolder.isDirectory()){
+////            files.add(trianaRootFolder);
+//            for(File lib : libFolder.listFiles()){
+//                File libWithParent = new File(libFolder, lib.getName());
+//                files.add(libWithParent);
+//            }
+//        }
 
-        File libFolder = new File(trianaRootFolder, "lib");
-        if(libFolder.exists() && libFolder.isDirectory()){
-//            files.add(trianaRootFolder);
-            for(File lib : libFolder.listFiles()){
-                File libWithParent = new File(libFolder, lib.getName());
-                files.add(libWithParent);
-            }
-        }
+//        HashSet<File> taskFiles = new HashSet<File>();
+//        for(org.trianacode.taskgraph.Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)){
+//
+//            JavaProxy javaProxy = (JavaProxy) task.getProxy();
+//            Class unitClass = javaProxy.getUnit().getClass();
+//
+//            File clazzFile = null;
+//            try {
+//                clazzFile = new File( unitClass.getProtectionDomain()
+//                        .getCodeSource().getLocation().toURI());
+//            } catch (URISyntaxException e) {
+//                e.printStackTrace();
+//            }
+//            if(clazzFile != null) {
+//                if(clazzFile.isFile()){
+//
+//                    System.out.println("task " + task.getToolName() +
+//                            " tool " + task.getClass().getCanonicalName() +
+//                            "triana toolbox jar : " + clazzFile.getAbsolutePath());
+//                    taskFiles.add(clazzFile);
+//                } else {
+//                    //TODO iterate through and grab all sub-folders/files and flatten
+//                }
+//            }
+//            files.addAll(taskFiles);
 
-        HashSet<File> taskFiles = new HashSet<File>();
-        for(org.trianacode.taskgraph.Task task : TaskGraphUtils.getAllTasksRecursive(taskgraph, false)){
 
-            JavaProxy javaProxy = (JavaProxy) task.getProxy();
-            Class unitClass = javaProxy.getUnit().getClass();
-
-            File clazzFile = null;
-            try {
-                clazzFile = new File( unitClass.getProtectionDomain()
-                        .getCodeSource().getLocation().toURI());
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-            if(clazzFile != null) {
-                if(clazzFile.isFile()){
-
-                    System.out.println("task " + task.getToolName() +
-                            " tool " + task.getClass().getCanonicalName() +
-                            "triana toolbox jar : " + clazzFile.getAbsolutePath());
-                    taskFiles.add(clazzFile);
-                } else {
-                    //TODO iterate through and grab all sub-folders/files and flatten
-                }
-            }
-            files.addAll(taskFiles);
 
 //        System.out.println(Locations.getHomeProper()
 //                + "\n" + Locations.isJarred() + "\n" + Locations.runHome().getAbsolutePath()  + "\n"
 //        );
 
-        }
+//        }
+
         for (File file : files){
             System.out.println(file.getAbsolutePath() + " " + file.exists() + "\n");
         }
@@ -261,10 +277,22 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                 if(task.getTasktype().equals(tasktype)){
 
                     HashSet<File> tasksFiles = new HashSet<File>();
+
+                    org.trianacode.taskgraph.Task trianaTask = getTaskForAtomicTask(task);
+                    File taskFile = new File(trianaTask.getToolName() + ".xml");
+                    XMLWriter xmlWriter = new XMLWriter(new FileWriter(taskFile));
+                    xmlWriter.writeComponent(trianaTask);
+                    System.out.println("Wrote " + taskFile.getAbsolutePath());
+                    tasksFiles.add(taskFile);
+
+                    File ioConfig = createIOConfig(trianaTask);
+                    tasksFiles.add(ioConfig);
+
                     Executable executable = null;
                     String jobName = "triana.sh";
                     String executableFileName = TRIANA_RUN_SCRIPT;
-                    String arguments = "-n -u " + tasktype;
+                    String arguments = "-n -w " + taskFile.getName() + " -d " + ioConfig.getName();
+
 
                     TaskTypeToolDescriptor taskTypeToolDescriptor;
                     if( (taskTypeToolDescriptor = TaskTypeRepo.getDescriptorFromType(tasktype)) != null){
@@ -329,6 +357,69 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
             }
         }
         System.out.println(jsdls.keySet());
+    }
+
+    private File createIOConfig(org.trianacode.taskgraph.Task trianaTask) throws IOException {
+
+        ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
+
+        Node[] inputPorts = trianaTask.getDataInputNodes();
+        for (Node inputPort : inputPorts) {
+//            String portName = inputPort.getName();
+//                String portNumberString = portName.substring(portName.indexOf("_") + 1);
+
+//                String portNumberString = getCorrectPortNumber(taskGraph, portName);
+
+//                String portNumberString = String.valueOf(portNumber);
+
+
+            boolean reference;
+
+            String[] inputTypes = trianaTask.getDataInputTypes(inputPort.getAbsoluteNodeIndex());
+            if(inputTypes == null){
+                inputTypes = trianaTask.getDataInputTypes();
+            }
+
+            if (Arrays.asList(inputTypes).contains("java.lang.String")) {
+                reference = true;
+            } else {
+                reference = false;
+            }
+
+            System.out.println("\n" +
+                    " to port " + inputPort.getName() +
+                    " portNumber " + inputPort.getAbsoluteNodeIndex() +
+                    " reference " + reference
+            );
+
+            //TODO figure out references
+
+            IoMapping ioMapping = new IoMapping(
+                    new IoType("input_" + inputPort.getAbsoluteNodeIndex()
+                            , "string", false),
+                    "" + inputPort.getAbsoluteNodeIndex());
+            inputMappings.add(ioMapping);
+        }
+
+        IoConfiguration conf = new IoConfiguration(trianaTask.getQualifiedToolName(), "0.1", inputMappings, new ArrayList<IoMapping>());
+
+        DocumentHandler documentHandler = new DocumentHandler();
+        new IoHandler().serialize(documentHandler, conf);
+        File tempConfFile = File.createTempFile(conf.getToolName() + "_confFile", ".dat");
+        documentHandler.output(new FileWriter(tempConfFile), true);
+        return tempConfFile;
+    }
+
+    private org.trianacode.taskgraph.Task getTaskForAtomicTask(Task task) {
+        for(org.trianacode.taskgraph.Task trianaTask : taskHashMap.keySet()){
+            AbstractTask atomicTask = taskHashMap.get(trianaTask);
+            System.out.println("Comparing " + atomicTask.getUniqueId() +
+                    " with " + task.getUniqueId());
+            if(atomicTask.getUniqueId().equals(task.getUniqueId())){
+                return trianaTask;
+            }
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -457,7 +548,7 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
         jsdlBuilder.append(createAllInputDataStaging(task));
 
         for(File file : files){
-            createInputDataStaging(null, file.getName());
+            jsdlBuilder.append(createInputDataStaging(null, file.getName()));
         }
 
         jsdlBuilder.append(createAllOutputDataStaging(task));
