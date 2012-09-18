@@ -1,14 +1,13 @@
 package imageproc.input;
 
-import java.awt.Image;
-
 import org.trianacode.gui.panels.FilePanel;
 import org.trianacode.taskgraph.Unit;
 import org.trianacode.taskgraph.util.FileUtils;
 import triana.types.FileName;
 import triana.types.TrianaImage;
 import triana.types.TrianaPixelMap;
-import triana.types.TrianaType;
+
+import java.awt.*;
 
 /**
  * A ImageReader : A unit which imports a GIF or JPG file.
@@ -36,8 +35,15 @@ public class ImageReader extends Unit {
      */
     public void process() {
         if (getTask().getDataInputNodeCount() > 0) {
-            TrianaType t = (TrianaType) getInputAtNode(0);
-            process(((FileName) t).getFile());
+            Object o = getInputAtNode(0);
+            if(o instanceof FileName){
+                process(((FileName) o).getFile());
+            }
+            if(o instanceof String){
+                process((String)o);
+            }
+//            TrianaType t = (TrianaType) getInputAtNode(0);
+
         } else {
             process(imageName);
         }
@@ -96,7 +102,7 @@ public class ImageReader extends Unit {
     }    
 
     public String[] getInputTypes() {
-        return new String[]{"triana.types.FileName"};
+        return new String[]{"triana.types.FileName", "java.lang.String"};
     }
 
     /**

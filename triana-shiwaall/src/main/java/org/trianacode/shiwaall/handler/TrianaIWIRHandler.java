@@ -9,6 +9,7 @@ import org.shiwa.desktop.data.transfer.FGITaskHandler;
 import org.shiwa.desktop.data.transfer.FGIWorkflowEngineHandler;
 import org.shiwa.desktop.data.transfer.IWIRTaskHandler;
 import org.shiwa.fgi.iwir.*;
+import org.shiwa.fgi.iwir.Task;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
 import org.trianacode.enactment.io.IoConfiguration;
@@ -20,10 +21,12 @@ import org.trianacode.shiwaall.extras.FileBuilder;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.importer.utils.ExportIwir;
 import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
-import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.TaskGraph;
+import org.trianacode.taskgraph.*;
+import org.trianacode.taskgraph.ser.Base64;
 import org.trianacode.taskgraph.ser.DocumentHandler;
+import org.trianacode.taskgraph.ser.TrianaObjectInputStream;
 import org.trianacode.taskgraph.ser.XMLWriter;
+import org.trianacode.taskgraph.tool.Tool;
 
 import javax.xml.bind.JAXBException;
 import java.io.*;
@@ -133,17 +136,65 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
      * @throws JAXBException the jAXB exception
      * @throws FileImTeaPotException the file im tea pot exception
      */
-    public static void main(String[] args) throws IOException, JAXBException, FileImTeaPotException {
+    public static void main(String[] args) throws IOException, JAXBException, FileImTeaPotException, TaskGraphException {
         TrianaIWIRHandler trianaIWIRHandler = new TrianaIWIRHandler();
 
-//        IWIR iwir1 = new IWIR(new File("/Users/ian/jsdl/activity.xml"));
-//
-//        trianaIWIRHandler.prepareJSDLs(iwir1);
-        ArrayList<File> files = trianaIWIRHandler.findTrianaFiles();
-        for (File file : files){
-            System.out.println(file.getAbsolutePath() + " " + file.exists());
+        File file = new File("triana-app/dist/input_0");
+//        Object obj = new TrianaPixelMap(new ImageIcon("output.gif").getImage());
+//        trianaIWIRHandler.serial(obj, new FileOutputStream(file));
+        System.out.println(file.getAbsolutePath());
+        Serializable o = trianaIWIRHandler.unserial(new FileInputStream(file));
+        System.out.println(o.getClass().getCanonicalName());
+
+
+
+    }
+
+    private Serializable unserial(FileInputStream fileInputStream) throws TaskGraphException {
+        try {
+            byte[] bytes = Base64.decode(readAsString(fileInputStream));
+            ObjectInputStream in = new TrianaObjectInputStream(new ByteArrayInputStream(bytes));
+            return (Serializable) in.readObject();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new TaskGraphException(e);
         }
     }
+
+    public String readAsString(InputStream in) throws TaskGraphException {
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            byte[] bytes = new byte[8192];
+            int c;
+            while ((c = in.read(bytes)) != -1) {
+                bout.write(bytes, 0, c);
+            }
+            bout.flush();
+            bout.close();
+            return new String(bout.toByteArray());
+        } catch (IOException e) {
+            throw new TaskGraphException(e);
+        }
+    }
+
+    private void serial(Object serializable, OutputStream sink) throws TaskGraphException {
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            ObjectOutputStream marshall = new ObjectOutputStream(bout);
+            marshall.writeObject(serializable);
+            String ret = Base64.encode(bout.toByteArray());
+            sink.write(ret.getBytes("UTF-8"));
+
+            marshall.close();
+            bout.close();
+        } catch (IOException e) {
+            throw new TaskGraphException(e);
+        }
+
+
+    }
+
 
     /**
      * An attempt to find the triana jars and libraries to add to a tasktype
@@ -262,108 +313,90 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private void prepareJSDLs(IWIR iwir) throws JAXBException, IOException {
-        jsdls = new HashMap<String, FGITaskHandler>();
+        try {
+            jsdls = new HashMap<String, FGITaskHandler>();
 
-        ArrayList<File> trianaFiles = findTrianaFiles();
+            ArrayList<File> trianaFiles = findTrianaFiles();
 
-        Set<String> tasktypes = iwir.getAtomicTaskTypes();
-        System.out.println(tasktypes);
+            Set<String> tasktypes = iwir.getAtomicTaskTypes();
+            System.out.println(tasktypes);
 
-        for(String tasktype : tasktypes){
+            for(String tasktype : tasktypes){
 
-            //for each tasktype, sort through the atomic tasks and create a jsdl for each
-            //TODO this is wrong, as need to check for similar signatures.
-            for(Task task : iwir.getAtomicTasks()){
-                if(task.getTasktype().equals(tasktype)){
+                //for each tasktype, sort through the atomic tasks and create a jsdl for each
+                //TODO this is wrong, as need to check for similar signatures.
+                for(Task task : iwir.getAtomicTasks()){
+                    if(task.getTasktype().equals(tasktype)){
 
-                    HashSet<File> tasksFiles = new HashSet<File>();
+                        HashSet<File> tasksFiles = new HashSet<File>();
 
-                    org.trianacode.taskgraph.Task trianaTask = getTaskForAtomicTask(task);
-                    File taskFile = new File(trianaTask.getToolName() + ".xml");
-                    XMLWriter xmlWriter = new XMLWriter(new FileWriter(taskFile));
-                    xmlWriter.writeComponent(trianaTask);
-                    System.out.println("Wrote " + taskFile.getAbsolutePath());
-                    tasksFiles.add(taskFile);
+                        org.trianacode.taskgraph.Task trianaTask = getTaskForAtomicTask(task);
 
-                    File ioConfig = createIOConfig(trianaTask);
-                    tasksFiles.add(ioConfig);
-
-                    Executable executable = null;
-                    String jobName = "triana.sh";
-                    String executableFileName = TRIANA_RUN_SCRIPT;
-                    String arguments = "-n -w " + taskFile.getName() + " -d " + ioConfig.getName();
+                        TaskGraph taskGraph = null;
+                        taskGraph = TaskGraphManager.createTaskGraph();
+                        taskGraph.setToolName(trianaTask.getToolName() + ".graph");
+                        TaskGraphUtils.createTasks(new Tool[]{trianaTask}, taskGraph, false);
+                        TaskLayoutUtils.resolveGroupNodes(taskGraph);
 
 
-                    TaskTypeToolDescriptor taskTypeToolDescriptor;
-                    if( (taskTypeToolDescriptor = TaskTypeRepo.getDescriptorFromType(tasktype)) != null){
-                        if((executable = taskTypeToolDescriptor.getExecutable()) != null){
-                            Collections.addAll(tasksFiles, executable.getWorkingDir().listFiles());
+                        File taskFile = new File(taskGraph.getQualifiedToolName() + ".xml");
+                        XMLWriter xmlWriter = new XMLWriter(new FileWriter(taskFile));
+                        xmlWriter.writeComponent(taskGraph);
+
+                        System.out.println("Wrote " + taskFile.getAbsolutePath());
+                        tasksFiles.add(taskFile);
+
+                        File ioConfig = createIOConfig(taskGraph);
+                        tasksFiles.add(ioConfig);
+
+                        Executable executable = null;
+                        String jobName = "triana.sh";
+                        String executableFileName = TRIANA_RUN_SCRIPT;
+                        String arguments = "-n -w " + taskFile.getName() + " -d " + ioConfig.getName();
+
+
+                        TaskTypeToolDescriptor taskTypeToolDescriptor;
+                        if( (taskTypeToolDescriptor = TaskTypeRepo.getDescriptorFromType(tasktype)) != null){
+                            if((executable = taskTypeToolDescriptor.getExecutable()) != null){
+                                Collections.addAll(tasksFiles, executable.getWorkingDir().listFiles());
+                            }
+                        } else {
+                            tasksFiles.addAll(trianaFiles);
                         }
-                    } else {
-                        tasksFiles.addAll(trianaFiles);
+
+                        IWIRTaskHandler iwirTaskHandler = new IWIRTaskHandler(task);
+                        iwirTaskHandler.setFiles(tasksFiles);
+
+                        Parser parser = new Parser();
+                        JobDefinitionType jobDefinitionType = parser.readJSDLFromString(
+                                createJSDLString(task, tasksFiles, jobName, executableFileName, arguments));
+
+                        String jsdlXML = parser.getJSDLXML(jobDefinitionType);
+                        System.out.println("\n\n" + jsdlXML);
+
+                        File jsdlFile = new File(tasktype + ".jdsl");
+                        new FileBuilder(jsdlFile.getAbsolutePath(), jsdlXML);
+                        System.out.println("Created jsdl at " + jsdlFile.getAbsolutePath());
+
+                        iwirTaskHandler.setDefinitionFile(jsdlFile);
+
+                        jsdls.put(tasktype, iwirTaskHandler);
+
                     }
-
-                    IWIRTaskHandler iwirTaskHandler = new IWIRTaskHandler(task);
-                    iwirTaskHandler.setFiles(tasksFiles);
-
-                    Parser parser = new Parser();
-                    JobDefinitionType jobDefinitionType = parser.readJSDLFromString(
-                            createJSDLString(task, tasksFiles, jobName, executableFileName, arguments));
-
-//                    List<InputPort> inputPorts = task.getInputPorts();
-//                    for(int in = 0; in < inputPorts.size(); in++){
-//                        InputPort inputPort = inputPorts.get(in);
-//                        String portName = inputPort.getName();
-//
-//                        String filename = "input_" + in;
-//                        try {
-//                            parser.AddInputDataStaging(filename, Parser.PLACEHOLDER_SOURCEURI);
-//                        } catch (FileImTeaPotException e) {
-//                            System.out.println("teapot error with " + filename);
-//                            e.printStackTrace();
-//                        }
-//                        parser.ModifyDatastagingName(filename, portName);
-//                    }
-//
-//                    List<OutputPort> outputPorts = task.getOutputPorts();
-//                    for(int out = 0; out < outputPorts.size(); out++){
-//                        OutputPort outputPort = outputPorts.get(out);
-//                        String portName = outputPort.getName();
-//
-//                        String filename = "output_" + out;
-//                        try {
-//                            parser.AddOutputDataStaging(filename, Parser.PLACEHOLDER_TARGETURI);
-//                        } catch (FileImTeaPotException e) {
-//                            System.out.println("teapot error with " + filename);
-//                            e.printStackTrace();
-//                        }
-//                        parser.ModifyDatastagingName(filename, portName);
-//                    }
-
-//                    parser.createExtensionTaginJSDL(jobDefinitionType);
-
-                    String jsdlXML = parser.getJSDLXML(jobDefinitionType);
-                    System.out.println("\n\n" + jsdlXML);
-
-                    File jsdlFile = new File(tasktype + ".jdsl");
-                    new FileBuilder(jsdlFile.getAbsolutePath(), jsdlXML);
-                    System.out.println("Created jsdl at " + jsdlFile.getAbsolutePath());
-
-                    iwirTaskHandler.setDefinitionFile(jsdlFile);
-
-                    jsdls.put(tasktype, iwirTaskHandler);
-
                 }
             }
+            System.out.println(jsdls.keySet());
+        } catch (TaskGraphException e) {
+            e.printStackTrace();
+            jsdls = null;
         }
-        System.out.println(jsdls.keySet());
     }
 
-    private File createIOConfig(org.trianacode.taskgraph.Task trianaTask) throws IOException {
+    private File createIOConfig(TaskGraph taskgraph) throws IOException {
 
         ArrayList<IoMapping> inputMappings = new ArrayList<IoMapping>();
 
-        Node[] inputPorts = trianaTask.getDataInputNodes();
+        Node[] inputPorts = taskgraph.getDataInputNodes();
         for (Node inputPort : inputPorts) {
 //            String portName = inputPort.getName();
 //                String portNumberString = portName.substring(portName.indexOf("_") + 1);
@@ -375,9 +408,9 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
             boolean reference;
 
-            String[] inputTypes = trianaTask.getDataInputTypes(inputPort.getAbsoluteNodeIndex());
+            String[] inputTypes = taskgraph.getDataInputTypes(inputPort.getAbsoluteNodeIndex());
             if(inputTypes == null){
-                inputTypes = trianaTask.getDataInputTypes();
+                inputTypes = taskgraph.getDataInputTypes();
             }
 
             if (Arrays.asList(inputTypes).contains("java.lang.String")) {
@@ -394,18 +427,19 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
             //TODO figure out references
 
+
             IoMapping ioMapping = new IoMapping(
                     new IoType("input_" + inputPort.getAbsoluteNodeIndex()
-                            , "string", false),
+                            , "java64", true),
                     "" + inputPort.getAbsoluteNodeIndex());
             inputMappings.add(ioMapping);
         }
 
-        IoConfiguration conf = new IoConfiguration(trianaTask.getQualifiedToolName(), "0.1", inputMappings, new ArrayList<IoMapping>());
+        IoConfiguration conf = new IoConfiguration(taskgraph.getQualifiedToolName(), "0.1", inputMappings, new ArrayList<IoMapping>());
 
         DocumentHandler documentHandler = new DocumentHandler();
         new IoHandler().serialize(documentHandler, conf);
-        File tempConfFile = File.createTempFile(conf.getToolName() + "_confFile", ".dat");
+        File tempConfFile = File.createTempFile(conf.getToolName() + ".io_conf", ".dat");
         documentHandler.output(new FileWriter(tempConfFile), true);
         return tempConfFile;
     }

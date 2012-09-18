@@ -20,20 +20,24 @@ public class SerializableHandler extends IoTypeHandler<Serializable> {
     @Override
     public Serializable read(String type, InputStream source) throws TaskGraphException {
         if (type.equals("java64")) {
+            System.out.println("should be java64 encoded");
             try {
                 byte[] bytes = Base64.decode(readAsString(source));
                 ObjectInputStream in = new TrianaObjectInputStream(new ByteArrayInputStream(bytes));
                 return (Serializable) in.readObject();
             }
             catch (Exception e) {
+                e.printStackTrace();
                 throw new TaskGraphException(e);
             }
         } else if (type.equals("java")) {
+            System.out.println("should be java encoded");
             try {
                 ObjectInputStream in = new TrianaObjectInputStream(source);
                 return (Serializable) in.readObject();
             }
             catch (Exception e) {
+                e.printStackTrace();
                 throw new TaskGraphException(e);
             }
         }
@@ -42,13 +46,16 @@ public class SerializableHandler extends IoTypeHandler<Serializable> {
 
     @Override
     public void write(Serializable serializable, OutputStream sink) throws TaskGraphException {
-
+        System.out.println("serializing " + serializable.toString());
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             ObjectOutputStream marshall = new ObjectOutputStream(bout);
             marshall.writeObject(serializable);
             String ret = Base64.encode(bout.toByteArray());
             sink.write(ret.getBytes("UTF-8"));
+
+            marshall.close();
+            bout.close();
         } catch (IOException e) {
             throw new TaskGraphException(e);
         }

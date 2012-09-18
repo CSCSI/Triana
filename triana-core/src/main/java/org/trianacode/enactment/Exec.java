@@ -398,15 +398,19 @@ public class Exec implements ExecutionListener {
     }
 
     private void writeData(Object o, int index) throws IOException, TaskGraphException {
-        File lockDir = new File(RUNS, pid);
-        if (!lockDir.exists()) {
-            return;
-        }
-        File dataFile = new File(lockDir, "output_" + index);
+
+//        File lockDir = new File(RUNS, pid);
+//        if (!lockDir.exists()) {
+//            return;
+//        }
+
+//        File dataFile = new File(lockDir, "output_" + index);
+        File dataFile = new File("output_" + index);
         IoTypeHandler ioth = IoHandler.getHandler(o);
         if (ioth != null) {
             FileOutputStream fout = new FileOutputStream(dataFile);
             ioth.write(o, fout);
+            fout.close();
         }
         System.out.println("wrote output " + dataFile.getAbsolutePath());
     }

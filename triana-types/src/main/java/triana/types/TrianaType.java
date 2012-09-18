@@ -103,6 +103,8 @@ import java.util.Hashtable;
  */
 public abstract class TrianaType implements Serializable, SequenceInterface {
 
+    public static final long serialVersionUID = 42L;
+
     /**
      * A TrianaType which represents that the data is not ready.
      */
