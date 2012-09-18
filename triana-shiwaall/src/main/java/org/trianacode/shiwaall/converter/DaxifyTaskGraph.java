@@ -7,6 +7,7 @@ import org.trianacode.gui.hci.GUIEnv;
 import org.trianacode.gui.main.TaskGraphPanel;
 import org.trianacode.shiwaall.dax.FileUnit;
 import org.trianacode.shiwaall.dax.JobUnit;
+import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.imp.TaskFactoryImp;
 import org.trianacode.taskgraph.imp.TaskImp;
@@ -18,6 +19,7 @@ import org.trianacode.taskgraph.tool.Tool;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 // TODO: Auto-generated Javadoc
@@ -32,7 +34,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
 
     /** The file unit class. */
     private Class fileUnitClass;
-    
+
     /** The job unit class. */
     private Class jobUnitClass;
 
@@ -383,16 +385,17 @@ public class DaxifyTaskGraph implements ConversionAddon {
 //    }
 
     /**
- * Inits the dax task.
- *
- * @param task the task
- * @param clazz the clazz
- * @return the task
- */
-private Task initDaxTask(Task task, Class clazz) {
+     * Inits the dax task.
+     *
+     * @param task the task
+     * @param jobUnitClass the class for job units
+     * @return the task
+     */
+    private Task initDaxTask(Task task, Class jobUnitClass) {
         Tool tool = null;
         try {
-            tool = AddonUtils.makeTool(clazz, task.getToolName(), task.getProperties());
+            tool = AddonUtils.makeTool(jobUnitClass, task.getToolName(), task.getProperties());
+
         } catch (ProxyInstantiationException e) {
             e.printStackTrace();
         } catch (TaskException e) {
@@ -435,8 +438,20 @@ private Task initDaxTask(Task task, Class clazz) {
             count++;
         }
 
+        Executable executable = null;
+        if(task.isParameterName(Executable.EXECUTABLE)){
+            executable = (Executable) task.getParameter(Executable.EXECUTABLE);
+            if(executable != null){
+                task.setParameter("jobName", executable.getPrimaryExec());
+                task.setParameter("args", Arrays.toString(executable.getArgs()));
+                task.setParameter("numberOfJobs", 1);
+                task.setParameter("execLocation", executable.getWorkingDir());
+            }
+        } else {
+            daxTask.setParameter("jobName", ((JavaProxy) task.getProxy()).getFullUnitName());
+        }
+
         daxTask.setParameter(JobUnit.TRIANA_TOOL, task.getQualifiedToolName());
-        daxTask.setParameter("jobName", ((JavaProxy) task.getProxy()).getFullUnitName());
 
         for (String paramName : task.getParameterNames()) {
             Object value = task.getParameter(paramName);

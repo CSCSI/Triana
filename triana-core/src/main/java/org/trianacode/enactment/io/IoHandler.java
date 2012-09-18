@@ -113,6 +113,27 @@ public class IoHandler {
                 }
             }
         }
+
+        //TODO map outputs after execution, serialise
+//        List<IoMapping> outputs = config.getOutputs();
+//        for (Node node : task.getDataOutputNodes()){
+//            IoMapping mapping = null;
+//            for(IoMapping map : maps){
+//                String name = map.getNodeName();
+//                if (name.equals(node.getNodeIndex() + "")) {
+//                    mapping = map;
+//                    break;
+//                }
+//            }
+//            if (mapping == null && node.isEssential()) {
+//                throw new TaskGraphException("No IOMapping defined for essential node:" + node.getNodeIndex());
+//            }
+//            if (mapping != null){
+//
+//            }
+//
+//        }
+
         return ret;
     }
 

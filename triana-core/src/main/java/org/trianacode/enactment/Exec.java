@@ -8,10 +8,7 @@ import org.trianacode.config.cl.OptionValues;
 import org.trianacode.config.cl.OptionsHandler;
 import org.trianacode.config.cl.TrianaOptions;
 import org.trianacode.enactment.addon.CLIaddon;
-import org.trianacode.enactment.io.IoConfiguration;
-import org.trianacode.enactment.io.IoHandler;
-import org.trianacode.enactment.io.IoTypeHandler;
-import org.trianacode.enactment.io.NodeMappings;
+import org.trianacode.enactment.io.*;
 import org.trianacode.enactment.logging.Loggers;
 import org.trianacode.taskgraph.ExecutionState;
 import org.trianacode.taskgraph.Node;
@@ -245,7 +242,7 @@ public class Exec implements ExecutionListener {
             if(currentFolder != null){
                 File currentFile = new File(currentFolder);
                 File scriptFile = new File(currentFile, "triana.sh");
-                if(scriptFile.exists() && scriptFile.isFile()){
+                if(scriptFile.exists() && scriptFile.isFile() && scriptFile.canExecute()){
                     bin = currentFile;
                 }
             }
@@ -308,6 +305,7 @@ public class Exec implements ExecutionListener {
 
         runner.getScheduler().addExecutionListener(this);
         NodeMappings mappings = null;
+        IoConfiguration ioc = null;
         if (data != null) {
             System.out.println("Config file : " + data);
             File conf = new File(data);
@@ -316,7 +314,7 @@ public class Exec implements ExecutionListener {
                 System.exit(1);
             }
             IoHandler handler = new IoHandler();
-            IoConfiguration ioc = handler.deserialize(new FileInputStream(conf));
+            ioc = handler.deserialize(new FileInputStream(conf));
             mappings = handler.map(ioc, runner.getTaskGraph());
             System.out.println("Data mappings size : " + mappings.getMap().size());
         } else {
@@ -365,6 +363,14 @@ public class Exec implements ExecutionListener {
             }
             writeData(o, node.getAbsoluteNodeIndex());
             System.out.println("Exec.execute output node " + node.getName() + " data : " + o);
+
+            if(ioc != null){
+                for(IoMapping mapping : ioc.getOutputs()){
+                    if(mapping.getNodeName().equals("" + node.getAbsoluteNodeIndex())){
+
+                    }
+                }
+            }
         }
         runner.dispose();
     }

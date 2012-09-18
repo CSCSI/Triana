@@ -1,6 +1,7 @@
 package org.trianacode.shiwaall.iwir.execute;
 
 import org.apache.commons.io.FileUtils;
+import org.shiwa.fgi.iwir.AbstractPort;
 import org.shiwa.fgi.iwir.InputPort;
 import org.shiwa.fgi.iwir.OutputPort;
 import org.trianacode.enactment.StreamToOutput;
@@ -8,6 +9,7 @@ import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.tool.Tool;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 // TODO: Auto-generated Javadoc
@@ -54,6 +56,8 @@ public class Executable implements ExecutableInterface, Serializable {
 
     private Tool tool = null;
 
+    private ArrayList<ExecutableNode> executableNodes;
+
     /**
      * Instantiates a new executable.
      *
@@ -64,6 +68,8 @@ public class Executable implements ExecutableInterface, Serializable {
         nodeNameToPortName = new HashMap<String, String>();
         inputPortToFileMap = new HashMap<InputPort, File>();
         outputPortToFileMap = new HashMap<OutputPort, File>();
+
+        executableNodes = new ArrayList<ExecutableNode>();
     }
 
     /**
@@ -132,6 +138,7 @@ public class Executable implements ExecutableInterface, Serializable {
 
         for(Node node : inputs.keySet()){
             File executableInputFile = getInputFileForNode(node);
+
             Object input = inputs.get(node);
 
             if(input instanceof String){
@@ -362,4 +369,35 @@ public class Executable implements ExecutableInterface, Serializable {
     }
 
 
+    public void addExecutableNode(ExecutableNode executableNode) {
+        executableNodes.add(executableNode);
+    }
+
+    public void addExecutableNodeMapping(Node node, AbstractPort abstractPort) {
+        boolean update = false;
+        for(ExecutableNode executableNode : executableNodes){
+            if(executableNode.getNode() == node || executableNode.getAbstractPort() == abstractPort){
+                executableNode.setNode(node);
+                executableNode.setAbstractPort(abstractPort);
+                update = true;
+            }
+        }
+        if(!update){
+            addExecutableNode(new ExecutableNode(node, abstractPort));
+        }
+    }
+
+    public void addExecutableNodeMapping(AbstractPort abstractPort, String fileName) {
+        boolean update = false;
+        for(ExecutableNode executableNode : executableNodes){
+            if(executableNode.getAbstractPort() == abstractPort){
+                executableNode.setFilename(fileName);
+                executableNode.setAbstractPort(abstractPort);
+                update = true;
+            }
+        }
+        if(!update){
+            addExecutableNode(new ExecutableNode(abstractPort, fileName));
+        }
+    }
 }

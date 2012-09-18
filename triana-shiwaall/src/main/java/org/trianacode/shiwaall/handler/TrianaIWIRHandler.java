@@ -398,25 +398,22 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
         Node[] inputPorts = taskgraph.getDataInputNodes();
         for (Node inputPort : inputPorts) {
-//            String portName = inputPort.getName();
-//                String portNumberString = portName.substring(portName.indexOf("_") + 1);
-
-//                String portNumberString = getCorrectPortNumber(taskGraph, portName);
-
-//                String portNumberString = String.valueOf(portNumber);
-
 
             boolean reference;
+            String type = "string";
 
             String[] inputTypes = taskgraph.getDataInputTypes(inputPort.getAbsoluteNodeIndex());
             if(inputTypes == null){
                 inputTypes = taskgraph.getDataInputTypes();
             }
 
+            //TODO figure out references and types
             if (Arrays.asList(inputTypes).contains("java.lang.String")) {
-                reference = true;
-            } else {
+                type = "string";
                 reference = false;
+            } else {
+                type = "java64";
+                reference = true;
             }
 
             System.out.println("\n" +
@@ -425,17 +422,51 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                     " reference " + reference
             );
 
-            //TODO figure out references
-
-
             IoMapping ioMapping = new IoMapping(
                     new IoType("input_" + inputPort.getAbsoluteNodeIndex()
-                            , "java64", true),
+                            , type, reference),
                     "" + inputPort.getAbsoluteNodeIndex());
             inputMappings.add(ioMapping);
         }
 
-        IoConfiguration conf = new IoConfiguration(taskgraph.getQualifiedToolName(), "0.1", inputMappings, new ArrayList<IoMapping>());
+
+        Node[] outputNodes = taskgraph.getDataOutputNodes();
+        List<IoMapping> outputMappings = new ArrayList<IoMapping>();
+
+        for (Node outputNode : outputNodes) {
+
+            boolean reference;
+            String type = "string";
+
+            String[] outputTypes = taskgraph.getDataOutputTypes(outputNode.getAbsoluteNodeIndex());
+            if(outputTypes == null){
+                outputTypes = taskgraph.getDataOutputTypes();
+            }
+
+            //TODO figure out references and types
+            if (Arrays.asList(outputTypes).contains("java.lang.String")) {
+                type = "string";
+                reference = false;
+            } else {
+                type = "java64";
+                reference = true;
+            }
+
+            System.out.println("\n" +
+                    " to port " + outputNode.getName() +
+                    " portNumber " + outputNode.getAbsoluteNodeIndex() +
+                    " reference " + reference
+            );
+
+            IoMapping ioMapping = new IoMapping(
+                    new IoType("output_" + outputNode.getAbsoluteNodeIndex()
+                            , type, reference),
+                    "" + outputNode.getAbsoluteNodeIndex());
+            outputMappings.add(ioMapping);
+        }
+
+
+        IoConfiguration conf = new IoConfiguration(taskgraph.getQualifiedToolName(), "0.1", inputMappings, outputMappings);
 
         DocumentHandler documentHandler = new DocumentHandler();
         new IoHandler().serialize(documentHandler, conf);
