@@ -238,7 +238,19 @@ public class Exec implements ExecutionListener {
             script += ".bat";
         } else {
             script = "./" + script + ".sh";
+
+            //HACK - Check if triana.sh is in current folder,
+            // if so, use that one instead
+            String currentFolder = System.getProperty("user.dir");
+            if(currentFolder != null){
+                File currentFile = new File(currentFolder);
+                File scriptFile = new File(currentFile, "triana.sh");
+                if(scriptFile.exists() && scriptFile.isFile()){
+                    bin = currentFile;
+                }
+            }
         }
+
         System.out.println(bin.getCanonicalPath());
         List<String> args = new ArrayList<String>();
         args.add(script);

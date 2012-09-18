@@ -20,7 +20,6 @@ public class SerializableHandler extends IoTypeHandler<Serializable> {
     @Override
     public Serializable read(String type, InputStream source) throws TaskGraphException {
         if (type.equals("java64")) {
-            System.out.println("should be java64 encoded");
             try {
                 byte[] bytes = Base64.decode(readAsString(source));
                 ObjectInputStream in = new TrianaObjectInputStream(new ByteArrayInputStream(bytes));
@@ -31,7 +30,6 @@ public class SerializableHandler extends IoTypeHandler<Serializable> {
                 throw new TaskGraphException(e);
             }
         } else if (type.equals("java")) {
-            System.out.println("should be java encoded");
             try {
                 ObjectInputStream in = new TrianaObjectInputStream(source);
                 return (Serializable) in.readObject();
