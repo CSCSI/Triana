@@ -169,7 +169,7 @@ public class TaskTypeRepo {
                     try {
                         tool = AddonUtils.makeTool(AtomicTaskHolder.class, iwirTask.getTasktype(), taskGraph.getProperties());
                         tool.setParameter(Executable.EXECUTABLE, executable);
-                        executable.setTool(tool);
+//                        executable.setTool(tool);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -244,15 +244,15 @@ public class TaskTypeRepo {
         if(tool == null){
             try {
 
-                if(descriptor.getExecutable() != null){
-                    if(descriptor.getExecutable().getTool() != null){
-                        tool = descriptor.getExecutable().getTool();
-//                        Executable executable = descriptor.getExecutable();
-//
-//                        tool.setParameter(Executable.EXECUTABLE, descriptor.getExecutable());
-//                        tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
-                    }
-                }
+//                if(descriptor.getExecutable() != null){
+//                    if(descriptor.getExecutable().getTool() != null){
+//                        tool = descriptor.getExecutable().getTool();
+////                        Executable executable = descriptor.getExecutable();
+////
+////                        tool.setParameter(Executable.EXECUTABLE, descriptor.getExecutable());
+////                        tool.setParameter(Executable.TASKTYPE , descriptor.getTasktype());
+//                    }
+//                }
 
 //                tool = AddonUtils.makeTool(AtomicTaskHolder.class, descriptor.getTasktype(), properties);
             } catch (Exception e) {

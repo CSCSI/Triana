@@ -6,10 +6,11 @@ import org.shiwa.fgi.iwir.InputPort;
 import org.shiwa.fgi.iwir.OutputPort;
 import org.trianacode.enactment.StreamToOutput;
 import org.trianacode.taskgraph.Node;
-import org.trianacode.taskgraph.tool.Tool;
+import org.trianacode.taskgraph.Task;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 // TODO: Auto-generated Javadoc
@@ -24,39 +25,44 @@ public class Executable implements ExecutableInterface, Serializable {
 
     /** The task type. */
     private String taskType;
-    
+
     /** The Constant TASKTYPE. */
     public static final String TASKTYPE = "taskType";
-    
+
     /** The Constant EXECUTABLE. */
     public static final String EXECUTABLE = "executable";
-    
+
     /** The args. */
     private String[] args = new String[0];
-    
+
     /** The working dir. */
     private File workingDir = null;
-    
+
     /** The primary exec. */
     private String primaryExec = "";
 
     /** The node name to port name. */
-    private HashMap<String, String> nodeNameToPortName;
-    
+    private transient HashMap<String, String> nodeNameToPortName;
+
     /** The task name. */
     private String taskName = "";
-    
+
     /** The input port to file map. */
-    private HashMap<InputPort, File> inputPortToFileMap;
-    
+    private transient HashMap<InputPort, File> inputPortToFileMap;
+
     /** The output port to file map. */
-    private HashMap<OutputPort, File> outputPortToFileMap;
+    private transient HashMap<OutputPort, File> outputPortToFileMap;
 
     private String JSDLstring = "";
 
-    private Tool tool = null;
+//    private Tool tool = null;
 
-    private ArrayList<ExecutableNode> executableNodes;
+    private transient ArrayList<ExecutableNode> executableNodes;
+
+
+    // Used only when saving and loading these tasks, don't use them otherwise
+    private HashMap<Integer, String> inputNodeNumberToFilename = new HashMap<Integer, String>();
+    private HashMap<Integer, String> outputNodeNumberToFilename = new HashMap<Integer, String>();
 
     /**
      * Instantiates a new executable.
@@ -313,6 +319,19 @@ public class Executable implements ExecutableInterface, Serializable {
                 }
             }
         }
+
+//        ArrayList<ExecutableNode> execNodes = getExecutableNodes(true);
+//        for(ExecutableNode executableNode : execNodes) {
+//            if(executableNode.getNode() != null) {
+//                if(executableNode.getNode() == node){
+//                    String filename = executableNode.getFilename();
+//                    if(filename != null && !filename.equals("")) {
+//                        return new File(workingDir, filename);
+//                    }
+//                }
+//            }
+//        }
+
         return null;
     }
 
@@ -360,17 +379,65 @@ public class Executable implements ExecutableInterface, Serializable {
         return JSDLstring;
     }
 
-    public void setTool(Tool tool) {
-        this.tool = tool;
+//    public void setTool(Tool tool) {
+//        this.tool = tool;
+//    }
+
+//    public Tool getTool() {
+//        return tool;
+//    }
+
+
+    private void updatedExeceutableNode() {
+        System.out.println("Updated Executable node" + Arrays.toString(executableNodes.toArray()));
+
+        Task task = null;
+        //get a the task without having to remember a reference to it
+        //keeps things tidy and serializable
+        for(ExecutableNode executableNode : executableNodes){
+            if(executableNode.getNode() != null){
+                task = executableNode.getNode().getTask();
+            }
+        }
+
+        if(task != null) {
+            for(Node node : task.getInputNodes()) {
+                File file = getOutputFileForNode(node);
+                if(file != null){
+                    inputNodeNumberToFilename.put(node.getNodeIndex(), file.getName());
+                }
+            }
+            System.out.println(inputNodeNumberToFilename.toString());
+
+            for(Node node : task.getOutputNodes()) {
+                File file = getOutputFileForNode(node);
+                if(file != null) {
+                    outputNodeNumberToFilename.put(node.getNodeIndex(), file.getName());
+                }
+            }
+            System.out.println(outputNodeNumberToFilename.toString());
+        }
     }
 
-    public Tool getTool() {
-        return tool;
-    }
-
-
-    public void addExecutableNode(ExecutableNode executableNode) {
+    private void addExecutableNode(ExecutableNode executableNode) {
         executableNodes.add(executableNode);
+        updatedExeceutableNode();
+        System.out.println("Node added : " + executableNode);
+    }
+
+    public void addExecutableNodeMapping(Node node, String fileName) {
+        boolean update = false;
+        for(ExecutableNode executableNode : executableNodes){
+            if(executableNode.getNode() == node){
+                executableNode.setNode(node);
+                executableNode.setFilename(fileName);
+                update = true;
+                updatedExeceutableNode();
+            }
+        }
+        if(!update){
+            addExecutableNode(new ExecutableNode(node, fileName));
+        }
     }
 
     public void addExecutableNodeMapping(Node node, AbstractPort abstractPort) {
@@ -380,6 +447,7 @@ public class Executable implements ExecutableInterface, Serializable {
                 executableNode.setNode(node);
                 executableNode.setAbstractPort(abstractPort);
                 update = true;
+                updatedExeceutableNode();
             }
         }
         if(!update){
@@ -394,10 +462,69 @@ public class Executable implements ExecutableInterface, Serializable {
                 executableNode.setFilename(fileName);
                 executableNode.setAbstractPort(abstractPort);
                 update = true;
+                updatedExeceutableNode();
             }
         }
         if(!update){
             addExecutableNode(new ExecutableNode(abstractPort, fileName));
+        }
+    }
+
+    public ArrayList<ExecutableNode> getInputNodes(){
+        return getExecutableNodes(true);
+    }
+
+    private ArrayList<ExecutableNode> getExecutableNodes(boolean inputs) {
+        ArrayList<ExecutableNode> returning = new ArrayList<ExecutableNode>();
+
+        if(executableNodes == null){
+            executableNodes = new ArrayList<ExecutableNode>();
+        }
+
+        for(ExecutableNode executableNode : executableNodes){
+            if(executableNode.getNode() != null){
+                if(executableNode.getNode().isInputNode() == inputs){
+                    returning.add(executableNode);
+                }
+            } else if(executableNode.getAbstractPort() != null){
+                if(executableNode.getAbstractPort().isInputPort() == inputs){
+                    returning.add(executableNode);
+                }
+            }
+        }
+        return returning;
+    }
+
+    public ArrayList<ExecutableNode> getOutputNodes(){
+        return getExecutableNodes(false);
+    }
+
+    public void removeExecutableNode(Node node) {
+        ArrayList<ExecutableNode> removing = new ArrayList<ExecutableNode>();
+        for(ExecutableNode executableNode : executableNodes) {
+            if(executableNode.getNode() == node) {
+                removing.add(executableNode);
+            }
+        }
+        for(ExecutableNode executableNode : removing) {
+            executableNodes.remove(executableNode);
+        }
+        updatedExeceutableNode();
+    }
+
+    //Called to rebuild the executableNode objects after deserializing
+    public void init(Task task) {
+        for(Integer integer : inputNodeNumberToFilename.keySet()) {
+            Node node = task.getInputNode(integer);
+            if(node != null) {
+                addExecutableNodeMapping(node, inputNodeNumberToFilename.get(integer));
+            }
+        }
+        for(Integer integer : outputNodeNumberToFilename.keySet()) {
+            Node node = task.getOutputNode(integer);
+            if(node != null) {
+                addExecutableNodeMapping(node, outputNodeNumberToFilename.get(integer));
+            }
         }
     }
 }

@@ -28,6 +28,16 @@ public class ExecutableNode implements NodeListener{
         this.filename = filename;
     }
 
+    public ExecutableNode(Node node, String fileName) {
+        this.node = node;
+        filename = fileName;
+    }
+
+
+    public String toString(){
+        return "[" + node + " : " + abstractPort + " : " + filename + "]";
+    }
+
     public AbstractPort getAbstractPort() {
         return abstractPort;
     }

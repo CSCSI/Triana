@@ -16,7 +16,7 @@ import java.util.HashMap;
  * Time: 14:33
  * To change this template use File | Settings | File Templates.
  */
-public class AtomicTaskHolder extends AbstractTaskHolder {
+public class AtomicTaskHolder extends AbstractTaskHolder{
 
     /** The executable. */
     private Executable executable;
@@ -26,9 +26,11 @@ public class AtomicTaskHolder extends AbstractTaskHolder {
      */
     @Override
     public void init() {
-
         if(this.isParameter(Executable.EXECUTABLE)){
             executable = (Executable) getParameter(Executable.EXECUTABLE);
+        } else {
+            executable = new Executable("");
+            setParameter(Executable.EXECUTABLE, executable);
         }
 
         setParameterPanelClass(BasicIWIRPanel.class.getCanonicalName());

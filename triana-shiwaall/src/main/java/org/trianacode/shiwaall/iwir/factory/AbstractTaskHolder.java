@@ -15,7 +15,7 @@ import org.trianacode.taskgraph.Unit;
 public abstract class AbstractTaskHolder extends Unit implements TaskHolder {
 //    Executable executable;
     /** The abstract task. */
-AbstractTask abstractTask;
+    AbstractTask abstractTask;
 
 //    public Executable getExecutable() {
 //        return executable;
@@ -29,7 +29,7 @@ AbstractTask abstractTask;
     /* (non-Javadoc)
  * @see org.trianacode.shiwaall.iwir.factory.TaskHolder#getIWIRTask()
  */
-public AbstractTask getIWIRTask() {
+    public AbstractTask getIWIRTask() {
         return abstractTask;
     }
 
@@ -68,6 +68,8 @@ public AbstractTask getIWIRTask() {
     public void registerIWIRTask(AbstractTask abstractTask) {
         IwirRegister.getIwirRegister().addTask(abstractTask);
     }
+
+
 
 }
 
