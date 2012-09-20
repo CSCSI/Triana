@@ -419,6 +419,22 @@ public class Executable implements ExecutableInterface, Serializable {
         }
     }
 
+    //Called to rebuild the executableNode objects after deserializing
+    public void init(Task task) {
+        for(Integer integer : inputNodeNumberToFilename.keySet()) {
+            Node node = task.getInputNode(integer);
+            if(node != null) {
+                addExecutableNodeMapping(node, inputNodeNumberToFilename.get(integer));
+            }
+        }
+        for(Integer integer : outputNodeNumberToFilename.keySet()) {
+            Node node = task.getOutputNode(integer);
+            if(node != null) {
+                addExecutableNodeMapping(node, outputNodeNumberToFilename.get(integer));
+            }
+        }
+    }
+
     private void addExecutableNode(ExecutableNode executableNode) {
         executableNodes.add(executableNode);
         updatedExeceutableNode();
@@ -510,21 +526,5 @@ public class Executable implements ExecutableInterface, Serializable {
             executableNodes.remove(executableNode);
         }
         updatedExeceutableNode();
-    }
-
-    //Called to rebuild the executableNode objects after deserializing
-    public void init(Task task) {
-        for(Integer integer : inputNodeNumberToFilename.keySet()) {
-            Node node = task.getInputNode(integer);
-            if(node != null) {
-                addExecutableNodeMapping(node, inputNodeNumberToFilename.get(integer));
-            }
-        }
-        for(Integer integer : outputNodeNumberToFilename.keySet()) {
-            Node node = task.getOutputNode(integer);
-            if(node != null) {
-                addExecutableNodeMapping(node, outputNodeNumberToFilename.get(integer));
-            }
-        }
     }
 }

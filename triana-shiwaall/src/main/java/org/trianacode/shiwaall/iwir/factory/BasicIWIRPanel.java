@@ -63,6 +63,7 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
         getTask().addTaskListener(this);
 
         executable = (Executable) getTask().getParameter(Executable.EXECUTABLE);
+
         executable.init(getTask());
 
         setLayout(new GridLayout(1, 1));

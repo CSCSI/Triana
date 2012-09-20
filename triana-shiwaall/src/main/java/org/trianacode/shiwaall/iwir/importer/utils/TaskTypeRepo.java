@@ -153,7 +153,7 @@ public class TaskTypeRepo {
             if(reader != null) {
                 File jsdlFile = reader.getJSDLFile();
                 if(jsdlFile != null) {
-                    Executable executable = new Executable(type);
+                    Executable executable = new Executable("");
                     executable.setTaskName(iwirTask.getName());
                     populateExecutableFromJSDL(executable, jsdlFile, iwirTask);
 
