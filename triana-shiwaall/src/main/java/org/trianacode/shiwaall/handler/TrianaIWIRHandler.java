@@ -446,7 +446,7 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
             //TODO figure out references and types
             if (Arrays.asList(outputTypes).contains("java.lang.String")) {
                 type = "string";
-                reference = false;
+                reference = true;
             } else {
                 type = "java64";
                 reference = true;

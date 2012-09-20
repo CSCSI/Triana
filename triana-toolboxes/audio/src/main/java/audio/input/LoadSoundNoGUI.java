@@ -1,7 +1,6 @@
 package audio.input;
 
 
-import org.trianacode.gui.Display;
 import org.trianacode.taskgraph.Unit;
 import triana.types.audio.AudioChannelFormat;
 import triana.types.audio.MultipleAudio;
@@ -10,11 +9,6 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -261,38 +255,38 @@ public class LoadSoundNoGUI extends Unit {
             }
         } else {
             System.out.println("File isn't there!!");
-            String title = "Error";
-            String text = "Audio file " + file + " not found in correct location!";
-            final JFrame showit = new JFrame(title);
-
-            JButton ok = new JButton("OK");
-            ok.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    showit.dispose();
-                }
-            });
-
-            JPanel buttonpanel = new JPanel(new FlowLayout());
-            buttonpanel.add(ok);
-
-            JTextArea textarea = new JTextArea(text);
-            textarea.setEditable(false);
-            textarea.setBackground(ok.getBackground());
-            textarea.setBorder(new EmptyBorder(3, 3, 3, 3));
-
-            //ImageIcon ima = GUIEnv.getIcon("triana.gif");
-            //JLabel icon = new JLabel(ima);
-            //icon.setBorder(new EmptyBorder(3, 3, 3, 3));
-
-            showit.getContentPane().setLayout(new BorderLayout());
-            showit.getContentPane().add(textarea, BorderLayout.EAST);
-            //showit.getContentPane().add(icon, BorderLayout.WEST);
-            showit.getContentPane().add(buttonpanel, BorderLayout.SOUTH);
-
-            showit.pack();
-            Display.centralise(showit);
-            showit.show();
-            showit.toFront();
+//            String title = "Error";
+//            String text = "Audio file " + file + " not found in correct location!";
+//            final JFrame showit = new JFrame(title);
+//
+//            JButton ok = new JButton("OK");
+//            ok.addActionListener(new ActionListener() {
+//                public void actionPerformed(ActionEvent e) {
+//                    showit.dispose();
+//                }
+//            });
+//
+//            JPanel buttonpanel = new JPanel(new FlowLayout());
+//            buttonpanel.add(ok);
+//
+//            JTextArea textarea = new JTextArea(text);
+//            textarea.setEditable(false);
+//            textarea.setBackground(ok.getBackground());
+//            textarea.setBorder(new EmptyBorder(3, 3, 3, 3));
+//
+//            //ImageIcon ima = GUIEnv.getIcon("triana.gif");
+//            //JLabel icon = new JLabel(ima);
+//            //icon.setBorder(new EmptyBorder(3, 3, 3, 3));
+//
+//            showit.getContentPane().setLayout(new BorderLayout());
+//            showit.getContentPane().add(textarea, BorderLayout.EAST);
+//            //showit.getContentPane().add(icon, BorderLayout.WEST);
+//            showit.getContentPane().add(buttonpanel, BorderLayout.SOUTH);
+//
+//            showit.pack();
+//            Display.centralise(showit);
+//            showit.show();
+//            showit.toFront();
         }
     }
 
@@ -323,9 +317,12 @@ public class LoadSoundNoGUI extends Unit {
 //        // Define initial value and type of parameters
         defineParameter("fileName", "/Users/eddie/Desktop/06 Midnight Express copy.aif", USER_ACCESSIBLE);
 //
-        createAudioInputStream(new File(fileName));
-        String fn = "/Users/eddie/Desktop/06 Midnight Express copy.aif";
-        parameterUpdate("fileName", fn);
+        File file = new File(fileName);
+        if(file.exists()){
+            createAudioInputStream(file);
+            String fn = "/Users/eddie/Desktop/06 Midnight Express copy.aif";
+            parameterUpdate("fileName", fn);
+        }
 
     }
 

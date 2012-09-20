@@ -1,6 +1,7 @@
 package org.trianacode.enactment.io;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,6 +68,7 @@ public class IoConfiguration {
     }
 
     public List<IoMapping> getOutputs() {
+        System.out.println("IOMappings : " + Arrays.toString(outputs.toArray()));
         return outputs;
     }
 }

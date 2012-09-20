@@ -118,7 +118,7 @@ public class IoHandler {
 //        List<IoMapping> outputs = config.getOutputs();
 //        for (Node node : task.getDataOutputNodes()){
 //            IoMapping mapping = null;
-//            for(IoMapping map : maps){
+//            for(IoMapping map : outputs){
 //                String name = map.getNodeName();
 //                if (name.equals(node.getNodeIndex() + "")) {
 //                    mapping = map;
@@ -129,9 +129,8 @@ public class IoHandler {
 //                throw new TaskGraphException("No IOMapping defined for essential node:" + node.getNodeIndex());
 //            }
 //            if (mapping != null){
-//
+//                ret.addOutputMapping(node.getNodeIndex(), mapping);
 //            }
-//
 //        }
 
         return ret;
@@ -201,8 +200,9 @@ public class IoHandler {
         }
         Element outports = handler.getChild(root, "outputPorts");
         if (outports != null) {
-            List<Element> outs = handler.getChildren(inports, "outputPort");
+            List<Element> outs = handler.getChildren(outports, "outputPort");
             for (Element element : outs) {
+                System.out.println("Deserializing outputPort");
                 deserializeMapping(conf, element, false);
             }
         }

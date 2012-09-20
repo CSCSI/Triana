@@ -445,7 +445,7 @@ public class DaxifyTaskGraph implements ConversionAddon {
                 task.setParameter("jobName", executable.getPrimaryExec());
                 task.setParameter("args", Arrays.toString(executable.getArgs()));
                 task.setParameter("numberOfJobs", 1);
-                task.setParameter("execLocation", executable.getWorkingDir());
+                task.setParameter("execLocation", executable.getWorkingDir().getAbsolutePath());
             }
         } else {
             daxTask.setParameter("jobName", ((JavaProxy) task.getProxy()).getFullUnitName());

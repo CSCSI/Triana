@@ -1,5 +1,6 @@
 package org.trianacode.enactment;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.trianacode.TrianaInstance;
 import org.trianacode.config.Locations;
@@ -361,16 +362,44 @@ public class Exec implements ExecutionListener {
                     e.printStackTrace();
                 }
             }
-            writeData(o, node.getAbsoluteNodeIndex());
-            System.out.println("Exec.execute output node " + node.getName() + " data : " + o);
 
             if(ioc != null){
+                System.out.println(ioc.getOutputs().size() + " outputs in config");
                 for(IoMapping mapping : ioc.getOutputs()){
+
+                    System.out.println(mapping.getNodeName() +
+                            " " + mapping.getIoType().getType() +
+                            " " + mapping.getIoType().getValue() +
+                            " " + mapping.getIoType().isReference() +
+                            " node : " + node.getAbsoluteNodeIndex()
+                    );
+
                     if(mapping.getNodeName().equals("" + node.getAbsoluteNodeIndex())){
 
+                        String value =  mapping.getIoType().getValue();
+
+                        //Irrelevant, probably, if the object doesnt match the IoType
+                        String type = mapping.getIoType().getType();
+
+                        if (mapping.getIoType().isReference()) {
+                            File file = new File(value);
+                            if(o instanceof File){
+                                File outputFile = (File) o;
+                                FileUtils.copyFile(outputFile, file);
+                            } else {
+                                IoTypeHandler handler = IoHandler.getHandler(o);
+                                OutputStream outputStream = new FileOutputStream(file);
+                                handler.write(o, outputStream);
+                            }
+                        }
                     }
                 }
+            } else {
+                System.out.println("Output config null");
+                writeData(o, node.getAbsoluteNodeIndex());
             }
+
+            System.out.println("Exec.execute output node " + node.getName() + " data : " + o);
         }
         runner.dispose();
     }
