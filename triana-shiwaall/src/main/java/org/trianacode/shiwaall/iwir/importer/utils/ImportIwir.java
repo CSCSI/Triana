@@ -152,7 +152,7 @@ public class ImportIwir {
                     //if the link is not itself && they have the same "from" port, its a collision
                     if(
                             dataLink != anotherDataLink &&
-                            dataLink.getFrom().equals(anotherDataLink.getFrom())){
+                                    dataLink.getFrom().equals(anotherDataLink.getFrom())){
 
                         System.out.println("####### port collision, " + dataLink.getFrom()
                                 + " : " + dataLink.getTo()
@@ -195,14 +195,22 @@ public class ImportIwir {
 
                     Task receivingTask = abstractHashMap.get(anotherDataLink.getToPort().getMyTask());
                     Node receivingNode = receivingTask.addDataInputNode();
+                    Node sendingNode = task.addDataOutputNode();
 
-                    taskGraph.connect(task.addDataOutputNode(), receivingNode);
+                    taskGraph.connect(sendingNode, receivingNode);
 
                     //Record the links for data matching up later
                     if(receivingTask.isParameterName(Executable.EXECUTABLE)){
                         Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
                         executable.addPort(receivingNode.getTopLevelNode().getName(), anotherDataLink.getToPort().getName());
                         executable.addExecutableNodeMapping(receivingNode, anotherDataLink.getToPort());
+                        receivingTask.setParameter(Executable.EXECUTABLE, executable);
+                    }
+
+                    if(task.isParameterName(Executable.EXECUTABLE)){
+                        Executable executable = (Executable) task.getParameter(Executable.EXECUTABLE);
+                        executable.addPort(sendingNode.getTopLevelNode().getName(), anotherDataLink.getFromPort().getName());
+                        executable.addExecutableNodeMapping(sendingNode, anotherDataLink.getFromPort());
                         receivingTask.setParameter(Executable.EXECUTABLE, executable);
                     }
 

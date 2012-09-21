@@ -60,8 +60,6 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
     @Override
     public void init() {
 
-        getTask().addTaskListener(this);
-
         executable = (Executable) getTask().getParameter(Executable.EXECUTABLE);
 
         executable.init(getTask());
@@ -70,6 +68,7 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
 
         updateMainPanel();
 
+        getTask().addTaskListener(this);
 
 
         this.add(mainPanel);
@@ -165,17 +164,17 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
         } else {
 
             descriptionPanel.add(new JLabel("Inputs : "));
-            addNodeDescriptions(descriptionPanel, executable.getInputNodes(), true);
+            addNodeDescriptions(descriptionPanel, executable.getInputNodes());
 
             descriptionPanel.add(new JLabel("Outputs : "));
-            addNodeDescriptions(descriptionPanel, executable.getOutputNodes(), false);
+            addNodeDescriptions(descriptionPanel, executable.getOutputNodes());
 
         }
 
         return descriptionPanel;
     }
 
-    private void addNodeDescriptions(JPanel descriptionPanel, ArrayList<ExecutableNode> nodes, boolean addFilenaming) {
+    private void addNodeDescriptions(JPanel descriptionPanel, ArrayList<ExecutableNode> nodes) {
         for(ExecutableNode executableNode : nodes){
             JPanel execNodePanel = new JPanel(new GridLayout(1, 3));
 
@@ -190,18 +189,17 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
                 execNodePanel.add(new JLabel("IWIR Port : " + executableNode.getAbstractPort().getUniqueId()));
             }
 
-            if(addFilenaming){
-                JPanel namePanel = new JPanel(new GridLayout(1, 2));
-                JLabel nameLabel = new JLabel("Filename : ");
-                namePanel.add(nameLabel);
-                JTextField nameField = new JTextField("");
-                if(executableNode.getFilename() != null){
-                    nameField.setText(executableNode.getFilename());
-                }
-                nodeFields.put(executableNode, nameField);
-                namePanel.add(nameField);
-                execNodePanel.add(namePanel);
+            JPanel namePanel = new JPanel(new GridLayout(1, 2));
+            JLabel nameLabel = new JLabel("Filename : ");
+            namePanel.add(nameLabel);
+            JTextField nameField = new JTextField("");
+            if(executableNode.getFilename() != null){
+                nameField.setText(executableNode.getFilename());
             }
+            nodeFields.put(executableNode, nameField);
+            namePanel.add(nameField);
+            execNodePanel.add(namePanel);
+
             descriptionPanel.add(execNodePanel);
         }
     }

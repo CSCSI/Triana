@@ -65,6 +65,7 @@ public class AtomicTaskHolder extends AbstractTaskHolder{
 
                 File outputFile = getExecutable().getOutputFileForNode(node);
                 if(outputFile != null && outputFile.exists()){
+                    System.out.println(node.getName() + " sends data to file " + outputFile.getAbsolutePath());
                     outputAtNode(j, outputFile.getAbsolutePath());
                 } else {
                     System.out.println("Output file for node " + node.getName() + " does not exist");

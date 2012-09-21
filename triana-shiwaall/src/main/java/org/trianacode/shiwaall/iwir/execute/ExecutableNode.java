@@ -35,7 +35,11 @@ public class ExecutableNode implements NodeListener{
 
 
     public String toString(){
-        return "[" + node + " : " + abstractPort + " : " + filename + "]";
+        String nodeName = null;
+        if(node != null) {
+            nodeName = node.getName();
+        }
+        return "[" + nodeName + " : " + abstractPort + " : " + filename + "]";
     }
 
     public AbstractPort getAbstractPort() {

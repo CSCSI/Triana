@@ -57,6 +57,7 @@ public class Executable implements ExecutableInterface, Serializable {
 
 //    private Tool tool = null;
 
+    //transient, as Executable node can't be serialised
     private transient ArrayList<ExecutableNode> executableNodes;
 
 
@@ -268,7 +269,7 @@ public class Executable implements ExecutableInterface, Serializable {
      * @param portName the port name
      */
     public void addPort(String nodeName, String portName) {
-        System.out.println(nodeName + " maps to " + portName);
+//        System.out.println(nodeName + " maps to " + portName);
         nodeNameToPortName.put(nodeName, portName);
     }
 
@@ -307,30 +308,33 @@ public class Executable implements ExecutableInterface, Serializable {
      * @return the input file for node
      */
     private File getInputFileForNode(Node node){
-        System.out.println("Looking for a file for " + node.getBottomLevelNode().getName());
-        String portName = nodeNameToPortName.get(node.getBottomLevelNode().getName());
-        if(portName != null){
-            System.out.println("IWIR port " + portName);
-            for(InputPort inputPort : inputPortToFileMap.keySet()){
-                if(inputPort.getName().equals(portName)){
-                    File file = inputPortToFileMap.get(inputPort);
-                    System.out.println("Input node to file : " + file.getAbsolutePath());
-                    return file;
-                }
-            }
-        }
-
-//        ArrayList<ExecutableNode> execNodes = getExecutableNodes(true);
-//        for(ExecutableNode executableNode : execNodes) {
-//            if(executableNode.getNode() != null) {
-//                if(executableNode.getNode() == node){
-//                    String filename = executableNode.getFilename();
-//                    if(filename != null && !filename.equals("")) {
-//                        return new File(workingDir, filename);
-//                    }
+//        System.out.println("Looking for a file for " + node.getBottomLevelNode().getName());
+//        String portName = nodeNameToPortName.get(node.getBottomLevelNode().getName());
+//        if(portName != null){
+//            System.out.println("IWIR port " + portName);
+//            for(InputPort inputPort : inputPortToFileMap.keySet()){
+//                if(inputPort.getName().equals(portName)){
+//                    File file = inputPortToFileMap.get(inputPort);
+//                    System.out.println("Input node to file : " + file.getAbsolutePath());
+//                    return file;
 //                }
 //            }
 //        }
+
+//        ArrayList<ExecutableNode> execNodes = getExecutableNodes(true);
+        for(ExecutableNode executableNode : executableNodes) {
+            if(executableNode.getNode() != null) {
+//                System.out.println(node + " " + executableNode.getNode());
+
+                //TODO ouch
+                if(executableNode.getNode().getName().equals(node.getName())){
+                    String filename = executableNode.getFilename();
+                    if(filename != null && !filename.equals("")) {
+                        return new File(workingDir, filename);
+                    }
+                }
+            }
+        }
 
         return null;
     }
@@ -342,14 +346,26 @@ public class Executable implements ExecutableInterface, Serializable {
      * @return the output file for node
      */
     public File getOutputFileForNode(Node node) {
-        String portName = nodeNameToPortName.get(node.getBottomLevelNode().getName());
-        if(portName != null) {
-            System.out.println("IWIR output port " + portName);
-            for(OutputPort outputPort : outputPortToFileMap.keySet()){
-                if(outputPort.getName().equals(portName)){
-                    File file = outputPortToFileMap.get(outputPort);
-                    System.out.println("Output node to file : " + file.getAbsolutePath());
-                    return file;
+//        String portName = nodeNameToPortName.get(node.getBottomLevelNode().getName());
+//        if(portName != null) {
+//            System.out.println("IWIR output port " + portName);
+//            for(OutputPort outputPort : outputPortToFileMap.keySet()){
+//                if(outputPort.getName().equals(portName)){
+//                    File file = outputPortToFileMap.get(outputPort);
+//                    System.out.println("Output node to file : " + file.getAbsolutePath());
+//                    return file;
+//                }
+//            }
+//        }
+
+//        ArrayList<ExecutableNode> execNodes = getExecutableNodes(false);
+        for(ExecutableNode executableNode : executableNodes) {
+            if(executableNode.getNode() != null) {
+                if(executableNode.getNode().getName().equals(node.getName())){
+                    String filename = executableNode.getFilename();
+                    if(filename != null && !filename.equals("")) {
+                        return new File(workingDir, filename);
+                    }
                 }
             }
         }
@@ -407,7 +423,7 @@ public class Executable implements ExecutableInterface, Serializable {
                     inputNodeNumberToFilename.put(node.getNodeIndex(), file.getName());
                 }
             }
-            System.out.println(inputNodeNumberToFilename.toString());
+            System.out.println("in node to file : " + inputNodeNumberToFilename.toString());
 
             for(Node node : task.getOutputNodes()) {
                 File file = getOutputFileForNode(node);
@@ -415,22 +431,34 @@ public class Executable implements ExecutableInterface, Serializable {
                     outputNodeNumberToFilename.put(node.getNodeIndex(), file.getName());
                 }
             }
-            System.out.println(outputNodeNumberToFilename.toString());
+            System.out.println("out node to file : " + outputNodeNumberToFilename.toString());
         }
     }
 
+    private boolean firstTime = true;
     //Called to rebuild the executableNode objects after deserializing
     public void init(Task task) {
-        for(Integer integer : inputNodeNumberToFilename.keySet()) {
-            Node node = task.getInputNode(integer);
-            if(node != null) {
-                addExecutableNodeMapping(node, inputNodeNumberToFilename.get(integer));
+
+//        System.out.println("Task " + task + " init, for some reason.");
+
+        if(firstTime) {
+            firstTime = !firstTime;
+        } else {
+            System.out.println("\nSecond init, loading from serials");
+            System.out.println("in node to file : " + inputNodeNumberToFilename.toString());
+            System.out.println("out node to file : " + outputNodeNumberToFilename.toString());
+
+            for(Integer integer : inputNodeNumberToFilename.keySet()) {
+                Node node = task.getInputNode(integer);
+                if(node != null) {
+                    addExecutableNodeMapping(node, inputNodeNumberToFilename.get(integer));
+                }
             }
-        }
-        for(Integer integer : outputNodeNumberToFilename.keySet()) {
-            Node node = task.getOutputNode(integer);
-            if(node != null) {
-                addExecutableNodeMapping(node, outputNodeNumberToFilename.get(integer));
+            for(Integer integer : outputNodeNumberToFilename.keySet()) {
+                Node node = task.getOutputNode(integer);
+                if(node != null) {
+                    addExecutableNodeMapping(node, outputNodeNumberToFilename.get(integer));
+                }
             }
         }
     }
@@ -442,47 +470,53 @@ public class Executable implements ExecutableInterface, Serializable {
     }
 
     public void addExecutableNodeMapping(Node node, String fileName) {
+        System.out.println("\nnode, file");
         boolean update = false;
         for(ExecutableNode executableNode : executableNodes){
             if(executableNode.getNode() == node){
                 executableNode.setNode(node);
                 executableNode.setFilename(fileName);
                 update = true;
-                updatedExeceutableNode();
             }
         }
         if(!update){
             addExecutableNode(new ExecutableNode(node, fileName));
+        } else {
+            updatedExeceutableNode();
         }
     }
 
     public void addExecutableNodeMapping(Node node, AbstractPort abstractPort) {
+        System.out.println("\nnode, port");
         boolean update = false;
         for(ExecutableNode executableNode : executableNodes){
             if(executableNode.getNode() == node || executableNode.getAbstractPort() == abstractPort){
                 executableNode.setNode(node);
                 executableNode.setAbstractPort(abstractPort);
                 update = true;
-                updatedExeceutableNode();
             }
         }
         if(!update){
             addExecutableNode(new ExecutableNode(node, abstractPort));
+        } else {
+            updatedExeceutableNode();
         }
     }
 
     public void addExecutableNodeMapping(AbstractPort abstractPort, String fileName) {
+        System.out.println("\nport, name");
         boolean update = false;
         for(ExecutableNode executableNode : executableNodes){
             if(executableNode.getAbstractPort() == abstractPort){
                 executableNode.setFilename(fileName);
                 executableNode.setAbstractPort(abstractPort);
                 update = true;
-                updatedExeceutableNode();
             }
         }
         if(!update){
             addExecutableNode(new ExecutableNode(abstractPort, fileName));
+        } else {
+            updatedExeceutableNode();
         }
     }
 

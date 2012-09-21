@@ -368,6 +368,8 @@ public class TaskTypeRepo {
                     String fileName = dataStage.getFileName();
                     File outputFile = new File(executable.getWorkingDir(), fileName);
                     executable.addOutputFile(outputPort, outputFile);
+
+                    executable.addExecutableNodeMapping(outputPort, fileName);
                 }
             }
         }
