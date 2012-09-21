@@ -16,11 +16,9 @@ import org.trianacode.enactment.io.IoConfiguration;
 import org.trianacode.enactment.io.IoHandler;
 import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
-import org.trianacode.shiwaall.executionServices.TaskTypeToolDescriptor;
 import org.trianacode.shiwaall.extras.FileBuilder;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.importer.utils.ExportIwir;
-import org.trianacode.shiwaall.iwir.importer.utils.TaskTypeRepo;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.ser.Base64;
 import org.trianacode.taskgraph.ser.DocumentHandler;
@@ -332,6 +330,16 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
 
                         org.trianacode.taskgraph.Task trianaTask = getTaskForAtomicTask(task);
 
+                        if (trianaTask.isParameterName(Executable.EXECUTABLE)) {
+                            Executable exec = (Executable) trianaTask.getParameter(Executable.EXECUTABLE);
+                            File dir = exec.getWorkingDir();
+                            if(dir.exists() && dir.isDirectory()) {
+                                tasksFiles.addAll(exec.getWorkingDirFileWhichAreNotInputsOrOutputs());
+                            }
+                        } else {
+                            tasksFiles.addAll(trianaFiles);
+                        }
+
                         TaskGraph taskGraph = null;
                         taskGraph = TaskGraphManager.createTaskGraph();
                         taskGraph.setToolName(trianaTask.getToolName() + ".graph");
@@ -355,14 +363,13 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                         String arguments = "-n -w " + taskFile.getName() + " -d " + ioConfig.getName();
 
 
-                        TaskTypeToolDescriptor taskTypeToolDescriptor;
-                        if( (taskTypeToolDescriptor = TaskTypeRepo.getDescriptorFromType(tasktype)) != null){
-                            if((executable = taskTypeToolDescriptor.getExecutable()) != null){
-                                Collections.addAll(tasksFiles, executable.getWorkingDir().listFiles());
-                            }
-                        } else {
-                            tasksFiles.addAll(trianaFiles);
-                        }
+//                        TaskTypeToolDescriptor taskTypeToolDescriptor;
+//                        if( (taskTypeToolDescriptor = TaskTypeRepo.getDescriptorFromType(tasktype)) != null){
+//                            if((executable = taskTypeToolDescriptor.getExecutable()) != null){
+//                                Collections.addAll(tasksFiles, executable.getWorkingDir().listFiles());
+//                            }
+//                        } else {
+//                        }
 
                         IWIRTaskHandler iwirTaskHandler = new IWIRTaskHandler(task);
                         iwirTaskHandler.setFiles(tasksFiles);
@@ -416,11 +423,11 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                 reference = true;
             }
 
-            System.out.println("\n" +
-                    " to port " + inputPort.getName() +
-                    " portNumber " + inputPort.getAbsoluteNodeIndex() +
-                    " reference " + reference
-            );
+//            System.out.println("\n" +
+//                    " to port " + inputPort.getName() +
+//                    " portNumber " + inputPort.getAbsoluteNodeIndex() +
+//                    " reference " + reference
+//            );
 
             IoMapping ioMapping = new IoMapping(
                     new IoType("input_" + inputPort.getAbsoluteNodeIndex()
@@ -478,8 +485,8 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
     private org.trianacode.taskgraph.Task getTaskForAtomicTask(Task task) {
         for(org.trianacode.taskgraph.Task trianaTask : taskHashMap.keySet()){
             AbstractTask atomicTask = taskHashMap.get(trianaTask);
-            System.out.println("Comparing " + atomicTask.getUniqueId() +
-                    " with " + task.getUniqueId());
+//            System.out.println("Comparing " + atomicTask.getUniqueId() +
+//                    " with " + task.getUniqueId());
             if(atomicTask.getUniqueId().equals(task.getUniqueId())){
                 return trianaTask;
             }

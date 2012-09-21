@@ -373,8 +373,8 @@ public class Executable implements ExecutableInterface, Serializable {
     /**
      * Adds the output file.
      *
-//     * @param outputPort the output port
-//     * @param outputFile the output file
+     //     * @param outputPort the output port
+     //     * @param outputFile the output file
      */
 //    public void addOutputFile(OutputPort outputPort, File outputFile) {
 //        outputPortToFileMap.put(outputPort, outputFile);
@@ -445,6 +445,9 @@ public class Executable implements ExecutableInterface, Serializable {
             System.out.println("\nSecond init, loading from serials");
             executableNodes = new ArrayList<ExecutableNode>();
 
+            confirmWorkingDir();
+
+
             System.out.println("in node to file : " + inputNodeNumberToFilename.toString());
             System.out.println("out node to file : " + outputNodeNumberToFilename.toString());
 
@@ -460,6 +463,26 @@ public class Executable implements ExecutableInterface, Serializable {
                     addExecutableNodeMapping(node, outputNodeNumberToFilename.get(integer));
                 }
             }
+        }
+    }
+
+    private void confirmWorkingDir() {
+
+        if(workingDir == null || !workingDir.exists()) {
+            System.out.println("Task " + taskName + " is missing.");
+            if(!primaryExec.equals("")) {
+                File file = new File(primaryExec);
+                if(file.exists()) {
+                    workingDir = new File(file.getParent());
+                }
+            } else {
+                String userDir = System.getenv("user.dir");
+                if(userDir != null) {
+                    workingDir = new File(userDir);
+                }
+            }
+            System.out.println("Working dir for "
+                    + taskName + " set to " + workingDir.getAbsolutePath());
         }
     }
 
@@ -555,10 +578,38 @@ public class Executable implements ExecutableInterface, Serializable {
             if(executableNode.getNode() == node) {
                 removing.add(executableNode);
             }
+            if(executableNode.getNode().getName().equals(node.getName())){
+                removing.add(executableNode);
+            }
         }
         for(ExecutableNode executableNode : removing) {
             executableNodes.remove(executableNode);
         }
         updatedExeceutableNode();
+    }
+
+    public ArrayList<File> getWorkingDirFileWhichAreNotInputsOrOutputs() {
+        ArrayList<File> returnedFiles = new ArrayList<File>();
+        if(workingDir.exists() && workingDir.isDirectory()) {
+            File[] files = workingDir.listFiles();
+            for(File file : files) {
+                boolean add = !isInputOrOutput(file);
+                if(add && file.isFile()) {
+                    System.out.println("Adding to bundle " + file.getAbsolutePath());
+                    returnedFiles.add(file);
+                }
+            }
+        }
+        return returnedFiles;
+    }
+
+    private boolean isInputOrOutput(File file) {
+        for(ExecutableNode executableNode : executableNodes) {
+            String filename = executableNode.getFilename();
+            if(filename.equals(file.getName())){
+                return true;
+            }
+        }
+        return false;
     }
 }
