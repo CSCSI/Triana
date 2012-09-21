@@ -3,7 +3,6 @@ package org.trianacode.shiwaall.iwir.factory;
 import org.trianacode.gui.panels.ParameterPanel;
 import org.trianacode.shiwaall.iwir.execute.Executable;
 import org.trianacode.shiwaall.iwir.execute.ExecutableNode;
-import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.event.*;
 import org.trianacode.taskgraph.proxy.java.JavaProxy;
 
@@ -155,13 +154,13 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
         JPanel descriptionPanel = new JPanel();
         descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.Y_AXIS));
 
-        if(executable == null){
-
-            JTextArea jTextArea = new JTextArea();
-            descriptionPanel.add(jTextArea);
-            jTextArea.append(getDescription());
-
-        } else {
+//        if(executable == null){
+//
+//            JTextArea jTextArea = new JTextArea();
+//            descriptionPanel.add(jTextArea);
+//            jTextArea.append(getDescription());
+//
+//        } else {
 
             descriptionPanel.add(new JLabel("Inputs : "));
             addNodeDescriptions(descriptionPanel, executable.getInputNodes());
@@ -169,7 +168,7 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
             descriptionPanel.add(new JLabel("Outputs : "));
             addNodeDescriptions(descriptionPanel, executable.getOutputNodes());
 
-        }
+//        }
 
         return descriptionPanel;
     }
@@ -210,29 +209,29 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
      *
      * @return the description
      */
-    private String getDescription() {
-        Executable executable = (Executable) getTask().getParameter(Executable.EXECUTABLE);
-
-        String inputNodeString = "";
-        String nodeName = null;
-        for (Node node : getTask().getInputNodes()) {
-            if ((executable != null)){
-                nodeName = executable.getPorts().get(node.getName());
-            }
-            inputNodeString += "\n          " + node.getName() + " : (" + nodeName + ")";
-        }
-
-        String outputNodeString = "";
-        for (Node node : getTask().getOutputNodes()) {
-            if ((executable != null)){
-                nodeName = executable.getPorts().get(node.getName());
-            }
-            outputNodeString += "\n          " + node.getName() + " : (" + nodeName + ")";
-        }
-        return "\nTask " + getTask().getDisplayName() +
-                "\n     Input nodes : " + inputNodeString +
-                "\n     Output nodes : " + outputNodeString;
-    }
+//    private String getDescription() {
+//        Executable executable = (Executable) getTask().getParameter(Executable.EXECUTABLE);
+//
+//        String inputNodeString = "";
+//        String nodeName = null;
+//        for (Node node : getTask().getInputNodes()) {
+//            if ((executable != null)){
+//                nodeName = executable.getPorts().get(node.getName());
+//            }
+//            inputNodeString += "\n          " + node.getName() + " : (" + nodeName + ")";
+//        }
+//
+//        String outputNodeString = "";
+//        for (Node node : getTask().getOutputNodes()) {
+//            if ((executable != null)){
+//                nodeName = executable.getPorts().get(node.getName());
+//            }
+//            outputNodeString += "\n          " + node.getName() + " : (" + nodeName + ")";
+//        }
+//        return "\nTask " + getTask().getDisplayName() +
+//                "\n     Input nodes : " + inputNodeString +
+//                "\n     Output nodes : " + outputNodeString;
+//    }
 
     /* (non-Javadoc)
      * @see org.trianacode.gui.panels.ParameterPanel#reset()

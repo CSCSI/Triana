@@ -166,7 +166,6 @@ public class TaskTypeRepoPanel extends AbstractAction implements Extension, Acti
                                 , null, taskGraph, false);
 //                        Task task = taskGraph.createTask(tool);
 
-                        System.out.println(selectedDescriptor.getExecutable().getPorts());
 
                     } catch (Exception e1) {
                         e1.printStackTrace();

@@ -353,7 +353,7 @@ public class TaskTypeRepo {
                 if(dataStage.getName() != null && dataStage.getName().equals(portName)){
                     String fileName = dataStage.getFileName();
                     File inputFile = new File(executable.getWorkingDir(), fileName);
-                    executable.addInputFile(inputPort, inputFile);
+//                    executable.addInputFile(inputPort, inputFile);
 
                     executable.addExecutableNodeMapping(inputPort, fileName);
                 }
@@ -367,7 +367,7 @@ public class TaskTypeRepo {
                 if(dataStage.getName() != null && dataStage.getName().equals(portName)){
                     String fileName = dataStage.getFileName();
                     File outputFile = new File(executable.getWorkingDir(), fileName);
-                    executable.addOutputFile(outputPort, outputFile);
+//                    executable.addOutputFile(outputPort, outputFile);
 
                     executable.addExecutableNodeMapping(outputPort, fileName);
                 }

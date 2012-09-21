@@ -2,8 +2,6 @@ package org.trianacode.shiwaall.iwir.execute;
 
 import org.apache.commons.io.FileUtils;
 import org.shiwa.fgi.iwir.AbstractPort;
-import org.shiwa.fgi.iwir.InputPort;
-import org.shiwa.fgi.iwir.OutputPort;
 import org.trianacode.enactment.StreamToOutput;
 import org.trianacode.taskgraph.Node;
 import org.trianacode.taskgraph.Task;
@@ -42,16 +40,16 @@ public class Executable implements ExecutableInterface, Serializable {
     private String primaryExec = "";
 
     /** The node name to port name. */
-    private transient HashMap<String, String> nodeNameToPortName;
+//    private transient HashMap<String, String> nodeNameToPortName;
 
     /** The task name. */
     private String taskName = "";
 
     /** The input port to file map. */
-    private transient HashMap<InputPort, File> inputPortToFileMap;
+//    private transient HashMap<InputPort, File> inputPortToFileMap;
 
     /** The output port to file map. */
-    private transient HashMap<OutputPort, File> outputPortToFileMap;
+//    private transient HashMap<OutputPort, File> outputPortToFileMap;
 
     private String JSDLstring = "";
 
@@ -72,9 +70,9 @@ public class Executable implements ExecutableInterface, Serializable {
      */
     public Executable(String taskType) {
         this.taskType = taskType;
-        nodeNameToPortName = new HashMap<String, String>();
-        inputPortToFileMap = new HashMap<InputPort, File>();
-        outputPortToFileMap = new HashMap<OutputPort, File>();
+//        nodeNameToPortName = new HashMap<String, String>();
+//        inputPortToFileMap = new HashMap<InputPort, File>();
+//        outputPortToFileMap = new HashMap<OutputPort, File>();
 
         executableNodes = new ArrayList<ExecutableNode>();
     }
@@ -140,8 +138,8 @@ public class Executable implements ExecutableInterface, Serializable {
         System.out.println("TaskType : " + taskType);
         System.out.println("Running with inputs, producing outputs");
 
-        System.out.println(nodeNameToPortName.toString());
-        System.out.println(inputPortToFileMap.toString());
+//        System.out.println(nodeNameToPortName.toString());
+//        System.out.println(inputPortToFileMap.toString());
 
         for(Node node : inputs.keySet()){
             File executableInputFile = getInputFileForNode(node);
@@ -258,9 +256,9 @@ public class Executable implements ExecutableInterface, Serializable {
      *
      * @return the ports
      */
-    public HashMap<String, String> getPorts() {
-        return nodeNameToPortName;
-    }
+//    public HashMap<String, String> getPorts() {
+//        return nodeNameToPortName;
+//    }
 
     /**
      * Adds the port.
@@ -268,10 +266,10 @@ public class Executable implements ExecutableInterface, Serializable {
      * @param nodeName the node name
      * @param portName the port name
      */
-    public void addPort(String nodeName, String portName) {
+//    public void addPort(String nodeName, String portName) {
 //        System.out.println(nodeName + " maps to " + portName);
-        nodeNameToPortName.put(nodeName, portName);
-    }
+//        nodeNameToPortName.put(nodeName, portName);
+//    }
 
     /**
      * Sets the task name.
@@ -297,9 +295,9 @@ public class Executable implements ExecutableInterface, Serializable {
      * @param inputPort the input port
      * @param inputFile the input file
      */
-    public void addInputFile(InputPort inputPort, File inputFile) {
-        inputPortToFileMap.put(inputPort, inputFile);
-    }
+//    public void addInputFile(InputPort inputPort, File inputFile) {
+//        inputPortToFileMap.put(inputPort, inputFile);
+//    }
 
     /**
      * Gets the input file for node.
@@ -375,12 +373,12 @@ public class Executable implements ExecutableInterface, Serializable {
     /**
      * Adds the output file.
      *
-     * @param outputPort the output port
-     * @param outputFile the output file
+//     * @param outputPort the output port
+//     * @param outputFile the output file
      */
-    public void addOutputFile(OutputPort outputPort, File outputFile) {
-        outputPortToFileMap.put(outputPort, outputFile);
-    }
+//    public void addOutputFile(OutputPort outputPort, File outputFile) {
+//        outputPortToFileMap.put(outputPort, outputFile);
+//    }
 
     @Override
     public String toString(){
@@ -445,6 +443,8 @@ public class Executable implements ExecutableInterface, Serializable {
             firstTime = !firstTime;
         } else {
             System.out.println("\nSecond init, loading from serials");
+            executableNodes = new ArrayList<ExecutableNode>();
+
             System.out.println("in node to file : " + inputNodeNumberToFilename.toString());
             System.out.println("out node to file : " + outputNodeNumberToFilename.toString());
 

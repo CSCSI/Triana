@@ -202,14 +202,14 @@ public class ImportIwir {
                     //Record the links for data matching up later
                     if(receivingTask.isParameterName(Executable.EXECUTABLE)){
                         Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
-                        executable.addPort(receivingNode.getTopLevelNode().getName(), anotherDataLink.getToPort().getName());
+//                        executable.addPort(receivingNode.getTopLevelNode().getName(), anotherDataLink.getToPort().getName());
                         executable.addExecutableNodeMapping(receivingNode, anotherDataLink.getToPort());
                         receivingTask.setParameter(Executable.EXECUTABLE, executable);
                     }
 
                     if(task.isParameterName(Executable.EXECUTABLE)){
                         Executable executable = (Executable) task.getParameter(Executable.EXECUTABLE);
-                        executable.addPort(sendingNode.getTopLevelNode().getName(), anotherDataLink.getFromPort().getName());
+//                        executable.addPort(sendingNode.getTopLevelNode().getName(), anotherDataLink.getFromPort().getName());
                         executable.addExecutableNodeMapping(sendingNode, anotherDataLink.getFromPort());
                         receivingTask.setParameter(Executable.EXECUTABLE, executable);
                     }
@@ -273,7 +273,7 @@ public class ImportIwir {
 
                     if(receivingTask.isParameterName(Executable.EXECUTABLE)){
                         Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
-                        executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
+//                        executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
                         executable.addExecutableNodeMapping(receivingNode, incomingPort);
                         receivingTask.setParameter(Executable.EXECUTABLE, executable);
                     }
@@ -286,7 +286,7 @@ public class ImportIwir {
 
                     if(sendingTask.isParameterName(Executable.EXECUTABLE)){
                         Executable executable = (Executable) sendingTask.getParameter(Executable.EXECUTABLE);
-                        executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
+//                        executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
                         executable.addExecutableNodeMapping(sendingNode, outgoingPort);
                         sendingTask.setParameter(Executable.EXECUTABLE, executable);
                     }
@@ -309,13 +309,13 @@ public class ImportIwir {
 
                         if(sendingTask.isParameterName(Executable.EXECUTABLE)){
                             Executable executable = (Executable) sendingTask.getParameter(Executable.EXECUTABLE);
-                            executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
+//                            executable.addPort(sendingNode.getTopLevelNode().getName(), outgoingPort.getName());
                             executable.addExecutableNodeMapping(sendingNode, outgoingPort);
                             sendingTask.setParameter(Executable.EXECUTABLE, executable);
                         }
                         if(receivingTask.isParameterName(Executable.EXECUTABLE)){
                             Executable executable = (Executable) receivingTask.getParameter(Executable.EXECUTABLE);
-                            executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
+//                            executable.addPort(receivingNode.getTopLevelNode().getName(), incomingPort.getName());
                             executable.addExecutableNodeMapping(receivingNode, incomingPort);
                             receivingTask.setParameter(Executable.EXECUTABLE, executable);
                         }
@@ -430,7 +430,7 @@ public class ImportIwir {
                 stdOut("Loop port found " + port.getName());
             }
             if(newNode != null && executable != null){
-                executable.addPort(newNode.getTopLevelNode().getName(), port.getName());
+//                executable.addPort(newNode.getTopLevelNode().getName(), port.getName());
                 executable.addExecutableNodeMapping(newNode.getTopLevelNode(), port);
             }
 
@@ -444,7 +444,7 @@ public class ImportIwir {
                 newNode = task.addParameterOutputNode("loop");
             }
             if(newNode != null && executable != null){
-                executable.addPort(newNode.getTopLevelNode().getName(), port.getName());
+//                executable.addPort(newNode.getTopLevelNode().getName(), port.getName());
                 executable.addExecutableNodeMapping(newNode.getTopLevelNode(), port);
             }
         }
