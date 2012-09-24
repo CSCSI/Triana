@@ -18,6 +18,7 @@ import org.trianacode.enactment.io.IoMapping;
 import org.trianacode.enactment.io.IoType;
 import org.trianacode.shiwaall.extras.FileBuilder;
 import org.trianacode.shiwaall.iwir.execute.Executable;
+import org.trianacode.shiwaall.iwir.execute.ExecutableNode;
 import org.trianacode.shiwaall.iwir.importer.utils.ExportIwir;
 import org.trianacode.taskgraph.*;
 import org.trianacode.taskgraph.ser.Base64;
@@ -327,11 +328,11 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                     if(task.getTasktype().equals(tasktype)){
 
                         HashSet<File> tasksFiles = new HashSet<File>();
-
+                        Executable exec = null;
                         org.trianacode.taskgraph.Task trianaTask = getTaskForAtomicTask(task);
 
                         if (trianaTask.isParameterName(Executable.EXECUTABLE)) {
-                            Executable exec = (Executable) trianaTask.getParameter(Executable.EXECUTABLE);
+                            exec = (Executable) trianaTask.getParameter(Executable.EXECUTABLE);
                             File dir = exec.getWorkingDir();
                             if(dir.exists() && dir.isDirectory()) {
                                 tasksFiles.addAll(exec.getWorkingDirFileWhichAreNotInputsOrOutputs());
@@ -357,10 +358,16 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
                         File ioConfig = createIOConfig(taskGraph);
                         tasksFiles.add(ioConfig);
 
-                        Executable executable = null;
+
                         String jobName = "triana.sh";
                         String executableFileName = TRIANA_RUN_SCRIPT;
                         String arguments = "-n -w " + taskFile.getName() + " -d " + ioConfig.getName();
+
+                        if(exec != null){
+                            arguments = exec.getArgsAsString();
+                            executableFileName = exec.getPrimaryExec();
+                            jobName = exec.getTaskName();
+                        }
 
 
 //                        TaskTypeToolDescriptor taskTypeToolDescriptor;
@@ -673,12 +680,22 @@ public class TrianaIWIRHandler implements FGIWorkflowEngineHandler {
     private String createAllInputDataStaging(Task task){
         StringBuilder inputDataStagings = new StringBuilder();
 
-        List<InputPort> inputPorts = task.getInputPorts();
-        for(int in = 0; in < inputPorts.size(); in++){
-            InputPort inputPort = inputPorts.get(in);
-            String portName = inputPort.getName();
-            String filename = "input_" + in;
-            inputDataStagings.append(createInputDataStaging(portName, filename));
+
+        org.trianacode.taskgraph.Task trianaTask = getTaskForAtomicTask(task);
+        if (trianaTask.isParameterName(Executable.EXECUTABLE)) {
+            Executable exec = (Executable) trianaTask.getParameter(Executable.EXECUTABLE);
+
+            for(ExecutableNode executableNode : exec.getInputNodes()) {
+                 executableNode.getFilename();
+            }
+        } else {
+            List<InputPort> inputPorts = task.getInputPorts();
+            for(int in = 0; in < inputPorts.size(); in++){
+                InputPort inputPort = inputPorts.get(in);
+                String portName = inputPort.getName();
+                String filename = "input_" + in;
+                inputDataStagings.append(createInputDataStaging(portName, filename));
+            }
         }
         return inputDataStagings.toString();
     }

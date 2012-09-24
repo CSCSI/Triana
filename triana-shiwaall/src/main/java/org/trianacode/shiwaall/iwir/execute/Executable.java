@@ -612,4 +612,12 @@ public class Executable implements ExecutableInterface, Serializable {
         }
         return false;
     }
+
+    public String getArgsAsString() {
+        String argstring = "";
+        for(String arg : args) {
+            argstring += arg + " ";
+        }
+        return argstring;
+    }
 }

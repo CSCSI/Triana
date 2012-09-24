@@ -147,7 +147,7 @@ public class BasicIWIRPanel extends ParameterPanel implements TaskListener{
 
         mainPanel.add(infoPanel);
         this.add(mainPanel);
-        this.validateTree();
+        this.validate();
     }
 
     private JPanel getDescriptionPanel(Executable executable) {
