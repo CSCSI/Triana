@@ -8,6 +8,7 @@ import triana.types.TrianaImage;
 import triana.types.TrianaPixelMap;
 
 import java.awt.*;
+import java.io.File;
 
 /**
  * A ImageReader : A unit which imports a GIF or JPG file.
@@ -41,6 +42,9 @@ public class ImageReader extends Unit {
             }
             if(o instanceof String){
                 process((String)o);
+            }
+            if(o instanceof File){
+                process(((File)o).getAbsolutePath());
             }
 //            TrianaType t = (TrianaType) getInputAtNode(0);
 
@@ -102,7 +106,7 @@ public class ImageReader extends Unit {
     }    
 
     public String[] getInputTypes() {
-        return new String[]{"triana.types.FileName", "java.lang.String"};
+        return new String[]{"triana.types.FileName", "java.lang.String", "java.io.File"};
     }
 
     /**

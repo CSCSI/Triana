@@ -32,7 +32,7 @@ public class WriteGifOutputFile extends Unit {
         Image image = trimage.getImage();
 
         if ((imageName == null) || (imageName.equals(""))) {
-            imageName = "output.gif";
+            imageName = "output_" + System.currentTimeMillis() + ".gif";
 //            ErrorDialog.show("No output file chosen in " + getTask().getToolName() + " please choose one now");
 //            doubleClick();
         }
