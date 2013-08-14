@@ -33,16 +33,15 @@
     <repositories>
         <repository>
             <id>trianacode-maven-repos</id>
-            <url>http://trianacode.org/maven</url>
+            <url>http://triana.cs.cf.ac.uk/archiva/repository/snapshots/</url>
         </repository>
     </repositories>
-
     <distributionManagement>
-        <repository>
-            <id>trianacode-maven-repos</id>
-            <name>Triana Maven Repository</name>
-            <url>scp://lapis.cs.cf.ac.uk/nfs/mntI3/static/triana/html/maven</url>
-        </repository>
+        <snapshotRepository>
+            <id>archiva.snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <url>http://triana.cs.cf.ac.uk/archiva/repository/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
 

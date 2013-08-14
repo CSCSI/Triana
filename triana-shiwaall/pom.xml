@@ -208,7 +208,7 @@
     <repositories>
         <repository>
             <id>trianacode-maven-repos</id>
-            <url>http://trianacode.org/maven</url>
+            <url>http://triana.cs.cf.ac.uk/archiva/repository/snapshots/</url>
         </repository>
         <repository>
             <id>creatis-thirdparty</id>

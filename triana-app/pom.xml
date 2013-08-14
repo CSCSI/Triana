@@ -175,8 +175,8 @@
     
     <repositories>
         <repository>
-            <id>cu-maven-repos</id>
-            <url>http://www.trianacode.org/maven</url>
+            <id>trianacode-maven-repos</id>
+            <url>http://triana.cs.cf.ac.uk/archiva/repository/snapshots/</url>
         </repository>
     </repositories>
 
