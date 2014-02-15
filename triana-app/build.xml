@@ -195,7 +195,7 @@
         <mkdir dir="dist/dist-tar"/>
         <copy file="dist/../disttar.tar.bz2" todir="dist/dist-tar"/>
         <delete file="dist/../disttar.tar.bz2"/>
-        <zip destfile="dist/../distzip.zip">
+        <zip destfile="dist/../distzip.zip" excludes="dist/dist-tar/**">
             <fileset dir="dist"/>
         </zip>
         <mkdir dir="dist/dist-zip"/>
