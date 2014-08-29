@@ -25,3 +25,20 @@ student records and the grading of papers. If you regularly create reports, Tria
 you to feed updated data directly into the finished document, no matter how it is formatted.
 
 
+Docker
+======
+
+There is a self contained docker container with Triana installed inside available.
+
+Pull the image down with
+```
+docker pull keyz182/triana
+```
+
+then run with
+```
+docker run -i -t -p 6080:6080 keyz182/triana
+```
+
+Finally, you can access Triana via a browser at the following URL, using the password ```ubuntu```:
+http://127.0.0.1:6080/vnc.html
