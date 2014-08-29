@@ -30,6 +30,8 @@ Docker
 
 There is a self contained docker container with Triana installed inside available.
 
+https://registry.hub.docker.com/u/keyz182/triana/
+
 Pull the image down with
 ```
 docker pull keyz182/triana
