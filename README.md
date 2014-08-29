@@ -41,6 +41,7 @@ docker run -i -t -p 6080:6080 keyz182/triana
 ```
 
 Finally, you can access Triana via a browser at the following URL, using the password ```ubuntu```:
-```
+
+
 http://127.0.0.1:6080/vnc.html
-```
+
