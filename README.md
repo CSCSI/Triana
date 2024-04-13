@@ -1,3 +1,5 @@
+[Latest (and likely final) release here.](https://github.com/CSCSI/Triana/releases/tag/4.0.0-rel)
+
 Triana
 ======
 
